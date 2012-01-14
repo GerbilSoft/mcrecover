@@ -99,7 +99,7 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	
 	// Read the block containing the file comments.
 	uint8_t *tmpBlock = (uint8_t*)malloc(blockSize);
-	card->readBlock(tmpBlock, blockSize, commentBlock);
+	card->readBlock(tmpBlock, blockSize, fileStartBlock + commentBlock);
 	
 	// TODO: Convert Shift-JIS comments to UTF-8.
 	gameDesc = QString::fromLatin1((char*)&tmpBlock[commentOffset], 32).trimmed();
