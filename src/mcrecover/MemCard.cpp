@@ -328,8 +328,8 @@ int MemCard::encoding(void) const
 {
 	if (!isOpen())
 		return -1;
-	if (q->mc_header->encoding > SYS_FONT_ENCODING_MASK)
+	if (d->mc_header.encoding > SYS_FONT_ENCODING_MASK)
 		return -2;
 	
-	return q->mc_header->encoding;
+	return d->mc_header.encoding;
 }
