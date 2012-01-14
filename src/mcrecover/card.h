@@ -126,11 +126,15 @@ typedef struct PACKED _card_dat
 #pragma pack(1)
 typedef struct PACKED _card_bat
 {
-	uint8_t pad[58];	// Padding.
+	uint16_t chksum1;	// Checksum 1.
+	uint16_t chksum2;	// Checksum 2.
 	uint16_t updated;	// Update serial number.
 	uint16_t freeblocks;	// Number of free blocks.
 	uint16_t lastalloc;	// Last block allocated.
-	uint16_t fat[0xFFC];	// File allocation table.
+	
+	// NOTE: Subtract 5 from the block address
+	// before looking it up in the FAT!
+	uint16_t fat[0xFFA];	// File allocation table.
 } card_bat;
 
 // File attributes.
