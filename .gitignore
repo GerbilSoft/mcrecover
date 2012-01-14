@@ -1,0 +1,25 @@
+# Filetypes.
+*~
+*.o
+*.a
+*.so
+
+# Directories and specific filenames.
+/FOR FUTURE USE/
+/mcrecover.kdev*
+
+Makefile
+Makefile.in
+
+/debug-*/
+/release-*/
+/build/
+/m4/*.m4
+
+.directory
+
+# CMake temproary files.
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+git_version.h
