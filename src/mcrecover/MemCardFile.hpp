@@ -22,10 +22,13 @@
 #ifndef __MCRECOVER_MEMCARDFILE_HPP__
 #define __MCRECOVER_MEMCARDFILE_HPP__
 
-#include "MemCard.hpp"
 #include "card.h"
 
 #include <QtCore/QObject>
+#include <QtCore/QDateTime>
+
+// MemCard class.
+class MemCard;
 
 class MemCardFilePrivate;
 
@@ -42,7 +45,8 @@ class MemCardFile : public QObject
 		friend class MemCardFilePrivate;
 		MemCardFilePrivate *const d;
 		Q_DISABLE_COPY(MemCardFile);
-		
+	
+	public:
 		/**
 		 * Get the game code.
 		 * @return Game code.
@@ -63,9 +67,9 @@ class MemCardFile : public QObject
 		
 		/**
 		 * Get the last modified time.
-		 * @return Last modified time. (UNIX timestamp)
+		 * @return Last modified time.
 		 */
-		uint32_t lastModified(void) const;
+		QDateTime lastModified(void) const;
 		
 		/**
 		 * Get the game description. ("Comments" field.)

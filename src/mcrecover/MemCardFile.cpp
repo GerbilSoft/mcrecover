@@ -23,7 +23,8 @@
 #include "card.h"
 #include "byteswap.h"
 
-#define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
+// MemCard class.
+#include "MemCard.hpp"
 
 // Qt includes.
 #include <QtCore/QString>
@@ -52,7 +53,7 @@ class MemCardFilePrivate
 		QString gamecode;
 		QString company;
 		QString filename;
-		uint32_t lastModified;	// Last modified time. (UNIX timestamp)
+		QDateTime lastModified;	// Last modified time.
 		
 		// File information. (Comment, banner, icon)
 		QString gameDesc;	// Game description.
@@ -81,7 +82,10 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	
 	gamecode = QString::fromLatin1(direntry->gamecode, sizeof(direntry->gamecode));
 	company = QString::fromLatin1(direntry->company, sizeof(direntry->company));
-	lastModified = (direntry->lastmodified + GC_UNIX_TIME_DIFF);
+	
+	// TODO: GC memory card time uses local time.
+	// QDateTime::setTime_t uses UTC. Add local time offset!
+	lastModified.setTime_t(direntry->lastmodified + GC_UNIX_TIME_DIFF);
 	
 	const int blockSize = card->blockSize();
 	const uint16_t fileStartBlock = direntry->block;
@@ -139,9 +143,9 @@ QString MemCardFile::filename(void) const
 
 /**
  * Get the last modified time.
- * @return Last modified time. (UNIX timestamp)
+ * @return Last modified time.
  */
-uint32_t MemCardFile::lastModified(void) const
+QDateTime MemCardFile::lastModified(void) const
 	{ return d->lastModified; }
 
 /**
