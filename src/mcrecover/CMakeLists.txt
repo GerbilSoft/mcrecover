@@ -57,11 +57,13 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/byteorder.h.in" "${CMAKE_CURRENT_BIN
 SET(mcrecover_SRCS
 	mcrecover.cpp
 	MemCard.cpp
+	MemCardFile.cpp
 	)
 
 # Headers with Qt4 objects.
 SET(mcrecover_MOC_HEADERS
 	MemCard.hpp
+	MemCardFile.hpp
 	)
 
 # UI files.
