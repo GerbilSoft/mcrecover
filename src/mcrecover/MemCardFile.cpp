@@ -60,9 +60,10 @@ class MemCardFilePrivate
 		QString fileDesc;	// File description.
 		
 		// Images.
-		QImage banner;
-		QImage icon[CARD_MAXICONS];
-		uint8_t iconSpeed;	// TODO: Animation.
+		// TODO: These seem to cause memory errors...
+		//QImage banner;
+		//QImage icon[CARD_MAXICONS];
+		//uint8_t iconSpeed;	// TODO: Animation.
 };
 
 MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,

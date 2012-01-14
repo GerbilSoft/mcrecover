@@ -28,6 +28,9 @@
 // Qt includes.
 #include <QtCore/QObject>
 
+// MemCardFile
+class MemCardFile;
+
 class MemCardPrivate;
 
 class MemCard : public QObject
@@ -83,6 +86,19 @@ class MemCard : public QObject
 		 * @return 0 for ANSI; 1 for SJIS; negative on error.
 		 */
 		int encoding(void) const;
+		
+		/**
+		 * Get the number of files in the file table.
+		 * @return Number of files, or negative on error.
+		 */
+		int numFiles(void) const;
+		
+		/**
+		 * Get a MemCardFile object.
+		 * @param idx File number.
+		 * @return MemCardFile object, or NULL on error.
+		 */
+		MemCardFile *getFile(int idx);
 };
 
 #endif /* __MCRECOVER_MEMCARD_HPP__ */

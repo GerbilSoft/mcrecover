@@ -350,3 +350,29 @@ int MemCard::encoding(void) const
 	
 	return d->mc_header.encoding;
 }
+
+
+/**
+ * Get the number of files in the file table.
+ * @return Number of files, or negative on error.
+ */
+int MemCard::numFiles(void) const
+{
+	if (!isOpen())
+		return -1;
+	
+	return d->lstMemCardFile.size();
+}
+
+/**
+ * Get a MemCardFile object.
+ * @param idx File number.
+ * @return MemCardFile object, or NULL on error.
+ */
+MemCardFile *MemCard::getFile(int idx)
+{
+	if (idx < 0 || idx >= d->lstMemCardFile.size())
+		return NULL;
+	
+	return d->lstMemCardFile.at(idx);
+}
