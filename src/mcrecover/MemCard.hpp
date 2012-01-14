@@ -28,10 +28,12 @@ class MemCardPrivate;
 
 class MemCard : public QObject
 {
+	Q_OBJECT
+	
 	public:
 		MemCard(const QString& filename);
 		~MemCard();
-		
+	
 	private:
 		friend class MemCardPrivate;
 		MemCardPrivate *const d;
