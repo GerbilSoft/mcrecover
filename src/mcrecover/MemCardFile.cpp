@@ -49,6 +49,9 @@ class MemCardFilePrivate
 		const card_dat *const dat;
 		const card_bat *const bat;
 		
+		// FAT entries.
+		QVector<uint16_t> fat_entries;
+		
 		// File information. (Directory table.)
 		QString gamecode;
 		QString company;
@@ -64,6 +67,13 @@ class MemCardFilePrivate
 		//QImage banner;
 		//QImage icon[CARD_MAXICONS];
 		//uint8_t iconSpeed;	// TODO: Animation.
+		
+		/**
+		 * Convert a file block number to a physical block number.
+		 * @param fileBlock File block number.
+		 * @return Physical block number, or negative on error.
+		 */
+		uint16_t fileBlockToPhysBlock(uint16_t fileBlock);
 };
 
 MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
@@ -78,6 +88,19 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	// Load the directory table information.
 	const card_direntry *direntry = &dat->entries[fileIdx];
 	
+	// Load the FAT entries.
+	fat_entries.clear();
+	fat_entries.reserve(direntry->length);
+	uint16_t last_block = direntry->block;
+	fat_entries.append(last_block);
+	for (int i = 1; i < direntry->length; i++)
+	{
+		last_block = bat->fat[last_block - 5];
+		if (last_block == 0xFFFF)
+			break;
+		fat_entries.append(last_block);
+	}
+	
 	// TODO: Convert Shift-JIS filenames to UTF-8.
 	filename = QString::fromLatin1(direntry->filename, sizeof(direntry->filename));
 	
@@ -89,21 +112,33 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	lastModified.setTime_t(direntry->lastmodified + GC_UNIX_TIME_DIFF);
 	
 	const int blockSize = card->blockSize();
-	const uint16_t fileStartBlock = direntry->block;
 	
 	// Load the file comments. (64 bytes)
 	// 0x00: Game description.
 	// 0x20: File description.
-	const uint16_t commentBlock = (uint16_t)(direntry->commentaddr / blockSize);
+	const uint16_t commentBlock = fileBlockToPhysBlock((direntry->commentaddr / blockSize));
 	const int commentOffset = (direntry->commentaddr % blockSize);
 	
 	// Read the block containing the file comments.
 	uint8_t *tmpBlock = (uint8_t*)malloc(blockSize);
-	card->readBlock(tmpBlock, blockSize, fileStartBlock + commentBlock);
+	card->readBlock(tmpBlock, blockSize, commentBlock);
 	
 	// TODO: Convert Shift-JIS comments to UTF-8.
 	gameDesc = QString::fromLatin1((char*)&tmpBlock[commentOffset], 32).trimmed();
 	fileDesc = QString::fromLatin1((char*)&tmpBlock[commentOffset+32], 32).trimmed();
+}
+
+
+/**
+ * Convert a file block number to a physical block number.
+ * @param fileBlock File block number.
+ * @return Physical block number, or negative on error.
+ */
+uint16_t MemCardFilePrivate::fileBlockToPhysBlock(uint16_t fileBlock)
+{
+	if ((int)fileBlock >= fat_entries.size())
+		return -1;
+	return fat_entries.at((int)fileBlock);
 }
 
 
