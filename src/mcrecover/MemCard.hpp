@@ -22,6 +22,10 @@
 #ifndef __MCRECOVER_MEMCARD_HPP__
 #define __MCRECOVER_MEMCARD_HPP__
 
+// C includes.
+#include <stdint.h>
+
+// Qt includes.
 #include <QtCore/QObject>
 
 class MemCardPrivate;
@@ -72,7 +76,7 @@ class MemCard : public QObject
 		 * @param blockIdx Block index.
 		 * @return Bytes read on success; negative on error.
 		 */
-		int readBlock(void *buf, size_t siz, int blockIdx);
+		int readBlock(void *buf, size_t siz, uint16_t blockIdx);
 		
 		/**
 		 * Get the memory card encoding.

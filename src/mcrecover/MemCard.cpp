@@ -307,7 +307,7 @@ int MemCard::blockSize(void) const
  * @param blockIdx Block index.
  * @return Bytes read on success; negative on error.
  */
-int MemCard::readBlock(void *buf, size_t siz, int blockIdx)
+int MemCard::readBlock(void *buf, size_t siz, uint16_t blockIdx)
 {
 	if (!isOpen())
 		return -1;
@@ -315,7 +315,7 @@ int MemCard::readBlock(void *buf, size_t siz, int blockIdx)
 		return -2;
 	
 	// Read the specified block.
-	d->file->seek(blockIdx * blockSize());
+	d->file->seek((int)blockIdx * blockSize());
 	return (int)d->file->read((char*)buf, blockSize());
 }
 

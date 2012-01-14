@@ -84,12 +84,13 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	lastModified = (direntry->lastmodified + GC_UNIX_TIME_DIFF);
 	
 	const int blockSize = card->blockSize();
+	const uint16_t fileStartBlock = direntry->block;
 	
 	// Load the file comments. (64 bytes)
 	// 0x00: Game description.
 	// 0x20: File description.
-	int commentBlock = (direntry->commentaddr / blockSize);
-	int commentOffset = (direntry->commentaddr % blockSize);
+	const uint16_t commentBlock = (uint16_t)(direntry->commentaddr / blockSize);
+	const int commentOffset = (direntry->commentaddr % blockSize);
 	
 	// Read the block containing the file comments.
 	uint8_t *tmpBlock = (uint8_t*)malloc(blockSize);
