@@ -73,6 +73,12 @@ class MemCard : public QObject
 		 * @return Bytes read on success; negative on error.
 		 */
 		int readBlock(void *buf, size_t siz, int blockIdx);
+		
+		/**
+		 * Get the memory card encoding.
+		 * @return 0 for ANSI; 1 for SJIS; negative on error.
+		 */
+		int encoding(void) const;
 };
 
 #endif /* __MCRECOVER_MEMCARD_HPP__ */

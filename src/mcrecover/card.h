@@ -170,6 +170,11 @@ typedef struct PACKED _card_bat
 #define CARD_SPEED_SLOW		0x03
 #define CARD_SPEED_MASK		0x03
 
+// System font encoding.
+#define SYS_FONT_ENCODING_ANSI	0x00	/* ANSI text. (cp1252?) */
+#define SYS_FONT_ENCODING_SJIS	0x01	/* Shift-JIS text. */
+#define SYS_FONT_ENCODING_MASK	0x01
+
 #ifdef __cplusplus
 }
 #endif

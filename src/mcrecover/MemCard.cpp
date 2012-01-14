@@ -318,3 +318,18 @@ int MemCard::readBlock(void *buf, size_t siz, int blockIdx)
 	d->file->seek(blockIdx * blockSize());
 	return (int)d->file->read((char*)buf, blockSize());
 }
+
+
+/**
+ * Get the memory card encoding.
+ * @return 0 for ANSI; 1 for SJIS; negative on error.
+ */
+int MemCard::encoding(void) const
+{
+	if (!isOpen())
+		return -1;
+	if (q->mc_header->encoding > SYS_FONT_ENCODING_MASK)
+		return -2;
+	
+	return q->mc_header->encoding;
+}
