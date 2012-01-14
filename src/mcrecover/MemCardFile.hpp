@@ -42,6 +42,42 @@ class MemCardFile : public QObject
 		friend class MemCardFilePrivate;
 		MemCardFilePrivate *const d;
 		Q_DISABLE_COPY(MemCardFile);
+		
+		/**
+		 * Get the game code.
+		 * @return Game code.
+		 */
+		QString gamecode(void) const;
+		
+		/**
+		 * Get the company code.
+		 * @return Company code.
+		 */
+		QString company(void) const;
+		
+		/**
+		 * Get the GC filename.
+		 * @return GC filename.
+		 */
+		QString filename(void) const;
+		
+		/**
+		 * Get the last modified time.
+		 * @return Last modified time. (UNIX timestamp)
+		 */
+		uint32_t lastModified(void) const;
+		
+		/**
+		 * Get the game description. ("Comments" field.)
+		 * @return Game description.
+		 */
+		QString gameDesc(void) const;
+		
+		/**
+		 * Get the file description. ("Comments" field.)
+		 * @return File description.
+		 */
+		QString fileDesc(void) const;
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */

@@ -111,3 +111,48 @@ MemCardFile::MemCardFile(MemCard *card, const int fileIdx,
 
 MemCardFile::~MemCardFile()
 	{ delete d; }
+
+
+/**
+ * Get the game code.
+ * @return Game code.
+ */
+QString MemCardFile::gamecode(void) const
+	{ return d->gamecode; }
+
+
+/**
+ * Get the company code.
+ * @return Company code.
+ */
+QString MemCardFile::company(void) const
+	{ return d->company; }
+
+
+/**
+ * Get the GC filename.
+ * @return GC filename.
+ */
+QString MemCardFile::filename(void) const
+	{ return d->filename; }
+
+/**
+ * Get the last modified time.
+ * @return Last modified time. (UNIX timestamp)
+ */
+uint32_t MemCardFile::lastModified(void) const
+	{ return d->lastModified; }
+
+/**
+ * Get the game description. ("Comments" field.)
+ * @return Game description.
+ */
+QString MemCardFile::gameDesc(void) const
+	{ return d->gameDesc; }
+
+/**
+ * Get the file description. ("Comments" field.)
+ * @return File description.
+ */
+QString MemCardFile::fileDesc(void) const
+	{ return d->fileDesc; }
