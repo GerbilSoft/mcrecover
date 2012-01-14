@@ -42,6 +42,7 @@ class MemCardPrivate
 	public:
 		MemCardPrivate(MemCard *q, QString filename);
 		~MemCardPrivate();
+		void init(void);
 	
 	private:
 		MemCard *const q;
@@ -123,12 +124,7 @@ MemCardPrivate::MemCardPrivate(MemCard *q, QString filename)
 	// - Should be a power of two.
 	// - Should at least be 40 KB for system information.
 	
-	// Load the memory card system information.
-	// This includes the header, directory, and block allocation table.
-	loadSysInfo();
-	
-	// Load the MemCardFile list.
-	loadMemCardFileList();
+	// NOTE: Initialization must be done *after* MemCard is initialized!
 }
 
 MemCardPrivate::~MemCardPrivate()
@@ -142,6 +138,21 @@ MemCardPrivate::~MemCardPrivate()
 		file->close();
 		delete file;
 	}
+}
+
+
+/**
+ * Initialize MemCardPrivate.
+ * This must be run *after* MemCard is initialized!
+ */
+void MemCardPrivate::init(void)
+{
+	// Load the memory card system information.
+	// This includes the header, directory, and block allocation table.
+	loadSysInfo();
+	
+	// Load the MemCardFile list.
+	loadMemCardFileList();
 }
 
 
@@ -261,11 +272,17 @@ void MemCardPrivate::loadMemCardFileList(void)
 MemCard::MemCard(QObject *parent, const QString& filename)
 	: QObject(parent)
 	, d(new MemCardPrivate(this, filename))
-{ }
+{
+	// Initialize MemCardPrivate.
+	d->init();
+}
 
 MemCard::MemCard(const QString& filename)
 	: d(new MemCardPrivate(this, filename))
-{ }
+{
+	// Initialize MemCardPrivate.
+	d->init();
+}
 
 MemCard::~MemCard()
 	{ delete d; }
