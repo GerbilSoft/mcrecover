@@ -23,10 +23,17 @@
 #include "card.h"
 #include "byteswap.h"
 
+// MemCardFile
+#include "MemCardFile.hpp"
+
+// C includes.
+#include <string.h>
+
 // Qt includes.
 #include <QtCore/QFile>
+#include <QtCore/QList>
 
-#define NUM_ELEMENTS(x) (sizeof(x) / sizeof(x[0]))
+#define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 /** MemCardPrivate **/
 
@@ -57,6 +64,9 @@ class MemCardPrivate
 		card_dat mc_dat_bak;	// Directory table. (Backup)
 		card_bat mc_bat;	// Block allocation table.
 		card_bat mc_bat_bak;	// Block allocation table. (Backup)
+		
+		// MemCardFile list.
+		QList<MemCardFile*> lstMemCardFile;
 	
 	private:
 		/**
@@ -78,6 +88,11 @@ class MemCardPrivate
 		 * @param address Block allocation table address.
 		 */
 		void loadBlockTable(card_bat *bat, uint32_t address);
+		
+		/**
+		 * Load the MemCardFile list.
+		 */
+		void loadMemCardFileList(void);
 };
 
 MemCardPrivate::MemCardPrivate(MemCard *q, QString filename)
@@ -111,10 +126,17 @@ MemCardPrivate::MemCardPrivate(MemCard *q, QString filename)
 	// Load the memory card system information.
 	// This includes the header, directory, and block allocation table.
 	loadSysInfo();
+	
+	// Load the MemCardFile list.
+	loadMemCardFileList();
 }
 
 MemCardPrivate::~MemCardPrivate()
 {
+	// Clear the MemCardFile list.
+	qDeleteAll(lstMemCardFile);
+	lstMemCardFile.clear();
+	
 	if (file)
 	{
 		file->close();
@@ -139,7 +161,7 @@ int MemCardPrivate::loadSysInfo(void)
 	file->read((char*)&mc_header, sizeof(mc_header));
 	
 	// Byteswap the header contents.
-	for (size_t i = 0; i < NUM_ELEMENTS(mc_header.serial); i++)
+	for (int i = 0; i < NUM_ELEMENTS(mc_header.serial); i++)
 		mc_header.serial[i] = be32_to_cpu(mc_header.serial[i]);
 	
 	mc_header.device_id	= be16_to_cpu(mc_header.device_id);
@@ -172,7 +194,7 @@ void MemCardPrivate::loadDirTable(card_dat *dat, uint32_t address)
 	file->read((char*)dat, sizeof(dat->entries));
 	
 	// Byteswap the directory table contents.
-	for (size_t i = 0; i < NUM_ELEMENTS(dat->entries); i++)
+	for (int i = 0; i < NUM_ELEMENTS(dat->entries); i++)
 	{
 		card_direntry *direntry	= &dat->entries[i];
 		direntry->lastmodified	= be32_to_cpu(direntry->lastmodified);
@@ -202,8 +224,35 @@ void MemCardPrivate::loadBlockTable(card_bat *bat, uint32_t address)
 	bat->freeblocks	= be16_to_cpu(bat->freeblocks);
 	bat->lastalloc	= be16_to_cpu(bat->lastalloc);
 	
-	for (size_t i = 0; i < NUM_ELEMENTS(bat->fat); i++)
+	for (int i = 0; i < NUM_ELEMENTS(bat->fat); i++)
 		bat->fat[i] = be16_to_cpu(bat->fat[i]);
+}
+
+
+/**
+ * Load the MemCardFile list.
+ */
+void MemCardPrivate::loadMemCardFileList(void)
+{
+	// Clear the current MemCardFile list.
+	qDeleteAll(lstMemCardFile);
+	lstMemCardFile.clear();
+	lstMemCardFile.reserve(NUM_ELEMENTS(mc_dat.entries));
+	
+	// Byteswap the directory table contents.
+	for (int i = 0; i < NUM_ELEMENTS(mc_dat.entries); i++)
+	{
+		const card_direntry *direntry = &mc_dat.entries[i];
+		
+		// If the game code is 0xFFFFFFFF, the entry is empty.
+		static const uint8_t gamecode_empty[4] = {0xFF, 0xFF, 0xFF, 0xFF};
+		if (!memcmp(direntry->gamecode, gamecode_empty, sizeof(gamecode_empty)))
+			continue;
+		
+		// Valid directory entry.
+		MemCardFile *mcf = new MemCardFile(q, i, &mc_dat, &mc_bat);
+		lstMemCardFile.append(mcf);
+	}
 }
 
 

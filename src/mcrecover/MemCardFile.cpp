@@ -23,7 +23,7 @@
 #include "card.h"
 #include "byteswap.h"
 
-#define NUM_ELEMENTS(x) (sizeof(x) / sizeof(x[0]))
+#define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 /** MemCardFilePrivate **/
 
