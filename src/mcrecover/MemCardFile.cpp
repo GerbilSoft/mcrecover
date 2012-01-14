@@ -25,13 +25,17 @@
 
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
+// Qt includes.
+#include <QtCore/QString>
+#include <QtGui/QImage>
+
 /** MemCardFilePrivate **/
 
 class MemCardFilePrivate
 {
 	public:
 		MemCardFilePrivate(MemCardFile *q,
-				const MemCard *card, const int fileIdx,
+				MemCard *card, const int fileIdx,
 				const card_dat *dat, const card_bat *bat);
 	
 	private:
@@ -39,14 +43,29 @@ class MemCardFilePrivate
 		Q_DISABLE_COPY(MemCardFilePrivate);
 	
 	public:
-		const MemCard *const card;
+		MemCard *const card;
 		const int fileIdx;
 		const card_dat *const dat;
 		const card_bat *const bat;
+		
+		// File information. (Directory table.)
+		QString gamecode;
+		QString company;
+		QString filename;
+		uint32_t lastModified;	// Last modified time. (UNIX timestamp)
+		
+		// File information. (Comment, banner, icon)
+		QString gameDesc;	// Game description.
+		QString fileDesc;	// File description.
+		
+		// Images.
+		QImage banner;
+		QImage icon[CARD_MAXICONS];
+		uint8_t iconSpeed;	// TODO: Animation.
 };
 
 MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
-		const MemCard *card, const int fileIdx,
+		MemCard *card, const int fileIdx,
 		const card_dat *dat, const card_bat *bat)
 	: q(q)
 	, card(card)
@@ -54,7 +73,31 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	, dat(dat)
 	, bat(bat)
 {
-	// TODO: Load the file and extract the images.
+	// Load the directory table information.
+	const card_direntry *direntry = &dat->entries[fileIdx];
+	
+	// TODO: Convert Shift-JIS filenames to UTF-8.
+	filename = QString::fromLatin1(direntry->filename, sizeof(direntry->filename));
+	
+	gamecode = QString::fromLatin1(direntry->gamecode, sizeof(direntry->gamecode));
+	company = QString::fromLatin1(direntry->company, sizeof(direntry->company));
+	lastModified = (direntry->lastmodified + GC_UNIX_TIME_DIFF);
+	
+	const int blockSize = card->blockSize();
+	
+	// Load the file comments. (64 bytes)
+	// 0x00: Game description.
+	// 0x20: File description.
+	int commentBlock = (direntry->commentaddr / blockSize);
+	int commentOffset = (direntry->commentaddr % blockSize);
+	
+	// Read the block containing the file comments.
+	uint8_t *tmpBlock = (uint8_t*)malloc(blockSize);
+	card->readBlock(tmpBlock, blockSize, commentBlock);
+	
+	// TODO: Convert Shift-JIS comments to UTF-8.
+	gameDesc = QString::fromLatin1((char*)&tmpBlock[commentOffset], 32).trimmed();
+	fileDesc = QString::fromLatin1((char*)&tmpBlock[commentOffset+32], 32).trimmed();
 }
 
 

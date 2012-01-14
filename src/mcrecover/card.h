@@ -5,8 +5,9 @@
  **************************************************************************/
 
 /**
- * Source:
- * http://devkitpro.svn.sourceforge.net/viewvc/devkitpro/trunk/libogc/libogc/card.c?revision=4732&view=markup
+ * References:
+ * - http://devkitpro.svn.sourceforge.net/viewvc/devkitpro/trunk/libogc/libogc/card.c?revision=4732&view=markup
+ * - http://hitmen.c02.at/files/yagcd/yagcd/chap12.html
  */
 
 /*-------------------------------------------------------------
@@ -91,8 +92,8 @@ typedef struct PACKED _card_header
 #pragma pack(1)
 typedef struct PACKED _card_direntry
 {
-	uint8_t gamecode[4];	// Game code.
-	uint8_t company[2];	// Company code.
+	char gamecode[4];	// Game code.
+	char company[2];	// Company code.
 	uint8_t pad_00;		// Padding. (0xFF)
 	uint8_t bannerfmt;	// Banner format.
 	char filename[CARD_FILENAMELEN];	// Filename.
@@ -159,21 +160,26 @@ typedef struct PACKED _card_bat
 #define CARD_ICON_MASK		0x03
 
 // Icon animation style.
+// (Stored in card_direntry.bannerfmt.)
 #define CARD_ANIM_LOOP		0x00
 #define CARD_ANIM_BOUNCE	0x04
 #define CARD_ANIM_MASK		0x04
 
 // Icon animation speed.
-#define CARD_SPEED_END		0x00
-#define CARD_SPEED_FAST		0x01
-#define CARD_SPEED_MIDDLE	0x02
-#define CARD_SPEED_SLOW		0x03
+#define CARD_SPEED_END		0x00	// No icon.
+#define CARD_SPEED_FAST		0x01	// Icon lasts for 4 frames.
+#define CARD_SPEED_MIDDLE	0x02	// Icon lasts for 8 frames.
+#define CARD_SPEED_SLOW		0x03	// Icon lasts for 12 frames.
 #define CARD_SPEED_MASK		0x03
 
 // System font encoding.
 #define SYS_FONT_ENCODING_ANSI	0x00	/* ANSI text. (cp1252?) */
 #define SYS_FONT_ENCODING_SJIS	0x01	/* Shift-JIS text. */
 #define SYS_FONT_ENCODING_MASK	0x01
+
+// Difference between GameCube timebase and Unix timebase.
+// (GameCube starts at 2000/01/01; Unix starts at 1970/01/01.)
+#define GC_UNIX_TIME_DIFF	0x386D4380
 
 #ifdef __cplusplus
 }
