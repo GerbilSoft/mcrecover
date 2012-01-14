@@ -1,6 +1,11 @@
 PROJECT(mcrecover)
 cmake_minimum_required(VERSION 2.6)
 
+# McRecover source and binary directories.
+# Binary directory is needed for byteorder.h.
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+
 # Find Qt4.
 # Components used:
 # - QtCore
@@ -36,13 +41,27 @@ ENDIF(APPLE)
 # Main binary directory. Needed for git_version.h
 INCLUDE_DIRECTORIES("${mcrecover_base_BINARY_DIR}")
 
+# Test system byteorder.
+# TODO: Universal Binary support; detect PDP endian.
+INCLUDE(TestBigEndian)
+TEST_BIG_ENDIAN(IS_BIG_ENDIAN)
+IF(IS_BIG_ENDIAN)
+        SET(MCRECOVER_BYTEORDER "MCRECOVER_BIG_ENDIAN")
+ELSE(IS_BIG_ENDIAN)
+        SET(MCRECOVER_BYTEORDER "MCRECOVER_LIL_ENDIAN")
+ENDIF(IS_BIG_ENDIAN)
+UNSET(IS_BIG_ENDIAN)
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/byteorder.h.in" "${CMAKE_CURRENT_BINARY_DIR}/byteorder.h")
+
 # Sources.
 SET(mcrecover_SRCS
 	mcrecover.cpp
+	MemCard.cpp
 	)
 
 # Headers with Qt4 objects.
 SET(mcrecover_MOC_HEADERS
+	MemCard.hpp
 	)
 
 # UI files.
@@ -77,6 +96,7 @@ ADD_EXECUTABLE(mcrecover MACOSX_BUNDLE
 	${mcrecover_MOC_SOURCES}
 	${mcrecover_UIS_H}
 	)
+TARGET_LINK_LIBRARIES(mcrecover ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
 # TODO: Translations.
 #ADD_DEPENDENCIES(gens-qt4 translations_target)
 
