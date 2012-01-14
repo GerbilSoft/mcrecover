@@ -60,9 +60,10 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 
 /** MemCardFile **/
 
-MemCardFile::MemCardFile(const MemCard *card, const int fileIdx,
+MemCardFile::MemCardFile(MemCard *card, const int fileIdx,
 			const card_dat *dat, const card_bat *bat)
-	: d(new MemCardFilePrivate(this, card, fileIdx, dat, bat))
+	: QObject(card)
+	, d(new MemCardFilePrivate(this, card, fileIdx, dat, bat))
 { }
 
 MemCardFile::~MemCardFile()

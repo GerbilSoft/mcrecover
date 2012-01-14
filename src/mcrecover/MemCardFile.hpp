@@ -34,7 +34,7 @@ class MemCardFile : public QObject
 	Q_OBJECT
 	
 	public:
-		MemCardFile(const MemCard *card, const int fileIdx,
+		MemCardFile(MemCard *card, const int fileIdx,
 				const card_dat *dat, const card_bat *bat);
 		~MemCardFile();
 	

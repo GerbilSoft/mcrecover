@@ -258,6 +258,11 @@ void MemCardPrivate::loadMemCardFileList(void)
 
 /** MemCard **/
 
+MemCard::MemCard(QObject *parent, const QString& filename)
+	: QObject(parent)
+	, d(new MemCardPrivate(this, filename))
+{ }
+
 MemCard::MemCard(const QString& filename)
 	: d(new MemCardPrivate(this, filename))
 { }

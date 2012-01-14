@@ -31,6 +31,7 @@ class MemCard : public QObject
 	Q_OBJECT
 	
 	public:
+		MemCard(QObject *parent, const QString& filename);
 		MemCard(const QString& filename);
 		~MemCard();
 	
