@@ -61,6 +61,15 @@ class MemCard : public QObject
 		 * @return Memory card block size, in bytes.
 		 */
 		int blockSize(void) const;
+		
+		/**
+		 * Read a block.
+		 * @param buf Buffer to read the block data into.
+		 * @param siz Size of buffer.
+		 * @param blockIdx Block index.
+		 * @return Bytes read on success; negative on error.
+		 */
+		int readBlock(void *buf, size_t siz, int blockIdx);
 };
 
 #endif /* __MCRECOVER_MEMCARD_HPP__ */

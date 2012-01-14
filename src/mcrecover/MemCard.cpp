@@ -152,9 +152,11 @@ int MemCardPrivate::loadSysInfo(void)
 	
 	// Directory tables.
 	loadDirTable(&mc_dat, CARD_SYSDIR);
-	loadDirTable(&mc_dat, CARD_SYSDIR_BACK);
+	loadDirTable(&mc_dat_bak, CARD_SYSDIR_BACK);
 	
 	// Block allocation tables.
+	loadBlockTable(&mc_bat, CARD_SYSBAT);
+	loadBlockTable(&mc_bat_bak, CARD_SYSBAT_BACK);
 }
 
 
@@ -242,3 +244,23 @@ int MemCard::sizeInBlocks(void) const
  */
 int MemCard::blockSize(void) const
 	{ return d->blockSize; }
+
+
+/**
+ * Read a block.
+ * @param buf Buffer to read the block data into.
+ * @param siz Size of buffer.
+ * @param blockIdx Block index.
+ * @return Bytes read on success; negative on error.
+ */
+int MemCard::readBlock(void *buf, size_t siz, int blockIdx)
+{
+	if (!isOpen())
+		return -1;
+	if (siz < blockSize())
+		return -2;
+	
+	// Read the specified block.
+	d->file->seek(blockIdx * blockSize());
+	return (int)d->file->read((char*)buf, blockSize());
+}
