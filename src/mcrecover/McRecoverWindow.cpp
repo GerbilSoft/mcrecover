@@ -71,4 +71,25 @@ void McRecoverWindow::open(QString filename)
 	// Resize the columns to fit the contents.
 	for (int i = 0; i < model->columnCount(); i++)
 		lstMemCard->resizeColumnToContents(i);
+	
+	// Update the group box title.
+	if (!card)
+		grpMemCard->setTitle(tr("No memory card loaded."));
+	else
+	{
+		// Extract the filename from the path.
+		int lastSlash = filename.lastIndexOf(QChar(L'/'));
+		if (lastSlash >= 0)
+			filename.remove(0, lastSlash + 1);
+		
+		// NOTE: 5 blocks are subtracted here in order to
+		// show the user-visible space, e.g. 59 or 251 blocks
+		// instead of 64 or 256 blocks.
+		grpMemCard->setTitle(
+			tr("%1: %2 block(s) (%3 free)")
+				.arg(filename)
+				.arg(card->sizeInBlocks() - 5)
+				.arg(card->freeBlocks())
+			);
+	}
 }
