@@ -48,6 +48,8 @@ class MemCardModelPrivate
 		struct AnimData
 		{
 			uint8_t frame;		// Current frame.
+			uint8_t lastValidFrame;	// Last valid frame.
+			bool frameHasIcon;	// If false, use previous frame.
 			uint8_t delayCnt;	// Delay counter.
 			uint8_t delayLen;	// Delay length.
 			uint8_t mode;		// Animation mode.
@@ -115,6 +117,8 @@ void MemCardModelPrivate::initAnimState(void)
 		// Get the file data.
 		AnimData *animData = new AnimData();
 		animData->frame = 0;
+		animData->lastValidFrame = 0;
+		animData->frameHasIcon = !(file->icon(animData->frame).isNull());
 		animData->delayCnt = 0;
 		animData->delayLen = file->iconDelay(i);
 		animData->mode = file->iconAnimMode();
@@ -200,6 +204,14 @@ void MemCardModelPrivate::animTimerSlot(void)
 		animData->delayCnt = 0;
 		animData->delayLen = file->iconDelay(animData->frame);
 		
+		// Check if this frame has an icon.
+		animData->frameHasIcon = !file->icon(animData->frame).isNull();
+		if (animData->frameHasIcon)
+		{
+			// Frame has an icon. Save this frame as the last valid frame.
+			animData->lastValidFrame = animData->frame;
+		}
+		
 		// Notify the UI that the icon has changed.
 		QModelIndex iconIndex = q->createIndex(i, MemCardModel::COL_ICON, 0);
 		emit q->dataChanged(iconIndex, iconIndex);
@@ -280,7 +292,10 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 					{
 						// Animated icon.
 						MemCardModelPrivate::AnimData *animData = d->animState.value(file);
-						return file->icon(animData->frame);
+						if (animData->frameHasIcon)
+							return file->icon(animData->frame);
+						else
+							return file->icon(animData->lastValidFrame);
 					}
 					else
 					{
