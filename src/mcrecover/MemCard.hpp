@@ -38,8 +38,7 @@ class MemCard : public QObject
 	Q_OBJECT
 	
 	public:
-		MemCard(QObject *parent = 0, const QString& filename);
-		MemCard(const QString& filename);
+		MemCard(const QString& filename, QObject *parent = 0);
 		~MemCard();
 	
 	private:

@@ -391,16 +391,9 @@ void MemCardPrivate::calcChecksums(uint16_t *buf, size_t siz, uint16_t *chksum1,
 
 /** MemCard **/
 
-MemCard::MemCard(QObject *parent, const QString& filename)
+MemCard::MemCard(const QString& filename, QObject *parent)
 	: QObject(parent)
 	, d(new MemCardPrivate(this, filename))
-{
-	// Initialize MemCardPrivate.
-	d->init();
-}
-
-MemCard::MemCard(const QString& filename)
-	: d(new MemCardPrivate(this, filename))
 {
 	// Initialize MemCardPrivate.
 	d->init();
