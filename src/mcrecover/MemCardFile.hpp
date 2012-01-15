@@ -88,6 +88,12 @@ class MemCardFile : public QObject
 		 * @return File permissions.
 		 */
 		uint8_t permission(void) const;
+		
+		/**
+		 * Get the size, in blocks.
+		 * @return Size, in blocks.
+		 */
+		uint8_t size(void) const;
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */

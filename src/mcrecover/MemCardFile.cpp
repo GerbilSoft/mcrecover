@@ -209,3 +209,9 @@ QString MemCardFile::fileDesc(void) const
 uint8_t MemCardFile::permission(void) const
 	{ return d->m_direntry->permission; }
 
+/**
+ * Get the size, in blocks.
+ * @return Size, in blocks.
+ */
+uint8_t MemCardFile::size(void) const
+	{ return d->m_direntry->length; }

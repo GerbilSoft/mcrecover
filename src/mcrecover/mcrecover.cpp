@@ -76,6 +76,10 @@ int main(int argc, char *argv[])
 			((permission & CARD_ATTRIB_NOCOPY) ? 'C' : '-'),
 			((permission & CARD_ATTRIB_PUBLIC) ? 'P' : '-'));
 		
+		printf("- Size: %d block(s) (%d KB)\n",
+			file->size(),
+			((file->size() * card->blockSize()) / 1024));
+		
 		printf("\n");
 	}
 	
