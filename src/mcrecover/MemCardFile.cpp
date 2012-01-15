@@ -218,7 +218,6 @@ int MemCardFilePrivate::loadFileData(void *buf, int siz)
 /**
  * Load the banner and icon images.
  */
-#include <stdio.h>
 void MemCardFilePrivate::loadImages(void)
 {
 	// Images are being loaded.
@@ -274,11 +273,9 @@ void MemCardFilePrivate::loadImages(void)
 	
 	// Decode the icon(s).
 	uint16_t iconfmt = m_direntry->iconfmt;
-	printf("ICON FORMAT: %08X\n", iconfmt);
 	QImage tmpIcon;
 	for (int i = 0; i < CARD_MAXICONS; i++)
 	{
-		printf("icon %d: %01X\n", i, iconfmt & CARD_ICON_MASK);
 		if ((iconfmt & CARD_ICON_MASK) == CARD_ICON_CI_SHARED)
 		{
 			// CI8 palette is after *all* the icons.
