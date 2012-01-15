@@ -59,15 +59,18 @@ static inline uint32_t RGB5A3_to_ARGB8888(uint16_t px16)
  * @param w Image width.
  * @param h Image height.
  * @param img_buf CI8 image buffer.
- * @param img_siz Size of image data. [must be (w*h)+0x200]
+ * @param img_siz Size of image data. [must be >= (w*h)]
+ * @param pal_buf Palette buffer.
+ * @param pal_siz Size of palette data. [must be >= 0x200]
  * @return QImage, or empty QImage on error.
  */
-QImage GcImage::FromCI8(int w, int h, const void *img_buf, int img_siz)
+QImage GcImage::FromCI8(int w, int h, const void *img_buf, int img_siz,
+			const void *pal_buf, int pal_siz)
 {
 	// Verify parameters.
 	if (w < 0 || h < 0)
 		return QImage();
-	if (img_siz < ((w * h) + 0x200))
+	if (img_siz < (w * h) || pal_siz < 0x200)
 		return QImage();
 	
 	// CI8 uses 8x4 tiles.
@@ -81,7 +84,7 @@ QImage GcImage::FromCI8(int w, int h, const void *img_buf, int img_siz)
 	// Convert the palette.
 	QVector<QRgb> palette;
 	palette.resize(256);
-	uint16_t *pal5A3 = (uint16_t*)((uint8_t*)img_buf + (w * h));
+	uint16_t *pal5A3 = (uint16_t*)pal_buf;
 	for (int i = 0; i < 256; i++)
 	{
 		palette[i] = RGB5A3_to_ARGB8888(be16_to_cpu(*pal5A3));
@@ -118,7 +121,7 @@ QImage GcImage::FromCI8(int w, int h, const void *img_buf, int img_siz)
  * @param w Image width.
  * @param h Image height.
  * @param img_buf CI8 image buffer.
- * @param img_siz Size of image data. [must be (w*h)*2]
+ * @param img_siz Size of image data. [must be >= (w*h)*2]
  * @return QImage, or empty QImage on error.
  */
 QImage GcImage::FromRGB5A3(int w, int h, const void *img_buf, int img_siz)

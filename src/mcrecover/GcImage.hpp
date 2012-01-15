@@ -38,17 +38,20 @@ class GcImage
 		 * @param w Image width.
 		 * @param h Image height.
 		 * @param img_buf CI8 image buffer.
-		 * @param img_siz Size of image data. [must be (w*h)+0x200]
+		 * @param img_siz Size of image data. [must be >= (w*h)]
+		 * @param pal_buf Palette buffer.
+		 * @param pal_siz Size of palette data. [must be >= 0x200]
 		 * @return QImage, or empty QImage on error.
 		 */
-		static QImage FromCI8(int w, int h, const void *img_buf, int img_siz);
+		static QImage FromCI8(int w, int h, const void *img_buf, int img_siz,
+				      const void *pal_buf, int pal_siz);
 		
 		/**
 		 * Convert a GameCube RGB5A3 image to QImage.
 		 * @param w Image width.
 		 * @param h Image height.
 		 * @param img_buf CI8 image buffer.
-		 * @param img_siz Size of image data. [must be (w*h)*2]
+		 * @param img_siz Size of image data. [must be >= (w*h)*2]
 		 * @return QImage, or empty QImage on error.
 		 */
 		static QImage FromRGB5A3(int w, int h, const void *img_buf, int img_siz);

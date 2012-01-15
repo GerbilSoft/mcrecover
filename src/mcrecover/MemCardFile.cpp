@@ -230,10 +230,11 @@ void MemCardFilePrivate::loadImages(void)
 		case CARD_BANNER_CI:
 			// CI8 palette is right after the banner.
 			// (256 entries in RGB5A3 format.)
-			imageSize = (CARD_BANNER_W * CARD_BANNER_H * 1) + 0x200;
+			imageSize = (CARD_BANNER_W * CARD_BANNER_H * 1);
 			tmpBanner = GcImage::FromCI8(CARD_BANNER_W, CARD_BANNER_H,
-					&fileData[iconAddr], imageSize);
-			iconAddr += imageSize;
+					&fileData[iconAddr], imageSize,
+					&fileData[iconAddr + imageSize], 0x200);
+			iconAddr += imageSize + 0x200;
 			break;
 		
 		case CARD_BANNER_RGB:
@@ -273,10 +274,11 @@ void MemCardFilePrivate::loadImages(void)
 			case CARD_ICON_CI_UNIQUE:
 				// CI8 palette is right after the icon.
 				// (256 entries in RGB5A3 format.)
-				imageSize = (CARD_ICON_W * CARD_ICON_H * 1) + 0x200;
+				imageSize = (CARD_ICON_W * CARD_ICON_H * 1);
 				tmpIcon = GcImage::FromCI8(CARD_ICON_W, CARD_ICON_H,
-						&fileData[iconAddr], imageSize);
-				iconAddr += imageSize;
+						&fileData[iconAddr], imageSize,
+						&fileData[iconAddr + imageSize], 0x200);
+				iconAddr += imageSize + 0x200;
 				break;
 			
 			case CARD_BANNER_RGB:
