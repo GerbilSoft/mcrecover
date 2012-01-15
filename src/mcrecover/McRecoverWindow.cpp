@@ -28,10 +28,20 @@
 // MemCard list model.
 #include "MemCardModel.hpp"
 
+// git version
+#include "git.h"
+
 McRecoverWindow::McRecoverWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
 	setupUi(this);
+	
+#ifdef MCRECOVER_GIT_VERSION
+	this->setWindowTitle(this->windowTitle() +
+			QLatin1String(" (") +
+			QLatin1String(MCRECOVER_GIT_VERSION) +
+			QChar(L')'));
+#endif
 	
 	// Make sure the window is deleted on close.
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
