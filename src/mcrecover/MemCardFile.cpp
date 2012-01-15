@@ -72,7 +72,6 @@ class MemCardFilePrivate
 		bool imagesLoaded;
 		QImage *banner;
 		QVector<QImage*> icons;
-		uint8_t iconSpeed;	// TODO: Animation.
 		
 		/**
 		 * Convert a file block number to a physical block number.
@@ -292,8 +291,14 @@ void MemCardFilePrivate::loadImages(void)
 				break;
 		}
 		
-		if (!tmpIcon.isNull())
+		if (tmpIcon.isNull())
 		{
+			// Invalid icon. Stop checking icons.
+			break;
+		}
+		else
+		{
+			// Save the icon.
 			QImage *icon = new QImage(tmpIcon);
 			icons.append(icon);
 		}
@@ -416,6 +421,7 @@ int MemCardFile::numIcons(void) const
 /**
  * Get an icon from the file.
  * @param idx Icon number.
+ * @return Icon, or null QImage on error.
  */
 QImage MemCardFile::icon(int idx)
 {
@@ -423,3 +429,23 @@ QImage MemCardFile::icon(int idx)
 		return QImage();
 	return *(d->icons.at(idx));
 }
+
+/**
+ * Get the delay for a given icon.
+ * @param idx Icon number.
+ * @return Icon delay.
+ */
+int MemCardFile::iconDelay(int idx) const
+{
+	if (idx < 0 || idx >= d->icons.size())
+		return CARD_SPEED_END;
+	
+	return ((d->m_direntry->iconspeed >> (idx * 2)) & CARD_SPEED_MASK);
+}
+
+/**
+ * Get the icon animation mode.
+ * @return Icon animation mode.
+ */
+int MemCardFile::iconAnimMode(void) const
+	{ return (d->m_direntry->bannerfmt & CARD_ANIM_MASK); }

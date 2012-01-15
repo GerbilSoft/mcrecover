@@ -119,8 +119,22 @@ class MemCardFile : public QObject
 		/**
 		 * Get an icon from the file.
 		 * @param idx Icon number.
+		 * @return Icon, or null QImage on error.
 		 */
 		QImage icon(int idx);
+		
+		/**
+		 * Get the delay for a given icon.
+		 * @param idx Icon number.
+		 * @return Icon delay.
+		 */
+		int iconDelay(int idx) const;
+		
+		/**
+		 * Get the icon animation mode.
+		 * @return Icon animation mode.
+		 */
+		int iconAnimMode(void) const;
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */
