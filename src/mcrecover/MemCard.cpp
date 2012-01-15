@@ -60,11 +60,14 @@ class MemCardPrivate
 		static const int blockSize = 8192;
 		
 		// Memory card data.
-		card_header mc_header;	// Header.
-		card_dat mc_dat;	// Directory table.
-		card_dat mc_dat_bak;	// Directory table. (Backup)
-		card_bat mc_bat;	// Block allocation table.
-		card_bat mc_bat_bak;	// Block allocation table. (Backup)
+		// Table 0 == main; Table 1 == backup.
+		card_header mc_header;		// Header.
+		card_dat mc_dat_int[2];		// Directory tables.
+		card_bat mc_bat_int[2];		// Block allocation tables.
+		
+		// Memory card data being used.
+		card_dat *mc_dat;
+		card_bat *mc_bat;
 		
 		// MemCardFile list.
 		QList<MemCardFile*> lstMemCardFile;
@@ -78,22 +81,35 @@ class MemCardPrivate
 		
 		/**
 		 * Load a directory table.
-		 * @param dat card_dat to store the directory table in.
-		 * @param address Directory table address.
+		 * @param dat     [out] card_dat to store the directory table in.
+		 * @param address  [in] Directory table address.
+		 * @param chksum1 [out] Calculated checksum 1.
+		 * @param chksum2 [out] Calculated checksum 2.
 		 */
-		void loadDirTable(card_dat *dat, uint32_t address);
+		void loadDirTable(card_dat *dat, uint32_t address, uint16_t *chksum1, uint16_t *chksum2);
 		
 		/**
 		 * Load a block allocation table.
-		 * @param bat card_bat to store the block allocation table in.
-		 * @param address Block allocation table address.
+		 * @param bat     [out] card_bat to store the block allocation table in.
+		 * @param address  [in] Directory table address.
+		 * @param chksum1 [out] Calculated checksum 1.
+		 * @param chksum2 [out] Calculated checksum 2.
 		 */
-		void loadBlockTable(card_bat *bat, uint32_t address);
+		void loadBlockTable(card_bat *bat, uint32_t address, uint16_t *chksum1, uint16_t *chksum2);
 		
 		/**
 		 * Load the MemCardFile list.
 		 */
 		void loadMemCardFileList(void);
+		
+		/**
+		 * Calculate the card checksums.
+		 * @param buf Input data.
+		 * @param siz Length of input data.
+		 * @param chksum1 Checksum 1.
+		 * @param chksum2 Checksum 2.
+		 */
+		void calcChecksums(uint16_t *buf, size_t siz, uint16_t *chksum1, uint16_t *chksum2);
 };
 
 MemCardPrivate::MemCardPrivate(MemCard *q, QString filename)
@@ -184,25 +200,92 @@ int MemCardPrivate::loadSysInfo(void)
 	// TODO: Adjust for block size?
 	
 	// Directory tables.
-	loadDirTable(&mc_dat, CARD_SYSDIR);
-	loadDirTable(&mc_dat_bak, CARD_SYSDIR_BACK);
+	uint16_t chksum[2][2];
+	loadDirTable(&mc_dat_int[0], CARD_SYSDIR, &chksum[0][0], &chksum[0][1]);
+	loadDirTable(&mc_dat_int[1],  CARD_SYSDIR_BACK, &chksum[1][0], &chksum[1][1]);
+	
+	// Determine which directory table to use.
+	// - 1. Check for higher "updated" value.
+	// - 2. Validate checksums.
+	// - 3. If invalid checksum, use other one.
+	// - 4. If both are invalid, error!
+	// TODO: If both checksums are invalid, report an error. Using main for now.
+	// TODO: Allow user to select?
+	int dirTable = (mc_dat_int[1].dircntrl.updated > mc_dat_int[0].dircntrl.updated ? 1 : 0);
+	
+	// Verify the checksums of the selected directory table.
+	if (mc_dat_int[dirTable].dircntrl.chksum1 != chksum[dirTable][0] ||
+	    mc_dat_int[dirTable].dircntrl.chksum2 != chksum[dirTable][1])
+	{
+		// Invalid checksum. Check the other directory table.
+		dirTable = !dirTable;
+		if (mc_dat_int[dirTable].dircntrl.chksum1 != chksum[dirTable][0] ||
+		    mc_dat_int[dirTable].dircntrl.chksum2 != chksum[dirTable][1])
+		{
+			// Both directory tables are invalid.
+			// TODO: Report an error.
+			// For now, default to main.
+			printf("WARNING: Both DATs are invalid. Using MAIN.");
+			dirTable = 0;
+		}
+	}
+	
+	// Select the directory table.
+	mc_dat = &mc_dat_int[dirTable];
+	printf("Dir Table == %d\n", dirTable);
 	
 	// Block allocation tables.
-	loadBlockTable(&mc_bat, CARD_SYSBAT);
-	loadBlockTable(&mc_bat_bak, CARD_SYSBAT_BACK);
+	loadBlockTable(&mc_bat_int[0], CARD_SYSBAT, &chksum[0][0], &chksum[0][1]);
+	loadBlockTable(&mc_bat_int[1], CARD_SYSBAT_BACK, &chksum[1][0], &chksum[1][1]);
+	
+	// Determine which block allocation table to use.
+	// - 1. Check for higher "updated" value.
+	// - 2. Validate checksums.
+	// - 3. If invalid checksum, use other one.
+	// - 4. If both are invalid, error!
+	// TODO: If both checksums are invalid, report an error. Using main for now.
+	// TODO: Allow user to select?
+	int blockTable = (mc_bat_int[1].updated > mc_bat_int[0].updated ? 1 : 0);
+	
+	// Verify the checksums of the selected block allocation table.
+	if (mc_bat_int[blockTable].chksum1 != chksum[blockTable][0] ||
+	    mc_bat_int[blockTable].chksum2 != chksum[blockTable][1])
+	{
+		// Invalid checksum. Check the other block allocation table.
+		blockTable = !blockTable;
+		if (mc_bat_int[blockTable].chksum1 != chksum[blockTable][0] ||
+		    mc_bat_int[blockTable].chksum2 != chksum[blockTable][1])
+		{
+			// Both block allocation tables are invalid.
+			// TODO: Report an error.
+			// For now, default to main.
+			printf("WARNING: Both BATs are invalid. Using MAIN.");
+			blockTable = 0;
+		}
+	}
+	
+	// Select the directory table.
+	mc_bat = &mc_bat_int[dirTable];
+	printf("Block Table == %d\n", blockTable);
 }
 
 
 /**
  * Load a directory table.
- * @param dat card_dat to store the directory table in.
- * @param address Directory table address.
+ * @param dat     [out] card_dat to store the directory table in.
+ * @param address  [in] Directory table address.
+ * @param chksum1 [out] Calculated checksum 1.
+ * @param chksum2 [out] Calculated checksum 2.
  */
-void MemCardPrivate::loadDirTable(card_dat *dat, uint32_t address)
+void MemCardPrivate::loadDirTable(card_dat *dat, uint32_t address, uint16_t *chksum1, uint16_t *chksum2)
 {
 	// TODO: Verify read size.
 	file->seek(address);
-	file->read((char*)dat, sizeof(dat->entries));
+	file->read((char*)dat, sizeof(*dat));
+	
+	// Calculate the checksums.
+	if (chksum1 != NULL && chksum2 != NULL)
+		calcChecksums((uint16_t*)dat, ((int)sizeof(*dat) - 4), chksum1, chksum2);
 	
 	// Byteswap the directory table contents.
 	for (int i = 0; i < NUM_ELEMENTS(dat->entries); i++)
@@ -216,21 +299,34 @@ void MemCardPrivate::loadDirTable(card_dat *dat, uint32_t address)
 		direntry->length	= be16_to_cpu(direntry->length);
 		direntry->commentaddr	= be32_to_cpu(direntry->commentaddr);
 	}
+	
+	// Byteswap the directory control block.
+	dat->dircntrl.updated = be16_to_cpu(dat->dircntrl.updated);
+	dat->dircntrl.chksum1 = be16_to_cpu(dat->dircntrl.chksum1);
+	dat->dircntrl.chksum2 = be16_to_cpu(dat->dircntrl.chksum2);
 }
 
 
 /**
  * Load a block allocation table.
- * @param bat card_bat to store the block allocation table in.
- * @param address Block allocation table address.
+ * @param bat     [out] card_bat to store the block allocation table in.
+ * @param address  [in] Directory table address.
+ * @param chksum1 [out] Calculated checksum 1.
+ * @param chksum2 [out] Calculated checksum 2.
  */
-void MemCardPrivate::loadBlockTable(card_bat *bat, uint32_t address)
+void MemCardPrivate::loadBlockTable(card_bat *bat, uint32_t address, uint16_t *chksum1, uint16_t *chksum2)
 {
 	// TODO: Verify read size.
 	file->seek(address);
 	file->read((char*)bat, sizeof(*bat));
 	
+	// Calculate the checksums.
+	if (chksum1 != NULL && chksum2 != NULL)
+		calcChecksums(((uint16_t*)bat + 2), (sizeof(*bat) - 4), chksum1, chksum2);
+	
 	// Byteswap the block allocation table contents.
+	bat->chksum1	= be16_to_cpu(bat->chksum1);
+	bat->chksum2	= be16_to_cpu(bat->chksum2);
 	bat->updated	= be16_to_cpu(bat->updated);
 	bat->freeblocks	= be16_to_cpu(bat->freeblocks);
 	bat->lastalloc	= be16_to_cpu(bat->lastalloc);
@@ -248,12 +344,12 @@ void MemCardPrivate::loadMemCardFileList(void)
 	// Clear the current MemCardFile list.
 	qDeleteAll(lstMemCardFile);
 	lstMemCardFile.clear();
-	lstMemCardFile.reserve(NUM_ELEMENTS(mc_dat.entries));
+	lstMemCardFile.reserve(NUM_ELEMENTS(mc_dat->entries));
 	
 	// Byteswap the directory table contents.
-	for (int i = 0; i < NUM_ELEMENTS(mc_dat.entries); i++)
+	for (int i = 0; i < NUM_ELEMENTS(mc_dat->entries); i++)
 	{
-		const card_direntry *direntry = &mc_dat.entries[i];
+		const card_direntry *direntry = &mc_dat->entries[i];
 		
 		// If the game code is 0xFFFFFFFF, the entry is empty.
 		static const uint8_t gamecode_empty[4] = {0xFF, 0xFF, 0xFF, 0xFF};
@@ -261,9 +357,35 @@ void MemCardPrivate::loadMemCardFileList(void)
 			continue;
 		
 		// Valid directory entry.
-		MemCardFile *mcf = new MemCardFile(q, i, &mc_dat, &mc_bat);
+		MemCardFile *mcf = new MemCardFile(q, i, mc_dat, mc_bat);
 		lstMemCardFile.append(mcf);
 	}
+}
+
+
+/**
+ * Calculate the card checksums.
+ * @param buf Input data.
+ * @param siz Length of input data.
+ * @param chksum1 Checksum 1.
+ * @param chksum2 Checksum 2.
+ */
+void MemCardPrivate::calcChecksums(uint16_t *buf, size_t siz, uint16_t *chksum1, uint16_t *chksum2)
+{
+	*chksum1 = 0;
+	*chksum2 = 0;
+	siz /= 2;
+	
+	for (size_t i = 0; i < siz; i++)
+	{
+		*chksum1 += be16_to_cpu(buf[i]);
+		*chksum2 += (be16_to_cpu(buf[i]) ^ 0xFFFF);
+	}
+	
+	if (*chksum1 == 0xFFFF)
+		*chksum1 = 0;
+	if (*chksum2 == 0xFFFF)
+		*chksum2 = 0;
 }
 
 

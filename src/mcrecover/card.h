@@ -67,7 +67,7 @@ extern "C" {
 #define CARD_SYSBAT_BACK	0x8000
 
 #define CARD_FILENAMELEN	32	/* Filename length. */
-#define CARD_MAXFILES		128	/* Maximum number of files. */
+#define CARD_MAXFILES		127	/* Maximum number of files. */
 
 /**
  * Memory card header.
@@ -83,6 +83,19 @@ typedef struct PACKED _card_header
 	uint16_t chksum1;
 	uint16_t chksum2;
 } card_header;
+#pragma pack()
+
+/**
+ * Directory control block.
+ */
+#pragma pack(1)
+typedef struct PACKED _card_dircntrl
+{
+	uint8_t pad[58];
+	uint16_t updated;	// Update counter.
+	uint16_t chksum1;	// Checksum 1.
+	uint16_t chksum2;	// Checksum 2.
+} card_dircntrl;
 #pragma pack()
 
 /**
@@ -117,6 +130,7 @@ typedef struct PACKED _card_direntry
 typedef struct PACKED _card_dat
 {
 	struct _card_direntry entries[CARD_MAXFILES];
+	struct _card_dircntrl dircntrl;
 } card_dat;
 #pragma pack()
 
@@ -128,13 +142,13 @@ typedef struct PACKED _card_bat
 {
 	uint16_t chksum1;	// Checksum 1.
 	uint16_t chksum2;	// Checksum 2.
-	uint16_t updated;	// Update serial number.
+	uint16_t updated;	// Update counter.
 	uint16_t freeblocks;	// Number of free blocks.
 	uint16_t lastalloc;	// Last block allocated.
 	
 	// NOTE: Subtract 5 from the block address
 	// before looking it up in the FAT!
-	uint16_t fat[0xFFA];	// File allocation table.
+	uint16_t fat[0xFFB];	// File allocation table.
 } card_bat;
 
 // File attributes.
