@@ -27,6 +27,8 @@
 
 // Qt includes.
 #include <QtGui/QFont>
+#include <QtCore/QHash>
+#include <QtCore/QTimer>
 
 /** MemCardModelPrivate **/
 
@@ -34,6 +36,7 @@ class MemCardModelPrivate
 {
 	public:
 		MemCardModelPrivate(MemCardModel *q);
+		~MemCardModelPrivate();
 	
 	private:
 		MemCardModel *const q;
@@ -41,11 +44,167 @@ class MemCardModelPrivate
 	
 	public:
 		MemCard *card;
+		
+		struct AnimData
+		{
+			uint8_t frame;		// Current frame.
+			uint8_t delayCnt;	// Delay counter.
+			uint8_t delayLen;	// Delay length.
+			uint8_t mode;		// Animation mode.
+			bool direction;		// Current direction for CARD_ANIM_BOUNCE.
+		};
+		QHash<MemCardFile*, AnimData*> animState;
+		
+		/**
+		 * Initialize the animation state.
+		 */
+		void initAnimState(void);
+		
+		// Animation timer.
+		QTimer animTimer;
+		
+		/**
+		 * Animation timer "slot".
+		 */
+		void animTimerSlot(void);
 };
 
 MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	: q(q)
-{ }
+	, animTimer(new QTimer(q))
+{
+	// Connect animTimer's timeout() signal.
+	QObject::connect(&animTimer, SIGNAL(timeout()),
+			 q, SLOT(animTimerSlot()));
+}
+
+MemCardModelPrivate::~MemCardModelPrivate()
+{
+	animTimer.stop();
+	
+	// TODO: Check for race conditions.
+	qDeleteAll(animState);
+	animState.clear();
+}
+
+
+/**
+ * Initialize the animation state.
+ */
+void MemCardModelPrivate::initAnimState(void)
+{
+	animTimer.stop();
+	
+	// TODO: Check for race conditions.
+	qDeleteAll(animState);
+	animState.clear();
+	
+	if (!card)
+		return;
+	
+	// Initialize the animation state.
+	for (int i = 0; i < card->numFiles(); i++)
+	{
+		MemCardFile *file = card->getFile(i);
+		file->verifyImagesLoaded();
+		
+		int numIcons = file->numIcons();
+		if (numIcons <= 1)
+			continue;
+		
+		// Get the file data.
+		AnimData *animData = new AnimData();
+		animData->frame = 0;
+		animData->delayCnt = 0;
+		animData->delayLen = file->iconDelay(i);
+		animData->mode = file->iconAnimMode();
+		animData->direction = false;
+		animState.insert(file, animData);
+	}
+	
+	// TODO: Figure out the correct timer interval.
+	if (!animState.isEmpty())
+		animTimer.start(500);
+}
+
+
+/**
+ * Animation timer "slot".
+ */
+void MemCardModelPrivate::animTimerSlot(void)
+{
+	if (!card)
+	{
+		animTimer.stop();
+		return;
+	}
+	
+	// Check for icon animations.
+	for (int i = 0; i < card->numFiles(); i++)
+	{
+		MemCardFile *file = card->getFile(i);
+		if (!animState.contains(file))
+			continue;
+		
+		AnimData *animData = animState.value(file);
+		
+		// TODO: Delay counter and different delays.
+		// For now, always advance the frame counter.
+		if (!animData->direction)
+		{
+			// Animation is moving forwards.
+			// Check if we're at the last frame.
+			if (animData->frame == (CARD_MAXICONS - 1) ||
+			    (file->iconDelay(animData->frame + 1) == CARD_SPEED_END))
+			{
+				// Last frame.
+				if (animData->mode == CARD_ANIM_BOUNCE)
+				{
+					// "Bounce" animation. Start playing backwards.
+					animData->direction = true;
+					animData->frame--;	// Go to the previous frame.
+				}
+				else
+				{
+					// "Looping" animation.
+					// Reset to frame 0.
+					animData->frame = 0;
+				}
+			}
+			else
+			{
+				// Not the last frame.
+				// Go to the next frame.
+				animData->frame++;
+			}
+		}
+		else
+		{
+			// Animation is moving backwards. ("Bounce" animation only.)
+			// Check if we're at the first frame.
+			if (animData->frame == 0)
+			{
+				// First frame. Start playing forwards.
+				animData->direction = false;
+				animData->frame++;	// Go to the next frame.
+			}
+			else
+			{
+				// Not the first frame.
+				// Go to the previous frame.
+				animData->frame--;
+			}
+		}
+		
+		// Update the frame delay data.
+		animData->delayCnt = 0;
+		animData->delayLen = file->iconDelay(animData->frame);
+		
+		// Notify the UI that the icon has changed.
+		QModelIndex iconIndex = q->createIndex(i, MemCardModel::COL_ICON, 0);
+		emit q->dataChanged(iconIndex, iconIndex);
+	}
+}
 
 
 /** MemCardModel **/
@@ -116,8 +275,19 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 			switch (section)
 			{
 				case COL_ICON:
-					// TODO: Icon animation.
-					return file->icon(0);
+					// Check if this is an animated icon.
+					if (d->animState.contains(file))
+					{
+						// Animated icon.
+						MemCardModelPrivate::AnimData *animData = d->animState.value(file);
+						return file->icon(animData->frame);
+					}
+					else
+					{
+						// Not an animated icon.
+						// Return the first icon.
+						return file->icon(0);
+					}
 				
 				case COL_BANNER:
 					return file->banner();
@@ -236,7 +406,18 @@ void MemCardModel::setMemCard(MemCard *card)
 		if (lastFile < 0)
 			lastFile++;
 		bottomRight = createIndex(lastFile, COL_MAX, 0);
+		
+		// Initialize the animation state.
+		d->initAnimState();
 	}
 	
 	emit dataChanged(topLeft, bottomRight);
 }
+
+
+/**
+ * Animation timer slot.
+ * Wrapper for MemCardModelPrivate::animTimerSlot().
+ */
+void MemCardModel::animTimerSlot(void)
+	{ d->animTimerSlot(); }

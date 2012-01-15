@@ -70,6 +70,13 @@ class MemCardModel : public QAbstractListModel
 		 * @param card Memory card.
 		 */
 		void setMemCard(MemCard *card);
+	
+	private slots:
+		/**
+		 * Animation timer slot.
+		 * Wrapper for MemCardModelPrivate::animTimerSlot().
+		 */
+		void animTimerSlot(void);
 };
 
 #endif /* __MCRECOVER_MEMCARDMODEL_HPP__ */
