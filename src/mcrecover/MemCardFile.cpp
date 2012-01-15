@@ -107,6 +107,7 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	
 	// TODO: Convert Shift-JIS filenames to UTF-8.
 	filename = QString::fromLatin1(m_direntry->filename, sizeof(m_direntry->filename));
+	filename = filename.replace(QChar(0), QChar(L' '));
 	
 	gamecode = QString::fromLatin1(m_direntry->gamecode, sizeof(m_direntry->gamecode));
 	company = QString::fromLatin1(m_direntry->company, sizeof(m_direntry->company));
@@ -126,6 +127,13 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	// Read the block containing the file comments.
 	uint8_t *tmpBlock = (uint8_t*)malloc(blockSize);
 	card->readBlock(tmpBlock, blockSize, commentBlock);
+	
+	// Convert NULL characters to spaces to prevent confusion.
+	for (int i = commentOffset; i < (commentOffset+64); i++)
+	{
+		if (tmpBlock[i] == 0x00)
+			tmpBlock[i] = ' ';
+	}
 	
 	// TODO: Convert Shift-JIS comments to UTF-8.
 	gameDesc = QString::fromLatin1((char*)&tmpBlock[commentOffset], 32).trimmed();
