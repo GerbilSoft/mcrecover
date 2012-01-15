@@ -280,7 +280,7 @@ void MemCardFilePrivate::loadImages(void)
 				break;
 			
 			case CARD_BANNER_RGB:
-				imageSize = (CARD_BANNER_W * CARD_ICON_H * 2);
+				imageSize = (CARD_ICON_W * CARD_ICON_H * 2);
 				tmpIcon = GcImage::FromRGB5A3(CARD_ICON_W, CARD_ICON_H,
 						&fileData[iconAddr], imageSize);
 				iconAddr += imageSize;
