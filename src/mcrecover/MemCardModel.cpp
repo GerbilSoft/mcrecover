@@ -120,15 +120,16 @@ void MemCardModelPrivate::initAnimState(void)
 		animData->lastValidFrame = 0;
 		animData->frameHasIcon = !(file->icon(animData->frame).isNull());
 		animData->delayCnt = 0;
-		animData->delayLen = file->iconDelay(i);
+		animData->delayLen = file->iconDelay(0);
 		animData->mode = file->iconAnimMode();
 		animData->direction = false;
 		animState.insert(file, animData);
 	}
 	
 	// TODO: Figure out the correct timer interval.
+	// This will use 125ms for 'fast' icons.
 	if (!animState.isEmpty())
-		animTimer.start(500);
+		animTimer.start(125);
 }
 
 
@@ -152,8 +153,16 @@ void MemCardModelPrivate::animTimerSlot(void)
 		
 		AnimData *animData = animState.value(file);
 		
-		// TODO: Delay counter and different delays.
-		// For now, always advance the frame counter.
+		// Check the delay counter.
+		animData->delayCnt++;
+		if (animData->delayCnt < animData->delayLen)
+		{
+			// Animation delay hasn't expired yet.
+			continue;
+		}
+		
+		// Animation delay has expired.
+		// Go to the next frame.
 		if (!animData->direction)
 		{
 			// Animation is moving forwards.
