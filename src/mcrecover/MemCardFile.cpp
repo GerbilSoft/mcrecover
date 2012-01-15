@@ -218,6 +218,23 @@ uint8_t MemCardFile::permission(void) const
 	{ return d->m_direntry->permission; }
 
 /**
+ * Get the file permissions as a string.
+ * @return File permission string.
+ */
+QString MemCardFile::permissionAsString(void) const
+{
+	char str[4];
+	
+	uint8_t permission = d->m_direntry->permission;
+	str[0] = ((permission & CARD_ATTRIB_GLOBAL) ? 'G' : '-');
+	str[1] = ((permission & CARD_ATTRIB_NOMOVE) ? 'M' : '-');
+	str[2] = ((permission & CARD_ATTRIB_NOCOPY) ? 'C' : '-');
+	str[3] = ((permission & CARD_ATTRIB_PUBLIC) ? 'P' : '-');
+	
+	return QString::fromLatin1(str, sizeof(str));
+}
+
+/**
  * Get the size, in blocks.
  * @return Size, in blocks.
  */

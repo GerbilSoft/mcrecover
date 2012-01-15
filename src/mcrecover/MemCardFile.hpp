@@ -90,6 +90,12 @@ class MemCardFile : public QObject
 		uint8_t permission(void) const;
 		
 		/**
+		 * Get the file permissions as a string.
+		 * @return File permission string.
+		 */
+		QString permissionAsString(void) const;
+		
+		/**
 		 * Get the size, in blocks.
 		 * @return Size, in blocks.
 		 */

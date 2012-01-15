@@ -19,8 +19,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#include "MemCard.hpp"
-#include "MemCardFile.hpp"
+#include "McRecoverWindow.hpp"
+//#include "MemCard.hpp"
+//#include "MemCardFile.hpp"
 
 // C includes.
 #include <stdio.h>
@@ -39,6 +40,15 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 	
+	// Initialize the McRecoverWindow.
+	McRecoverWindow *mcRecoverWindow = new McRecoverWindow();
+	mcRecoverWindow->open(QString::fromLocal8Bit(argv[1]));
+	mcRecoverWindow->show();
+	
+	// Run the Qt4 UI.
+	return mcApp->exec();
+	
+#if 0
 	// Open the memory card file.
 	MemCard *card = new MemCard(QString::fromUtf8(argv[1]));
 	if (!card->isOpen())
@@ -84,4 +94,5 @@ int main(int argc, char *argv[])
 	}
 	
 	delete card;
+#endif
 }

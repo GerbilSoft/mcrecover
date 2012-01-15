@@ -58,17 +58,21 @@ SET(mcrecover_SRCS
 	mcrecover.cpp
 	MemCard.cpp
 	MemCardFile.cpp
+	McRecoverWindow.cpp
+	MemCardModel.cpp
 	)
 
 # Headers with Qt4 objects.
 SET(mcrecover_MOC_HEADERS
 	MemCard.hpp
 	MemCardFile.hpp
+	McRecoverWindow.hpp
+	MemCardModel.hpp
 	)
 
 # UI files.
 SET(mcrecover_UIS
-	ui/McRecoveryWindow.ui
+	ui/McRecoverWindow.ui
 	)
 
 # Generate the header files from the UI files.
