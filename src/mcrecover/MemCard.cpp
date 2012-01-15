@@ -267,6 +267,7 @@ int MemCardPrivate::loadSysInfo(void)
 	// Select the directory table.
 	mc_bat = &mc_bat_int[dirTable];
 	printf("Block Table == %d\n", blockTable);
+	return 0;
 }
 
 
@@ -439,7 +440,7 @@ int MemCard::blockSize(void) const
  * @param blockIdx Block index.
  * @return Bytes read on success; negative on error.
  */
-int MemCard::readBlock(void *buf, size_t siz, uint16_t blockIdx)
+int MemCard::readBlock(void *buf, int siz, uint16_t blockIdx)
 {
 	if (!isOpen())
 		return -1;

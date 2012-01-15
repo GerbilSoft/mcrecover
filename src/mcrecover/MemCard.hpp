@@ -78,7 +78,7 @@ class MemCard : public QObject
 		 * @param blockIdx Block index.
 		 * @return Bytes read on success; negative on error.
 		 */
-		int readBlock(void *buf, size_t siz, uint16_t blockIdx);
+		int readBlock(void *buf, int siz, uint16_t blockIdx);
 		
 		/**
 		 * Get the memory card encoding.

@@ -37,6 +37,7 @@ class MemCardFilePrivate
 		MemCardFilePrivate(MemCardFile *q,
 				MemCard *card, const int fileIdx,
 				const card_dat *dat, const card_bat *bat);
+		~MemCardFilePrivate();
 	
 	private:
 		MemCardFile *const q;
@@ -66,12 +67,11 @@ class MemCardFilePrivate
 		QString fileDesc;	// File description.
 		
 		// Images.
-		uint8_t reserved_00[128];	// FIXME: QImage is screwing up...
-		QImage banner;
-		uint8_t reserved_01[128];	// FIXME: QImage is screwing up...
-		QVector<QImage> icons;
-		uint8_t reserved_02[128];	// FIXME: QImage is screwing up...
-		
+		// TODO: Delay loading...
+		// NOTE: Pointers are used due to weird issues with QImage.
+		bool imagesLoaded;
+		QImage *banner;
+		QVector<QImage*> icons;
 		uint8_t iconSpeed;	// TODO: Animation.
 		
 		/**
@@ -80,6 +80,19 @@ class MemCardFilePrivate
 		 * @return Physical block number, or negative on error.
 		 */
 		uint16_t fileBlockAddrToPhysBlockAddr(uint16_t fileBlock);
+		
+		/**
+		 * Load file data.
+		 * @param buf Buffer to load file data into.
+		 * @param siz Size of buffer.
+		 * @return Number of bytes read, or negative on error.
+		 * */
+		int loadFileData(void *buf, int siz);
+		
+		/**
+		 * Load the banner and icon images..
+		 */
+		void loadImages(void);
 };
 
 MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
@@ -90,6 +103,8 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	, fileIdx(fileIdx)
 	, dat(dat)
 	, bat(bat)
+	, imagesLoaded(false)
+	, banner(NULL)
 {
 	// Load the directory table information.
 	m_direntry = &dat->entries[fileIdx];
@@ -124,60 +139,38 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	// Get the block size.
 	const int blockSize = card->blockSize();
 	
-	// Load the file data.
-	// TODO: Split this into another function?
-	uint8_t *fileData = (uint8_t*)malloc(m_direntry->length * blockSize);
-	uint8_t *filePtr = fileData;
-	for (int i = 0; i < m_direntry->length; i++, filePtr += blockSize)
-	{
-		const uint16_t physBlockAddr = fileBlockAddrToPhysBlockAddr(i);
-		card->readBlock(filePtr, blockSize, physBlockAddr);
-	}
+	// Load the block with the comments.
+	const int commentBlock = (m_direntry->commentaddr / blockSize);
+	const int commentOffset = (m_direntry->commentaddr % blockSize);
+	
+	uint8_t *commentData = (uint8_t*)malloc(blockSize);
+	card->readBlock(commentData, blockSize, fileBlockAddrToPhysBlockAddr(commentBlock));
 	
 	// Load the file comments. (64 bytes)
 	// 0x00: Game description.
 	// 0x20: File description.
 	
 	// Convert NULL characters to spaces to prevent confusion.
-	const uint32_t commentAddr = m_direntry->commentaddr;
-	for (filePtr = &fileData[commentAddr];
-	     filePtr < (&fileData[commentAddr] + 64); filePtr++)
+	uint8_t *commentPtr = &commentData[commentOffset];
+	for (int i = 0; i < 64; i++)
 	{
-		if (*filePtr == 0x00)
-			*filePtr = ' ';
+		if (commentPtr[i] == 0x00)
+			commentPtr[i] = ' ';
 	}
 	
 	// TODO: Convert Shift-JIS comments to UTF-8.
-	gameDesc = QString::fromLatin1((char*)&fileData[commentAddr], 32).trimmed();
-	fileDesc = QString::fromLatin1((char*)&fileData[commentAddr+32], 32).trimmed();
+	gameDesc = QString::fromLatin1((char*)&commentPtr[0], 32).trimmed();
+	fileDesc = QString::fromLatin1((char*)&commentPtr[32], 32).trimmed();
 	
-	// Decode the banner.
-	uint32_t iconAddr = m_direntry->iconaddr;
-	uint32_t bannerSize = 0;
-	switch (m_direntry->bannerfmt & CARD_BANNER_MASK)
-	{
-		case CARD_BANNER_CI:
-			// CI8 palette is right after the banner.
-			// (256 entries in RGB5A1 format.)
-			bannerSize = (CARD_BANNER_W * CARD_BANNER_H * 1) + 0x200;
-			banner = GcImage::FromCI8(CARD_BANNER_W, CARD_BANNER_H,
-					&fileData[iconAddr], bannerSize);
-			iconAddr += bannerSize;
-			break;
-		
-		case CARD_BANNER_RGB:
-			bannerSize = (CARD_BANNER_W * CARD_BANNER_H * 2);
-			banner = GcImage::FromRGB5A3(CARD_BANNER_W, CARD_BANNER_H,
-					&fileData[iconAddr], bannerSize);
-			iconAddr += bannerSize;
-			break;
-		
-		default:
-			break;
-	}
-	
-	// Free the file data.
-	free(fileData);
+	// Free the comment data.
+	free(commentData);
+}
+
+MemCardFilePrivate::~MemCardFilePrivate()
+{
+	// Clear the icon vector.
+	qDeleteAll(icons);
+	icons.clear();
 }
 
 
@@ -191,6 +184,81 @@ uint16_t MemCardFilePrivate::fileBlockAddrToPhysBlockAddr(uint16_t fileBlock)
 	if ((int)fileBlock >= fat_entries.size())
 		return -1;
 	return fat_entries.at((int)fileBlock);
+}
+
+
+/**
+ * Load file data.
+ * @param buf Buffer to load file data into.
+ * @param siz Size of buffer. (Must be large enough for the whole file!)
+ * @return Number of bytes read, or negative on error.
+ * */
+int MemCardFilePrivate::loadFileData(void *buf, int siz)
+{
+	const int blockSize = card->blockSize();
+	if (siz < (m_direntry->length * blockSize))
+		return -1;
+	
+	uint8_t *bufPtr = (uint8_t*)buf;
+	for (int i = 0; i < m_direntry->length; i++, bufPtr += blockSize)
+	{
+		const uint16_t physBlockAddr = fileBlockAddrToPhysBlockAddr(i);
+		card->readBlock(bufPtr, blockSize, physBlockAddr);
+	}
+	return 0;
+}
+
+
+/**
+ * Load the banner and icon images..
+ */
+void MemCardFilePrivate::loadImages(void)
+{
+	// Images are being loaded.
+	imagesLoaded = true;
+	
+	// Load the file.
+	const int fileLen = (m_direntry->length * card->blockSize());
+	uint8_t *fileData = (uint8_t*)malloc(fileLen);
+	loadFileData(fileData, fileLen);
+	
+	// Decode the banner.
+	uint32_t iconAddr = m_direntry->iconaddr;
+	uint32_t imageSize = 0;
+	QImage tmpBanner;
+	switch (m_direntry->bannerfmt & CARD_BANNER_MASK)
+	{
+		case CARD_BANNER_CI:
+			// CI8 palette is right after the banner.
+			// (256 entries in RGB5A3 format.)
+			imageSize = (CARD_BANNER_W * CARD_BANNER_H * 1) + 0x200;
+			tmpBanner = GcImage::FromCI8(CARD_BANNER_W, CARD_BANNER_H,
+					&fileData[iconAddr], imageSize);
+			iconAddr += imageSize;
+			break;
+		
+		case CARD_BANNER_RGB:
+			imageSize = (CARD_BANNER_W * CARD_BANNER_H * 2);
+			tmpBanner = GcImage::FromRGB5A3(CARD_BANNER_W, CARD_BANNER_H,
+					&fileData[iconAddr], imageSize);
+			iconAddr += imageSize;
+			break;
+		
+		default:
+			break;
+	}
+	
+	delete banner;
+	banner = NULL;
+	if (!tmpBanner.isNull())
+		banner = new QImage(tmpBanner);
+	
+	// Clear the icon vector.
+	qDeleteAll(icons);
+	icons.clear();
+	
+	// Decode the icon(s).
+	// TODO
 }
 
 
@@ -286,4 +354,12 @@ uint8_t MemCardFile::size(void) const
  * @return Banner image.
  */
 QImage MemCardFile::banner(void) const
-	{ return d->banner; }
+{
+	if (!d->imagesLoaded)
+		d->loadImages();
+	
+	if (!d->banner)
+		return QImage();
+	else
+		return *d->banner;
+}
