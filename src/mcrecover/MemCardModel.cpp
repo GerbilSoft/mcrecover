@@ -88,11 +88,6 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 		case Qt::DisplayRole:
 			switch (section)
 			{
-				case COL_ICON:
-				case COL_BANNER:
-					// TODO
-					return QVariant();
-				
 				case COL_DESCRIPTION:
 					return file->gameDesc() + QChar(L'\n') + file->fileDesc();
 				
@@ -110,6 +105,22 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 				
 				case COL_FILENAME:
 					return file->filename();
+				
+				default:
+					break;
+			}
+			break;
+		
+		case Qt::DecorationRole:
+			// Images must use Qt::DecorationRole.
+			switch (section)
+			{
+				case COL_ICON:
+					// TODO
+					return QVariant();
+				
+				case COL_BANNER:
+					return file->banner();
 				
 				default:
 					break;

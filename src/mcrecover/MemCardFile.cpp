@@ -26,9 +26,8 @@
 // MemCard class.
 #include "MemCard.hpp"
 
-// Qt includes.
-#include <QtCore/QString>
-#include <QtGui/QImage>
+// GcImage class.
+#include "GcImage.hpp"
 
 /** MemCardFilePrivate **/
 
@@ -67,17 +66,20 @@ class MemCardFilePrivate
 		QString fileDesc;	// File description.
 		
 		// Images.
-		// TODO: These seem to cause memory errors...
-		//QImage banner;
-		//QImage icon[CARD_MAXICONS];
-		//uint8_t iconSpeed;	// TODO: Animation.
+		uint8_t reserved_00[128];	// FIXME: QImage is screwing up...
+		QImage banner;
+		uint8_t reserved_01[128];	// FIXME: QImage is screwing up...
+		QVector<QImage> icons;
+		uint8_t reserved_02[128];	// FIXME: QImage is screwing up...
+		
+		uint8_t iconSpeed;	// TODO: Animation.
 		
 		/**
 		 * Convert a file block number to a physical block number.
 		 * @param fileBlock File block number.
 		 * @return Physical block number, or negative on error.
 		 */
-		uint16_t fileBlockToPhysBlock(uint16_t fileBlock);
+		uint16_t fileBlockAddrToPhysBlockAddr(uint16_t fileBlock);
 };
 
 MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
@@ -96,13 +98,16 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	fat_entries.clear();
 	fat_entries.reserve(m_direntry->length);
 	uint16_t last_block = m_direntry->block;
-	fat_entries.append(last_block);
-	for (int i = 1; i < m_direntry->length; i++)
+	if (last_block >= 5 && last_block != 0xFFFF)
 	{
-		last_block = bat->fat[last_block - 5];
-		if (last_block == 0xFFFF)
-			break;
 		fat_entries.append(last_block);
+		for (int i = 1; i < m_direntry->length; i++)
+		{
+			last_block = bat->fat[last_block - 5];
+			if (last_block == 0xFFFF || last_block < 5)
+				break;
+			fat_entries.append(last_block);
+		}
 	}
 	
 	// TODO: Convert Shift-JIS filenames to UTF-8.
@@ -116,28 +121,63 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	// QDateTime::setTime_t uses UTC. Add local time offset!
 	lastModified.setTime_t(m_direntry->lastmodified + GC_UNIX_TIME_DIFF);
 	
+	// Get the block size.
 	const int blockSize = card->blockSize();
+	
+	// Load the file data.
+	// TODO: Split this into another function?
+	uint8_t *fileData = (uint8_t*)malloc(m_direntry->length * blockSize);
+	uint8_t *filePtr = fileData;
+	for (int i = 0; i < m_direntry->length; i++, filePtr += blockSize)
+	{
+		const uint16_t physBlockAddr = fileBlockAddrToPhysBlockAddr(i);
+		card->readBlock(filePtr, blockSize, physBlockAddr);
+	}
 	
 	// Load the file comments. (64 bytes)
 	// 0x00: Game description.
 	// 0x20: File description.
-	const uint16_t commentBlock = fileBlockToPhysBlock((m_direntry->commentaddr / blockSize));
-	const int commentOffset = (m_direntry->commentaddr % blockSize);
-	
-	// Read the block containing the file comments.
-	uint8_t *tmpBlock = (uint8_t*)malloc(blockSize);
-	card->readBlock(tmpBlock, blockSize, commentBlock);
 	
 	// Convert NULL characters to spaces to prevent confusion.
-	for (int i = commentOffset; i < (commentOffset+64); i++)
+	const uint32_t commentAddr = m_direntry->commentaddr;
+	for (filePtr = &fileData[commentAddr];
+	     filePtr < (&fileData[commentAddr] + 64); filePtr++)
 	{
-		if (tmpBlock[i] == 0x00)
-			tmpBlock[i] = ' ';
+		if (*filePtr == 0x00)
+			*filePtr = ' ';
 	}
 	
 	// TODO: Convert Shift-JIS comments to UTF-8.
-	gameDesc = QString::fromLatin1((char*)&tmpBlock[commentOffset], 32).trimmed();
-	fileDesc = QString::fromLatin1((char*)&tmpBlock[commentOffset+32], 32).trimmed();
+	gameDesc = QString::fromLatin1((char*)&fileData[commentAddr], 32).trimmed();
+	fileDesc = QString::fromLatin1((char*)&fileData[commentAddr+32], 32).trimmed();
+	
+	// Decode the banner.
+	uint32_t iconAddr = m_direntry->iconaddr;
+	uint32_t bannerSize = 0;
+	switch (m_direntry->bannerfmt & CARD_BANNER_MASK)
+	{
+		case CARD_BANNER_CI:
+			// CI8 palette is right after the banner.
+			// (256 entries in RGB5A1 format.)
+			bannerSize = (CARD_BANNER_W * CARD_BANNER_H * 1) + 0x200;
+			banner = GcImage::FromCI8(CARD_BANNER_W, CARD_BANNER_H,
+					&fileData[iconAddr], bannerSize);
+			iconAddr += bannerSize;
+			break;
+		
+		case CARD_BANNER_RGB:
+			bannerSize = (CARD_BANNER_W * CARD_BANNER_H * 2);
+			banner = GcImage::FromRGB5A3(CARD_BANNER_W, CARD_BANNER_H,
+					&fileData[iconAddr], bannerSize);
+			iconAddr += bannerSize;
+			break;
+		
+		default:
+			break;
+	}
+	
+	// Free the file data.
+	free(fileData);
 }
 
 
@@ -146,7 +186,7 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
  * @param fileBlock File block number.
  * @return Physical block number, or negative on error.
  */
-uint16_t MemCardFilePrivate::fileBlockToPhysBlock(uint16_t fileBlock)
+uint16_t MemCardFilePrivate::fileBlockAddrToPhysBlockAddr(uint16_t fileBlock)
 {
 	if ((int)fileBlock >= fat_entries.size())
 		return -1;
@@ -240,3 +280,10 @@ QString MemCardFile::permissionAsString(void) const
  */
 uint8_t MemCardFile::size(void) const
 	{ return d->m_direntry->length; }
+
+/**
+ * Get the banner image.
+ * @return Banner image.
+ */
+QImage MemCardFile::banner(void) const
+	{ return d->banner; }

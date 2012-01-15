@@ -24,8 +24,11 @@
 
 #include "card.h"
 
+// Qt includes.
 #include <QtCore/QObject>
+#include <QtCore/QString>
 #include <QtCore/QDateTime>
+#include <QtGui/QImage>
 
 // MemCard class.
 class MemCard;
@@ -100,6 +103,12 @@ class MemCardFile : public QObject
 		 * @return Size, in blocks.
 		 */
 		uint8_t size(void) const;
+		
+		/**
+		 * Get the banner image.
+		 * @return Banner image.
+		 */
+		QImage banner(void) const;
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */

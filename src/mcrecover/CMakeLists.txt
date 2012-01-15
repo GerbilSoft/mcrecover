@@ -60,6 +60,7 @@ SET(mcrecover_SRCS
 	MemCardFile.cpp
 	McRecoverWindow.cpp
 	MemCardModel.cpp
+	GcImage.cpp
 	)
 
 # Headers with Qt4 objects.
