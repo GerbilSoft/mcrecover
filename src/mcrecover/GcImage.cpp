@@ -58,16 +58,16 @@ static inline uint32_t RGB5A3_to_ARGB8888(uint16_t px16)
  * Convert a GameCube CI8 image to QImage.
  * @param w Image width.
  * @param h Image height.
- * @param buf CI8 image buffer.
- * @param siz Size of data. [must be (w*h)+0x200]
+ * @param img_buf CI8 image buffer.
+ * @param img_siz Size of image data. [must be (w*h)+0x200]
  * @return QImage, or empty QImage on error.
  */
-QImage GcImage::FromCI8(int w, int h, const void *buf, int siz)
+QImage GcImage::FromCI8(int w, int h, const void *img_buf, int img_siz)
 {
 	// Verify parameters.
 	if (w < 0 || h < 0)
 		return QImage();
-	if (siz < ((w * h) + 0x200))
+	if (img_siz < ((w * h) + 0x200))
 		return QImage();
 	
 	// CI8 uses 8x4 tiles.
@@ -81,7 +81,7 @@ QImage GcImage::FromCI8(int w, int h, const void *buf, int siz)
 	// Convert the palette.
 	QVector<QRgb> palette;
 	palette.resize(256);
-	uint16_t *pal5A3 = (uint16_t*)((uint8_t*)buf + (w * h));
+	uint16_t *pal5A3 = (uint16_t*)((uint8_t*)img_buf + (w * h));
 	for (int i = 0; i < 256; i++)
 	{
 		palette[i] = RGB5A3_to_ARGB8888(be16_to_cpu(*pal5A3));
@@ -92,7 +92,7 @@ QImage GcImage::FromCI8(int w, int h, const void *buf, int siz)
 	QImage qimg(w, h, QImage::Format_ARGB32);
 	memset(qimg.bits(), 0x00, (w * h * sizeof(uint32_t)));
 	QPainter painter(&qimg);
-	const uint8_t *tile_ptr = (const uint8_t*)buf;
+	const uint8_t *tile_ptr = (const uint8_t*)img_buf;
 	
 	for (int y = 0; y < tilesY; y++)
 	{
@@ -117,11 +117,11 @@ QImage GcImage::FromCI8(int w, int h, const void *buf, int siz)
  * Convert a GameCube RGB5A3 image to QImage.
  * @param w Image width.
  * @param h Image height.
- * @param buf CI8 image buffer.
- * @param siz Size of data. [must be (w*h)*2]
+ * @param img_buf CI8 image buffer.
+ * @param img_siz Size of image data. [must be (w*h)*2]
  * @return QImage, or empty QImage on error.
  */
-QImage GcImage::FromRGB5A3(int w, int h, const void *buf, int siz)
+QImage GcImage::FromRGB5A3(int w, int h, const void *img_buf, int img_siz)
 {
 	// NOTE: This should probably be RGB5A1,
 	// but everything uses RGB5A3.
@@ -129,7 +129,7 @@ QImage GcImage::FromRGB5A3(int w, int h, const void *buf, int siz)
 	// Verify parameters.
 	if (w < 0 || h < 0)
 		return QImage();
-	if (siz < ((w * h) * 2))
+	if (img_siz < ((w * h) * 2))
 		return QImage();
 	
 	// RGB5A3 uses 4x4 tiles.
@@ -139,7 +139,7 @@ QImage GcImage::FromRGB5A3(int w, int h, const void *buf, int siz)
 	// Calculate the total number of tiles.
 	const int tilesX = (w / 4);
 	const int tilesY = (h / 4);
-	const uint16_t *buf5A3 = (uint16_t*)buf;
+	const uint16_t *buf5A3 = (uint16_t*)img_buf;
 	
 	// Temporary images.
 	QImage qimg(w, h, QImage::Format_ARGB32);
