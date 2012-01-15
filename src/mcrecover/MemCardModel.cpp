@@ -116,8 +116,8 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 			switch (section)
 			{
 				case COL_ICON:
-					// TODO
-					return QVariant();
+					// TODO: Icon animation.
+					return file->icon(0);
 				
 				case COL_BANNER:
 					return file->banner();

@@ -109,6 +109,18 @@ class MemCardFile : public QObject
 		 * @return Banner image.
 		 */
 		QImage banner(void) const;
+		
+		/**
+		 * Get the number of icons in the file.
+		 * @return Number of icons.
+		 */
+		int numIcons(void) const;
+		
+		/**
+		 * Get an icon from the file.
+		 * @param idx Icon number.
+		 */
+		QImage icon(int idx);
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */

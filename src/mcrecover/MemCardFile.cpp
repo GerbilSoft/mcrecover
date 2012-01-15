@@ -258,7 +258,49 @@ void MemCardFilePrivate::loadImages(void)
 	icons.clear();
 	
 	// Decode the icon(s).
-	// TODO
+	uint16_t iconfmt = m_direntry->iconfmt;
+	QImage tmpIcon;
+	for (int i = CARD_MAXICONS; i >= 0; i--)
+	{
+		switch (iconfmt & CARD_ICON_MASK)
+		{
+			case CARD_ICON_CI_SHARED:
+				// CI8 palette is after *all* the icons.
+				// (256 entries in RGB5A3 format.)
+				// TODO: Handle this!
+				tmpIcon = QImage();
+				break;
+			
+			case CARD_ICON_CI_UNIQUE:
+				// CI8 palette is right after the icon.
+				// (256 entries in RGB5A3 format.)
+				imageSize = (CARD_ICON_W * CARD_ICON_H * 1) + 0x200;
+				tmpIcon = GcImage::FromCI8(CARD_ICON_W, CARD_ICON_H,
+						&fileData[iconAddr], imageSize);
+				iconAddr += imageSize;
+				break;
+			
+			case CARD_BANNER_RGB:
+				imageSize = (CARD_BANNER_W * CARD_ICON_H * 2);
+				tmpIcon = GcImage::FromRGB5A3(CARD_ICON_W, CARD_ICON_H,
+						&fileData[iconAddr], imageSize);
+				iconAddr += imageSize;
+				break;
+			
+			default:
+				tmpIcon = QImage();
+				break;
+		}
+		
+		if (!tmpIcon.isNull())
+		{
+			QImage *icon = new QImage(tmpIcon);
+			icons.append(icon);
+		}
+		
+		// Next icon.
+		iconfmt >>= 2;
+	}
 }
 
 
@@ -362,4 +404,22 @@ QImage MemCardFile::banner(void) const
 		return QImage();
 	else
 		return *d->banner;
+}
+
+/**
+ * Get the number of icons in the file.
+ * @return Number of icons.
+ */
+int MemCardFile::numIcons(void) const
+	{ return d->icons.size(); }
+
+/**
+ * Get an icon from the file.
+ * @param idx Icon number.
+ */
+QImage MemCardFile::icon(int idx)
+{
+	if (idx < 0 || idx >= d->icons.size())
+		return QImage();
+	return *(d->icons.at(idx));
 }
