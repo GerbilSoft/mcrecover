@@ -426,6 +426,13 @@ int MemCard::sizeInBlocks(void) const
 	{ return (d->filesize / d->blockSize); }
 
 /**
+ * Get the number of free blocks.
+ * @return Free blocks.
+ */
+int MemCard::freeBlocks(void) const
+	{ return d->mc_bat->freeblocks; }
+
+/**
  * Get the memory card block size, in bytes.
  * @return Memory card block size, in bytes.
  */
