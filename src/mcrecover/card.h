@@ -155,6 +155,7 @@ typedef struct PACKED _card_bat
 #define CARD_ATTRIB_PUBLIC	0x04
 #define CARD_ATTRIB_NOCOPY	0x08
 #define CARD_ATTRIB_NOMOVE	0x10
+#define CARD_ATTRIB_GLOBAL	0x20
 
 // Banner size.
 #define CARD_BANNER_W		96

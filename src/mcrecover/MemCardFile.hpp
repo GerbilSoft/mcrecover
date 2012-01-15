@@ -82,6 +82,12 @@ class MemCardFile : public QObject
 		 * @return File description.
 		 */
 		QString fileDesc(void) const;
+		
+		/**
+		 * Get the file permissions.
+		 * @return File permissions.
+		 */
+		uint8_t permission(void) const;
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */

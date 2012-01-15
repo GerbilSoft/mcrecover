@@ -49,6 +49,10 @@ class MemCardFilePrivate
 		const card_dat *const dat;
 		const card_bat *const bat;
 		
+		// Directory entry.
+		// This points to an entry within dat.
+		const card_direntry *m_direntry;
+		
 		// FAT entries.
 		QVector<uint16_t> fat_entries;
 		
@@ -86,14 +90,14 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	, bat(bat)
 {
 	// Load the directory table information.
-	const card_direntry *direntry = &dat->entries[fileIdx];
+	m_direntry = &dat->entries[fileIdx];
 	
 	// Load the FAT entries.
 	fat_entries.clear();
-	fat_entries.reserve(direntry->length);
-	uint16_t last_block = direntry->block;
+	fat_entries.reserve(m_direntry->length);
+	uint16_t last_block = m_direntry->block;
 	fat_entries.append(last_block);
-	for (int i = 1; i < direntry->length; i++)
+	for (int i = 1; i < m_direntry->length; i++)
 	{
 		last_block = bat->fat[last_block - 5];
 		if (last_block == 0xFFFF)
@@ -102,22 +106,22 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	}
 	
 	// TODO: Convert Shift-JIS filenames to UTF-8.
-	filename = QString::fromLatin1(direntry->filename, sizeof(direntry->filename));
+	filename = QString::fromLatin1(m_direntry->filename, sizeof(m_direntry->filename));
 	
-	gamecode = QString::fromLatin1(direntry->gamecode, sizeof(direntry->gamecode));
-	company = QString::fromLatin1(direntry->company, sizeof(direntry->company));
+	gamecode = QString::fromLatin1(m_direntry->gamecode, sizeof(m_direntry->gamecode));
+	company = QString::fromLatin1(m_direntry->company, sizeof(m_direntry->company));
 	
 	// TODO: GC memory card time uses local time.
 	// QDateTime::setTime_t uses UTC. Add local time offset!
-	lastModified.setTime_t(direntry->lastmodified + GC_UNIX_TIME_DIFF);
+	lastModified.setTime_t(m_direntry->lastmodified + GC_UNIX_TIME_DIFF);
 	
 	const int blockSize = card->blockSize();
 	
 	// Load the file comments. (64 bytes)
 	// 0x00: Game description.
 	// 0x20: File description.
-	const uint16_t commentBlock = fileBlockToPhysBlock((direntry->commentaddr / blockSize));
-	const int commentOffset = (direntry->commentaddr % blockSize);
+	const uint16_t commentBlock = fileBlockToPhysBlock((m_direntry->commentaddr / blockSize));
+	const int commentOffset = (m_direntry->commentaddr % blockSize);
 	
 	// Read the block containing the file comments.
 	uint8_t *tmpBlock = (uint8_t*)malloc(blockSize);
@@ -197,3 +201,11 @@ QString MemCardFile::gameDesc(void) const
  */
 QString MemCardFile::fileDesc(void) const
 	{ return d->fileDesc; }
+
+/**
+ * Get the file permissions.
+ * @return File permissions.
+ */
+uint8_t MemCardFile::permission(void) const
+	{ return d->m_direntry->permission; }
+
