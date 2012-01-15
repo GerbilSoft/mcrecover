@@ -135,6 +135,12 @@ class MemCardFile : public QObject
 		 * @return Icon animation mode.
 		 */
 		int iconAnimMode(void) const;
+		
+		/**
+		 * Ensure that the images are loaded.
+		 * Does nothing if images are already loaded.
+		 */
+		void verifyImagesLoaded(void);
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */

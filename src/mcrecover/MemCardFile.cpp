@@ -449,3 +449,14 @@ int MemCardFile::iconDelay(int idx) const
  */
 int MemCardFile::iconAnimMode(void) const
 	{ return (d->m_direntry->bannerfmt & CARD_ANIM_MASK); }
+
+/**
+ * Ensure that the images are loaded.
+ * Does nothing if images are already loaded.
+ */
+void MemCardFile::verifyImagesLoaded(void)
+{
+	if (d->card && !d->imagesLoaded)
+		d->loadImages();
+}
+
