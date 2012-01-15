@@ -69,8 +69,45 @@ QImage GcImage::FromCI8(int w, int h, const void *buf, int siz)
 	if (siz < ((w * h) + 0x200))
 		return QImage();
 	
-	// TODO
-	return QImage();
+	// CI8 uses 8x4 tiles.
+	if (w % 8 != 0 || h % 4 != 0)
+		return QImage();
+	
+	// Calculate the total number of tiles.
+	const int tilesX = (w / 8);
+	const int tilesY = (h / 4);
+	
+	// Convert the palette.
+	QVector<QRgb> palette;
+	palette.resize(256);
+	uint16_t *pal5A3 = (uint16_t*)((uint8_t*)buf + (w * h));
+	for (int i = 0; i < 256; i++)
+	{
+		palette[i] = RGB5A3_to_ARGB8888(be16_to_cpu(*pal5A3));
+		pal5A3++;
+	}
+	
+	// Temporary images.
+	QImage banner(w, h, QImage::Format_ARGB32);
+	QPainter painter(&banner);
+	const uint8_t *tile_ptr = (const uint8_t*)buf;
+	
+	for (int y = 0; y < tilesY; y++)
+	{
+		for (int x = 0; x < tilesX; x++)
+		{
+			// Let QImage handle the 256-color image directly.
+			QImage tile(tile_ptr, 8, 4, QImage::Format_Indexed8);
+			tile.setColorTable(palette);
+			tile_ptr += (8*4);
+			
+			// Blit the tile to the final image.
+			painter.drawImage(x*8, y*4, tile);
+		}
+	}
+	
+	// Image has been converted.
+	return banner;
 }
 
 
@@ -93,13 +130,14 @@ QImage GcImage::FromRGB5A3(int w, int h, const void *buf, int siz)
 	if (siz < ((w * h) * 2))
 		return QImage();
 	
-	// Image is stored as 4x4 pixels.
+	// RGB5A3 uses 4x4 tiles.
 	if (w % 4 != 0 || h % 4 != 0)
 		return QImage();
 	
+	// Calculate the total number of tiles.
 	const int tilesX = (w / 4);
 	const int tilesY = (h / 4);
-	const uint16_t *buf5A1 = (uint16_t*)buf;
+	const uint16_t *buf5A3 = (uint16_t*)buf;
 	
 	// Temporary images.
 	QImage banner(w, h, QImage::Format_ARGB32);
@@ -114,11 +152,11 @@ QImage GcImage::FromRGB5A3(int w, int h, const void *buf, int siz)
 			uint32_t *tile_ptr = tile_buf;
 			for (int i = 0; i < 4*4; i++)
 			{
-				*tile_ptr++ = RGB5A3_to_ARGB8888(be16_to_cpu(*buf5A1));
+				*tile_ptr++ = RGB5A3_to_ARGB8888(be16_to_cpu(*buf5A3));
 				
-				// NOTE: buf5A1 must be incremented OUTSIDE of the
+				// NOTE: buf5A3 must be incremented OUTSIDE of the
 				// be16_to_cpu() macro! Otherwise, shenanigans will ensue.
-				buf5A1++;
+				buf5A3++;
 			}
 			
 			// Convert to QImage, then blit to the final image.
@@ -127,5 +165,6 @@ QImage GcImage::FromRGB5A3(int w, int h, const void *buf, int siz)
 		}
 	}
 	
+	// Image has been converted.
 	return banner;
 }
