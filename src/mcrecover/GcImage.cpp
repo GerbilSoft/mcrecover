@@ -45,7 +45,8 @@ static inline uint32_t RGB5A3_to_ARGB8888(uint16_t px16)
 	px32 |= (((px16 << 6) & 0x00F800) | ((px16 << 3) & 0x000700));	// G
 	px32 |= (((px16 << 9) & 0xF80000) | ((px16 << 6) & 0x070000));	// R
 	
-	// TODO: Always show banners on a black background?
+	// TODO: Fix alpha channel!
+	// For now, just use white for alpha.
 	if (px16 & 0x8000)
 		px32 |= 0xFF000000U;
 	
@@ -88,8 +89,9 @@ QImage GcImage::FromCI8(int w, int h, const void *buf, int siz)
 	}
 	
 	// Temporary images.
-	QImage banner(w, h, QImage::Format_ARGB32);
-	QPainter painter(&banner);
+	QImage qimg(w, h, QImage::Format_ARGB32);
+	memset(qimg.bits(), 0x00, (w * h * sizeof(uint32_t)));
+	QPainter painter(&qimg);
 	const uint8_t *tile_ptr = (const uint8_t*)buf;
 	
 	for (int y = 0; y < tilesY; y++)
@@ -107,7 +109,7 @@ QImage GcImage::FromCI8(int w, int h, const void *buf, int siz)
 	}
 	
 	// Image has been converted.
-	return banner;
+	return qimg;
 }
 
 
@@ -140,8 +142,9 @@ QImage GcImage::FromRGB5A3(int w, int h, const void *buf, int siz)
 	const uint16_t *buf5A3 = (uint16_t*)buf;
 	
 	// Temporary images.
-	QImage banner(w, h, QImage::Format_ARGB32);
-	QPainter painter(&banner);
+	QImage qimg(w, h, QImage::Format_ARGB32);
+	memset(qimg.bits(), 0x00, (w * h * sizeof(uint32_t)));
+	QPainter painter(&qimg);
 	uint32_t *tile_buf = (uint32_t*)malloc(4 * 4 * sizeof(uint32_t));
 	
 	for (int y = 0; y < tilesY; y++)
@@ -166,5 +169,5 @@ QImage GcImage::FromRGB5A3(int w, int h, const void *buf, int siz)
 	}
 	
 	// Image has been converted.
-	return banner;
+	return qimg;
 }
