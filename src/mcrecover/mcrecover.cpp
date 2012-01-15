@@ -68,6 +68,14 @@ int main(int argc, char *argv[])
 		printf("- Last modified: %s\n", file->lastModified().toString(Qt::DefaultLocaleLongDate).toUtf8().constData());
 		printf("- Game Description: %s\n", file->gameDesc().toUtf8().constData());
 		printf("- File Description: %s\n", file->fileDesc().toUtf8().constData());
+		
+		uint8_t permission = file->permission();
+		printf("- Permission: %c%c%c%c\n",
+			((permission & CARD_ATTRIB_GLOBAL) ? 'G' : '-'),
+			((permission & CARD_ATTRIB_NOMOVE) ? 'M' : '-'),
+			((permission & CARD_ATTRIB_NOCOPY) ? 'C' : '-'),
+			((permission & CARD_ATTRIB_PUBLIC) ? 'P' : '-'));
+		
 		printf("\n");
 	}
 	
