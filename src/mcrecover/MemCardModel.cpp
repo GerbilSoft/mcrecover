@@ -179,8 +179,18 @@ QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int 
 			break;
 		
 		case Qt::TextAlignmentRole:
-			// TODO: Only specific items?
-			return Qt::AlignHCenter;
+			switch (section)
+			{
+				case COL_DESCRIPTION:
+				case COL_FILENAME:
+					// These headers should have the default alignment.
+					return QVariant();
+				
+				default:
+					// Center-align the text.
+					return Qt::AlignHCenter;
+			}
+			break;
 	}
 	
 	// Default value.
