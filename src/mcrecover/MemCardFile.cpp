@@ -88,6 +88,13 @@ class MemCardFilePrivate
 		 * */
 		int loadFileData(void *buf, int siz);
 		
+		// CI8 SHARED image struct.
+		struct CI8_SHARED_data
+		{
+			int iconIdx;
+			uint32_t iconAddr;
+		};
+		
 		/**
 		 * Load the banner and icon images..
 		 */
@@ -209,7 +216,7 @@ int MemCardFilePrivate::loadFileData(void *buf, int siz)
 
 
 /**
- * Load the banner and icon images..
+ * Load the banner and icon images.
  */
 void MemCardFilePrivate::loadImages(void)
 {
@@ -231,6 +238,8 @@ void MemCardFilePrivate::loadImages(void)
 			// CI8 palette is right after the banner.
 			// (256 entries in RGB5A3 format.)
 			imageSize = (CARD_BANNER_W * CARD_BANNER_H * 1);
+			if ((iconAddr + imageSize) > fileLen)
+				break;
 			tmpBanner = GcImage::FromCI8(CARD_BANNER_W, CARD_BANNER_H,
 					&fileData[iconAddr], imageSize,
 					&fileData[iconAddr + imageSize], 0x200);
@@ -239,6 +248,8 @@ void MemCardFilePrivate::loadImages(void)
 		
 		case CARD_BANNER_RGB:
 			imageSize = (CARD_BANNER_W * CARD_BANNER_H * 2);
+			if ((iconAddr + imageSize) > fileLen)
+				break;
 			tmpBanner = GcImage::FromRGB5A3(CARD_BANNER_W, CARD_BANNER_H,
 					&fileData[iconAddr], imageSize);
 			iconAddr += imageSize;
@@ -257,24 +268,42 @@ void MemCardFilePrivate::loadImages(void)
 	qDeleteAll(icons);
 	icons.clear();
 	
+	// List of CI8 SHARED images.
+	QVector<CI8_SHARED_data> lst_CI8_SHARED;
+	
 	// Decode the icon(s).
 	uint16_t iconfmt = m_direntry->iconfmt;
 	QImage tmpIcon;
-	for (int i = CARD_MAXICONS; i >= 0; i--)
+	for (int i = 0; i < CARD_MAXICONS; i++)
 	{
+		if ((iconfmt & CARD_ICON_MASK) == CARD_ICON_CI_SHARED)
+		{
+			// CI8 palette is after *all* the icons.
+			// (256 entries in RGB5A3 format.)
+			// This is handled after the rest of the icons.
+			CI8_SHARED_data data;
+			data.iconIdx = i;
+			data.iconAddr = iconAddr;
+			lst_CI8_SHARED.append(data);
+			
+			// Add a NULL QImage as a placeholder.
+			icons.append(NULL);
+			
+			// Next icon.
+			imageSize = (CARD_ICON_W * CARD_ICON_H * 1);
+			iconAddr += imageSize;
+			iconfmt >>= 2;
+			continue;
+		}
+		
 		switch (iconfmt & CARD_ICON_MASK)
 		{
-			case CARD_ICON_CI_SHARED:
-				// CI8 palette is after *all* the icons.
-				// (256 entries in RGB5A3 format.)
-				// TODO: Handle this!
-				tmpIcon = QImage();
-				break;
-			
 			case CARD_ICON_CI_UNIQUE:
 				// CI8 palette is right after the icon.
 				// (256 entries in RGB5A3 format.)
 				imageSize = (CARD_ICON_W * CARD_ICON_H * 1);
+				if ((iconAddr + imageSize + 0x200) > fileLen)
+					break;
 				tmpIcon = GcImage::FromCI8(CARD_ICON_W, CARD_ICON_H,
 						&fileData[iconAddr], imageSize,
 						&fileData[iconAddr + imageSize], 0x200);
@@ -283,6 +312,8 @@ void MemCardFilePrivate::loadImages(void)
 			
 			case CARD_BANNER_RGB:
 				imageSize = (CARD_ICON_W * CARD_ICON_H * 2);
+				if ((iconAddr + imageSize) > fileLen)
+					break;
 				tmpIcon = GcImage::FromRGB5A3(CARD_ICON_W, CARD_ICON_H,
 						&fileData[iconAddr], imageSize);
 				iconAddr += imageSize;
@@ -307,6 +338,33 @@ void MemCardFilePrivate::loadImages(void)
 		
 		// Next icon.
 		iconfmt >>= 2;
+	}
+	
+	if (!lst_CI8_SHARED.isEmpty())
+	{
+		// Process CI8 SHARED icons.
+		// TODO: Convert the palette once instead of every time?
+		if ((iconAddr + 0x200) > fileLen)
+		{
+			// Out of bounds.
+			// Delete the NULL icons.
+			for (int i = (icons.size() - 1); i >= 0; i--)
+			{
+				if (icons.at(i) == NULL)
+					icons.remove(i);
+			}
+		}
+		else
+		{
+			// Process each icon.
+			foreach (const CI8_SHARED_data& data, lst_CI8_SHARED)
+			{
+				tmpIcon = GcImage::FromCI8(CARD_ICON_W, CARD_ICON_H,
+						&fileData[data.iconAddr], imageSize,
+						&fileData[iconAddr], 0x200);
+				icons[data.iconIdx] = new QImage(tmpIcon);
+			}
+		}
 	}
 }
 
