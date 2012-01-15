@@ -198,7 +198,7 @@ uint16_t MemCardFilePrivate::fileBlockAddrToPhysBlockAddr(uint16_t fileBlock)
  * @param buf Buffer to load file data into.
  * @param siz Size of buffer. (Must be large enough for the whole file!)
  * @return Number of bytes read, or negative on error.
- * */
+ */
 int MemCardFilePrivate::loadFileData(void *buf, int siz)
 {
 	const int blockSize = card->blockSize();
