@@ -265,7 +265,7 @@ int MemCardPrivate::loadSysInfo(void)
 	}
 	
 	// Select the directory table.
-	mc_bat = &mc_bat_int[dirTable];
+	mc_bat = &mc_bat_int[blockTable];
 	printf("Block Table == %d\n", blockTable);
 	return 0;
 }
