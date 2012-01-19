@@ -71,7 +71,7 @@ static inline void BlitTile(pixel *imgBuf, int pitch,
 			    const pixel *tileBuf, int tileX, int tileY)
 {
 	// Go to the first pixel for this tile.
-	imgBuf += ((tileY * tileH * pitch) + (tileX * tileH));
+	imgBuf += ((tileY * tileH * pitch) + (tileX * tileW));
 	
 	for (int y = tileH; y != 0; y--)
 	{
@@ -119,28 +119,24 @@ QImage GcImage::FromCI8(int w, int h, const void *img_buf, int img_siz,
 		pal5A3++;
 	}
 	
-	// Temporary images.
-	QImage qimg(w, h, QImage::Format_ARGB32);
-	memset(qimg.bits(), 0x00, (w * h * sizeof(uint32_t)));
-	QPainter painter(&qimg);
-	const uint8_t *tile_ptr = (const uint8_t*)img_buf;
-	
+	// Temporary image buffer.
+	QImage qimgBuf(w, h, QImage::Format_Indexed8);
+	qimgBuf.setColorTable(palette);
+	const uint8_t *tileBuf = (const uint8_t*)img_buf;
+
 	for (int y = 0; y < tilesY; y++)
 	{
 		for (int x = 0; x < tilesX; x++)
 		{
-			// Let QImage handle the 256-color image directly.
-			QImage tile(tile_ptr, 8, 4, QImage::Format_Indexed8);
-			tile.setColorTable(palette);
-			tile_ptr += (8*4);
-			
-			// Blit the tile to the final image.
-			painter.drawImage(x*8, y*4, tile);
+			// Decode the current tile.
+			BlitTile<uint8_t, 8, 4>(qimgBuf.bits(), w,
+						tileBuf, x, y);
+			tileBuf += (8 * 4);
 		}
 	}
 	
 	// Image has been converted.
-	return qimg;
+	return qimgBuf;
 }
 
 
