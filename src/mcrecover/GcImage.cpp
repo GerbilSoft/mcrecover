@@ -30,6 +30,7 @@
 // Qt includes.
 #include <QtGui/QImage>
 #include <QtGui/QPainter>
+#include <QtCore/QVector>
 
 
 /**
@@ -51,6 +52,33 @@ static inline uint32_t RGB5A3_to_ARGB8888(uint16_t px16)
 		px32 |= 0xFF000000U;
 	
 	return px32;
+}
+
+
+/**
+ * Blit an ARGB32 tile to an ARGB32 linear image buffer.
+ * @param pixel		[in] Pixel type.
+ * @param tileW		[in] Tile width.
+ * @param tileH		[in] Tile height.
+ * @param imgBuf	[out] Linear image buffer.
+ * @param pitch		[in] Pitch of image buffer, in pixels.
+ * @param tileBuf	[in] Tile buffer.
+ * @param tileX		[in] Horizontal tile number.
+ * @param tileY		[in] Vertical tile number.
+ */
+template<typename pixel, int tileW, int tileH>
+static inline void BlitTile(pixel *imgBuf, int pitch,
+			    const pixel *tileBuf, int tileX, int tileY)
+{
+	// Go to the first pixel for this tile.
+	imgBuf += ((tileY * tileH * pitch) + (tileX * tileH));
+	
+	for (int y = tileH; y != 0; y--)
+	{
+		memcpy(imgBuf, tileBuf, (tileW * sizeof(pixel)));
+		imgBuf += pitch;
+		tileBuf += tileW;
+	}
 }
 
 
@@ -144,33 +172,31 @@ QImage GcImage::FromRGB5A3(int w, int h, const void *img_buf, int img_siz)
 	const int tilesY = (h / 4);
 	const uint16_t *buf5A3 = (uint16_t*)img_buf;
 	
-	// Temporary images.
-	QImage qimg(w, h, QImage::Format_ARGB32);
-	memset(qimg.bits(), 0x00, (w * h * sizeof(uint32_t)));
-	QPainter painter(&qimg);
-	uint32_t *tile_buf = (uint32_t*)malloc(4 * 4 * sizeof(uint32_t));
+	// Temporary image buffer.
+	QImage qimgBuf(w, h, QImage::Format_ARGB32);
+	QVector<uint32_t> tileBuf(4 * 4);
 	
 	for (int y = 0; y < tilesY; y++)
 	{
 		for (int x = 0; x < tilesX; x++)
 		{
 			// Convert each tile to ARGB888 manually.
-			uint32_t *tile_ptr = tile_buf;
+			uint32_t *tilePtr = tileBuf.data();
 			for (int i = 0; i < 4*4; i++)
 			{
-				*tile_ptr++ = RGB5A3_to_ARGB8888(be16_to_cpu(*buf5A3));
+				*tilePtr++ = RGB5A3_to_ARGB8888(be16_to_cpu(*buf5A3));
 				
 				// NOTE: buf5A3 must be incremented OUTSIDE of the
 				// be16_to_cpu() macro! Otherwise, shenanigans will ensue.
 				buf5A3++;
 			}
 			
-			// Convert to QImage, then blit to the final image.
-			QImage tile((uint8_t*)tile_buf, 4, 4, QImage::Format_ARGB32);
-			painter.drawImage(x*4, y*4, tile);
+			// Blit the tile to the main image buffer.
+			BlitTile<uint32_t, 4, 4>((uint32_t*)qimgBuf.bits(), w,
+						tileBuf.constData(), x, y);
 		}
 	}
 	
 	// Image has been converted.
-	return qimg;
+	return qimgBuf;
 }
