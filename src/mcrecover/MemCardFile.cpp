@@ -29,6 +29,9 @@
 // GcImage class.
 #include "GcImage.hpp"
 
+// Qt includes.
+#include <QtCore/QByteArray>
+
 /** MemCardFilePrivate **/
 
 class MemCardFilePrivate
@@ -79,11 +82,9 @@ class MemCardFilePrivate
 		
 		/**
 		 * Load file data.
-		 * @param buf Buffer to load file data into.
-		 * @param siz Size of buffer.
-		 * @return Number of bytes read, or negative on error.
-		 * */
-		int loadFileData(void *buf, int siz);
+		 * @return QByteArray with file data, or empty QByteArray on error.
+		 */
+		QByteArray loadFileData(void);
 		
 		// CI8 SHARED image struct.
 		struct CI8_SHARED_data
@@ -185,23 +186,24 @@ uint16_t MemCardFilePrivate::fileBlockAddrToPhysBlockAddr(uint16_t fileBlock)
 
 /**
  * Load file data.
- * @param buf Buffer to load file data into.
- * @param siz Size of buffer. (Must be large enough for the whole file!)
- * @return Number of bytes read, or negative on error.
+ * @return QByteArray with file data, or empty QByteArray on error.
  */
-int MemCardFilePrivate::loadFileData(void *buf, int siz)
+QByteArray MemCardFilePrivate::loadFileData(void)
 {
 	const int blockSize = card->blockSize();
-	if (siz < (m_direntry->length * blockSize))
-		return -1;
+	if (m_direntry->length > card->sizeInBlocks())
+		return QByteArray();
 	
-	uint8_t *bufPtr = (uint8_t*)buf;
-	for (int i = 0; i < m_direntry->length; i++, bufPtr += blockSize)
+	QByteArray fileData;
+	fileData.resize(m_direntry->length * blockSize);
+	
+	uint8_t *fileDataPtr = (uint8_t*)fileData.data();
+	for (int i = 0; i < m_direntry->length; i++, fileDataPtr += blockSize)
 	{
 		const uint16_t physBlockAddr = fileBlockAddrToPhysBlockAddr(i);
-		card->readBlock(bufPtr, blockSize, physBlockAddr);
+		card->readBlock(fileDataPtr, blockSize, physBlockAddr);
 	}
-	return 0;
+	return fileData;
 }
 
 
@@ -214,9 +216,9 @@ void MemCardFilePrivate::loadImages(void)
 	imagesLoaded = true;
 	
 	// Load the file.
-	const int fileLen = (m_direntry->length * card->blockSize());
-	uint8_t *fileData = (uint8_t*)malloc(fileLen);
-	loadFileData(fileData, fileLen);
+	QByteArray fileData = loadFileData();
+	if (fileData.isEmpty())
+		return;
 	
 	// Decode the banner.
 	uint32_t iconAddr = m_direntry->iconaddr;
@@ -229,20 +231,20 @@ void MemCardFilePrivate::loadImages(void)
 			// CI8 palette is right after the banner.
 			// (256 entries in RGB5A3 format.)
 			imageSize = (CARD_BANNER_W * CARD_BANNER_H * 1);
-			if ((iconAddr + imageSize) > fileLen)
+			if ((iconAddr + imageSize) > fileData.size())
 				break;
 			banner = GcImage::FromCI8(CARD_BANNER_W, CARD_BANNER_H,
-					&fileData[iconAddr], imageSize,
-					&fileData[iconAddr + imageSize], 0x200);
+					&fileData.constData()[iconAddr], imageSize,
+					&fileData.constData()[iconAddr + imageSize], 0x200);
 			iconAddr += imageSize + 0x200;
 			break;
 		
 		case CARD_BANNER_RGB:
 			imageSize = (CARD_BANNER_W * CARD_BANNER_H * 2);
-			if ((iconAddr + imageSize) > fileLen)
+			if ((iconAddr + imageSize) > fileData.size())
 				break;
 			banner = GcImage::FromRGB5A3(CARD_BANNER_W, CARD_BANNER_H,
-					&fileData[iconAddr], imageSize);
+					&fileData.constData()[iconAddr], imageSize);
 			iconAddr += imageSize;
 			break;
 		
@@ -283,20 +285,20 @@ void MemCardFilePrivate::loadImages(void)
 				// CI8 palette is right after the icon.
 				// (256 entries in RGB5A3 format.)
 				imageSize = (CARD_ICON_W * CARD_ICON_H * 1);
-				if ((iconAddr + imageSize + 0x200) > fileLen)
+				if ((iconAddr + imageSize + 0x200) > fileData.size())
 					break;
 				icons.append(GcImage::FromCI8(CARD_ICON_W, CARD_ICON_H,
-						&fileData[iconAddr], imageSize,
-						&fileData[iconAddr + imageSize], 0x200));
+						&fileData.constData()[iconAddr], imageSize,
+						&fileData.constData()[iconAddr + imageSize], 0x200));
 				iconAddr += imageSize + 0x200;
 				break;
 			
 			case CARD_BANNER_RGB:
 				imageSize = (CARD_ICON_W * CARD_ICON_H * 2);
-				if ((iconAddr + imageSize) > fileLen)
+				if ((iconAddr + imageSize) > fileData.size())
 					break;
 				icons.append(GcImage::FromRGB5A3(CARD_ICON_W, CARD_ICON_H,
-						&fileData[iconAddr], imageSize));
+						&fileData.constData()[iconAddr], imageSize));
 				iconAddr += imageSize;
 				break;
 			
@@ -315,7 +317,7 @@ void MemCardFilePrivate::loadImages(void)
 	{
 		// Process CI8 SHARED icons.
 		// TODO: Convert the palette once instead of every time?
-		if ((iconAddr + 0x200) > fileLen)
+		if ((iconAddr + 0x200) > fileData.size())
 		{
 			// Out of bounds.
 			// Delete the NULL icons.
@@ -331,8 +333,8 @@ void MemCardFilePrivate::loadImages(void)
 			foreach (const CI8_SHARED_data& data, lst_CI8_SHARED)
 			{
 				icons[data.iconIdx] = GcImage::FromCI8(CARD_ICON_W, CARD_ICON_H,
-							&fileData[data.iconAddr], imageSize,
-							&fileData[iconAddr], 0x200);
+							&fileData.constData()[data.iconAddr], imageSize,
+							&fileData.constData()[iconAddr], 0x200);
 			}
 		}
 	}
