@@ -188,9 +188,8 @@ int MemCardPrivate::loadSysInfo(void)
 	file->read((char*)&mc_header, sizeof(mc_header));
 	
 	// Byteswap the header contents.
-	for (int i = 0; i < NUM_ELEMENTS(mc_header.serial); i++)
-		mc_header.serial[i] = be32_to_cpu(mc_header.serial[i]);
-	
+	// TODO: Add be64_to_cpu().
+	//mc_header.formatTime	= be64_to_cpu(mc_header.formatTime);
 	mc_header.device_id	= be16_to_cpu(mc_header.device_id);
 	mc_header.size		= be16_to_cpu(mc_header.size);
 	mc_header.encoding	= be16_to_cpu(mc_header.encoding);

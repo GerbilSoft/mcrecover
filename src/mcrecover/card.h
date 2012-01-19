@@ -71,11 +71,21 @@ extern "C" {
 
 /**
  * Memory card header.
+ * Reference for first 32 bytes: Dolphin
+ * - Revision bef3d7229eca9a7f9568abf72de6b4d467feee9f
+ * - File: Source/Core/Core/Src/HW/GCMemcard.h
  */
 #pragma pack(1)
 typedef struct PACKED _card_header
 {
-	uint32_t serial[0x08];	// Serial number.
+	// The following is uint32_t serial[8] in libogc.
+	// Dolphin has more detailed information.
+	uint8_t serial[12];	// Serial number. (TODO: Should be 8...)
+	uint64_t formatTime;	// Format time. (OSTime value)
+	uint8_t sramBias[4];	// SRAM bias at time of format.
+	uint8_t sramLang[4];	// SRAM language.
+	uint8_t reserved1[4];
+	
 	uint16_t device_id;
 	uint16_t size;
 	uint16_t encoding;
