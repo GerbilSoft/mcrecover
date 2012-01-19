@@ -69,7 +69,6 @@ class MemCardFilePrivate
 		QString fileDesc;	// File description.
 		
 		// Images.
-		bool imagesLoaded;
 		QImage banner;
 		QVector<QImage> icons;
 		
@@ -94,7 +93,7 @@ class MemCardFilePrivate
 		};
 		
 		/**
-		 * Load the banner and icon images..
+		 * Load the banner and icon images.
 		 */
 		void loadImages(void);
 };
@@ -107,7 +106,6 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	, fileIdx(fileIdx)
 	, dat(dat)
 	, bat(bat)
-	, imagesLoaded(false)
 	, banner(NULL)
 {
 	// Load the directory table information.
@@ -168,6 +166,9 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	
 	// Free the comment data.
 	free(commentData);
+	
+	// Load the banner and icon images.
+	loadImages();
 }
 
 
@@ -212,9 +213,6 @@ QByteArray MemCardFilePrivate::loadFileData(void)
  */
 void MemCardFilePrivate::loadImages(void)
 {
-	// Images are being loaded.
-	imagesLoaded = true;
-	
 	// Load the file.
 	QByteArray fileData = loadFileData();
 	if (fileData.isEmpty())
@@ -432,12 +430,8 @@ uint8_t MemCardFile::size(void) const
  * Get the banner image.
  * @return Banner image.
  */
-QImage MemCardFile::banner(void)
-{
-	if (!d->imagesLoaded)
-		d->loadImages();
-	return d->banner;
-}
+QImage MemCardFile::banner(void) const
+	{ return d->banner; }
 
 /**
  * Get the number of icons in the file.
@@ -451,10 +445,8 @@ int MemCardFile::numIcons(void) const
  * @param idx Icon number.
  * @return Icon, or null QImage on error.
  */
-QImage MemCardFile::icon(int idx)
+QImage MemCardFile::icon(int idx) const
 {
-	if (!d->imagesLoaded)
-		d->loadImages();
 	if (idx < 0 || idx >= d->icons.size())
 		return QImage();
 	return d->icons.at(idx);
@@ -479,14 +471,3 @@ int MemCardFile::iconDelay(int idx) const
  */
 int MemCardFile::iconAnimMode(void) const
 	{ return (d->m_direntry->bannerfmt & CARD_ANIM_MASK); }
-
-/**
- * Ensure that the images are loaded.
- * Does nothing if images are already loaded.
- */
-void MemCardFile::verifyImagesLoaded(void)
-{
-	if (d->card && !d->imagesLoaded)
-		d->loadImages();
-}
-

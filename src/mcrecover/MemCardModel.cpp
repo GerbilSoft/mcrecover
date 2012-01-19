@@ -108,7 +108,6 @@ void MemCardModelPrivate::initAnimState(void)
 	for (int i = 0; i < card->numFiles(); i++)
 	{
 		MemCardFile *file = card->getFile(i);
-		file->verifyImagesLoaded();
 		
 		int numIcons = file->numIcons();
 		if (numIcons <= 1)

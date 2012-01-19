@@ -108,7 +108,7 @@ class MemCardFile : public QObject
 		 * Get the banner image.
 		 * @return Banner image.
 		 */
-		QImage banner(void);
+		QImage banner(void) const;
 		
 		/**
 		 * Get the number of icons in the file.
@@ -121,7 +121,7 @@ class MemCardFile : public QObject
 		 * @param idx Icon number.
 		 * @return Icon, or null QImage on error.
 		 */
-		QImage icon(int idx);
+		QImage icon(int idx) const;
 		
 		/**
 		 * Get the delay for a given icon.
@@ -135,12 +135,6 @@ class MemCardFile : public QObject
 		 * @return Icon animation mode.
 		 */
 		int iconAnimMode(void) const;
-		
-		/**
-		 * Ensure that the images are loaded.
-		 * Does nothing if images are already loaded.
-		 */
-		void verifyImagesLoaded(void);
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */
