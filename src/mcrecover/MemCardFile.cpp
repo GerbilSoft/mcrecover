@@ -31,6 +31,7 @@
 
 // Qt includes.
 #include <QtCore/QByteArray>
+#include <QtCore/QTextCodec>
 
 /** MemCardFilePrivate **/
 
@@ -127,10 +128,13 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 		}
 	}
 	
-	// TODO: Convert Shift-JIS filenames to UTF-8.
+	// TODO: Should filenames be converted from Shift-JIS, or always use Latin-1?
 	filename = QString::fromLatin1(m_direntry->filename, sizeof(m_direntry->filename));
-	filename = filename.replace(QChar(0), QChar(L' '));
-	
+	int nullChr = filename.indexOf(QChar(L'\0'));
+	if (nullChr >= 0)
+		filename.resize(nullChr);
+
+	// Game Code and Company are always Latin-1.
 	gamecode = QString::fromLatin1(m_direntry->gamecode, sizeof(m_direntry->gamecode));
 	company = QString::fromLatin1(m_direntry->company, sizeof(m_direntry->company));
 	
@@ -145,27 +149,40 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	const int commentBlock = (m_direntry->commentaddr / blockSize);
 	const int commentOffset = (m_direntry->commentaddr % blockSize);
 	
-	uint8_t *commentData = (uint8_t*)malloc(blockSize);
+	char *commentData = (char*)malloc(blockSize);
 	card->readBlock(commentData, blockSize, fileBlockAddrToPhysBlockAddr(commentBlock));
 	
 	// Load the file comments. (64 bytes)
+	// NOTE: These comments are supposed to be NULL-terminated.
 	// 0x00: Game description.
 	// 0x20: File description.
-	
-	// Convert NULL characters to spaces to prevent confusion.
-	uint8_t *commentPtr = &commentData[commentOffset];
-	for (int i = 0; i < 64; i++)
-	{
-		if (commentPtr[i] == 0x00)
-			commentPtr[i] = ' ';
-	}
-	
-	// TODO: Convert Shift-JIS comments to UTF-8.
-	gameDesc = QString::fromLatin1((char*)&commentPtr[0], 32).trimmed();
-	fileDesc = QString::fromLatin1((char*)&commentPtr[32], 32).trimmed();
-	
-	// Free the comment data.
+	QByteArray gameDescData(&commentData[commentOffset], 32);
+	QByteArray fileDescData(&commentData[commentOffset+32], 32);
 	free(commentData);
+	
+	// Remove trailing NULL characters before converting to UTF-8.
+	nullChr = gameDescData.indexOf('\0');
+	if (nullChr >= 0)
+		gameDescData.resize(nullChr);
+	nullChr = fileDescData.indexOf('\0');
+	if (nullChr >= 0)
+		fileDescData.resize(nullChr);
+	
+	// Convert the descriptions to UTF-8.
+	QTextCodec *textCodec = card->textCodec();
+	if (!textCodec)
+	{
+		// No text codec was found.
+		// Default to Latin-1.
+		gameDesc = QString::fromLatin1(gameDescData.constData(), gameDescData.size());
+		fileDesc = QString::fromLatin1(fileDescData.constData(), fileDescData.size());
+	}
+	else
+	{
+		// Use the text codec.
+		gameDesc = textCodec->toUnicode(gameDescData.constData(), gameDescData.size());
+		fileDesc = textCodec->toUnicode(fileDescData.constData(), fileDescData.size());
+	}
 	
 	// Load the banner and icon images.
 	loadImages();

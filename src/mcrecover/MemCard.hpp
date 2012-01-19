@@ -25,12 +25,14 @@
 // C includes.
 #include <stdint.h>
 
-// Qt includes.
+// Qt includes and classes.
 #include <QtCore/QObject>
+class QTextCodec;
 
 // MemCardFile
 class MemCardFile;
 
+// MemCard private class.
 class MemCardPrivate;
 
 class MemCard : public QObject
@@ -88,9 +90,15 @@ class MemCard : public QObject
 		
 		/**
 		 * Get the memory card encoding.
-		 * @return 0 for ANSI; 1 for SJIS; negative on error.
+		 * @return 0 for ANSI (ISO-8859-1); 1 for SJIS; negative on error.
 		 */
 		int encoding(void) const;
+		
+		/**
+		 * Get the QTextCodec for the memory card encoding.
+		 * @return QTextCodec.
+		 */
+		QTextCodec *textCodec(void) const;
 		
 		/**
 		 * Get the number of files in the file table.

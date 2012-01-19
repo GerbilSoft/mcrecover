@@ -32,6 +32,7 @@
 // Qt includes.
 #include <QtCore/QFile>
 #include <QtCore/QList>
+#include <QtCore/QTextCodec>
 
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
@@ -58,6 +59,9 @@ class MemCardPrivate
 		// Block size.
 		// NOTE: This is always assumed to be 8 KB.
 		static const int blockSize = 8192;
+		
+		// QTextCodec for memory card text encoding.
+		QTextCodec *textCodec;
 		
 		// Memory card data.
 		// Table 0 == main; Table 1 == backup.
@@ -114,6 +118,10 @@ class MemCardPrivate
 
 MemCardPrivate::MemCardPrivate(MemCard *q, QString filename)
 	: q(q)
+	, file(NULL)
+	, textCodec(NULL)
+	, mc_dat(NULL)
+	, mc_bat(NULL)
 {
 	// Save the filename.
 	this->filename = filename;
@@ -195,6 +203,21 @@ int MemCardPrivate::loadSysInfo(void)
 	mc_header.encoding	= be16_to_cpu(mc_header.encoding);
 	mc_header.chksum1	= be16_to_cpu(mc_header.chksum1);
 	mc_header.chksum2	= be16_to_cpu(mc_header.chksum2);
+	
+	// Get the QTextCodec for the memory card's text encoding.
+	if ((mc_header.encoding & SYS_FONT_ENCODING_MASK) == SYS_FONT_ENCODING_SJIS)
+	{
+		// Shift-JIS encoding.
+		textCodec = QTextCodec::codecForName("Shift-JIS");
+	}
+	if (!textCodec)
+	{
+		// "ANSI" encoding is used.
+		// Alternatively, Shift-JIS is used, but we couldn't find
+		// a QTextCodec for Shift-JIS. This shouldn't happen, but
+		// it's possible...
+		textCodec = QTextCodec::codecForName("latin1");
+	}
 	
 	// TODO: Adjust for block size?
 	
@@ -461,17 +484,22 @@ int MemCard::readBlock(void *buf, int siz, uint16_t blockIdx)
 
 /**
  * Get the memory card encoding.
- * @return 0 for ANSI; 1 for SJIS; negative on error.
+ * @return 0 for ANSI (ISO-8859-1); 1 for SJIS; negative on error.
  */
 int MemCard::encoding(void) const
 {
 	if (!isOpen())
 		return -1;
-	if (d->mc_header.encoding > SYS_FONT_ENCODING_MASK)
-		return -2;
-	
-	return d->mc_header.encoding;
+	return (d->mc_header.encoding & SYS_FONT_ENCODING_MASK);
 }
+
+
+/**
+ * Get the QTextCodec for the memory card encoding.
+ * @return QTextCodec.
+ */
+QTextCodec *MemCard::textCodec(void) const
+	{ return d->textCodec; }
 
 
 /**
