@@ -37,7 +37,6 @@ class MemCardFilePrivate
 		MemCardFilePrivate(MemCardFile *q,
 				MemCard *card, const int fileIdx,
 				const card_dat *dat, const card_bat *bat);
-		~MemCardFilePrivate();
 	
 	private:
 		MemCardFile *const q;
@@ -67,11 +66,9 @@ class MemCardFilePrivate
 		QString fileDesc;	// File description.
 		
 		// Images.
-		// TODO: Delay loading...
-		// NOTE: Pointers are used due to weird issues with QImage.
 		bool imagesLoaded;
-		QImage *banner;
-		QVector<QImage*> icons;
+		QImage banner;
+		QVector<QImage> icons;
 		
 		/**
 		 * Convert a file block number to a physical block number.
@@ -172,13 +169,6 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	free(commentData);
 }
 
-MemCardFilePrivate::~MemCardFilePrivate()
-{
-	// Clear the icon vector.
-	qDeleteAll(icons);
-	icons.clear();
-}
-
 
 /**
  * Convert a file block number to a physical block number.
@@ -231,7 +221,8 @@ void MemCardFilePrivate::loadImages(void)
 	// Decode the banner.
 	uint32_t iconAddr = m_direntry->iconaddr;
 	uint32_t imageSize = 0;
-	QImage tmpBanner;
+	banner = QImage();	// Clear the current banner.
+	
 	switch (m_direntry->bannerfmt & CARD_BANNER_MASK)
 	{
 		case CARD_BANNER_CI:
@@ -240,7 +231,7 @@ void MemCardFilePrivate::loadImages(void)
 			imageSize = (CARD_BANNER_W * CARD_BANNER_H * 1);
 			if ((iconAddr + imageSize) > fileLen)
 				break;
-			tmpBanner = GcImage::FromCI8(CARD_BANNER_W, CARD_BANNER_H,
+			banner = GcImage::FromCI8(CARD_BANNER_W, CARD_BANNER_H,
 					&fileData[iconAddr], imageSize,
 					&fileData[iconAddr + imageSize], 0x200);
 			iconAddr += imageSize + 0x200;
@@ -250,7 +241,7 @@ void MemCardFilePrivate::loadImages(void)
 			imageSize = (CARD_BANNER_W * CARD_BANNER_H * 2);
 			if ((iconAddr + imageSize) > fileLen)
 				break;
-			tmpBanner = GcImage::FromRGB5A3(CARD_BANNER_W, CARD_BANNER_H,
+			banner = GcImage::FromRGB5A3(CARD_BANNER_W, CARD_BANNER_H,
 					&fileData[iconAddr], imageSize);
 			iconAddr += imageSize;
 			break;
@@ -259,21 +250,11 @@ void MemCardFilePrivate::loadImages(void)
 			break;
 	}
 	
-	delete banner;
-	banner = NULL;
-	if (!tmpBanner.isNull())
-		banner = new QImage(tmpBanner);
-	
-	// Clear the icon vector.
-	qDeleteAll(icons);
+	// Decode the icon(s).
+	QVector<CI8_SHARED_data> lst_CI8_SHARED;
 	icons.clear();
 	
-	// List of CI8 SHARED images.
-	QVector<CI8_SHARED_data> lst_CI8_SHARED;
-	
-	// Decode the icon(s).
 	uint16_t iconfmt = m_direntry->iconfmt;
-	QImage tmpIcon;
 	for (int i = 0; i < CARD_MAXICONS; i++)
 	{
 		if ((iconfmt & CARD_ICON_MASK) == CARD_ICON_CI_SHARED)
@@ -287,7 +268,7 @@ void MemCardFilePrivate::loadImages(void)
 			lst_CI8_SHARED.append(data);
 			
 			// Add a NULL QImage as a placeholder.
-			icons.append(NULL);
+			icons.append(QImage());
 			
 			// Next icon.
 			imageSize = (CARD_ICON_W * CARD_ICON_H * 1);
@@ -304,9 +285,9 @@ void MemCardFilePrivate::loadImages(void)
 				imageSize = (CARD_ICON_W * CARD_ICON_H * 1);
 				if ((iconAddr + imageSize + 0x200) > fileLen)
 					break;
-				tmpIcon = GcImage::FromCI8(CARD_ICON_W, CARD_ICON_H,
+				icons.append(GcImage::FromCI8(CARD_ICON_W, CARD_ICON_H,
 						&fileData[iconAddr], imageSize,
-						&fileData[iconAddr + imageSize], 0x200);
+						&fileData[iconAddr + imageSize], 0x200));
 				iconAddr += imageSize + 0x200;
 				break;
 			
@@ -314,20 +295,16 @@ void MemCardFilePrivate::loadImages(void)
 				imageSize = (CARD_ICON_W * CARD_ICON_H * 2);
 				if ((iconAddr + imageSize) > fileLen)
 					break;
-				tmpIcon = GcImage::FromRGB5A3(CARD_ICON_W, CARD_ICON_H,
-						&fileData[iconAddr], imageSize);
+				icons.append(GcImage::FromRGB5A3(CARD_ICON_W, CARD_ICON_H,
+						&fileData[iconAddr], imageSize));
 				iconAddr += imageSize;
 				break;
 			
 			default:
-				tmpIcon = QImage();
+				// No icon.
+				// Add a NULL image as a placeholder.
+				icons.append(QImage());
 				break;
-		}
-		
-		{
-			// Save the icon.
-			QImage *icon = new QImage(tmpIcon);
-			icons.append(icon);
 		}
 		
 		// Next icon.
@@ -344,7 +321,7 @@ void MemCardFilePrivate::loadImages(void)
 			// Delete the NULL icons.
 			for (int i = (icons.size() - 1); i >= 0; i--)
 			{
-				if (icons.at(i) == NULL)
+				if (icons.at(i).isNull())
 					icons.remove(i);
 			}
 		}
@@ -353,10 +330,9 @@ void MemCardFilePrivate::loadImages(void)
 			// Process each icon.
 			foreach (const CI8_SHARED_data& data, lst_CI8_SHARED)
 			{
-				tmpIcon = GcImage::FromCI8(CARD_ICON_W, CARD_ICON_H,
-						&fileData[data.iconAddr], imageSize,
-						&fileData[iconAddr], 0x200);
-				icons[data.iconIdx] = new QImage(tmpIcon);
+				icons[data.iconIdx] = GcImage::FromCI8(CARD_ICON_W, CARD_ICON_H,
+							&fileData[data.iconAddr], imageSize,
+							&fileData[iconAddr], 0x200);
 			}
 		}
 	}
@@ -458,11 +434,7 @@ QImage MemCardFile::banner(void) const
 {
 	if (!d->imagesLoaded)
 		d->loadImages();
-	
-	if (!d->banner)
-		return QImage();
-	else
-		return *d->banner;
+	return d->banner;
 }
 
 /**
@@ -479,9 +451,11 @@ int MemCardFile::numIcons(void) const
  */
 QImage MemCardFile::icon(int idx)
 {
+	if (!d->imagesLoaded)
+		d->loadImages();
 	if (idx < 0 || idx >= d->icons.size())
 		return QImage();
-	return *(d->icons.at(idx));
+	return d->icons.at(idx);
 }
 
 /**
