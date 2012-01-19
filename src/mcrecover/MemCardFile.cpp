@@ -432,7 +432,7 @@ uint8_t MemCardFile::size(void) const
  * Get the banner image.
  * @return Banner image.
  */
-QImage MemCardFile::banner(void) const
+QImage MemCardFile::banner(void)
 {
 	if (!d->imagesLoaded)
 		d->loadImages();

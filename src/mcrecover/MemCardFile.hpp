@@ -108,7 +108,7 @@ class MemCardFile : public QObject
 		 * Get the banner image.
 		 * @return Banner image.
 		 */
-		QImage banner(void) const;
+		QImage banner(void);
 		
 		/**
 		 * Get the number of icons in the file.
