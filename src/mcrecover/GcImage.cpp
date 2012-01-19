@@ -34,11 +34,11 @@
 
 
 /**
- * Convert an RGB5A3 pixel to ARGB8888.
+ * Convert an RGB5A3 pixel to ARGB32.
  * @param px16 RGB5A3 pixel.
  * @return ARGB888 pixel.
  */
-static inline uint32_t RGB5A3_to_ARGB8888(uint16_t px16)
+static inline uint32_t RGB5A3_to_ARGB32(uint16_t px16)
 {
 	uint32_t px32 = 0;
 	
@@ -46,8 +46,6 @@ static inline uint32_t RGB5A3_to_ARGB8888(uint16_t px16)
 	px32 |= (((px16 << 6) & 0x00F800) | ((px16 << 3) & 0x000700));	// G
 	px32 |= (((px16 << 9) & 0xF80000) | ((px16 << 6) & 0x070000));	// R
 	
-	// TODO: Fix alpha channel!
-	// For now, just use white for alpha.
 	if (px16 & 0x8000)
 		px32 |= 0xFF000000U;
 	
@@ -115,7 +113,7 @@ QImage GcImage::FromCI8(int w, int h, const void *img_buf, int img_siz,
 	uint16_t *pal5A3 = (uint16_t*)pal_buf;
 	for (int i = 0; i < 256; i++)
 	{
-		palette[i] = RGB5A3_to_ARGB8888(be16_to_cpu(*pal5A3));
+		palette[i] = RGB5A3_to_ARGB32(be16_to_cpu(*pal5A3));
 		pal5A3++;
 	}
 	
@@ -180,7 +178,7 @@ QImage GcImage::FromRGB5A3(int w, int h, const void *img_buf, int img_siz)
 			uint32_t *tilePtr = tileBuf.data();
 			for (int i = 0; i < 4*4; i++)
 			{
-				*tilePtr++ = RGB5A3_to_ARGB8888(be16_to_cpu(*buf5A3));
+				*tilePtr++ = RGB5A3_to_ARGB32(be16_to_cpu(*buf5A3));
 				
 				// NOTE: buf5A3 must be incremented OUTSIDE of the
 				// be16_to_cpu() macro! Otherwise, shenanigans will ensue.
