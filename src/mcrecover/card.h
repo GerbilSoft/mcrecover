@@ -150,6 +150,7 @@ typedef struct PACKED _card_bat
 	// before looking it up in the FAT!
 	uint16_t fat[0xFFB];	// File allocation table.
 } card_bat;
+#pragma pack()
 
 // File attributes.
 #define CARD_ATTRIB_PUBLIC	0x04
