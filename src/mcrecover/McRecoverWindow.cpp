@@ -53,16 +53,16 @@ class McRecoverWindowPrivate
 		// Memory Card instance.
 		MemCard *card;
 		
-		// Memory Card model for QListView.
+		// Memory Card model for lstMemCard.
 		MemCardModel *model;
 		
 		// Filename.
 		QString filename;
 		
 		/**
-		 * Update the memory card group box's title.
+		 * Update the memory card's QTreeView.
 		 */
-		void updateGrpMemCardTitle(void);
+		void updateLstMemCard(void);
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -89,14 +89,23 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 
 
 /**
- * Update the memory card group box's title.
+ * Update the memory card's QTreeView.
  */
-void McRecoverWindowPrivate::updateGrpMemCardTitle(void)
+void McRecoverWindowPrivate::updateLstMemCard(void)
 {
 	if (!card)
+	{
+		// Hide the QTreeView headers.
+		q->lstMemCard->setHeaderHidden(true);
+		
+		// Set the group box's title.
 		q->grpMemCard->setTitle(q->tr("No memory card loaded."));
+	}
 	else
 	{
+		// Show the QTreeView headers.
+		q->lstMemCard->setHeaderHidden(false);
+		
 		// Extract the filename from the path.
 		QString displayFilename = filename;
 		int lastSlash = displayFilename.lastIndexOf(QChar(L'/'));
@@ -143,8 +152,8 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	// Set lstMemCard's model.
 	lstMemCard->setModel(d->model);
 	
-	// Initialize the memory card's group box title.
-	d->updateGrpMemCardTitle();
+	// Initialize the memory card's QTreeView.
+	d->updateLstMemCard();
 }
 
 McRecoverWindow::~McRecoverWindow()
@@ -171,12 +180,12 @@ void McRecoverWindow::open(QString filename)
 	d->model->setMemCard(d->card);
 	d->filename = filename;
 	
+	// Update the memory card's QTreeView.
+	d->updateLstMemCard();
+	
 	// Resize the columns to fit the contents.
 	for (int i = 0; i < d->model->columnCount(); i++)
 		lstMemCard->resizeColumnToContents(i);
-	
-	// Update the memory card's group box title.
-	d->updateGrpMemCardTitle();
 }
 
 
