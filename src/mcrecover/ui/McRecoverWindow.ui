@@ -10,6 +10,9 @@
     <height>535</height>
    </rect>
   </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>GameCube Memory Card Recovery Program</string>
   </property>

@@ -38,6 +38,11 @@ class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
 		 * @param filename Filename.
 		 */
 		void open(QString filename);
+	
+	protected:
+		// QMainWindow virtual functions: drag and drop.
+		void dragEnterEvent(QDragEnterEvent *event);
+		void dropEvent(QDropEvent *event);
 };
 
 #endif /* __MCRECOVER_MCRECOVERWINDOW_HPP__ */

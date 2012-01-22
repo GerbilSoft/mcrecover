@@ -28,6 +28,11 @@
 // MemCard list model.
 #include "MemCardModel.hpp"
 
+// Qt includes. (Drag & Drop)
+#include <QtGui/QDragEnterEvent>
+#include <QtGui/QDropEvent>
+#include <QtCore/QUrl>
+
 // git version
 #include "git.h"
 
@@ -104,4 +109,78 @@ void McRecoverWindow::open(QString filename)
 				.arg(card->freeBlocks())
 			);
 	}
+}
+
+
+/**
+ * An item is being dragged onto the window.
+ * @param event QDragEnterEvent describing the item.
+ */
+void McRecoverWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+	if (!event->mimeData()->hasUrls())
+		return;
+	
+	// One or more URls have been dragged onto the window.
+	const QList<QUrl>& lstUrls = event->mimeData()->urls();
+	if (lstUrls.size() != 1)
+	{
+		// More than one file has been dragged onto the window.
+		// TODO: Add support for this; open one window per file.
+		return;
+	}
+	
+	// One URL has been dragged onto the window.
+	const QUrl& url = lstUrls.at(0);
+	
+	// Make sure the URL is file://.
+	// TODO: Add support for other protocols later.
+	if (url.scheme() != QLatin1String("file"))
+		return;
+	
+	// Override the proposed action with Copy, and accept it.
+	event->setDropAction(Qt::CopyAction);
+	event->accept();
+}
+
+
+/**
+ * An item has been dropped onto the window.
+ * @param event QDropEvent describing the item.
+ */
+void McRecoverWindow::dropEvent(QDropEvent *event)
+{
+	if (!event->mimeData()->hasUrls())
+		return;
+	
+	// One or more URls have been dragged onto the window.
+	const QList<QUrl>& lstUrls = event->mimeData()->urls();
+	if (lstUrls.size() != 1)
+	{
+		// More than one file has been dropped onto the window.
+		// TODO: Add support for this; open one window per file.
+		return;
+	}
+	
+	// One URL has been dropped onto the window.
+	const QUrl& url = lstUrls.at(0);
+	
+	// Make sure the URL is file://.
+	// TODO: Add support for other protocols later.
+	if (url.scheme() != QLatin1String("file"))
+		return;
+	
+	// Get the local filename.
+	// NOTE: url.toLocalFile() returns an empty string if this isn't file://,
+	// but we're already checking for file:// above...
+	QString filename = url.toLocalFile();
+	if (filename.isEmpty())
+		return;
+	
+	// Override the proposed action with Copy, and accept it.
+	event->setDropAction(Qt::CopyAction);
+	event->accept();
+	
+	// Open the memory card file.
+	open(filename);
 }
