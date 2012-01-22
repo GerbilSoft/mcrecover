@@ -66,6 +66,18 @@ void McRecoverWindow::open(QString filename)
 	MemCard *card = new MemCard(filename);
 	MemCardModel *model = new MemCardModel(this);
 	model->setMemCard(card);
+	
+	// Only show icon, description, and size in the MemCardModel.
+	model->setColumnVisible(MemCardModel::COL_ICON, true);
+	model->setColumnVisible(MemCardModel::COL_BANNER, false);
+	model->setColumnVisible(MemCardModel::COL_DESCRIPTION, true);
+	model->setColumnVisible(MemCardModel::COL_SIZE, true);
+	model->setColumnVisible(MemCardModel::COL_MTIME, false);
+	model->setColumnVisible(MemCardModel::COL_PERMISSION, false);
+	model->setColumnVisible(MemCardModel::COL_GAMECODE, false);
+	model->setColumnVisible(MemCardModel::COL_FILENAME, false);
+	
+	// Attach the model to the QListView.
 	lstMemCard->setModel(model);
 	
 	// Resize the columns to fit the contents.
