@@ -475,6 +475,11 @@ QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int 
 void MemCardModel::setMemCard(MemCard *card)
 {
 	d->card = card;
+	
+	// Initialize the animation state.
+	if (card != NULL)
+		d->initAnimState();
+	
 	emit layoutChanged();
 }
 
