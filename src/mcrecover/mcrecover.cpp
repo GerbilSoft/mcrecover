@@ -34,15 +34,14 @@ int main(int argc, char *argv[])
 {
 	QApplication *mcApp = new QApplication(argc, argv);
 	
-	if (argc < 2)
-	{
-		printf("Usage: %s [filename]\n", argv[0]);
-		return EXIT_FAILURE;
-	}
-	
 	// Initialize the McRecoverWindow.
 	McRecoverWindow *mcRecoverWindow = new McRecoverWindow();
-	mcRecoverWindow->open(QString::fromLocal8Bit(argv[1]));
+	
+	// If a filename was specified, open it.
+	if (argc > 1)
+		mcRecoverWindow->open(QString::fromLocal8Bit(argv[1]));
+	
+	// Show the window.
 	mcRecoverWindow->show();
 	
 	// Run the Qt4 UI.
