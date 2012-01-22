@@ -259,21 +259,8 @@ void MemCardModelPrivate::refreshVisibleColumns(void)
 	// vIndirectCols is no longer dirty.
 	vIndirectCols_dirty = false;
 	
-	// Notify the UI that the visible columns have changed.
-	QModelIndex topLeft;
-	QModelIndex bottomRight;
-	
-	int rows = q->rowCount() - 1;
-	if (rows < 0)
-		rows = 0;
-	int cols = q->columnCount() - 1;
-	if (cols < 0)
-		cols = 0;
-	
-	topLeft = q->createIndex(0, 0, 0);
-	bottomRight = q->createIndex(q->rowCount() - 1, q->columnCount() - 1, 0);
-	
-	emit q->dataChanged(topLeft, bottomRight);
+	// Notify the UI that the layout has changed.
+	emit q->layoutChanged();
 }
 
 
@@ -488,27 +475,7 @@ QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int 
 void MemCardModel::setMemCard(MemCard *card)
 {
 	d->card = card;
-	
-	QModelIndex topLeft;
-	QModelIndex bottomRight;
-	
-	int rows = rowCount() - 1;
-	if (rows < 0)
-		rows = 0;
-	int cols = columnCount() - 1;
-	if (cols < 0)
-		cols = 0;
-	
-	topLeft = createIndex(0, 0, 0);
-	bottomRight = createIndex(rows, cols, 0);
-	
-	if (rows > 0 && cols > 0)
-	{
-		// Initialize the animation state.
-		d->initAnimState();
-	}
-	
-	emit dataChanged(topLeft, bottomRight);
+	emit layoutChanged();
 }
 
 
