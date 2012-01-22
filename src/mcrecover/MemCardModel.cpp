@@ -521,4 +521,7 @@ void MemCardModel::setColumnVisible(int column, bool visible)
 	
 	// d->vIndirectCols needs to be updated.
 	d->vIndirectCols_dirty = true;
+	
+	// Layout has changed.
+	emit layoutChanged();
 }
