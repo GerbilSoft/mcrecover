@@ -76,7 +76,8 @@ class MemCardModelPrivate
 		// Visible columns.
 		uint32_t bfColumnsVisible;	// bitfield
 		QVector<int> vIndirectCols;	// indirect columns
-		void refreshVisibleColumns(bool notify = true);
+		bool vIndirectCols_dirty;
+		void refreshVisibleColumns(void);
 };
 
 MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
@@ -85,10 +86,8 @@ MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	
 	// Default to all columns visible.
 	, bfColumnsVisible((1 << (MemCardModel::COL_MAX + 1)) - 1)
+	, vIndirectCols_dirty(true)
 {
-	// Initialize vIndirectCols.
-	refreshVisibleColumns(false);
-	
 	// Connect animTimer's timeout() signal.
 	QObject::connect(&animTimer, SIGNAL(timeout()),
 			 q, SLOT(animTimerSlot()));
@@ -243,9 +242,8 @@ void MemCardModelPrivate::animTimerSlot(void)
 
 /**
  * Refresh the indirect columns vector.
- * @param notify If true, notify the UI that the visible columns have changed.
  */
-void MemCardModelPrivate::refreshVisibleColumns(bool notify)
+void MemCardModelPrivate::refreshVisibleColumns(void)
 {
 	vIndirectCols.clear();
 	vIndirectCols.reserve(MemCardModel::COL_MAX);
@@ -257,24 +255,24 @@ void MemCardModelPrivate::refreshVisibleColumns(bool notify)
 			vIndirectCols.push_back(col);
 	}
 	
+	// vIndirectCols is no longer dirty.
+	vIndirectCols_dirty = false;
+	
 	// Notify the UI that the visible columns have changed.
-	if (notify)
-	{
-		QModelIndex topLeft;
-		QModelIndex bottomRight;
-		
-		int rows = q->rowCount() - 1;
-		if (rows < 0)
-			rows = 0;
-		int cols = q->columnCount() - 1;
-		if (cols < 0)
-			cols = 0;
-		
-		topLeft = q->createIndex(0, 0, 0);
-		bottomRight = q->createIndex(q->rowCount() - 1, q->columnCount() - 1, 0);
-		
-		emit q->dataChanged(topLeft, bottomRight);
-	}
+	QModelIndex topLeft;
+	QModelIndex bottomRight;
+	
+	int rows = q->rowCount() - 1;
+	if (rows < 0)
+		rows = 0;
+	int cols = q->columnCount() - 1;
+	if (cols < 0)
+		cols = 0;
+	
+	topLeft = q->createIndex(0, 0, 0);
+	bottomRight = q->createIndex(q->rowCount() - 1, q->columnCount() - 1, 0);
+	
+	emit q->dataChanged(topLeft, bottomRight);
 }
 
 
@@ -298,6 +296,11 @@ int MemCardModel::rowCount(const QModelIndex& parent) const
 int MemCardModel::columnCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
+	
+	// NOTE: This is a const function, but it modifies the private class!
+	if (d->vIndirectCols_dirty)
+		d->refreshVisibleColumns();
+	
 	return d->vIndirectCols.size();
 }
 
@@ -311,6 +314,10 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 	
 	// Get the memory card file.
 	MemCardFile *file = d->card->getFile(index.row());
+	
+	// Make sure vIndirectCols is up to date.
+	if (d->vIndirectCols_dirty)
+		d->refreshVisibleColumns();
 	
 	// Get the column identifier.
 	int section = index.column();
@@ -421,6 +428,10 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	Q_UNUSED(orientation);
+	
+	// Make sure vIndirectCols is up to date.
+	if (d->vIndirectCols_dirty)
+		d->refreshVisibleColumns();
 	
 	// Get the column identifier.
 	if (section >= d->vIndirectCols.size())
@@ -537,6 +548,6 @@ void MemCardModel::setColumnVisible(int column, bool visible)
 	else
 		d->bfColumnsVisible &= ~(1 << column);
 	
-	// Update d->vIndirectCols.
-	d->refreshVisibleColumns();
+	// d->vIndirectCols needs to be updated.
+	d->vIndirectCols_dirty = true;
 }
