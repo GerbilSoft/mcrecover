@@ -82,6 +82,7 @@ class MemCardModelPrivate
 
 MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	: q(q)
+	, card(NULL)
 	, animTimer(new QTimer(q))
 	
 	// Default to all columns visible.
