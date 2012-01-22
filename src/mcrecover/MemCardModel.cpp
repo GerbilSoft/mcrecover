@@ -297,6 +297,7 @@ int MemCardModel::columnCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
 	
+	// Make sure vIndirectCols is up to date.
 	// NOTE: This is a const function, but it modifies the private class!
 	if (d->vIndirectCols_dirty)
 		d->refreshVisibleColumns();
@@ -316,6 +317,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 	MemCardFile *file = d->card->getFile(index.row());
 	
 	// Make sure vIndirectCols is up to date.
+	// NOTE: This is a const function, but it modifies the private class!
 	if (d->vIndirectCols_dirty)
 		d->refreshVisibleColumns();
 	
@@ -430,6 +432,7 @@ QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int 
 	Q_UNUSED(orientation);
 	
 	// Make sure vIndirectCols is up to date.
+	// NOTE: This is a const function, but it modifies the private class!
 	if (d->vIndirectCols_dirty)
 		d->refreshVisibleColumns();
 	
