@@ -25,6 +25,8 @@
 #include <QtGui/QMainWindow>
 #include "ui_McRecoverWindow.h"
 
+class McRecoverWindowPrivate;
+
 class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
 {
 	Q_OBJECT
@@ -32,7 +34,13 @@ class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
 	public:
 		McRecoverWindow(QWidget *parent = 0);
 		~McRecoverWindow();
-		
+	
+	private:
+		friend class McRecoverWindowPrivate;
+		McRecoverWindowPrivate *const d;
+		Q_DISABLE_COPY(McRecoverWindow);
+	
+	public:
 		/**
 		 * Open a GameCube Memory Card file.
 		 * @param filename Filename.
