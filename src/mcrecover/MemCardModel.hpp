@@ -70,6 +70,20 @@ class MemCardModel : public QAbstractListModel
 		 * @param card Memory card.
 		 */
 		void setMemCard(MemCard *card);
+		
+		/**
+		 * Check if a column is visible.
+		 * @param column Column number.
+		 * @return True if the column is visible; false if not.
+		 */
+		bool isColumnVisible(int column);
+		
+		/**
+		 * Set a column's visibility status.
+		 * @param column Column number.
+		 * @param visible True to show the column; false to hide it.
+		 */
+		void setColumnVisible(int column, bool visible);
 	
 	private slots:
 		/**

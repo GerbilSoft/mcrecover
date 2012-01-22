@@ -25,6 +25,9 @@
 #include "MemCard.hpp"
 #include "MemCardFile.hpp"
 
+// C includes.
+#include <limits.h>
+
 // Qt includes.
 #include <QtGui/QFont>
 #include <QtCore/QHash>
@@ -69,12 +72,23 @@ class MemCardModelPrivate
 		 * Animation timer "slot".
 		 */
 		void animTimerSlot(void);
+		
+		// Visible columns.
+		uint32_t bfColumnsVisible;	// bitfield
+		QVector<int> vIndirectCols;	// indirect columns
+		void refreshVisibleColumns(bool notify = true);
 };
 
 MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	: q(q)
 	, animTimer(new QTimer(q))
+	
+	// Default to all columns visible.
+	, bfColumnsVisible((1 << (MemCardModel::COL_MAX + 1)) - 1)
 {
+	// Initialize vIndirectCols.
+	refreshVisibleColumns(false);
+	
 	// Connect animTimer's timeout() signal.
 	QObject::connect(&animTimer, SIGNAL(timeout()),
 			 q, SLOT(animTimerSlot()));
@@ -227,6 +241,43 @@ void MemCardModelPrivate::animTimerSlot(void)
 }
 
 
+/**
+ * Refresh the indirect columns vector.
+ * @param notify If true, notify the UI that the visible columns have changed.
+ */
+void MemCardModelPrivate::refreshVisibleColumns(bool notify)
+{
+	vIndirectCols.clear();
+	vIndirectCols.reserve(MemCardModel::COL_MAX);
+	
+	int col = 0;
+	for (uint32_t bf = bfColumnsVisible; bf != 0; bf >>= 1, col++)
+	{
+		if (bf & 1)
+			vIndirectCols.push_back(col);
+	}
+	
+	// Notify the UI that the visible columns have changed.
+	if (notify)
+	{
+		QModelIndex topLeft;
+		QModelIndex bottomRight;
+		
+		int rows = q->rowCount() - 1;
+		if (rows < 0)
+			rows = 0;
+		int cols = q->columnCount() - 1;
+		if (cols < 0)
+			cols = 0;
+		
+		topLeft = q->createIndex(0, 0, 0);
+		bottomRight = q->createIndex(q->rowCount() - 1, q->columnCount() - 1, 0);
+		
+		emit q->dataChanged(topLeft, bottomRight);
+	}
+}
+
+
 /** MemCardModel **/
 
 MemCardModel::MemCardModel(QObject *parent)
@@ -247,7 +298,7 @@ int MemCardModel::rowCount(const QModelIndex& parent) const
 int MemCardModel::columnCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
-	return COL_MAX;
+	return d->vIndirectCols.size();
 }
 
 
@@ -255,12 +306,17 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 {
 	if (!d->card || !index.isValid())
 		return QVariant();
-	if (index.row() >= d->card->numFiles())
+	if (index.row() >= rowCount())
 		return QVariant();
 	
 	// Get the memory card file.
 	MemCardFile *file = d->card->getFile(index.row());
-	const int section = index.column();
+	
+	// Get the column identifier.
+	int section = index.column();
+	if (section >= d->vIndirectCols.size())
+		return QVariant();
+	section = d->vIndirectCols.at(section);
 	
 	switch (role)
 	{
@@ -364,6 +420,13 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 
 QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
+	Q_UNUSED(orientation);
+	
+	// Get the column identifier.
+	if (section >= d->vIndirectCols.size())
+		return QVariant();
+	section = d->vIndirectCols.at(section);
+	
 	switch (role)
 	{
 		case Qt::DisplayRole:
@@ -414,22 +477,18 @@ void MemCardModel::setMemCard(MemCard *card)
 	QModelIndex topLeft;
 	QModelIndex bottomRight;
 	
-	if (card == NULL)
+	int rows = rowCount() - 1;
+	if (rows < 0)
+		rows = 0;
+	int cols = columnCount() - 1;
+	if (cols < 0)
+		cols = 0;
+	
+	topLeft = createIndex(0, 0, 0);
+	bottomRight = createIndex(rows, cols, 0);
+	
+	if (rows > 0 && cols > 0)
 	{
-		// No memory card. Use blank indexes.
-		topLeft = createIndex(0, 0, 0);
-		bottomRight = createIndex(0, COL_MAX, 0);
-	}
-	else
-	{
-		// Memory card specified.
-		topLeft = createIndex(0, 0, 0);
-		
-		int lastFile = (card->numFiles() - 1);
-		if (lastFile < 0)
-			lastFile++;
-		bottomRight = createIndex(lastFile, COL_MAX, 0);
-		
 		// Initialize the animation state.
 		d->initAnimState();
 	}
@@ -444,3 +503,40 @@ void MemCardModel::setMemCard(MemCard *card)
  */
 void MemCardModel::animTimerSlot(void)
 	{ d->animTimerSlot(); }
+
+
+/**
+ * Check if a column is visible.
+ * @param column Column number.
+ * @return True if the column is visible; false if not.
+ */
+bool MemCardModel::isColumnVisible(int column)
+{
+	if (column < 0 || column >= COL_MAX)
+		return false;
+	
+	return !!(d->bfColumnsVisible & (1 << column));
+}
+
+
+/**
+ * Set a column's visibility status.
+ * @param column Column number.
+ * @param visible True to show the column; false to hide it.
+ */
+void MemCardModel::setColumnVisible(int column, bool visible)
+{
+	if (column < 0 || column >= COL_MAX)
+		return;
+	if (isColumnVisible(column) == visible)
+		return;
+	
+	// Change the visibility of this column.
+	if (visible)
+		d->bfColumnsVisible |= (1 << column);
+	else
+		d->bfColumnsVisible &= ~(1 << column);
+	
+	// Update d->vIndirectCols.
+	d->refreshVisibleColumns();
+}
