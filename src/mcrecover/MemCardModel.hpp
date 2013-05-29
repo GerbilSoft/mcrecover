@@ -91,6 +91,12 @@ class MemCardModel : public QAbstractListModel
 		 * Wrapper for MemCardModelPrivate::animTimerSlot().
 		 */
 		void animTimerSlot(void);
+
+		/**
+		 * MemCard has changed.
+		 * TODO: More fine-grained slot for specific files.
+		 */
+		void memCardChangedSlot(void);
 };
 
 #endif /* __MCRECOVER_MEMCARDMODEL_HPP__ */

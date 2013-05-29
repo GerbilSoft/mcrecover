@@ -40,16 +40,15 @@ class MemCardModelPrivate
 	public:
 		MemCardModelPrivate(MemCardModel *q);
 		~MemCardModelPrivate();
-	
+
 	private:
 		MemCardModel *const q;
 		Q_DISABLE_COPY(MemCardModelPrivate);
-	
+
 	public:
 		MemCard *card;
-		
-		struct AnimData
-		{
+
+		struct AnimData {
 			uint8_t frame;		// Current frame.
 			uint8_t lastValidFrame;	// Last valid frame.
 			bool frameHasIcon;	// If false, use previous frame.
@@ -59,20 +58,20 @@ class MemCardModelPrivate
 			bool direction;		// Current direction for CARD_ANIM_BOUNCE.
 		};
 		QHash<MemCardFile*, AnimData*> animState;
-		
+
 		/**
 		 * Initialize the animation state.
 		 */
 		void initAnimState(void);
-		
+
 		// Animation timer.
 		QTimer animTimer;
-		
+
 		/**
 		 * Animation timer "slot".
 		 */
 		void animTimerSlot(void);
-		
+
 		// Visible columns.
 		uint32_t bfColumnsVisible;	// bitfield
 		QVector<int> vIndirectCols;	// indirect columns
@@ -84,7 +83,7 @@ MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	: q(q)
 	, card(NULL)
 	, animTimer(new QTimer(q))
-	
+
 	// Default to all columns visible.
 	, bfColumnsVisible((1 << (MemCardModel::COL_MAX + 1)) - 1)
 	, vIndirectCols_dirty(true)
@@ -97,7 +96,7 @@ MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 MemCardModelPrivate::~MemCardModelPrivate()
 {
 	animTimer.stop();
-	
+
 	// TODO: Check for race conditions.
 	qDeleteAll(animState);
 	animState.clear();
@@ -110,23 +109,22 @@ MemCardModelPrivate::~MemCardModelPrivate()
 void MemCardModelPrivate::initAnimState(void)
 {
 	animTimer.stop();
-	
+
 	// TODO: Check for race conditions.
 	qDeleteAll(animState);
 	animState.clear();
-	
+
 	if (!card)
 		return;
-	
+
 	// Initialize the animation state.
-	for (int i = 0; i < card->numFiles(); i++)
-	{
+	for (int i = 0; i < card->numFiles(); i++) {
 		MemCardFile *file = card->getFile(i);
-		
+
 		int numIcons = file->numIcons();
 		if (numIcons <= 1)
 			continue;
-		
+
 		// Get the file data.
 		AnimData *animData = new AnimData();
 		animData->frame = 0;
@@ -138,7 +136,7 @@ void MemCardModelPrivate::initAnimState(void)
 		animData->direction = false;
 		animState.insert(file, animData);
 	}
-	
+
 	// TODO: Figure out the correct timer interval.
 	// This will use 125ms for 'fast' icons.
 	if (!animState.isEmpty())
@@ -151,89 +149,74 @@ void MemCardModelPrivate::initAnimState(void)
  */
 void MemCardModelPrivate::animTimerSlot(void)
 {
-	if (!card)
-	{
+	if (!card) {
 		animTimer.stop();
 		return;
 	}
-	
+
 	// Check for icon animations.
-	for (int i = 0; i < card->numFiles(); i++)
-	{
+	for (int i = 0; i < card->numFiles(); i++) {
 		MemCardFile *file = card->getFile(i);
 		if (!animState.contains(file))
 			continue;
-		
+
 		AnimData *animData = animState.value(file);
-		
+
 		// Check the delay counter.
 		animData->delayCnt++;
-		if (animData->delayCnt < animData->delayLen)
-		{
+		if (animData->delayCnt < animData->delayLen) {
 			// Animation delay hasn't expired yet.
 			continue;
 		}
-		
+
 		// Animation delay has expired.
 		// Go to the next frame.
-		if (!animData->direction)
-		{
+		if (!animData->direction) {
 			// Animation is moving forwards.
 			// Check if we're at the last frame.
 			if (animData->frame == (CARD_MAXICONS - 1) ||
 			    (file->iconDelay(animData->frame + 1) == CARD_SPEED_END))
 			{
 				// Last frame.
-				if (animData->mode == CARD_ANIM_BOUNCE)
-				{
+				if (animData->mode == CARD_ANIM_BOUNCE) {
 					// "Bounce" animation. Start playing backwards.
 					animData->direction = true;
 					animData->frame--;	// Go to the previous frame.
-				}
-				else
-				{
+				} else {
 					// "Looping" animation.
 					// Reset to frame 0.
 					animData->frame = 0;
 				}
-			}
-			else
-			{
+			} else {
 				// Not the last frame.
 				// Go to the next frame.
 				animData->frame++;
 			}
-		}
-		else
-		{
+		} else {
 			// Animation is moving backwards. ("Bounce" animation only.)
 			// Check if we're at the first frame.
-			if (animData->frame == 0)
-			{
+			if (animData->frame == 0) {
 				// First frame. Start playing forwards.
 				animData->direction = false;
 				animData->frame++;	// Go to the next frame.
-			}
-			else
-			{
+			} else {
 				// Not the first frame.
 				// Go to the previous frame.
 				animData->frame--;
 			}
 		}
-		
+
 		// Update the frame delay data.
 		animData->delayCnt = 0;
 		animData->delayLen = file->iconDelay(animData->frame);
-		
+
 		// Check if this frame has an icon.
 		animData->frameHasIcon = !file->icon(animData->frame).isNull();
-		if (animData->frameHasIcon)
-		{
+		if (animData->frameHasIcon) {
 			// Frame has an icon. Save this frame as the last valid frame.
 			animData->lastValidFrame = animData->frame;
 		}
-		
+
 		// Notify the UI that the icon has changed.
 		QModelIndex iconIndex = q->createIndex(i, MemCardModel::COL_ICON, 0);
 		emit q->dataChanged(iconIndex, iconIndex);
@@ -248,17 +231,16 @@ void MemCardModelPrivate::refreshVisibleColumns(void)
 {
 	vIndirectCols.clear();
 	vIndirectCols.reserve(MemCardModel::COL_MAX);
-	
+
 	int col = 0;
-	for (uint32_t bf = bfColumnsVisible; bf != 0; bf >>= 1, col++)
-	{
+	for (uint32_t bf = bfColumnsVisible; bf != 0; bf >>= 1, col++) {
 		if (bf & 1)
 			vIndirectCols.push_back(col);
 	}
-	
+
 	// vIndirectCols is no longer dirty.
 	vIndirectCols_dirty = false;
-	
+
 	// Notify the UI that the layout has changed.
 	emit q->layoutChanged();
 }
@@ -300,97 +282,83 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 		return QVariant();
 	if (index.row() >= rowCount())
 		return QVariant();
-	
+
 	// Get the memory card file.
 	MemCardFile *file = d->card->getFile(index.row());
-	
+
 	// Make sure vIndirectCols is up to date.
 	// NOTE: This is a const function, but it modifies the private class!
 	if (d->vIndirectCols_dirty)
 		d->refreshVisibleColumns();
-	
+
 	// Get the column identifier.
 	int section = index.column();
 	if (section >= d->vIndirectCols.size())
 		return QVariant();
 	section = d->vIndirectCols.at(section);
-	
-	switch (role)
-	{
+
+	switch (role) {
 		case Qt::DisplayRole:
-			switch (section)
-			{
+			switch (section) {
 				case COL_DESCRIPTION:
 					return file->gameDesc() + QChar(L'\n') + file->fileDesc();
-				
 				case COL_SIZE:
 					return file->size();
-				
 				case COL_MTIME:
 					return file->lastModified().toString(Qt::DefaultLocaleShortDate);
-				
 				case COL_PERMISSION:
 					return file->permissionAsString();
-				
 				case COL_GAMECODE:
 					return (file->gamecode() + file->company());
-				
 				case COL_FILENAME:
 					return file->filename();
-				
 				default:
 					break;
 			}
 			break;
-		
+
 		case Qt::DecorationRole:
 			// Images must use Qt::DecorationRole.
-			switch (section)
-			{
+			switch (section) {
 				case COL_ICON:
 					// Check if this is an animated icon.
-					if (d->animState.contains(file))
-					{
+					if (d->animState.contains(file)) {
 						// Animated icon.
 						MemCardModelPrivate::AnimData *animData = d->animState.value(file);
 						if (animData->frameHasIcon)
 							return file->icon(animData->frame);
 						else
 							return file->icon(animData->lastValidFrame);
-					}
-					else
-					{
+					} else {
 						// Not an animated icon.
 						// Return the first icon.
 						return file->icon(0);
 					}
-				
+
 				case COL_BANNER:
 					return file->banner();
-				
+
 				default:
 					break;
 			}
 			break;
-		
+
 		case Qt::TextAlignmentRole:
-			switch (section)
-			{
+			switch (section) {
 				case COL_SIZE:
 				case COL_PERMISSION:
 				case COL_GAMECODE:
 					// These columns should be center-aligned horizontally.
 					return (int)(Qt::AlignHCenter | Qt::AlignVCenter);
-				
+
 				default:
 					// Everything should be center-aligned vertically.
 					return Qt::AlignVCenter;
 			}
 			break;
-		
+
 		case Qt::FontRole:
-			switch (section)
-			{
+			switch (section) {
 				case COL_SIZE:
 				case COL_PERMISSION:
 				case COL_GAMECODE:
@@ -400,16 +368,16 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 					font.setStyleHint(QFont::TypeWriter); // or QFont::Monospace?
 					return font;
 				}
-				
+
 				default:
 					break;
 			}
 			break;
-		
+
 		default:
 			break;
 	}
-	
+
 	// Default value.
 	return QVariant();
 }
@@ -418,22 +386,20 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	Q_UNUSED(orientation);
-	
+
 	// Make sure vIndirectCols is up to date.
 	// NOTE: This is a const function, but it modifies the private class!
 	if (d->vIndirectCols_dirty)
 		d->refreshVisibleColumns();
-	
+
 	// Get the column identifier.
 	if (section >= d->vIndirectCols.size())
 		return QVariant();
 	section = d->vIndirectCols.at(section);
-	
-	switch (role)
-	{
+
+	switch (role) {
 		case Qt::DisplayRole:
-			switch (section)
-			{
+			switch (section) {
 				case COL_ICON:		return tr("Icon");
 				case COL_BANNER:	return tr("Banner");
 				case COL_DESCRIPTION:	return tr("Description");
@@ -446,23 +412,22 @@ QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int 
 					break;
 			}
 			break;
-		
+
 		case Qt::TextAlignmentRole:
-			switch (section)
-			{
+			switch (section) {
 				case COL_ICON:
 				case COL_SIZE:
 				case COL_PERMISSION:
 				case COL_GAMECODE:
 					// Center-align the text.
 					return Qt::AlignHCenter;
-				
+
 				default:
 					break;
 			}
 			break;
 	}
-	
+
 	// Default value.
 	return QVariant();
 }
@@ -474,12 +439,28 @@ QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int 
  */
 void MemCardModel::setMemCard(MemCard *card)
 {
+	emit layoutAboutToBeChanged();
+
+	// Disconnect the MemCard's changed() signal if a MemCard is already set.
+	if (d->card) {
+		// TODO: More fine-grained changed() for the specific files.
+		disconnect(d->card, SIGNAL(changed()),
+			   this, SLOT(memCardChangedSlot()));
+	}
+
 	d->card = card;
-	
-	// Initialize the animation state.
-	if (card != NULL)
+
+	if (card != NULL) {
+		// Initialize the animation state.
 		d->initAnimState();
-	
+
+		// Connect the MemCard's changed() signal.
+		// TODO: More fine-grained changed() for the specific files.
+		connect(card, SIGNAL(changed()),
+			this, SLOT(memCardChangedSlot()));
+	}
+
+	// Layout has changed.
 	emit layoutChanged();
 }
 
@@ -493,6 +474,19 @@ void MemCardModel::animTimerSlot(void)
 
 
 /**
+ * MemCard has changed.
+ * TODO: More fine-grained slot for specific files.
+ */
+void MemCardModel::memCardChangedSlot(void)
+{
+	// NOTE: Not sure if layoutAboutToBeChanged() should be emitted here...
+	// TODO: Emit "aboutToChange()" from MemCard?
+	emit layoutAboutToBeChanged();
+	emit layoutChanged();
+}
+
+
+/**
  * Check if a column is visible.
  * @param column Column number.
  * @return True if the column is visible; false if not.
@@ -501,7 +495,7 @@ bool MemCardModel::isColumnVisible(int column)
 {
 	if (column < 0 || column >= COL_MAX)
 		return false;
-	
+
 	return !!(d->bfColumnsVisible & (1 << column));
 }
 
@@ -517,16 +511,16 @@ void MemCardModel::setColumnVisible(int column, bool visible)
 		return;
 	if (isColumnVisible(column) == visible)
 		return;
-	
+
 	// Change the visibility of this column.
 	if (visible)
 		d->bfColumnsVisible |= (1 << column);
 	else
 		d->bfColumnsVisible &= ~(1 << column);
-	
+
 	// d->vIndirectCols needs to be updated.
 	d->vIndirectCols_dirty = true;
-	
+
 	// Layout has changed.
 	emit layoutChanged();
 }

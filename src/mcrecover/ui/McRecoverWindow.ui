@@ -28,6 +28,7 @@
         <property name="title">
          <string>Memory Card Details</string>
         </property>
+        <zorder>grpFileList</zorder>
        </widget>
       </item>
       <item>
@@ -117,23 +118,48 @@
      </layout>
     </item>
     <item>
-     <widget class="QGroupBox" name="grpFileList">
-      <property name="title">
-       <string>grpFileList</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QTreeView" name="lstFileList">
-         <property name="alternatingRowColors">
-          <bool>true</bool>
-         </property>
-         <property name="rootIsDecorated">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     <layout class="QVBoxLayout" name="vboxFileList">
+      <item>
+       <widget class="QGroupBox" name="grpFileList">
+        <layout class="QVBoxLayout" name="vboxGrpFileList">
+         <item>
+          <widget class="QTreeView" name="lstFileList">
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="rootIsDecorated">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="hboxCmdButtons">
+           <item>
+            <widget class="QPushButton" name="btnSearchLostFiles">
+             <property name="text">
+              <string>&amp;Search for Lost Files</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="hspcCmdButtons">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>

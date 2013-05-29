@@ -156,6 +156,12 @@ class MemCardFile : public QObject
 		 * @return Icon animation mode.
 		 */
 		int iconAnimMode(void) const;
+
+		/**
+		 * Is this a lost file?
+		 * @return True if lost; false if file is in the directory table.
+		 */
+		bool isLostFile(void) const;
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */

@@ -29,6 +29,8 @@
 #include <QtCore/QObject>
 class QTextCodec;
 
+#include "card.h"
+
 // MemCardFile
 class MemCardFile;
 
@@ -42,43 +44,50 @@ class MemCard : public QObject
 	public:
 		MemCard(const QString& filename, QObject *parent = 0);
 		~MemCard();
-	
+
 	private:
 		friend class MemCardPrivate;
 		MemCardPrivate *const d;
 		Q_DISABLE_COPY(MemCard);
-	
+
+	signals:
+		/**
+		 * MemCard has changed.
+		 * TODO: Specify if files were added, removed, etc.
+		 */
+		void changed(void);
+
 	public:
 		/**
 		 * Check if the memory card is open.
 		 * @return True if open; false if not.
 		 */
 		bool isOpen(void) const;
-		
+
 		/**
 		 * Get the memory card filename.
 		 * @return Memory card filename, or empty string if not open.
 		 */
 		QString filename(void) const;
-		
+
 		/**
 		 * Get the size of the memory card, in blocks.
 		 * @return Size of memory card, in blocks.
 		 */
 		int sizeInBlocks(void) const;
-		
+
 		/**
 		 * Get the number of free blocks.
 		 * @return Free blocks.
 		 */
 		int freeBlocks(void) const;
-		
+
 		/**
 		 * Get the memory card block size, in bytes.
 		 * @return Memory card block size, in bytes.
 		 */
 		int blockSize(void) const;
-		
+
 		/**
 		 * Read a block.
 		 * @param buf Buffer to read the block data into.
@@ -87,31 +96,43 @@ class MemCard : public QObject
 		 * @return Bytes read on success; negative on error.
 		 */
 		int readBlock(void *buf, int siz, uint16_t blockIdx);
-		
+
 		/**
 		 * Get the memory card encoding.
 		 * @return 0 for ANSI (ISO-8859-1); 1 for SJIS; negative on error.
 		 */
 		int encoding(void) const;
-		
+
 		/**
 		 * Get the QTextCodec for the memory card encoding.
 		 * @return QTextCodec.
 		 */
 		QTextCodec *textCodec(void) const;
-		
+
 		/**
 		 * Get the number of files in the file table.
 		 * @return Number of files, or negative on error.
 		 */
 		int numFiles(void) const;
-		
+
 		/**
 		 * Get a MemCardFile object.
 		 * @param idx File number.
 		 * @return MemCardFile object, or NULL on error.
 		 */
 		MemCardFile *getFile(int idx);
+
+		/**
+		 * Remove all "lost" files.
+		 */
+		void removeLostFiles(void);
+
+		/**
+		 * Add a "lost" file.
+		 * NOTE: This is a debugging version.
+		 * Add more comprehensive versions with a block map specification.
+		 */
+		void addLostFile(const card_direntry *dirEntry);
 };
 
 #endif /* __MCRECOVER_MEMCARD_HPP__ */

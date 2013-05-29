@@ -604,3 +604,10 @@ int MemCardFile::iconDelay(int idx) const
  */
 int MemCardFile::iconAnimMode(void) const
 	{ return (d->dirEntry->bannerfmt & CARD_ANIM_MASK); }
+
+/**
+ * Is this a lost file?
+ * @return True if lost; false if file is in the directory table.
+ */
+bool MemCardFile::isLostFile(void) const
+	{ return (d->fileIdx >= 0); }
