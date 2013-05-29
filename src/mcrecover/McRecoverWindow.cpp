@@ -32,9 +32,10 @@
 #include "GcnMcFileDb.hpp"
 
 // Qt includes. (Drag & Drop)
+#include <QtCore/QUrl>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDropEvent>
-#include <QtCore/QUrl>
+#include <QtGui/QMessageBox>
 
 // git version
 #include "git.h"
@@ -301,7 +302,13 @@ void McRecoverWindow::on_btnSearchLostFiles_clicked(void)
 
 void McRecoverWindow::on_btnLoadDatabase_clicked(void)
 {
-	d->db->load(QLatin1String("db.xml"));
+	int ret = d->db->load(QLatin1String("db.xml"));
+	if (ret != 0) {
+		QMessageBox::critical(this,
+			tr("Database Load Error"),
+			tr("Error loading the GCN Memory Card File database:") +
+			QLatin1String("\n\n") + d->db->errorString());
+	}
 }
 
 
