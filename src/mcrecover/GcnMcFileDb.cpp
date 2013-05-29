@@ -35,6 +35,9 @@
 #include <QtCore/QFile>
 #include <QtXml/QXmlStreamReader>
 
+// libpcre
+#include <pcre.h>
+
 class GcnMcFileDbPrivate
 {
 	public:
@@ -53,14 +56,20 @@ class GcnMcFileDbPrivate
 
 			struct {
 				uint32_t address;
-				QByteArray gamedesc;	// UTF-8, regex
-				QByteArray filedesc;	// UTF-8, regex
+				QString gamedesc;	// regex
+				QString filedesc;	// regex
+
+				// compiled regexes
+				pcre *gamedesc_regex;
+				pcre *filedesc_regex;
 			} search;
 
 			// Make sure all fields are initialized.
 			gcn_file_def()
 			{
 				this->search.address = 0;
+				this->search.gamedesc_regex = NULL;
+				this->search.filedesc_regex = NULL;
 			}
 		};
 
@@ -88,6 +97,7 @@ class GcnMcFileDbPrivate
 		gcn_file_def *parseXml_file(QXmlStreamReader &xml);
 		QString parseXml_element(QXmlStreamReader &xml);
 		void parseXml_file_search(QXmlStreamReader &xml, gcn_file_def *gcn_file);
+		pcre *compile_regex(QString regex);
 
 		/**
 		 * Error string.
@@ -113,8 +123,15 @@ GcnMcFileDbPrivate::~GcnMcFileDbPrivate()
 void GcnMcFileDbPrivate::clear(void)
 {
 	// Delete all gcn_file_defs.
-	foreach(uint16_t address, addr_file_defs.keys()) {
+	foreach (uint16_t address, addr_file_defs.keys()) {
 		QVector<gcn_file_def*> *vec = addr_file_defs.value(address);
+		foreach (gcn_file_def* gcn_file, *vec) {
+			// Make sure the regexes are freed.
+			if (gcn_file->search.gamedesc_regex)
+				pcre_free(gcn_file->search.gamedesc_regex);
+			if (gcn_file->search.filedesc_regex)
+				pcre_free(gcn_file->search.filedesc_regex);
+		}
 		qDeleteAll(*vec);
 		delete vec;
 	}
@@ -298,22 +315,64 @@ void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, gcn_file_de
 				gcn_file->search.address = address_str.toUInt(NULL, 0);
 			} else if (xml.name() == QLatin1String("gamedesc")) {
 				// Game description. (regex)
-				// This must be converted to UTF-8 in order to
-				// use the regex with libpcre.
-				QString gamedesc_str = parseXml_element(xml);
-				gcn_file->search.gamedesc = gamedesc_str.toUtf8();
+				gcn_file->search.gamedesc = parseXml_element(xml);
 			} else if (xml.name() == QLatin1String("filedesc")) {
 				// File description. (regex)
-				// This must be converted to UTF-8 in order to
-				// use the regex with libpcre.
-				QString filedesc_str = parseXml_element(xml);
-				gcn_file->search.filedesc = filedesc_str.toUtf8();
+				gcn_file->search.filedesc = parseXml_element(xml);
 			}
 		}
 
 		// Next token.
 		xml.readNext();
 	}
+
+	// Attempt to compile the regular expressions.
+
+	// Game Description.
+	if (gcn_file->search.gamedesc_regex) {
+		pcre_free(gcn_file->search.gamedesc_regex);
+		gcn_file->search.gamedesc_regex = NULL;
+	}
+	gcn_file->search.gamedesc_regex = compile_regex(gcn_file->search.gamedesc);
+
+	// File Description.
+	if (gcn_file->search.filedesc_regex) {
+		pcre_free(gcn_file->search.filedesc_regex);
+		gcn_file->search.filedesc_regex = NULL;
+	}
+	gcn_file->search.filedesc_regex = compile_regex(gcn_file->search.filedesc);
+}
+
+
+pcre *GcnMcFileDbPrivate::compile_regex(QString regex)
+{
+	if (regex.isEmpty()) {
+		// ERROR: Empty regex is not allowed here.
+		// TODO: Set an error flag and append a message.
+		fprintf(stderr, "WARNING: regex is empty\n");
+		return NULL;
+	}
+
+	// Convert the regex to UTF-8.
+	QByteArray regex_utf8 = regex.toUtf8();
+
+	// Attempt to compile the regex.
+	pcre *re;
+	const char *error;
+	int erroffset;
+	re = pcre_compile(
+		regex_utf8.constData(),	// pattern
+		PCRE_UTF8,		// options
+		&error,			// error message
+		&erroffset,		// error offset
+		NULL);			// use default character tables
+	if (!re) {
+		// Regex compilation failed.
+		fprintf(stderr, "ERROR: Regex compilation failed.\n- Regex: %s\n- Error: %s\n- Offset: %d\n",
+			regex_utf8.constData(), error, erroffset);
+	}
+
+	return re;
 }
 
 
