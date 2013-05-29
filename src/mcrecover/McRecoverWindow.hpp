@@ -58,6 +58,7 @@ class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
 
 		// MemCardModel slots.
 		void memCardModel_layoutChanged(void);
+		void memCardModel_rowsInserted(void);
 };
 
 #endif /* __MCRECOVER_MCRECOVERWINDOW_HPP__ */

@@ -57,6 +57,12 @@ class MemCard : public QObject
 		 */
 		void changed(void);
 
+		/**
+		 * File was added to the MemCard.
+		 * @param idx File number.
+		 */
+		void fileAdded(int idx);
+
 	public:
 		/**
 		 * Check if the memory card is open.

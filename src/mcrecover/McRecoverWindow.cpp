@@ -83,6 +83,8 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	// Connect the MemCardModel slots.
 	QObject::connect(model, SIGNAL(layoutChanged()),
 			 q, SLOT(memCardModel_layoutChanged()));
+	QObject::connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)),
+			 q, SLOT(memCardModel_rowsInserted()));
 }
 
 McRecoverWindowPrivate::~McRecoverWindowPrivate()
@@ -294,5 +296,14 @@ void McRecoverWindow::memCardModel_layoutChanged(void)
 	// Update the QTreeView columns, etc.
 	// FIXME: This doesn't work the first time a file is added...
 	// (possibly needs a dataChanged() signal)
+	d->updateLstMemCard();
+}
+
+
+void McRecoverWindow::memCardModel_rowsInserted(void)
+{
+	// A new file entry was added to the MemCard.
+	// Update the QTreeView columns.
+	// FIXME: This doesn't work the first time a file is added...
 	d->updateLstMemCard();
 }

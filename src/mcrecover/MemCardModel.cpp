@@ -446,6 +446,8 @@ void MemCardModel::setMemCard(MemCard *card)
 		// TODO: More fine-grained changed() for the specific files.
 		disconnect(d->card, SIGNAL(changed()),
 			   this, SLOT(memCardChangedSlot()));
+		disconnect(card, SIGNAL(fileAdded(int)),
+			   this, SLOT(memCard_fileAddedSlot(int)));
 	}
 
 	d->card = card;
@@ -458,6 +460,8 @@ void MemCardModel::setMemCard(MemCard *card)
 		// TODO: More fine-grained changed() for the specific files.
 		connect(card, SIGNAL(changed()),
 			this, SLOT(memCardChangedSlot()));
+		connect(card, SIGNAL(fileAdded(int)),
+			this, SLOT(memCard_fileAddedSlot(int)));
 	}
 
 	// Layout has changed.
@@ -483,6 +487,18 @@ void MemCardModel::memCardChangedSlot(void)
 	// TODO: Emit "aboutToChange()" from MemCard?
 	emit layoutAboutToBeChanged();
 	emit layoutChanged();
+}
+
+
+/**
+ * MemCard: File was added.
+ * @param idx File number.
+ */
+void MemCardModel::memCard_fileAddedSlot(int idx)
+{
+	// Data has changed.
+	emit beginInsertRows(QModelIndex(), idx, idx);
+	emit endInsertRows();
 }
 
 

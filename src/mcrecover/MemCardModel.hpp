@@ -97,6 +97,12 @@ class MemCardModel : public QAbstractListModel
 		 * TODO: More fine-grained slot for specific files.
 		 */
 		void memCardChangedSlot(void);
+
+		/**
+		 * MemCard: File was added.
+		 * @param idx File number.
+		 */
+		void memCard_fileAddedSlot(int idx);
 };
 
 #endif /* __MCRECOVER_MEMCARDMODEL_HPP__ */
