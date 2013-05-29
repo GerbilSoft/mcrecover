@@ -38,67 +38,112 @@
 class MemCardFilePrivate
 {
 	public:
-		MemCardFilePrivate(MemCardFile *q,
+		/**
+		 * Initialize the MemCardFile private class.
+		 * This constructor is for valid files.
+		 * @param q MemCardFile.
+		 * @param card MemCard.
+		 * @param fileIdx File index in MemCard.
+		 * @param dat Directory table.
+		 * @param bat Block allocation table.
+		 */
+		MemCardFilePrivate(MemCardFile *q, 
 				MemCard *card, const int fileIdx,
 				const card_dat *dat, const card_bat *bat);
-	
+
+		/**
+		 * Initialize the MemCardFile private class.
+		 * This constructor is for "lost" files.
+		 * @param q MemCardFile.
+		 * @param card MemCard.
+		 * @param dirEntry Constructed directory entry.
+		 * @param start Starting block.
+		 * @param length File length, in blocks.
+		 */
+		MemCardFilePrivate(MemCardFile *q,
+				MemCard *card,
+				const card_direntry *dirEntry,
+				uint16_t start, uint16_t length);
+
+		~MemCardFilePrivate();
+
 	private:
 		MemCardFile *const q;
 		Q_DISABLE_COPY(MemCardFilePrivate);
-	
+
+		/**
+		* Common initialization code.
+		*/
+		void init(void);
+
 	public:
 		MemCard *const card;
-		const int fileIdx;
-		const card_dat *const dat;
-		const card_bat *const bat;
-		
-		// Directory entry.
-		// This points to an entry within dat.
-		const card_direntry *m_direntry;
-		
+
+		// Card directory information.
+		const int fileIdx;		// If -1, this is a lost file.
+		const card_dat *const dat;	// If nullptr, this is a lost file.
+		const card_bat *const bat;	// If nullptr, this is a lost file.
+
+		/**
+		 * Directory entry.
+		 * This points to an entry within dat.
+		 * NOTE: If this is a lost file, this was allocated by us,
+		 * and needs to be freed in the destructor.
+		 */
+		const card_direntry *dirEntry;
+
 		// FAT entries.
 		QVector<uint16_t> fat_entries;
-		
+
 		// File information. (Directory table.)
 		QString gamecode;
 		QString company;
 		QString filename;
 		QDateTime lastModified;	// Last modified time.
-		
+
 		// File information. (Comment, banner, icon)
 		QString gameDesc;	// Game description.
 		QString fileDesc;	// File description.
-		
+
 		// Images.
 		QImage banner;
 		QVector<QImage> icons;
-		
+
 		/**
 		 * Convert a file block number to a physical block number.
 		 * @param fileBlock File block number.
 		 * @return Physical block number, or negative on error.
 		 */
 		uint16_t fileBlockAddrToPhysBlockAddr(uint16_t fileBlock);
-		
+
 		/**
 		 * Load file data.
 		 * @return QByteArray with file data, or empty QByteArray on error.
 		 */
 		QByteArray loadFileData(void);
-		
+
 		// CI8 SHARED image struct.
-		struct CI8_SHARED_data
-		{
+		struct CI8_SHARED_data {
 			int iconIdx;
 			uint32_t iconAddr;
 		};
-		
+
 		/**
 		 * Load the banner and icon images.
 		 */
 		void loadImages(void);
 };
 
+
+/**
+ * Initialize the MemCardFile private class.
+ * This constructor is for valid files.
+ * @param q MemCardFile.
+ * @param card MemCard.
+ * @param fileIdx File index in MemCard.
+ * @param dat Directory table.
+ * @param bat Block allocation table.
+ */
 MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 		MemCard *card, const int fileIdx,
 		const card_dat *dat, const card_bat *bat)
@@ -110,48 +155,110 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	, banner(NULL)
 {
 	// Load the directory table information.
-	m_direntry = &dat->entries[fileIdx];
-	
+	dirEntry = &dat->entries[fileIdx];
+
 	// Load the FAT entries.
 	fat_entries.clear();
-	fat_entries.reserve(m_direntry->length);
-	uint16_t last_block = m_direntry->block;
-	if (last_block >= 5 && last_block != 0xFFFF)
-	{
+	fat_entries.reserve(dirEntry->length);
+	uint16_t last_block = dirEntry->block;
+	if (last_block >= 5 && last_block != 0xFFFF) {
 		fat_entries.append(last_block);
-		for (int i = 1; i < m_direntry->length; i++)
-		{
+		for (int i = 1; i < dirEntry->length; i++) {
 			last_block = bat->fat[last_block - 5];
 			if (last_block == 0xFFFF || last_block < 5)
 				break;
 			fat_entries.append(last_block);
 		}
 	}
-	
+
+	// Populate the rest of the fields.
+	init();
+}
+
+
+/**
+ * Initialize the MemCardFile private class.
+ * This constructor is for "lost" files.
+ * @param q MemCardFile.
+ * @param card MemCard.
+ * @param dirEntry Constructed directory entry.
+ * @param start Starting block.
+ * @param length File length, in blocks.
+ */
+MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
+		MemCard *card, const card_direntry *dirEntry,
+		uint16_t start, uint16_t length)
+	: q(q)
+	, card(card)
+	, fileIdx(-1)
+	, dat(NULL)
+	, bat(NULL)
+	, banner(NULL)
+{
+	// Take a copy of the constructed directory entry.
+	card_direntry *dentry = (card_direntry*)malloc(sizeof(*dirEntry));
+	memcpy(dentry, dirEntry, sizeof(*dentry));
+	this->dirEntry = dentry;
+
+	// Initialize the FAT entries baesd on start/length.
+	// TODO: Check for block collisions and skip used blocks.
+	uint16_t maxBlockNum = ((uint16_t)card->sizeInBlocks() - 1);
+	if (maxBlockNum <= 5 || maxBlockNum > 4091) {
+		// Invalid maximum block size. Don't initialize the FAT.
+		// TODO: Print an error message.
+	} else {
+		// Initialize the FAT.
+		for (; length > 0; length--) {
+			if (start > maxBlockNum)
+				start = 5;
+			fat_entries.append(start);
+		}
+	}
+
+	// Populate the rest of the fields.
+	init();
+}
+
+
+MemCardFilePrivate::~MemCardFilePrivate()
+{
+	if (fileIdx < 0) {
+		// dirEntry was allocated by us.
+		// Free it.
+		free((void*)dirEntry);
+	}
+}
+
+
+/**
+ * Common initialization code.
+ */
+void MemCardFilePrivate::init(void)
+{
 	// TODO: Should filenames be converted from Shift-JIS, or always use Latin-1?
-	filename = QString::fromLatin1(m_direntry->filename, sizeof(m_direntry->filename));
+	filename = QString::fromLatin1(dirEntry->filename, sizeof(dirEntry->filename));
 	int nullChr = filename.indexOf(QChar(L'\0'));
 	if (nullChr >= 0)
 		filename.resize(nullChr);
 
 	// Game Code and Company are always Latin-1.
-	gamecode = QString::fromLatin1(m_direntry->gamecode, sizeof(m_direntry->gamecode));
-	company = QString::fromLatin1(m_direntry->company, sizeof(m_direntry->company));
-	
+	gamecode = QString::fromLatin1(dirEntry->gamecode, sizeof(dirEntry->gamecode));
+	company = QString::fromLatin1(dirEntry->company, sizeof(dirEntry->company));
+
 	// TODO: GC memory card time uses local time.
 	// QDateTime::setTime_t uses UTC. Add local time offset!
-	lastModified.setTime_t(m_direntry->lastmodified + GC_UNIX_TIME_DIFF);
-	
+	lastModified.setTime_t(dirEntry->lastmodified + GC_UNIX_TIME_DIFF);
+
 	// Get the block size.
 	const int blockSize = card->blockSize();
-	
+
 	// Load the block with the comments.
-	const int commentBlock = (m_direntry->commentaddr / blockSize);
-	const int commentOffset = (m_direntry->commentaddr % blockSize);
-	
+	const int commentBlock = (dirEntry->commentaddr / blockSize);
+	const int commentOffset = (dirEntry->commentaddr % blockSize);
+
 	char *commentData = (char*)malloc(blockSize);
 	card->readBlock(commentData, blockSize, fileBlockAddrToPhysBlockAddr(commentBlock));
-	
+
 	// Load the file comments. (64 bytes)
 	// NOTE: These comments are supposed to be NULL-terminated.
 	// 0x00: Game description.
@@ -159,7 +266,7 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	QByteArray gameDescData(&commentData[commentOffset], 32);
 	QByteArray fileDescData(&commentData[commentOffset+32], 32);
 	free(commentData);
-	
+
 	// Remove trailing NULL characters before converting to UTF-8.
 	nullChr = gameDescData.indexOf('\0');
 	if (nullChr >= 0)
@@ -167,23 +274,20 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	nullChr = fileDescData.indexOf('\0');
 	if (nullChr >= 0)
 		fileDescData.resize(nullChr);
-	
+
 	// Convert the descriptions to UTF-8.
 	QTextCodec *textCodec = card->textCodec();
-	if (!textCodec)
-	{
+	if (!textCodec) {
 		// No text codec was found.
 		// Default to Latin-1.
 		gameDesc = QString::fromLatin1(gameDescData.constData(), gameDescData.size());
 		fileDesc = QString::fromLatin1(fileDescData.constData(), fileDescData.size());
-	}
-	else
-	{
+	} else {
 		// Use the text codec.
 		gameDesc = textCodec->toUnicode(gameDescData.constData(), gameDescData.size());
 		fileDesc = textCodec->toUnicode(fileDescData.constData(), fileDescData.size());
 	}
-	
+
 	// Load the banner and icon images.
 	loadImages();
 }
@@ -209,14 +313,14 @@ uint16_t MemCardFilePrivate::fileBlockAddrToPhysBlockAddr(uint16_t fileBlock)
 QByteArray MemCardFilePrivate::loadFileData(void)
 {
 	const int blockSize = card->blockSize();
-	if (m_direntry->length > card->sizeInBlocks())
+	if (dirEntry->length > card->sizeInBlocks())
 		return QByteArray();
 	
 	QByteArray fileData;
-	fileData.resize(m_direntry->length * blockSize);
+	fileData.resize(dirEntry->length * blockSize);
 	
 	uint8_t *fileDataPtr = (uint8_t*)fileData.data();
-	for (int i = 0; i < m_direntry->length; i++, fileDataPtr += blockSize)
+	for (int i = 0; i < dirEntry->length; i++, fileDataPtr += blockSize)
 	{
 		const uint16_t physBlockAddr = fileBlockAddrToPhysBlockAddr(i);
 		card->readBlock(fileDataPtr, blockSize, physBlockAddr);
@@ -236,12 +340,11 @@ void MemCardFilePrivate::loadImages(void)
 		return;
 	
 	// Decode the banner.
-	uint32_t iconAddr = m_direntry->iconaddr;
+	uint32_t iconAddr = dirEntry->iconaddr;
 	uint32_t imageSize = 0;
 	banner = QImage();	// Clear the current banner.
 	
-	switch (m_direntry->bannerfmt & CARD_BANNER_MASK)
-	{
+	switch (dirEntry->bannerfmt & CARD_BANNER_MASK) {
 		case CARD_BANNER_CI:
 			// CI8 palette is right after the banner.
 			// (256 entries in RGB5A3 format.)
@@ -271,11 +374,9 @@ void MemCardFilePrivate::loadImages(void)
 	QVector<CI8_SHARED_data> lst_CI8_SHARED;
 	icons.clear();
 	
-	uint16_t iconfmt = m_direntry->iconfmt;
-	for (int i = 0; i < CARD_MAXICONS; i++)
-	{
-		if ((iconfmt & CARD_ICON_MASK) == CARD_ICON_CI_SHARED)
-		{
+	uint16_t iconfmt = dirEntry->iconfmt;
+	for (int i = 0; i < CARD_MAXICONS; i++) {
+		if ((iconfmt & CARD_ICON_MASK) == CARD_ICON_CI_SHARED) {
 			// CI8 palette is after *all* the icons.
 			// (256 entries in RGB5A3 format.)
 			// This is handled after the rest of the icons.
@@ -283,19 +384,18 @@ void MemCardFilePrivate::loadImages(void)
 			data.iconIdx = i;
 			data.iconAddr = iconAddr;
 			lst_CI8_SHARED.append(data);
-			
+
 			// Add a NULL QImage as a placeholder.
 			icons.append(QImage());
-			
+
 			// Next icon.
 			imageSize = (CARD_ICON_W * CARD_ICON_H * 1);
 			iconAddr += imageSize;
 			iconfmt >>= 2;
 			continue;
 		}
-		
-		switch (iconfmt & CARD_ICON_MASK)
-		{
+
+		switch (iconfmt & CARD_ICON_MASK) {
 			case CARD_ICON_CI_UNIQUE:
 				// CI8 palette is right after the icon.
 				// (256 entries in RGB5A3 format.)
@@ -307,7 +407,7 @@ void MemCardFilePrivate::loadImages(void)
 						&fileData.constData()[iconAddr + imageSize], 0x200));
 				iconAddr += imageSize + 0x200;
 				break;
-			
+
 			case CARD_BANNER_RGB:
 				imageSize = (CARD_ICON_W * CARD_ICON_H * 2);
 				if ((iconAddr + imageSize) > fileData.size())
@@ -316,37 +416,31 @@ void MemCardFilePrivate::loadImages(void)
 						&fileData.constData()[iconAddr], imageSize));
 				iconAddr += imageSize;
 				break;
-			
+
 			default:
 				// No icon.
 				// Add a NULL image as a placeholder.
 				icons.append(QImage());
 				break;
 		}
-		
+
 		// Next icon.
 		iconfmt >>= 2;
 	}
-	
-	if (!lst_CI8_SHARED.isEmpty())
-	{
+
+	if (!lst_CI8_SHARED.isEmpty()) {
 		// Process CI8 SHARED icons.
 		// TODO: Convert the palette once instead of every time?
-		if ((iconAddr + 0x200) > fileData.size())
-		{
+		if ((iconAddr + 0x200) > fileData.size()) {
 			// Out of bounds.
 			// Delete the NULL icons.
-			for (int i = (icons.size() - 1); i >= 0; i--)
-			{
+			for (int i = (icons.size() - 1); i >= 0; i--) {
 				if (icons.at(i).isNull())
 					icons.remove(i);
 			}
-		}
-		else
-		{
+		} else {
 			// Process each icon.
-			foreach (const CI8_SHARED_data& data, lst_CI8_SHARED)
-			{
+			foreach (const CI8_SHARED_data& data, lst_CI8_SHARED) {
 				icons[data.iconIdx] = GcImage::FromCI8(CARD_ICON_W, CARD_ICON_H,
 							&fileData.constData()[data.iconAddr], imageSize,
 							&fileData.constData()[iconAddr], 0x200);
@@ -358,10 +452,33 @@ void MemCardFilePrivate::loadImages(void)
 
 /** MemCardFile **/
 
+/**
+ * Create a MemCardFile for a MemCard.
+ * This constructor is for valid files.
+ * @param card MemCard.
+ * @param fileIdx File index in MemCard.
+ * @param dat Directory table.
+ * @param bat Block allocation table.
+ */
 MemCardFile::MemCardFile(MemCard *card, const int fileIdx,
 			const card_dat *dat, const card_bat *bat)
 	: QObject(card)
 	, d(new MemCardFilePrivate(this, card, fileIdx, dat, bat))
+{ }
+
+/**
+ * Create a MemCardFile for a MemCard.
+ * This constructor is for "lost" files.
+ * @param card MemCard.
+ * @param dirEntry Constructed directory entry.
+ * @param start Starting block.
+ * @param length File length, in blocks.
+ */
+MemCardFile::MemCardFile(MemCard *card,
+		const card_direntry *dirEntry,
+		uint16_t start, uint16_t length)
+	: QObject(card)
+	, d(new MemCardFilePrivate(this, card, dirEntry, start, length))
 { }
 
 MemCardFile::~MemCardFile()
@@ -417,7 +534,7 @@ QString MemCardFile::fileDesc(void) const
  * @return File permissions.
  */
 uint8_t MemCardFile::permission(void) const
-	{ return d->m_direntry->permission; }
+	{ return d->dirEntry->permission; }
 
 /**
  * Get the file permissions as a string.
@@ -426,13 +543,13 @@ uint8_t MemCardFile::permission(void) const
 QString MemCardFile::permissionAsString(void) const
 {
 	char str[4];
-	
-	uint8_t permission = d->m_direntry->permission;
+
+	uint8_t permission = d->dirEntry->permission;
 	str[0] = ((permission & CARD_ATTRIB_GLOBAL) ? 'G' : '-');
 	str[1] = ((permission & CARD_ATTRIB_NOMOVE) ? 'M' : '-');
 	str[2] = ((permission & CARD_ATTRIB_NOCOPY) ? 'C' : '-');
 	str[3] = ((permission & CARD_ATTRIB_PUBLIC) ? 'P' : '-');
-	
+
 	return QString::fromLatin1(str, sizeof(str));
 }
 
@@ -441,7 +558,7 @@ QString MemCardFile::permissionAsString(void) const
  * @return Size, in blocks.
  */
 uint8_t MemCardFile::size(void) const
-	{ return d->m_direntry->length; }
+	{ return d->dirEntry->length; }
 
 /**
  * Get the banner image.
@@ -478,8 +595,7 @@ int MemCardFile::iconDelay(int idx) const
 {
 	if (idx < 0 || idx >= d->icons.size())
 		return CARD_SPEED_END;
-	
-	return ((d->m_direntry->iconspeed >> (idx * 2)) & CARD_SPEED_MASK);
+	return ((d->dirEntry->iconspeed >> (idx * 2)) & CARD_SPEED_MASK);
 }
 
 /**
@@ -487,4 +603,4 @@ int MemCardFile::iconDelay(int idx) const
  * @return Icon animation mode.
  */
 int MemCardFile::iconAnimMode(void) const
-	{ return (d->m_direntry->bannerfmt & CARD_ANIM_MASK); }
+	{ return (d->dirEntry->bannerfmt & CARD_ANIM_MASK); }
