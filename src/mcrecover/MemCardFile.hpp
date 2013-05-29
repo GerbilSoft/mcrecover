@@ -84,8 +84,8 @@ class MemCardFile : public QObject
 		QString company(void) const;
 
 		/**
-		 * Get the GC filename.
-		 * @return GC filename.
+		 * Get the GCN filename.
+		 * @return GCN filename.
 		 */
 		QString filename(void) const;
 

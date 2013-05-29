@@ -502,8 +502,8 @@ QString MemCardFile::company(void) const
 
 
 /**
- * Get the GC filename.
- * @return GC filename.
+ * Get the GCN filename.
+ * @return GCN filename.
  */
 QString MemCardFile::filename(void) const
 	{ return d->filename; }
