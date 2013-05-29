@@ -53,7 +53,7 @@ class McRecoverWindowPrivate
 		// Memory Card instance.
 		MemCard *card;
 		
-		// Memory Card model for lstMemCard.
+		// Memory Card model for lstFileList.
 		MemCardModel *model;
 		
 		// Filename.
@@ -96,15 +96,15 @@ void McRecoverWindowPrivate::updateLstMemCard(void)
 	if (!card)
 	{
 		// Hide the QTreeView headers.
-		q->lstMemCard->setHeaderHidden(true);
+		q->lstFileList->setHeaderHidden(true);
 		
 		// Set the group box's title.
-		q->grpMemCard->setTitle(q->tr("No memory card loaded."));
+		q->grpFileList->setTitle(q->tr("No memory card loaded."));
 	}
 	else
 	{
 		// Show the QTreeView headers.
-		q->lstMemCard->setHeaderHidden(false);
+		q->lstFileList->setHeaderHidden(false);
 		
 		// Extract the filename from the path.
 		QString displayFilename = filename;
@@ -115,13 +115,17 @@ void McRecoverWindowPrivate::updateLstMemCard(void)
 		// NOTE: 5 blocks are subtracted here in order to
 		// show the user-visible space, e.g. 59 or 251 blocks
 		// instead of 64 or 256 blocks.
-		q->grpMemCard->setTitle(
+		q->grpFileList->setTitle(
 			q->tr("%1: %2 block(s) (%3 free)")
 				.arg(displayFilename)
 				.arg(card->sizeInBlocks() - 5)
 				.arg(card->freeBlocks())
 			);
 	}
+	
+	// Resize the columns to fit the contents.
+	for (int i = 0; i < model->columnCount(); i++)
+		q->lstFileList->resizeColumnToContents(i);
 }
 
 
@@ -149,8 +153,8 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	this->setWindowIcon(QIcon());
 #endif /* Q_WS_MAC */
 	
-	// Set lstMemCard's model.
-	lstMemCard->setModel(d->model);
+	// Set lstFileList's model.
+	lstFileList->setModel(d->model);
 	
 	// Initialize the memory card's QTreeView.
 	d->updateLstMemCard();
@@ -182,10 +186,6 @@ void McRecoverWindow::open(QString filename)
 	
 	// Update the memory card's QTreeView.
 	d->updateLstMemCard();
-	
-	// Resize the columns to fit the contents.
-	for (int i = 0; i < d->model->columnCount(); i++)
-		lstMemCard->resizeColumnToContents(i);
 }
 
 
