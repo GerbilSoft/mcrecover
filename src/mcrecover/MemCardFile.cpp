@@ -349,7 +349,7 @@ void MemCardFilePrivate::loadImages(void)
 			// CI8 palette is right after the banner.
 			// (256 entries in RGB5A3 format.)
 			imageSize = (CARD_BANNER_W * CARD_BANNER_H * 1);
-			if ((iconAddr + imageSize) > fileData.size())
+			if ((int)(iconAddr + imageSize) > fileData.size())
 				break;
 			banner = GcImage::FromCI8(CARD_BANNER_W, CARD_BANNER_H,
 					&fileData.constData()[iconAddr], imageSize,
@@ -359,7 +359,7 @@ void MemCardFilePrivate::loadImages(void)
 		
 		case CARD_BANNER_RGB:
 			imageSize = (CARD_BANNER_W * CARD_BANNER_H * 2);
-			if ((iconAddr + imageSize) > fileData.size())
+			if ((int)(iconAddr + imageSize) > fileData.size())
 				break;
 			banner = GcImage::FromRGB5A3(CARD_BANNER_W, CARD_BANNER_H,
 					&fileData.constData()[iconAddr], imageSize);
@@ -400,7 +400,7 @@ void MemCardFilePrivate::loadImages(void)
 				// CI8 palette is right after the icon.
 				// (256 entries in RGB5A3 format.)
 				imageSize = (CARD_ICON_W * CARD_ICON_H * 1);
-				if ((iconAddr + imageSize + 0x200) > fileData.size())
+				if ((int)(iconAddr + imageSize + 0x200) > fileData.size())
 					break;
 				icons.append(GcImage::FromCI8(CARD_ICON_W, CARD_ICON_H,
 						&fileData.constData()[iconAddr], imageSize,
@@ -410,7 +410,7 @@ void MemCardFilePrivate::loadImages(void)
 
 			case CARD_BANNER_RGB:
 				imageSize = (CARD_ICON_W * CARD_ICON_H * 2);
-				if ((iconAddr + imageSize) > fileData.size())
+				if ((int)(iconAddr + imageSize) > fileData.size())
 					break;
 				icons.append(GcImage::FromRGB5A3(CARD_ICON_W, CARD_ICON_H,
 						&fileData.constData()[iconAddr], imageSize));
@@ -431,7 +431,7 @@ void MemCardFilePrivate::loadImages(void)
 	if (!lst_CI8_SHARED.isEmpty()) {
 		// Process CI8 SHARED icons.
 		// TODO: Convert the palette once instead of every time?
-		if ((iconAddr + 0x200) > fileData.size()) {
+		if ((int)(iconAddr + 0x200) > fileData.size()) {
 			// Out of bounds.
 			// Delete the NULL icons.
 			for (int i = (icons.size() - 1); i >= 0; i--) {
