@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GcnMcFileDb>
+	<file>
+		<description>Sonic Adventure 2: Battle</description>
+		<gamecode>GSNE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gamedesc>^SONIC ADVENTURE 2 BATTLE</gamedesc>
+		 	<filedesc>^FILE(\d\d):\d{1,3} Emblems</gamedesc>
+		</search>
+	</file>
+</GcnMcFileDb>
