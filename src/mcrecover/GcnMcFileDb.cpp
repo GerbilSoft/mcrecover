@@ -267,15 +267,8 @@ QString GcnMcFileDbPrivate::parseXml_element(QXmlStreamReader &xml)
 	if (xml.tokenType() != QXmlStreamReader::StartElement)
 		return QString();
 
-	// Skip the element name.
-	xml.readNext();
-
-	// Next token should be characters.
-	if (xml.tokenType() != QXmlStreamReader::Characters)
-		return QString();
-
-	// Get the text.
-	return xml.text().toString();
+	// Read the element's text.
+	return xml.readElementText();
 }
 
 
