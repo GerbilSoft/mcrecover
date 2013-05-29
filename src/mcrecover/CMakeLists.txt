@@ -20,6 +20,10 @@ ENDIF()
 
 INCLUDE(${QT_USE_FILE})
 
+# PCRE
+FIND_PACKAGE(PCRE REQUIRED)
+INCLUDE_DIRECTORIES(PCRE_INCLUDE_DIR)
+
 # Link to Carbon on Mac OS X.
 # TODO: Use Cocoa instead if we're compiling against Qt/Cocoa.
 IF(APPLE)
@@ -105,7 +109,7 @@ ADD_EXECUTABLE(mcrecover MACOSX_BUNDLE
 	${mcrecover_MOC_SOURCES}
 	${mcrecover_UIS_H}
 	)
-TARGET_LINK_LIBRARIES(mcrecover ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
+TARGET_LINK_LIBRARIES(mcrecover ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${PCRE_LIBRARIES})
 # TODO: Translations.
 #ADD_DEPENDENCIES(gens-qt4 translations_target)
 

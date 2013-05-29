@@ -11,6 +11,8 @@ MACRO(UNSET var)
 	SET(${var})
 ENDMACRO(UNSET)
 
+list (APPEND CMAKE_MODULE_PATH "${mcrecover_base_SOURCE_DIR}/cmake")
+
 # Git version information.
 ADD_CUSTOM_TARGET(git_version ALL
 	${mcrecover_base_SOURCE_DIR}/git_version.sh -s "${mcrecover_base_SOURCE_DIR}" -o "${mcrecover_base_BINARY_DIR}/git_version.h"
