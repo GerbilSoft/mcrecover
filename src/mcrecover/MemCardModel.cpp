@@ -446,13 +446,13 @@ void MemCardModel::setMemCard(MemCard *card)
 		// TODO: More fine-grained changed() for the specific files.
 		disconnect(d->card, SIGNAL(changed()),
 			   this, SLOT(memCardChangedSlot()));
-		disconnect(card, SIGNAL(fileAdded(int)),
+		disconnect(d->card, SIGNAL(fileAdded(int)),
 			   this, SLOT(memCard_fileAddedSlot(int)));
 	}
 
 	d->card = card;
 
-	if (card != NULL) {
+	if (card) {
 		// Initialize the animation state.
 		d->initAnimState();
 
