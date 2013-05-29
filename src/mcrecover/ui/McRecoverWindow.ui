@@ -135,6 +135,13 @@
          <item>
           <layout class="QHBoxLayout" name="hboxCmdButtons">
            <item>
+            <widget class="QPushButton" name="btnLoadDatabase">
+             <property name="text">
+              <string>&amp;Load Database</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="btnSearchLostFiles">
              <property name="text">
               <string>&amp;Search for Lost Files</string>
@@ -164,6 +171,11 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>lstFileList</tabstop>
+  <tabstop>btnLoadDatabase</tabstop>
+  <tabstop>btnSearchLostFiles</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

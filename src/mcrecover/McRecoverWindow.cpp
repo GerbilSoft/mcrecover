@@ -28,6 +28,9 @@
 // MemCard list model.
 #include "MemCardModel.hpp"
 
+// GCN Memory Card File Database.
+#include "GcnMcFileDb.hpp"
+
 // Qt includes. (Drag & Drop)
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDropEvent>
@@ -63,12 +66,16 @@ class McRecoverWindowPrivate
 		 * Update the memory card's QTreeView.
 		 */
 		void updateLstMemCard(void);
+
+		// GCN Memory Card File Database.
+		GcnMcFileDb *db;
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	: q(q)
 	, card(NULL)
 	, model(new MemCardModel(q))
+	, db(new GcnMcFileDb(q))
 {
 	// Only show icon, description, and size in the MemCardModel.
 	model->setColumnVisible(MemCardModel::COL_ICON, true);
@@ -91,6 +98,7 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 {
 	delete model;
 	delete card;
+	delete db;
 }
 
 
@@ -288,6 +296,12 @@ void McRecoverWindow::on_btnSearchLostFiles_clicked(void)
 	dirEntry.commentaddr = 0x0000;
 
 	d->card->addLostFile(&dirEntry);
+}
+
+
+void McRecoverWindow::on_btnLoadDatabase_clicked(void)
+{
+	d->db->load(QLatin1String("db.xml"));
 }
 
 
