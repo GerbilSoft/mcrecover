@@ -164,7 +164,10 @@ int GcnMcFileDbPrivate::load(QString filename)
 
 	if (xml.hasError()) {
 		// XML parse error occurred.
-		errorString = xml.errorString();
+		errorString = xml.errorString() +
+			QLatin1String(" (line ") + QString::number(xml.lineNumber()) +
+			QLatin1String(", column ") + QString::number(xml.columnNumber()) +
+			QChar(L')');
 		return -2;
 	}
 
