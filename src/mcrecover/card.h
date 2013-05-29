@@ -175,7 +175,7 @@ typedef struct PACKED _card_bat
 // Banner format.
 #define CARD_BANNER_NONE	0x00	/* No banner. */
 #define CARD_BANNER_CI		0x01	/* CI8 (256-color) */
-#define CARD_BANNER_RGB		0x02	/* RGB5A1 */
+#define CARD_BANNER_RGB		0x02	/* RGB5A3 */
 #define CARD_BANNER_MASK	0x03
 
 // Icon size.
@@ -186,7 +186,7 @@ typedef struct PACKED _card_bat
 // Icon format.
 #define CARD_ICON_NONE		0x00	/* No icon. */
 #define CARD_ICON_CI_SHARED	0x01	/* CI8 (256-color; shared palette) */
-#define CARD_ICON_RGB		0x02	/* RGB5A1 */
+#define CARD_ICON_RGB		0x02	/* RGB5A3 */
 #define CARD_ICON_CI_UNIQUE	0x03	/* CI8 (256-color; unique palette) */
 #define CARD_ICON_MASK		0x03
 

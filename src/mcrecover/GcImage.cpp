@@ -148,9 +148,6 @@ QImage GcImage::FromCI8(int w, int h, const void *img_buf, int img_siz,
  */
 QImage GcImage::FromRGB5A3(int w, int h, const void *img_buf, int img_siz)
 {
-	// NOTE: This should probably be RGB5A1,
-	// but everything uses RGB5A3.
-	
 	// Verify parameters.
 	if (w < 0 || h < 0)
 		return QImage();
