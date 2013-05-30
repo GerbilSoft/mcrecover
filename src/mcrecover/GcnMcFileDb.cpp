@@ -281,6 +281,7 @@ GcnMcFileDbPrivate::gcn_file_def *GcnMcFileDbPrivate::parseXml_file(QXmlStreamRe
 	}
 
 	gcn_file_def *gcn_file = new gcn_file_def;
+	QString regionStr;
 
 	// Iterate over the properties.
 	xml.readNext();
@@ -297,6 +298,9 @@ GcnMcFileDbPrivate::gcn_file_def *GcnMcFileDbPrivate::parseXml_file(QXmlStreamRe
 			} else if (xml.name() == QLatin1String("company")) {
 				// Company code.
 				gcn_file->company = parseXml_element(xml);
+			} else if (xml.name() == QLatin1String("regions")) {
+				// Additional region codes.
+				regionStr += parseXml_element(xml);
 			} else if (xml.name() == QLatin1String("search")) {
 				// Search definitions.
 				parseXml_file_search(xml, gcn_file);
@@ -309,18 +313,25 @@ GcnMcFileDbPrivate::gcn_file_def *GcnMcFileDbPrivate::parseXml_file(QXmlStreamRe
 		xml.readNext();
 	}
 
-	// Determine the valid regions.
+	// Determine the main region code from the game code.
 	if (gcn_file->gamecode.length() == 4) {
 		// Last character of the game code is the region code.
 		QChar regionChr = gcn_file->gamecode.at(3);
 		gcn_file->regions = RegionCharToBitfield(regionChr);
-
-		// TODO: Parse "regions" field for additional regions.
 	} else {
 		// TODO: Set an error flag and append a message.
 		fprintf(stderr, "WARNING: Game code \"%s\" is invalid.\n",
 			gcn_file->gamecode.toUtf8().constData());
+		// Default to USA... (TODO: Maybe "all regions"?)
+		gcn_file->regions = REGION_USA;
 	}
+
+	// Parse additional region codes.
+	for (int i = (regionStr.length() - 1); i >= 0; i--) {
+		QChar regionChr = regionStr.at(i);
+		gcn_file->regions |= RegionCharToBitfield(regionChr);
+	}
+	printf("regions: %08X\n", gcn_file->regions);
 
 	// Return the gcn_file_def.
 	return gcn_file;
