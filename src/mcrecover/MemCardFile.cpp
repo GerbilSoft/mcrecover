@@ -624,4 +624,4 @@ int MemCardFile::iconAnimMode(void) const
  * @return True if lost; false if file is in the directory table.
  */
 bool MemCardFile::isLostFile(void) const
-	{ return (d->fileIdx >= 0); }
+	{ return (d->fileIdx < 0); }
