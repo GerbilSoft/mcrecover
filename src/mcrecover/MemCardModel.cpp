@@ -86,7 +86,6 @@ class MemCardModelPrivate
 		QColor bgColor_lostFile_alt;
 };
 
-#include <stdio.h>
 MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	: q(q)
 	, card(NULL)
