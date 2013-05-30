@@ -56,20 +56,20 @@ class GcnMcFileDbPrivate
 
 			struct {
 				uint32_t address;
-				QString gamedesc;	// regex
-				QString filedesc;	// regex
+				QString gamedesc;	// regexp
+				QString filedesc;	// regexp
 
-				// compiled regexes
-				pcre *gamedesc_regex;
-				pcre *filedesc_regex;
+				// compiled regexps
+				pcre *gamedesc_regexp;
+				pcre *filedesc_regexp;
 			} search;
 
 			// Make sure all fields are initialized.
 			gcn_file_def()
 			{
 				this->search.address = 0;
-				this->search.gamedesc_regex = NULL;
-				this->search.filedesc_regex = NULL;
+				this->search.gamedesc_regexp = NULL;
+				this->search.filedesc_regexp = NULL;
 			}
 		};
 
@@ -97,7 +97,7 @@ class GcnMcFileDbPrivate
 		gcn_file_def *parseXml_file(QXmlStreamReader &xml);
 		QString parseXml_element(QXmlStreamReader &xml);
 		void parseXml_file_search(QXmlStreamReader &xml, gcn_file_def *gcn_file);
-		pcre *compile_regex(QString regex);
+		pcre *compile_regexp(QString regexp);
 
 		/**
 		 * Error string.
@@ -126,11 +126,11 @@ void GcnMcFileDbPrivate::clear(void)
 	foreach (uint16_t address, addr_file_defs.keys()) {
 		QVector<gcn_file_def*> *vec = addr_file_defs.value(address);
 		foreach (gcn_file_def* gcn_file, *vec) {
-			// Make sure the regexes are freed.
-			if (gcn_file->search.gamedesc_regex)
-				pcre_free(gcn_file->search.gamedesc_regex);
-			if (gcn_file->search.filedesc_regex)
-				pcre_free(gcn_file->search.filedesc_regex);
+			// Make sure the regexps are freed.
+			if (gcn_file->search.gamedesc_regexp)
+				pcre_free(gcn_file->search.gamedesc_regexp);
+			if (gcn_file->search.filedesc_regexp)
+				pcre_free(gcn_file->search.filedesc_regexp);
 		}
 		qDeleteAll(*vec);
 		delete vec;
@@ -314,10 +314,10 @@ void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, gcn_file_de
 				QString address_str = parseXml_element(xml);
 				gcn_file->search.address = address_str.toUInt(NULL, 0);
 			} else if (xml.name() == QLatin1String("gamedesc")) {
-				// Game description. (regex)
+				// Game description. (regexp)
 				gcn_file->search.gamedesc = parseXml_element(xml);
 			} else if (xml.name() == QLatin1String("filedesc")) {
-				// File description. (regex)
+				// File description. (regexp)
 				gcn_file->search.filedesc = parseXml_element(xml);
 			}
 		}
@@ -329,47 +329,47 @@ void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, gcn_file_de
 	// Attempt to compile the regular expressions.
 
 	// Game Description.
-	if (gcn_file->search.gamedesc_regex) {
-		pcre_free(gcn_file->search.gamedesc_regex);
-		gcn_file->search.gamedesc_regex = NULL;
+	if (gcn_file->search.gamedesc_regexp) {
+		pcre_free(gcn_file->search.gamedesc_regexp);
+		gcn_file->search.gamedesc_regexp = NULL;
 	}
-	gcn_file->search.gamedesc_regex = compile_regex(gcn_file->search.gamedesc);
+	gcn_file->search.gamedesc_regexp = compile_regexp(gcn_file->search.gamedesc);
 
 	// File Description.
-	if (gcn_file->search.filedesc_regex) {
-		pcre_free(gcn_file->search.filedesc_regex);
-		gcn_file->search.filedesc_regex = NULL;
+	if (gcn_file->search.filedesc_regexp) {
+		pcre_free(gcn_file->search.filedesc_regexp);
+		gcn_file->search.filedesc_regexp = NULL;
 	}
-	gcn_file->search.filedesc_regex = compile_regex(gcn_file->search.filedesc);
+	gcn_file->search.filedesc_regexp = compile_regexp(gcn_file->search.filedesc);
 }
 
 
-pcre *GcnMcFileDbPrivate::compile_regex(QString regex)
+pcre *GcnMcFileDbPrivate::compile_regexp(QString regexp)
 {
-	if (regex.isEmpty()) {
-		// ERROR: Empty regex is not allowed here.
+	if (regexp.isEmpty()) {
+		// ERROR: Empty regexp is not allowed here.
 		// TODO: Set an error flag and append a message.
-		fprintf(stderr, "WARNING: regex is empty\n");
+		fprintf(stderr, "WARNING: regexp is empty\n");
 		return NULL;
 	}
 
-	// Convert the regex to UTF-8.
-	QByteArray regex_utf8 = regex.toUtf8();
+	// Convert the regexp to UTF-8.
+	QByteArray regexp_utf8 = regexp.toUtf8();
 
-	// Attempt to compile the regex.
+	// Attempt to compile the regexp.
 	pcre *re;
 	const char *error;
 	int erroffset;
 	re = pcre_compile(
-		regex_utf8.constData(),	// pattern
+		regexp_utf8.constData(),	// pattern
 		PCRE_UTF8,		// options
 		&error,			// error message
 		&erroffset,		// error offset
 		NULL);			// use default character tables
 	if (!re) {
-		// Regex compilation failed.
-		fprintf(stderr, "ERROR: Regex compilation failed.\n- Regex: %s\n- Error: %s\n- Offset: %d\n",
-			regex_utf8.constData(), error, erroffset);
+		// Regexp compilation failed.
+		fprintf(stderr, "ERROR: Regexp compilation failed.\n- Regexp: %s\n- Error: %s\n- Offset: %d\n",
+			regexp_utf8.constData(), error, erroffset);
 	}
 
 	return re;
