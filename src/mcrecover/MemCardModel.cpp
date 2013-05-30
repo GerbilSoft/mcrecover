@@ -28,6 +28,9 @@
 // C includes.
 #include <limits.h>
 
+// C++ includes.
+#include <bitset>
+
 // Qt includes.
 #include <QtCore/QHash>
 #include <QtCore/QTimer>
@@ -76,7 +79,9 @@ class MemCardModelPrivate
 		void animTimerSlot(void);
 
 		// Visible columns.
-		uint32_t bfColumnsVisible;	// bitfield
+		// NOTE: We need COL_MAX+1 in order to show a blank spacer column
+		// after the rest of the columns..
+		std::bitset<MemCardModel::COL_MAX+1> colsVisible;
 		QVector<int> vIndirectCols;	// indirect columns
 		bool vIndirectCols_dirty;
 		void refreshVisibleColumns(void);
@@ -92,7 +97,7 @@ MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	, animTimer(new QTimer(q))
 
 	// Default to all columns visible.
-	, bfColumnsVisible((1 << (MemCardModel::COL_MAX + 1)) - 1)
+	, colsVisible(~0)
 	, vIndirectCols_dirty(true)
 {
 	// Connect animTimer's timeout() signal.
@@ -260,10 +265,9 @@ void MemCardModelPrivate::refreshVisibleColumns(void)
 	vIndirectCols.clear();
 	vIndirectCols.reserve(MemCardModel::COL_MAX);
 
-	int col = 0;
-	for (uint32_t bf = bfColumnsVisible; bf != 0; bf >>= 1, col++) {
-		if (bf & 1)
-			vIndirectCols.push_back(col);
+	for (int i = 0; i < (int)colsVisible.size(); i++) {
+		if (colsVisible.test(i))
+			vIndirectCols.push_back(i);
 	}
 
 	// vIndirectCols is no longer dirty.
@@ -389,8 +393,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 			switch (section) {
 				case COL_SIZE:
 				case COL_PERMISSION:
-				case COL_GAMECODE:
-				{
+				case COL_GAMECODE: {
 					// These columns should be monospaced.
 					QFont font(QLatin1String("Monospace"));
 					font.setStyleHint(QFont::TypeWriter); // or QFont::Monospace?
@@ -551,7 +554,7 @@ bool MemCardModel::isColumnVisible(int column)
 	if (column < 0 || column >= COL_MAX)
 		return false;
 
-	return !!(d->bfColumnsVisible & (1 << column));
+	return d->colsVisible.test(column);
 }
 
 
@@ -564,14 +567,14 @@ void MemCardModel::setColumnVisible(int column, bool visible)
 {
 	if (column < 0 || column >= COL_MAX)
 		return;
-	if (isColumnVisible(column) == visible)
+	if (isColumnVisible(column) == !!visible)
 		return;
 
 	// Change the visibility of this column.
 	if (visible)
-		d->bfColumnsVisible |= (1 << column);
+		d->colsVisible.set(column);
 	else
-		d->bfColumnsVisible &= ~(1 << column);
+		d->colsVisible.reset(column);
 
 	// d->vIndirectCols needs to be updated.
 	d->vIndirectCols_dirty = true;
