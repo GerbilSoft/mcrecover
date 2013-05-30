@@ -331,7 +331,6 @@ GcnMcFileDbPrivate::gcn_file_def *GcnMcFileDbPrivate::parseXml_file(QXmlStreamRe
 		QChar regionChr = regionStr.at(i);
 		gcn_file->regions |= RegionCharToBitfield(regionChr);
 	}
-	printf("regions: %08X\n", gcn_file->regions);
 
 	// Return the gcn_file_def.
 	return gcn_file;
