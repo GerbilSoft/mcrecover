@@ -123,6 +123,8 @@ MemCardPrivate::MemCardPrivate(MemCard *q, QString filename)
 	, mc_dat(NULL)
 	, mc_bat(NULL)
 {
+	// TODO: Set an error code somewhere.
+
 	// Save the filename.
 	this->filename = filename;
 	if (filename.isEmpty()) {
@@ -168,6 +170,9 @@ MemCardPrivate::~MemCardPrivate()
  */
 void MemCardPrivate::init(void)
 {
+	if (!file)
+		return;
+
 	// Load the memory card system information.
 	// This includes the header, directory, and block allocation table.
 	loadSysInfo();
@@ -358,6 +363,9 @@ void MemCardPrivate::loadBlockTable(card_bat *bat, uint32_t address, uint16_t *c
  */
 void MemCardPrivate::loadMemCardFileList(void)
 {
+	if (!file)
+		return;
+
 	// Clear the current MemCardFile list.
 	qDeleteAll(lstMemCardFile);
 	lstMemCardFile.clear();
@@ -437,24 +445,36 @@ QString MemCard::filename(void) const
 
 /**
  * Get the size of the memory card, in blocks.
- * @return Size of memory card, in blocks.
+ * @return Size of memory card, in blocks. (Negative on error)
  */
 int MemCard::sizeInBlocks(void) const
-	{ return (d->filesize / d->blockSize); }
+{
+	if (!isOpen())
+		return -1;
+	return (d->filesize / d->blockSize);
+}
 
 /**
  * Get the number of free blocks.
- * @return Free blocks.
+ * @return Free blocks. (Negative on error)
  */
 int MemCard::freeBlocks(void) const
-	{ return d->mc_bat->freeblocks; }
+{
+	if (!isOpen())
+		return -1;
+	return d->mc_bat->freeblocks;
+}
 
 /**
  * Get the memory card block size, in bytes.
- * @return Memory card block size, in bytes.
+ * @return Memory card block size, in bytes. (Negative on error)
  */
 int MemCard::blockSize(void) const
-	{ return d->blockSize; }
+{
+	if (!isOpen())
+		return -1;
+	return d->blockSize;
+}
 
 
 /**
@@ -516,6 +536,8 @@ int MemCard::numFiles(void) const
  */
 MemCardFile *MemCard::getFile(int idx)
 {
+	if (!isOpen())
+		return NULL;
 	if (idx < 0 || idx >= d->lstMemCardFile.size())
 		return NULL;
 	

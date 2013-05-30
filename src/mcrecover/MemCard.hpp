@@ -78,19 +78,19 @@ class MemCard : public QObject
 
 		/**
 		 * Get the size of the memory card, in blocks.
-		 * @return Size of memory card, in blocks.
+		 * @return Size of memory card, in blocks. (Negative on error)
 		 */
 		int sizeInBlocks(void) const;
 
 		/**
 		 * Get the number of free blocks.
-		 * @return Free blocks.
+		 * @return Free blocks. (Negative on error)
 		 */
 		int freeBlocks(void) const;
 
 		/**
 		 * Get the memory card block size, in bytes.
-		 * @return Memory card block size, in bytes.
+		 * @return Memory card block size, in bytes. (Negative on error)
 		 */
 		int blockSize(void) const;
 
