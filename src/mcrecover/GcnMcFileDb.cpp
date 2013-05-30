@@ -49,10 +49,21 @@ class GcnMcFileDbPrivate
 		Q_DISABLE_COPY(GcnMcFileDbPrivate);
 
 	public:
+		enum regions_t {
+			REGION_JPN = (1 << 0),
+			REGION_USA = (1 << 1),
+			REGION_EUR = (1 << 2),
+			REGION_KOR = (1 << 3),
+		};
+		static uint8_t RegionCharToBitfield(QChar regionChr);
+
 		struct gcn_file_def {
 			QString description;
 			QString gamecode;
 			QString company;
+
+			// Regions this file definition applies to.
+			uint8_t regions;
 
 			struct {
 				uint32_t address;
@@ -70,6 +81,7 @@ class GcnMcFileDbPrivate
 				this->search.address = 0;
 				this->search.gamedesc_regexp = NULL;
 				this->search.filedesc_regexp = NULL;
+				this->regions = 0;
 			}
 		};
 
@@ -113,6 +125,28 @@ GcnMcFileDbPrivate::GcnMcFileDbPrivate(GcnMcFileDb *q)
 GcnMcFileDbPrivate::~GcnMcFileDbPrivate()
 {
 	clear();
+}
+
+
+/**
+ * Convert a region character to a region_t bitfield value.
+ * @param regionChr Region character.
+ * @return region_t value, or 0 if unknown.
+ */
+uint8_t GcnMcFileDbPrivate::RegionCharToBitfield(QChar regionChr)
+{
+	switch (regionChr.unicode()) {
+		case 'J':	return REGION_JPN;
+		case 'E':	return REGION_USA;
+		case 'P':	return REGION_EUR;
+		case 'K':	return REGION_KOR;
+		default:
+			break;
+	}
+
+	// Unknown region character.
+	// TODO: Show an error message?
+	return 0;
 }
 
 
@@ -273,6 +307,19 @@ GcnMcFileDbPrivate::gcn_file_def *GcnMcFileDbPrivate::parseXml_file(QXmlStreamRe
 
 		// Next token.
 		xml.readNext();
+	}
+
+	// Determine the valid regions.
+	if (gcn_file->gamecode.length() == 4) {
+		// Last character of the game code is the region code.
+		QChar regionChr = gcn_file->gamecode.at(3);
+		gcn_file->regions = RegionCharToBitfield(regionChr);
+
+		// TODO: Parse "regions" field for additional regions.
+	} else {
+		// TODO: Set an error flag and append a message.
+		fprintf(stderr, "WARNING: Game code \"%s\" is invalid.\n",
+			gcn_file->gamecode.toUtf8().constData());
 	}
 
 	// Return the gcn_file_def.
