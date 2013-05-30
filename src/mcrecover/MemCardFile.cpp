@@ -276,16 +276,17 @@ void MemCardFilePrivate::init(void)
 		fileDescData.resize(nullChr);
 
 	// Convert the descriptions to UTF-8.
+	// Trim the descriptions while we're at it.
 	QTextCodec *textCodec = card->textCodec();
 	if (!textCodec) {
 		// No text codec was found.
 		// Default to Latin-1.
-		gameDesc = QString::fromLatin1(gameDescData.constData(), gameDescData.size());
-		fileDesc = QString::fromLatin1(fileDescData.constData(), fileDescData.size());
+		gameDesc = QString::fromLatin1(gameDescData.constData(), gameDescData.size()).trimmed();
+		fileDesc = QString::fromLatin1(fileDescData.constData(), fileDescData.size()).trimmed();
 	} else {
 		// Use the text codec.
-		gameDesc = textCodec->toUnicode(gameDescData.constData(), gameDescData.size());
-		fileDesc = textCodec->toUnicode(fileDescData.constData(), fileDescData.size());
+		gameDesc = textCodec->toUnicode(gameDescData.constData(), gameDescData.size()).trimmed();
+		fileDesc = textCodec->toUnicode(fileDescData.constData(), fileDescData.size()).trimmed();
 	}
 
 	// Load the banner and icon images.
