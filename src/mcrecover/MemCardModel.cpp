@@ -29,9 +29,12 @@
 #include <limits.h>
 
 // Qt includes.
-#include <QtGui/QFont>
 #include <QtCore/QHash>
 #include <QtCore/QTimer>
+#include <QtGui/QApplication>
+#include <QtGui/QColor>
+#include <QtGui/QFont>
+#include <QtGui/QPalette>
 
 /** MemCardModelPrivate **/
 
@@ -77,8 +80,13 @@ class MemCardModelPrivate
 		QVector<int> vIndirectCols;	// indirect columns
 		bool vIndirectCols_dirty;
 		void refreshVisibleColumns(void);
+
+		// Background colors for "lost" files.
+		QColor bgColor_lostFile;
+		QColor bgColor_lostFile_alt;
 };
 
+#include <stdio.h>
 MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	: q(q)
 	, card(NULL)
@@ -91,6 +99,27 @@ MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	// Connect animTimer's timeout() signal.
 	QObject::connect(&animTimer, SIGNAL(timeout()),
 			 q, SLOT(animTimerSlot()));
+
+	// Initialize the background colors for "lost" files.
+	// TODO: Update these if the UI changes?
+	QPalette pal = QApplication::palette("QTreeView");
+	bgColor_lostFile = pal.base().color();
+	bgColor_lostFile_alt = pal.alternateBase().color();
+
+	// Adjust the colors to have a yellow hue.
+	int h, s, v;
+
+	// "Lost" file. (Main)
+	bgColor_lostFile.getHsv(&h, &s, &v, NULL);
+	h = 60;
+	s = (255 - s);
+	bgColor_lostFile.setHsv(h, s, v);
+
+	// "Lost" file. (Alternate)
+	bgColor_lostFile_alt.getHsv(&h, &s, &v, NULL);
+	h = 60;
+	s = (255 - s);
+	bgColor_lostFile_alt.setHsv(h, s, v);
 }
 
 MemCardModelPrivate::~MemCardModelPrivate()
@@ -371,6 +400,17 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 
 				default:
 					break;
+			}
+			break;
+
+		case Qt::BackgroundColorRole:
+			// "Lost" files should be displayed using a different color.
+			if (file->isLostFile()) {
+				// TODO: Check if the item view is using alternating row colors before using them.
+				if (index.row() & 1)
+					return d->bgColor_lostFile_alt;
+				else
+					return d->bgColor_lostFile;
 			}
 			break;
 
