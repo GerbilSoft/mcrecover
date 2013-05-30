@@ -28,7 +28,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QDateTime>
-#include <QtGui/QImage>
+#include <QtGui/QPixmap>
 
 // MemCard class.
 class MemCard;
@@ -127,9 +127,9 @@ class MemCardFile : public QObject
 
 		/**
 		 * Get the banner image.
-		 * @return Banner image.
+		 * @return Banner image, or null QPixmap on error.
 		 */
-		QImage banner(void) const;
+		QPixmap banner(void) const;
 
 		/**
 		 * Get the number of icons in the file.
@@ -140,9 +140,9 @@ class MemCardFile : public QObject
 		/**
 		 * Get an icon from the file.
 		 * @param idx Icon number.
-		 * @return Icon, or null QImage on error.
+		 * @return Icon, or null QPixmap on error.
 		 */
-		QImage icon(int idx) const;
+		QPixmap icon(int idx) const;
 
 		/**
 		 * Get the delay for a given icon.
