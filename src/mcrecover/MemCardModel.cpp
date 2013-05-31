@@ -592,6 +592,7 @@ void MemCardModel::memCard_fileAddedSlot(int idx)
 	// If this file has an animated icon, add it.
 	MemCardFile *file = d->card->getFile(idx);
 	d->initAnimState(file);
+	d->updateAnimTimerState();
 
 	// Done updating.
 	emit endInsertRows();
