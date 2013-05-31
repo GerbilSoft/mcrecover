@@ -41,14 +41,29 @@
 static inline uint32_t RGB5A3_to_ARGB32(uint16_t px16)
 {
 	uint32_t px32 = 0;
-	
-	px32 |= (((px16 << 3) & 0x0000F8) | ((px16 >> 2) & 0x000007));	// B
-	px32 |= (((px16 << 6) & 0x00F800) | ((px16 << 3) & 0x000700));	// G
-	px32 |= (((px16 << 9) & 0xF80000) | ((px16 << 6) & 0x070000));	// R
-	
-	if (px16 & 0x8000)
-		px32 |= 0xFF000000U;
-	
+
+	// NOTE: Pixels are byteswapped.
+	if (px16 & 0x8000) {
+		// RGB5
+		px32 |= (((px16 << 3) & 0x0000F8) | ((px16 >> 2) & 0x000007));	// B
+		px32 |= (((px16 << 6) & 0x00F800) | ((px16 << 3) & 0x000700));	// G
+		px32 |= (((px16 << 9) & 0xF80000) | ((px16 << 6) & 0x070000));	// R
+		px32 |= 0xFF000000U; // no alpha channel
+	} else {
+		// RGB4A3
+		px32 |= (((px16 & 0x000F) << 4) | (px16 & 0x000F));		// B
+		px32 |= (((px16 & 0x00F0) << 4) | ((px16 & 0x00F0) << 8));	// G
+		px32 |= (((px16 & 0x0F00) << 8) | ((px16 & 0x0F00) << 12));	// R
+
+		// Calculate the alpha channel.
+		uint8_t a = ((px16 >> 7) & 0xE0);
+		a |= (a >> 3);
+		a |= (a >> 3);
+
+		// Apply the alpha channel.
+		px32 |= (a << 24);
+	}
+
 	return px32;
 }
 
