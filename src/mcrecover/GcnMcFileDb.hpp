@@ -22,9 +22,13 @@
 #ifndef __MCRECOVER_GCNMCFILEDB_HPP__
 #define __MCRECOVER_GCNMCFILEDB_HPP__
 
+// Card definitions.
+#include "card.h"
+
 // Qt includes.
 #include <QtCore/QObject>
 #include <QtCore/QString>
+#include <QtCore/QVector>
 
 class GcnMcFileDbPrivate;
 
@@ -55,6 +59,15 @@ class GcnMcFileDb : public QObject
 		 * @return Error string.
 		 */
 		QString errorString(void);
+
+		/**
+		 * Check a GCN memory card block to see if it matches any search patterns.
+		 * @param buf		[in] GCN memory card block to check.
+		 * @param siz		[in] Size of buf. (Should be BLOCK_SIZE == 0x2000.)
+		 * @param direntry	[out] Constructed directory entry if a pattern matched.
+		 * @return 0 if a pattern was matched; non-zero if not.
+		 */
+		int checkBlock(const void *buf, int siz, card_direntry *direntry);
 };
 
 #endif /* __MCRECOVER_GCNMCFILEDB_HPP__ */

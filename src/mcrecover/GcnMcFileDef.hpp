@@ -57,12 +57,32 @@ class GcnMcFileDef {
 			pcre *fileDesc_regexp;
 		} search;
 
+		struct {
+			QString filename;
+			uint8_t bannerFormat;
+			uint32_t iconAddress;
+			uint16_t iconFormat;
+			uint16_t iconSpeed;
+			uint8_t permission;
+			uint16_t length;	// Length, in blocks.
+			uint32_t commentAddress;
+		} dirEntry;
+
 		// Make sure all fields are initialized.
 		GcnMcFileDef() {
-			this->search.address = 0;
-			this->search.gameDesc_regexp = NULL;
-			this->search.fileDesc_regexp = NULL;
 			this->regions = 0;
+
+			search.address = 0;
+			search.gameDesc_regexp = NULL;
+			search.fileDesc_regexp = NULL;
+
+			dirEntry.bannerFormat = 0;
+			dirEntry.iconAddress = 0;
+			dirEntry.iconFormat = 0;
+			dirEntry.iconSpeed = 0;
+			dirEntry.permission = 0;
+			dirEntry.length = 0;
+			dirEntry.commentAddress = 0;
 		}
 
 		~GcnMcFileDef() {

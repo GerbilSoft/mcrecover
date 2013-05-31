@@ -29,14 +29,17 @@
 // C includes.
 #include <stdint.h>
 #include <cstdio>
+#include <cstring>
+#include <cctype>
 
 // GCN Memory Card File Definition class.
 #include "GcnMcFileDef.hpp"
 
 // Qt includes.
-#include <QtCore/QVector>
-#include <QtCore/QMap>
 #include <QtCore/QFile>
+#include <QtCore/QMap>
+#include <QtCore/QTextCodec>
+#include <QtCore/QVector>
 #include <QtXml/QXmlStreamReader>
 
 // libpcre
@@ -88,6 +91,7 @@ class GcnMcFileDbPrivate
 		GcnMcFileDef *parseXml_file(QXmlStreamReader &xml);
 		QString parseXml_element(QXmlStreamReader &xml);
 		void parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
+		void parseXml_file_dirEntry(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
 		pcre *compile_regexp(QString regexp);
 
 		/**
@@ -95,10 +99,32 @@ class GcnMcFileDbPrivate
 		 * Set if an error occurs in load().
 		 */
 		QString errorString;
+
+		// Text codecs.
+		QTextCodec *const textCodecJP;
+		QTextCodec *const textCodecUS;
+
+		/**
+		 * Get a comment from the GCN comment block, converted to UTF-8.
+		 * @param buf Comment block.
+		 * @param siz Size of comment block. (usually 32)
+		 * @param textCodec QTextCodec. (If nullptr, use latin1.)
+		 */
+		static QByteArray GetGcnCommentUtf8(const char *buf, int siz, QTextCodec *textCodec);
+
+		/**
+		 * Check a GCN comment against a regexp.
+		 * @param regexp Regexp.
+		 * @param descUtf8 GCN comment, converted to UTF-8.
+		 * @return Return value from pcre_exec(). (Positive indicates matches; negative indicates error.)
+		 */
+		static int CheckDescRegexp(pcre *regexp, const QByteArray &descUtf8);
 };
 
 GcnMcFileDbPrivate::GcnMcFileDbPrivate(GcnMcFileDb *q)
 	: q(q)
+	, textCodecJP(QTextCodec::codecForName("Shift-JIS"))
+	, textCodecUS(QTextCodec::codecForName("Windows-1252"))
 { }
 
 GcnMcFileDbPrivate::~GcnMcFileDbPrivate()
@@ -279,6 +305,9 @@ GcnMcFileDef *GcnMcFileDbPrivate::parseXml_file(QXmlStreamReader &xml)
 			} else if (xml.name() == QLatin1String("search")) {
 				// Search definitions.
 				parseXml_file_search(xml, gcnMcFileDef);
+			} else if (xml.name() == QLatin1String("dirEntry")) {
+				// Directory entry.
+				parseXml_file_dirEntry(xml, gcnMcFileDef);
 			}
 
 			// TODO: File table information.
@@ -377,6 +406,64 @@ void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDe
 }
 
 
+void GcnMcFileDbPrivate::parseXml_file_dirEntry(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef)
+{
+	static const QString myTokenType = QLatin1String("dirEntry");
+
+	// Check that this is actually a <dirEntry> element.
+	if (xml.tokenType() != QXmlStreamReader::StartElement ||
+	    xml.name() != myTokenType) {
+		// Not a <dirEntry> element.
+		return;
+	}
+
+	// Iterate over the <dirEntry> properties.
+	xml.readNext();
+	QString str;	// temporary string
+	while (!xml.hasError() &&
+		!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == myTokenType)) {
+		if (xml.tokenType() == QXmlStreamReader::StartElement) {
+			// Check what this element is.
+			if (xml.name() == QLatin1String("filename")) {
+				// Filename.
+				gcnMcFileDef->dirEntry.filename = parseXml_element(xml);
+			} else if (xml.name() == QLatin1String("bannerFormat")) {
+				// Banner format.
+				str = parseXml_element(xml);
+				gcnMcFileDef->dirEntry.bannerFormat = (uint8_t)str.toUInt(NULL, 0);
+			} else if (xml.name() == QLatin1String("iconAddress")) {
+				// Icon address.
+				str = parseXml_element(xml);
+				gcnMcFileDef->dirEntry.iconAddress = str.toUInt(NULL, 0);
+			} else if (xml.name() == QLatin1String("iconFormat")) {
+				// Icon format.
+				str = parseXml_element(xml);
+				gcnMcFileDef->dirEntry.iconFormat = str.toUShort(NULL, 0);
+			} else if (xml.name() == QLatin1String("iconSpeed")) {
+				// Icon speed.
+				str = parseXml_element(xml);
+				gcnMcFileDef->dirEntry.iconSpeed = str.toUShort(NULL, 0);
+			} else if (xml.name() == QLatin1String("permission")) {
+				// Permission.
+				str = parseXml_element(xml);
+				gcnMcFileDef->dirEntry.permission = (uint8_t)str.toUInt(NULL, 0);
+			} else if (xml.name() == QLatin1String("length")) {
+				// Length, in blocks.
+				str = parseXml_element(xml);
+				gcnMcFileDef->dirEntry.length = str.toUShort(NULL, 0);
+			} else if (xml.name() == QLatin1String("commentAddress")) {
+				// Comment address.
+				str = parseXml_element(xml);
+				gcnMcFileDef->dirEntry.commentAddress = str.toUInt(NULL, 0);
+			}
+		}
+
+		// Next token.
+		xml.readNext();
+	}
+}
+
+
 pcre *GcnMcFileDbPrivate::compile_regexp(QString regexp)
 {
 	if (regexp.isEmpty()) {
@@ -406,6 +493,64 @@ pcre *GcnMcFileDbPrivate::compile_regexp(QString regexp)
 	}
 
 	return re;
+}
+
+
+/**
+ * Get a comment from the GCN comment block, converted to UTF-8.
+ * @param buf Comment block.
+ * @param siz Size of comment block. (usually 32)
+ * @param textCodec QTextCodec. (If nullptr, use latin1.)
+ */
+QByteArray GcnMcFileDbPrivate::GetGcnCommentUtf8(const char *buf, int siz, QTextCodec *textCodec)
+{
+	// Remove trialing NULL characters before converting to UTF-8.
+	const char *p_nullChr = (const char*)memchr(buf, 0x00, siz);
+	if (p_nullChr) {
+		// Found a NULL character.
+		if (p_nullChr == buf)
+			return QByteArray();
+		siz = (p_nullChr - buf);
+	}
+
+	// Convert the comment to Unicode.
+	// Trim the comment while we're at it.
+	QString comment;
+	if (!textCodec) {
+		// No text codec was specified.
+		// Default to Latin-1.
+		comment = QString::fromLatin1(buf, siz).trimmed();
+	} else {
+		// Use the text codec.
+		comment = textCodec->toUnicode(buf, siz).trimmed();
+	}
+
+	// Convert the comment to UTF-8.
+	return comment.toUtf8();
+}
+
+
+/**
+ * Check a GCN comment against a regexp.
+ * @param regexp Regexp.
+ * @param descUtf8 GCN comment, converted to UTF-8.
+ * @return Return value from pcre_exec(). (Positive indicates matches; negative indicates error.)
+ */
+int GcnMcFileDbPrivate::CheckDescRegexp(pcre *regexp, const QByteArray &descUtf8)
+{
+	int ovector[60];
+	int rc = pcre_exec(
+		regexp,					// compiled regexp
+		NULL,					// pattern not studied
+		descUtf8.constData(),			// subject string
+		descUtf8.size(),			// size of subject string
+		0,					// start at offset 0 in the subject
+		0,					// default options
+		ovector,				// vector of integers for substring information
+		sizeof(ovector)/sizeof(ovector[0]));	// number of elements in ovector
+
+	// TODO: QVector with substring matches.
+	return rc;
 }
 
 
@@ -441,4 +586,141 @@ int GcnMcFileDb::load(QString filename)
 QString GcnMcFileDb::errorString(void)
 {
 	return d->errorString;
+}
+
+
+/**
+ * Check a GCN memory card block to see if it matches any search patterns.
+ * @param buf		[in] GCN memory card block to check.
+ * @param siz		[in] Size of buf. (Should be BLOCK_SIZE == 0x2000.)
+ * @param direntry	[out] Constructed directory entry if a pattern matched.
+ * @return 0 if a pattern was matched; non-zero if not.
+ */
+int GcnMcFileDb::checkBlock(const void *buf, int siz, card_direntry *direntry)
+{
+	// TODO: Return a list of FAT entries.
+	// (May require more info from MemCard, and might need to be in
+	// another function somewhere else.)
+
+	// Matching file definition.
+	const GcnMcFileDef *matchFileDef = NULL;
+
+	foreach (uint32_t address, d->addr_file_defs.keys()) {
+		// Make sure this address is within the bounds of the buffer.
+		// Game Description + File Description == 64 bytes. (0x40)
+		const int maxAddress = (int)(address + 0x40);
+		if (maxAddress < 0 || maxAddress > siz)
+			continue;
+
+		// Get the game description and file description.
+		const char *commentData = ((const char*)buf + address);
+		QByteArray gameDescUS = d->GetGcnCommentUtf8(commentData, 32, d->textCodecUS);
+		QByteArray gameDescJP = d->GetGcnCommentUtf8(commentData, 32, d->textCodecJP);
+		QByteArray fileDescUS = d->GetGcnCommentUtf8(commentData+32, 32, d->textCodecUS);
+		QByteArray fileDescJP = d->GetGcnCommentUtf8(commentData+32, 32, d->textCodecJP);
+
+		QVector<GcnMcFileDef*> *vec = d->addr_file_defs.value(address);
+		foreach (const GcnMcFileDef *gcnMcFileDef, *vec) {
+			bool gameDescMatch = false, fileDescMatch = false;
+			int rc;
+
+			// TODO: Save substring matches.
+
+			// Check if the Game Description (US) matches.
+			rc = d->CheckDescRegexp(
+				gcnMcFileDef->search.gameDesc_regexp,
+				gameDescUS);
+			if (rc > 0) {
+				gameDescMatch = true;
+			} else {
+				// Check if the Game Description (JP) matches.
+				rc = d->CheckDescRegexp(
+					gcnMcFileDef->search.gameDesc_regexp,
+					gameDescJP);
+				if (rc > 0)
+					gameDescMatch = true;
+			}
+
+			// Check if the File Description (US) matches.
+			rc = d->CheckDescRegexp(
+				gcnMcFileDef->search.fileDesc_regexp,
+				fileDescUS);
+			if (rc > 0) {
+				fileDescMatch = true;
+			} else {
+				// Check if the File Description (JP) matches.
+				rc = d->CheckDescRegexp(
+					gcnMcFileDef->search.fileDesc_regexp,
+					fileDescJP);
+				if (rc > 0)
+					fileDescMatch = true;
+			}
+
+			if (gameDescMatch && fileDescMatch) {
+				// Found a match.
+				matchFileDef = gcnMcFileDef;
+				break;
+			}
+		}
+
+		if (matchFileDef)
+			break;
+	}
+
+	if (!matchFileDef) {
+		// No match.
+		return -1;
+	}
+
+	// Construct the directory entry for this file.
+	memset(direntry, 0x00, sizeof(*direntry));
+	QByteArray ba;
+
+	// Game code.
+	ba = matchFileDef->gamecode.toLatin1();
+	strncpy(direntry->gamecode, ba.constData(), sizeof(direntry->gamecode));
+
+	// Company code.
+	ba = matchFileDef->company.toLatin1();
+	strncpy(direntry->company, ba.constData(), sizeof(direntry->company));
+
+	// Filename.
+	// TODO: Convert to Shift-JIS if this is a JP file.
+	// For now, always assume cp1252.
+	if (!d->textCodecUS) {
+		// ...or not.
+		ba = matchFileDef->dirEntry.filename.toLatin1();
+	} else {
+		// We have a codec.
+		ba = d->textCodecUS->fromUnicode(matchFileDef->dirEntry.filename);
+	}
+
+	if (ba.length() > (int)sizeof(direntry->filename))
+		ba.resize(sizeof(direntry->filename));
+	strncpy(direntry->filename, ba.constData(), sizeof(direntry->filename));
+	// TODO: Make sure the filename is null-terminated?
+
+	// Values.
+	/**
+	 * TODO:
+	 * - Construct a proper timestamp.
+	 * - Use the actual starting block?
+	 * - Block offsets for files with commentaddr >= 0x2000
+	 * - Support for variable-length files?
+	 */
+	direntry->pad_00	= 0xFF;
+	direntry->bannerfmt	= matchFileDef->dirEntry.bannerFormat;
+	direntry->lastmodified	= 0;
+	direntry->iconaddr	= matchFileDef->dirEntry.iconAddress;
+	direntry->iconfmt	= matchFileDef->dirEntry.iconFormat;
+	direntry->iconspeed	= matchFileDef->dirEntry.iconSpeed;
+	direntry->permission	= matchFileDef->dirEntry.permission;
+	direntry->copytimes	= 0;
+	direntry->block		= 5;	// FIXME
+	direntry->length	= matchFileDef->dirEntry.length;
+	direntry->pad_01	= 0xFFFF;
+	direntry->commentaddr	= matchFileDef->dirEntry.commentAddress;
+
+	// Directory entry matched.
+	return 0;
 }
