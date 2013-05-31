@@ -9,6 +9,16 @@
 			<gameDesc>^SONIC ADVENTURE 2 BATTLE$</gameDesc>
 			<fileDesc>^FILE(\d{2}):\d{1,3} Emblems$</fileDesc>
 		</search>
+		<dirEntry>
+			<filename>SONIC2B__S$F1</filename>
+			<bannerFormat>2</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0A</iconFormat>
+			<iconSpeed>0x0F</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
 	</file>
 	<file>
 		<description>Sonic Adventure 2: Battle (Chao Garden)</description>
