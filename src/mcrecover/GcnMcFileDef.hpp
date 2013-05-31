@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * GcnMcFileDb.hpp: GCN Memory Card File Database class.                   *
+ * GcnMcFileDef.hpp: GCN Memory Card File Definition class.                *
  *                                                                         *
  * Copyright (c) 2013 by David Korth.                                      *
  *                                                                         *
@@ -18,43 +18,60 @@
  * with this program; if not, write to the Free Software Foundation, Inc., *
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
+ 
+#ifndef __MCRECOVER_GCNMCFILEDEF_HPP__
+#define __MCRECOVER_GCNMCFILEDEF_HPP__
 
-#ifndef __MCRECOVER_GCNMCFILEDB_HPP__
-#define __MCRECOVER_GCNMCFILEDB_HPP__
+// C includes.
+#include <stdint.h>
+
+// libpcre
+#include <pcre.h>
 
 // Qt includes.
-#include <QtCore/QObject>
 #include <QtCore/QString>
 
-class GcnMcFileDbPrivate;
-
-class GcnMcFileDb : public QObject
-{
-	Q_OBJECT
-
+class GcnMcFileDef {
 	public:
-		GcnMcFileDb(QObject *parent = 0);
-		~GcnMcFileDb();
+		enum regions_t {
+			REGION_JPN = (1 << 0),
+			REGION_USA = (1 << 1),
+			REGION_EUR = (1 << 2),
+			REGION_KOR = (1 << 3),
+		};
 
-	private:
-		friend class GcnMcFileDbPrivate;
-		GcnMcFileDbPrivate *const d;
-		Q_DISABLE_COPY(GcnMcFileDb);
+		QString description;
+		QString gamecode;
+		QString company;
 
-	public:
-		/**
-		 * Load a GCN Memory Card File database.
-		 * @param filename Filename of the database file.
-		 * @return 0 on success; non-zero on error.
-		 */
-		int load(QString filename);
+		// Regions this file definition applies to.
+		uint8_t regions;
 
-		/**
-		 * Get the error string.
-		 * This is set if load() fails.
-		 * @return Error string.
-		 */
-		QString errorString(void);
+		struct {
+			uint32_t address;
+			QString gamedesc;	// regexp
+			QString filedesc;	// regexp
+
+			// compiled regexps
+			pcre *gamedesc_regexp;
+			pcre *filedesc_regexp;
+		} search;
+
+		// Make sure all fields are initialized.
+		GcnMcFileDef() {
+			this->search.address = 0;
+			this->search.gamedesc_regexp = NULL;
+			this->search.filedesc_regexp = NULL;
+			this->regions = 0;
+		}
+
+		~GcnMcFileDef() {
+			// Delete allocated PCRE regexps.
+			if (search.gamedesc_regexp)
+				pcre_free(search.gamedesc_regexp);
+			if (search.filedesc_regexp)
+				pcre_free(search.filedesc_regexp);
+		}
 };
 
-#endif /* __MCRECOVER_GCNMCFILEDB_HPP__ */
+#endif /* __MCRECOVER_GCNMCFILEDEF_HPP__ */

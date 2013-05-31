@@ -572,6 +572,9 @@ void MemCard::removeLostFiles(void)
  */
 void MemCard::addLostFile(const card_direntry *dirEntry)
 {
+	if (!isOpen())
+		return;
+
 	MemCardFile *file = new MemCardFile(this, dirEntry, dirEntry->block, dirEntry->length);
 	d->lstMemCardFile.append(file);
 	emit fileAdded(d->lstMemCardFile.size() - 1);

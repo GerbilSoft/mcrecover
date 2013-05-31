@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * GcnMcFileDb.cpp: GCN Memory CardFile Database class.                    *
+ * GcnMcFileDb.cpp: GCN Memory Card File Database class.                   *
  *                                                                         *
  * Copyright (c) 2013 by David Korth.                                      *
  *                                                                         *
@@ -28,6 +28,10 @@
 
 // C includes.
 #include <stdint.h>
+#include <cstdio>
+
+// GCN Memory Card File Definition class.
+#include "GcnMcFileDef.hpp"
 
 // Qt includes.
 #include <QtCore/QVector>
@@ -49,48 +53,20 @@ class GcnMcFileDbPrivate
 		Q_DISABLE_COPY(GcnMcFileDbPrivate);
 
 	public:
-		enum regions_t {
-			REGION_JPN = (1 << 0),
-			REGION_USA = (1 << 1),
-			REGION_EUR = (1 << 2),
-			REGION_KOR = (1 << 3),
-		};
-		static uint8_t RegionCharToBitfield(QChar regionChr);
-
-		struct gcn_file_def {
-			QString description;
-			QString gamecode;
-			QString company;
-
-			// Regions this file definition applies to.
-			uint8_t regions;
-
-			struct {
-				uint32_t address;
-				QString gamedesc;	// regexp
-				QString filedesc;	// regexp
-
-				// compiled regexps
-				pcre *gamedesc_regexp;
-				pcre *filedesc_regexp;
-			} search;
-
-			// Make sure all fields are initialized.
-			gcn_file_def()
-			{
-				this->search.address = 0;
-				this->search.gamedesc_regexp = NULL;
-				this->search.filedesc_regexp = NULL;
-				this->regions = 0;
-			}
-		};
-
 		/**
 		 * GCN memory card file definitions.
 		 * - Key: Search address.
-		 * - Value: QVector<> of gcn_file_defs.
+		 * - Value: QVector<>* of GcnMcFileDef*.
 		 */
-		QMap<uint32_t, QVector<gcn_file_def*>* > addr_file_defs;
+		QMap<uint32_t, QVector<GcnMcFileDef*>*> addr_file_defs;
+
+		
+		/**
+		 * Convert a region character to a GcnMcFileDef::regions_t bitfield value.
+		 * @param regionChr Region character.
+		 * @return region_t value, or 0 if unknown.
+		 */
+		static uint8_t RegionCharToBitfield(QChar regionChr);
 
 		/**
 		 * Clear the GCN Memory Card File database.
@@ -106,9 +82,9 @@ class GcnMcFileDbPrivate
 		int load(QString filename);
 
 		void parseXml_GcnMcFileDb(QXmlStreamReader &xml);
-		gcn_file_def *parseXml_file(QXmlStreamReader &xml);
+		GcnMcFileDef *parseXml_file(QXmlStreamReader &xml);
 		QString parseXml_element(QXmlStreamReader &xml);
-		void parseXml_file_search(QXmlStreamReader &xml, gcn_file_def *gcn_file);
+		void parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
 		pcre *compile_regexp(QString regexp);
 
 		/**
@@ -129,17 +105,17 @@ GcnMcFileDbPrivate::~GcnMcFileDbPrivate()
 
 
 /**
- * Convert a region character to a region_t bitfield value.
+ * Convert a region character to a GcnMcFileDef::regions_t bitfield value.
  * @param regionChr Region character.
  * @return region_t value, or 0 if unknown.
  */
 uint8_t GcnMcFileDbPrivate::RegionCharToBitfield(QChar regionChr)
 {
 	switch (regionChr.unicode()) {
-		case 'J':	return REGION_JPN;
-		case 'E':	return REGION_USA;
-		case 'P':	return REGION_EUR;
-		case 'K':	return REGION_KOR;
+		case 'J':	return GcnMcFileDef::REGION_JPN;
+		case 'E':	return GcnMcFileDef::REGION_USA;
+		case 'P':	return GcnMcFileDef::REGION_EUR;
+		case 'K':	return GcnMcFileDef::REGION_KOR;
 		default:
 			break;
 	}
@@ -156,16 +132,11 @@ uint8_t GcnMcFileDbPrivate::RegionCharToBitfield(QChar regionChr)
  */
 void GcnMcFileDbPrivate::clear(void)
 {
-	// Delete all gcn_file_defs.
-	foreach (uint16_t address, addr_file_defs.keys()) {
-		QVector<gcn_file_def*> *vec = addr_file_defs.value(address);
-		foreach (gcn_file_def* gcn_file, *vec) {
-			// Make sure the regexps are freed.
-			if (gcn_file->search.gamedesc_regexp)
-				pcre_free(gcn_file->search.gamedesc_regexp);
-			if (gcn_file->search.filedesc_regexp)
-				pcre_free(gcn_file->search.filedesc_regexp);
-		}
+	// Delete all GcnMcFileDefs.
+	for (QMap<uint32_t, QVector<GcnMcFileDef*>*>::iterator iter = addr_file_defs.begin();
+	     iter != addr_file_defs.end(); iter++)
+	{
+		QVector<GcnMcFileDef*> *vec = *iter;
 		qDeleteAll(*vec);
 		delete vec;
 	}
@@ -247,17 +218,17 @@ void GcnMcFileDbPrivate::parseXml_GcnMcFileDb(QXmlStreamReader &xml)
 		if (xml.tokenType() == QXmlStreamReader::StartElement &&
 		    xml.name() == QLatin1String("file")) {
 			// Found a <file> element.
-			gcn_file_def *gcn_file = parseXml_file(xml);
-			if (gcn_file) {
+			GcnMcFileDef *gcnMcFileDef = parseXml_file(xml);
+			if (gcnMcFileDef) {
 				// Add the file to the database.
-				const uint32_t address = gcn_file->search.address;
-				QVector<gcn_file_def*>* vec = addr_file_defs.value(address);
+				const uint32_t address = gcnMcFileDef->search.address;
+				QVector<GcnMcFileDef*>* vec = addr_file_defs.value(address);
 				if (!vec) {
 					// Create a new QVector.
-					vec = new QVector<gcn_file_def*>();
+					vec = new QVector<GcnMcFileDef*>();
 					addr_file_defs.insert(address, vec);
 				}
-				vec->append(gcn_file);
+				vec->append(gcnMcFileDef);
 			}
 		}
 
@@ -269,7 +240,7 @@ void GcnMcFileDbPrivate::parseXml_GcnMcFileDb(QXmlStreamReader &xml)
 }
 
 
-GcnMcFileDbPrivate::gcn_file_def *GcnMcFileDbPrivate::parseXml_file(QXmlStreamReader &xml)
+GcnMcFileDef *GcnMcFileDbPrivate::parseXml_file(QXmlStreamReader &xml)
 {
 	static const QString myTokenType = QLatin1String("file");
 
@@ -280,7 +251,7 @@ GcnMcFileDbPrivate::gcn_file_def *GcnMcFileDbPrivate::parseXml_file(QXmlStreamRe
 		return NULL;
 	}
 
-	gcn_file_def *gcn_file = new gcn_file_def;
+	GcnMcFileDef *gcnMcFileDef = new GcnMcFileDef;
 	QString regionStr;
 
 	// Iterate over the properties.
@@ -291,19 +262,19 @@ GcnMcFileDbPrivate::gcn_file_def *GcnMcFileDbPrivate::parseXml_file(QXmlStreamRe
 			// Check what this element is.
 			if (xml.name() == QLatin1String("description")) {
 				// File description.
-				gcn_file->description = parseXml_element(xml);
+				gcnMcFileDef->description = parseXml_element(xml);
 			} else if (xml.name() == QLatin1String("gamecode")) {
 				// Game code.
-				gcn_file->gamecode = parseXml_element(xml);
+				gcnMcFileDef->gamecode = parseXml_element(xml);
 			} else if (xml.name() == QLatin1String("company")) {
 				// Company code.
-				gcn_file->company = parseXml_element(xml);
+				gcnMcFileDef->company = parseXml_element(xml);
 			} else if (xml.name() == QLatin1String("regions")) {
 				// Additional region codes.
 				regionStr += parseXml_element(xml);
 			} else if (xml.name() == QLatin1String("search")) {
 				// Search definitions.
-				parseXml_file_search(xml, gcn_file);
+				parseXml_file_search(xml, gcnMcFileDef);
 			}
 
 			// TODO: File table information.
@@ -314,26 +285,26 @@ GcnMcFileDbPrivate::gcn_file_def *GcnMcFileDbPrivate::parseXml_file(QXmlStreamRe
 	}
 
 	// Determine the main region code from the game code.
-	if (gcn_file->gamecode.length() == 4) {
+	if (gcnMcFileDef->gamecode.length() == 4) {
 		// Last character of the game code is the region code.
-		QChar regionChr = gcn_file->gamecode.at(3);
-		gcn_file->regions = RegionCharToBitfield(regionChr);
+		QChar regionChr = gcnMcFileDef->gamecode.at(3);
+		gcnMcFileDef->regions = RegionCharToBitfield(regionChr);
 	} else {
 		// TODO: Set an error flag and append a message.
 		fprintf(stderr, "WARNING: Game code \"%s\" is invalid.\n",
-			gcn_file->gamecode.toUtf8().constData());
+			gcnMcFileDef->gamecode.toUtf8().constData());
 		// Default to USA... (TODO: Maybe "all regions"?)
-		gcn_file->regions = REGION_USA;
+		gcnMcFileDef->regions = GcnMcFileDef::REGION_USA;
 	}
 
 	// Parse additional region codes.
 	for (int i = (regionStr.length() - 1); i >= 0; i--) {
 		QChar regionChr = regionStr.at(i);
-		gcn_file->regions |= RegionCharToBitfield(regionChr);
+		gcnMcFileDef->regions |= RegionCharToBitfield(regionChr);
 	}
 
-	// Return the gcn_file_def.
-	return gcn_file;
+	// Return the GcnMcFileDef.
+	return gcnMcFileDef;
 }
 
 
@@ -349,7 +320,7 @@ QString GcnMcFileDbPrivate::parseXml_element(QXmlStreamReader &xml)
 }
 
 
-void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, gcn_file_def *gcn_file)
+void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef)
 {
 	static const QString myTokenType = QLatin1String("search");
 
@@ -369,13 +340,13 @@ void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, gcn_file_de
 			if (xml.name() == QLatin1String("address")) {
 				// Search address.
 				QString address_str = parseXml_element(xml);
-				gcn_file->search.address = address_str.toUInt(NULL, 0);
+				gcnMcFileDef->search.address = address_str.toUInt(NULL, 0);
 			} else if (xml.name() == QLatin1String("gamedesc")) {
 				// Game description. (regexp)
-				gcn_file->search.gamedesc = parseXml_element(xml);
+				gcnMcFileDef->search.gamedesc = parseXml_element(xml);
 			} else if (xml.name() == QLatin1String("filedesc")) {
 				// File description. (regexp)
-				gcn_file->search.filedesc = parseXml_element(xml);
+				gcnMcFileDef->search.filedesc = parseXml_element(xml);
 			}
 		}
 
@@ -384,20 +355,21 @@ void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, gcn_file_de
 	}
 
 	// Attempt to compile the regular expressions.
+	// TODO: Display errors if compile_regexp() fails.
 
 	// Game Description.
-	if (gcn_file->search.gamedesc_regexp) {
-		pcre_free(gcn_file->search.gamedesc_regexp);
-		gcn_file->search.gamedesc_regexp = NULL;
+	if (gcnMcFileDef->search.gamedesc_regexp) {
+		pcre_free(gcnMcFileDef->search.gamedesc_regexp);
+		gcnMcFileDef->search.gamedesc_regexp = NULL;
 	}
-	gcn_file->search.gamedesc_regexp = compile_regexp(gcn_file->search.gamedesc);
+	gcnMcFileDef->search.gamedesc_regexp = compile_regexp(gcnMcFileDef->search.gamedesc);
 
 	// File Description.
-	if (gcn_file->search.filedesc_regexp) {
-		pcre_free(gcn_file->search.filedesc_regexp);
-		gcn_file->search.filedesc_regexp = NULL;
+	if (gcnMcFileDef->search.filedesc_regexp) {
+		pcre_free(gcnMcFileDef->search.filedesc_regexp);
+		gcnMcFileDef->search.filedesc_regexp = NULL;
 	}
-	gcn_file->search.filedesc_regexp = compile_regexp(gcn_file->search.filedesc);
+	gcnMcFileDef->search.filedesc_regexp = compile_regexp(gcnMcFileDef->search.filedesc);
 }
 
 
