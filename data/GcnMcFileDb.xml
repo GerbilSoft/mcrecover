@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GcnMcFileDb>
 	<file>
+		<description>Action Replay</description>
+		<gamecode>D3GC</gamecode>
+		<company>00</company>
+		<search>
+			<address>0x0000</address>
+			<!-- TODO: Is V 1.14 the only known version? -->
+			<gameDesc>^Action Replay V (\d)\.(\d{1,2})$</gameDesc>
+			<fileDesc>^$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>DATELCOD.BIN</filename>
+			<bannerFormat>0</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Luigi's Mansion</description>
+		<gamecode>GLME</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x1C00</address>
+			<gameDesc>^Luigi's Mansion$</gameDesc>
+			<!-- Date format: M/D - Verify for PAL! -->
+			<fileDesc>^Last saved on (\d{1,2})/(\d{1,2})$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>LUIGI_MANSION_SAVEDATA_v3</filename>
+			<bannerFormat>5</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x4041</iconFormat>
+			<iconSpeed>0xFFFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+			<commentAddress>0x1C00</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
 		<description>Mario Kart: Double Dash!!</description>
 		<gamecode>GM4E</gamecode>
 		<company>01</company>
@@ -112,6 +154,27 @@
 		</dirEntry>
 	</file>
 	<file>
+		<description>Pac-Man World 2</description>
+		<gamecode>GP2E</gamecode>
+		<company>AF</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^PAC-MAN WORLD 2$</gameDesc>
+			<fileDesc>^\(C\) 2002 NAMCO$</fileDesc>
+			<!-- TODO: Checksum field? -->
+		</search>
+		<dirEntry>
+			<filename>PMW2SAVE</filename>
+			<bannerFormat>2</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x2AAA</iconFormat>
+			<iconSpeed>0x2AAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>8</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
 		<description>Puyo Pop Fever (System File)</description>
 		<gamecode>GPUE</gamecode>
 		<company>8P</company>
@@ -128,6 +191,26 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>1</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Shadow the Hedgehog</description>
+		<gamecode>GUPE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SHADOW THE HEDGEHOG$</gameDesc>
+			<fileDesc>^GAME DATA$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SHADOWTHEHEDGEHOG</filename>
+			<bannerFormat>2</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
 			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
@@ -213,6 +296,28 @@
 		</dirEntry>
 	</file>
 	<file>
+		<description>Sonic Gems Collection</description>
+		<gamecode>G2XE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SONIC GEMS COLLECTION$</gameDesc>
+			<!-- Date format: MM/DD - Verify for PAL! -->
+			<!-- TODO: Verify MM instead of M, DD instead of D. -->
+			<fileDesc>^SETTING DATA (\d{2})/(\d{2})$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SONIC GEMS_00</filename> <!-- TODO: Slot number? -->
+			<bannerFormat>2</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
 		<description>Sonic Heroes</description>
 		<gamecode>G9SE</gamecode>
 		<company>8P</company>
@@ -230,6 +335,27 @@
 			<permission>0x04</permission>
 			<length>2</length>
 			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Sonic Riders</description>
+		<gamecode>G2XE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x1400</address>
+			<gameDesc>^SONIC RIDERS$</gameDesc>
+			<!-- Date format: MM/DD/YY - Verify for PAL! -->
+			<fileDesc>^Game Data\.(\d{2})\: (\d{2})/(\d{2})/(\d{2})$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SONICRIDERS_GAMEDATA_$F1</filename>
+			<bannerFormat>1</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+			<commentAddress>0x1400</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -251,6 +377,27 @@
 			<iconSpeed>0x0F</iconSpeed>
 			<permission>0x04</permission>
 			<length>7</length>
+			<commentAddress>0x0004</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Super Monkey Ball 2</description>
+		<gamecode>GM2E</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Super Monkey Ball 2$</gameDesc>
+			<fileDesc>^Game Data$</fileDesc>
+			<!-- TODO: Checksum field? -->
+		</search>
+		<dirEntry>
+			<filename>super_monkey_ball_2.dat</filename>
+			<bannerFormat>2</bannerFormat>
+			<iconAddress>0x0060</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
 			<commentAddress>0x0004</commentAddress>
 		</dirEntry>
 	</file>
