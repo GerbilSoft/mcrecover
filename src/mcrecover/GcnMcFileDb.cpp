@@ -593,10 +593,10 @@ QString GcnMcFileDb::errorString(void)
  * Check a GCN memory card block to see if it matches any search patterns.
  * @param buf		[in] GCN memory card block to check.
  * @param siz		[in] Size of buf. (Should be BLOCK_SIZE == 0x2000.)
- * @param direntry	[out] Constructed directory entry if a pattern matched.
+ * @param dirEntry	[out] Constructed directory entry if a pattern matched.
  * @return 0 if a pattern was matched; non-zero if not.
  */
-int GcnMcFileDb::checkBlock(const void *buf, int siz, card_direntry *direntry)
+int GcnMcFileDb::checkBlock(const void *buf, int siz, card_direntry *dirEntry)
 {
 	// TODO: Return a list of FAT entries.
 	// (May require more info from MemCard, and might need to be in
@@ -673,16 +673,16 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz, card_direntry *direntry)
 	}
 
 	// Construct the directory entry for this file.
-	memset(direntry, 0x00, sizeof(*direntry));
+	memset(dirEntry, 0x00, sizeof(*dirEntry));
 	QByteArray ba;
 
 	// Game code.
 	ba = matchFileDef->gamecode.toLatin1();
-	strncpy(direntry->gamecode, ba.constData(), sizeof(direntry->gamecode));
+	strncpy(dirEntry->gamecode, ba.constData(), sizeof(dirEntry->gamecode));
 
 	// Company code.
 	ba = matchFileDef->company.toLatin1();
-	strncpy(direntry->company, ba.constData(), sizeof(direntry->company));
+	strncpy(dirEntry->company, ba.constData(), sizeof(dirEntry->company));
 
 	// Filename.
 	// TODO: Convert to Shift-JIS if this is a JP file.
@@ -695,9 +695,9 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz, card_direntry *direntry)
 		ba = d->textCodecUS->fromUnicode(matchFileDef->dirEntry.filename);
 	}
 
-	if (ba.length() > (int)sizeof(direntry->filename))
-		ba.resize(sizeof(direntry->filename));
-	strncpy(direntry->filename, ba.constData(), sizeof(direntry->filename));
+	if (ba.length() > (int)sizeof(dirEntry->filename))
+		ba.resize(sizeof(dirEntry->filename));
+	strncpy(dirEntry->filename, ba.constData(), sizeof(dirEntry->filename));
 	// TODO: Make sure the filename is null-terminated?
 
 	// Values.
@@ -708,18 +708,18 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz, card_direntry *direntry)
 	 * - Block offsets for files with commentaddr >= 0x2000
 	 * - Support for variable-length files?
 	 */
-	direntry->pad_00	= 0xFF;
-	direntry->bannerfmt	= matchFileDef->dirEntry.bannerFormat;
-	direntry->lastmodified	= 0;
-	direntry->iconaddr	= matchFileDef->dirEntry.iconAddress;
-	direntry->iconfmt	= matchFileDef->dirEntry.iconFormat;
-	direntry->iconspeed	= matchFileDef->dirEntry.iconSpeed;
-	direntry->permission	= matchFileDef->dirEntry.permission;
-	direntry->copytimes	= 0;
-	direntry->block		= 5;	// FIXME
-	direntry->length	= matchFileDef->dirEntry.length;
-	direntry->pad_01	= 0xFFFF;
-	direntry->commentaddr	= matchFileDef->dirEntry.commentAddress;
+	dirEntry->pad_00	= 0xFF;
+	dirEntry->bannerfmt	= matchFileDef->dirEntry.bannerFormat;
+	dirEntry->lastmodified	= 0;
+	dirEntry->iconaddr	= matchFileDef->dirEntry.iconAddress;
+	dirEntry->iconfmt	= matchFileDef->dirEntry.iconFormat;
+	dirEntry->iconspeed	= matchFileDef->dirEntry.iconSpeed;
+	dirEntry->permission	= matchFileDef->dirEntry.permission;
+	dirEntry->copytimes	= 0;
+	dirEntry->block		= 5;	// FIXME
+	dirEntry->length	= matchFileDef->dirEntry.length;
+	dirEntry->pad_01	= 0xFFFF;
+	dirEntry->commentaddr	= matchFileDef->dirEntry.commentAddress;
 
 	// Directory entry matched.
 	return 0;

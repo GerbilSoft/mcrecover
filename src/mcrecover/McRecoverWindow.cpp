@@ -286,7 +286,7 @@ void McRecoverWindow::on_btnSearchLostFiles_clicked(void)
 	// Search blocks for lost files.
 	const int blockSize = d->card->blockSize();
 	void *buf = malloc(blockSize);
-	card_direntry direntry;
+	card_direntry dirEntry;
 
 	fprintf(stderr, "--------------------------------\n");
 	fprintf(stderr, "SCANNING MEMORY CARD...\n");
@@ -300,18 +300,20 @@ void McRecoverWindow::on_btnSearchLostFiles_clicked(void)
 		}
 
 		// Check the block in the database.
-		ret = d->db->checkBlock(buf, blockSize, &direntry);
+		ret = d->db->checkBlock(buf, blockSize, &dirEntry);
 		if (!ret) {
 			// Matched!
 			fprintf(stderr, "FOUND A MATCH: %-.4s%-.2s %-.32s\n",
-				direntry.gamecode,
-				direntry.company,
-				direntry.filename);
+				dirEntry.gamecode,
+				dirEntry.company,
+				dirEntry.filename);
+			fprintf(stderr, "bannerFmt == %02X, iconAddress == %08X, iconFormat == %02X, iconSpeed == %02X\n",
+				dirEntry.bannerfmt, dirEntry.iconaddr, dirEntry.iconfmt, dirEntry.iconspeed);
 
-			// NOTE: direntry's block start is not set by d->db->checkBlock().
+			// NOTE: dirEntry's block start is not set by d->db->checkBlock().
 			// Set it here.
-			direntry.block = i;
-			d->card->addLostFile(&direntry);
+			dirEntry.block = i;
+			d->card->addLostFile(&dirEntry);
 		}
 	}
 	fprintf(stderr, "Finished scanning memory card.\n");
