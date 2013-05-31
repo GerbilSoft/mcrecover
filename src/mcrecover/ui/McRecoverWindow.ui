@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>745</width>
-    <height>536</height>
+    <width>848</width>
+    <height>540</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -28,7 +28,6 @@
         <property name="title">
          <string>Memory Card Details</string>
         </property>
-        <zorder>grpFileList</zorder>
        </widget>
       </item>
       <item>

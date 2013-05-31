@@ -81,14 +81,16 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, model(new MemCardModel(q))
 	, db(new GcnMcFileDb(q))
 {
-	// Only show icon, description, and size in the MemCardModel.
+	// Show icon, description, size, mtime, permission, and gamecode by default.
+	// TODO: Allow the user to customize the columns, and save the 
+	// customized columns somewhere.
 	model->setColumnVisible(MemCardModel::COL_ICON, true);
 	model->setColumnVisible(MemCardModel::COL_BANNER, false);
 	model->setColumnVisible(MemCardModel::COL_DESCRIPTION, true);
 	model->setColumnVisible(MemCardModel::COL_SIZE, true);
-	model->setColumnVisible(MemCardModel::COL_MTIME, false);
-	model->setColumnVisible(MemCardModel::COL_PERMISSION, false);
-	model->setColumnVisible(MemCardModel::COL_GAMECODE, false);
+	model->setColumnVisible(MemCardModel::COL_MTIME, true);
+	model->setColumnVisible(MemCardModel::COL_PERMISSION, true);
+	model->setColumnVisible(MemCardModel::COL_GAMECODE, true);
 	model->setColumnVisible(MemCardModel::COL_FILENAME, false);
 
 	// Connect the MemCardModel slots.
