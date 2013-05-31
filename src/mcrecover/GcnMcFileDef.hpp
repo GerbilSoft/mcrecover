@@ -49,28 +49,28 @@ class GcnMcFileDef {
 
 		struct {
 			uint32_t address;
-			QString gamedesc;	// regexp
-			QString filedesc;	// regexp
+			QString gameDesc;	// regexp
+			QString fileDesc;	// regexp
 
 			// compiled regexps
-			pcre *gamedesc_regexp;
-			pcre *filedesc_regexp;
+			pcre *gameDesc_regexp;
+			pcre *fileDesc_regexp;
 		} search;
 
 		// Make sure all fields are initialized.
 		GcnMcFileDef() {
 			this->search.address = 0;
-			this->search.gamedesc_regexp = NULL;
-			this->search.filedesc_regexp = NULL;
+			this->search.gameDesc_regexp = NULL;
+			this->search.fileDesc_regexp = NULL;
 			this->regions = 0;
 		}
 
 		~GcnMcFileDef() {
 			// Delete allocated PCRE regexps.
-			if (search.gamedesc_regexp)
-				pcre_free(search.gamedesc_regexp);
-			if (search.filedesc_regexp)
-				pcre_free(search.filedesc_regexp);
+			if (search.gameDesc_regexp)
+				pcre_free(search.gameDesc_regexp);
+			if (search.fileDesc_regexp)
+				pcre_free(search.fileDesc_regexp);
 		}
 };
 

@@ -341,12 +341,12 @@ void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDe
 				// Search address.
 				QString address_str = parseXml_element(xml);
 				gcnMcFileDef->search.address = address_str.toUInt(NULL, 0);
-			} else if (xml.name() == QLatin1String("gamedesc")) {
+			} else if (xml.name() == QLatin1String("gameDesc")) {
 				// Game description. (regexp)
-				gcnMcFileDef->search.gamedesc = parseXml_element(xml);
-			} else if (xml.name() == QLatin1String("filedesc")) {
+				gcnMcFileDef->search.gameDesc = parseXml_element(xml);
+			} else if (xml.name() == QLatin1String("fileDesc")) {
 				// File description. (regexp)
-				gcnMcFileDef->search.filedesc = parseXml_element(xml);
+				gcnMcFileDef->search.fileDesc = parseXml_element(xml);
 			}
 		}
 
@@ -358,18 +358,18 @@ void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDe
 	// TODO: Display errors if compile_regexp() fails.
 
 	// Game Description.
-	if (gcnMcFileDef->search.gamedesc_regexp) {
-		pcre_free(gcnMcFileDef->search.gamedesc_regexp);
-		gcnMcFileDef->search.gamedesc_regexp = NULL;
+	if (gcnMcFileDef->search.gameDesc_regexp) {
+		pcre_free(gcnMcFileDef->search.gameDesc_regexp);
+		gcnMcFileDef->search.gameDesc_regexp = NULL;
 	}
-	gcnMcFileDef->search.gamedesc_regexp = compile_regexp(gcnMcFileDef->search.gamedesc);
+	gcnMcFileDef->search.gameDesc_regexp = compile_regexp(gcnMcFileDef->search.gameDesc);
 
 	// File Description.
-	if (gcnMcFileDef->search.filedesc_regexp) {
-		pcre_free(gcnMcFileDef->search.filedesc_regexp);
-		gcnMcFileDef->search.filedesc_regexp = NULL;
+	if (gcnMcFileDef->search.fileDesc_regexp) {
+		pcre_free(gcnMcFileDef->search.fileDesc_regexp);
+		gcnMcFileDef->search.fileDesc_regexp = NULL;
 	}
-	gcnMcFileDef->search.filedesc_regexp = compile_regexp(gcnMcFileDef->search.filedesc);
+	gcnMcFileDef->search.fileDesc_regexp = compile_regexp(gcnMcFileDef->search.fileDesc);
 }
 
 

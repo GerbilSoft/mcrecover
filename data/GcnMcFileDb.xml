@@ -6,8 +6,8 @@
 		<company>8P</company>
 		<search>
 			<address>0x0000</address>
-			<gamedesc>^SONIC ADVENTURE 2 BATTLE$</gamedesc>
-			<filedesc>^FILE(\d{2}):\d{1,3} Emblems$</filedesc>
+			<gameDesc>^SONIC ADVENTURE 2 BATTLE$</gameDesc>
+			<fileDesc>^FILE(\d{2}):\d{1,3} Emblems$</fileDesc>
 		</search>
 	</file>
 	<file>
@@ -16,8 +16,8 @@
 		<company>8P</company>
 		<search>
 			<address>0x0000</address>
-			<gamedesc>^SONIC ADVENTURE 2 BATTLE$</gamedesc>
-			<filedesc>^CHAO GARDEN DATA$</filedesc>
+			<gameDesc>^SONIC ADVENTURE 2 BATTLE$</gameDesc>
+			<fileDesc>^CHAO GARDEN DATA$</fileDesc>
 		</search>
 	</file>
 	<file>
@@ -26,9 +26,9 @@
 		<company>01</company>
 		<search>
 			<address>0x0000</address>
-			<gamedesc>^Mario Party 4$</gamedesc>
+			<gameDesc>^Mario Party 4$</gameDesc>
 			<!-- Date format: MM/DD/YYYY - Verify for PAL! -->
-			<filedesc>^File (\d)  (\d{2})/(\d{2})/(\d{4})$</filedesc>
+			<fileDesc>^File (\d)  (\d{2})/(\d{2})/(\d{4})$</fileDesc>
 		</search>
 	</file>
 	<file>
@@ -37,10 +37,10 @@
 		<company>01</company>
 		<search>
 			<address>0x0000</address>
-			<gamedesc>^Mario Party 7$</gamedesc>
+			<gameDesc>^Mario Party 7$</gameDesc>
 			<!-- NOTE: Description does NOT have a slot identifier. Need to prompt the user! -->
 			<!-- Date format: MM/DD/YYYY - Verify for PAL! -->
-			<filedesc>^(\d{2})/(\d{2})/(\d{4})$</filedesc>
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4})$</fileDesc>
 		</search>
 	</file>
 	<file>
@@ -49,9 +49,9 @@
 		<company>8P</company>
 		<search>
 			<address>0x0000</address>
-			<gamedesc>^Sonic Adventure DX  File (\d)$</gamedesc>
+			<gameDesc>^Sonic Adventure DX  File (\d)$</gameDesc>
 			<!-- TODO: Verify variable-length emblem count. -->
-			<filedesc>^Emblem collected \:(\d{1,3})$</filedesc>
+			<fileDesc>^Emblem collected \:(\d{1,3})$</fileDesc>
 		</search>
 	</file>
 	<file>
@@ -60,8 +60,8 @@
 		<company>8P</company>
 		<search>
 			<address>0x0000</address>
-			<gamedesc>^Sonic Adventure DX$</gamedesc>
-			<filedesc>^Chao Garden$</filedesc>
+			<gameDesc>^Sonic Adventure DX$</gameDesc>
+			<fileDesc>^Chao Garden$</fileDesc>
 		</search>
 	</file>
 	<file>
@@ -70,9 +70,9 @@
 		<company>01</company>
 		<search>
 			<address>0x0004</address>
-			<gamedesc>^Super Mario Sunshine$</gamedesc>
+			<gameDesc>^Super Mario Sunshine$</gameDesc>
 			<!-- Date format: M/D - Verify for PAL! -->
-			<filedesc>^(\d{1,2})/(\d{1,2}) Save Data$</filedesc>
+			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
 		</search>
 	</file>
 	<file>
@@ -81,8 +81,8 @@
 		<company>8P</company>
 		<search>
 			<address>0x0000</address>
-			<gamedesc>^SONIC HEROES \: (\d{2})$</gamedesc>
-			<filedesc>^EMBLEM \: (\d{3})$</filedesc>
+			<gameDesc>^SONIC HEROES \: (\d{2})$</gameDesc>
+			<fileDesc>^EMBLEM \: (\d{3})$</fileDesc>
 		</search>
 	</file>
 	<file>
@@ -91,9 +91,9 @@
 		<company>01</company>
 		<search>
 			<address>0x0000</address>
-			<gamedesc>^Super Smash Bros. Melee</gamedesc>
+			<gameDesc>^Super Smash Bros. Melee</gameDesc>
 			<!-- Date format: YYYY/MM/DD - Verify for PAL! -->
-			<filedesc>^Game Data (\d{4})/(\d{2})/(\d{2})$</filedesc>
+			<fileDesc>^Game Data (\d{4})/(\d{2})/(\d{2})$</fileDesc>
 		</search>
 	</file>
 	<file>
@@ -102,10 +102,10 @@
 		<company>01</company>
 		<search>
 			<address>0x0004</address>
-			<gamedesc>^Metroid Prime$</gamedesc>
+			<gameDesc>^Metroid Prime$</gameDesc>
 			<!-- Date format: MM.DD.YY HH:mm - Verify for PAL! -->
 			<!-- TODO: Verify HH instead of H. -->
-			<filedesc>^(\d{2})\.(\d{2})\.(\d{2}) (\d{2})\:(\d{2})$</filedesc>
+			<fileDesc>^(\d{2})\.(\d{2})\.(\d{2}) (\d{2})\:(\d{2})$</fileDesc>
 		</search>
 	</file>
 	<file>
@@ -114,10 +114,10 @@
 		<company>01</company>
 		<search>
 			<address>0x0004</address>
-			<gamedesc>^Metroid Prime 2 Echoes$</gamedesc>
+			<gameDesc>^Metroid Prime 2 Echoes$</gameDesc>
 			<!-- Date format: MM.DD.YYYY HH:mm - Verify for PAL! -->
 			<!-- TODO: Verify MM instead of M, DD instead of D, HH instead of H. -->
-			<filedesc>^(\d{2}).(\d{2}).(\d{2})  (\d{2})\:(\d{2})$</filedesc>
+			<fileDesc>^(\d{2}).(\d{2}).(\d{2})  (\d{2})\:(\d{2})$</fileDesc>
 		</search>
 	</file>
 	<file>
@@ -127,9 +127,9 @@
 		<search>
 			<!-- Start of second block; we'll need to implement block offsets. -->
 			<address>0x2000</address>
-			<gamedesc>^Mario Kart\: Double Dash!!$</gamedesc>
+			<gameDesc>^Mario Kart\: Double Dash!!$</gameDesc>
 			<!-- Date format: MM/DD/YY - Verify for PAL! -->
-			<filedesc>^Game Data (\d{2})/(\d{2})/(\d{2})$</filedesc>
+			<fileDesc>^Game Data (\d{2})/(\d{2})/(\d{2})$</fileDesc>
 		</search>
 	</file>
 	<file>
@@ -138,8 +138,8 @@
 		<company>8P</company>
 		<search>
 			<address>0x0000</address>
-			<gamedesc>^Puyo Pop Fever$</gamedesc>
-			<filedesc>^System File$</filedesc>
+			<gameDesc>^Puyo Pop Fever$</gameDesc>
+			<fileDesc>^System File$</fileDesc>
 		</search>
 	</file>
 </GcnMcFileDb>
