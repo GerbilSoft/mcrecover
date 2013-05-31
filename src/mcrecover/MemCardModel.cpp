@@ -66,9 +66,27 @@ class MemCardModelPrivate
 		QHash<MemCardFile*, AnimData*> animState;
 
 		/**
-		 * Initialize the animation state.
+		 * Time, in ms, for each frame for "fast" animated icons.
+		 * TODO: Figure out the correct timer interval.
+		 */
+		static const int FAST_ANIM_TIMER = 125;
+
+		/**
+		 * Initialize the animation state for all files.
 		 */
 		void initAnimState(void);
+
+		/**
+		 * Initialize the animation state for a given file.
+		 * @param file MemCardFile.
+		 */
+		void initAnimState(MemCardFile *file);
+
+		/**
+		 * Update the animation timer state.
+		 * Starts the timer if animated icons are present; stops the timer if not.
+		 */
+		void updateAnimTimerState(void);
 
 		// Animation timer.
 		QTimer animTimer;
@@ -153,27 +171,52 @@ void MemCardModelPrivate::initAnimState(void)
 	// Initialize the animation state.
 	for (int i = 0; i < card->numFiles(); i++) {
 		MemCardFile *file = card->getFile(i);
-
-		int numIcons = file->numIcons();
-		if (numIcons <= 1)
-			continue;
-
-		// Get the file data.
-		AnimData *animData = new AnimData();
-		animData->frame = 0;
-		animData->lastValidFrame = 0;
-		animData->frameHasIcon = !(file->icon(animData->frame).isNull());
-		animData->delayCnt = 0;
-		animData->delayLen = file->iconDelay(0);
-		animData->mode = file->iconAnimMode();
-		animData->direction = false;
-		animState.insert(file, animData);
+		initAnimState(file);
 	}
 
-	// TODO: Figure out the correct timer interval.
-	// This will use 125ms for 'fast' icons.
+	// Start the timer if animated icons are present.
+	updateAnimTimerState();
+}
+
+
+/**
+ * Initialize the animation state for a given file.
+ * @param file MemCardFile.
+ */
+void MemCardModelPrivate::initAnimState(MemCardFile *file)
+{
+	int numIcons = file->numIcons();
+	if (numIcons <= 1) {
+		// Not an animated icon.
+		animState.remove(file);
+		return;
+	}
+
+	// Get the file data.
+	AnimData *animData = animState.value(file);
+	if (!animData)
+		animData = new AnimData();
+	animData->frame = 0;
+	animData->lastValidFrame = 0;
+	animData->frameHasIcon = !(file->icon(animData->frame).isNull());
+	animData->delayCnt = 0;
+	animData->delayLen = file->iconDelay(0);
+	animData->mode = file->iconAnimMode();
+	animData->direction = false;
+	animState.insert(file, animData);
+}
+
+
+/**
+ * Update the animation timer state.
+ * Starts the timer if animated icons are present; stops the timer if not.
+ */
+void MemCardModelPrivate::updateAnimTimerState(void)
+{
 	if (!animState.isEmpty())
-		animTimer.start(125);
+		animTimer.start(FAST_ANIM_TIMER);
+	else
+		animTimer.stop();
 }
 
 
@@ -528,6 +571,11 @@ void MemCardModel::memCardChangedSlot(void)
 	// NOTE: Not sure if layoutAboutToBeChanged() should be emitted here...
 	// TODO: Emit "aboutToChange()" from MemCard?
 	emit layoutAboutToBeChanged();
+
+	// Redo all the animation states.
+	d->initAnimState();
+
+	// Done updating.
 	emit layoutChanged();
 }
 
@@ -540,6 +588,12 @@ void MemCardModel::memCard_fileAddedSlot(int idx)
 {
 	// Data has changed.
 	emit beginInsertRows(QModelIndex(), idx, idx);
+
+	// If this file has an animated icon, add it.
+	MemCardFile *file = d->card->getFile(idx);
+	d->initAnimState(file);
+
+	// Done updating.
 	emit endInsertRows();
 }
 
