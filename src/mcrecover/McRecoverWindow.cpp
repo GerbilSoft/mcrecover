@@ -302,7 +302,7 @@ void McRecoverWindow::on_btnSearchLostFiles_clicked(void)
 
 void McRecoverWindow::on_btnLoadDatabase_clicked(void)
 {
-	int ret = d->db->load(QLatin1String("db.xml"));
+	int ret = d->db->load(QLatin1String("GcnMcFileDb.xml"));
 	if (ret != 0) {
 		QMessageBox::critical(this,
 			tr("Database Load Error"),
