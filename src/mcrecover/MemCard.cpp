@@ -551,7 +551,7 @@ MemCardFile *MemCard::getFile(int idx)
 void MemCard::removeLostFiles(void)
 {
 	bool wasFileDeleted = false;
-	for (int i = d->lstMemCardFile.size() - 1; i > 0; i--) {
+	for (int i = d->lstMemCardFile.size() - 1; i >= 0; i--) {
 		MemCardFile *file = d->lstMemCardFile.at(i);
 		if (file->isLostFile()) {
 			// This is a "lost" file. Remove it.
