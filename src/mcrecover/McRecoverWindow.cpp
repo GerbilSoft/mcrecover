@@ -31,6 +31,9 @@
 // GCN Memory Card File Database.
 #include "GcnMcFileDb.hpp"
 
+// C includes.
+#include <cstdio>
+
 // Qt includes. (Drag & Drop)
 #include <QtCore/QUrl>
 #include <QtGui/QDragEnterEvent>
@@ -277,26 +280,42 @@ void McRecoverWindow::on_btnSearchLostFiles_clicked(void)
 	if (!d->card)
 		return;
 
-	// Add a "lost" file.
-	// TODO: Actually search for it.
-	card_direntry dirEntry;
-	memcpy(dirEntry.gamecode, "GSNE", 4);
-	memcpy(dirEntry.company, "8P", 2);
-	dirEntry.pad_00 = 0xFF;
-	dirEntry.bannerfmt = 0x02;
-	strncpy(dirEntry.filename, "SONIC2B__S01", sizeof(dirEntry.filename));
-	dirEntry.lastmodified = 0x16A370CC;
-	dirEntry.iconaddr = 0x0040;
-	dirEntry.iconfmt = 0x0A;
-	dirEntry.iconspeed = 0x0F;
-	dirEntry.permission = 0x04;
-	dirEntry.copytimes = 0x00;
-	dirEntry.block = 38;	/* 0x4C000 */
-	dirEntry.length = 0x03;
-	dirEntry.pad_01 = 0xFFFF;
-	dirEntry.commentaddr = 0x0000;
+	// Remove lost files from the card.
+	d->card->removeLostFiles();
 
-	d->card->addLostFile(&dirEntry);
+	// Search blocks for lost files.
+	const int blockSize = d->card->blockSize();
+	void *buf = malloc(blockSize);
+	card_direntry direntry;
+
+	fprintf(stderr, "--------------------------------\n");
+	fprintf(stderr, "SCANNING MEMORY CARD...\n");
+	for (int i = 5; i < d->card->sizeInBlocks(); i++) {
+		fprintf(stderr, "Searching block: %d...\n", i);
+		int ret = d->card->readBlock(buf, blockSize, i);
+		if (ret != blockSize) {
+			// Error reading block.
+			fprintf(stderr, "ERROR reading block %d - readBlock() returned %d.\n", i, ret);
+			continue;
+		}
+
+		// Check the block in the database.
+		ret = d->db->checkBlock(buf, blockSize, &direntry);
+		if (!ret) {
+			// Matched!
+			fprintf(stderr, "FOUND A MATCH: %-.4s%-.2s %-.32s\n",
+				direntry.gamecode,
+				direntry.company,
+				direntry.filename);
+
+			// NOTE: direntry's block start is not set by d->db->checkBlock().
+			// Set it here.
+			direntry.block = i;
+			d->card->addLostFile(&direntry);
+		}
+	}
+	fprintf(stderr, "Finished scanning memory card.\n");
+	fprintf(stderr, "--------------------------------\n");
 }
 
 
