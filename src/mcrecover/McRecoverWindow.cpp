@@ -313,6 +313,12 @@ void McRecoverWindow::on_btnSearchLostFiles_clicked(void)
 			// NOTE: dirEntry's block start is not set by d->db->checkBlock().
 			// Set it here.
 			dirEntry.block = i;
+			if (dirEntry.length == 0) {
+				// This only happens if an entry is either
+				// missing a <dirEntry>, or has <length>0</length>.
+				// TODO: Check for this in GcnMcFileDb.
+				dirEntry.length = 1;
+			}
 			d->card->addLostFile(&dirEntry);
 		}
 	}
