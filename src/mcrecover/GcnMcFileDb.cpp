@@ -52,15 +52,18 @@ class GcnMcFileDbPrivate
 		GcnMcFileDb *const q;
 		Q_DISABLE_COPY(GcnMcFileDbPrivate);
 
+		// Block size.
+		static const uint32_t BLOCK_SIZE = 0x2000;
+		static const uint32_t BLOCK_SIZE_MASK = (BLOCK_SIZE - 1);
+
 	public:
 		/**
 		 * GCN memory card file definitions.
-		 * - Key: Search address.
+		 * - Key: Search address. (limited to BLOCK_SIZE-1)
 		 * - Value: QVector<>* of GcnMcFileDef*.
 		 */
 		QMap<uint32_t, QVector<GcnMcFileDef*>*> addr_file_defs;
 
-		
 		/**
 		 * Convert a region character to a GcnMcFileDef::regions_t bitfield value.
 		 * @param regionChr Region character.
@@ -221,7 +224,8 @@ void GcnMcFileDbPrivate::parseXml_GcnMcFileDb(QXmlStreamReader &xml)
 			GcnMcFileDef *gcnMcFileDef = parseXml_file(xml);
 			if (gcnMcFileDef) {
 				// Add the file to the database.
-				const uint32_t address = gcnMcFileDef->search.address;
+				uint32_t address = gcnMcFileDef->search.address;
+				address &= BLOCK_SIZE_MASK;	// search the specific block only
 				QVector<GcnMcFileDef*>* vec = addr_file_defs.value(address);
 				if (!vec) {
 					// Create a new QVector.
