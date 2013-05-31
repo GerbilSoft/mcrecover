@@ -208,7 +208,7 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 		// TODO: Print an error message.
 	} else {
 		// Initialize the FAT.
-		for (; length > 0; length--) {
+		for (; length > 0; length--, start++) {
 			if (start > maxBlockNum)
 				start = 5;
 			fat_entries.append(start);
