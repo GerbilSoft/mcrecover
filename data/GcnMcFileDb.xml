@@ -1,43 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GcnMcFileDb>
 	<file>
-		<description>Sonic Adventure 2: Battle</description>
-		<gamecode>GSNE</gamecode>
-		<company>8P</company>
+		<description>Mario Kart: Double Dash!!</description>
+		<gamecode>GM4E</gamecode>
+		<company>01</company>
 		<search>
-			<address>0x0000</address>
-			<gameDesc>^SONIC ADVENTURE 2 BATTLE$</gameDesc>
-			<fileDesc>^FILE(\d{2}):\d{1,3} Emblems$</fileDesc>
+			<!-- Start of second block; we'll need to implement block offsets. -->
+			<!-- NOTE: This is also present at 0x4000... -->
+			<address>0x2000</address>
+			<gameDesc>^Mario Kart\: Double Dash!!$</gameDesc>
+			<!-- Date format: MM/DD/YY - Verify for PAL! -->
+			<fileDesc>^Game Data (\d{2})/(\d{2})/(\d{2})$</fileDesc>
 		</search>
 		<dirEntry>
-			<filename>SONIC2B__S$F1</filename>
-			<bannerFormat>2</bannerFormat>
-			<iconAddress>0x0040</iconAddress>
-			<iconFormat>0x0A</iconFormat>
-			<iconSpeed>0x0F</iconSpeed>
+			<filename>MarioKart Double Dash!!</filename>
+			<bannerFormat>1</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x15</iconFormat>
+			<iconSpeed>0x2A</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
-			<commentAddress>0x0000</commentAddress>
-		</dirEntry>
-	</file>
-	<file>
-		<description>Sonic Adventure 2: Battle (Chao Garden)</description>
-		<gamecode>GSNE</gamecode>
-		<company>8P</company>
-		<search>
-			<address>0x0000</address>
-			<gameDesc>^SONIC ADVENTURE 2 BATTLE$</gameDesc>
-			<fileDesc>^CHAO GARDEN DATA$</fileDesc>
-		</search>
-		<dirEntry>
-			<filename>SONIC2B__ALF</filename>
-			<bannerFormat>1</bannerFormat>
-			<iconAddress>0x0040</iconAddress>
-			<iconFormat>0x5555</iconFormat>
-			<iconSpeed>0x5555</iconSpeed>
-			<permission>0x0C</permission>
-			<length>8</length>
-			<commentAddress>0x0000</commentAddress>
+			<commentAddress>0x2000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -80,110 +63,6 @@
 			<iconSpeed>0x00AA</iconSpeed>
 			<permission>0x04</permission>
 			<length>6</length>
-			<commentAddress>0x0000</commentAddress>
-		</dirEntry>
-	</file>
-	<file>
-		<description>Sonic Adventure DX: Director's Cut</description>
-		<gamecode>GXSE</gamecode>
-		<company>8P</company>
-		<search>
-			<address>0x0000</address>
-			<gameDesc>^Sonic Adventure DX  File (\d)$</gameDesc>
-			<!-- TODO: Verify variable-length emblem count. -->
-			<fileDesc>^Emblem collected \:(\d{1,3})$</fileDesc>
-		</search>
-		<dirEntry>
-			<filename>SONICADVENTURE_DX_PLAYRECORD_$G1</filename>
-			<bannerFormat>1</bannerFormat>
-			<iconAddress>0x0040</iconAddress>
-			<iconFormat>0x0001</iconFormat>
-			<iconSpeed>0x0001</iconSpeed>
-			<permission>0x04</permission>
-			<length>1</length>
-			<commentAddress>0x0000</commentAddress>
-		</dirEntry>
-	</file>
-	<file>
-		<description>Sonic Adventure DX: Director's Cut (Chao Garden)</description>
-		<gamecode>GXSE</gamecode>
-		<company>8P</company>
-		<search>
-			<address>0x0000</address>
-			<gameDesc>^Sonic Adventure DX$</gameDesc>
-			<fileDesc>^Chao Garden$</fileDesc>
-		</search>
-		<dirEntry>
-			<filename>SONICADVENTURE_DX_CHAOGARDEN</filename>
-			<bannerFormat>1</bannerFormat>
-			<iconAddress>0x0040</iconAddress>
-			<iconFormat>0x5555</iconFormat>
-			<iconSpeed>0xAAAA</iconSpeed>
-			<permission>0x0C</permission>
-			<length>8</length>
-			<commentAddress>0x0000</commentAddress>
-		</dirEntry>
-	</file>
-	<file>
-		<description>Super Mario Sunshine</description>
-		<gamecode>GMSE</gamecode>
-		<company>01</company>
-		<search>
-			<address>0x0004</address>
-			<gameDesc>^Super Mario Sunshine$</gameDesc>
-			<!-- Date format: M/D - Verify for PAL! -->
-			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
-			<!-- TODO: Checksum field? -->
-		</search>
-		<dirEntry>
-			<filename>super_mario_sunshine</filename>
-			<bannerFormat>1</bannerFormat>
-			<iconAddress>0x0044</iconAddress>
-			<iconFormat>0x05</iconFormat>
-			<iconSpeed>0x0F</iconSpeed>
-			<permission>0x04</permission>
-			<length>7</length>
-			<commentAddress>0x0004</commentAddress>
-		</dirEntry>
-	</file>
-	<file>
-		<description>Sonic Heroes</description>
-		<gamecode>G9SE</gamecode>
-		<company>8P</company>
-		<search>
-			<address>0x0000</address>
-			<gameDesc>^SONIC HEROES \: (\d{2})$</gameDesc>
-			<fileDesc>^EMBLEM \: (\d{3})$</fileDesc>
-		</search>
-		<dirEntry>
-			<filename>SONICHEROES_$G1</filename>
-			<bannerFormat>2</bannerFormat>
-			<iconAddress>0x0040</iconAddress>
-			<iconFormat>0x56</iconFormat>
-			<iconSpeed>0xA2</iconSpeed>
-			<permission>0x04</permission>
-			<length>2</length>
-			<commentAddress>0x0000</commentAddress>
-		</dirEntry>
-	</file>
-	<file>
-		<description>Super Smash Bros. Melee</description>
-		<gamecode>GALE</gamecode>
-		<company>01</company>
-		<search>
-			<address>0x0000</address>
-			<gameDesc>^Super Smash Bros. Melee</gameDesc>
-			<!-- Date format: YYYY/MM/DD - Verify for PAL! -->
-			<fileDesc>^Game Data (\d{4})/(\d{2})/(\d{2})$</fileDesc>
-		</search>
-		<dirEntry>
-			<filename>SuperSmashBros0110290334</filename>
-			<bannerFormat>2</bannerFormat>
-			<iconAddress>0x0040</iconAddress>
-			<iconFormat>0x01</iconFormat>
-			<iconSpeed>0x03</iconSpeed>
-			<permission>0x04</permission>
-			<length>11</length>
 			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
@@ -233,29 +112,6 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Mario Kart: Double Dash!!</description>
-		<gamecode>GM4E</gamecode>
-		<company>01</company>
-		<search>
-			<!-- Start of second block; we'll need to implement block offsets. -->
-			<!-- NOTE: This is also present at 0x4000... -->
-			<address>0x2000</address>
-			<gameDesc>^Mario Kart\: Double Dash!!$</gameDesc>
-			<!-- Date format: MM/DD/YY - Verify for PAL! -->
-			<fileDesc>^Game Data (\d{2})/(\d{2})/(\d{2})$</fileDesc>
-		</search>
-		<dirEntry>
-			<filename>MarioKart Double Dash!!</filename>
-			<bannerFormat>1</bannerFormat>
-			<iconAddress>0x0000</iconAddress>
-			<iconFormat>0x15</iconFormat>
-			<iconSpeed>0x2A</iconSpeed>
-			<permission>0x04</permission>
-			<length>3</length>
-			<commentAddress>0x2000</commentAddress>
-		</dirEntry>
-	</file>
-	<file>
 		<description>Puyo Pop Fever (System File)</description>
 		<gamecode>GPUE</gamecode>
 		<company>8P</company>
@@ -272,6 +128,150 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>1</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Sonic Adventure DX: Director's Cut</description>
+		<gamecode>GXSE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Sonic Adventure DX  File (\d)$</gameDesc>
+			<!-- TODO: Verify variable-length emblem count. -->
+			<fileDesc>^Emblem collected \:(\d{1,3})$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SONICADVENTURE_DX_PLAYRECORD_$G1</filename>
+			<bannerFormat>1</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0001</iconFormat>
+			<iconSpeed>0x0001</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Sonic Adventure DX: Director's Cut (Chao Garden)</description>
+		<gamecode>GXSE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Sonic Adventure DX$</gameDesc>
+			<fileDesc>^Chao Garden$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SONICADVENTURE_DX_CHAOGARDEN</filename>
+			<bannerFormat>1</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x0C</permission>
+			<length>8</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Sonic Adventure 2: Battle</description>
+		<gamecode>GSNE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SONIC ADVENTURE 2 BATTLE$</gameDesc>
+			<fileDesc>^FILE(\d{2}):\d{1,3} Emblems$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SONIC2B__S$F1</filename>
+			<bannerFormat>2</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0A</iconFormat>
+			<iconSpeed>0x0F</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Sonic Adventure 2: Battle (Chao Garden)</description>
+		<gamecode>GSNE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SONIC ADVENTURE 2 BATTLE$</gameDesc>
+			<fileDesc>^CHAO GARDEN DATA$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SONIC2B__ALF</filename>
+			<bannerFormat>1</bannerFormat> <!-- FIXME: MM's file has 0x0D -->
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x0C</permission>
+			<length>8</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Sonic Heroes</description>
+		<gamecode>G9SE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SONIC HEROES \: (\d{2})$</gameDesc>
+			<fileDesc>^EMBLEM \: (\d{3})$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SONICHEROES_$G1</filename>
+			<bannerFormat>2</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x56</iconFormat>
+			<iconSpeed>0xA2</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Super Mario Sunshine</description>
+		<gamecode>GMSE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Super Mario Sunshine$</gameDesc>
+			<!-- Date format: M/D - Verify for PAL! -->
+			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
+			<!-- TODO: Checksum field? -->
+		</search>
+		<dirEntry>
+			<filename>super_mario_sunshine</filename>
+			<bannerFormat>1</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x05</iconFormat>
+			<iconSpeed>0x0F</iconSpeed>
+			<permission>0x04</permission>
+			<length>7</length>
+			<commentAddress>0x0004</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Super Smash Bros. Melee</description>
+		<gamecode>GALE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Super Smash Bros. Melee</gameDesc>
+			<!-- Date format: YYYY/MM/DD - Verify for PAL! -->
+			<fileDesc>^Game Data (\d{4})/(\d{2})/(\d{2})$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SuperSmashBros0110290334</filename>
+			<bannerFormat>2</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>11</length>
 			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
