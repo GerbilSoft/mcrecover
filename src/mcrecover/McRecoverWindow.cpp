@@ -28,8 +28,8 @@
 // MemCard list model.
 #include "MemCardModel.hpp"
 
-// GCN Memory Card File Database.
-#include "GcnMcFileDb.hpp"
+// Search Thread.
+#include "SearchThread.hpp"
 
 // C includes.
 #include <cstdio>
@@ -72,15 +72,15 @@ class McRecoverWindowPrivate
 		 */
 		void updateLstMemCard(void);
 
-		// GCN Memory Card File Database.
-		GcnMcFileDb *db;
+		// Search thread.
+		SearchThread *searchThread;
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	: q(q)
 	, card(NULL)
 	, model(new MemCardModel(q))
-	, db(new GcnMcFileDb(q))
+	, searchThread(new SearchThread(q))
 {
 	// Show icon, description, size, mtime, permission, and gamecode by default.
 	// TODO: Allow the user to customize the columns, and save the 
@@ -105,7 +105,9 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 {
 	delete model;
 	delete card;
-	delete db;
+
+	// TODO: Wait for searchThread to finish?
+	delete searchThread;
 }
 
 
@@ -287,75 +289,20 @@ void McRecoverWindow::on_btnSearchLostFiles_clicked(void)
 	d->card->removeLostFiles();
 
 	// Search blocks for lost files.
-	const int blockSize = d->card->blockSize();
-	void *buf = malloc(blockSize);
+	// TODO: Handle errors.
+	QLinkedList<card_direntry> lostFiles = d->searchThread->searchMemCard(d->card);
 
-	// Stack of directory entries.
-	// We're scanning the card in reverse-order,
-	// so we need to add them to a stack,
-	// then add the stack in order to get correct-order.
-	// TODO: Use malloc()'d dirEntry
-	QStack<card_direntry> dirEntries;
-
-	// Current directory entry.
-	card_direntry dirEntry;
-
-	fprintf(stderr, "--------------------------------\n");
-	fprintf(stderr, "SCANNING MEMORY CARD...\n");
-	for (int i = (d->card->sizeInBlocks() - 1); i > 5; i--) {
-		fprintf(stderr, "Searching block: %d...\n", i);
-		int ret = d->card->readBlock(buf, blockSize, i);
-		if (ret != blockSize) {
-			// Error reading block.
-			fprintf(stderr, "ERROR reading block %d - readBlock() returned %d.\n", i, ret);
-			continue;
-		}
-
-		// Check the block in the database.
-		ret = d->db->checkBlock(buf, blockSize, &dirEntry);
-		if (!ret) {
-			// Matched!
-			fprintf(stderr, "FOUND A MATCH: %-.4s%-.2s %-.32s\n",
-				dirEntry.gamecode,
-				dirEntry.company,
-				dirEntry.filename);
-			fprintf(stderr, "bannerFmt == %02X, iconAddress == %08X, iconFormat == %02X, iconSpeed == %02X\n",
-				dirEntry.bannerfmt, dirEntry.iconaddr, dirEntry.iconfmt, dirEntry.iconspeed);
-
-			// NOTE: dirEntry's block start is not set by d->db->checkBlock().
-			// Set it here.
-			dirEntry.block = i;
-			if (dirEntry.length == 0) {
-				// This only happens if an entry is either
-				// missing a <dirEntry>, or has <length>0</length>.
-				// TODO: Check for this in GcnMcFileDb.
-				dirEntry.length = 1;
-			}
-
-			// Add the directory entry to the stack.
-			dirEntries.push(dirEntry);
-		}
-	}
-
-	// Add the directory entries in the correct order.
-	while (!dirEntries.isEmpty()) {
-		dirEntry = dirEntries.pop();
+	// Add the directory entries.
+	foreach (const card_direntry dirEntry, lostFiles) {
 		d->card->addLostFile(&dirEntry);
 	}
-	fprintf(stderr, "Finished scanning memory card.\n");
-	fprintf(stderr, "--------------------------------\n");
 }
 
 
 void McRecoverWindow::on_btnLoadDatabase_clicked(void)
 {
-	int ret = d->db->load(QLatin1String("GcnMcFileDb.xml"));
-	if (ret != 0) {
-		QMessageBox::critical(this,
-			tr("Database Load Error"),
-			tr("Error loading the GCN Memory Card File database:") +
-			QLatin1String("\n\n") + d->db->errorString());
-	}
+	int ret = d->searchThread->loadGcnMcFileDb(QLatin1String("GcnMcFileDb.xml"));
+	// TODO: Handle errors.
 }
 
 
