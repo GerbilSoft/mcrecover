@@ -255,7 +255,6 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
 				// Check if this block is used.
 				if (usedBlockMap[block] == 0) {
 					// Block is not used.
-					printf("next block: %04X\n", block);
 					fatEntries.append(block);
 					if (!wasWrapped)
 						usedBlockMap[block]++;
