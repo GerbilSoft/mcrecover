@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SearchThread.hpp: "Lost" file search thread.                            *
+ * SearchThreadWorker.hpp: SearchThread "worker" object.                   *
  *                                                                         *
  * Copyright (c) 2013 by David Korth.                                      *
  *                                                                         *
@@ -19,8 +19,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_SEARCHTHREAD_HPP__
-#define __MCRECOVER_SEARCHTHREAD_HPP__
+#ifndef __MCRECOVER_SEARCHTHREADWORKER_HPP__
+#define __MCRECOVER_SEARCHTHREADWORKER_HPP__
 
 // Card definitions.
 #include "card.h"
@@ -30,24 +30,25 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 
-// MemCard
+// Forward declarations.
 class MemCard;
+class GcnMcFileDb;
 
-// SearchThread private class.
-class SearchThreadPrivate;
+// SearchThreadWorker private class.
+class SearchThreadWorkerPrivate;
 
-class SearchThread : public QObject
+class SearchThreadWorker : public QObject
 {
 	Q_OBJECT
 
 	public:
-		SearchThread(QObject *parent = 0);
-		~SearchThread();
+		SearchThreadWorker(QObject *parent = 0);
+		~SearchThreadWorker();
 
 	private:
-		friend class SearchThreadPrivate;
-		SearchThreadPrivate *const d;
-		Q_DISABLE_COPY(SearchThread);
+		friend class SearchThreadWorkerPrivate;
+		SearchThreadWorkerPrivate *const d;
+		Q_DISABLE_COPY(SearchThreadWorker);
 
 	signals:
 		/**
@@ -99,31 +100,14 @@ class SearchThread : public QObject
 
 		/**
 		 * Search a memory card for "lost" files.
-		 * Synchronous search; non-threaded.
 		 * @param card Memory Card to search.
+		 * @param db GcnMcFileDb to use.
 		 * @return Number of files found on success; negative on error.
 		 *
 		 * If successful, retrieve the file list using dirEntryList().
 		 * If an error occurs, check the errorString(). (TODO)(
 		 */
-		int searchMemCard(MemCard *card);
-
-		/**
-		 * Search a memory card for "lost" files.
-		 * Asynchronous search; uses a separate thread.
-		 * @param card Memory Card to search.
-		 * @return 0 if thread started successfully; non-zero on error.
-		 *
-		 * Search is completed when either of the following
-		 * signals are emitted:
-		 * - searchCancelled(): Search was cancelled. No files found.
-		 * - searchFinished(): Search has completed.
-		 * - searchError(): Search failed due to an error.
-		 *
-		 * In the case of searchFinished(), use dirEntryList() to get
-		 * the list of files.
-		 */
-		int searchMemCard_async(MemCard *card);
+		int searchMemCard(MemCard *card, const GcnMcFileDb *db);
 };
 
-#endif /* __MCRECOVER_SEARCHTHREAD_HPP__ */
+#endif /* __MCRECOVER_SEARCHTHREADWORKER_HPP__ */

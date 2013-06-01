@@ -27,12 +27,16 @@
 // GCN Memory Card File Database.
 #include "GcnMcFileDb.hpp"
 
+// Worker object.
+#include "SearchThreadWorker.hpp"
+
 // C includes.
 #include <cstdio>
 
 // Qt includes.
 #include <QtCore/QLinkedList>
 #include <QtCore/QStack>
+#include <QtCore/QThread>
 
 // TODO: Remove this...
 #include <QtGui/QMessageBox>
@@ -51,121 +55,40 @@ class SearchThreadPrivate
 		// GCN Memory Card File Database.
 		GcnMcFileDb *db;
 
-		// List of directory entries from the last successful search.
-		// QLinkedList allows us to prepend items, so we do that
-		// in order to turn "reverse-order" into "correct-order".
-		// TODO: Use malloc()'d dirEntry?
-		QLinkedList<card_direntry> dirEntryList;
-
-		/**
-		 * Search a memory card for "lost" files.
-		 * Internal function used by both threaded and non-threaded versions.
-		 * @param card Memory Card to search.
-		 * @return 0 on success; non-zero on error.
-		 *
-		 * If successful, dirEntryList will have the list of directory entries.
-		 * If an error occurs, check the errorString(). (TODO)(
-		 */
-		int searchMemCard_int(MemCard *card);
+		// Worker object.
+		SearchThreadWorker *worker;
 };
 
 
 SearchThreadPrivate::SearchThreadPrivate(SearchThread* q)
 	: q(q)
 	, db(new GcnMcFileDb(q))
-{ }
+	, worker(new SearchThreadWorker(q))
+{
+	// Signal passthrough.
+	QObject::connect(worker, SIGNAL(searchStarted(int,int,int)),
+			 q, SIGNAL(searchStarted(int,int,int)));
+	QObject::connect(worker, SIGNAL(searchCancelled()),
+			 q, SIGNAL(searchCancelled()));
+	QObject::connect(worker, SIGNAL(searchFinished(int)),
+			 q, SIGNAL(searchFinished(int)));
+	QObject::connect(worker, SIGNAL(searchUpdate(int,int,int)),
+			 q, SIGNAL(searchUpdate(int,int,int)));
+	QObject::connect(worker, SIGNAL(searchError(QString)),
+			 q, SIGNAL(searchError(QString)));
+}	
 
 SearchThreadPrivate::~SearchThreadPrivate()
 {
+	delete worker;
 	delete db;
-}
-
-
-/**
- * Search a memory card for "lost" files.
- * Internal function used by both threaded and non-threaded versions.
- * @param card Memory Card to search.
- * @return Number of files found on success; negative on error.
- *
- * If successful, dirEntryList will have the list of directory entries.
- * If an error occurs, check the errorString(). (TODO)(
- */
-int SearchThreadPrivate::searchMemCard_int(MemCard *card)
-{
-	dirEntryList.clear();
-
-	if (!db) {
-		// Database is not loaded.
-		// TODO: Set an error string somewhere.
-		return -1;
-	}
-
-	// Search blocks for lost files.
-	const int blockSize = card->blockSize();
-	void *buf = malloc(blockSize);
-
-	// Current directory entry.
-	card_direntry dirEntry;
-
-	fprintf(stderr, "--------------------------------\n");
-	fprintf(stderr, "SCANNING MEMORY CARD...\n");
-
-	// TODO: totalSearchBlocks should be based on used block map.
-	const int totalPhysBlocks = card->sizeInBlocks();
-	const int totalSearchBlocks = (card->sizeInBlocks() - 5);
-	const int firstPhysBlock = (totalPhysBlocks - 1);
-	emit q->searchStarted(totalPhysBlocks, totalSearchBlocks, firstPhysBlock);
-
-	int currentSearchBlock = 0;
-	for (int i = firstPhysBlock; i >= 5; i--, currentSearchBlock++) {
-		fprintf(stderr, "Searching block: %d...\n", i);
-		emit q->searchUpdate(i, currentSearchBlock, dirEntryList.size());
-
-		int ret = card->readBlock(buf, blockSize, i);
-		if (ret != blockSize) {
-			// Error reading block.
-			fprintf(stderr, "ERROR reading block %d - readBlock() returned %d.\n", i, ret);
-			continue;
-		}
-
-		// Check the block in the database.
-		ret = db->checkBlock(buf, blockSize, &dirEntry);
-		if (!ret) {
-			// Matched!
-			fprintf(stderr, "FOUND A MATCH: %-.4s%-.2s %-.32s\n",
-				dirEntry.gamecode,
-				dirEntry.company,
-				dirEntry.filename);
-			fprintf(stderr, "bannerFmt == %02X, iconAddress == %08X, iconFormat == %02X, iconSpeed == %02X\n",
-				dirEntry.bannerfmt, dirEntry.iconaddr, dirEntry.iconfmt, dirEntry.iconspeed);
-
-			// NOTE: dirEntry's block start is not set by d->db->checkBlock().
-			// Set it here.
-			dirEntry.block = i;
-			if (dirEntry.length == 0) {
-				// This only happens if an entry is either
-				// missing a <dirEntry>, or has <length>0</length>.
-				// TODO: Check for this in GcnMcFileDb.
-				dirEntry.length = 1;
-			}
-
-			// Add the directory entry to the list.
-			dirEntryList.prepend(dirEntry);
-		}
-	}
-
-	emit q->searchFinished(dirEntryList.size());
-
-	fprintf(stderr, "Finished scanning memory card.\n");
-	fprintf(stderr, "--------------------------------\n");
-	return dirEntryList.size();
 }
 
 
 /** SearchThread **/
 
 SearchThread::SearchThread(QObject *parent)
-	: QThread(parent)
+	: QObject(parent)
 	, d(new SearchThreadPrivate(this))
 { }
 
@@ -197,6 +120,17 @@ int SearchThread::loadGcnMcFileDb(QString filename)
 
 
 /**
+ * Get the list of directory entries from the last successful search.
+ * @return List of directory entries.
+ */
+QLinkedList<card_direntry> SearchThread::dirEntryList(void)
+{
+	// TODO: Not while thread is running...
+	return d->worker->dirEntryList();
+}
+
+
+/**
  * Search a memory card for "lost" files.
  * Synchronous search; non-threaded.
  * @param card Memory Card to search.
@@ -207,16 +141,29 @@ int SearchThread::loadGcnMcFileDb(QString filename)
  */
 int SearchThread::searchMemCard(MemCard *card)
 {
-	return d->searchMemCard_int(card);
+	// Search for files.
+	// TODO: Not while thread is running...
+	return d->worker->searchMemCard(card, d->db);
 }
 
 
 /**
- * Get the list of directory entries from the last successful search.
- * @return List of directory entries.
+ * Search a memory card for "lost" files.
+ * Asynchronous search; uses a separate thread.
+ * @param card Memory Card to search.
+ * @return 0 if thread started successfully; non-zero on error.
+ *
+ * Search is completed when either of the following
+ * signals are emitted:
+ * - searchCancelled(): Search was cancelled. No files found.
+ * - searchFinished(): Search has completed.
+ * - searchError(): Search failed due to an error.
+ *
+ * In the case of searchFinished(), use dirEntryList() to get
+ * the list of files.
  */
-QLinkedList<card_direntry> SearchThread::dirEntryList(void)
+int SearchThread::searchMemCard_async(MemCard *card)
 {
-	// TODO: Not while thread is running...
-	return d->dirEntryList;
+	// TODO
+	return -1;
 }

@@ -70,6 +70,7 @@ SET(mcrecover_SRCS
 	GcnMcFileDb.cpp
 	SearchThread.cpp
 	SearchDialog.cpp
+	SearchThreadWorker.cpp
 	)
 
 # Headers with Qt4 objects.
@@ -81,6 +82,7 @@ SET(mcrecover_MOC_HEADERS
 	GcnMcFileDb.hpp
 	SearchThread.hpp
 	SearchDialog.hpp
+	SearchThreadWorker.hpp
 	)
 
 # UI files.
