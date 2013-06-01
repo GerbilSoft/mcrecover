@@ -36,6 +36,7 @@
 
 // Qt includes. (Drag & Drop)
 #include <QtCore/QUrl>
+#include <QtCore/QStack>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDropEvent>
 #include <QtGui/QMessageBox>
@@ -288,11 +289,20 @@ void McRecoverWindow::on_btnSearchLostFiles_clicked(void)
 	// Search blocks for lost files.
 	const int blockSize = d->card->blockSize();
 	void *buf = malloc(blockSize);
+
+	// Stack of directory entries.
+	// We're scanning the card in reverse-order,
+	// so we need to add them to a stack,
+	// then add the stack in order to get correct-order.
+	// TODO: Use malloc()'d dirEntry
+	QStack<card_direntry> dirEntries;
+
+	// Current directory entry.
 	card_direntry dirEntry;
 
 	fprintf(stderr, "--------------------------------\n");
 	fprintf(stderr, "SCANNING MEMORY CARD...\n");
-	for (int i = 5; i < d->card->sizeInBlocks(); i++) {
+	for (int i = (d->card->sizeInBlocks() - 1); i > 5; i--) {
 		fprintf(stderr, "Searching block: %d...\n", i);
 		int ret = d->card->readBlock(buf, blockSize, i);
 		if (ret != blockSize) {
@@ -321,8 +331,16 @@ void McRecoverWindow::on_btnSearchLostFiles_clicked(void)
 				// TODO: Check for this in GcnMcFileDb.
 				dirEntry.length = 1;
 			}
-			d->card->addLostFile(&dirEntry);
+
+			// Add the directory entry to the stack.
+			dirEntries.push(dirEntry);
 		}
+	}
+
+	// Add the directory entries in the correct order.
+	while (!dirEntries.isEmpty()) {
+		dirEntry = dirEntries.pop();
+		d->card->addLostFile(&dirEntry);
 	}
 	fprintf(stderr, "Finished scanning memory card.\n");
 	fprintf(stderr, "--------------------------------\n");
