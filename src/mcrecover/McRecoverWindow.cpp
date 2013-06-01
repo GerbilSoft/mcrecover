@@ -102,6 +102,10 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 			 q, SLOT(memCardModel_layoutChanged()));
 	QObject::connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)),
 			 q, SLOT(memCardModel_rowsInserted()));
+
+	// Connect the SearchThread slots.
+	QObject::connect(searchThread, SIGNAL(searchFinished(int)),
+			 q, SLOT(searchThread_searchFinished_slot(int)));
 }
 
 McRecoverWindowPrivate::~McRecoverWindowPrivate()
@@ -301,14 +305,13 @@ void McRecoverWindow::on_btnSearchLostFiles_clicked(void)
 
 	// Search blocks for lost files.
 	// TODO: Handle errors.
-	int ret = d->searchThread->searchMemCard(d->card);
-	if (ret > 0) {
-		QLinkedList<card_direntry> dirEntryList = d->searchThread->dirEntryList();
-
-		// Add the directory entries.
-		foreach (const card_direntry dirEntry, dirEntryList) {
-			d->card->addLostFile(&dirEntry);
-		}
+	int ret = d->searchThread->searchMemCard_async(d->card);
+	if (ret < 0) {
+		// Error starting the thread.
+		// Use the synchronous version.
+		// TODO: Handle errors.
+		// NOTE: Files will be added by searchThread_searchFinished_slot().
+		int ret = d->searchThread->searchMemCard(d->card);
 	}
 }
 
@@ -335,4 +338,25 @@ void McRecoverWindow::memCardModel_rowsInserted(void)
 	// Update the QTreeView columns.
 	// FIXME: This doesn't work the first time a file is added...
 	d->updateLstMemCard();
+}
+
+
+/**
+ * Search has completed.
+ * @param lostFilesFound Number of "lost" files found.
+ */
+void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
+{
+	Q_UNUSED(lostFilesFound)
+
+	// Remove lost files from the card.
+	d->card->removeLostFiles();
+
+	// Get the directory entry list.
+	QLinkedList<card_direntry> dirEntryList = d->searchThread->dirEntryList();
+
+	// Add the directory entries.
+	foreach (const card_direntry dirEntry, dirEntryList) {
+		d->card->addLostFile(&dirEntry);
+	}
 }

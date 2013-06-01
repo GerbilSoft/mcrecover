@@ -108,6 +108,24 @@ class SearchThreadWorker : public QObject
 		 * If an error occurs, check the errorString(). (TODO)(
 		 */
 		int searchMemCard(MemCard *card, const GcnMcFileDb *db);
+
+		/**
+		 * Set internal information for threading purposes.
+		 * This is basically the parameters to searchMemCard().
+		 * We can't pass these when starting the thread, so
+		 * we have to set them up first.
+		 * @param card Memory Card to search.
+		 * @param db GcnMcFileDb to use.
+		 */
+		void setThreadInfo(MemCard *card, const GcnMcFileDb *db);
+
+	public slots:
+		/**
+		 * Search the memory card for "lost" files.
+		 * This version should be connected to a QThread's SIGNAL(started()).
+		 * Thread information must have been set using setThreadInfo().
+		 */
+		void searchMemCard_threaded(void);
 };
 
 #endif /* __MCRECOVER_SEARCHTHREADWORKER_HPP__ */

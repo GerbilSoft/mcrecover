@@ -124,6 +124,24 @@ class SearchThread : public QObject
 		 * the list of files.
 		 */
 		int searchMemCard_async(MemCard *card);
+
+	private slots:
+		/**
+		 * Search has been cancelled.
+		 */
+		void searchCancelled_slot(void);
+
+		/**
+		 * Search has completed.
+		 * @param lostFilesFound Number of "lost" files found.
+		 */
+		void searchFinished_slot(int lostFilesFound);
+
+		/**
+		 * An error has occurred during the search.
+		 * @param errorString Error string.
+		 */
+		void searchError_slot(QString errorString);
 };
 
 #endif /* __MCRECOVER_SEARCHTHREAD_HPP__ */

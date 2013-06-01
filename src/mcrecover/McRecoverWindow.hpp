@@ -60,6 +60,9 @@ class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
 		// MemCardModel slots.
 		void memCardModel_layoutChanged(void);
 		void memCardModel_rowsInserted(void);
+
+		// SearchThread has finished.
+		void searchThread_searchFinished_slot(int lostFilesFound);
 };
 
 #endif /* __MCRECOVER_MCRECOVERWINDOW_HPP__ */

@@ -49,12 +49,23 @@ class SearchThreadWorkerPrivate
 		// in order to turn "reverse-order" into "correct-order".
 		// TODO: Use malloc()'d dirEntry?
 		QLinkedList<card_direntry> dirEntryList;
+
+		// searchMemCard() parameters used when this worker
+		// is called by a thread's started() signal.
+		struct {
+			MemCard *card;
+			const GcnMcFileDb *db;
+		} thread_info;
 };
 
 
 SearchThreadWorkerPrivate::SearchThreadWorkerPrivate(SearchThreadWorker* q)
 	: q(q)
-{ }
+{
+	// NULL these out by default.
+	thread_info.card = NULL;
+	thread_info.db = NULL;
+}
 
 
 /** SearchThreadWorker **/
@@ -163,4 +174,38 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db)
 	fprintf(stderr, "Finished scanning memory card.\n");
 	fprintf(stderr, "--------------------------------\n");
 	return d->dirEntryList.size();
+}
+
+
+/**
+ * Set internal information for threading purposes.
+ * This is basically the parameters to searchMemCard().
+ * We can't pass these when starting the thread, so
+ * we have to set them up first.
+ * @param card Memory Card to search.
+ * @param db GcnMcFileDb to use.
+ */
+void SearchThreadWorker::setThreadInfo(MemCard *card, const GcnMcFileDb *db)
+{
+	d->thread_info.card = card;
+	d->thread_info.db = db;
+}
+
+
+/**
+ * Search the memory card for "lost" files.
+ * This version should be connected to a QThread's SIGNAL(started()).
+ * Thread information must have been set using setThreadInfo().
+ */
+void SearchThreadWorker::searchMemCard_threaded(void)
+{
+	if (!d->thread_info.card || !d->thread_info.db) {
+		// Thread information was not set.
+		// TODO: Set an error string.
+		emit searchError(QLatin1String("SearchThreadWorker: Thread information was not set."));
+		return;
+	}
+
+	// Search the memory card.
+	searchMemCard(d->thread_info.card, d->thread_info.db);
 }
