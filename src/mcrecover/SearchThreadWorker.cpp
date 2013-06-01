@@ -69,6 +69,9 @@ class SearchThreadWorkerPrivate
 
 			// Original thread.
 			QThread *orig_thread;
+
+			// If true, search all blocks, not just empty blocks.
+			bool searchUsedBlocks;
 		} thread_info;
 };
 
@@ -80,6 +83,7 @@ SearchThreadWorkerPrivate::SearchThreadWorkerPrivate(SearchThreadWorker* q)
 	thread_info.card = NULL;
 	thread_info.db = NULL;
 	thread_info.orig_thread = NULL;
+	thread_info.searchUsedBlocks = false;
 }
 
 
@@ -122,12 +126,14 @@ QLinkedList<QVector<uint16_t> > SearchThreadWorker::fatEntriesList(void)
  * Search a memory card for "lost" files.
  * @param card Memory Card to search.
  * @param db GcnMcFileDb to use.
+ * @param searchUsedBlocks If true, search all blocks, not just empty blocks.
  * @return Number of files found on success; negative on error.
  *
  * If successful, retrieve the file list using dirEntryList().
  * If an error occurs, check the errorString(). (TODO)(
  */
-int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db)
+int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
+				      bool searchUsedBlocks)
 {
 	d->dirEntryList.clear();
 	d->fatEntriesList.clear();
@@ -138,34 +144,64 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db)
 		return -1;
 	}
 
-	// Search blocks for lost files.
-	const int blockSize = card->blockSize();
-	void *buf = malloc(blockSize);
+	// Block search list.
+	QVector<uint16_t> blockSearchList;
+	const int totalPhysBlocks = card->sizeInBlocks();
 
 	// Used block map.
-	QVector<uint8_t> usedBlockMap = card->usedBlockMap();
+	QVector<uint8_t> usedBlockMap;
+	if (!searchUsedBlocks) {
+		// Only search empty blocks.
+		usedBlockMap = card->usedBlockMap();
+
+		// Put together a block search list.
+		blockSearchList.reserve(totalPhysBlocks - card->freeBlocks() - 5);
+		for (int i = (usedBlockMap.size() - 1); i >= 5; i--) {
+			if (usedBlockMap[i] == 0)
+				blockSearchList.append((uint16_t)i);
+		}
+	} else {
+		// Search through all blocks.
+		usedBlockMap = QVector<uint8_t>(card->sizeInBlocks(), 0);
+
+		// Put together a block search list.
+		blockSearchList.reserve(totalPhysBlocks - 5);
+		for (int i = (usedBlockMap.size() - 1); i >= 5; i--) {
+			blockSearchList.append((uint16_t)i);
+		}
+	}
+
+	if (blockSearchList.isEmpty()) {
+		// Should not happen...
+		// TODO: Set an error string somewhere.
+		return -2;
+	}
 
 	// Current directory entry.
 	card_direntry dirEntry;
+
+	// Block buffer.
+	const int blockSize = card->blockSize();
+	void *buf = malloc(blockSize);
 
 	fprintf(stderr, "--------------------------------\n");
 	fprintf(stderr, "SCANNING MEMORY CARD...\n");
 
 	// TODO: totalSearchBlocks should be based on used block map.
-	const int totalPhysBlocks = card->sizeInBlocks();
-	const int totalSearchBlocks = (card->sizeInBlocks() - 5);
-	const int firstPhysBlock = (totalPhysBlocks - 1);
-	emit searchStarted(totalPhysBlocks, totalSearchBlocks, firstPhysBlock);
+	const int totalSearchBlocks = blockSearchList.size();
+	int currentPhysBlock = blockSearchList.value(0);
+	emit searchStarted(totalPhysBlocks, totalSearchBlocks, currentPhysBlock);
 
-	int currentSearchBlock = 0;
-	for (int i = firstPhysBlock; i >= 5; i--, currentSearchBlock++) {
-		fprintf(stderr, "Searching block: %d...\n", i);
-		emit searchUpdate(i, currentSearchBlock, d->dirEntryList.size());
+	int currentSearchBlock = -1;	// compensate for currentSearchBlock++
+	foreach (currentPhysBlock, blockSearchList) {
+		currentSearchBlock++;
+		fprintf(stderr, "Searching block: %d...\n", currentPhysBlock);
+		emit searchUpdate(currentPhysBlock, currentSearchBlock, d->dirEntryList.size());
 
-		int ret = card->readBlock(buf, blockSize, i);
+		int ret = card->readBlock(buf, blockSize, currentPhysBlock);
 		if (ret != blockSize) {
 			// Error reading block.
-			fprintf(stderr, "ERROR reading block %d - readBlock() returned %d.\n", i, ret);
+			fprintf(stderr, "ERROR reading block %d - readBlock() returned %d.\n", currentPhysBlock, ret);
 			continue;
 		}
 
@@ -182,7 +218,7 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db)
 
 			// NOTE: dirEntry's block start is not set by d->db->checkBlock().
 			// Set it here.
-			dirEntry.block = i;
+			dirEntry.block = currentPhysBlock;
 			if (dirEntry.length == 0) {
 				// This only happens if an entry is either
 				// missing a <dirEntry>, or has <length>0</length>.
@@ -280,12 +316,15 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db)
  * @param card Memory Card to search.
  * @param db GcnMcFileDb to use.
  * @param orig_thread Thread to move back to once completed.
+ * @param searchUsedBlocks If true, search all blocks, not just empty blocks.
  */
-void SearchThreadWorker::setThreadInfo(MemCard *card, const GcnMcFileDb *db, QThread *orig_thread)
+void SearchThreadWorker::setThreadInfo(MemCard *card, const GcnMcFileDb *db,
+				       QThread *orig_thread, bool searchUsedBlocks)
 {
 	d->thread_info.card = card;
 	d->thread_info.db = db;
 	d->thread_info.orig_thread = orig_thread;
+	d->thread_info.searchUsedBlocks = searchUsedBlocks;
 }
 
 
@@ -312,7 +351,7 @@ void SearchThreadWorker::searchMemCard_threaded(void)
 	}
 
 	// Search the memory card.
-	searchMemCard(d->thread_info.card, d->thread_info.db);
+	searchMemCard(d->thread_info.card, d->thread_info.db, d->thread_info.searchUsedBlocks);
 
 	// Move back to the original thread.
 	moveToThread(d->thread_info.orig_thread);

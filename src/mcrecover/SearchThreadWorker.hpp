@@ -111,12 +111,13 @@ class SearchThreadWorker : public QObject
 		 * Search a memory card for "lost" files.
 		 * @param card Memory Card to search.
 		 * @param db GcnMcFileDb to use.
+		 * @param searchUsedBlocks If true, search all blocks, not just empty blocks.
 		 * @return Number of files found on success; negative on error.
 		 *
 		 * If successful, retrieve the file list using dirEntryList().
 		 * If an error occurs, check the errorString(). (TODO)(
 		 */
-		int searchMemCard(MemCard *card, const GcnMcFileDb *db);
+		int searchMemCard(MemCard *card, const GcnMcFileDb *db, bool searchUsedBlocks = false);
 
 		/**
 		 * Set internal information for threading purposes.
@@ -126,8 +127,10 @@ class SearchThreadWorker : public QObject
 		 * @param card Memory Card to search.
 		 * @param db GcnMcFileDb to use.
 		 * @param orig_thread Thread to move back to once completed.
+		 * @param searchUsedBlocks If true, search all blocks, not just empty blocks.
 		 */
-		void setThreadInfo(MemCard *card, const GcnMcFileDb *db, QThread *orig_thread);
+		void setThreadInfo(MemCard *card, const GcnMcFileDb *db,
+				   QThread *orig_thread, bool searchUsedBlocks = false);
 
 	public slots:
 		/**
