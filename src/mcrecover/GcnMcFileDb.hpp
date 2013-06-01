@@ -58,7 +58,7 @@ class GcnMcFileDb : public QObject
 		 * This is set if load() fails.
 		 * @return Error string.
 		 */
-		QString errorString(void);
+		QString errorString(void) const;
 
 		/**
 		 * Check a GCN memory card block to see if it matches any search patterns.
@@ -67,7 +67,7 @@ class GcnMcFileDb : public QObject
 		 * @param dirEntry	[out] Constructed directory entry if a pattern matched.
 		 * @return 0 if a pattern was matched; non-zero if not.
 		 */
-		int checkBlock(const void *buf, int siz, card_direntry *dirEntry);
+		int checkBlock(const void *buf, int siz, card_direntry *dirEntry) const;
 };
 
 #endif /* __MCRECOVER_GCNMCFILEDB_HPP__ */

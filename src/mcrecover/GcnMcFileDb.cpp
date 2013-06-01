@@ -583,7 +583,7 @@ int GcnMcFileDb::load(QString filename)
  * This is set if load() fails.
  * @return Error string.
  */
-QString GcnMcFileDb::errorString(void)
+QString GcnMcFileDb::errorString(void) const
 {
 	return d->errorString;
 }
@@ -596,7 +596,7 @@ QString GcnMcFileDb::errorString(void)
  * @param dirEntry	[out] Constructed directory entry if a pattern matched.
  * @return 0 if a pattern was matched; non-zero if not.
  */
-int GcnMcFileDb::checkBlock(const void *buf, int siz, card_direntry *dirEntry)
+int GcnMcFileDb::checkBlock(const void *buf, int siz, card_direntry *dirEntry) const
 {
 	// TODO: Return a list of FAT entries.
 	// (May require more info from MemCard, and might need to be in
