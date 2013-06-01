@@ -29,6 +29,9 @@
 // C includes.
 #include <string.h>
 
+// C++ includes.
+#include <limits>
+
 // Qt includes.
 #include <QtCore/QFile>
 #include <QtCore/QList>
@@ -60,6 +63,12 @@ class MemCardPrivate
 		// NOTE: This is always assumed to be 8 KB.
 		static const int blockSize = 8192;
 
+		/**
+		 * Total number of blocks in the file.
+		 * Includes the 5 reserved blocks at the beginning.
+		 */
+		int numBlocks;
+
 		// QTextCodec for memory card text encoding.
 		QTextCodec *textCodec;
 
@@ -75,6 +84,15 @@ class MemCardPrivate
 
 		// MemCardFile list.
 		QList<MemCardFile*> lstMemCardFile;
+
+		/**
+		 * Used block map.
+		 * NOTE: This is only valid for regular files, not "lost" files.
+		 * Value indicates how many files are "using" that block.
+		 * Should be 0 for free, 1 for normal files,
+		 * and >1 for "lost" files that are overlapping other files.
+		 */
+		QVector<uint8_t> usedBlockMap;
 
 	private:
 		/**
@@ -147,6 +165,15 @@ MemCardPrivate::MemCardPrivate(MemCard *q, QString filename)
 	// TODO: Verify the filesize:
 	// - Should be a power of two.
 	// - Should at least be 40 KB for system information.
+
+	// Calculate the number of blocks.
+	numBlocks = (filesize / blockSize);
+
+	// Initialize the used block map.
+	// (The first 5 blocks are always used.)
+	usedBlockMap = QVector<uint8_t>(numBlocks, 0);
+	for (int i = 0; i < 5 && i < numBlocks; i++)
+		usedBlockMap[i] = 1;
 
 	// NOTE: Initialization must be done *after* MemCard is initialized!
 }
@@ -383,6 +410,21 @@ void MemCardPrivate::loadMemCardFileList(void)
 		// Valid directory entry.
 		MemCardFile *mcf = new MemCardFile(q, i, mc_dat, mc_bat);
 		lstMemCardFile.append(mcf);
+
+		// Mark the file's blocks as used.
+		QVector<uint16_t> fatEntries = mcf->fatEntries();
+		foreach (uint16_t block, fatEntries) {
+			if (block >= 5 && block < usedBlockMap.size()) {
+				// Valid block.
+				// Increment its entry in the usedBlockMap.
+				if (usedBlockMap[block] < std::numeric_limits<uint8_t>::max())
+					usedBlockMap[block]++;
+			} else {
+				// Invalid block.
+				// TODO: Store an error value somewhere.
+				fprintf(stderr, "WARNING: File %d has invalid FAT entry 0x%04X.\n", i, block);
+			}
+		}
 	}
 
 	// File list has changed.
@@ -451,7 +493,7 @@ int MemCard::sizeInBlocks(void) const
 {
 	if (!isOpen())
 		return -1;
-	return (d->filesize / d->blockSize);
+	return d->numBlocks;
 }
 
 /**
@@ -525,7 +567,6 @@ int MemCard::numFiles(void) const
 {
 	if (!isOpen())
 		return -1;
-	
 	return d->lstMemCardFile.size();
 }
 
@@ -540,7 +581,6 @@ MemCardFile *MemCard::getFile(int idx)
 		return NULL;
 	if (idx < 0 || idx >= d->lstMemCardFile.size())
 		return NULL;
-	
 	return d->lstMemCardFile.at(idx);
 }
 
@@ -578,4 +618,17 @@ void MemCard::addLostFile(const card_direntry *dirEntry)
 	MemCardFile *file = new MemCardFile(this, dirEntry, dirEntry->block, dirEntry->length);
 	d->lstMemCardFile.append(file);
 	emit fileAdded(d->lstMemCardFile.size() - 1);
+}
+
+
+/**
+ * Get the used block map.
+ * NOTE: This is only valid for regular files, not "lost" files.
+ * @return Used block map.
+ */
+QVector<uint8_t> MemCard::usedBlockMap(void)
+{
+	if (!isOpen())
+		return QVector<uint8_t>();
+	return d->usedBlockMap;
 }

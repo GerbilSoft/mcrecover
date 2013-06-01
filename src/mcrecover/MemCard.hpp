@@ -139,6 +139,13 @@ class MemCard : public QObject
 		 * Add more comprehensive versions with a block map specification.
 		 */
 		void addLostFile(const card_direntry *dirEntry);
+
+		/**
+		 * Get the used block map.
+		 * NOTE: This is only valid for regular files, not "lost" files.
+		 * @return Used block map.
+		 */
+		QVector<uint8_t> usedBlockMap(void);
 };
 
 #endif /* __MCRECOVER_MEMCARD_HPP__ */

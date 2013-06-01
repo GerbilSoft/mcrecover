@@ -93,7 +93,7 @@ class MemCardFilePrivate
 		const card_direntry *dirEntry;
 
 		// FAT entries.
-		QVector<uint16_t> fat_entries;
+		QVector<uint16_t> fatEntries;
 
 		// File information. (Directory table.)
 		QString gamecode;
@@ -158,16 +158,16 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	dirEntry = &dat->entries[fileIdx];
 
 	// Load the FAT entries.
-	fat_entries.clear();
-	fat_entries.reserve(dirEntry->length);
+	fatEntries.clear();
+	fatEntries.reserve(dirEntry->length);
 	uint16_t last_block = dirEntry->block;
 	if (last_block >= 5 && last_block != 0xFFFF) {
-		fat_entries.append(last_block);
+		fatEntries.append(last_block);
 		for (int i = 1; i < dirEntry->length; i++) {
 			last_block = bat->fat[last_block - 5];
 			if (last_block == 0xFFFF || last_block < 5)
 				break;
-			fat_entries.append(last_block);
+			fatEntries.append(last_block);
 		}
 	}
 
@@ -211,7 +211,7 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 		for (; length > 0; length--, start++) {
 			if (start > maxBlockNum)
 				start = 5;
-			fat_entries.append(start);
+			fatEntries.append(start);
 		}
 	}
 
@@ -301,9 +301,9 @@ void MemCardFilePrivate::init(void)
  */
 uint16_t MemCardFilePrivate::fileBlockAddrToPhysBlockAddr(uint16_t fileBlock)
 {
-	if ((int)fileBlock >= fat_entries.size())
+	if ((int)fileBlock >= fatEntries.size())
 		return -1;
-	return fat_entries.at((int)fileBlock);
+	return fatEntries.at((int)fileBlock);
 }
 
 
@@ -625,3 +625,10 @@ int MemCardFile::iconAnimMode(void) const
  */
 bool MemCardFile::isLostFile(void) const
 	{ return (d->fileIdx < 0); }
+
+/**
+ * Get this file's FAT entries.
+ * @return FAT entries.
+ */
+QVector<uint16_t> MemCardFile::fatEntries(void) const
+	{ return d->fatEntries; }

@@ -25,9 +25,10 @@
 #include "card.h"
 
 // Qt includes.
+#include <QtCore/QDateTime>
 #include <QtCore/QObject>
 #include <QtCore/QString>
-#include <QtCore/QDateTime>
+#include <QtCore/QVector>
 #include <QtGui/QPixmap>
 
 // MemCard class.
@@ -162,6 +163,12 @@ class MemCardFile : public QObject
 		 * @return True if lost; false if file is in the directory table.
 		 */
 		bool isLostFile(void) const;
+
+		/**
+		 * Get this file's FAT entries.
+		 * @return FAT entries.
+		 */
+		QVector<uint16_t> fatEntries(void) const;
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */
