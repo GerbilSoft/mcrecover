@@ -51,16 +51,22 @@ class SearchThreadPrivate
 		// GCN Memory Card File Database.
 		GcnMcFileDb *db;
 
+		// List of directory entries from the last successful search.
+		// QLinkedList allows us to prepend items, so we do that
+		// in order to turn "reverse-order" into "correct-order".
+		// TODO: Use malloc()'d dirEntry?
+		QLinkedList<card_direntry> dirEntryList;
+
 		/**
 		 * Search a memory card for "lost" files.
 		 * Internal function used by both threaded and non-threaded versions.
 		 * @param card Memory Card to search.
-		 * @return List of "lost" files.
+		 * @return 0 on success; non-zero on error.
 		 *
-		 * If an error occurs, an empty list will be returned,
-		 * and an error string will be set. (TODO)
+		 * If successful, dirEntryList will have the list of directory entries.
+		 * If an error occurs, check the errorString(). (TODO)(
 		 */
-		QLinkedList<card_direntry> searchMemCard_int(MemCard *card);
+		int searchMemCard_int(MemCard *card);
 };
 
 
@@ -79,26 +85,24 @@ SearchThreadPrivate::~SearchThreadPrivate()
  * Search a memory card for "lost" files.
  * Internal function used by both threaded and non-threaded versions.
  * @param card Memory Card to search.
- * @param emitSignals If true, emit signals.
- * @return List of "lost" files.
+ * @return Number of files found on success; negative on error.
+ *
+ * If successful, dirEntryList will have the list of directory entries.
+ * If an error occurs, check the errorString(). (TODO)(
  */
-QLinkedList<card_direntry> SearchThreadPrivate::searchMemCard_int(MemCard *card)
+int SearchThreadPrivate::searchMemCard_int(MemCard *card)
 {
+	dirEntryList.clear();
+
 	if (!db) {
 		// Database is not loaded.
 		// TODO: Set an error string somewhere.
-		return QLinkedList<card_direntry>();
+		return -1;
 	}
 
 	// Search blocks for lost files.
 	const int blockSize = card->blockSize();
 	void *buf = malloc(blockSize);
-
-	// List of directory entries.
-	// QLinkedList allows us to prepend items, so we do that
-	// in order to turn "reverse-order" into "correct-order".
-	// TODO: Use malloc()'d dirEntry?
-	QLinkedList<card_direntry> dirEntries;
 
 	// Current directory entry.
 	card_direntry dirEntry;
@@ -115,7 +119,7 @@ QLinkedList<card_direntry> SearchThreadPrivate::searchMemCard_int(MemCard *card)
 	int currentSearchBlock = 0;
 	for (int i = firstPhysBlock; i >= 5; i--, currentSearchBlock++) {
 		fprintf(stderr, "Searching block: %d...\n", i);
-		emit q->searchUpdate(i, currentSearchBlock, dirEntries.size());
+		emit q->searchUpdate(i, currentSearchBlock, dirEntryList.size());
 
 		int ret = card->readBlock(buf, blockSize, i);
 		if (ret != blockSize) {
@@ -146,15 +150,15 @@ QLinkedList<card_direntry> SearchThreadPrivate::searchMemCard_int(MemCard *card)
 			}
 
 			// Add the directory entry to the list.
-			dirEntries.prepend(dirEntry);
+			dirEntryList.prepend(dirEntry);
 		}
 	}
 
-	emit q->searchFinished(dirEntries.size());
+	emit q->searchFinished(dirEntryList.size());
 
 	fprintf(stderr, "Finished scanning memory card.\n");
 	fprintf(stderr, "--------------------------------\n");
-	return dirEntries;
+	return dirEntryList.size();
 }
 
 
@@ -196,9 +200,23 @@ int SearchThread::loadGcnMcFileDb(QString filename)
  * Search a memory card for "lost" files.
  * Synchronous search; non-threaded.
  * @param card Memory Card to search.
- * @return List of "lost" files.
+ * @return Number of files found on success; negative on error.
+ *
+ * If successful, retrieve the file list using dirEntryList().
+ * If an error occurs, check the errorString(). (TODO)(
  */
-QLinkedList<card_direntry> SearchThread::searchMemCard(MemCard *card)
+int SearchThread::searchMemCard(MemCard *card)
 {
 	return d->searchMemCard_int(card);
+}
+
+
+/**
+ * Get the list of directory entries from the last successful search.
+ * @return List of directory entries.
+ */
+QLinkedList<card_direntry> SearchThread::dirEntryList(void)
+{
+	// TODO: Not while thread is running...
+	return d->dirEntryList;
 }

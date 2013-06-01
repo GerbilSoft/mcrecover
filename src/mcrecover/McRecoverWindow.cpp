@@ -301,11 +301,14 @@ void McRecoverWindow::on_btnSearchLostFiles_clicked(void)
 
 	// Search blocks for lost files.
 	// TODO: Handle errors.
-	QLinkedList<card_direntry> lostFiles = d->searchThread->searchMemCard(d->card);
+	int ret = d->searchThread->searchMemCard(d->card);
+	if (ret > 0) {
+		QLinkedList<card_direntry> dirEntryList = d->searchThread->dirEntryList();
 
-	// Add the directory entries.
-	foreach (const card_direntry dirEntry, lostFiles) {
-		d->card->addLostFile(&dirEntry);
+		// Add the directory entries.
+		foreach (const card_direntry dirEntry, dirEntryList) {
+			d->card->addLostFile(&dirEntry);
+		}
 	}
 }
 

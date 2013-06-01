@@ -95,12 +95,18 @@ class SearchThread : public QThread
 		 * Search a memory card for "lost" files.
 		 * Synchronous search; non-threaded.
 		 * @param card Memory Card to search.
-		 * @return List of "lost" files.
+		 * @return Number of files found on success; negative on error.
 		 *
-		 * If an error occurs, an empty list will be returned,
-		 * and an error string will be set. (TODO)
+		 * If successful, retrieve the file list using dirEntryList().
+		 * If an error occurs, check the errorString(). (TODO)(
 		 */
-		QLinkedList<card_direntry> searchMemCard(MemCard *card);
+		int searchMemCard(MemCard *card);
+
+		/**
+		 * Get the list of directory entries from the last successful search.
+		 * @return List of directory entries.
+		 */
+		QLinkedList<card_direntry> dirEntryList(void);
 };
 
 #endif /* __MCRECOVER_SEARCHTHREAD_HPP__ */
