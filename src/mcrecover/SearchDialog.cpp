@@ -25,6 +25,7 @@
 #include "SearchThread.hpp"
 
 // Qt includes.
+#include <QtGui/QApplication>
 #include <QtGui/QCloseEvent>
 
 
@@ -90,6 +91,9 @@ void SearchDialogPrivate::updateSearchStatus(void)
 	// Update the progress bar.
 	q->pbProgress->setMaximum(totalSearchBlocks);
 	q->pbProgress->setValue(currentSearchBlock);
+
+	// Make sure the label updates are processed.
+	QApplication::processEvents();
 }
 
 
