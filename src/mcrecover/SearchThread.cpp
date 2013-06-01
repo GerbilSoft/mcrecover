@@ -107,14 +107,15 @@ QLinkedList<card_direntry> SearchThreadPrivate::searchMemCard_int(MemCard *card)
 	fprintf(stderr, "SCANNING MEMORY CARD...\n");
 
 	// TODO: totalSearchBlocks should be based on used block map.
-	const int totalBlocks = card->sizeInBlocks();
+	const int totalPhysBlocks = card->sizeInBlocks();
 	const int totalSearchBlocks = (card->sizeInBlocks() - 5);
-	emit q->searchStarted(totalBlocks, totalSearchBlocks);
+	const int firstPhysBlock = (totalPhysBlocks - 1);
+	emit q->searchStarted(totalPhysBlocks, totalSearchBlocks, firstPhysBlock);
 
 	int currentSearchBlock = 0;
-	for (int i = (totalBlocks - 1); i >= 5; i--, currentSearchBlock++) {
+	for (int i = firstPhysBlock; i >= 5; i--, currentSearchBlock++) {
 		fprintf(stderr, "Searching block: %d...\n", i);
-		emit q->searchUpdate(i, currentSearchBlock, totalSearchBlocks, dirEntries.size());
+		emit q->searchUpdate(i, currentSearchBlock, dirEntries.size());
 
 		int ret = card->readBlock(buf, blockSize, i);
 		if (ret != blockSize) {
@@ -149,7 +150,7 @@ QLinkedList<card_direntry> SearchThreadPrivate::searchMemCard_int(MemCard *card)
 		}
 	}
 
-	emit q->searchFinished(dirEntries);
+	emit q->searchFinished(dirEntries.size());
 
 	fprintf(stderr, "Finished scanning memory card.\n");
 	fprintf(stderr, "--------------------------------\n");

@@ -69,6 +69,7 @@ SET(mcrecover_SRCS
 	GcImage.cpp
 	GcnMcFileDb.cpp
 	SearchThread.cpp
+	SearchDialog.cpp
 	)
 
 # Headers with Qt4 objects.
@@ -79,11 +80,13 @@ SET(mcrecover_MOC_HEADERS
 	MemCardModel.hpp
 	GcnMcFileDb.hpp
 	SearchThread.hpp
+	SearchDialog.hpp
 	)
 
 # UI files.
 SET(mcrecover_UIS
 	ui/McRecoverWindow.ui
+	ui/SearchDialog.ui
 	)
 
 # Generate the header files from the UI files.

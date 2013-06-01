@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SearchThread.hpp: "Lost" file search thread.                            *
+ * SearchDialog.hpp: Search dialog.                                        *
  *                                                                         *
  * Copyright (c) 2013 by David Korth.                                      *
  *                                                                         *
@@ -19,55 +19,80 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_SEARCHTHREAD_HPP__
-#define __MCRECOVER_SEARCHTHREAD_HPP__
+#ifndef __MCRECOVER_SEARCHDIALOG_HPP__
+#define __MCRECOVER_SEARCHDIALOG_HPP__
+
+#include <QtGui/QDialog>
+#include "ui_SearchDialog.h"
 
 // Card definitions.
 #include "card.h"
 
-// Qt includes.
-#include <QtCore/QLinkedList>
-#include <QtCore/QString>
-#include <QtCore/QThread>
+// Qt classes.
+class QCloseEvent;
 
-// MemCard
-class MemCard;
+// SearchThread.
+class SearchThread;
 
-// SearchThread private class.
-class SearchThreadPrivate;
+// SearchDialog private class.
+class SearchDialogPrivate;
 
-class SearchThread : public QThread
+class SearchDialog : public QDialog, public Ui::SearchDialog
 {
 	Q_OBJECT
 
 	public:
-		SearchThread(QObject *parent = 0);
-		~SearchThread();
+		SearchDialog(QWidget *parent = 0);
+		~SearchDialog();
 
 	private:
-		friend class SearchThreadPrivate;
-		SearchThreadPrivate *const d;
-		Q_DISABLE_COPY(SearchThread);
+		friend class SearchDialogPrivate;
+		SearchDialogPrivate *const d;
+		Q_DISABLE_COPY(SearchDialog);
 
-	signals:
+	public:
+		/**
+		 * Get the SearchThread.
+		 * @return SearchThread.
+		 */
+		SearchThread *searchThread(void);
+
+		/**
+		 * Set the SearchThread.
+		 * @param searchThread SearchThread.
+		 */
+		void setSearchThread(SearchThread *searchThread);
+
+	private slots:
+		/**
+		 * User closed the window.
+		 * @param event QCloseEvent.
+		 */
+		void closeEvent(QCloseEvent *event);
+
+		/**
+		 * User clicked cancel.
+		 */
+		void reject(void);
+
 		/**
 		 * Search has started.
 		 * @param totalPhysBlocks Total number of blocks in the card.
 		 * @param totalSearchBlocks Number of blocks being searched.
 		 * @param firstPhysBlock First block being searched.
 		 */
-		void searchStarted(int totalPhysBlocks, int totalSearchBlocks, int firstPhysBlock);
+		void searchStarted_slot(int totalPhysBlocks, int totalSearchBlocks, int firstPhysBlock);
 
 		/**
 		 * Search has been cancelled.
 		 */
-		void searchCancelled(void);
+		void searchCancelled_slot(void);
 
 		/**
 		 * Search has completed.
 		 * @param lostFilesFound Number of "lost" files found.
 		 */
-		void searchFinished(int lostFilesFound);
+		void searchFinished_slot(int lostFilesFound);
 
 		/**
 		 * Update search status.
@@ -75,32 +100,13 @@ class SearchThread : public QThread
 		 * @param currentSearchBlock Number of blocks searched so far.
 		 * @param lostFilesFound Number of "lost" files found.
 		 */
-		void searchUpdate(int currentPhysBlock, int currentSearchBlock, int lostFilesFound);
+		void searchUpdate_slot(int currentPhysBlock, int currentSearchBlock, int lostFilesFound);
 
 		/**
 		 * An error has occurred during the search.
 		 * @param errorString Error string.
 		 */
-		void searchError(QString errorString);
-
-	public:
-		/**
-		 * Load a GCN Memory Card File database.
-		 * @param filename Filename of GCN Memory Card File database.
-		 * @return 0 on success; non-zero on error. (Check error string!)
-		 */
-		int loadGcnMcFileDb(QString filename);
-
-		/**
-		 * Search a memory card for "lost" files.
-		 * Synchronous search; non-threaded.
-		 * @param card Memory Card to search.
-		 * @return List of "lost" files.
-		 *
-		 * If an error occurs, an empty list will be returned,
-		 * and an error string will be set. (TODO)
-		 */
-		QLinkedList<card_direntry> searchMemCard(MemCard *card);
+		void searchError_slot(QString errorString);
 };
 
-#endif /* __MCRECOVER_SEARCHTHREAD_HPP__ */
+#endif /* __MCRECOVER_SEARCHDIALOG_HPP__ */

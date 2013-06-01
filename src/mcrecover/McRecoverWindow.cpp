@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * McRecoverWindow.cpp: Main window.                                       *
  *                                                                         *
- * Copyright (c) 2011 by David Korth.                                      *
+ * Copyright (c) 2012-2013 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -24,12 +24,11 @@
 // MemCard classes.
 #include "MemCard.hpp"
 #include "MemCardFile.hpp"
-
-// MemCard list model.
 #include "MemCardModel.hpp"
 
-// Search Thread.
+// Search classes.
 #include "SearchThread.hpp"
+#include "SearchDialog.hpp"
 
 // C includes.
 #include <cstdio>
@@ -74,6 +73,9 @@ class McRecoverWindowPrivate
 
 		// Search thread.
 		SearchThread *searchThread;
+
+		// Search dialog.
+		SearchDialog *searchDialog;
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -81,6 +83,7 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, card(NULL)
 	, model(new MemCardModel(q))
 	, searchThread(new SearchThread(q))
+	, searchDialog(NULL)
 {
 	// Show icon, description, size, mtime, permission, and gamecode by default.
 	// TODO: Allow the user to customize the columns, and save the 
@@ -107,6 +110,7 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 	delete card;
 
 	// TODO: Wait for searchThread to finish?
+	delete searchDialog;
 	delete searchThread;
 }
 
@@ -287,6 +291,13 @@ void McRecoverWindow::on_btnSearchLostFiles_clicked(void)
 
 	// Remove lost files from the card.
 	d->card->removeLostFiles();
+
+	// Initialize the Search dialog.
+	if (!d->searchDialog) {
+		d->searchDialog = new SearchDialog(this);
+		d->searchDialog->setSearchThread(d->searchThread);
+	}
+	d->searchDialog->open();
 
 	// Search blocks for lost files.
 	// TODO: Handle errors.
