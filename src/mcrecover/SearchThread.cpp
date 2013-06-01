@@ -172,12 +172,13 @@ QLinkedList<QVector<uint16_t> > SearchThread::fatEntriesList(void)
  * Search a memory card for "lost" files.
  * Synchronous search; non-threaded.
  * @param card Memory Card to search.
+ * @param searchUsedBlocks If true, search all blocks, not just empty blocks.
  * @return Number of files found on success; negative on error.
  *
  * If successful, retrieve the file list using dirEntryList().
  * If an error occurs, check the errorString(). (TODO)(
  */
-int SearchThread::searchMemCard(MemCard *card)
+int SearchThread::searchMemCard(MemCard *card, bool searchUsedBlocks)
 {
 	// TODO: Mutex?
 	if (d->workerThread) {
@@ -186,7 +187,7 @@ int SearchThread::searchMemCard(MemCard *card)
 	}
 
 	// Search for files.
-	return d->worker->searchMemCard(card, d->db);
+	return d->worker->searchMemCard(card, d->db, searchUsedBlocks);
 }
 
 
@@ -194,6 +195,7 @@ int SearchThread::searchMemCard(MemCard *card)
  * Search a memory card for "lost" files.
  * Asynchronous search; uses a separate thread.
  * @param card Memory Card to search.
+ * @param searchUsedBlocks If true, search all blocks, not just empty blocks.
  * @return 0 if the thread started successfully; non-zero on error.
  *
  * Search is completed when either of the following
@@ -202,7 +204,7 @@ int SearchThread::searchMemCard(MemCard *card)
  * - searchFinished(): Search has completed.
  * - searchError(): Search failed due to an error.
  */
-int SearchThread::searchMemCard_async(MemCard *card)
+int SearchThread::searchMemCard_async(MemCard *card, bool searchUsedBlocks)
 {
 	// TODO: Mutex?
 	if (d->workerThread) {
@@ -213,7 +215,7 @@ int SearchThread::searchMemCard_async(MemCard *card)
 	// Set up the worker thread.
 	d->workerThread = new QThread(this);
 	d->worker->moveToThread(d->workerThread);
-	d->worker->setThreadInfo(card, d->db, QThread::currentThread());
+	d->worker->setThreadInfo(card, d->db, QThread::currentThread(), searchUsedBlocks);
 
 	connect(d->workerThread, SIGNAL(started()),
 		d->worker, SLOT(searchMemCard_threaded()));

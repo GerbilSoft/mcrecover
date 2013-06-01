@@ -112,7 +112,7 @@ class SearchThread : public QObject
 		 * If successful, retrieve the file list using dirEntryList().
 		 * If an error occurs, check the errorString(). (TODO)(
 		 */
-		int searchMemCard(MemCard *card);
+		int searchMemCard(MemCard *card, bool searchUsedBlocks = false);
 
 		/**
 		 * Search a memory card for "lost" files.
@@ -129,7 +129,7 @@ class SearchThread : public QObject
 		 * In the case of searchFinished(), use dirEntryList() to get
 		 * the list of files.
 		 */
-		int searchMemCard_async(MemCard *card);
+		int searchMemCard_async(MemCard *card, bool searchUsedBlocks = false);
 
 	private slots:
 		/**
