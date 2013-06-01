@@ -154,6 +154,10 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db)
 		}
 	}
 
+	// Send an update for the last block.
+	emit searchUpdate(5, currentSearchBlock, d->dirEntryList.size());
+
+	// Search is finished.
 	emit searchFinished(d->dirEntryList.size());
 
 	fprintf(stderr, "Finished scanning memory card.\n");
