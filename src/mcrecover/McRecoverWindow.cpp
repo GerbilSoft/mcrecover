@@ -354,9 +354,11 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 
 	// Get the directory entry list.
 	QLinkedList<card_direntry> dirEntryList = d->searchThread->dirEntryList();
+	QLinkedList<QVector<uint16_t> > fatEntriesList = d->searchThread->fatEntriesList();
 
 	// Add the directory entries.
 	foreach (const card_direntry dirEntry, dirEntryList) {
-		d->card->addLostFile(&dirEntry);
+		QVector<uint16_t> fatEntries = fatEntriesList.takeFirst();
+		d->card->addLostFile(&dirEntry, fatEntries);
 	}
 }
