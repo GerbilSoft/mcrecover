@@ -76,12 +76,16 @@ SearchDialogPrivate::~SearchDialogPrivate()
  */
 void SearchDialogPrivate::updateSearchStatus(void)
 {
-	// Update the label.
+	// Update the "scanning" label.
 	QString scanText = q->tr("Scanning block #%L1 (%L2 scanned, %L3 remaining)")
 				.arg(currentPhysBlock)
 				.arg(currentSearchBlock)
 				.arg(totalSearchBlocks - currentSearchBlock);
 	q->lblScanningBlocks->setText(scanText);
+
+	// Update the "files found" label.
+	QString filesFoundText = q->tr("%n file(s) found.", NULL, lostFilesFound);
+	q->lblFilesFound->setText(filesFoundText);
 
 	// Update the progress bar.
 	q->pbProgress->setMaximum(totalSearchBlocks);
