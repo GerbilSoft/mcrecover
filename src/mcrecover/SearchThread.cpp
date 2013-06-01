@@ -158,6 +158,17 @@ QLinkedList<card_direntry> SearchThread::dirEntryList(void)
 
 
 /**
+ * Get the list of FAT entries from the last successful search.
+ * @return List of FAT entries.
+ */
+QLinkedList<QVector<uint16_t> > SearchThread::fatEntriesList(void)
+{
+	// TODO: Not while thread is running...
+	return d->worker->fatEntriesList();
+}
+
+
+/**
  * Search a memory card for "lost" files.
  * Synchronous search; non-threaded.
  * @param card Memory Card to search.

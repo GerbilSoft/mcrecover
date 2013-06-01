@@ -27,6 +27,7 @@
 
 // Qt includes and classes.
 #include <QtCore/QObject>
+#include <QtCore/QVector>
 class QTextCodec;
 
 #include "card.h"
@@ -134,6 +135,13 @@ class MemCard : public QObject
 		void removeLostFiles(void);
 
 		/**
+		 * Get the used block map.
+		 * NOTE: This is only valid for regular files, not "lost" files.
+		 * @return Used block map.
+		 */
+		QVector<uint8_t> usedBlockMap(void);
+
+		/**
 		 * Add a "lost" file.
 		 * NOTE: This is a debugging version.
 		 * Add more comprehensive versions with a block map specification.
@@ -141,11 +149,11 @@ class MemCard : public QObject
 		void addLostFile(const card_direntry *dirEntry);
 
 		/**
-		 * Get the used block map.
-		 * NOTE: This is only valid for regular files, not "lost" files.
-		 * @return Used block map.
+		 * Add a "lost" file.
+		 * @param dirEntry Directory entry.
+		 * @param fatEntries FAT entries.
 		 */
-		QVector<uint8_t> usedBlockMap(void);
+		void addLostFile(const card_direntry *dirEntry, QVector<uint16_t> fatEntries);
 };
 
 #endif /* __MCRECOVER_MEMCARD_HPP__ */

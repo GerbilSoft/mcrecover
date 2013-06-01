@@ -30,9 +30,12 @@
 // C includes.
 #include <cstdio>
 
+// C++ includes.
+#include <limits>
+
 // Qt includes.
 #include <QtCore/QLinkedList>
-#include <QtCore/QStack>
+#include <QtCore/QVector>
 
 
 class SearchThreadWorkerPrivate
@@ -45,11 +48,18 @@ class SearchThreadWorkerPrivate
 		Q_DISABLE_COPY(SearchThreadWorkerPrivate);
 
 	public:
-		// List of directory entries from the last successful search.
-		// QLinkedList allows us to prepend items, so we do that
-		// in order to turn "reverse-order" into "correct-order".
-		// TODO: Use malloc()'d dirEntry?
+		/**
+		 * List of directory entries from the last successful search.
+		 * QLinkedList allows us to prepend items, so we do that
+		 * in order to turn "reverse-order" into "correct-order".
+		 * TODO: Use malloc()'d dirEntry?
+		 */
 		QLinkedList<card_direntry> dirEntryList;
+
+		/**
+		 * List of FAT entries for directory entries.
+		 */
+		QLinkedList<QVector<uint16_t> > fatEntriesList;
 
 		// searchMemCard() parameters used when this worker
 		// is called by a thread's started() signal.
@@ -98,6 +108,17 @@ QLinkedList<card_direntry> SearchThreadWorker::dirEntryList(void)
 
 
 /**
+ * Get the list of FAT entries from the last successful search.
+ * @return List of FAT entries.
+ */
+QLinkedList<QVector<uint16_t> > SearchThreadWorker::fatEntriesList(void)
+{
+	// TODO: Not while thread is running...
+	return d->fatEntriesList;
+}
+
+
+/**
  * Search a memory card for "lost" files.
  * @param card Memory Card to search.
  * @param db GcnMcFileDb to use.
@@ -109,6 +130,7 @@ QLinkedList<card_direntry> SearchThreadWorker::dirEntryList(void)
 int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db)
 {
 	d->dirEntryList.clear();
+	d->fatEntriesList.clear();
 
 	if (!db) {
 		// Database is not loaded.
@@ -119,6 +141,9 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db)
 	// Search blocks for lost files.
 	const int blockSize = card->blockSize();
 	void *buf = malloc(blockSize);
+
+	// Used block map.
+	QVector<uint8_t> usedBlockMap = card->usedBlockMap();
 
 	// Current directory entry.
 	card_direntry dirEntry;
@@ -165,8 +190,73 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db)
 				dirEntry.length = 1;
 			}
 
+			// Construct the FAT entries for this file.
+			QVector<uint16_t> fatEntries;
+			fatEntries.reserve(dirEntry.length);
+
+			// First block is always valid.
+			fatEntries.append(dirEntry.block);
+
+			uint16_t blocksRemaining = (dirEntry.length - 1);
+			uint16_t block = (dirEntry.block + 1);
+			bool wasWrapped = false;
+
+			// Skip used blocks and go after empty blocks only.
+			while (blocksRemaining > 0) {
+				if (block >= totalPhysBlocks) {
+					// Wraparound.
+					// Do NOT mark the wrapped blocks as used,
+					// since they might be used by actual files.
+					block = 5;
+					wasWrapped = true;
+					continue;
+				} else if (block == dirEntry.block) {
+					// ERROR: We wrapped around!
+					// Use the "naive" algorithm after the last valid block.
+					break;
+				}
+
+				// Check if this block is used.
+				if (usedBlockMap[block] == 0) {
+					// Block is not used.
+					printf("next block: %04X\n", block);
+					fatEntries.append(block);
+					if (!wasWrapped)
+						usedBlockMap[block]++;
+					blocksRemaining--;
+				}
+
+				// Next block.
+				block++;
+			}
+
+			// Naive block algorithm for the remaining blocks.
+			block = (fatEntries.value(fatEntries.size() - 1) + 1);
+			wasWrapped = false;
+			while (blocksRemaining > 0) {
+				if (block >= totalPhysBlocks) {
+					// Wraparound.
+					// Do NOT mark the wrapped blocks as used,
+					// since they might be used by actual files.
+					block = 5;
+					continue;
+				}
+
+				// Add this block.
+				fatEntries.append(block);
+				if (usedBlockMap[block] < std::numeric_limits<uint8_t>::max()) {
+					if (!wasWrapped)
+						usedBlockMap[block]++;
+				}
+				block++;
+				blocksRemaining--;
+			}
+
 			// Add the directory entry to the list.
 			d->dirEntryList.prepend(dirEntry);
+
+			// Add the FAT entries to the list.
+			d->fatEntriesList.prepend(fatEntries);
 		}
 	}
 

@@ -57,12 +57,11 @@ class MemCardFile : public QObject
 		 * This constructor is for "lost" files.
 		 * @param card MemCard.
 		 * @param dirEntry Constructed directory entry.
-		 * @param start Starting block.
-		 * @param length File length, in blocks.
+		 * @param fatEntries FAT entries.
 		 */
 		MemCardFile(MemCard *card,
 				const card_direntry *dirEntry,
-				uint16_t start, uint16_t length);
+				QVector<uint16_t> fatEntries);
 
 		~MemCardFile();
 	

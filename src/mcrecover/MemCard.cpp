@@ -400,11 +400,11 @@ void MemCardPrivate::loadMemCardFileList(void)
 
 	// Byteswap the directory table contents.
 	for (int i = 0; i < NUM_ELEMENTS(mc_dat->entries); i++) {
-		const card_direntry *direntry = &mc_dat->entries[i];
+		const card_direntry *dirEntry = &mc_dat->entries[i];
 
 		// If the game code is 0xFFFFFFFF, the entry is empty.
 		static const uint8_t gamecode_empty[4] = {0xFF, 0xFF, 0xFF, 0xFF};
-		if (!memcmp(direntry->gamecode, gamecode_empty, sizeof(gamecode_empty)))
+		if (!memcmp(dirEntry->gamecode, gamecode_empty, sizeof(gamecode_empty)))
 			continue;
 
 		// Valid directory entry.
@@ -586,6 +586,19 @@ MemCardFile *MemCard::getFile(int idx)
 
 
 /**
+ * Get the used block map.
+ * NOTE: This is only valid for regular files, not "lost" files.
+ * @return Used block map.
+ */
+QVector<uint8_t> MemCard::usedBlockMap(void)
+{
+	if (!isOpen())
+		return QVector<uint8_t>();
+	return d->usedBlockMap;
+}
+
+
+/**
  * Remove all "lost" files.
  */
 void MemCard::removeLostFiles(void)
@@ -615,20 +628,41 @@ void MemCard::addLostFile(const card_direntry *dirEntry)
 	if (!isOpen())
 		return;
 
-	MemCardFile *file = new MemCardFile(this, dirEntry, dirEntry->block, dirEntry->length);
-	d->lstMemCardFile.append(file);
-	emit fileAdded(d->lstMemCardFile.size() - 1);
+	// Initialize the FAT entries baesd on start/length.
+	// TODO: Check for block collisions and skip used blocks.
+	QVector<uint16_t> fatEntries;
+	fatEntries.reserve(dirEntry->length);
+
+	const uint16_t maxBlockNum = ((uint16_t)sizeInBlocks() - 1);
+	if (maxBlockNum <= 5 || maxBlockNum > 4091) {
+		// Invalid maximum block size. Don't initialize the FAT.
+		// TODO: Print an error message.
+	} else {
+		// Initialize the FAT.
+		uint16_t block = dirEntry->block;
+		uint16_t length = dirEntry->length;
+		for (; length > 0; length--, block++) {
+			if (block > maxBlockNum)
+				block = 5;
+			fatEntries.append(block);
+		}
+	}
+
+	addLostFile(dirEntry, fatEntries);
 }
 
 
 /**
- * Get the used block map.
- * NOTE: This is only valid for regular files, not "lost" files.
- * @return Used block map.
+ * Add a "lost" file.
+ * @param dirEntry Directory entry.
+ * @param fatEntries FAT entries.
  */
-QVector<uint8_t> MemCard::usedBlockMap(void)
+void MemCard::addLostFile(const card_direntry *dirEntry, QVector<uint16_t> fatEntries)
 {
 	if (!isOpen())
-		return QVector<uint8_t>();
-	return d->usedBlockMap;
+		return;
+
+	MemCardFile *file = new MemCardFile(this, dirEntry, fatEntries);
+	d->lstMemCardFile.append(file);
+	emit fileAdded(d->lstMemCardFile.size() - 1);
 }

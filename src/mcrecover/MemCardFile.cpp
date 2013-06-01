@@ -57,13 +57,12 @@ class MemCardFilePrivate
 		 * @param q MemCardFile.
 		 * @param card MemCard.
 		 * @param dirEntry Constructed directory entry.
-		 * @param start Starting block.
-		 * @param length File length, in blocks.
+		 * @param fatEntries FAT entries.
 		 */
 		MemCardFilePrivate(MemCardFile *q,
 				MemCard *card,
 				const card_direntry *dirEntry,
-				uint16_t start, uint16_t length);
+				QVector<uint16_t> fatEntries);
 
 		~MemCardFilePrivate();
 
@@ -182,12 +181,11 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
  * @param q MemCardFile.
  * @param card MemCard.
  * @param dirEntry Constructed directory entry.
- * @param start Starting block.
- * @param length File length, in blocks.
+ * @param fatEntries FAT entries.
  */
 MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 		MemCard *card, const card_direntry *dirEntry,
-		uint16_t start, uint16_t length)
+		QVector<uint16_t> fatEntries)
 	: q(q)
 	, card(card)
 	, fileIdx(-1)
@@ -200,20 +198,8 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	memcpy(dentry, dirEntry, sizeof(*dentry));
 	this->dirEntry = dentry;
 
-	// Initialize the FAT entries baesd on start/length.
-	// TODO: Check for block collisions and skip used blocks.
-	uint16_t maxBlockNum = ((uint16_t)card->sizeInBlocks() - 1);
-	if (maxBlockNum <= 5 || maxBlockNum > 4091) {
-		// Invalid maximum block size. Don't initialize the FAT.
-		// TODO: Print an error message.
-	} else {
-		// Initialize the FAT.
-		for (; length > 0; length--, start++) {
-			if (start > maxBlockNum)
-				start = 5;
-			fatEntries.append(start);
-		}
-	}
+	// Copy the FAT entries.
+	this->fatEntries = fatEntries;
 
 	// Populate the rest of the fields.
 	init();
@@ -485,14 +471,13 @@ MemCardFile::MemCardFile(MemCard *card, const int fileIdx,
  * This constructor is for "lost" files.
  * @param card MemCard.
  * @param dirEntry Constructed directory entry.
- * @param start Starting block.
- * @param length File length, in blocks.
+ * @param fatEntries FAT entries.
  */
 MemCardFile::MemCardFile(MemCard *card,
 		const card_direntry *dirEntry,
-		uint16_t start, uint16_t length)
+		QVector<uint16_t> fatEntries)
 	: QObject(card)
-	, d(new MemCardFilePrivate(this, card, dirEntry, start, length))
+	, d(new MemCardFilePrivate(this, card, dirEntry, fatEntries))
 { }
 
 MemCardFile::~MemCardFile()
