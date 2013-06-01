@@ -34,6 +34,7 @@
 #include <QtCore/QLinkedList>
 #include <QtCore/QStack>
 
+
 class SearchThreadWorkerPrivate
 {
 	public:
@@ -55,6 +56,9 @@ class SearchThreadWorkerPrivate
 		struct {
 			MemCard *card;
 			const GcnMcFileDb *db;
+
+			// Original thread.
+			QThread *orig_thread;
 		} thread_info;
 };
 
@@ -65,6 +69,7 @@ SearchThreadWorkerPrivate::SearchThreadWorkerPrivate(SearchThreadWorker* q)
 	// NULL these out by default.
 	thread_info.card = NULL;
 	thread_info.db = NULL;
+	thread_info.orig_thread = NULL;
 }
 
 
@@ -184,11 +189,13 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db)
  * we have to set them up first.
  * @param card Memory Card to search.
  * @param db GcnMcFileDb to use.
+ * @param orig_thread Thread to move back to once completed.
  */
-void SearchThreadWorker::setThreadInfo(MemCard *card, const GcnMcFileDb *db)
+void SearchThreadWorker::setThreadInfo(MemCard *card, const GcnMcFileDb *db, QThread *orig_thread)
 {
 	d->thread_info.card = card;
 	d->thread_info.db = db;
+	d->thread_info.orig_thread = orig_thread;
 }
 
 
@@ -199,8 +206,16 @@ void SearchThreadWorker::setThreadInfo(MemCard *card, const GcnMcFileDb *db)
  */
 void SearchThreadWorker::searchMemCard_threaded(void)
 {
-	if (!d->thread_info.card || !d->thread_info.db) {
+	if (!d->thread_info.card ||
+	    !d->thread_info.db ||
+	    !d->thread_info.orig_thread)
+	{
 		// Thread information was not set.
+		if (d->thread_info.orig_thread) {
+			// Move back to the original thread.
+			moveToThread(d->thread_info.orig_thread);
+		}
+
 		// TODO: Set an error string.
 		emit searchError(QLatin1String("SearchThreadWorker: Thread information was not set."));
 		return;
@@ -208,4 +223,7 @@ void SearchThreadWorker::searchMemCard_threaded(void)
 
 	// Search the memory card.
 	searchMemCard(d->thread_info.card, d->thread_info.db);
+
+	// Move back to the original thread.
+	moveToThread(d->thread_info.orig_thread);
 }

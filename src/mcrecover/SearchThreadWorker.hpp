@@ -30,6 +30,9 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 
+// Qt classes.
+class QThread;
+
 // Forward declarations.
 class MemCard;
 class GcnMcFileDb;
@@ -116,8 +119,9 @@ class SearchThreadWorker : public QObject
 		 * we have to set them up first.
 		 * @param card Memory Card to search.
 		 * @param db GcnMcFileDb to use.
+		 * @param orig_thread Thread to move back to once completed.
 		 */
-		void setThreadInfo(MemCard *card, const GcnMcFileDb *db);
+		void setThreadInfo(MemCard *card, const GcnMcFileDb *db, QThread *orig_thread);
 
 	public slots:
 		/**

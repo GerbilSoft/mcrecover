@@ -82,11 +82,11 @@ SearchThreadPrivate::SearchThreadPrivate(SearchThread* q)
 	// We have to handle these signals in order to move
 	// the worker object back to the main thread.
 	QObject::connect(worker, SIGNAL(searchCancelled()),
-			 q, SIGNAL(searchCancelled()));
+			 q, SLOT(searchCancelled_slot()));
 	QObject::connect(worker, SIGNAL(searchFinished(int)),
-			 q, SIGNAL(searchFinished(int)));
+			 q, SLOT(searchFinished_slot(int)));
 	QObject::connect(worker, SIGNAL(searchError(QString)),
-			 q, SIGNAL(searchError(QString)));
+			 q, SLOT(searchError_slot(QString)));
 }	
 
 SearchThreadPrivate::~SearchThreadPrivate()
@@ -202,7 +202,7 @@ int SearchThread::searchMemCard_async(MemCard *card)
 	// Set up the worker thread.
 	d->workerThread = new QThread(this);
 	d->worker->moveToThread(d->workerThread);
-	d->worker->setThreadInfo(card, d->db);
+	d->worker->setThreadInfo(card, d->db, QThread::currentThread());
 
 	connect(d->workerThread, SIGNAL(started()),
 		d->worker, SLOT(searchMemCard_threaded()));
@@ -222,10 +222,8 @@ int SearchThread::searchMemCard_async(MemCard *card)
  */
 void SearchThread::searchCancelled_slot(void)
 {
-	if (d->workerThread) {
-		d->worker->moveToThread(QThread::currentThread());
+	if (d->workerThread)
 		d->stopWorkerThread();
-	}
 
 	emit searchCancelled();
 }
@@ -236,10 +234,8 @@ void SearchThread::searchCancelled_slot(void)
  */
 void SearchThread::searchFinished_slot(int lostFilesFound)
 {
-	if (d->workerThread) {
-		d->worker->moveToThread(QThread::currentThread());
+	if (d->workerThread)
 		d->stopWorkerThread();
-	}
 
 	emit searchFinished(lostFilesFound);
 }
