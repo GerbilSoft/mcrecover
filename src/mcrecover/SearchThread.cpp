@@ -112,7 +112,7 @@ QLinkedList<card_direntry> SearchThreadPrivate::searchMemCard_int(MemCard *card)
 	emit q->searchStarted(totalBlocks, totalSearchBlocks);
 
 	int currentSearchBlock = 0;
-	for (int i = (totalBlocks - 1); i > 5; i--, currentSearchBlock++) {
+	for (int i = (totalBlocks - 1); i >= 5; i--, currentSearchBlock++) {
 		fprintf(stderr, "Searching block: %d...\n", i);
 		emit q->searchUpdate(i, currentSearchBlock, totalSearchBlocks, dirEntries.size());
 
