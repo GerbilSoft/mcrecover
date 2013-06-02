@@ -684,15 +684,22 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz, card_direntry *dirEntry) c
 	ba = matchFileDef->company.toLatin1();
 	strncpy(dirEntry->company, ba.constData(), sizeof(dirEntry->company));
 
+	// Clear the byte array before converting the filename.
+	ba = QByteArray();
+
 	// Filename.
-	// TODO: Convert to Shift-JIS if this is a JP file.
-	// For now, always assume cp1252.
-	if (!d->textCodecUS) {
-		// ...or not.
-		ba = matchFileDef->dirEntry.filename.toLatin1();
-	} else {
-		// We have a codec.
+	if (dirEntry->gamecode[3] == 'J' && d->textCodecJP) {
+		// JP file. Convert to Shift-JIS.
+		ba = d->textCodecJP->fromUnicode(matchFileDef->dirEntry.filename);
+	} else if (d->textCodecUS) {
+		// US/EU file. Convert to cp1252.
 		ba = d->textCodecUS->fromUnicode(matchFileDef->dirEntry.filename);
+	}
+
+	if (ba.isEmpty()) {
+		// QByteArray is empty. Conversion failed.
+		// Convert to Latin1 instead.
+		ba = matchFileDef->dirEntry.filename.toLatin1();
 	}
 
 	if (ba.length() > (int)sizeof(dirEntry->filename))
