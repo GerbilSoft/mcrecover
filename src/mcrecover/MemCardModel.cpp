@@ -97,9 +97,7 @@ class MemCardModelPrivate
 		void animTimerSlot(void);
 
 		// Visible columns.
-		// NOTE: We need COL_MAX+1 in order to show a blank spacer column
-		// after the rest of the columns..
-		std::bitset<MemCardModel::COL_MAX+1> colsVisible;
+		std::bitset<MemCardModel::COL_MAX> colsVisible;
 		QVector<int> vIndirectCols;	// indirect columns
 		bool vIndirectCols_dirty;
 		void refreshVisibleColumns(void);

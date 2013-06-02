@@ -184,6 +184,9 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	// Set lstFileList's model.
 	lstFileList->setModel(d->model);
 	
+	// Don't expand the last header column to fill the QTreeView.
+	lstFileList->header()->setStretchLastSection(false);
+
 	// Initialize the memory card's QTreeView.
 	d->updateLstMemCard();
 }
