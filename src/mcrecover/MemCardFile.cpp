@@ -231,8 +231,9 @@ void MemCardFilePrivate::init(void)
 	gamecode = QString::fromLatin1(dirEntry->gamecode, sizeof(dirEntry->gamecode));
 	company = QString::fromLatin1(dirEntry->company, sizeof(dirEntry->company));
 
-	// TODO: GC memory card time uses local time.
-	// QDateTime::setTime_t uses UTC. Add local time offset!
+	// Handle the timestamp as UTC.
+	// GCN doesn't know about timezones, so we shouldn't apply any time offsets.
+	lastModified.setTimeSpec(Qt::UTC);
 	lastModified.setTime_t(dirEntry->lastmodified + GC_UNIX_TIME_DIFF);
 
 	// Get the block size.
