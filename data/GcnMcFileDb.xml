@@ -27,7 +27,7 @@
 		<company>7D</company>
 		<search>
 			<address>0x0000</address>
-			<gameDesc>^Crash Bandicoot\: TWoC$</gameDesc>
+			<gameDesc>^Crash Bandicoot: TWoC$</gameDesc>
 			<fileDesc>^Save Game File$</fileDesc>
 		</search>
 		<dirEntry>
@@ -70,7 +70,7 @@
 			<!-- Start of second block; we'll need to implement block offsets. -->
 			<!-- NOTE: This is also present at 0x4000... -->
 			<address>0x2000</address>
-			<gameDesc>^Mario Kart\: Double Dash!!$</gameDesc>
+			<gameDesc>^Mario Kart: Double Dash!!$</gameDesc>
 			<!-- Date format: MM/DD/YY - Verify for PAL! -->
 			<fileDesc>^Game Data (\d{2})/(\d{2})/(\d{2})$</fileDesc>
 		</search>
@@ -136,7 +136,7 @@
 			<address>0x0004</address>
 			<gameDesc>^Metroid Prime$</gameDesc>
 			<!-- Date format: MM.DD.YY HH:mm - Verify for PAL! -->
-			<fileDesc>^(\d{2})\.(\d{2})\.(\d{2})  (\d{2})\:(\d{2})$</fileDesc>
+			<fileDesc>^(\d{2})\.(\d{2})\.(\d{2})  (\d{2}):(\d{2})$</fileDesc>
 			<!-- TODO: Checksum field? -->
 		</search>
 		<dirEntry>
@@ -159,7 +159,7 @@
 			<gameDesc>^Metroid Prime 2 Echoes$</gameDesc>
 			<!-- Date format: MM.DD.YYYY HH:mm - Verify for PAL! -->
 			<!-- TODO: Verify MM instead of M, DD instead of D, HH instead of H. -->
-			<fileDesc>^(\d{2}).(\d{2}).(\d{2})  (\d{2})\:(\d{2})$</fileDesc>
+			<fileDesc>^(\d{2}).(\d{2}).(\d{2})  (\d{2}):(\d{2})$</fileDesc>
 			<!-- TODO: Checksum field? -->
 		</search>
 		<dirEntry>
@@ -242,7 +242,7 @@
 			<address>0x0000</address>
 			<gameDesc>^Sonic Adventure DX  File (\d)$</gameDesc>
 			<!-- TODO: Verify variable-length emblem count. -->
-			<fileDesc>^Emblem collected \:(\d{1,3})$</fileDesc>
+			<fileDesc>^Emblem collected :(\d{1,3})$</fileDesc>
 		</search>
 		<dirEntry>
 			<filename>SONICADVENTURE_DX_PLAYRECORD_$G1</filename>
@@ -343,8 +343,8 @@
 		<company>8P</company>
 		<search>
 			<address>0x0000</address>
-			<gameDesc>^SONIC HEROES \: (\d{2})$</gameDesc>
-			<fileDesc>^EMBLEM \: (\d{3})$</fileDesc>
+			<gameDesc>^SONIC HEROES : (\d{2})$</gameDesc>
+			<fileDesc>^EMBLEM : (\d{3})$</fileDesc>
 		</search>
 		<dirEntry>
 			<filename>SONICHEROES_$G1</filename>
@@ -365,7 +365,7 @@
 			<address>0x1400</address>
 			<gameDesc>^SONIC RIDERS$</gameDesc>
 			<!-- Date format: MM/DD/YY - Verify for PAL! -->
-			<fileDesc>^Game Data\.(\d{2})\: (\d{2})/(\d{2})/(\d{2})$</fileDesc>
+			<fileDesc>^Game Data\.(\d{2}): (\d{2})/(\d{2})/(\d{2})$</fileDesc>
 		</search>
 		<dirEntry>
 			<filename>SONICRIDERS_GAMEDATA_$F1</filename>
