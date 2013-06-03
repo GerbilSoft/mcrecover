@@ -22,6 +22,27 @@
 		</dirEntry>
 	</file>
 	<file>
+		<description>Billy Hatcher and the Giant Egg</description>
+		<gamecode>GEZE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Billy Hatcher$</gameDesc>
+			<!-- Date format: MM/DD/YYYY HH:MM - Verify for PAL! -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>billyhatcher</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
 		<description>Crash Bandicoot: The Wrath of Cortex</description>
 		<gamecode>GCBE</gamecode>
 		<company>7D</company>
@@ -39,6 +60,30 @@
 			<permission>0x04</permission>
 			<length>1</length>
 			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>F-Zero GX</description>
+		<gamecode>GFZE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^F-ZERO GX$</gameDesc>
+			<!-- Date format: YY/MM/DD - Verify for PAL! -->
+			<!-- TODO: Example field was "13/06/01 A" - what's the A for? -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{2})</fileDesc>
+			<!-- TODO: Checksum field? -->
+		</search>
+		<dirEntry>
+			<filename>f_zero.dat</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0060</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x1C</permission>
+			<length>4</length>
+			<commentAddress>0x0004</commentAddress>
+			<encrypted>true</encrypted>
 		</dirEntry>
 	</file>
 	<file>
@@ -67,7 +112,7 @@
 		<gamecode>GM4E</gamecode>
 		<company>01</company>
 		<search>
-			<!-- Start of second block; we'll need to implement block offsets. -->
+			<!-- Second block. FIXME: Implement block offsets. -->
 			<!-- NOTE: This is also present at 0x4000... -->
 			<address>0x2000</address>
 			<gameDesc>^Mario Kart: Double Dash!!$</gameDesc>
@@ -96,7 +141,8 @@
 			<fileDesc>^File (\d)  (\d{2})/(\d{2})/(\d{4})$</fileDesc>
 		</search>
 		<dirEntry>
-			<filename>MARIPA4BOX0</filename> <!-- TODO: Save slot? -->
+			<!-- TODO: $F1 needs a -1 modifier. -->
+			<filename>MARIPA4BOX$F1</filename>
 			<bannerFormat>0x01</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x0055</iconFormat>
@@ -107,19 +153,60 @@
 		</dirEntry>
 	</file>
 	<file>
+		<description>Mario Party 5</description>
+		<gamecode>GP5E</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Mario Party 5$</gameDesc>
+			<!-- Date format: MM/DD/YYYY - Verify for PAL! -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4})$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>MARIPA5</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0055</iconFormat>
+			<iconSpeed>0x00AA</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Mario Party 6</description>
+		<gamecode>GP6E</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Mario Party 6$</gameDesc>
+			<!-- Date format: MM/DD/YYYY - Verify for PAL! -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4})$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>MARIPA6</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0055</iconFormat>
+			<iconSpeed>0x00AA</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
 		<description>Mario Party 7</description>
 		<gamecode>GP7E</gamecode>
 		<company>01</company>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Mario Party 7$</gameDesc>
-			<!-- NOTE: Description does NOT have a slot identifier. Need to prompt the user! -->
 			<!-- Date format: MM/DD/YYYY - Verify for PAL! -->
 			<fileDesc>^(\d{2})/(\d{2})/(\d{4})$</fileDesc>
 		</search>
 		<dirEntry>
-			<filename>MARIPA7</filename> <!-- TODO: Save slot? -->
-			<bannerFormat>0x01</bannerFormat>
+			<filename>MARIPA7</filename>
+			<bannerFormat>0x05</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x0055</iconFormat>
 			<iconSpeed>0x00AA</iconSpeed>
@@ -129,18 +216,24 @@
 		</dirEntry>
 	</file>
 	<file>
+		<!-- NOTE: PAL version uses a different file structure! -->
+		<!-- User will need to select a preferred region. -->
 		<description>Metroid Prime</description>
 		<gamecode>GM8E</gamecode>
 		<company>01</company>
 		<search>
 			<address>0x0004</address>
 			<gameDesc>^Metroid Prime$</gameDesc>
-			<!-- Date format: MM.DD.YY HH:mm - Verify for PAL! -->
+			<!-- Date format: MM.DD.YY HH:mm -->
 			<fileDesc>^(\d{2})\.(\d{2})\.(\d{2})  (\d{2}):(\d{2})$</fileDesc>
 			<!-- TODO: Checksum field? -->
 		</search>
 		<dirEntry>
-			<filename>MetroidPrime A</filename> <!-- TODO: Save slot? -->
+			<!-- NOTE: "A" is not a save slot!
+			     "MetroidPrime B" is used for wear levelling,
+			     and shouldn't show up normally.
+			     All 3 save slots are in this file. -->
+			<filename>MetroidPrime A</filename>
 			<bannerFormat>0x01</bannerFormat>
 			<iconAddress>0x0044</iconAddress>
 			<iconFormat>0x01</iconFormat>
@@ -157,8 +250,7 @@
 		<search>
 			<address>0x0004</address>
 			<gameDesc>^Metroid Prime 2 Echoes$</gameDesc>
-			<!-- Date format: MM.DD.YYYY HH:mm - Verify for PAL! -->
-			<!-- TODO: Verify MM instead of M, DD instead of D, HH instead of H. -->
+			<!-- Date format: MM.DD.YY HH:mm - Verify for PAL! -->
 			<fileDesc>^(\d{2}).(\d{2}).(\d{2})  (\d{2}):(\d{2})$</fileDesc>
 			<!-- TODO: Checksum field? -->
 		</search>
@@ -181,7 +273,6 @@
 			<address>0x0000</address>
 			<gameDesc>^PAC-MAN WORLD 2$</gameDesc>
 			<fileDesc>^\(C\) 2002 NAMCO$</fileDesc>
-			<!-- TODO: Checksum field? -->
 		</search>
 		<dirEntry>
 			<filename>PMW2SAVE</filename>
@@ -191,6 +282,29 @@
 			<iconSpeed>0x2AAA</iconSpeed>
 			<permission>0x04</permission>
 			<length>8</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Paper Mario: The Thousand Year Door</description>
+		<gamecode>G8ME</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Paper Mario$</gameDesc>
+			<!-- Date format: MM/DD, with leading spaces - Verify for PAL! -->
+			<!-- NOTE: Months less than 10 will have a leading space;
+			     however, mcrecover trims spaces from descriptions! -->
+			<fileDesc>^( \d|\d{1,2})/( \d|\d{2}) save data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>mariost_save_file</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>17</length>
 			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
@@ -211,6 +325,26 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>1</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Puyo Pop Fever (Replay)</description>
+		<gamecode>GPUE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Puyo Pop Fever$</gameDesc>
+			<fileDesc>^Replay(\d{2}) File$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Puyo Pop Fever Replay$F1</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
 			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
@@ -241,15 +375,14 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Sonic Adventure DX  File (\d)$</gameDesc>
-			<!-- TODO: Verify variable-length emblem count. -->
-			<fileDesc>^Emblem collected :(\d{1,3})$</fileDesc>
+			<fileDesc>^Emblem collected :(  \d| \d{2}|\d{3})$</fileDesc>
 		</search>
 		<dirEntry>
 			<filename>SONICADVENTURE_DX_PLAYRECORD_$G1</filename>
 			<bannerFormat>0x01</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
-			<iconFormat>0x0001</iconFormat>
-			<iconSpeed>0x0001</iconSpeed>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x01</iconSpeed>
 			<permission>0x04</permission>
 			<length>1</length>
 			<commentAddress>0x0000</commentAddress>
@@ -282,11 +415,11 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^SONIC ADVENTURE 2 BATTLE$</gameDesc>
-			<fileDesc>^FILE(\d{2}):\d{1,3} Emblems$</fileDesc>
+			<fileDesc>^FILE(\d{2}):(  \d| \d{2}|\d{3}) Emblems?$</fileDesc>
 		</search>
 		<dirEntry>
 			<filename>SONIC2B__S$F1</filename>
-			<bannerFormat>0x02</bannerFormat>
+			<bannerFormat>0x06</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x0A</iconFormat>
 			<iconSpeed>0x0F</iconSpeed>
@@ -306,7 +439,7 @@
 		</search>
 		<dirEntry>
 			<filename>SONIC2B__ALF</filename>
-			<bannerFormat>0x01</bannerFormat> <!-- FIXME: MM's file has 0x0D -->
+			<bannerFormat>0xCD</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x5555</iconFormat>
 			<iconSpeed>0x5555</iconSpeed>
@@ -323,17 +456,56 @@
 			<address>0x0000</address>
 			<gameDesc>^SONIC GEMS COLLECTION$</gameDesc>
 			<!-- Date format: MM/DD - Verify for PAL! -->
-			<!-- TODO: Verify MM instead of M, DD instead of D. -->
 			<fileDesc>^SETTING DATA (\d{2})/(\d{2})$</fileDesc>
 		</search>
 		<dirEntry>
-			<filename>SONIC GEMS_00</filename> <!-- TODO: Slot number? -->
+			<filename>SONIC GEMS_00</filename>
 			<bannerFormat>0x02</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x02</iconFormat>
 			<iconSpeed>0x02</iconSpeed>
 			<permission>0x04</permission>
 			<length>2</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Sonic Gems Collection (Sonic R)</description>
+		<gamecode>G2XE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SONIC GEMS COLLECTION$</gameDesc>
+			<fileDesc>^SONIC R : Game Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SONIC_R</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Sonic Gems Collection (Sonic the Fighters)</description>
+		<gamecode>G2XE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SONIC GEMS COLLECTION$</gameDesc>
+			<fileDesc>^SONIC F : SYSTEM FILE$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>STF.DAT</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
 			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
@@ -347,11 +519,33 @@
 			<fileDesc>^EMBLEM : (\d{3})$</fileDesc>
 		</search>
 		<dirEntry>
+			<!-- TODO: $G1 needs a -1 modifier. -->
 			<filename>SONICHEROES_$G1</filename>
 			<bannerFormat>0x02</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
-			<iconFormat>0x56</iconFormat>
-			<iconSpeed>0xA2</iconSpeed>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>Sonic Mega Collection</description>
+		<gamecode>GSOE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Sonic Mega Collection$</gameDesc>
+			<!-- Date format: MM/DD HH:MM - Verify for PAL! -->
+			<fileDesc>^System File (\d{2})/(\d{2}) (\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>S_MEGA_SYS</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>2</length>
 			<commentAddress>0x0000</commentAddress>
@@ -427,7 +621,7 @@
 		<company>01</company>
 		<search>
 			<address>0x0000</address>
-			<gameDesc>^Super Smash Bros. Melee</gameDesc>
+			<gameDesc>^Super Smash Bros. Melee$</gameDesc>
 			<!-- Date format: YYYY/MM/DD - Verify for PAL! -->
 			<fileDesc>^Game Data (\d{4})/(\d{2})/(\d{2})$</fileDesc>
 		</search>
@@ -440,6 +634,171 @@
 			<permission>0x04</permission>
 			<length>11</length>
 			<commentAddress>0x0000</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>The Legend of Zelda: Collector's Edition (Zelda 1)</description>
+		<gamecode>PZLE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x1C00</address>
+			<gameDesc>^Zelda: Collector's Edition$</gameDesc>
+			<fileDesc>^THE LEGEND OF ZELDA$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>NES_ZELDA1_SAVE</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x15</iconFormat>
+			<iconSpeed>0x3F</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+			<commentAddress>0x1C00</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>The Legend of Zelda: Collector's Edition (Zelda 2)</description>
+		<gamecode>PZLE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x1C00</address>
+			<gameDesc>^Zelda: Collector's Edition$</gameDesc>
+			<fileDesc>^THE ADVENTURE OF LINK$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>NES_ZELDA2_SAVE</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x15</iconFormat>
+			<iconSpeed>0x3F</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+			<commentAddress>0x1C00</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>The Legend of Zelda: Collector's Edition (Ocarina of Time)</description>
+		<gamecode>PZLE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x002C</address>
+			<gameDesc>^Zelda: Collector's Edition$</gameDesc>
+			<fileDesc>^OCARINA OF TIME$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>ZELDA1</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x006C</iconAddress>
+			<iconFormat>0x2A</iconFormat>
+			<iconSpeed>0x3F</iconSpeed>
+			<permission>0x04</permission>
+			<length>9</length>
+			<commentAddress>0x002C</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>The Legend of Zelda: Collector's Edition (Majora's Mask)</description>
+		<gamecode>PZLE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x002C</address>
+			<gameDesc>^Zelda: Collector's Edition$</gameDesc>
+			<fileDesc>^MAJORA'S MASK$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>ZELDA2</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x006C</iconAddress>
+			<iconFormat>0x2A</iconFormat>
+			<iconSpeed>0x3F</iconSpeed>
+			<permission>0x04</permission>
+			<length>21</length>
+			<commentAddress>0x002C</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>The Legend of Zelda: Four Swords Adventures</description>
+		<gamecode>G4SE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x1C00</address>
+			<gameDesc>^Four Swords Adventures$</gameDesc>
+			<!-- Date format: M/D - Verify for PAL! -->
+			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>gc4sword</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+			<commentAddress>0x1C00</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>The Legend of Zelda: Ocarina of Time / Master Quest</description>
+		<gamecode>D43E</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x002C</address>
+			<gameDesc>^Zelda: Ocarina of Time$</gameDesc>
+			<!-- Date format: M/D - Verify for PAL! -->
+			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>ZELDA</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x006C</iconAddress>
+			<iconFormat>0x2A</iconFormat>
+			<iconSpeed>0x2A</iconSpeed>
+			<permission>0x04</permission>
+			<length>15</length>
+			<commentAddress>0x002C</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>The Legend of Zelda: The Wind Waker</description>
+		<gamecode>GZLE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x1C00</address>
+			<gameDesc>^Zelda: The Wind Waker$</gameDesc>
+			<!-- Date format: M/D - Verify for PAL! -->
+			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>gczelda</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>12</length>
+			<commentAddress>0x1C00</commentAddress>
+		</dirEntry>
+	</file>
+	<file>
+		<description>The Legend of Zelda: Twilight Princess</description>
+		<gamecode>GZLE</gamecode>
+		<company>01</company>
+		<search>
+			<!-- Second block. FIXME: Implement block offsets. -->
+			<address>0x2400</address>
+			<gameDesc>^Zelda: Twilight Princess$</gameDesc>
+			<!-- Date format: M/D - Verify for PAL! -->
+			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>gczelda2</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x0155</iconFormat>
+			<iconSpeed>0x0155</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+			<commentAddress>0x2400</commentAddress>
 		</dirEntry>
 	</file>
 </GcnMcFileDb>
