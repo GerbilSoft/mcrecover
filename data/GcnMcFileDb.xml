@@ -12,7 +12,7 @@
 		</search>
 		<dirEntry>
 			<filename>DATELCOD.BIN</filename>
-			<bannerFormat>0</bannerFormat>
+			<bannerFormat>0x00</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x02</iconFormat>
 			<iconSpeed>0x02</iconSpeed>
@@ -32,7 +32,7 @@
 		</search>
 		<dirEntry>
 			<filename>CRASHWOC</filename>
-			<bannerFormat>0</bannerFormat>
+			<bannerFormat>0x00</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x01</iconFormat>
 			<iconSpeed>0x03</iconSpeed>
@@ -53,7 +53,7 @@
 		</search>
 		<dirEntry>
 			<filename>LUIGI_MANSION_SAVEDATA_v3</filename>
-			<bannerFormat>5</bannerFormat>
+			<bannerFormat>0x05</bannerFormat>
 			<iconAddress>0x0000</iconAddress>
 			<iconFormat>0x4041</iconFormat>
 			<iconSpeed>0xFFFF</iconSpeed>
@@ -76,7 +76,7 @@
 		</search>
 		<dirEntry>
 			<filename>MarioKart Double Dash!!</filename>
-			<bannerFormat>1</bannerFormat>
+			<bannerFormat>0x01</bannerFormat>
 			<iconAddress>0x0000</iconAddress>
 			<iconFormat>0x15</iconFormat>
 			<iconSpeed>0x2A</iconSpeed>
@@ -97,7 +97,7 @@
 		</search>
 		<dirEntry>
 			<filename>MARIPA4BOX0</filename> <!-- TODO: Save slot? -->
-			<bannerFormat>1</bannerFormat>
+			<bannerFormat>0x01</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x0055</iconFormat>
 			<iconSpeed>0x00AA</iconSpeed>
@@ -119,7 +119,7 @@
 		</search>
 		<dirEntry>
 			<filename>MARIPA7</filename> <!-- TODO: Save slot? -->
-			<bannerFormat>1</bannerFormat>
+			<bannerFormat>0x01</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x0055</iconFormat>
 			<iconSpeed>0x00AA</iconSpeed>
@@ -141,7 +141,7 @@
 		</search>
 		<dirEntry>
 			<filename>MetroidPrime A</filename> <!-- TODO: Save slot? -->
-			<bannerFormat>1</bannerFormat>
+			<bannerFormat>0x01</bannerFormat>
 			<iconAddress>0x0044</iconAddress>
 			<iconFormat>0x01</iconFormat>
 			<iconSpeed>0x02</iconSpeed>
@@ -164,7 +164,7 @@
 		</search>
 		<dirEntry>
 			<filename>MetroidPrime2</filename> <!-- TODO: Save slot? -->
-			<bannerFormat>1</bannerFormat>
+			<bannerFormat>0x01</bannerFormat>
 			<iconAddress>0x0044</iconAddress>
 			<iconFormat>0x01</iconFormat>
 			<iconSpeed>0x02</iconSpeed>
@@ -185,7 +185,7 @@
 		</search>
 		<dirEntry>
 			<filename>PMW2SAVE</filename>
-			<bannerFormat>2</bannerFormat>
+			<bannerFormat>0x02</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x2AAA</iconFormat>
 			<iconSpeed>0x2AAA</iconSpeed>
@@ -205,7 +205,7 @@
 		</search>
 		<dirEntry>
 			<filename>Puyo Pop Fever System</filename>
-			<bannerFormat>0</bannerFormat>
+			<bannerFormat>0x00</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x01</iconFormat>
 			<iconSpeed>0x03</iconSpeed>
@@ -225,7 +225,7 @@
 		</search>
 		<dirEntry>
 			<filename>SHADOWTHEHEDGEHOG</filename>
-			<bannerFormat>2</bannerFormat>
+			<bannerFormat>0x02</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x02</iconFormat>
 			<iconSpeed>0x02</iconSpeed>
@@ -246,7 +246,7 @@
 		</search>
 		<dirEntry>
 			<filename>SONICADVENTURE_DX_PLAYRECORD_$G1</filename>
-			<bannerFormat>1</bannerFormat>
+			<bannerFormat>0x01</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x0001</iconFormat>
 			<iconSpeed>0x0001</iconSpeed>
@@ -266,7 +266,7 @@
 		</search>
 		<dirEntry>
 			<filename>SONICADVENTURE_DX_CHAOGARDEN</filename>
-			<bannerFormat>1</bannerFormat>
+			<bannerFormat>0x01</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x5555</iconFormat>
 			<iconSpeed>0xAAAA</iconSpeed>
@@ -286,7 +286,7 @@
 		</search>
 		<dirEntry>
 			<filename>SONIC2B__S$F1</filename>
-			<bannerFormat>2</bannerFormat>
+			<bannerFormat>0x02</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x0A</iconFormat>
 			<iconSpeed>0x0F</iconSpeed>
@@ -306,7 +306,7 @@
 		</search>
 		<dirEntry>
 			<filename>SONIC2B__ALF</filename>
-			<bannerFormat>1</bannerFormat> <!-- FIXME: MM's file has 0x0D -->
+			<bannerFormat>0x01</bannerFormat> <!-- FIXME: MM's file has 0x0D -->
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x5555</iconFormat>
 			<iconSpeed>0x5555</iconSpeed>
@@ -328,7 +328,7 @@
 		</search>
 		<dirEntry>
 			<filename>SONIC GEMS_00</filename> <!-- TODO: Slot number? -->
-			<bannerFormat>2</bannerFormat>
+			<bannerFormat>0x02</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x02</iconFormat>
 			<iconSpeed>0x02</iconSpeed>
@@ -348,7 +348,7 @@
 		</search>
 		<dirEntry>
 			<filename>SONICHEROES_$G1</filename>
-			<bannerFormat>2</bannerFormat>
+			<bannerFormat>0x02</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x56</iconFormat>
 			<iconSpeed>0xA2</iconSpeed>
@@ -369,7 +369,7 @@
 		</search>
 		<dirEntry>
 			<filename>SONICRIDERS_GAMEDATA_$F1</filename>
-			<bannerFormat>1</bannerFormat>
+			<bannerFormat>0x01</bannerFormat>
 			<iconAddress>0x0000</iconAddress>
 			<iconFormat>0x01</iconFormat>
 			<iconSpeed>0x03</iconSpeed>
@@ -391,7 +391,7 @@
 		</search>
 		<dirEntry>
 			<filename>super_mario_sunshine</filename>
-			<bannerFormat>1</bannerFormat>
+			<bannerFormat>0x01</bannerFormat>
 			<iconAddress>0x0044</iconAddress>
 			<iconFormat>0x05</iconFormat>
 			<iconSpeed>0x0F</iconSpeed>
@@ -412,7 +412,7 @@
 		</search>
 		<dirEntry>
 			<filename>super_monkey_ball_2.dat</filename>
-			<bannerFormat>2</bannerFormat>
+			<bannerFormat>0x02</bannerFormat>
 			<iconAddress>0x0060</iconAddress>
 			<iconFormat>0x02</iconFormat>
 			<iconSpeed>0x03</iconSpeed>
@@ -433,7 +433,7 @@
 		</search>
 		<dirEntry>
 			<filename>SuperSmashBros0110290334</filename>
-			<bannerFormat>2</bannerFormat>
+			<bannerFormat>0x02</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x01</iconFormat>
 			<iconSpeed>0x03</iconSpeed>
