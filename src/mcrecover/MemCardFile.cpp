@@ -98,7 +98,7 @@ class MemCardFilePrivate
 		QString gamecode;
 		QString company;
 		QString filename;
-		QDateTime lastModified;	// Last modified time.
+		GcnDateTime lastModified;	// Last modified time.
 
 		// File information. (Comment, banner, icon)
 		QString gameDesc;	// Game description.
@@ -231,10 +231,8 @@ void MemCardFilePrivate::init(void)
 	gamecode = QString::fromLatin1(dirEntry->gamecode, sizeof(dirEntry->gamecode));
 	company = QString::fromLatin1(dirEntry->company, sizeof(dirEntry->company));
 
-	// Handle the timestamp as UTC.
-	// GCN doesn't know about timezones, so we shouldn't apply any time offsets.
-	lastModified.setTimeSpec(Qt::UTC);
-	lastModified.setTime_t(dirEntry->lastmodified + GC_UNIX_TIME_DIFF);
+	// Timestamp.Handle the timestamp as UTC.
+	lastModified.setGcnTimestamp(dirEntry->lastmodified);
 
 	// Get the block size.
 	const int blockSize = card->blockSize();
@@ -512,7 +510,7 @@ QString MemCardFile::filename(void) const
  * Get the last modified time.
  * @return Last modified time.
  */
-QDateTime MemCardFile::lastModified(void) const
+GcnDateTime MemCardFile::lastModified(void) const
 	{ return d->lastModified; }
 
 /**

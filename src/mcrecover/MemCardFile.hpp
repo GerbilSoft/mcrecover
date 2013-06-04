@@ -31,6 +31,9 @@
 #include <QtCore/QVector>
 #include <QtGui/QPixmap>
 
+// GcnDateTime: QDateTime wrapper.
+#include "GcnDateTime.hpp"
+
 // MemCard class.
 class MemCard;
 
@@ -93,7 +96,7 @@ class MemCardFile : public QObject
 		 * Get the last modified time.
 		 * @return Last modified time.
 		 */
-		QDateTime lastModified(void) const;
+		GcnDateTime lastModified(void) const;
 
 		/**
 		 * Get the game description. ("Comments" field.)
