@@ -72,6 +72,7 @@ SET(mcrecover_SRCS
 	SearchDialog.cpp
 	SearchThreadWorker.cpp
 	PcreRegex.cpp
+	GcnDateTime.cpp
 	)
 
 # Headers with Qt4 objects.
