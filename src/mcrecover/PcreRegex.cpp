@@ -111,7 +111,8 @@ int PcreRegex::exec(QByteArray subjectUtf8, QVector<QString> *outVector) const
 
 	// Output vector.
 	// Supports up to 20 substring matches.
-	int ovector[20*3];
+	static const int MAX_SUBSTRINGS = 20;
+	int ovector[MAX_SUBSTRINGS*3];
 
 	int rc = pcre_exec(
 		m_regex,			// compiled regex
@@ -128,7 +129,30 @@ int PcreRegex::exec(QByteArray subjectUtf8, QVector<QString> *outVector) const
 		// Store the substrings in the specified QVector.
 		outVector->clear();
 
-		// TODO: Copy substrings.
+		// Substring count.
+		// rc == 0: we ran out of space; use MAX_SUBSTRINGS.
+		// rc > 0: rc is number of substrings.
+		const int count = (rc > 0 ? rc : MAX_SUBSTRINGS);
+		outVector->reserve(count);
+
+		// Get the substrings.
+		// TODO: Verify that count == number of substrings?
+		const char **listptr;
+		int rc_get = pcre_get_substring_list(
+			subjectUtf8.constData(),
+			ovector, count, &listptr);
+		if (rc_get != 0) {
+			// pcre_get_substring_list() failed.
+			return rc_get;
+		}
+
+		// Convert the list of strings to QVector<QString>.
+		for (const char **listiter = listptr; *listiter != NULL; listiter++) {
+			QString str = QString::fromUtf8(*listiter);
+			outVector->append(str);
+		}
+
+		pcre_free(listptr);
 	}
 
 	return rc;
