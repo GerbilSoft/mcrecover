@@ -71,6 +71,7 @@ SET(mcrecover_SRCS
 	SearchThread.cpp
 	SearchDialog.cpp
 	SearchThreadWorker.cpp
+	PcreRegex.cpp
 	)
 
 # Headers with Qt4 objects.
