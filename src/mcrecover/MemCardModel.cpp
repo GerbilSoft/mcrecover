@@ -572,7 +572,6 @@ void MemCardModel::memCard_destroyed_slot(QObject *obj)
 {
 	if (obj == d->card) {
 		// Our MemCard was destroyed.
-		printf("MEM CARD DESTROYED\n");
 		emit layoutAboutToBeChanged();
 		d->card = NULL;
 		emit layoutChanged();
