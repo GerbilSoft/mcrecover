@@ -93,16 +93,22 @@ class MemCardModel : public QAbstractListModel
 		void animTimerSlot(void);
 
 		/**
+		 * MemCard object was destroyed.
+		 * @param obj QObject that was destroyed.
+		 */
+		void memCard_destroyed_slot(QObject *obj = 0);
+
+		/**
 		 * MemCard has changed.
 		 * TODO: More fine-grained slot for specific files.
 		 */
-		void memCardChangedSlot(void);
+		void memCard_changed_slot(void);
 
 		/**
 		 * MemCard: File was added.
 		 * @param idx File number.
 		 */
-		void memCard_fileAddedSlot(int idx);
+		void memCard_fileAdded_slot(int idx);
 };
 
 #endif /* __MCRECOVER_MEMCARDMODEL_HPP__ */

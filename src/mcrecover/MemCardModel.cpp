@@ -527,24 +527,28 @@ void MemCardModel::setMemCard(MemCard *card)
 	// Disconnect the MemCard's changed() signal if a MemCard is already set.
 	if (d->card) {
 		// TODO: More fine-grained changed() for the specific files.
+		disconnect(d->card, SIGNAL(destroyed(QObject*)),
+			   this, SLOT(memCard_destroyed_slot(QObject*)));
 		disconnect(d->card, SIGNAL(changed()),
-			   this, SLOT(memCardChangedSlot()));
+			   this, SLOT(memCard_changed_slot()));
 		disconnect(d->card, SIGNAL(fileAdded(int)),
-			   this, SLOT(memCard_fileAddedSlot(int)));
+			   this, SLOT(memCard_fileAdded_slot(int)));
 	}
 
 	d->card = card;
 
-	if (card) {
+	if (d->card) {
 		// Initialize the animation state.
 		d->initAnimState();
 
 		// Connect the MemCard's changed() signal.
 		// TODO: More fine-grained changed() for the specific files.
-		connect(card, SIGNAL(changed()),
-			this, SLOT(memCardChangedSlot()));
-		connect(card, SIGNAL(fileAdded(int)),
-			this, SLOT(memCard_fileAddedSlot(int)));
+		connect(d->card, SIGNAL(destroyed(QObject*)),
+			this, SLOT(memCard_destroyed_slot(QObject*)));
+		connect(d->card, SIGNAL(changed()),
+			this, SLOT(memCard_changed_slot()));
+		connect(d->card, SIGNAL(fileAdded(int)),
+			this, SLOT(memCard_fileAdded_slot(int)));
 	}
 
 	// Layout has changed.
@@ -561,10 +565,26 @@ void MemCardModel::animTimerSlot(void)
 
 
 /**
+ * MemCard object was destroyed.
+ * @param obj QObject that was destroyed.
+ */
+void MemCardModel::memCard_destroyed_slot(QObject *obj)
+{
+	if (obj == d->card) {
+		// Our MemCard was destroyed.
+		printf("MEM CARD DESTROYED\n");
+		emit layoutAboutToBeChanged();
+		d->card = NULL;
+		emit layoutChanged();
+	}
+}
+
+
+/**
  * MemCard has changed.
  * TODO: More fine-grained slot for specific files.
  */
-void MemCardModel::memCardChangedSlot(void)
+void MemCardModel::memCard_changed_slot(void)
 {
 	// NOTE: Not sure if layoutAboutToBeChanged() should be emitted here...
 	// TODO: Emit "aboutToChange()" from MemCard?
@@ -582,7 +602,7 @@ void MemCardModel::memCardChangedSlot(void)
  * MemCard: File was added.
  * @param idx File number.
  */
-void MemCardModel::memCard_fileAddedSlot(int idx)
+void MemCardModel::memCard_fileAdded_slot(int idx)
 {
 	// Data has changed.
 	emit beginInsertRows(QModelIndex(), idx, idx);
