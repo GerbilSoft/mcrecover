@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * McRecoverWindow.hpp: Main window.                                       *
+ * MemCardFileView.hpp: MemCardFile view widget.                           *
  *                                                                         *
  * Copyright (c) 2012-2013 by David Korth.                                 *
  *                                                                         *
@@ -19,53 +19,49 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MCRECOVERWINDOW_HPP__
-#define __MCRECOVER_MCRECOVERWINDOW_HPP__
+#ifndef __MCRECOVER_MEMCARDFILEVIEW_HPP__
+#define __MCRECOVER_MEMCARDFILEVIEW_HPP__
 
-#include <QtGui/QMainWindow>
-#include "ui_McRecoverWindow.h"
+#include <QtGui/QWidget>
+#include "ui_MemCardFileView.h"
 
-class McRecoverWindowPrivate;
+// MemCardFile class.
+class MemCardFile;
 
-class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
+class MemCardFileViewPrivate;
+
+class MemCardFileView : public QWidget, public Ui::MemCardFileView
 {
 	Q_OBJECT
 	
 	public:
-		McRecoverWindow(QWidget *parent = 0);
-		~McRecoverWindow();
+		MemCardFileView(QWidget *parent = 0);
+		~MemCardFileView();
 
 	private:
-		friend class McRecoverWindowPrivate;
-		McRecoverWindowPrivate *const d;
-		Q_DISABLE_COPY(McRecoverWindow);
+		friend class MemCardFileViewPrivate;
+		MemCardFileViewPrivate *const d;
+		Q_DISABLE_COPY(MemCardFileView);
 
 	public:
 		/**
-		 * Open a GameCube Memory Card file.
-		 * @param filename Filename.
+		 * Get the MemCardFile being displayed.
+		 * @return MemCardFile.
 		 */
-		void open(QString filename);
+		const MemCardFile *file(void) const;
 
-	protected:
-		// QMainWindow virtual functions: drag and drop.
-		void dragEnterEvent(QDragEnterEvent *event);
-		void dropEvent(QDropEvent *event);
+		/**
+		 * Set the MemCardFile being displayed.
+		 * @param file MemCardFile.
+		 */
+		void setFile(const MemCardFile *file);
 
 	protected slots:
-		// Widget slots.
-		void on_btnSearchLostFiles_clicked(void);
-		void on_btnLoadDatabase_clicked(void);
-
-		// MemCardModel slots.
-		void memCardModel_layoutChanged(void);
-		void memCardModel_rowsInserted(void);
-
-		// SearchThread has finished.
-		void searchThread_searchFinished_slot(int lostFilesFound);
-
-		// lstFileList slots.
-		void lstFileList_selectionModel_currentRowChanged(const QModelIndex& current, const QModelIndex& previous);
+		/**
+		 * MemCardFile object was destroyed.
+		 * @param obj QObject that was destroyed.
+		 */
+		void memCardFile_destroyed_slot(QObject *obj = 0);
 };
 
-#endif /* __MCRECOVER_MCRECOVERWINDOW_HPP__ */
+#endif /* __MCRECOVER_MEMCARDFILEVIEW_HPP__ */

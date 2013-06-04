@@ -69,7 +69,7 @@ class McRecoverWindowPrivate
 		/**
 		 * Update the memory card's QTreeView.
 		 */
-		void updateLstMemCard(void);
+		void updateLstFileList(void);
 
 		// Search thread.
 		SearchThread *searchThread;
@@ -122,7 +122,7 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 /**
  * Update the memory card's QTreeView.
  */
-void McRecoverWindowPrivate::updateLstMemCard(void)
+void McRecoverWindowPrivate::updateLstFileList(void)
 {
 	if (!card) {
 		// Hide the QTreeView headers.
@@ -202,8 +202,12 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	// Don't expand the last header column to fill the QTreeView.
 	lstFileList->header()->setStretchLastSection(false);
 
+	// Connect the lstFileList slots.
+	connect(lstFileList->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
+		this, SLOT(lstFileList_selectionModel_currentRowChanged(QModelIndex,QModelIndex)));
+
 	// Initialize the memory card's QTreeView.
-	d->updateLstMemCard();
+	d->updateLstFileList();
 }
 
 McRecoverWindow::~McRecoverWindow()
@@ -230,7 +234,11 @@ void McRecoverWindow::open(QString filename)
 	d->filename = filename;
 
 	// Update the memory card's QTreeView.
-	d->updateLstMemCard();
+	d->updateLstFileList();
+
+	// FIXME: If a file is opened from the command line,
+	// QTreeView sort-of selects the first file.
+	// (Signal is emitted, but nothing is highlighted.)
 }
 
 
@@ -346,7 +354,7 @@ void McRecoverWindow::memCardModel_layoutChanged(void)
 	// Update the QTreeView columns, etc.
 	// FIXME: This doesn't work the first time a file is added...
 	// (possibly needs a dataChanged() signal)
-	d->updateLstMemCard();
+	d->updateLstFileList();
 }
 
 
@@ -355,7 +363,7 @@ void McRecoverWindow::memCardModel_rowsInserted(void)
 	// A new file entry was added to the MemCard.
 	// Update the QTreeView columns.
 	// FIXME: This doesn't work the first time a file is added...
-	d->updateLstMemCard();
+	d->updateLstFileList();
 }
 
 
@@ -379,4 +387,20 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 		QVector<uint16_t> fatEntries = fatEntriesList.takeFirst();
 		d->card->addLostFile(&dirEntry, fatEntries);
 	}
+}
+
+
+/**
+ * lstFileList selectionModel: Current row selection has changed.
+ * @param current Current index.
+ * @param previous Previous index.
+ */
+void McRecoverWindow::lstFileList_selectionModel_currentRowChanged(
+	const QModelIndex& current, const QModelIndex& previous)
+{
+	Q_UNUSED(previous)
+
+	// Set the MemCardFileView's MemCardFile to the
+	// selected file in the QTreeView.
+	mcfFileView->setFile(d->card->getFile(current.row()));
 }
