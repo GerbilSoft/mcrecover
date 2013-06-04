@@ -164,26 +164,41 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	, d(new McRecoverWindowPrivate(this))
 {
 	setupUi(this);
-	
+
 #ifdef MCRECOVER_GIT_VERSION
 	this->setWindowTitle(this->windowTitle() +
 			QLatin1String(" (") +
 			QLatin1String(MCRECOVER_GIT_VERSION) +
 			QChar(L')'));
 #endif
-	
+
 	// Make sure the window is deleted on close.
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
-	
+
 #ifdef Q_WS_MAC
 	// Remove the window icon. (Mac "proxy icon")
 	// TODO: Use the memory card file?
 	this->setWindowIcon(QIcon());
 #endif /* Q_WS_MAC */
-	
+
+	// Set up the QSplitter sizes.
+	// We want the card info panel to be 160px wide at startup.
+	// TODO: Save positioning settings somewhere?
+	static const int MemCardInfoPanelWidth = 160;
+	QList<int> sizes;
+	sizes.reserve(2);
+	sizes.append(MemCardInfoPanelWidth);
+	sizes.append(this->width() - MemCardInfoPanelWidth);
+	splitter->setSizes(sizes);
+
+	// Set the splitter stretch factors.
+	// We want the QTreeView to stretch, but not the card info panel.
+	splitter->setStretchFactor(0, 0);
+	splitter->setStretchFactor(1, 1);
+
 	// Set lstFileList's model.
 	lstFileList->setModel(d->model);
-	
+
 	// Don't expand the last header column to fill the QTreeView.
 	lstFileList->header()->setStretchLastSection(false);
 

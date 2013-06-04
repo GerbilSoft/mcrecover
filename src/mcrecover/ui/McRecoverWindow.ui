@@ -19,153 +19,185 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="hboxMainLayout">
     <item>
-     <layout class="QVBoxLayout" name="vboxCardFileInfo">
-      <property name="spacing">
-       <number>8</number>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
-      <item>
-       <widget class="QGroupBox" name="grpMemCardInfo">
-        <property name="title">
-         <string>Memory Card Details</string>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="QWidget" name="">
+       <layout class="QVBoxLayout" name="vboxCardFileInfo">
+        <property name="spacing">
+         <number>8</number>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="grpFileInfo">
-        <property name="title">
-         <string>File Information</string>
-        </property>
-        <widget class="QWidget" name="horizontalLayoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>40</x>
-           <y>40</y>
-           <width>160</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <layout class="QHBoxLayout" name="hboxFileImages">
-          <property name="spacing">
-           <number>8</number>
+        <item>
+         <widget class="QGroupBox" name="grpMemCardInfo">
+          <property name="title">
+           <string>Memory Card Details</string>
           </property>
-          <item>
-           <widget class="QLabel" name="lblFileIcon">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>32</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>32</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="baseSize">
-             <size>
-              <width>32</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="lblFileBanner">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>96</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>96</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="baseSize">
-             <size>
-              <width>96</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" name="vboxFileList">
-      <item>
-       <widget class="QGroupBox" name="grpFileList">
-        <layout class="QVBoxLayout" name="vboxGrpFileList">
-         <item>
-          <widget class="QTreeView" name="lstFileList">
-           <property name="alternatingRowColors">
-            <bool>true</bool>
-           </property>
-           <property name="rootIsDecorated">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="hboxCmdButtons">
+          <layout class="QVBoxLayout" name="vboxMemCardInfo">
            <item>
-            <widget class="QPushButton" name="btnLoadDatabase">
-             <property name="text">
-              <string>&amp;Load Database</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnSearchLostFiles">
-             <property name="text">
-              <string>&amp;Search for Lost Files</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="hspcCmdButtons">
+            <spacer name="vspcMemCardInfo">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Vertical</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>40</width>
-               <height>20</height>
+               <width>20</width>
+               <height>220</height>
               </size>
              </property>
             </spacer>
            </item>
           </layout>
-         </item>
-        </layout>
-       </widget>
-      </item>
-     </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="grpFileInfo">
+          <property name="title">
+           <string>File Information</string>
+          </property>
+          <layout class="QVBoxLayout" name="vboxFileInfo">
+           <item>
+            <layout class="QHBoxLayout" name="hboxFileImages">
+             <property name="spacing">
+              <number>8</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="lblFileIcon">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="baseSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="lblFileBanner">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>96</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>96</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="baseSize">
+                <size>
+                 <width>96</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="vspcFileInfo">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="">
+       <layout class="QVBoxLayout" name="vboxFileList">
+        <item>
+         <widget class="QGroupBox" name="grpFileList">
+          <layout class="QVBoxLayout" name="vboxGrpFileList">
+           <item>
+            <widget class="QTreeView" name="lstFileList">
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="rootIsDecorated">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="hboxCmdButtons">
+             <item>
+              <widget class="QPushButton" name="btnLoadDatabase">
+               <property name="text">
+                <string>&amp;Load Database</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnSearchLostFiles">
+               <property name="text">
+                <string>&amp;Search for Lost Files</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="hspcCmdButtons">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
     </item>
    </layout>
   </widget>
