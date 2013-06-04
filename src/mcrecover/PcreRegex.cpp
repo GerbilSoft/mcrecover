@@ -74,7 +74,7 @@ int PcreRegex::setRegex(QString regex, int *errOffset)
 	// Convert the regex to UTF-8.
 	QByteArray regex_utf8 = regex.toUtf8();
 
-	// Attempt to compile the regexp.
+	// Attempt to compile the regex.
 	const char *error;
 	int erroffset;
 	int errorcode;
@@ -114,7 +114,7 @@ int PcreRegex::exec(QByteArray subjectUtf8, QVector<QString> *outVector) const
 	int ovector[20*3];
 
 	int rc = pcre_exec(
-		m_regex,			// compiled regexp
+		m_regex,			// compiled regex
 		NULL,				// pattern not studied
 		subjectUtf8.constData(),	// subject string
 		subjectUtf8.size(),		// size of subject string
