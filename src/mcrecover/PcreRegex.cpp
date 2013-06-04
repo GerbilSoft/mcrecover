@@ -65,6 +65,12 @@ int PcreRegex::setRegex(QString regex, int *errOffset)
 	if (m_regex)
 		pcre_free(m_regex);
 
+	// Don't allow empty regular expressions.
+	if (regex.isEmpty()) {
+		m_regex = NULL;
+		return -1; // NOTE: Not an actual pcre_compile2() error code...
+	}
+
 	// Convert the regex to UTF-8.
 	QByteArray regex_utf8 = regex.toUtf8();
 
