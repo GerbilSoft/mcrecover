@@ -18,18 +18,18 @@
  * with this program; if not, write to the Free Software Foundation, Inc., *
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
- 
+
 #ifndef __MCRECOVER_GCNMCFILEDEF_HPP__
 #define __MCRECOVER_GCNMCFILEDEF_HPP__
 
 // C includes.
 #include <stdint.h>
 
-// libpcre
-#include <pcre.h>
-
 // Qt includes.
 #include <QtCore/QString>
+
+// PCRE wrapper class.
+#include "PcreRegex.hpp"
 
 class GcnMcFileDef {
 	public:
@@ -40,6 +40,10 @@ class GcnMcFileDef {
 			REGION_KOR = (1 << 3),
 		};
 
+	private:
+		Q_DISABLE_COPY(GcnMcFileDef);
+
+	public:
 		QString description;
 		QString gamecode;
 		QString company;
@@ -49,12 +53,12 @@ class GcnMcFileDef {
 
 		struct {
 			uint32_t address;
-			QString gameDesc;	// regexp
-			QString fileDesc;	// regexp
+			QString gameDesc;	// regex
+			QString fileDesc;	// regex
 
-			// compiled regexps
-			pcre *gameDesc_regexp;
-			pcre *fileDesc_regexp;
+			// Regular expressions.
+			PcreRegex gameDesc_regex;
+			PcreRegex fileDesc_regex;
 		} search;
 
 		struct {
@@ -73,8 +77,6 @@ class GcnMcFileDef {
 			this->regions = 0;
 
 			search.address = 0;
-			search.gameDesc_regexp = NULL;
-			search.fileDesc_regexp = NULL;
 
 			dirEntry.bannerFormat = 0;
 			dirEntry.iconAddress = 0;
@@ -83,14 +85,6 @@ class GcnMcFileDef {
 			dirEntry.permission = 0;
 			dirEntry.length = 0;
 			dirEntry.commentAddress = 0;
-		}
-
-		~GcnMcFileDef() {
-			// Delete allocated PCRE regexps.
-			if (search.gameDesc_regexp)
-				pcre_free(search.gameDesc_regexp);
-			if (search.fileDesc_regexp)
-				pcre_free(search.fileDesc_regexp);
 		}
 };
 

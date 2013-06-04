@@ -26,14 +26,14 @@
 
 #include "GcnMcFileDb.hpp"
 
+// GCN Memory Card File Definition class.
+#include "GcnMcFileDef.hpp"
+
 // C includes.
 #include <stdint.h>
 #include <cstdio>
 #include <cstring>
 #include <cctype>
-
-// GCN Memory Card File Definition class.
-#include "GcnMcFileDef.hpp"
 
 // Qt includes.
 #include <QtCore/QFile>
@@ -42,8 +42,6 @@
 #include <QtCore/QVector>
 #include <QtXml/QXmlStreamReader>
 
-// libpcre
-#include <pcre.h>
 
 class GcnMcFileDbPrivate
 {
@@ -92,7 +90,6 @@ class GcnMcFileDbPrivate
 		QString parseXml_element(QXmlStreamReader &xml);
 		void parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
 		void parseXml_file_dirEntry(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
-		pcre *compile_regexp(QString regexp);
 
 		/**
 		 * Error string.
@@ -111,14 +108,6 @@ class GcnMcFileDbPrivate
 		 * @param textCodec QTextCodec. (If nullptr, use latin1.)
 		 */
 		static QByteArray GetGcnCommentUtf8(const char *buf, int siz, QTextCodec *textCodec);
-
-		/**
-		 * Check a GCN comment against a regexp.
-		 * @param regexp Regexp.
-		 * @param descUtf8 GCN comment, converted to UTF-8.
-		 * @return Return value from pcre_exec(). (Positive indicates matches; negative indicates error.)
-		 */
-		static int CheckDescRegexp(pcre *regexp, const QByteArray &descUtf8);
 };
 
 GcnMcFileDbPrivate::GcnMcFileDbPrivate(GcnMcFileDb *q)
@@ -375,10 +364,10 @@ void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDe
 				QString address_str = parseXml_element(xml);
 				gcnMcFileDef->search.address = address_str.toUInt(NULL, 0);
 			} else if (xml.name() == QLatin1String("gameDesc")) {
-				// Game description. (regexp)
+				// Game description. (regex)
 				gcnMcFileDef->search.gameDesc = parseXml_element(xml);
 			} else if (xml.name() == QLatin1String("fileDesc")) {
-				// File description. (regexp)
+				// File description. (regex)
 				gcnMcFileDef->search.fileDesc = parseXml_element(xml);
 			}
 		}
@@ -388,21 +377,13 @@ void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDe
 	}
 
 	// Attempt to compile the regular expressions.
-	// TODO: Display errors if compile_regexp() fails.
+	// TODO: Display errors if setRegex() fails.
 
 	// Game Description.
-	if (gcnMcFileDef->search.gameDesc_regexp) {
-		pcre_free(gcnMcFileDef->search.gameDesc_regexp);
-		gcnMcFileDef->search.gameDesc_regexp = NULL;
-	}
-	gcnMcFileDef->search.gameDesc_regexp = compile_regexp(gcnMcFileDef->search.gameDesc);
+	gcnMcFileDef->search.gameDesc_regex.setRegex(gcnMcFileDef->search.gameDesc);
 
 	// File Description.
-	if (gcnMcFileDef->search.fileDesc_regexp) {
-		pcre_free(gcnMcFileDef->search.fileDesc_regexp);
-		gcnMcFileDef->search.fileDesc_regexp = NULL;
-	}
-	gcnMcFileDef->search.fileDesc_regexp = compile_regexp(gcnMcFileDef->search.fileDesc);
+	gcnMcFileDef->search.fileDesc_regex.setRegex(gcnMcFileDef->search.fileDesc);
 }
 
 
@@ -464,38 +445,6 @@ void GcnMcFileDbPrivate::parseXml_file_dirEntry(QXmlStreamReader &xml, GcnMcFile
 }
 
 
-pcre *GcnMcFileDbPrivate::compile_regexp(QString regexp)
-{
-	if (regexp.isEmpty()) {
-		// ERROR: Empty regexp is not allowed here.
-		// TODO: Set an error flag and append a message.
-		fprintf(stderr, "WARNING: regexp is empty\n");
-		return NULL;
-	}
-
-	// Convert the regexp to UTF-8.
-	QByteArray regexp_utf8 = regexp.toUtf8();
-
-	// Attempt to compile the regexp.
-	pcre *re;
-	const char *error;
-	int erroffset;
-	re = pcre_compile(
-		regexp_utf8.constData(),	// pattern
-		PCRE_UTF8,		// options
-		&error,			// error message
-		&erroffset,		// error offset
-		NULL);			// use default character tables
-	if (!re) {
-		// Regexp compilation failed.
-		fprintf(stderr, "ERROR: Regexp compilation failed.\n- Regexp: %s\n- Error: %s\n- Offset: %d\n",
-			regexp_utf8.constData(), error, erroffset);
-	}
-
-	return re;
-}
-
-
 /**
  * Get a comment from the GCN comment block, converted to UTF-8.
  * @param buf Comment block.
@@ -527,30 +476,6 @@ QByteArray GcnMcFileDbPrivate::GetGcnCommentUtf8(const char *buf, int siz, QText
 
 	// Convert the comment to UTF-8.
 	return comment.toUtf8();
-}
-
-
-/**
- * Check a GCN comment against a regexp.
- * @param regexp Regexp.
- * @param descUtf8 GCN comment, converted to UTF-8.
- * @return Return value from pcre_exec(). (Positive indicates matches; negative indicates error.)
- */
-int GcnMcFileDbPrivate::CheckDescRegexp(pcre *regexp, const QByteArray &descUtf8)
-{
-	int ovector[60];
-	int rc = pcre_exec(
-		regexp,					// compiled regexp
-		NULL,					// pattern not studied
-		descUtf8.constData(),			// subject string
-		descUtf8.size(),			// size of subject string
-		0,					// start at offset 0 in the subject
-		0,					// default options
-		ovector,				// vector of integers for substring information
-		sizeof(ovector)/sizeof(ovector[0]));	// number of elements in ovector
-
-	// TODO: QVector with substring matches.
-	return rc;
 }
 
 
@@ -627,31 +552,23 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz, card_direntry *dirEntry) c
 			// TODO: Save substring matches.
 
 			// Check if the Game Description (US) matches.
-			rc = d->CheckDescRegexp(
-				gcnMcFileDef->search.gameDesc_regexp,
-				gameDescUS);
+			rc = gcnMcFileDef->search.gameDesc_regex.exec(gameDescUS);
 			if (rc > 0) {
 				gameDescMatch = true;
 			} else {
 				// Check if the Game Description (JP) matches.
-				rc = d->CheckDescRegexp(
-					gcnMcFileDef->search.gameDesc_regexp,
-					gameDescJP);
+				rc = gcnMcFileDef->search.gameDesc_regex.exec(gameDescJP);
 				if (rc > 0)
 					gameDescMatch = true;
 			}
 
 			// Check if the File Description (US) matches.
-			rc = d->CheckDescRegexp(
-				gcnMcFileDef->search.fileDesc_regexp,
-				fileDescUS);
+			rc = gcnMcFileDef->search.fileDesc_regex.exec(fileDescUS);
 			if (rc > 0) {
 				fileDescMatch = true;
 			} else {
 				// Check if the File Description (JP) matches.
-				rc = d->CheckDescRegexp(
-					gcnMcFileDef->search.fileDesc_regexp,
-					fileDescJP);
+				rc = gcnMcFileDef->search.fileDesc_regex.exec(fileDescJP);
 				if (rc > 0)
 					fileDescMatch = true;
 			}
