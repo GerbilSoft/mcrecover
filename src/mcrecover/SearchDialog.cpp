@@ -137,8 +137,6 @@ SearchThread *SearchDialog::searchThread(void)
  */
 void SearchDialog::setSearchThread(SearchThread *searchThread)
 {
-	// TODO: Get current status from the new searchThread.
-
 	if (d->searchThread) {
 		// Disconnect signals from the current searchThread.
 		disconnect(d->searchThread, SIGNAL(searchStarted(int,int,int)),
@@ -168,6 +166,15 @@ void SearchDialog::setSearchThread(SearchThread *searchThread)
 		connect(d->searchThread, SIGNAL(searchError(QString)),
 			this, SLOT(searchError_slot(QString)));
 	}
+
+	// TODO: Get current status from the new searchThread.
+	// For now, just clear everything.
+	d->currentPhysBlock = 0;
+	d->totalPhysBlocks = 0;
+	d->currentPhysBlock = 0;
+	d->totalSearchBlocks = 0;
+	d->lostFilesFound = 0;
+	d->updateSearchStatus();
 }
 
 
