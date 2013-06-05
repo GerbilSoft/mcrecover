@@ -492,19 +492,20 @@ void MemCardFilePrivate::calculateChecksum(void)
 
 	// Get the expected checksum.
 	// NOTE: Assuming big-endian for all values.
+	const uint8_t *data = reinterpret_cast<const uint8_t*>(fileData.constData());
 	uint32_t expected = 0;
 	switch (checksumData.algorithm) {
 		case Checksum::CHKALG_CRC16:
-			expected = (fileData[checksumData.address+0] << 8) |
-				   (fileData[checksumData.address+1]);
+			expected = (data[checksumData.address+0] << 8) |
+				   (data[checksumData.address+1]);
 			break;
 
 		case Checksum::CHKALG_CRC32:
 		case Checksum::CHKALG_ADDBYTES32:
-			expected = (fileData[checksumData.address+0] << 24) |
-				   (fileData[checksumData.address+1] << 16) |
-				   (fileData[checksumData.address+2] << 8) |
-				   (fileData[checksumData.address+3]);
+			expected = (data[checksumData.address+0] << 24) |
+				   (data[checksumData.address+1] << 16) |
+				   (data[checksumData.address+2] << 8) |
+				   (data[checksumData.address+3]);
 			break;
 
 		case Checksum::CHKALG_SONICCHAOGARDEN:	// TODO
@@ -517,7 +518,7 @@ void MemCardFilePrivate::calculateChecksum(void)
 	}
 
 	// Calculate the checksum.
-	const char *const start = (fileData.data() + checksumData.start);
+	const char *const start = (fileData.constData() + checksumData.start);
 	uint32_t actual = Checksum::Exec(checksumData.algorithm,
 			start, checksumData.length, checksumData.poly);
 

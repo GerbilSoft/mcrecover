@@ -31,6 +31,7 @@ class ChecksumPrivate
 
 	public:
 		static uint16_t Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly = Checksum::CRC16_POLY_CCITT);
+		static uint32_t AddBytes32(const uint8_t *buf, uint32_t siz);
 };
 
 
@@ -61,6 +62,33 @@ uint16_t ChecksumPrivate::Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly)
 
 
 /**
+ * AddBytes32 algorithm.
+ * Adds all bytes together in a uint32_t.
+ * @param buf Data buffer.
+ * @param siz Length of data buffer.
+ * @return Checksum.
+ */
+uint32_t ChecksumPrivate::AddBytes32(const uint8_t *buf, uint32_t siz)
+{
+	uint32_t checksum = 0;
+
+	// Do four bytes at a time.
+	for (; siz > 4; siz -= 4, buf += 4) {
+		checksum += buf[0];
+		checksum += buf[1];
+		checksum += buf[2];
+		checksum += buf[3];
+	}
+
+	// Remaining bytes.
+	for (; siz != 0; siz--, buf++)
+		checksum += *buf;
+
+	return checksum;
+}
+
+
+/**
  * Get the checksum for a block of data.
  * @param algorithm Checksum algorithm.
  * @param buf Data buffer.
@@ -77,8 +105,11 @@ uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, u
 			return ChecksumPrivate::Crc16(
 				reinterpret_cast<const uint8_t*>(buf), siz, (uint16_t)(poly & 0xFFFF));
 
-		case CHKALG_CRC32:
 		case CHKALG_ADDBYTES32:
+			return ChecksumPrivate::AddBytes32(
+				reinterpret_cast<const uint8_t*>(buf), siz);
+
+		case CHKALG_CRC32:
 		case CHKALG_SONICCHAOGARDEN:
 			// TODO
 
