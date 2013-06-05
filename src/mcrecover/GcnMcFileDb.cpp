@@ -89,6 +89,7 @@ class GcnMcFileDbPrivate
 		GcnMcFileDef *parseXml_file(QXmlStreamReader &xml);
 		QString parseXml_element(QXmlStreamReader &xml);
 		void parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
+		void parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
 		void parseXml_file_dirEntry(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
 
 		/**
@@ -294,6 +295,9 @@ GcnMcFileDef *GcnMcFileDbPrivate::parseXml_file(QXmlStreamReader &xml)
 			} else if (xml.name() == QLatin1String("search")) {
 				// Search definitions.
 				parseXml_file_search(xml, gcnMcFileDef);
+			} else if (xml.name() == QLatin1String("checksum")) {
+				// Checksum definitions.
+				parseXml_file_checksum(xml, gcnMcFileDef);
 			} else if (xml.name() == QLatin1String("dirEntry")) {
 				// Directory entry.
 				parseXml_file_dirEntry(xml, gcnMcFileDef);
@@ -384,6 +388,95 @@ void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDe
 
 	// File Description.
 	gcnMcFileDef->search.fileDesc_regex.setRegex(gcnMcFileDef->search.fileDesc);
+}
+
+
+void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef)
+{
+	static const QString myTokenType = QLatin1String("checksum");
+
+	// Check that this is actually a <checksum> element.
+	if (xml.tokenType() != QXmlStreamReader::StartElement ||
+	    xml.name() != myTokenType) {
+		// Not a <checksum> element.
+		return;
+	}
+
+	// Decode the algorithm later.
+	QString algorithm;
+	uint32_t poly = 0;
+
+	// Iterate over the <search> properties.
+	xml.readNext();
+	while (!xml.hasError() &&
+		!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == myTokenType)) {
+		if (xml.tokenType() == QXmlStreamReader::StartElement) {
+			// Check what this element is.
+			if (xml.name() == QLatin1String("algorithm")) {
+				// Algorithm.
+				QXmlStreamAttributes attributes = xml.attributes();
+				if (attributes.hasAttribute(QLatin1String("poly")))
+					poly = attributes.value(QLatin1String("poly")).toString().toUInt(NULL, 0);
+				else
+					poly = 0;
+				algorithm = parseXml_element(xml).toLower();
+			} else if (xml.name() == QLatin1String("address")) {
+				// Checksum address.
+				QString address_str = parseXml_element(xml);
+				gcnMcFileDef->checksumData.address = address_str.toUInt(NULL, 0);
+			} else if (xml.name() == QLatin1String("range")) {
+				// Checksummed area.
+				QXmlStreamAttributes attributes = xml.attributes();
+				if (attributes.hasAttribute(QLatin1String("start")) &&
+				    attributes.hasAttribute(QLatin1String("length"))) {
+					// Required attributes are present.
+					gcnMcFileDef->checksumData.start =
+						attributes.value(QLatin1String("start")).toString().toUInt(NULL, 0);
+					gcnMcFileDef->checksumData.length =
+						attributes.value(QLatin1String("length")).toString().toUInt(NULL, 0);
+				} else {
+					// Attributes missing.
+					// TODO: Show error message?
+				}
+			}
+		}
+
+		// Next token.
+		xml.readNext();
+	}
+
+	if (gcnMcFileDef->checksumData.length == 0) {
+		// Invalid length.
+		// TODO: Show an error message.
+		gcnMcFileDef->checksumData.clear();
+	}
+
+	// Determine which checksum algorithm to use.
+	// TODO: Move to a checksum class.
+	if (algorithm == QLatin1String("crc16") ||
+	    algorithm == QLatin1String("crc-16"))
+	{
+		gcnMcFileDef->checksumData.algorithm = Checksum::CHKALG_CRC16;
+		gcnMcFileDef->checksumData.poly =
+			(poly != 0 ? (poly & 0xFFFF) : Checksum::CRC16_POLY_CCITT);
+	}
+	else if (algorithm == QLatin1String("crc32") ||
+		 algorithm == QLatin1String("crc-32"))
+	{
+		gcnMcFileDef->checksumData.algorithm = Checksum::CHKALG_CRC32;
+		gcnMcFileDef->checksumData.poly =
+			(poly != 0 ? poly : Checksum::CRC32_POLY_ZLIB);
+	} else if (algorithm == QLatin1String("allbytes32")) {
+		gcnMcFileDef->checksumData.algorithm = Checksum::CHKALG_ALLBYTES32;
+		gcnMcFileDef->checksumData.poly = 0;
+	} else if (algorithm == QLatin1String("sonicchaogarden")) {
+		gcnMcFileDef->checksumData.algorithm = Checksum::CHKALG_SONICCHAOGARDEN;
+		gcnMcFileDef->checksumData.poly = 0;
+	} else {
+		// Unknown algorithm.
+		// TODO: Show an error message?
+		gcnMcFileDef->checksumData.clear();
+	}
 }
 
 
@@ -519,9 +612,12 @@ QString GcnMcFileDb::errorString(void) const
  * @param buf		[in] GCN memory card block to check.
  * @param siz		[in] Size of buf. (Should be BLOCK_SIZE == 0x2000.)
  * @param dirEntry	[out] Constructed directory entry if a pattern matched.
+ * @param checksumData	[out, opt] Checksum data for the file.
  * @return 0 if a pattern was matched; non-zero if not.
  */
-int GcnMcFileDb::checkBlock(const void *buf, int siz, card_direntry *dirEntry) const
+int GcnMcFileDb::checkBlock(const void *buf, int siz,
+	card_direntry *dirEntry,
+	Checksum::ChecksumData *checksumData) const
 {
 	// TODO: Return a list of FAT entries.
 	// (May require more info from MemCard, and might need to be in
@@ -644,6 +740,10 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz, card_direntry *dirEntry) c
 	dirEntry->length	= matchFileDef->dirEntry.length;
 	dirEntry->pad_01	= 0xFFFF;
 	dirEntry->commentaddr	= matchFileDef->dirEntry.commentAddress;
+
+	// Checksum data.
+	if (checksumData)
+		*checksumData = matchFileDef->checksumData;
 
 	// Directory entry matched.
 	return 0;

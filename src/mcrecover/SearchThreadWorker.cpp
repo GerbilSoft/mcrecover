@@ -27,7 +27,10 @@
 // GCN Memory Card File Database
 #include "GcnMcFileDb.hpp"
 
-// C includes.
+// Checksum algorithm class.
+#include "Checksum.hpp"
+
+// C includes. (C++ namespace)
 #include <cstdio>
 
 // C++ includes.
@@ -49,17 +52,12 @@ class SearchThreadWorkerPrivate
 
 	public:
 		/**
-		 * List of directory entries from the last successful search.
+		 * List of files found in the last successful search.
 		 * QLinkedList allows us to prepend items, so we do that
 		 * in order to turn "reverse-order" into "correct-order".
-		 * TODO: Use malloc()'d dirEntry?
+		 * TODO: Use malloc()'d SearchData?
 		 */
-		QLinkedList<card_direntry> dirEntryList;
-
-		/**
-		 * List of FAT entries for directory entries.
-		 */
-		QLinkedList<QVector<uint16_t> > fatEntriesList;
+		QLinkedList<SearchData> filesFoundList;
 
 		// searchMemCard() parameters used when this worker
 		// is called by a thread's started() signal.
@@ -101,24 +99,13 @@ SearchThreadWorker::~SearchThreadWorker()
 
 
 /**
- * Get the list of directory entries from the last successful search.
- * @return List of directory entries.
+ * Get the list of files found in the last successful search.
+ * @return List of files found.
  */
-QLinkedList<card_direntry> SearchThreadWorker::dirEntryList(void)
+QLinkedList<SearchData> SearchThreadWorker::filesFoundList(void)
 {
 	// TODO: Not while thread is running...
-	return d->dirEntryList;
-}
-
-
-/**
- * Get the list of FAT entries from the last successful search.
- * @return List of FAT entries.
- */
-QLinkedList<QVector<uint16_t> > SearchThreadWorker::fatEntriesList(void)
-{
-	// TODO: Not while thread is running...
-	return d->fatEntriesList;
+	return d->filesFoundList;
 }
 
 
@@ -135,8 +122,7 @@ QLinkedList<QVector<uint16_t> > SearchThreadWorker::fatEntriesList(void)
 int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
 				      bool searchUsedBlocks)
 {
-	d->dirEntryList.clear();
-	d->fatEntriesList.clear();
+	d->filesFoundList.clear();
 
 	if (!db) {
 		// Database is not loaded.
@@ -178,7 +164,7 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
 	}
 
 	// Current directory entry.
-	card_direntry dirEntry;
+	SearchData searchData;
 
 	// Block buffer.
 	const int blockSize = card->blockSize();
@@ -196,7 +182,7 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
 	foreach (currentPhysBlock, blockSearchList) {
 		currentSearchBlock++;
 		fprintf(stderr, "Searching block: %d...\n", currentPhysBlock);
-		emit searchUpdate(currentPhysBlock, currentSearchBlock, d->dirEntryList.size());
+		emit searchUpdate(currentPhysBlock, currentSearchBlock, d->filesFoundList.size());
 
 		int ret = card->readBlock(buf, blockSize, currentPhysBlock);
 		if (ret != blockSize) {
@@ -206,35 +192,38 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
 		}
 
 		// Check the block in the database.
-		ret = db->checkBlock(buf, blockSize, &dirEntry);
+		ret = db->checkBlock(buf, blockSize, &(searchData.dirEntry), &(searchData.checksumData));
 		if (!ret) {
 			// Matched!
 			fprintf(stderr, "FOUND A MATCH: %-.4s%-.2s %-.32s\n",
-				dirEntry.gamecode,
-				dirEntry.company,
-				dirEntry.filename);
+				searchData.dirEntry.gamecode,
+				searchData.dirEntry.company,
+				searchData.dirEntry.filename);
 			fprintf(stderr, "bannerFmt == %02X, iconAddress == %08X, iconFormat == %02X, iconSpeed == %02X\n",
-				dirEntry.bannerfmt, dirEntry.iconaddr, dirEntry.iconfmt, dirEntry.iconspeed);
+				searchData.dirEntry.bannerfmt,
+				searchData.dirEntry.iconaddr,
+				searchData.dirEntry.iconfmt,
+				searchData.dirEntry.iconspeed);
 
 			// NOTE: dirEntry's block start is not set by d->db->checkBlock().
 			// Set it here.
-			dirEntry.block = currentPhysBlock;
-			if (dirEntry.length == 0) {
+			searchData.dirEntry.block = currentPhysBlock;
+			if (searchData.dirEntry.length == 0) {
 				// This only happens if an entry is either
 				// missing a <dirEntry>, or has <length>0</length>.
 				// TODO: Check for this in GcnMcFileDb.
-				dirEntry.length = 1;
+				searchData.dirEntry.length = 1;
 			}
 
 			// Construct the FAT entries for this file.
-			QVector<uint16_t> fatEntries;
-			fatEntries.reserve(dirEntry.length);
+			searchData.fatEntries.clear();
+			searchData.fatEntries.reserve(searchData.dirEntry.length);
 
 			// First block is always valid.
-			fatEntries.append(dirEntry.block);
+			searchData.fatEntries.append(searchData.dirEntry.block);
 
-			uint16_t blocksRemaining = (dirEntry.length - 1);
-			uint16_t block = (dirEntry.block + 1);
+			uint16_t blocksRemaining = (searchData.dirEntry.length - 1);
+			uint16_t block = (searchData.dirEntry.block + 1);
 			bool wasWrapped = false;
 
 			// Skip used blocks and go after empty blocks only.
@@ -246,7 +235,7 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
 					block = 5;
 					wasWrapped = true;
 					continue;
-				} else if (block == dirEntry.block) {
+				} else if (block == searchData.dirEntry.block) {
 					// ERROR: We wrapped around!
 					// Use the "naive" algorithm after the last valid block.
 					break;
@@ -255,7 +244,7 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
 				// Check if this block is used.
 				if (usedBlockMap[block] == 0) {
 					// Block is not used.
-					fatEntries.append(block);
+					searchData.fatEntries.append(block);
 					if (!wasWrapped)
 						usedBlockMap[block]++;
 					blocksRemaining--;
@@ -266,7 +255,7 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
 			}
 
 			// Naive block algorithm for the remaining blocks.
-			block = (fatEntries.value(fatEntries.size() - 1) + 1);
+			block = (searchData.fatEntries.value(searchData.fatEntries.size() - 1) + 1);
 			wasWrapped = false;
 			while (blocksRemaining > 0) {
 				if (block >= totalPhysBlocks) {
@@ -278,7 +267,7 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
 				}
 
 				// Add this block.
-				fatEntries.append(block);
+				searchData.fatEntries.append(block);
 				if (usedBlockMap[block] < std::numeric_limits<uint8_t>::max()) {
 					if (!wasWrapped)
 						usedBlockMap[block]++;
@@ -287,23 +276,20 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
 				blocksRemaining--;
 			}
 
-			// Add the directory entry to the list.
-			d->dirEntryList.prepend(dirEntry);
-
-			// Add the FAT entries to the list.
-			d->fatEntriesList.prepend(fatEntries);
+			// Add the search data to the list.
+			d->filesFoundList.prepend(searchData);
 		}
 	}
 
 	// Send an update for the last block.
-	emit searchUpdate(5, currentSearchBlock, d->dirEntryList.size());
+	emit searchUpdate(5, currentSearchBlock, d->filesFoundList.size());
 
 	// Search is finished.
-	emit searchFinished(d->dirEntryList.size());
+	emit searchFinished(d->filesFoundList.size());
 
 	fprintf(stderr, "Finished scanning memory card.\n");
 	fprintf(stderr, "--------------------------------\n");
-	return d->dirEntryList.size();
+	return d->filesFoundList.size();
 }
 
 

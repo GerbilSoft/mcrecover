@@ -147,24 +147,13 @@ int SearchThread::loadGcnMcFileDb(QString filename)
 
 
 /**
- * Get the list of directory entries from the last successful search.
- * @return List of directory entries.
+ * Get the list of files found in the last successful search.
+ * @return List of files found.
  */
-QLinkedList<card_direntry> SearchThread::dirEntryList(void)
+QLinkedList<SearchData> SearchThread::filesFoundList(void)
 {
 	// TODO: Not while thread is running...
-	return d->worker->dirEntryList();
-}
-
-
-/**
- * Get the list of FAT entries from the last successful search.
- * @return List of FAT entries.
- */
-QLinkedList<QVector<uint16_t> > SearchThread::fatEntriesList(void)
-{
-	// TODO: Not while thread is running...
-	return d->worker->fatEntriesList();
+	return d->worker->filesFoundList();
 }
 
 

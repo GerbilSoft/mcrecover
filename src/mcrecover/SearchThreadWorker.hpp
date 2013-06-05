@@ -25,6 +25,9 @@
 // Card definitions.
 #include "card.h"
 
+// Search Data struct.
+#include "SearchData.hpp"
+
 // Qt includes.
 #include <QtCore/QLinkedList>
 #include <QtCore/QObject>
@@ -96,16 +99,10 @@ class SearchThreadWorker : public QObject
 		int loadGcnMcFileDb(QString filename);
 
 		/**
-		 * Get the list of directory entries from the last successful search.
-		 * @return List of directory entries.
+		 * Get the list of files found in the last successful search.
+		 * @return List of files found.
 		 */
-		QLinkedList<card_direntry> dirEntryList(void);
-
-		/**
-		 * Get the list of FAT entries from the last successful search.
-		 * @return List of FAT entries.
-		 */
-		QLinkedList<QVector<uint16_t> > fatEntriesList(void);
+		QLinkedList<SearchData> filesFoundList(void);
 
 		/**
 		 * Search a memory card for "lost" files.

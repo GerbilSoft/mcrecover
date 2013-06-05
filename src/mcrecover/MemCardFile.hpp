@@ -34,6 +34,9 @@
 // GcnDateTime: QDateTime wrapper.
 #include "GcnDateTime.hpp"
 
+// Checksum algorithm class.
+#include "Checksum.hpp"
+
 // MemCard class.
 class MemCard;
 
@@ -171,6 +174,30 @@ class MemCardFile : public QObject
 		 * @return FAT entries.
 		 */
 		QVector<uint16_t> fatEntries(void) const;
+
+		/**
+		 * Get the checksum data.
+		 * @return Checksum data.
+		 */
+		Checksum::ChecksumData checksumData(void) const;
+
+		/**
+		 * Set the checksum data.
+		 * @param checksumData Checksum data.
+		 */
+		void setChecksumData(const Checksum::ChecksumData &checksumData);
+
+		/**
+		 * Get the expected checksum.
+		 * @return Expected checksum, or 0 if no checksum data was set.
+		 */
+		uint32_t checksumExpected(void) const;
+
+		/**
+		 * Get the actual checksum.
+		 * @return Actual checksum, or 0 if no checksum data was set.
+		 */
+		uint32_t checksumActual(void) const;
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */

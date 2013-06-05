@@ -131,6 +131,16 @@ class MemCardFilePrivate
 		 * Load the banner and icon images.
 		 */
 		void loadImages(void);
+
+		// Checksum data.
+		Checksum::ChecksumData checksumData;
+		uint32_t checksumExpected;
+		uint32_t checksumActual;
+
+		/**
+		 * Calculate the file checksum.
+		 */
+		void calculateChecksum(void);
 };
 
 
@@ -152,6 +162,8 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	, dat(dat)
 	, bat(bat)
 	, banner(QPixmap())
+	, checksumExpected(0)
+	, checksumActual(0)
 {
 	// Load the directory table information.
 	dirEntry = &dat->entries[fileIdx];
@@ -192,6 +204,8 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	, dat(NULL)
 	, bat(NULL)
 	, banner(QPixmap())
+	, checksumExpected(0)
+	, checksumActual(0)
 {
 	// Take a copy of the constructed directory entry.
 	card_direntry *dentry = (card_direntry*)malloc(sizeof(*dirEntry));
@@ -301,13 +315,12 @@ QByteArray MemCardFilePrivate::loadFileData(void)
 	const int blockSize = card->blockSize();
 	if (dirEntry->length > card->sizeInBlocks())
 		return QByteArray();
-	
+
 	QByteArray fileData;
 	fileData.resize(dirEntry->length * blockSize);
-	
+
 	uint8_t *fileDataPtr = (uint8_t*)fileData.data();
-	for (int i = 0; i < dirEntry->length; i++, fileDataPtr += blockSize)
-	{
+	for (int i = 0; i < dirEntry->length; i++, fileDataPtr += blockSize) {
 		const uint16_t physBlockAddr = fileBlockAddrToPhysBlockAddr(i);
 		card->readBlock(fileDataPtr, blockSize, physBlockAddr);
 	}
@@ -446,6 +459,71 @@ void MemCardFilePrivate::loadImages(void)
 			}
 		}
 	}
+}
+
+
+/**
+ * Calculate the file checksum.
+ */
+void MemCardFilePrivate::calculateChecksum(void)
+{
+	if (checksumData.algorithm == Checksum::CHKALG_NONE ||
+	    checksumData.algorithm >= Checksum::CHKALG_MAX ||
+	    checksumData.length == 0)
+	{
+		// No algorithm or invalid algorithm set,
+		// or the checksum data has no length.
+		checksumExpected = 0;
+		checksumActual = 0;
+		return;
+	}
+
+	// Load the file data.
+	QByteArray fileData = loadFileData();
+	if (fileData.isEmpty() ||
+	    fileData.size() < (int)checksumData.address ||
+	    fileData.size() < (int)(checksumData.start + checksumData.length))
+	{
+		// File is too small...
+		checksumExpected = 0;
+		checksumActual = 0;
+		return;
+	}
+
+	// Get the expected checksum.
+	// NOTE: Assuming big-endian for all values.
+	uint32_t expected = 0;
+	switch (checksumData.algorithm) {
+		case Checksum::CHKALG_CRC16:
+			expected = (fileData[checksumData.address+0] << 8) |
+				   (fileData[checksumData.address+1]);
+			break;
+
+		case Checksum::CHKALG_CRC32:
+		case Checksum::CHKALG_ALLBYTES32:
+			expected = (fileData[checksumData.address+0] << 24) |
+				   (fileData[checksumData.address+1] << 16) |
+				   (fileData[checksumData.address+2] << 8) |
+				   (fileData[checksumData.address+3]);
+			break;
+
+		case Checksum::CHKALG_SONICCHAOGARDEN:	// TODO
+		case Checksum::CHKALG_NONE:
+		default:
+			// Unsupported algorithm.
+			checksumExpected = 0;
+			checksumActual = 0;
+			return;
+	}
+
+	// Calculate the checksum.
+	const char *const start = (fileData.data() + checksumData.start);
+	uint32_t actual = Checksum::Exec(checksumData.algorithm,
+			start, checksumData.length, checksumData.poly);
+
+	// Save the checksums.
+	checksumExpected = expected;
+	checksumActual = actual;
 }
 
 
@@ -616,3 +694,34 @@ bool MemCardFile::isLostFile(void) const
  */
 QVector<uint16_t> MemCardFile::fatEntries(void) const
 	{ return d->fatEntries; }
+
+/**
+ * Get the checksum data.
+ * @return Checksum data.
+ */
+Checksum::ChecksumData MemCardFile::checksumData(void) const
+	{ return d->checksumData; }
+
+/**
+ * Set the checksum data.
+ * @param checksumData Checksum data.
+ */
+void MemCardFile::setChecksumData(const Checksum::ChecksumData &checksumData)
+{
+	d->checksumData = checksumData;
+	d->calculateChecksum();
+}
+
+/**
+ * Get the expected checksum.
+ * @return Expected checksum, or 0 if no checksum data was set.
+ */
+uint32_t MemCardFile::checksumExpected(void) const
+	{ return d->checksumExpected; }
+
+/**
+ * Get the actual checksum.
+ * @return Actual checksum, or 0 if no checksum data was set.
+ */
+uint32_t MemCardFile::checksumActual(void) const
+	{ return d->checksumActual; }

@@ -378,14 +378,17 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 	// Remove lost files from the card.
 	d->card->removeLostFiles();
 
-	// Get the directory entry list.
-	QLinkedList<card_direntry> dirEntryList = d->searchThread->dirEntryList();
-	QLinkedList<QVector<uint16_t> > fatEntriesList = d->searchThread->fatEntriesList();
+	// Get the files found list.
+	QLinkedList<SearchData> filesFoundList = d->searchThread->filesFoundList();
 
 	// Add the directory entries.
-	foreach (const card_direntry dirEntry, dirEntryList) {
-		QVector<uint16_t> fatEntries = fatEntriesList.takeFirst();
-		d->card->addLostFile(&dirEntry, fatEntries);
+	foreach (const SearchData &searchData, filesFoundList) {
+		MemCardFile *file = d->card->addLostFile(&(searchData.dirEntry), searchData.fatEntries);
+
+		// TODO: Add ChecksumData parameter to addLostFile.
+		// Alternatively, add SearchData overload?
+		if (file && searchData.checksumData.algorithm != Checksum::CHKALG_NONE)
+			file->setChecksumData(searchData.checksumData);
 	}
 }
 
