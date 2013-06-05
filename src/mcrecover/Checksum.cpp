@@ -78,7 +78,7 @@ uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, u
 				reinterpret_cast<const uint8_t*>(buf), siz, (uint16_t)(poly & 0xFFFF));
 
 		case CHKALG_CRC32:
-		case CHKALG_ALLBYTES32:
+		case CHKALG_ADDBYTES32:
 		case CHKALG_SONICCHAOGARDEN:
 			// TODO
 
@@ -107,8 +107,8 @@ Checksum::ChkAlgorithm Checksum::ChkAlgorithmFromString(QString algorithm)
 		 algorithm == QLatin1String("crc-32"))
 	{
 		return CHKALG_CRC32;
-	} else if (algorithm == QLatin1String("allbytes32")) {
-		return CHKALG_ALLBYTES32;
+	} else if (algorithm == QLatin1String("addbytes32")) {
+		return CHKALG_ADDBYTES32;
 	} else if (algorithm == QLatin1String("sonicchaogarden")) {
 		return CHKALG_SONICCHAOGARDEN;
 	}
