@@ -447,6 +447,16 @@
 			<gameDesc>^Sonic Adventure DX$</gameDesc>
 			<fileDesc>^Chao Garden$</fileDesc>
 		</search>
+		<checksum>
+			<algorithm>SonicChaoGarden</algorithm>
+			<!-- NOTE: Checksum is NOT a contiguous uint32_t.
+			     This is the starting address of the entire
+			     checksum block. -->
+			<!-- Banner+icons take up 0x3040 bytes. -->
+			<!-- Chao Garden checksum is at 0xC818 after the banner. -->
+			<address>0xF858</address>
+			<range start="0x3040" length="0xC820" />
+		</checksum>
 		<dirEntry>
 			<filename>SONICADVENTURE_DX_CHAOGARDEN</filename>
 			<bannerFormat>0x01</bannerFormat>
@@ -492,6 +502,16 @@
 			<gameDesc>^SONIC ADVENTURE 2 BATTLE$</gameDesc>
 			<fileDesc>^CHAO GARDEN DATA$</fileDesc>
 		</search>
+		<checksum>
+			<algorithm>SonicChaoGarden</algorithm>
+			<!-- NOTE: Checksum is NOT a contiguous uint32_t.
+			     This is the starting address of the entire
+			     checksum block. -->
+			<!-- Banner+icons take up 0x3040 bytes. -->
+			<!-- Chao Garden checksum is at 0xCA64 after the banner. -->
+			<address>0xFAA4</address>
+			<range start="0x3040" length="0xCA6C" />
+		</checksum>
 		<dirEntry>
 			<filename>SONIC2B__ALF</filename>
 			<bannerFormat>0xCD</bannerFormat>
