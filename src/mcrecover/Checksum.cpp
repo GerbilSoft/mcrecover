@@ -44,7 +44,6 @@ class ChecksumPrivate
 uint16_t ChecksumPrivate::Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly)
 {
 	// TODO: Add optimized version for poly == CRC16_POLY_CCITT.
-	const uint8_t derp[4] = {0x1B, 0xFF, 0x41, 0x00};
 	uint16_t crc = 0xFFFF;
 
 	for (; siz != 0; siz--, buf++) {
