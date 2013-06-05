@@ -187,8 +187,8 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	static const int MemCardInfoPanelWidth = 160;
 	QList<int> sizes;
 	sizes.reserve(2);
-	sizes.append(MemCardInfoPanelWidth);
 	sizes.append(this->width() - MemCardInfoPanelWidth);
+	sizes.append(MemCardInfoPanelWidth);
 	splitter->setSizes(sizes);
 
 	// Set the splitter stretch factors.
