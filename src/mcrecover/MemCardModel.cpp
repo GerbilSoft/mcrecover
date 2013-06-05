@@ -457,6 +457,18 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 			}
 			break;
 
+		case Qt::SizeHintRole:
+			// Increase row height by 4px.
+			switch (section) {
+				case COL_ICON:
+					return QSize(CARD_ICON_W, (CARD_ICON_H + 4));
+				case COL_BANNER:
+					return QSize(CARD_BANNER_W, (CARD_BANNER_H + 4));
+				default:
+					break;
+			}
+			break;
+
 		default:
 			break;
 	}
