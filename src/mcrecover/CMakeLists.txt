@@ -74,6 +74,7 @@ SET(mcrecover_SRCS
 	PcreRegex.cpp
 	GcnDateTime.cpp
 	MemCardFileView.cpp
+	Checksum.cpp
 	)
 
 # Headers with Qt4 objects.
