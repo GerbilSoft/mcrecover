@@ -622,11 +622,12 @@ void MemCard::removeLostFiles(void)
  * Add a "lost" file.
  * NOTE: This is a debugging version.
  * Add more comprehensive versions with a block map specification.
+ * @return MemCardFile added to the MemCard, or NULL on error.
  */
-void MemCard::addLostFile(const card_direntry *dirEntry)
+MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry)
 {
 	if (!isOpen())
-		return;
+		return NULL;
 
 	// Initialize the FAT entries baesd on start/length.
 	// TODO: Check for block collisions and skip used blocks.
@@ -648,7 +649,7 @@ void MemCard::addLostFile(const card_direntry *dirEntry)
 		}
 	}
 
-	addLostFile(dirEntry, fatEntries);
+	return addLostFile(dirEntry, fatEntries);
 }
 
 
@@ -656,13 +657,15 @@ void MemCard::addLostFile(const card_direntry *dirEntry)
  * Add a "lost" file.
  * @param dirEntry Directory entry.
  * @param fatEntries FAT entries.
+ * @return MemCardFile added to the MemCard, or NULL on error.
  */
-void MemCard::addLostFile(const card_direntry *dirEntry, QVector<uint16_t> fatEntries)
+MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry, QVector<uint16_t> fatEntries)
 {
 	if (!isOpen())
-		return;
+		return NULL;
 
 	MemCardFile *file = new MemCardFile(this, dirEntry, fatEntries);
 	d->lstMemCardFile.append(file);
 	emit fileAdded(d->lstMemCardFile.size() - 1);
+	return file;
 }
