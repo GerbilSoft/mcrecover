@@ -467,6 +467,11 @@
 			<gameDesc>^SONIC ADVENTURE 2 BATTLE$</gameDesc>
 			<fileDesc>^FILE(\d{2}):(  \d| \d{2}|\d{3}) Emblems?$</fileDesc>
 		</search>
+		<checksum>
+			<algorithm>AddBytes32</algorithm>
+			<address>0x2840</address>
+			<range start="0x2844" length="0x34A0" />
+		</checksum>
 		<dirEntry>
 			<filename>SONIC2B__S$F1</filename>
 			<bannerFormat>0x06</bannerFormat>
