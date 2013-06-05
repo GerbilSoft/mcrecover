@@ -452,30 +452,28 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 	}
 
 	// Determine which checksum algorithm to use.
-	// TODO: Move to a checksum class.
-	if (algorithm == QLatin1String("crc16") ||
-	    algorithm == QLatin1String("crc-16"))
-	{
-		gcnMcFileDef->checksumData.algorithm = Checksum::CHKALG_CRC16;
-		gcnMcFileDef->checksumData.poly =
-			(poly != 0 ? (poly & 0xFFFF) : Checksum::CRC16_POLY_CCITT);
-	}
-	else if (algorithm == QLatin1String("crc32") ||
-		 algorithm == QLatin1String("crc-32"))
-	{
-		gcnMcFileDef->checksumData.algorithm = Checksum::CHKALG_CRC32;
-		gcnMcFileDef->checksumData.poly =
-			(poly != 0 ? poly : Checksum::CRC32_POLY_ZLIB);
-	} else if (algorithm == QLatin1String("allbytes32")) {
-		gcnMcFileDef->checksumData.algorithm = Checksum::CHKALG_ALLBYTES32;
-		gcnMcFileDef->checksumData.poly = 0;
-	} else if (algorithm == QLatin1String("sonicchaogarden")) {
-		gcnMcFileDef->checksumData.algorithm = Checksum::CHKALG_SONICCHAOGARDEN;
-		gcnMcFileDef->checksumData.poly = 0;
-	} else {
-		// Unknown algorithm.
-		// TODO: Show an error message?
-		gcnMcFileDef->checksumData.clear();
+	gcnMcFileDef->checksumData.algorithm = Checksum::ChkAlgorithmFromString(algorithm);
+	switch (gcnMcFileDef->checksumData.algorithm) {
+		case Checksum::CHKALG_CRC16:
+			gcnMcFileDef->checksumData.poly =
+				(poly != 0 ? (poly & 0xFFFF) : Checksum::CRC16_POLY_CCITT);
+				break;
+
+		case Checksum::CHKALG_CRC32:
+			gcnMcFileDef->checksumData.poly =
+				(poly != 0 ? poly : Checksum::CRC32_POLY_ZLIB);
+				break;
+
+		case Checksum::CHKALG_NONE:
+			// Unknown algorithm.
+			// TODO: Show an error message?
+			gcnMcFileDef->checksumData.clear();
+			break;
+
+		default:
+			// Other algorithm.
+			gcnMcFileDef->checksumData.poly = 0;
+			break;
 	}
 }
 
