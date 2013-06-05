@@ -421,6 +421,12 @@
 			<gameDesc>^Sonic Adventure DX  File (\d)$</gameDesc>
 			<fileDesc>^Emblem collected :(  \d| \d{2}|\d{3})$</fileDesc>
 		</search>
+		<checksum>
+			<algorithm>CRC-16</algorithm>
+			<!-- NOTE: Stored as uint32_t in the file; we only need uint16_t. -->
+			<address>0x1442</address>
+			<range start="0x1444" length="0x056C" />
+		</checksum>
 		<dirEntry>
 			<filename>SONICADVENTURE_DX_PLAYRECORD_$G1</filename>
 			<bannerFormat>0x01</bannerFormat>
