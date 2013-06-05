@@ -89,3 +89,30 @@ uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, u
 	// Unknown algorithm.
 	return 0;
 }
+
+
+/**
+ * Get a ChkAlgorithm from a checksum algorithm name.
+ * @param algorithm Checksum algorithm name.
+ * @return ChkAlgorithm. (If unknown, returns CHKALG_NONE.)
+ */
+Checksum::ChkAlgorithm Checksum::ChkAlgorithmFromString(QString algorithm)
+{
+	if (algorithm == QLatin1String("crc16") ||
+	    algorithm == QLatin1String("crc-16"))
+	{
+		return CHKALG_CRC16;
+	}
+	else if (algorithm == QLatin1String("crc32") ||
+		 algorithm == QLatin1String("crc-32"))
+	{
+		return CHKALG_CRC32;
+	} else if (algorithm == QLatin1String("allbytes32")) {
+		return CHKALG_ALLBYTES32;
+	} else if (algorithm == QLatin1String("sonicchaogarden")) {
+		return CHKALG_SONICCHAOGARDEN;
+	}
+
+	// Unknown algorithm name.
+	return CHKALG_NONE;
+}

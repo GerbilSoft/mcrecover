@@ -25,6 +25,9 @@
 // C includes.
 #include <stdint.h>
 
+// Qt includes.
+#include <QtCore/QString>
+
 class Checksum
 {
 	private:
@@ -79,6 +82,13 @@ class Checksum
 		 * @return Checksum.
 		 */
 		static uint32_t Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, uint32_t poly = 0);
+
+		/**
+		 * Get a ChkAlgorithm from a checksum algorithm name.
+		 * @param algorithm Checksum algorithm name.
+		 * @return ChkAlgorithm. (If unknown, returns CHKALG_NONE.)
+		 */
+		static ChkAlgorithm ChkAlgorithmFromString(QString algorithm);
 };
 
 #endif /* __MCRECOVER_CHECKSUM_HPP__ */
