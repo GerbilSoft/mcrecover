@@ -485,6 +485,7 @@ void MemCardFilePrivate::calculateChecksum(void)
 	    fileData.size() < (int)(checksumData.start + checksumData.length))
 	{
 		// File is too small...
+		// TODO: Also check the size of the checksum itself.
 		checksumExpected = 0;
 		checksumActual = 0;
 		return;
@@ -492,7 +493,7 @@ void MemCardFilePrivate::calculateChecksum(void)
 
 	// Get the expected checksum.
 	// NOTE: Assuming big-endian for all values.
-	const uint8_t *data = reinterpret_cast<const uint8_t*>(fileData.constData());
+	uint8_t *data = reinterpret_cast<uint8_t*>(fileData.data());
 	uint32_t expected = 0;
 	switch (checksumData.algorithm) {
 		case Checksum::CHKALG_CRC16:
@@ -508,7 +509,24 @@ void MemCardFilePrivate::calculateChecksum(void)
 				   (data[checksumData.address+3]);
 			break;
 
-		case Checksum::CHKALG_SONICCHAOGARDEN:	// TODO
+		case Checksum::CHKALG_SONICCHAOGARDEN: {
+			Checksum::ChaoGardenChecksumData chaoChk;
+			memcpy(&chaoChk, &data[checksumData.address], sizeof(chaoChk));
+			expected = (chaoChk.checksum_3 << 24) |
+				   (chaoChk.checksum_2 << 16) |
+				   (chaoChk.checksum_1 << 8) |
+				   (chaoChk.checksum_0);
+
+			// Clear some fields that must be 0 when calculating the checksum.
+			chaoChk.checksum_3 = 0;
+			chaoChk.checksum_2 = 0;
+			chaoChk.checksum_1 = 0;
+			chaoChk.checksum_0 = 0;
+			chaoChk.random_3 = 0;
+			memcpy(&data[checksumData.address], &chaoChk, sizeof(chaoChk));
+			break;
+		}
+
 		case Checksum::CHKALG_NONE:
 		default:
 			// Unsupported algorithm.

@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 #include "Checksum.hpp"
+#include "SonicChaoGarden.h"
 
 class ChecksumPrivate
 {
@@ -32,6 +33,7 @@ class ChecksumPrivate
 	public:
 		static uint16_t Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly = Checksum::CRC16_POLY_CCITT);
 		static uint32_t AddBytes32(const uint8_t *buf, uint32_t siz);
+		static uint32_t SonicChaoGarden(const uint8_t *buf, uint32_t siz);
 };
 
 
@@ -89,6 +91,26 @@ uint32_t ChecksumPrivate::AddBytes32(const uint8_t *buf, uint32_t siz)
 
 
 /**
+ * SonicChaoGarden algorithm.
+ * @param buf Data buffer.
+ * @param siz Length of data buffer.
+ * @return Checksum.
+ */
+uint32_t ChecksumPrivate::SonicChaoGarden(const uint8_t *buf, uint32_t siz)
+{
+	// Ported from MainMemory's C# SADX/SA2B Chao Garden checksum code.
+	const uint32_t a4 = 0x686F6765;
+	uint32_t v4 = 0x6368616F;
+
+	for (; siz != 0; siz--, buf++) {
+		v4 = SonicChaoGarden_CRC32_Table[*buf ^ (v4 & 0xFF)] ^ (v4 >> 8);
+	}
+
+	return (a4 ^ v4);
+}
+
+
+/**
  * Get the checksum for a block of data.
  * @param algorithm Checksum algorithm.
  * @param buf Data buffer.
@@ -98,19 +120,21 @@ uint32_t ChecksumPrivate::AddBytes32(const uint8_t *buf, uint32_t siz)
  */
 uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, uint32_t poly)
 {
+	const uint8_t *const buf8 = reinterpret_cast<const uint8_t*>(buf);
+
 	switch (algorithm) {
 		case CHKALG_CRC16:
 			if (poly == 0)
 				poly = CRC16_POLY_CCITT;
-			return ChecksumPrivate::Crc16(
-				reinterpret_cast<const uint8_t*>(buf), siz, (uint16_t)(poly & 0xFFFF));
+			return ChecksumPrivate::Crc16(buf8, siz, (uint16_t)(poly & 0xFFFF));
 
 		case CHKALG_ADDBYTES32:
-			return ChecksumPrivate::AddBytes32(
-				reinterpret_cast<const uint8_t*>(buf), siz);
+			return ChecksumPrivate::AddBytes32(buf8, siz);
+
+		case CHKALG_SONICCHAOGARDEN:
+			return ChecksumPrivate::SonicChaoGarden(buf8, siz);
 
 		case CHKALG_CRC32:
-		case CHKALG_SONICCHAOGARDEN:
 			// TODO
 
 		default:

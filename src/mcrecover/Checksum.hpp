@@ -68,6 +68,23 @@ class Checksum
 			}
 		};
 
+		// Chao Garden checksum struct.
+		struct ChaoGardenChecksumData {
+			/**
+			 * The following bytes MUST be 0 when evaluating the checksum:
+			 * - checksum_0, checksum_1, checksum_2, checksum_3
+			 * - random_3
+			 */
+			uint8_t checksum_1;     // Checksum byte 1. (bits 15-8)
+			uint8_t random_0;       // Random byte 0.
+			uint8_t checksum_3;     // Checksum byte 3. (bits 31-24)
+			uint8_t random_3;       // Random byte 3. [MUST BE ZERO INITIALLY]
+			uint8_t random_1;       // Random byte 1.
+			uint8_t checksum_0;     // Checksum byte 0. (bits 7-0)
+			uint8_t random_2;       // Random byte 2.
+			uint8_t checksum_2;     // Checksum byte 2. (bits 23-16)
+		};
+
 		/** Default polynomials. **/
 
 		static const uint16_t CRC16_POLY_CCITT = 0x8408;
