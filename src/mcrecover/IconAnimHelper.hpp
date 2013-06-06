@@ -69,6 +69,12 @@ class IconAnimHelper : public QObject
 		void reset(void);
 
 		/**
+		 * Does this file have an animated icon?
+		 * @return True if the icon is animated; false if not, or if no file is loaded.
+		 */
+		bool isAnimated(void) const;
+
+		/**
 		 * Get the current icon for this file.
 		 * @return Current icon.
 		 */

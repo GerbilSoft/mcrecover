@@ -232,6 +232,14 @@ void IconAnimHelper::reset(void)
 
 
 /**
+ * Does this file have an animated icon?
+ * @return True if the icon is animated; false if not, or if no file is loaded.
+ */
+bool IconAnimHelper::isAnimated(void) const
+	{ return d->enabled; }
+
+
+/**
  * Get the current icon for this file.
  * @return Current icon.
  */
