@@ -26,8 +26,9 @@
 // MemCardFile
 #include "MemCardFile.hpp"
 
-// C includes.
-#include <string.h>
+// C includes. (C++ namespace)
+#include <cstring>
+#include <cstdio>
 
 // C++ includes.
 #include <limits>
@@ -546,6 +547,30 @@ int MemCard::readBlock(void *buf, int siz, uint16_t blockIdx)
 	// Read the specified block.
 	d->file->seek((int)blockIdx * blockSize());
 	return (int)d->file->read((char*)buf, blockSize());
+}
+
+
+/**
+ * Get the memory card's serial number.
+ * @return Memory card's serial number.
+ */
+QString MemCard::serialNumber(void) const
+{
+	// TODO: We're returning the 12-byte serial number.
+	// Should we return the 8-byte F-Zero GX / PSO serial number instead?
+
+	QString serial_text;
+	char tmp[4];
+
+	// TODO: ARRAY_SIZE() macro.
+	serial_text.reserve(sizeof(d->mc_header.serial)*2);
+
+	for (int i = 0; i < (int)sizeof(d->mc_header.serial); i++) {
+		snprintf(tmp, sizeof(tmp), "%02X", d->mc_header.serial[i]);
+		serial_text += QLatin1String(tmp);
+	}
+
+	return serial_text;
 }
 
 

@@ -105,6 +105,12 @@ class MemCard : public QObject
 		int readBlock(void *buf, int siz, uint16_t blockIdx);
 
 		/**
+		 * Get the memory card's serial number.
+		 * @return Memory card's serial number.
+		 */
+		QString serialNumber(void) const;
+
+		/**
 		 * Get the memory card encoding.
 		 * @return 0 for ANSI (ISO-8859-1); 1 for SJIS; negative on error.
 		 */
