@@ -25,6 +25,9 @@
 #include "MemCard.hpp"
 #include "MemCardFile.hpp"
 
+// Icon animation helper.
+#include "IconAnimHelper.hpp"
+
 // C includes.
 #include <limits.h>
 
@@ -54,22 +57,7 @@ class MemCardModelPrivate
 	public:
 		MemCard *card;
 
-		struct AnimData {
-			uint8_t frame;		// Current frame.
-			uint8_t lastValidFrame;	// Last valid frame.
-			bool frameHasIcon;	// If false, use previous frame.
-			uint8_t delayCnt;	// Delay counter.
-			uint8_t delayLen;	// Delay length.
-			uint8_t mode;		// Animation mode.
-			bool direction;		// Current direction for CARD_ANIM_BOUNCE.
-		};
-		QHash<MemCardFile*, AnimData*> animState;
-
-		/**
-		 * Time, in ms, for each frame for "fast" animated icons.
-		 * TODO: Figure out the correct timer interval.
-		 */
-		static const int FAST_ANIM_TIMER = 125;
+		QHash<MemCardFile*, IconAnimHelper*> animState;
 
 		/**
 		 * Initialize the animation state for all files.
@@ -190,18 +178,8 @@ void MemCardModelPrivate::initAnimState(MemCardFile *file)
 		return;
 	}
 
-	// Get the file data.
-	AnimData *animData = animState.value(file);
-	if (!animData)
-		animData = new AnimData();
-	animData->frame = 0;
-	animData->lastValidFrame = 0;
-	animData->frameHasIcon = !(file->icon(animData->frame).isNull());
-	animData->delayCnt = 0;
-	animData->delayLen = file->iconDelay(0);
-	animData->mode = file->iconAnimMode();
-	animData->direction = false;
-	animState.insert(file, animData);
+	IconAnimHelper *helper = new IconAnimHelper(file);
+	animState.insert(file, helper);
 }
 
 
@@ -212,7 +190,7 @@ void MemCardModelPrivate::initAnimState(MemCardFile *file)
 void MemCardModelPrivate::updateAnimTimerState(void)
 {
 	if (!animState.isEmpty())
-		animTimer.start(FAST_ANIM_TIMER);
+		animTimer.start(IconAnimHelper::FAST_ANIM_TIMER);
 	else
 		animTimer.stop();
 }
@@ -231,69 +209,19 @@ void MemCardModelPrivate::animTimerSlot(void)
 	// Check for icon animations.
 	for (int i = 0; i < card->numFiles(); i++) {
 		MemCardFile *file = card->getFile(i);
-		if (!animState.contains(file))
+		IconAnimHelper *helper = animState.value(file);
+		if (!helper)
 			continue;
 
-		AnimData *animData = animState.value(file);
-
-		// Check the delay counter.
-		animData->delayCnt++;
-		if (animData->delayCnt < animData->delayLen) {
-			// Animation delay hasn't expired yet.
-			continue;
+		// Tell the IconAnimHelper that a timer tick has occurred.
+		// TODO: Connect the timer to the IconAnimHelper directly?
+		bool iconUpdated = helper->tick();
+		if (iconUpdated) {
+			// Icon has been updated.
+			// Notify the UI that the icon has changed.
+			QModelIndex iconIndex = q->createIndex(i, MemCardModel::COL_ICON, 0);
+			emit q->dataChanged(iconIndex, iconIndex);
 		}
-
-		// Animation delay has expired.
-		// Go to the next frame.
-		if (!animData->direction) {
-			// Animation is moving forwards.
-			// Check if we're at the last frame.
-			if (animData->frame == (CARD_MAXICONS - 1) ||
-			    (file->iconDelay(animData->frame + 1) == CARD_SPEED_END))
-			{
-				// Last frame.
-				if (animData->mode == CARD_ANIM_BOUNCE) {
-					// "Bounce" animation. Start playing backwards.
-					animData->direction = true;
-					animData->frame--;	// Go to the previous frame.
-				} else {
-					// "Looping" animation.
-					// Reset to frame 0.
-					animData->frame = 0;
-				}
-			} else {
-				// Not the last frame.
-				// Go to the next frame.
-				animData->frame++;
-			}
-		} else {
-			// Animation is moving backwards. ("Bounce" animation only.)
-			// Check if we're at the first frame.
-			if (animData->frame == 0) {
-				// First frame. Start playing forwards.
-				animData->direction = false;
-				animData->frame++;	// Go to the next frame.
-			} else {
-				// Not the first frame.
-				// Go to the previous frame.
-				animData->frame--;
-			}
-		}
-
-		// Update the frame delay data.
-		animData->delayCnt = 0;
-		animData->delayLen = file->iconDelay(animData->frame);
-
-		// Check if this frame has an icon.
-		animData->frameHasIcon = !file->icon(animData->frame).isNull();
-		if (animData->frameHasIcon) {
-			// Frame has an icon. Save this frame as the last valid frame.
-			animData->lastValidFrame = animData->frame;
-		}
-
-		// Notify the UI that the icon has changed.
-		QModelIndex iconIndex = q->createIndex(i, MemCardModel::COL_ICON, 0);
-		emit q->dataChanged(iconIndex, iconIndex);
 	}
 }
 
@@ -397,11 +325,8 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 					// Check if this is an animated icon.
 					if (d->animState.contains(file)) {
 						// Animated icon.
-						MemCardModelPrivate::AnimData *animData = d->animState.value(file);
-						if (animData->frameHasIcon)
-							return file->icon(animData->frame);
-						else
-							return file->icon(animData->lastValidFrame);
+						IconAnimHelper *helper= d->animState.value(file);
+						return helper->icon();
 					} else {
 						// Not an animated icon.
 						// Return the first icon.

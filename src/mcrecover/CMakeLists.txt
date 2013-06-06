@@ -76,6 +76,7 @@ SET(mcrecover_SRCS
 	MemCardFileView.cpp
 	Checksum.cpp
 	MemCardView.cpp
+	IconAnimHelper.cpp
 	)
 
 # Headers with Qt4 objects.
@@ -90,6 +91,7 @@ SET(mcrecover_MOC_HEADERS
 	SearchThreadWorker.hpp
 	MemCardFileView.hpp
 	MemCardView.hpp
+	IconAnimHelper.hpp
 	)
 
 # UI files.
