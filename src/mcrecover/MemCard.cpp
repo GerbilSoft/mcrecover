@@ -225,13 +225,23 @@ int MemCardPrivate::loadSysInfo(void)
 	file->read((char*)&mc_header, sizeof(mc_header));
 
 	// Byteswap the header contents.
-	// TODO: Add be64_to_cpu().
-	//mc_header.formatTime	= be64_to_cpu(mc_header.formatTime);
+	mc_header.formatTime	= be64_to_cpu(mc_header.formatTime);
+	mc_header.sramBias	= be32_to_cpu(mc_header.sramBias);
+	mc_header.sramLang	= be32_to_cpu(mc_header.sramLang);
 	mc_header.device_id	= be16_to_cpu(mc_header.device_id);
 	mc_header.size		= be16_to_cpu(mc_header.size);
 	mc_header.encoding	= be16_to_cpu(mc_header.encoding);
 	mc_header.chksum1	= be16_to_cpu(mc_header.chksum1);
 	mc_header.chksum2	= be16_to_cpu(mc_header.chksum2);
+
+	/**
+	 * NOTE: formatTime appears to be in units of (CPU clock / 12).
+	 * This means the time format will be different depending on if
+	 * the card was formatted on a GameCube (or Wii in GCN mode)
+	 * or on a Wii in Wii mode.
+	 *
+	 * Don't bother determining the actual formatTime right now.
+	 */
 
 	// Get the QTextCodec for the memory card's text encoding.
 	if ((mc_header.encoding & SYS_FONT_ENCODING_MASK) == SYS_FONT_ENCODING_SJIS) {

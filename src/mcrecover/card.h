@@ -79,19 +79,25 @@ extern "C" {
 typedef struct PACKED _card_header
 {
 	// The following is uint32_t serial[8] in libogc.
-	// Dolphin has more detailed information.
-	uint8_t serial[12];	// Serial number. (TODO: Should be 8...)
-	uint64_t formatTime;	// Format time. (OSTime value)
-	uint8_t sramBias[4];	// SRAM bias at time of format.
-	uint8_t sramLang[4];	// SRAM language.
-	uint8_t reserved1[4];
-	
-	uint16_t device_id;
-	uint16_t size;
-	uint16_t encoding;
+	// It's used as an 8-word key for F-Zero GX and PSO "encryption".
+	union {
+		uint32_t serial_full[8];
+		struct {
+			uint8_t serial[12];	// Serial number. (TODO: Should be 8...)
+			uint64_t formatTime;	// Format time. (OSTime value; 1 tick == 1/40,500,000 sec)
+			uint32_t sramBias;	// SRAM bias at time of format.
+			uint32_t sramLang;	// SRAM language.
+			uint8_t reserved1[4];	// usually 0
+		};
+	};
+
+	uint16_t device_id;	// 0 if formatted in slot A; 1 if formatted in slot B
+	uint16_t size;		// size of card, in Mbits
+	uint16_t encoding;	// 0 == cp1252; 1 == Shift-JIS
+
 	uint8_t padding[0x1D6];
-	uint16_t chksum1;
-	uint16_t chksum2;
+	uint16_t chksum1;	// Checksum.
+	uint16_t chksum2;	// Inverted checksum.
 } card_header;
 #pragma pack()
 
