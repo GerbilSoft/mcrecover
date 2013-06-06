@@ -224,6 +224,8 @@ void McRecoverWindow::open(QString filename)
 {
 	if (d->card) {
 		d->model->setMemCard(NULL);
+		mcCardView->setCard(NULL);
+		mcfFileView->setFile(NULL);
 		delete d->card;
 	}
 
@@ -232,6 +234,10 @@ void McRecoverWindow::open(QString filename)
 	// TODO: Make sure the card is open.
 	d->model->setMemCard(d->card);
 	d->filename = filename;
+
+	// Set the MemCardView's MemCard to the
+	// selected card in the QTreeView.
+	mcCardView->setCard(d->card);
 
 	// Update the memory card's QTreeView.
 	d->updateLstFileList();
