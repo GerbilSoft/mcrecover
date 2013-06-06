@@ -62,6 +62,11 @@ class MemCardFileView : public QWidget, public Ui::MemCardFileView
 		 * @param obj QObject that was destroyed.
 		 */
 		void memCardFile_destroyed_slot(QObject *obj = 0);
+
+		/**
+		 * Animation timer slot.
+		 */
+		void animTimer_slot(void);
 };
 
 #endif /* __MCRECOVER_MEMCARDFILEVIEW_HPP__ */

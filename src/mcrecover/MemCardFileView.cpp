@@ -22,6 +22,10 @@
 #include "MemCardFileView.hpp"
 
 #include "MemCardFile.hpp"
+#include "IconAnimHelper.hpp"
+
+// Qt includes.
+#include <QtCore/QTimer>
 
 
 /** MemCardFileViewPrivate **/
@@ -39,6 +43,12 @@ class MemCardFileViewPrivate
 	public:
 		const MemCardFile *file;
 
+		// Icon animation helper.
+		IconAnimHelper helper;
+
+		// Animation timer.
+		QTimer animTimer;
+
 		/**
 		 * Update the widget display.
 		 */
@@ -48,7 +58,11 @@ class MemCardFileViewPrivate
 MemCardFileViewPrivate::MemCardFileViewPrivate(MemCardFileView *q)
 	: q(q)
 	, file(NULL)
-{ }
+{
+	// Connect animTimer's timeout() signal.
+	QObject::connect(&animTimer, SIGNAL(timeout()),
+			 q, SLOT(animTimer_slot()));
+}
 
 MemCardFileViewPrivate::~MemCardFileViewPrivate()
 { }
@@ -70,7 +84,6 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 	// Set the widget display.
 
 	// File icon.
-	// TODO: Icon animation. (Synchronized with QTreeView?)
 	QPixmap icon = file->icon(0);
 	if (!icon.isNull()) {
 		q->lblFileIcon->setPixmap(icon);
@@ -79,6 +92,11 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 		q->lblFileIcon->setVisible(false);
 		q->lblFileIcon->clear();
 	}
+
+	// Icon animation.
+	helper.setFile(file);
+	if (helper.isAnimated())
+		animTimer.start(IconAnimHelper::FAST_ANIM_TIMER);
 
 	// File banner.
 	QPixmap banner = file->banner();
@@ -157,5 +175,26 @@ void MemCardFileView::memCardFile_destroyed_slot(QObject *obj)
 
 		// Update the widget display.
 		d->updateWidgetDisplay();
+	}
+}
+
+
+/**
+ * Animation timer slot.
+ */
+void MemCardFileView::animTimer_slot(void)
+{
+	if (!d->file || !d->helper.isAnimated()) {
+		// No file is loaded, or the file doesn't have an animated icon.
+		// Stop the animation timer.
+		d->animTimer.stop();
+		return;
+	}
+
+	// Check if the animated icon should be updated.
+	bool iconUpdated = d->helper.tick();
+	if (iconUpdated) {
+		// Icon has been updated.
+		lblFileIcon->setPixmap(d->helper.icon());
 	}
 }
