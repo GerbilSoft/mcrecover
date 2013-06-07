@@ -140,6 +140,16 @@
 			<!-- Date format: M/D - Verify for PAL! -->
 			<fileDesc>^Last saved on (\d{1,2})/(\d{1,2})$</fileDesc>
 		</search>
+		<checksum>
+			<algorithm sum="0xF002">AddSubDual16</algorithm>
+			<address>0x3FFC</address>
+			<range start="0x2000" length="0x1FFC" />
+		</checksum>
+		<!--<checksum>
+			<algorithm>AddSubDual16</algorithm>
+			<address>0x5FFC</address>
+			<range start="0x4000" length="0x1FFC" />
+		</checksum>-->
 		<dirEntry>
 			<filename>LUIGI_MANSION_SAVEDATA_v3</filename>
 			<bannerFormat>0x05</bannerFormat>
