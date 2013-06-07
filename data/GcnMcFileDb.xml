@@ -666,8 +666,37 @@
 			<gameDesc>^Super Mario Sunshine$</gameDesc>
 			<!-- Date format: M/D - Verify for PAL! -->
 			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
-			<!-- TODO: Checksum field? -->
 		</search>
+		<checksum>
+			<algorithm>AddInvDual16</algorithm>
+			<address>0x3FFC</address>
+			<range start="0x2000" length="0x1FFC" />
+		</checksum>
+		<checksum>
+			<algorithm>AddInvDual16</algorithm>
+			<address>0x5FFC</address>
+			<range start="0x4000" length="0x1FFC" />
+		</checksum>
+		<checksum>
+			<algorithm>AddInvDual16</algorithm>
+			<address>0x7FFC</address>
+			<range start="0x6000" length="0x1FFC" />
+		</checksum>
+		<checksum>
+			<algorithm>AddInvDual16</algorithm>
+			<address>0x9FFC</address>
+			<range start="0x8000" length="0x1FFC" />
+		</checksum>
+		<checksum>
+			<algorithm>AddInvDual16</algorithm>
+			<address>0xBFFC</address>
+			<range start="0xA000" length="0x1FFC" />
+		</checksum>
+		<checksum>
+			<algorithm>AddInvDual16</algorithm>
+			<address>0xDFFC</address>
+			<range start="0xC000" length="0x1FFC" />
+		</checksum>
 		<dirEntry>
 			<filename>super_mario_sunshine</filename>
 			<bannerFormat>0x01</bannerFormat>
