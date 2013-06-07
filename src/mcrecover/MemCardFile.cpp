@@ -134,8 +134,7 @@ class MemCardFilePrivate
 
 		// Checksum data.
 		QVector<Checksum::ChecksumDef> checksumDefs;
-		uint32_t checksumExpected;
-		uint32_t checksumActual;
+		QVector<Checksum::ChecksumValue> checksumValues;
 
 		/**
 		 * Calculate the file checksum.
@@ -162,8 +161,6 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	, dat(dat)
 	, bat(bat)
 	, banner(QPixmap())
-	, checksumExpected(0)
-	, checksumActual(0)
 {
 	// Load the directory table information.
 	dirEntry = &dat->entries[fileIdx];
@@ -204,8 +201,6 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	, dat(NULL)
 	, bat(NULL)
 	, banner(QPixmap())
-	, checksumExpected(0)
-	, checksumActual(0)
 {
 	// Take a copy of the constructed directory entry.
 	card_direntry *dentry = (card_direntry*)malloc(sizeof(*dirEntry));
@@ -467,92 +462,108 @@ void MemCardFilePrivate::loadImages(void)
  */
 void MemCardFilePrivate::calculateChecksum(void)
 {
-	// TODO: Support multiple checksums.
+	checksumValues.clear();
+
 	if (checksumDefs.isEmpty()) {
 		// No checksum definitions were set.
-		checksumExpected = 0;
-		checksumActual = 0;
-		return;
-	}
-
-	const Checksum::ChecksumDef &checksumDef = checksumDefs.at(0);
-	if (checksumDef.algorithm == Checksum::CHKALG_NONE ||
-	    checksumDef.algorithm >= Checksum::CHKALG_MAX ||
-	    checksumDef.length == 0)
-	{
-		// No algorithm or invalid algorithm set,
-		// or the checksum data has no length.
-		checksumExpected = 0;
-		checksumActual = 0;
 		return;
 	}
 
 	// Load the file data.
 	QByteArray fileData = loadFileData();
-	if (fileData.isEmpty() ||
-	    fileData.size() < (int)checksumDef.address ||
-	    fileData.size() < (int)(checksumDef.start + checksumDef.length))
-	{
-		// File is too small...
-		// TODO: Also check the size of the checksum itself.
-		checksumExpected = 0;
-		checksumActual = 0;
+	if (fileData.isEmpty()) {
+		// File is empty.
 		return;
 	}
 
-	// Get the expected checksum.
-	// NOTE: Assuming big-endian for all values.
+	// Pointer to fileData's internal data array.
 	uint8_t *data = reinterpret_cast<uint8_t*>(fileData.data());
-	uint32_t expected = 0;
-	switch (checksumDef.algorithm) {
-		case Checksum::CHKALG_CRC16:
-			expected = (data[checksumDef.address+0] << 8) |
-				   (data[checksumDef.address+1]);
-			break;
 
-		case Checksum::CHKALG_CRC32:
-		case Checksum::CHKALG_ADDINVDUAL16:
-		case Checksum::CHKALG_ADDBYTES32:
-			expected = (data[checksumDef.address+0] << 24) |
-				   (data[checksumDef.address+1] << 16) |
-				   (data[checksumDef.address+2] << 8) |
-				   (data[checksumDef.address+3]);
-			break;
+	// Process all of the checksum definitions.
+	for (int i = 0; i < checksumDefs.count(); i++) {
+		const Checksum::ChecksumDef &checksumDef = checksumDefs.at(i);
 
-		case Checksum::CHKALG_SONICCHAOGARDEN: {
-			Checksum::ChaoGardenChecksumData chaoChk;
-			memcpy(&chaoChk, &data[checksumDef.address], sizeof(chaoChk));
-			expected = (chaoChk.checksum_3 << 24) |
-				   (chaoChk.checksum_2 << 16) |
-				   (chaoChk.checksum_1 << 8) |
-				   (chaoChk.checksum_0);
-
-			// Clear some fields that must be 0 when calculating the checksum.
-			chaoChk.checksum_3 = 0;
-			chaoChk.checksum_2 = 0;
-			chaoChk.checksum_1 = 0;
-			chaoChk.checksum_0 = 0;
-			chaoChk.random_3 = 0;
-			memcpy(&data[checksumDef.address], &chaoChk, sizeof(chaoChk));
-			break;
+		if (checksumDef.algorithm == Checksum::CHKALG_NONE ||
+		    checksumDef.algorithm >= Checksum::CHKALG_MAX ||
+		    checksumDef.length == 0)
+		{
+			// No algorithm or invalid algorithm set,
+			// or the checksum data has no length.
+			continue;
 		}
 
-		case Checksum::CHKALG_NONE:
-		default:
-			// Unsupported algorithm.
-			checksumExpected = 0;
-			checksumActual = 0;
-			return;
+		// Make sure the checksum definition is in range.
+		if (fileData.size() < (int)checksumDef.address ||
+		    fileData.size() < (int)(checksumDef.start + checksumDef.length))
+		{
+			// File is too small...
+			// TODO: Also check the size of the checksum itself.
+			continue;
+		}
+
+		// Get the expected checksum.
+		// NOTE: Assuming big-endian for all values.
+		uint32_t expected = 0;
+		Checksum::ChaoGardenChecksumData chaoChk_orig;
+
+		switch (checksumDef.algorithm) {
+			case Checksum::CHKALG_CRC16:
+				expected = (data[checksumDef.address+0] << 8) |
+					   (data[checksumDef.address+1]);
+				break;
+
+			case Checksum::CHKALG_CRC32:
+			case Checksum::CHKALG_ADDINVDUAL16:
+			case Checksum::CHKALG_ADDBYTES32:
+				expected = (data[checksumDef.address+0] << 24) |
+					   (data[checksumDef.address+1] << 16) |
+					   (data[checksumDef.address+2] << 8) |
+					   (data[checksumDef.address+3]);
+				break;
+
+			case Checksum::CHKALG_SONICCHAOGARDEN: {
+				memcpy(&chaoChk_orig, &data[checksumDef.address], sizeof(chaoChk_orig));
+
+				// Temporary working copy.
+				Checksum::ChaoGardenChecksumData chaoChk = chaoChk_orig;
+				expected = (chaoChk.checksum_3 << 24) |
+					   (chaoChk.checksum_2 << 16) |
+					   (chaoChk.checksum_1 << 8) |
+					   (chaoChk.checksum_0);
+
+				// Clear some fields that must be 0 when calculating the checksum.
+				chaoChk.checksum_3 = 0;
+				chaoChk.checksum_2 = 0;
+				chaoChk.checksum_1 = 0;
+				chaoChk.checksum_0 = 0;
+				chaoChk.random_3 = 0;
+				memcpy(&data[checksumDef.address], &chaoChk, sizeof(chaoChk));
+				break;
+			}
+
+			case Checksum::CHKALG_NONE:
+			default:
+				// Unsupported algorithm.
+				expected = 0;
+				break;
+		}
+
+		// Calculate the checksum.
+		const char *const start = (fileData.constData() + checksumDef.start);
+		uint32_t actual = Checksum::Exec(checksumDef.algorithm,
+				start, checksumDef.length, checksumDef.param);
+
+		if (checksumDef.algorithm == Checksum::CHKALG_SONICCHAOGARDEN) {
+			// Restore the Chao Garden checksum data.
+			memcpy(&data[checksumDef.address], &chaoChk_orig, sizeof(chaoChk_orig));
+		}
+
+		// Save the checksums.
+		Checksum::ChecksumValue checksumValue;
+		checksumValue.expected = expected;
+		checksumValue.actual = actual;
+		checksumValues.append(checksumValue);
 	}
-
-	// Calculate the checksum.
-	const char *const start = (fileData.constData() + checksumDef.start);
-	uint32_t actual = Checksum::Exec(checksumDef.algorithm,
-			start, checksumDef.length, checksumDef.param);
-
-	// Save the checksums.
-	checksumExpected = expected;
-	checksumActual = actual;
 }
 
 
@@ -746,14 +757,24 @@ void MemCardFile::setChecksumDefs(QVector<Checksum::ChecksumDef> checksumDefs)
  * @return Expected checksum, or 0 if no checksum definitions were set.
  */
 uint32_t MemCardFile::checksumExpected(void) const
-	{ return d->checksumExpected; }
+{
+	// TODO: Return multiple checksums.
+	if (d->checksumValues.isEmpty())
+		return 0;
+	return d->checksumValues.at(0).expected;
+}
 
 /**
  * Get the actual checksum.
  * @return Actual checksum, or 0 if no checksum definitions were set.
  */
 uint32_t MemCardFile::checksumActual(void) const
-	{ return d->checksumActual; }
+{
+	// TODO: Return multiple checksums.
+	if (d->checksumValues.isEmpty())
+		return 0;
+	return d->checksumValues.at(0).actual;
+}
 
 /**
  * Get the checksum status.
@@ -764,7 +785,12 @@ Checksum::ChkStatus MemCardFile::checksumStatus(void) const
 	if (d->checksumDefs.isEmpty())
 		return Checksum::CHKST_UNKNOWN;
 
-	return (d->checksumExpected == d->checksumActual
-		? Checksum::CHKST_GOOD
-		: Checksum::CHKST_INVALID);
+	for (int i = 0; i < d->checksumValues.count(); i++) {
+		const Checksum::ChecksumValue &checksumValue = d->checksumValues.at(i);
+		if (checksumValue.expected != checksumValue.actual)
+			return Checksum::CHKST_INVALID;
+	}
+
+	// All checksums are good.
+	return Checksum::CHKST_GOOD;
 }
