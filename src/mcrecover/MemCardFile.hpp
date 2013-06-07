@@ -198,6 +198,12 @@ class MemCardFile : public QObject
 		 * @return Actual checksum, or 0 if no checksum definitions were set.
 		 */
 		uint32_t checksumActual(void) const;
+
+		/**
+		 * Get the checksum status.
+		 * @return Checksum status.
+		 */
+		Checksum::ChkStatus checksumStatus(void) const;
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */

@@ -41,6 +41,8 @@
 #include <QtGui/QColor>
 #include <QtGui/QFont>
 #include <QtGui/QPalette>
+#include <QtGui/QStyle>
+
 
 /** MemCardModelPrivate **/
 
@@ -90,9 +92,25 @@ class MemCardModelPrivate
 		bool vIndirectCols_dirty;
 		void refreshVisibleColumns(void);
 
-		// Background colors for "lost" files.
-		QColor bgColor_lostFile;
-		QColor bgColor_lostFile_alt;
+		// Style variables.
+		struct style_t {
+			/**
+			 * Initialize the style variables.
+			 */
+			void init(void);
+
+			// Background colors for "lost" files.
+			QColor bgColor_lostFile;
+			QColor bgColor_lostFile_alt;
+
+			// Pixmaps for COL_ISVALID.
+			static const int pxmIsValid_width = 16;
+			static const int pxmIsValid_height = 16;
+			QPixmap pxmIsValid_unknown;
+			QPixmap pxmIsValid_invalid;
+			QPixmap pxmIsValid_good;
+		};
+		style_t style;
 };
 
 MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
@@ -108,8 +126,19 @@ MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	QObject::connect(&animTimer, SIGNAL(timeout()),
 			 q, SLOT(animTimerSlot()));
 
+	// Initialize the style variables.
+	style.init();
+}
+
+
+/**
+ * Initialize the style variables.
+ */
+void MemCardModelPrivate::style_t::init(void)
+{
+	// TODO: Call this function if the UI style changes.
+
 	// Initialize the background colors for "lost" files.
-	// TODO: Update these if the UI changes?
 	QPalette pal = QApplication::palette("QTreeView");
 	bgColor_lostFile = pal.base().color();
 	bgColor_lostFile_alt = pal.alternateBase().color();
@@ -128,6 +157,15 @@ MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	h = 60;
 	s = (255 - s);
 	bgColor_lostFile_alt.setHsv(h, s, v);
+
+	// Initialize the COL_ISVALID pixmaps.
+	QStyle *style = QApplication::style();
+	pxmIsValid_unknown = style->standardIcon(QStyle::SP_MessageBoxQuestion)
+				.pixmap(pxmIsValid_width, pxmIsValid_height);
+	pxmIsValid_invalid = style->standardIcon(QStyle::SP_MessageBoxCritical)
+				.pixmap(pxmIsValid_width, pxmIsValid_height);
+	pxmIsValid_good    = style->standardIcon(QStyle::SP_DialogOkButton)
+				.pixmap(pxmIsValid_width, pxmIsValid_height);
 }
 
 MemCardModelPrivate::~MemCardModelPrivate()
@@ -336,6 +374,22 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 				case COL_BANNER:
 					return file->banner();
 
+				case COL_ISVALID:
+					if (!file->isLostFile()) {
+						// Regular files aren't checked right now.
+						break;
+					}
+
+					switch (file->checksumStatus()) {
+						default:
+						case Checksum::CHKST_UNKNOWN:
+							return d->style.pxmIsValid_unknown;
+						case Checksum::CHKST_INVALID:
+							return d->style.pxmIsValid_invalid;
+						case Checksum::CHKST_GOOD:
+							return d->style.pxmIsValid_good;
+					}
+
 				default:
 					break;
 			}
@@ -346,6 +400,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 				case COL_SIZE:
 				case COL_PERMISSION:
 				case COL_GAMECODE:
+				case COL_ISVALID:
 					// These columns should be center-aligned horizontally.
 					return (int)(Qt::AlignHCenter | Qt::AlignVCenter);
 
@@ -376,9 +431,9 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 			if (file->isLostFile()) {
 				// TODO: Check if the item view is using alternating row colors before using them.
 				if (index.row() & 1)
-					return d->bgColor_lostFile_alt;
+					return d->style.bgColor_lostFile_alt;
 				else
-					return d->bgColor_lostFile;
+					return d->style.bgColor_lostFile;
 			}
 			break;
 
@@ -389,6 +444,9 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 					return QSize(CARD_ICON_W, (CARD_ICON_H + 4));
 				case COL_BANNER:
 					return QSize(CARD_BANNER_W, (CARD_BANNER_H + 4));
+				case COL_ISVALID:
+					return QSize(d->style.pxmIsValid_width,
+						     (d->style.pxmIsValid_height + 4));
 				default:
 					break;
 			}
@@ -428,6 +486,12 @@ QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int 
 				case COL_PERMISSION:	return tr("Permission");
 				case COL_GAMECODE:	return tr("Game ID");
 				case COL_FILENAME:	return tr("Filename");
+
+				// NOTE: Don't use a column header for COL_ISVALID.
+				// Otherwise, the column will be too wide,
+				// and the icon won't be aligned correctly.
+				//case COL_ISVALID:	return tr("Valid?");
+
 				default:
 					break;
 			}
@@ -439,6 +503,7 @@ QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int 
 				case COL_SIZE:
 				case COL_PERMISSION:
 				case COL_GAMECODE:
+				case COL_ISVALID:
 					// Center-align the text.
 					return Qt::AlignHCenter;
 

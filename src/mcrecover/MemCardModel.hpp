@@ -54,6 +54,7 @@ class MemCardModel : public QAbstractListModel
 			COL_PERMISSION,		// Permission string.
 			COL_GAMECODE,		// Game code. (including company)
 			COL_FILENAME,		// Filename.
+			COL_ISVALID,		// Is the file valid? (Checksum status)
 			
 			COL_MAX
 		};

@@ -38,6 +38,9 @@ class Checksum
 		Checksum &operator=(const Checksum &);
 
 	public:
+		/**
+		 * Checksum algorithms.
+		 */
 		enum ChkAlgorithm {
 			CHKALG_NONE = 0,
 			CHKALG_CRC16,
@@ -46,6 +49,15 @@ class Checksum
 			CHKALG_SONICCHAOGARDEN,
 
 			CHKALG_MAX
+		};
+
+		/**
+		 * Checksum status.
+		 */
+		enum ChkStatus {
+			CHKST_UNKNOWN = 0,	// Unknown checksum.
+			CHKST_INVALID,		// Checksum is invalid.
+			CHKST_GOOD		// Checksum is good.
 		};
 
 		// Checksum definition struct.

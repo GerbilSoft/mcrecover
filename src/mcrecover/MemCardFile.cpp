@@ -753,3 +753,17 @@ uint32_t MemCardFile::checksumExpected(void) const
  */
 uint32_t MemCardFile::checksumActual(void) const
 	{ return d->checksumActual; }
+
+/**
+ * Get the checksum status.
+ * @return Checksum status.
+ */
+Checksum::ChkStatus MemCardFile::checksumStatus(void) const
+{
+	if (d->checksumDefs.isEmpty())
+		return Checksum::CHKST_UNKNOWN;
+
+	return (d->checksumExpected == d->checksumActual
+		? Checksum::CHKST_GOOD
+		: Checksum::CHKST_INVALID);
+}
