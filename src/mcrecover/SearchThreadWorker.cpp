@@ -221,6 +221,8 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
 
 			// First block is always valid.
 			searchData.fatEntries.append(searchData.dirEntry.block);
+			if (usedBlockMap[searchData.dirEntry.block] < std::numeric_limits<uint8_t>::max())
+				usedBlockMap[searchData.dirEntry.block]++;
 
 			uint16_t blocksRemaining = (searchData.dirEntry.length - 1);
 			uint16_t block = (searchData.dirEntry.block + 1);
