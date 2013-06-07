@@ -408,7 +408,6 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 	// Decode the algorithm later.
 	QString algorithm;
 	uint32_t poly = 0;
-	uint32_t sum = 0;
 
 	// Iterate over the <search> properties.
 	xml.readNext();
