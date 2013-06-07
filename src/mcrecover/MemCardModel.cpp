@@ -483,7 +483,7 @@ QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int 
 				case COL_DESCRIPTION:	return tr("Description");
 				case COL_SIZE:		return tr("Size");
 				case COL_MTIME:		return tr("Last Modified");
-				case COL_PERMISSION:	return tr("Permission");
+				case COL_PERMISSION:	return tr("Mode");
 				case COL_GAMECODE:	return tr("Game ID");
 				case COL_FILENAME:	return tr("Filename");
 
