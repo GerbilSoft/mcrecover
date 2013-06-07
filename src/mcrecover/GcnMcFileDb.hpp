@@ -68,12 +68,12 @@ class GcnMcFileDb : public QObject
 		 * @param buf		[in] GCN memory card block to check.
 		 * @param siz		[in] Size of buf. (Should be BLOCK_SIZE == 0x2000.)
 		 * @param dirEntry	[out] Constructed directory entry if a pattern matched.
-		 * @param checksumData	[out, opt] Checksum data for the file.
+		 * @param checksumDef	[out, opt] Checksum definitions for the file.
 		 * @return 0 if a pattern was matched; non-zero if not.
 		 */
 		int checkBlock(const void *buf, int siz,
 			card_direntry *dirEntry,
-			Checksum::ChecksumData *checksumData = NULL) const;
+			QVector<Checksum::ChecksumDef> *checksumDefs = NULL) const;
 };
 
 #endif /* __MCRECOVER_GCNMCFILEDB_HPP__ */

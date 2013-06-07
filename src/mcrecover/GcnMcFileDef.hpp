@@ -64,7 +64,11 @@ class GcnMcFileDef {
 			PcreRegex fileDesc_regex;
 		} search;
 
-		Checksum::ChecksumData checksumData;
+		/**
+		 * Checksum definitions.
+		 * Some files have more than one checksum.
+		 */
+		QVector<Checksum::ChecksumDef> checksumDefs;
 
 		struct {
 			QString filename;

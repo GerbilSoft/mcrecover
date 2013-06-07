@@ -133,7 +133,7 @@ class MemCardFilePrivate
 		void loadImages(void);
 
 		// Checksum data.
-		Checksum::ChecksumData checksumData;
+		QVector<Checksum::ChecksumDef> checksumDefs;
 		uint32_t checksumExpected;
 		uint32_t checksumActual;
 
@@ -467,9 +467,18 @@ void MemCardFilePrivate::loadImages(void)
  */
 void MemCardFilePrivate::calculateChecksum(void)
 {
-	if (checksumData.algorithm == Checksum::CHKALG_NONE ||
-	    checksumData.algorithm >= Checksum::CHKALG_MAX ||
-	    checksumData.length == 0)
+	// TODO: Support multiple checksums.
+	if (checksumDefs.isEmpty()) {
+		// No checksum definitions were set.
+		checksumExpected = 0;
+		checksumActual = 0;
+		return;
+	}
+
+	const Checksum::ChecksumDef &checksumDef = checksumDefs.at(0);
+	if (checksumDef.algorithm == Checksum::CHKALG_NONE ||
+	    checksumDef.algorithm >= Checksum::CHKALG_MAX ||
+	    checksumDef.length == 0)
 	{
 		// No algorithm or invalid algorithm set,
 		// or the checksum data has no length.
@@ -481,8 +490,8 @@ void MemCardFilePrivate::calculateChecksum(void)
 	// Load the file data.
 	QByteArray fileData = loadFileData();
 	if (fileData.isEmpty() ||
-	    fileData.size() < (int)checksumData.address ||
-	    fileData.size() < (int)(checksumData.start + checksumData.length))
+	    fileData.size() < (int)checksumDef.address ||
+	    fileData.size() < (int)(checksumDef.start + checksumDef.length))
 	{
 		// File is too small...
 		// TODO: Also check the size of the checksum itself.
@@ -495,23 +504,23 @@ void MemCardFilePrivate::calculateChecksum(void)
 	// NOTE: Assuming big-endian for all values.
 	uint8_t *data = reinterpret_cast<uint8_t*>(fileData.data());
 	uint32_t expected = 0;
-	switch (checksumData.algorithm) {
+	switch (checksumDef.algorithm) {
 		case Checksum::CHKALG_CRC16:
-			expected = (data[checksumData.address+0] << 8) |
-				   (data[checksumData.address+1]);
+			expected = (data[checksumDef.address+0] << 8) |
+				   (data[checksumDef.address+1]);
 			break;
 
 		case Checksum::CHKALG_CRC32:
 		case Checksum::CHKALG_ADDBYTES32:
-			expected = (data[checksumData.address+0] << 24) |
-				   (data[checksumData.address+1] << 16) |
-				   (data[checksumData.address+2] << 8) |
-				   (data[checksumData.address+3]);
+			expected = (data[checksumDef.address+0] << 24) |
+				   (data[checksumDef.address+1] << 16) |
+				   (data[checksumDef.address+2] << 8) |
+				   (data[checksumDef.address+3]);
 			break;
 
 		case Checksum::CHKALG_SONICCHAOGARDEN: {
 			Checksum::ChaoGardenChecksumData chaoChk;
-			memcpy(&chaoChk, &data[checksumData.address], sizeof(chaoChk));
+			memcpy(&chaoChk, &data[checksumDef.address], sizeof(chaoChk));
 			expected = (chaoChk.checksum_3 << 24) |
 				   (chaoChk.checksum_2 << 16) |
 				   (chaoChk.checksum_1 << 8) |
@@ -523,7 +532,7 @@ void MemCardFilePrivate::calculateChecksum(void)
 			chaoChk.checksum_1 = 0;
 			chaoChk.checksum_0 = 0;
 			chaoChk.random_3 = 0;
-			memcpy(&data[checksumData.address], &chaoChk, sizeof(chaoChk));
+			memcpy(&data[checksumDef.address], &chaoChk, sizeof(chaoChk));
 			break;
 		}
 
@@ -536,9 +545,9 @@ void MemCardFilePrivate::calculateChecksum(void)
 	}
 
 	// Calculate the checksum.
-	const char *const start = (fileData.constData() + checksumData.start);
-	uint32_t actual = Checksum::Exec(checksumData.algorithm,
-			start, checksumData.length, checksumData.poly);
+	const char *const start = (fileData.constData() + checksumDef.start);
+	uint32_t actual = Checksum::Exec(checksumDef.algorithm,
+			start, checksumDef.length, checksumDef.poly);
 
 	// Save the checksums.
 	checksumExpected = expected;
@@ -715,32 +724,32 @@ QVector<uint16_t> MemCardFile::fatEntries(void) const
 	{ return d->fatEntries; }
 
 /**
- * Get the checksum data.
- * @return Checksum data.
+ * Get the checksum definitions.
+ * @return Checksum definitions.
  */
-Checksum::ChecksumData MemCardFile::checksumData(void) const
-	{ return d->checksumData; }
+QVector<Checksum::ChecksumDef> MemCardFile::checksumDefs(void) const
+	{ return d->checksumDefs; }
 
 /**
- * Set the checksum data.
- * @param checksumData Checksum data.
+ * Set the checksum definitions.
+ * @param checksumDefs Checksum definitions.
  */
-void MemCardFile::setChecksumData(const Checksum::ChecksumData &checksumData)
+void MemCardFile::setChecksumDefs(QVector<Checksum::ChecksumDef> checksumDefs)
 {
-	d->checksumData = checksumData;
+	d->checksumDefs = checksumDefs;
 	d->calculateChecksum();
 }
 
 /**
  * Get the expected checksum.
- * @return Expected checksum, or 0 if no checksum data was set.
+ * @return Expected checksum, or 0 if no checksum definitions were set.
  */
 uint32_t MemCardFile::checksumExpected(void) const
 	{ return d->checksumExpected; }
 
 /**
  * Get the actual checksum.
- * @return Actual checksum, or 0 if no checksum data was set.
+ * @return Actual checksum, or 0 if no checksum definitions were set.
  */
 uint32_t MemCardFile::checksumActual(void) const
 	{ return d->checksumActual; }

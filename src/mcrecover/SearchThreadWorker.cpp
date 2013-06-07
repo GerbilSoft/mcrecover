@@ -192,7 +192,7 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
 		}
 
 		// Check the block in the database.
-		ret = db->checkBlock(buf, blockSize, &(searchData.dirEntry), &(searchData.checksumData));
+		ret = db->checkBlock(buf, blockSize, &(searchData.dirEntry), &(searchData.checksumDefs));
 		if (!ret) {
 			// Matched!
 			fprintf(stderr, "FOUND A MATCH: %-.4s%-.2s %-.32s\n",

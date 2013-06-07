@@ -402,6 +402,9 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 		return;
 	}
 
+	// Struct for the checksum definition.
+	Checksum::ChecksumDef checksumDef;
+
 	// Decode the algorithm later.
 	QString algorithm;
 	uint32_t poly = 0;
@@ -423,16 +426,16 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 			} else if (xml.name() == QLatin1String("address")) {
 				// Checksum address.
 				QString address_str = parseXml_element(xml);
-				gcnMcFileDef->checksumData.address = address_str.toUInt(NULL, 0);
+				checksumDef.address = address_str.toUInt(NULL, 0);
 			} else if (xml.name() == QLatin1String("range")) {
 				// Checksummed area.
 				QXmlStreamAttributes attributes = xml.attributes();
 				if (attributes.hasAttribute(QLatin1String("start")) &&
 				    attributes.hasAttribute(QLatin1String("length"))) {
 					// Required attributes are present.
-					gcnMcFileDef->checksumData.start =
+					checksumDef.start =
 						attributes.value(QLatin1String("start")).toString().toUInt(NULL, 0);
-					gcnMcFileDef->checksumData.length =
+					checksumDef.length =
 						attributes.value(QLatin1String("length")).toString().toUInt(NULL, 0);
 				} else {
 					// Attributes missing.
@@ -445,36 +448,38 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 		xml.readNext();
 	}
 
-	if (gcnMcFileDef->checksumData.length == 0) {
+	if (checksumDef.length == 0) {
 		// Invalid length.
 		// TODO: Show an error message.
-		gcnMcFileDef->checksumData.clear();
+		return;
 	}
 
 	// Determine which checksum algorithm to use.
-	gcnMcFileDef->checksumData.algorithm = Checksum::ChkAlgorithmFromString(algorithm);
-	switch (gcnMcFileDef->checksumData.algorithm) {
+	checksumDef.algorithm = Checksum::ChkAlgorithmFromString(algorithm);
+	switch (checksumDef.algorithm) {
 		case Checksum::CHKALG_CRC16:
-			gcnMcFileDef->checksumData.poly =
+			checksumDef.poly =
 				(poly != 0 ? (poly & 0xFFFF) : Checksum::CRC16_POLY_CCITT);
 				break;
 
 		case Checksum::CHKALG_CRC32:
-			gcnMcFileDef->checksumData.poly =
+			checksumDef.poly =
 				(poly != 0 ? poly : Checksum::CRC32_POLY_ZLIB);
 				break;
 
 		case Checksum::CHKALG_NONE:
 			// Unknown algorithm.
 			// TODO: Show an error message?
-			gcnMcFileDef->checksumData.clear();
-			break;
+			return;
 
 		default:
 			// Other algorithm.
-			gcnMcFileDef->checksumData.poly = 0;
+			checksumDef.poly = 0;
 			break;
 	}
+
+	// Add the checksum definition.
+	gcnMcFileDef->checksumDefs.append(checksumDef);
 }
 
 
@@ -610,12 +615,12 @@ QString GcnMcFileDb::errorString(void) const
  * @param buf		[in] GCN memory card block to check.
  * @param siz		[in] Size of buf. (Should be BLOCK_SIZE == 0x2000.)
  * @param dirEntry	[out] Constructed directory entry if a pattern matched.
- * @param checksumData	[out, opt] Checksum data for the file.
+ * @param checksumDefs	[out, opt] Checksum definitions for the file.
  * @return 0 if a pattern was matched; non-zero if not.
  */
 int GcnMcFileDb::checkBlock(const void *buf, int siz,
 	card_direntry *dirEntry,
-	Checksum::ChecksumData *checksumData) const
+	QVector<Checksum::ChecksumDef> *checksumDefs) const
 {
 	// TODO: Return a list of FAT entries.
 	// (May require more info from MemCard, and might need to be in
@@ -740,8 +745,8 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz,
 	dirEntry->commentaddr	= matchFileDef->dirEntry.commentAddress;
 
 	// Checksum data.
-	if (checksumData)
-		*checksumData = matchFileDef->checksumData;
+	if (checksumDefs)
+		*checksumDefs = matchFileDef->checksumDefs;
 
 	// Directory entry matched.
 	return 0;

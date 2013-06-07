@@ -48,15 +48,15 @@ class Checksum
 			CHKALG_MAX
 		};
 
-		// Checksum data struct.
-		struct ChecksumData {
+		// Checksum definition struct.
+		struct ChecksumDef {
 			ChkAlgorithm algorithm;
 			uint32_t address;	// Checksum address.
 			uint32_t poly;		// Polynomial for CRC algorithms.
 			uint32_t start;		// Checksummed area: start.
 			uint32_t length;	// Checksummed area: length.
 
-			ChecksumData()
+			ChecksumDef()
 				{ clear(); }
 
 			void clear(void) {

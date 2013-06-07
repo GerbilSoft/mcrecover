@@ -393,8 +393,8 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 
 		// TODO: Add ChecksumData parameter to addLostFile.
 		// Alternatively, add SearchData overload?
-		if (file && searchData.checksumData.algorithm != Checksum::CHKALG_NONE)
-			file->setChecksumData(searchData.checksumData);
+		if (file)
+			file->setChecksumDefs(searchData.checksumDefs);
 	}
 }
 

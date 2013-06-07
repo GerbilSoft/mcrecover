@@ -32,7 +32,7 @@ struct SearchData
 {
 	card_direntry dirEntry;
 	QVector<uint16_t> fatEntries;
-	Checksum::ChecksumData checksumData;
+	QVector<Checksum::ChecksumDef> checksumDefs;
 };
 
 #endif /* __MCRECOVER_SEARCHDATA_HPP__ */

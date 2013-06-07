@@ -176,26 +176,26 @@ class MemCardFile : public QObject
 		QVector<uint16_t> fatEntries(void) const;
 
 		/**
-		 * Get the checksum data.
-		 * @return Checksum data.
+		 * Get the checksum definitions.
+		 * @return Checksum definitions.
 		 */
-		Checksum::ChecksumData checksumData(void) const;
+		QVector<Checksum::ChecksumDef> checksumDefs(void) const;
 
 		/**
-		 * Set the checksum data.
-		 * @param checksumData Checksum data.
+		 * Set the checksum definitions.
+		 * @param checksumDefs Checksum definitions.
 		 */
-		void setChecksumData(const Checksum::ChecksumData &checksumData);
+		void setChecksumDefs(QVector<Checksum::ChecksumDef> checksumDefs);
 
 		/**
 		 * Get the expected checksum.
-		 * @return Expected checksum, or 0 if no checksum data was set.
+		 * @return Expected checksum, or 0 if no checksum definitions were set.
 		 */
 		uint32_t checksumExpected(void) const;
 
 		/**
 		 * Get the actual checksum.
-		 * @return Actual checksum, or 0 if no checksum data was set.
+		 * @return Actual checksum, or 0 if no checksum definitions were set.
 		 */
 		uint32_t checksumActual(void) const;
 };
