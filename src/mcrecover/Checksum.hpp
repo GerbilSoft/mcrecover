@@ -148,6 +148,13 @@ class Checksum
 		 * @return ChkAlgorithm. (If unknown, returns CHKALG_NONE.)
 		 */
 		static ChkAlgorithm ChkAlgorithmFromString(QString algorithm);
+
+		/**
+		 * Get a checksum algorithm name from a ChkAlgorithm.
+		 * @param algorithm ChkAlgorithm.
+		 * @return Checksum algorithm name, or empty string if CHKALG_NONE or unknown.
+		 */
+		static QString ChkAlgorithmToString(ChkAlgorithm algorithm);
 };
 
 #endif /* __MCRECOVER_CHECKSUM_HPP__ */
