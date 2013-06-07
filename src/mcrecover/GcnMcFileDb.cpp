@@ -426,12 +426,6 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 				else
 					poly = 0;
 
-				// Sum attribute. (AddSubDual16)
-				if (attributes.hasAttribute(QLatin1String("sum")))
-					sum = attributes.value(QLatin1String("sum")).toString().toUInt(NULL, 0);
-				else
-					sum = 0;
-
 				algorithm = parseXml_element(xml).toLower();
 			} else if (xml.name() == QLatin1String("address")) {
 				// Checksum address.
@@ -477,11 +471,6 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 				(poly != 0 ? poly : Checksum::CRC32_POLY_ZLIB);
 			break;
 
-		case Checksum::CHKALG_ADDSUBDUAL16:
-			checksumDef.param =
-				(sum != 0 ? sum : Checksum::ADDSUBDUAL16_SUM_GCN_MEMCARD);
-			break;
-
 		case Checksum::CHKALG_NONE:
 			// Unknown algorithm.
 			// TODO: Show an error message?
@@ -489,6 +478,7 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 
 		default:
 			// Other algorithm.
+			// No parameter is required.
 			checksumDef.param = 0;
 			break;
 	}

@@ -511,7 +511,7 @@ void MemCardFilePrivate::calculateChecksum(void)
 			break;
 
 		case Checksum::CHKALG_CRC32:
-		case Checksum::CHKALG_ADDSUBDUAL16:
+		case Checksum::CHKALG_ADDINVDUAL16:
 		case Checksum::CHKALG_ADDBYTES32:
 			expected = (data[checksumDef.address+0] << 24) |
 				   (data[checksumDef.address+1] << 16) |

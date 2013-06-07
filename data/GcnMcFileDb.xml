@@ -141,7 +141,7 @@
 			<fileDesc>^Last saved on (\d{1,2})/(\d{1,2})$</fileDesc>
 		</search>
 		<checksum>
-			<algorithm sum="0xF002">AddSubDual16</algorithm>
+			<algorithm>AddInvDual16</algorithm>
 			<address>0x3FFC</address>
 			<range start="0x2000" length="0x1FFC" />
 		</checksum>

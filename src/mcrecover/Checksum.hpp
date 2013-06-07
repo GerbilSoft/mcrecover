@@ -45,7 +45,7 @@ class Checksum
 			CHKALG_NONE = 0,
 			CHKALG_CRC16,
 			CHKALG_CRC32,
-			CHKALG_ADDSUBDUAL16,
+			CHKALG_ADDINVDUAL16,
 			CHKALG_ADDBYTES32,
 			CHKALG_SONICCHAOGARDEN,
 
@@ -120,18 +120,16 @@ class Checksum
 				      uint16_t poly = CRC16_POLY_CCITT);
 
 		/**
-		 * AddSubDual16 algorithm.
-		 * Adds 16-bit words to initial value of 0 while
-		 * subtracting 16-bit words from initial value of 'sum'.
-		 * Both 16-bit values will add up to 'sum'.
-		 * This algorithm is used for GCN memory cards with sum = 0xFFFF.
+		 * AddInvDual16 algorithm.
+		 * Adds 16-bit words together in a uint16_t.
+		 * First word is a simple addition.
+		 * Second word adds (word ^ 0xFFFF).
+		 * If either word equals 0xFFFF, it's changed to 0.
 		 * @param buf Data buffer.
 		 * @param siz Length of data buffer.
-		 * @param sum Sum of the two checksums.
 		 * @return Checksum.
 		 */
-		static uint32_t AddSubDual16(const uint16_t *buf, uint32_t siz,
-					     uint16_t sum = ADDSUBDUAL16_SUM_GCN_MEMCARD);
+		static uint32_t AddInvDual16(const uint16_t *buf, uint32_t siz);
 
 		/**
 		 * AddBytes32 algorithm.
