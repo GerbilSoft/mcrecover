@@ -102,6 +102,36 @@ class Checksum
 		static const uint16_t CRC16_POLY_CCITT = 0x8408;
 		static const uint32_t CRC32_POLY_ZLIB = 0xEDB88320;
 
+		/** Algorithms. **/
+
+		/**
+		 * CRC-16 algorithm.
+		 * @param buf Data buffer.
+		 * @param siz Length of data buffer.
+		 * @param poly Polynomial.
+		 * @return Checksum.
+		 */
+		static uint16_t Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly = CRC16_POLY_CCITT);
+
+		/**
+		 * AddBytes32 algorithm.
+		 * Adds all bytes together in a uint32_t.
+		 * @param buf Data buffer.
+		 * @param siz Length of data buffer.
+		 * @return Checksum.
+		 */
+		static uint32_t AddBytes32(const uint8_t *buf, uint32_t siz);
+
+		/**
+		 * SonicChaoGarden algorithm.
+		 * @param buf Data buffer.
+		 * @param siz Length of data buffer.
+		 * @return Checksum.
+		 */
+		static uint32_t SonicChaoGarden(const uint8_t *buf, uint32_t siz);
+
+		/** General functions. **/
+
 		/**
 		 * Get the checksum for a block of data.
 		 * @param algorithm Checksum algorithm.

@@ -22,19 +22,8 @@
 #include "Checksum.hpp"
 #include "SonicChaoGarden.h"
 
-class ChecksumPrivate
-{
-	private:
-		ChecksumPrivate();
-		~ChecksumPrivate();
-		ChecksumPrivate(const ChecksumPrivate &);
-		ChecksumPrivate &operator=(const ChecksumPrivate &);
 
-	public:
-		static uint16_t Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly = Checksum::CRC16_POLY_CCITT);
-		static uint32_t AddBytes32(const uint8_t *buf, uint32_t siz);
-		static uint32_t SonicChaoGarden(const uint8_t *buf, uint32_t siz);
-};
+/** Algorithms. **/
 
 
 /**
@@ -44,7 +33,7 @@ class ChecksumPrivate
  * @param poly Polynomial.
  * @return Checksum.
  */
-uint16_t ChecksumPrivate::Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly)
+uint16_t Checksum::Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly)
 {
 	// TODO: Add optimized version for poly == CRC16_POLY_CCITT.
 	uint16_t crc = 0xFFFF;
@@ -70,7 +59,7 @@ uint16_t ChecksumPrivate::Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly)
  * @param siz Length of data buffer.
  * @return Checksum.
  */
-uint32_t ChecksumPrivate::AddBytes32(const uint8_t *buf, uint32_t siz)
+uint32_t Checksum::AddBytes32(const uint8_t *buf, uint32_t siz)
 {
 	uint32_t checksum = 0;
 
@@ -96,7 +85,7 @@ uint32_t ChecksumPrivate::AddBytes32(const uint8_t *buf, uint32_t siz)
  * @param siz Length of data buffer.
  * @return Checksum.
  */
-uint32_t ChecksumPrivate::SonicChaoGarden(const uint8_t *buf, uint32_t siz)
+uint32_t Checksum::SonicChaoGarden(const uint8_t *buf, uint32_t siz)
 {
 	// Ported from MainMemory's C# SADX/SA2B Chao Garden checksum code.
 	const uint32_t a4 = 0x686F6765;
@@ -108,6 +97,9 @@ uint32_t ChecksumPrivate::SonicChaoGarden(const uint8_t *buf, uint32_t siz)
 
 	return (a4 ^ v4);
 }
+
+
+/** General functions. **/
 
 
 /**
@@ -126,13 +118,13 @@ uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, u
 		case CHKALG_CRC16:
 			if (poly == 0)
 				poly = CRC16_POLY_CCITT;
-			return ChecksumPrivate::Crc16(buf8, siz, (uint16_t)(poly & 0xFFFF));
+			return Crc16(buf8, siz, (uint16_t)(poly & 0xFFFF));
 
 		case CHKALG_ADDBYTES32:
-			return ChecksumPrivate::AddBytes32(buf8, siz);
+			return AddBytes32(buf8, siz);
 
 		case CHKALG_SONICCHAOGARDEN:
-			return ChecksumPrivate::SonicChaoGarden(buf8, siz);
+			return SonicChaoGarden(buf8, siz);
 
 		case CHKALG_CRC32:
 			// TODO
