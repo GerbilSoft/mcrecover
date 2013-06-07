@@ -89,6 +89,13 @@ uint32_t Checksum::AddInvDual16(const uint16_t *buf, uint32_t siz)
 		chk2 += (be16_to_cpu(*buf) ^ 0xFFFF);
 	}
 
+	// 0xFFFF is an invalid checksum value.
+	// Reset it to 0 if it shows up.
+	if (chk1 == 0xFFFF)
+		chk1 = 0;
+	if (chk2 == 0xFFFF)
+		chk2 = 0;
+
 	// Combine the checksum into a dword.
 	// chk1 == high word; chk2 == low word.
 	return ((chk1 << 16) | chk2);
