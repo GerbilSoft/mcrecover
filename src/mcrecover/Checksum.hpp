@@ -81,6 +81,12 @@ class Checksum
 			}
 		};
 
+		// Checksum value struct.
+		struct ChecksumValue {
+			uint32_t expected;
+			uint32_t actual;
+		};
+
 		// Chao Garden checksum struct.
 		struct ChaoGardenChecksumData {
 			/**
