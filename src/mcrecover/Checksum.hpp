@@ -45,6 +45,7 @@ class Checksum
 			CHKALG_NONE = 0,
 			CHKALG_CRC16,
 			CHKALG_CRC32,
+			CHKALG_ADDSUBDUAL16,
 			CHKALG_ADDBYTES32,
 			CHKALG_SONICCHAOGARDEN,
 
@@ -64,7 +65,7 @@ class Checksum
 		struct ChecksumDef {
 			ChkAlgorithm algorithm;
 			uint32_t address;	// Checksum address.
-			uint32_t poly;		// Polynomial for CRC algorithms.
+			uint32_t param;		// Algorithm parameter, e.g. "poly" or "sum".
 			uint32_t start;		// Checksummed area: start.
 			uint32_t length;	// Checksummed area: length.
 
@@ -74,7 +75,7 @@ class Checksum
 			void clear(void) {
 				algorithm = CHKALG_NONE;
 				address = 0;
-				poly = 0;
+				param = 0;
 				start = 0;
 				length = 0;
 			}
@@ -102,6 +103,10 @@ class Checksum
 		static const uint16_t CRC16_POLY_CCITT = 0x8408;
 		static const uint32_t CRC32_POLY_ZLIB = 0xEDB88320;
 
+		/** Default sums. **/
+
+		static const uint16_t ADDSUBDUAL16_SUM_GCN_MEMCARD = 0xFFFF;
+
 		/** Algorithms. **/
 
 		/**
@@ -111,7 +116,22 @@ class Checksum
 		 * @param poly Polynomial.
 		 * @return Checksum.
 		 */
-		static uint16_t Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly = CRC16_POLY_CCITT);
+		static uint16_t Crc16(const uint8_t *buf, uint32_t siz,
+				      uint16_t poly = CRC16_POLY_CCITT);
+
+		/**
+		 * AddSubDual16 algorithm.
+		 * Adds 16-bit words to initial value of 0 while
+		 * subtracting 16-bit words from initial value of 'sum'.
+		 * Both 16-bit values will add up to 'sum'.
+		 * This algorithm is used for GCN memory cards with sum = 0xFFFF.
+		 * @param buf Data buffer.
+		 * @param siz Length of data buffer.
+		 * @param sum Sum of the two checksums.
+		 * @return Checksum.
+		 */
+		static uint32_t AddSubDual16(const uint16_t *buf, uint32_t siz,
+					     uint16_t sum = ADDSUBDUAL16_SUM_GCN_MEMCARD);
 
 		/**
 		 * AddBytes32 algorithm.
@@ -137,10 +157,10 @@ class Checksum
 		 * @param algorithm Checksum algorithm.
 		 * @param buf Data buffer.
 		 * @param siz Length of data buffer.
-		 * @param poly Polynomial. (Not needed for some algorithms.)
+		 * @param param Algorithm parameter, e.g. polynomial or sum.
 		 * @return Checksum.
 		 */
-		static uint32_t Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, uint32_t poly = 0);
+		static uint32_t Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, uint32_t param = 0);
 
 		/**
 		 * Get a ChkAlgorithm from a checksum algorithm name.

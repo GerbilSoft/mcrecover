@@ -22,6 +22,8 @@
 #include "Checksum.hpp"
 #include "SonicChaoGarden.h"
 
+#include "byteswap.h"
+
 
 /** Algorithms. **/
 
@@ -49,6 +51,48 @@ uint16_t Checksum::Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly)
 	}
 
 	return ~crc;
+}
+
+
+/**
+ * AddSubDual16 algorithm.
+ * Adds 16-bit words to initial value of 0 while
+ * subtracting 16-bit words from initial value of 'sum'.
+ * Both 16-bit values will add up to 'sum'.
+ * This algorithm is used for GCN memory cards with sum = 0xFFFF.
+ * @param buf Data buffer.
+ * @param siz Length of data buffer.
+ * @param sum Sum of the two checksums.
+ * @return Checksum.
+ */
+uint32_t Checksum::AddSubDual16(const uint16_t *buf, uint32_t siz, uint16_t sum)
+{
+	// NOTE: Integer overflow/underflow is expected here.
+	uint16_t chk_add = 0;
+	uint16_t chk_sub = sum;
+
+	// We're operating on words, not bytes.
+	// siz is in bytes, so we have to divide it by two.
+	siz /= 2;
+
+	// Do four words at a time.
+	// TODO: Optimize byteswapping?
+	for (; siz > 4; siz -= 4, buf += 4) {
+		chk_add += be16_to_cpu(buf[0]); chk_sub -= be16_to_cpu(buf[0]);
+		chk_add += be16_to_cpu(buf[1]); chk_sub -= be16_to_cpu(buf[1]);
+		chk_add += be16_to_cpu(buf[2]); chk_sub -= be16_to_cpu(buf[2]);
+		chk_add += be16_to_cpu(buf[3]); chk_sub -= be16_to_cpu(buf[3]);
+	}
+
+	// Remaining words.
+	for (; siz != 0; siz--, buf++) {
+		chk_add += be16_to_cpu(*buf);
+		chk_sub -= be16_to_cpu(*buf);
+	}
+
+	// Combine the checksum into a dword.
+	// chk_add == high word; chk_sub == low word.
+	return ((chk_add << 16) | chk_sub);
 }
 
 
@@ -107,24 +151,29 @@ uint32_t Checksum::SonicChaoGarden(const uint8_t *buf, uint32_t siz)
  * @param algorithm Checksum algorithm.
  * @param buf Data buffer.
  * @param siz Length of data buffer.
- * @param poly Polynomial. (Not needed for some algorithms.)
+ * @param param Algorithm parameter, e.g. polynomial or sum.
  * @return Checksum.
  */
-uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, uint32_t poly)
+uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, uint32_t param)
 {
-	const uint8_t *const buf8 = reinterpret_cast<const uint8_t*>(buf);
-
 	switch (algorithm) {
 		case CHKALG_CRC16:
-			if (poly == 0)
-				poly = CRC16_POLY_CCITT;
-			return Crc16(buf8, siz, (uint16_t)(poly & 0xFFFF));
+			if (param == 0)
+				param = CRC16_POLY_CCITT;
+			return Crc16(reinterpret_cast<const uint8_t*>(buf),
+				     siz, (uint16_t)(param & 0xFFFF));
+
+		case CHKALG_ADDSUBDUAL16:
+			if (param == 0)
+				param = ADDSUBDUAL16_SUM_GCN_MEMCARD;
+			return AddSubDual16(reinterpret_cast<const uint16_t*>(buf),
+					    siz, (uint16_t)(param & 0xFFFF));
 
 		case CHKALG_ADDBYTES32:
-			return AddBytes32(buf8, siz);
+			return AddBytes32(reinterpret_cast<const uint8_t*>(buf), siz);
 
 		case CHKALG_SONICCHAOGARDEN:
-			return SonicChaoGarden(buf8, siz);
+			return SonicChaoGarden(reinterpret_cast<const uint8_t*>(buf), siz);
 
 		case CHKALG_CRC32:
 			// TODO
@@ -154,6 +203,8 @@ Checksum::ChkAlgorithm Checksum::ChkAlgorithmFromString(QString algorithm)
 		 algorithm == QLatin1String("crc-32"))
 	{
 		return CHKALG_CRC32;
+	} else if (algorithm == QLatin1String("addsubdual16")) {
+		return CHKALG_ADDSUBDUAL16;
 	} else if (algorithm == QLatin1String("addbytes32")) {
 		return CHKALG_ADDBYTES32;
 	} else if (algorithm == QLatin1String("sonicchaogarden")) {
@@ -181,6 +232,8 @@ QString Checksum::ChkAlgorithmToString(ChkAlgorithm algorithm)
 			return QLatin1String("CRC-16");
 		case CHKALG_CRC32:
 			return QLatin1String("CRC-32");
+		case CHKALG_ADDSUBDUAL16:
+			return QLatin1String("AddSubDual16");
 		case CHKALG_ADDBYTES32:
 			return QLatin1String("AddBytes32");
 		case CHKALG_SONICCHAOGARDEN:

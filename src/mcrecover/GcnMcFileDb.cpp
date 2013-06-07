@@ -408,6 +408,7 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 	// Decode the algorithm later.
 	QString algorithm;
 	uint32_t poly = 0;
+	uint32_t sum = 0;
 
 	// Iterate over the <search> properties.
 	xml.readNext();
@@ -418,10 +419,19 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 			if (xml.name() == QLatin1String("algorithm")) {
 				// Algorithm.
 				QXmlStreamAttributes attributes = xml.attributes();
+
+				// Polynomial attribute. (CRC-16, CRC-32)
 				if (attributes.hasAttribute(QLatin1String("poly")))
 					poly = attributes.value(QLatin1String("poly")).toString().toUInt(NULL, 0);
 				else
 					poly = 0;
+
+				// Sum attribute. (AddSubDual16)
+				if (attributes.hasAttribute(QLatin1String("sum")))
+					sum = attributes.value(QLatin1String("sum")).toString().toUInt(NULL, 0);
+				else
+					sum = 0;
+
 				algorithm = parseXml_element(xml).toLower();
 			} else if (xml.name() == QLatin1String("address")) {
 				// Checksum address.
@@ -458,14 +468,19 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 	checksumDef.algorithm = Checksum::ChkAlgorithmFromString(algorithm);
 	switch (checksumDef.algorithm) {
 		case Checksum::CHKALG_CRC16:
-			checksumDef.poly =
+			checksumDef.param =
 				(poly != 0 ? (poly & 0xFFFF) : Checksum::CRC16_POLY_CCITT);
-				break;
+			break;
 
 		case Checksum::CHKALG_CRC32:
-			checksumDef.poly =
+			checksumDef.param =
 				(poly != 0 ? poly : Checksum::CRC32_POLY_ZLIB);
-				break;
+			break;
+
+		case Checksum::CHKALG_ADDSUBDUAL16:
+			checksumDef.param =
+				(sum != 0 ? sum : Checksum::ADDSUBDUAL16_SUM_GCN_MEMCARD);
+			break;
 
 		case Checksum::CHKALG_NONE:
 			// Unknown algorithm.
@@ -474,7 +489,7 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 
 		default:
 			// Other algorithm.
-			checksumDef.poly = 0;
+			checksumDef.param = 0;
 			break;
 	}
 
