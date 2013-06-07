@@ -78,6 +78,8 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 		q->lblFileIcon->clear();
 		q->lblFileBanner->clear();
 		q->lblFilename->clear();
+		q->lblModeTitle->setVisible(false);
+		q->lblMode->setVisible(false);
 		return;
 	}
 
@@ -85,13 +87,10 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 
 	// File icon.
 	QPixmap icon = file->icon(0);
-	if (!icon.isNull()) {
+	if (!icon.isNull())
 		q->lblFileIcon->setPixmap(icon);
-		q->lblFileIcon->setVisible(true);
-	} else {
-		q->lblFileIcon->setVisible(false);
+	else
 		q->lblFileIcon->clear();
-	}
 
 	// Icon animation.
 	helper.setFile(file);
@@ -100,16 +99,72 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 
 	// File banner.
 	QPixmap banner = file->banner();
-	if (!banner.isNull()) {
+	if (!banner.isNull())
 		q->lblFileBanner->setPixmap(banner);
-		q->lblFileBanner->setVisible(true);
-	} else {
-		q->lblFileBanner->setVisible(false);
+	else
 		q->lblFileBanner->clear();
-	}
 
 	// Filename.
 	q->lblFilename->setText(file->filename());
+
+	// File permissions.
+	q->lblModeTitle->setVisible(true);
+	q->lblMode->setText(file->permissionAsString());
+	q->lblMode->setVisible(true);
+
+	// Checksums.
+	// TODO: Support multiple checksums.
+	// TODO: Better palette colors?
+	QPalette lblChecksum_palette = q->lblChecksum->palette();
+	if (file->checksumStatus() == Checksum::CHKST_UNKNOWN) {
+		// Unknown checksum.
+		q->lblChecksum->setText(q->tr("Unknown"));
+		q->lblChecksumExpectedTitle->setVisible(false);
+		q->lblChecksumExpected->setVisible(false);
+
+		// Set the text color to yellow.
+		lblChecksum_palette.setColor(q->lblChecksum->foregroundRole(), Qt::darkYellow);
+	} else {
+		// Checksum is known.
+		uint32_t chkActual = file->checksumActual();
+		uint32_t chkExpected = file->checksumExpected();
+		char s_chkActual[12];
+		char s_chkExpected[12];
+
+		if (chkExpected <= 0xFFFF && chkActual <= 0xFFFF) {
+			// 16-bit checksums.
+			snprintf(s_chkActual, sizeof(s_chkActual), "%04X", chkActual);
+			snprintf(s_chkExpected, sizeof(s_chkExpected), "%04X", chkExpected);
+		} else {
+			// 32-bit checksums.
+			snprintf(s_chkActual, sizeof(s_chkActual), "%08X", chkActual);
+			snprintf(s_chkExpected, sizeof(s_chkExpected), "%08X", chkExpected);
+		}
+
+		// Set the actual checksum label.
+		q->lblChecksum->setText(QLatin1String(s_chkActual));
+		if (chkActual == chkExpected) {
+			// Checksum is correct.
+			lblChecksum_palette.setColor(q->lblChecksum->foregroundRole(), Qt::darkGreen);
+
+			// Hide the expected checksum.
+			q->lblChecksumExpectedTitle->setVisible(false);
+			q->lblChecksumExpected->setVisible(false);
+		} else {
+			// Checksum is invalid.
+			lblChecksum_palette.setColor(q->lblChecksum->foregroundRole(), Qt::red);
+
+			// Set the expected checksum.
+			q->lblChecksumExpected->setText(QLatin1String(s_chkExpected));
+
+			// Show the expected checksum.
+			q->lblChecksumExpectedTitle->setVisible(true);
+			q->lblChecksumExpected->setVisible(true);
+		}
+	}
+
+	// Set the new lblChecksum palette.
+	q->lblChecksum->setPalette(lblChecksum_palette);
 }
 
 
