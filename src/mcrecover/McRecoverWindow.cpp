@@ -193,8 +193,8 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 
 	// Set the splitter stretch factors.
 	// We want the QTreeView to stretch, but not the card info panel.
-	splitter->setStretchFactor(0, 0);
-	splitter->setStretchFactor(1, 1);
+	splitter->setStretchFactor(0, 1);
+	splitter->setStretchFactor(1, 0);
 
 	// Set lstFileList's model.
 	lstFileList->setModel(d->model);
