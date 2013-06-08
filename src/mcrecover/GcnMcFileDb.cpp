@@ -416,6 +416,12 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 	QString algorithm;
 	uint32_t poly = 0;
 
+	// Multiple checksums with identical properties.
+	static const int INSTANCES_DEFAULT = 1;
+	int instances = INSTANCES_DEFAULT;
+	static const uint32_t INCREMENT_DEFAULT = 0x2000;
+	uint32_t increment = INCREMENT_DEFAULT;
+
 	// Iterate over the <search> properties.
 	xml.readNext();
 	while (!xml.hasError() &&
@@ -450,6 +456,27 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 				} else {
 					// Attributes missing.
 					// TODO: Show error message?
+				}
+			} else if (xml.name() == QLatin1String("multiple")) {
+				// Multiple instances.
+				QXmlStreamAttributes attributes = xml.attributes();
+
+				if (attributes.hasAttribute(QLatin1String("instances"))) {
+					// Number of instances.
+					instances =
+						attributes.value(QLatin1String("instances")).toString().toUInt(NULL, 0);
+				} else {
+					// Instances not specified.
+					instances = INSTANCES_DEFAULT;
+				}
+
+				if (attributes.hasAttribute(QLatin1String("increment"))) {
+					// Byte increment between checksums.
+					increment =
+						attributes.value(QLatin1String("increment")).toString().toUInt(NULL, 0);
+				} else {
+					// Increment not specified.
+					increment = INCREMENT_DEFAULT;
 				}
 			} else {
 				// Skip unreocgnized tokens.
@@ -492,8 +519,21 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 			break;
 	}
 
-	// Add the checksum definition.
-	gcnMcFileDef->checksumDefs.append(checksumDef);
+	// Clamp instances to an upper limit of 2043.
+	// (Maximum number of blocks in a memory card.)
+	if (instances > 2043)
+		instances = 2043;
+
+	// TODO: Make sure (instances * increment)
+	// doesn't go past the end of the card?
+	for (; instances > 0; instances--) {
+		// Add the checksum definition.
+		gcnMcFileDef->checksumDefs.append(checksumDef);
+
+		// Next instance.
+		checksumDef.address += increment;
+		checksumDef.start += increment;
+	}
 }
 
 
