@@ -753,27 +753,36 @@ void MemCardFile::setChecksumDefs(QVector<Checksum::ChecksumDef> checksumDefs)
 }
 
 /**
- * Get the expected checksum.
- * @return Expected checksum, or 0 if no checksum definitions were set.
+ * Get the checksum values.
+ * @return Checksum values, or empty QVector if no checksum definitions were set.
  */
-uint32_t MemCardFile::checksumExpected(void) const
+QVector<Checksum::ChecksumValue> MemCardFile::checksumValues(void) const
 {
-	// TODO: Return multiple checksums.
 	if (d->checksumValues.isEmpty())
-		return 0;
-	return d->checksumValues.at(0).expected;
+		return QVector<Checksum::ChecksumValue>();
+	return d->checksumValues;
 }
 
 /**
- * Get the actual checksum.
- * @return Actual checksum, or 0 if no checksum definitions were set.
+ * Get the checksum field width.
+ * @return 4 for 16-bit checksums; 8 for 32-bit checksums.
  */
-uint32_t MemCardFile::checksumActual(void) const
+int MemCardFile::checksumFieldWidth(void) const
 {
-	// TODO: Return multiple checksums.
+	// TODO: Maybe this should go in the Checksum class...
 	if (d->checksumValues.isEmpty())
-		return 0;
-	return d->checksumValues.at(0).actual;
+		return 4;
+
+	for (int i = (d->checksumValues.size() - 1); i >= 0; i--) {
+		const Checksum::ChecksumValue &value = d->checksumValues.at(i);
+		if (value.expected > 0xFFFF || value.actual > 0xFFFF) {
+			// Checksums are 32-bit.
+			return 8;
+		}
+	}
+
+	// Checksums are 16-bit.
+	return 4;
 }
 
 /**

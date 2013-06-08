@@ -112,49 +112,52 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 	q->lblMode->setText(file->permissionAsString());
 	q->lblMode->setVisible(true);
 
+	// Checksum colors.
+	// TODO: Better colors?
+	static const QString s_chkHtmlUnknown = QLatin1String("<span style='color: #880'>%1</span>");
+	static const QString s_chkHtmlGood = QLatin1String("<span style='color: #080'>%1</span>");
+	static const QString s_chkHtmlInvalid = QLatin1String("<span style='color: #F00'>%1</span>");
+
 	// Checksums.
-	// TODO: Support multiple checksums.
-	// TODO: Better palette colors?
-	QPalette lblChecksum_palette = q->lblChecksum->palette();
 	if (file->checksumStatus() == Checksum::CHKST_UNKNOWN) {
 		// Unknown checksum.
-		q->lblChecksum->setText(q->tr("Unknown"));
+		q->lblChecksum->setText(s_chkHtmlUnknown.arg(q->tr("Unknown")));
 		q->lblChecksumExpectedTitle->setVisible(false);
 		q->lblChecksumExpected->setVisible(false);
+		return;
+	}
 
-		// Set the text color to yellow.
-		lblChecksum_palette.setColor(q->lblChecksum->foregroundRole(), Qt::darkYellow);
-	} else {
-		// Checksum is known.
-		uint32_t chkActual = file->checksumActual();
-		uint32_t chkExpected = file->checksumExpected();
+	// Checksum is known.
+	const QVector<Checksum::ChecksumValue> checksumValues = file->checksumValues();
+	const int fieldWidth = file->checksumFieldWidth();
+
+	for (int i = 0; i < checksumValues.size(); i++) {
+		const Checksum::ChecksumValue &value = checksumValues.at(i);
+
 		char s_chkActual[12];
-		char s_chkExpected[12];
+		if (fieldWidth <= 4)
+			snprintf(s_chkActual, sizeof(s_chkActual), "%04X", value.actual);
+		else
+			snprintf(s_chkActual, sizeof(s_chkActual), "%08X", value.actual);
 
-		if (chkExpected <= 0xFFFF && chkActual <= 0xFFFF) {
-			// 16-bit checksums.
-			snprintf(s_chkActual, sizeof(s_chkActual), "%04X", chkActual);
-			snprintf(s_chkExpected, sizeof(s_chkExpected), "%04X", chkExpected);
-		} else {
-			// 32-bit checksums.
-			snprintf(s_chkActual, sizeof(s_chkActual), "%08X", chkActual);
-			snprintf(s_chkExpected, sizeof(s_chkExpected), "%08X", chkExpected);
-		}
-
-		// Set the actual checksum label.
-		q->lblChecksum->setText(QLatin1String(s_chkActual));
-		if (chkActual == chkExpected) {
-			// Checksum is correct.
-			lblChecksum_palette.setColor(q->lblChecksum->foregroundRole(), Qt::darkGreen);
+		// Check if the checksum is valid.
+		if (value.actual == value.expected) {
+			// Checksum is valid.
+			q->lblChecksum->setText(s_chkHtmlGood.arg(QLatin1String(s_chkActual)));
 
 			// Hide the expected checksum.
 			q->lblChecksumExpectedTitle->setVisible(false);
 			q->lblChecksumExpected->setVisible(false);
 		} else {
 			// Checksum is invalid.
-			lblChecksum_palette.setColor(q->lblChecksum->foregroundRole(), Qt::red);
+			q->lblChecksum->setText(s_chkHtmlInvalid.arg(QLatin1String(s_chkActual)));
 
 			// Set the expected checksum.
+			char s_chkExpected[12];
+			if (fieldWidth <= 4)
+				snprintf(s_chkExpected, sizeof(s_chkExpected), "%04X", value.expected);
+			else
+				snprintf(s_chkExpected, sizeof(s_chkExpected), "%08X", value.expected);
 			q->lblChecksumExpected->setText(QLatin1String(s_chkExpected));
 
 			// Show the expected checksum.
@@ -162,9 +165,6 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 			q->lblChecksumExpected->setVisible(true);
 		}
 	}
-
-	// Set the new lblChecksum palette.
-	q->lblChecksum->setPalette(lblChecksum_palette);
 }
 
 

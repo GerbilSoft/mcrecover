@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>158</width>
-    <height>166</height>
+    <height>138</height>
    </rect>
   </property>
   <layout class="QFormLayout" name="formLayout">
@@ -148,6 +148,9 @@
      <property name="textFormat">
       <enum>Qt::PlainText</enum>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
      <property name="buddy">
       <cstring>lblChecksum</cstring>
      </property>
@@ -166,7 +169,7 @@
       <string notr="true">00000000</string>
      </property>
      <property name="textFormat">
-      <enum>Qt::PlainText</enum>
+      <enum>Qt::RichText</enum>
      </property>
      <property name="textInteractionFlags">
       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -181,6 +184,9 @@ Checksum:</string>
      </property>
      <property name="textFormat">
       <enum>Qt::PlainText</enum>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
      </property>
      <property name="textInteractionFlags">
       <set>Qt::LinksAccessibleByMouse</set>

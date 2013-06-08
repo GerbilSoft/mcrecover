@@ -188,16 +188,16 @@ class MemCardFile : public QObject
 		void setChecksumDefs(QVector<Checksum::ChecksumDef> checksumDefs);
 
 		/**
-		 * Get the expected checksum.
-		 * @return Expected checksum, or 0 if no checksum definitions were set.
+		 * Get the checksum values.
+		 * @return Checksum values, or empty QVector if no checksum definitions were set.
 		 */
-		uint32_t checksumExpected(void) const;
+		QVector<Checksum::ChecksumValue> checksumValues(void) const;
 
 		/**
-		 * Get the actual checksum.
-		 * @return Actual checksum, or 0 if no checksum definitions were set.
+		 * Get the checksum field width.
+		 * @return 4 for 16-bit checksums; 8 for 32-bit checksums.
 		 */
-		uint32_t checksumActual(void) const;
+		int checksumFieldWidth(void) const;
 
 		/**
 		 * Get the checksum status.
