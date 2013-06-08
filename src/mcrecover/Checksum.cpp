@@ -210,7 +210,10 @@ Checksum::ChkAlgorithm Checksum::ChkAlgorithmFromString(QString algorithm)
 		return CHKALG_ADDINVDUAL16;
 	} else if (algorithm == QLatin1String("addbytes32")) {
 		return CHKALG_ADDBYTES32;
-	} else if (algorithm == QLatin1String("sonicchaogarden")) {
+	}
+	else if (algorithm == QLatin1String("sonicchaogarden") ||
+		 algorithm == QLatin1String("sonic chao garden"))
+	{
 		return CHKALG_SONICCHAOGARDEN;
 	}
 
@@ -241,5 +244,31 @@ QString Checksum::ChkAlgorithmToString(ChkAlgorithm algorithm)
 			return QLatin1String("AddBytes32");
 		case CHKALG_SONICCHAOGARDEN:
 			return QLatin1String("SonicChaoGarden");
+	}
+}
+
+
+/**
+ * Get a nicely formatted checksum algorithm name from a ChkAlgorithm.
+ * @param algorithm ChkAlgorithm.
+ * @return Checksum algorithm name, or empty string if CHKALG_NONE or unknown.
+ */
+QString Checksum::ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm)
+{
+	switch (algorithm) {
+		default:
+		case CHKALG_NONE:
+			return QString();
+
+		case CHKALG_CRC16:
+			return QLatin1String("CRC-16");
+		case CHKALG_CRC32:
+			return QLatin1String("CRC-32");
+		case CHKALG_ADDINVDUAL16:
+			return QLatin1String("AddInvDual16");
+		case CHKALG_ADDBYTES32:
+			return QLatin1String("AddBytes32");
+		case CHKALG_SONICCHAOGARDEN:
+			return QLatin1String("Sonic Chao Garden");
 	}
 }
