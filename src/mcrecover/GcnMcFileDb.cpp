@@ -250,6 +250,9 @@ void GcnMcFileDbPrivate::parseXml_GcnMcFileDb(QXmlStreamReader &xml)
 				}
 				vec->append(gcnMcFileDef);
 			}
+		} else {
+			// Skip unreocgnized tokens.
+			xml.readElementText(QXmlStreamReader::SkipChildElements);
 		}
 
 		// Next token.
@@ -301,9 +304,10 @@ GcnMcFileDef *GcnMcFileDbPrivate::parseXml_file(QXmlStreamReader &xml)
 			} else if (xml.name() == QLatin1String("dirEntry")) {
 				// Directory entry.
 				parseXml_file_dirEntry(xml, gcnMcFileDef);
+			} else {
+				// Skip unreocgnized tokens.
+				xml.readElementText(QXmlStreamReader::SkipChildElements);
 			}
-
-			// TODO: File table information.
 		}
 
 		// Next token.
@@ -373,6 +377,9 @@ void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDe
 			} else if (xml.name() == QLatin1String("fileDesc")) {
 				// File description. (regex)
 				gcnMcFileDef->search.fileDesc = parseXml_element(xml);
+			} else {
+				// Skip unreocgnized tokens.
+				xml.readElementText(QXmlStreamReader::SkipChildElements);
 			}
 		}
 
@@ -444,6 +451,9 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 					// Attributes missing.
 					// TODO: Show error message?
 				}
+			} else {
+				// Skip unreocgnized tokens.
+				xml.readElementText(QXmlStreamReader::SkipChildElements);
 			}
 		}
 
@@ -536,6 +546,9 @@ void GcnMcFileDbPrivate::parseXml_file_dirEntry(QXmlStreamReader &xml, GcnMcFile
 				// Comment address.
 				str = parseXml_element(xml);
 				gcnMcFileDef->dirEntry.commentAddress = str.toUInt(NULL, 0);
+			} else {
+				// Skip unreocgnized tokens.
+				xml.readElementText(QXmlStreamReader::SkipChildElements);
 			}
 		}
 
