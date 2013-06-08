@@ -55,11 +55,16 @@ class GcnMcFileDef {
 		uint8_t regions;
 
 		struct {
+			/**
+			 * Comment search address.
+			 * This is also used for dirEntry.
+			 */
 			uint32_t address;
+
 			QString gameDesc;	// regex
 			QString fileDesc;	// regex
 
-			// Regular expressions.
+			// Compiled regular expressions.
 			PcreRegex gameDesc_regex;
 			PcreRegex fileDesc_regex;
 		} search;
@@ -78,7 +83,9 @@ class GcnMcFileDef {
 			uint16_t iconSpeed;
 			uint8_t permission;
 			uint16_t length;	// Length, in blocks.
-			uint32_t commentAddress;
+
+			// NOTE: commentAddress is implied by search.address.
+			//uint32_t commentAddress;
 		} dirEntry;
 
 		// Make sure all fields are initialized.
@@ -93,7 +100,6 @@ class GcnMcFileDef {
 			dirEntry.iconSpeed = 0;
 			dirEntry.permission = 0;
 			dirEntry.length = 0;
-			dirEntry.commentAddress = 0;
 		}
 };
 

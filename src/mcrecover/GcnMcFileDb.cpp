@@ -582,10 +582,6 @@ void GcnMcFileDbPrivate::parseXml_file_dirEntry(QXmlStreamReader &xml, GcnMcFile
 				// Length, in blocks.
 				str = parseXml_element(xml);
 				gcnMcFileDef->dirEntry.length = str.toUShort(NULL, 0);
-			} else if (xml.name() == QLatin1String("commentAddress")) {
-				// Comment address.
-				str = parseXml_element(xml);
-				gcnMcFileDef->dirEntry.commentAddress = str.toUInt(NULL, 0);
 			} else {
 				// Skip unreocgnized tokens.
 				xml.readElementText(QXmlStreamReader::SkipChildElements);
@@ -799,7 +795,7 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz,
 	dirEntry->block		= 5;	// FIXME
 	dirEntry->length	= matchFileDef->dirEntry.length;
 	dirEntry->pad_01	= 0xFFFF;
-	dirEntry->commentaddr	= matchFileDef->dirEntry.commentAddress;
+	dirEntry->commentaddr	= matchFileDef->search.address;
 
 	// Checksum data.
 	if (checksumDefs)
