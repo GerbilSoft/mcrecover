@@ -134,7 +134,7 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 	// Display the algorithm.
 	// TODO: Also the polynomial / parameter?
 	Checksum::ChkAlgorithm algorithm = file->checksumAlgorithm();
-	q->lblChecksumAlgorithm->setText(Checksum::ChkAlgorithmToString(algorithm));
+	q->lblChecksumAlgorithm->setText(Checksum::ChkAlgorithmToStringFormatted(algorithm));
 
 	// Show the actual checksum labels.
 	q->lblChecksumActualTitle->setVisible(true);
