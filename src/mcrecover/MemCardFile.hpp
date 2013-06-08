@@ -200,6 +200,13 @@ class MemCardFile : public QObject
 		int checksumFieldWidth(void) const;
 
 		/**
+		 * Get the checksum algorithm.
+		 * NOTE: We're assuming each file only uses one algorithm...
+		 * @return Checksum algorithm.
+		 */
+		Checksum::ChkAlgorithm checksumAlgorithm(void) const;
+
+		/**
 		 * Get the checksum status.
 		 * @return Checksum status.
 		 */

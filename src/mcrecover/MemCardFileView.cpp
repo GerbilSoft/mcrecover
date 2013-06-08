@@ -114,7 +114,6 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 
 	// Checksum colors.
 	// TODO: Better colors?
-	static const QString s_chkHtmlUnknown = QLatin1String("<span style='color: #880'>%1</span>");
 	static const QString s_chkHtmlGood = QLatin1String("<span style='color: #080'>%1</span>");
 	static const QString s_chkHtmlInvalid = QLatin1String("<span style='color: #F00'>%1</span>");
 	static const QString s_chkHtmlLinebreak = QLatin1String("<br/>");
@@ -122,16 +121,29 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 	// Checksums.
 	if (file->checksumStatus() == Checksum::CHKST_UNKNOWN) {
 		// Unknown checksum.
-		q->lblChecksum->setText(s_chkHtmlUnknown.arg(q->tr("Unknown")));
+		q->lblChecksumAlgorithm->setText(q->tr("Unknown"));
+		q->lblChecksumActualTitle->setVisible(false);
+		q->lblChecksumActual->setVisible(false);
 		q->lblChecksumExpectedTitle->setVisible(false);
 		q->lblChecksumExpected->setVisible(false);
 		return;
 	}
 
 	// Checksum is known.
+
+	// Display the algorithm.
+	// TODO: Also the polynomial / parameter?
+	Checksum::ChkAlgorithm algorithm = file->checksumAlgorithm();
+	q->lblChecksumAlgorithm->setText(Checksum::ChkAlgorithmToString(algorithm));
+
+	// Show the actual checksum labels.
+	q->lblChecksumActualTitle->setVisible(true);
+	q->lblChecksumActual->setVisible(true);
+
+	// Get the checksum values.
 	const QVector<Checksum::ChecksumValue> checksumValues = file->checksumValues();
 	const int fieldWidth = file->checksumFieldWidth();
-	const int reserveSize = ((s_chkHtmlUnknown.length() + fieldWidth + 5) * checksumValues.size());
+	const int reserveSize = ((s_chkHtmlGood.length() + fieldWidth + 5) * checksumValues.size());
 
 	QString s_chkActual_all; s_chkActual_all.reserve(reserveSize);
 	QString s_chkExpected_all;
@@ -180,7 +192,7 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 	}
 
 	// Set the actual checksum text.
-	q->lblChecksum->setText(s_chkActual_all);
+	q->lblChecksumActual->setText(s_chkActual_all);
 
 	if (file->checksumStatus() == Checksum::CHKST_INVALID) {
 		// At least one checksum is invalid.

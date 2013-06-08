@@ -803,3 +803,16 @@ Checksum::ChkStatus MemCardFile::checksumStatus(void) const
 	// All checksums are good.
 	return Checksum::CHKST_GOOD;
 }
+
+
+/**
+ * Get the checksum algorithm.
+ * NOTE: We're assuming each file only uses one algorithm...
+ * @return Checksum algorithm.
+ */
+Checksum::ChkAlgorithm MemCardFile::checksumAlgorithm(void) const
+{
+	if (d->checksumDefs.isEmpty())
+		return Checksum::CHKALG_NONE;
+	return d->checksumDefs.at(0).algorithm;
+}
