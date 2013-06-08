@@ -18,7 +18,6 @@
 			<iconSpeed>0x02</iconSpeed>
 			<permission>0x04</permission>
 			<length>2</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -42,7 +41,6 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>57</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -62,7 +60,6 @@
 			<iconSpeed>0x02</iconSpeed>
 			<permission>0x04</permission>
 			<length>1</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -83,7 +80,6 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>2</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -103,7 +99,6 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>1</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -126,7 +121,6 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x1C</permission>
 			<length>4</length>
-			<commentAddress>0x0004</commentAddress>
 			<encrypted>true</encrypted>
 		</dirEntry>
 	</file>
@@ -154,7 +148,6 @@
 			<iconSpeed>0xFFFF</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
-			<commentAddress>0x1C00</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -177,7 +170,6 @@
 			<iconSpeed>0x2A</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
-			<commentAddress>0x2000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -199,7 +191,6 @@
 			<iconSpeed>0x00AA</iconSpeed>
 			<permission>0x04</permission>
 			<length>2</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -220,7 +211,6 @@
 			<iconSpeed>0x00AA</iconSpeed>
 			<permission>0x04</permission>
 			<length>5</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -241,7 +231,6 @@
 			<iconSpeed>0x00AA</iconSpeed>
 			<permission>0x04</permission>
 			<length>5</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -262,7 +251,6 @@
 			<iconSpeed>0x00AA</iconSpeed>
 			<permission>0x04</permission>
 			<length>6</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -290,7 +278,6 @@
 			<iconSpeed>0x02</iconSpeed>
 			<permission>0x04</permission>
 			<length>1</length>
-			<commentAddress>0x0004</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -312,7 +299,6 @@
 			<iconSpeed>0x02</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
-			<commentAddress>0x0004</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -332,7 +318,6 @@
 			<iconSpeed>0x2AAA</iconSpeed>
 			<permission>0x04</permission>
 			<length>8</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -355,7 +340,6 @@
 			<iconSpeed>0x02</iconSpeed>
 			<permission>0x04</permission>
 			<length>17</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -375,7 +359,6 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>1</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -395,7 +378,6 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -415,7 +397,6 @@
 			<iconSpeed>0x02</iconSpeed>
 			<permission>0x04</permission>
 			<length>2</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -441,7 +422,6 @@
 			<iconSpeed>0x01</iconSpeed>
 			<permission>0x04</permission>
 			<length>1</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -471,7 +451,6 @@
 			<iconSpeed>0xAAAA</iconSpeed>
 			<permission>0x0C</permission>
 			<length>8</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -496,7 +475,6 @@
 			<iconSpeed>0x0F</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -526,7 +504,6 @@
 			<iconSpeed>0x5555</iconSpeed>
 			<permission>0x0C</permission>
 			<length>8</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -547,7 +524,6 @@
 			<iconSpeed>0x02</iconSpeed>
 			<permission>0x04</permission>
 			<length>2</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -567,7 +543,6 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>4</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -587,7 +562,6 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>4</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -608,7 +582,6 @@
 			<iconSpeed>0x02</iconSpeed>
 			<permission>0x04</permission>
 			<length>2</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -629,7 +602,6 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>2</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -650,7 +622,6 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>1</length>
-			<commentAddress>0x1400</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -677,7 +648,6 @@
 			<iconSpeed>0x0F</iconSpeed>
 			<permission>0x04</permission>
 			<length>7</length>
-			<commentAddress>0x0004</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -698,7 +668,6 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>2</length>
-			<commentAddress>0x0004</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -719,7 +688,6 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>11</length>
-			<commentAddress>0x0000</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -739,7 +707,6 @@
 			<iconSpeed>0x3F</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
-			<commentAddress>0x1C00</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -759,7 +726,6 @@
 			<iconSpeed>0x3F</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
-			<commentAddress>0x1C00</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -779,7 +745,6 @@
 			<iconSpeed>0x3F</iconSpeed>
 			<permission>0x04</permission>
 			<length>9</length>
-			<commentAddress>0x002C</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -799,7 +764,6 @@
 			<iconSpeed>0x3F</iconSpeed>
 			<permission>0x04</permission>
 			<length>21</length>
-			<commentAddress>0x002C</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -820,7 +784,6 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
-			<commentAddress>0x1C00</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -841,7 +804,6 @@
 			<iconSpeed>0x2A</iconSpeed>
 			<permission>0x04</permission>
 			<length>15</length>
-			<commentAddress>0x002C</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -862,7 +824,6 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>12</length>
-			<commentAddress>0x1C00</commentAddress>
 		</dirEntry>
 	</file>
 	<file>
@@ -884,7 +845,6 @@
 			<iconSpeed>0x0155</iconSpeed>
 			<permission>0x04</permission>
 			<length>4</length>
-			<commentAddress>0x2400</commentAddress>
 		</dirEntry>
 	</file>
 </GcnMcFileDb>
