@@ -144,11 +144,7 @@
 			<algorithm>AddInvDual16</algorithm>
 			<address>0x3FFC</address>
 			<range start="0x2000" length="0x1FFC" />
-		</checksum>
-		<checksum>
-			<algorithm>AddInvDual16</algorithm>
-			<address>0x5FFC</address>
-			<range start="0x4000" length="0x1FFC" />
+			<multiple instances="2" increment="0x2000" />
 		</checksum>
 		<dirEntry>
 			<filename>LUIGI_MANSION_SAVEDATA_v3</filename>
@@ -671,31 +667,7 @@
 			<algorithm>AddInvDual16</algorithm>
 			<address>0x3FFC</address>
 			<range start="0x2000" length="0x1FFC" />
-		</checksum>
-		<checksum>
-			<algorithm>AddInvDual16</algorithm>
-			<address>0x5FFC</address>
-			<range start="0x4000" length="0x1FFC" />
-		</checksum>
-		<checksum>
-			<algorithm>AddInvDual16</algorithm>
-			<address>0x7FFC</address>
-			<range start="0x6000" length="0x1FFC" />
-		</checksum>
-		<checksum>
-			<algorithm>AddInvDual16</algorithm>
-			<address>0x9FFC</address>
-			<range start="0x8000" length="0x1FFC" />
-		</checksum>
-		<checksum>
-			<algorithm>AddInvDual16</algorithm>
-			<address>0xBFFC</address>
-			<range start="0xA000" length="0x1FFC" />
-		</checksum>
-		<checksum>
-			<algorithm>AddInvDual16</algorithm>
-			<address>0xDFFC</address>
-			<range start="0xC000" length="0x1FFC" />
+			<multiple instances="6" increment="0x2000" />
 		</checksum>
 		<dirEntry>
 			<filename>super_mario_sunshine</filename>
