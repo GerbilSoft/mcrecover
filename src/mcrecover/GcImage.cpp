@@ -85,9 +85,8 @@ static inline void BlitTile(pixel *imgBuf, int pitch,
 {
 	// Go to the first pixel for this tile.
 	imgBuf += ((tileY * tileH * pitch) + (tileX * tileW));
-	
-	for (int y = tileH; y != 0; y--)
-	{
+
+	for (int y = tileH; y != 0; y--) {
 		memcpy(imgBuf, tileBuf, (tileW * sizeof(pixel)));
 		imgBuf += pitch;
 		tileBuf += tileW;
@@ -113,41 +112,38 @@ QImage GcImage::FromCI8(int w, int h, const void *img_buf, int img_siz,
 		return QImage();
 	if (img_siz < (w * h) || pal_siz < 0x200)
 		return QImage();
-	
+
 	// CI8 uses 8x4 tiles.
 	if (w % 8 != 0 || h % 4 != 0)
 		return QImage();
-	
+
 	// Calculate the total number of tiles.
 	const int tilesX = (w / 8);
 	const int tilesY = (h / 4);
-	
+
 	// Convert the palette.
 	QVector<QRgb> palette;
 	palette.resize(256);
 	uint16_t *pal5A3 = (uint16_t*)pal_buf;
-	for (int i = 0; i < 256; i++)
-	{
+	for (int i = 0; i < 256; i++) {
 		palette[i] = RGB5A3_to_ARGB32(be16_to_cpu(*pal5A3));
 		pal5A3++;
 	}
-	
+
 	// Temporary image buffer.
 	QImage qimgBuf(w, h, QImage::Format_Indexed8);
 	qimgBuf.setColorTable(palette);
 	const uint8_t *tileBuf = (const uint8_t*)img_buf;
 
-	for (int y = 0; y < tilesY; y++)
-	{
-		for (int x = 0; x < tilesX; x++)
-		{
+	for (int y = 0; y < tilesY; y++) {
+		for (int x = 0; x < tilesX; x++) {
 			// Decode the current tile.
 			BlitTile<uint8_t, 8, 4>(qimgBuf.bits(), w,
 						tileBuf, x, y);
 			tileBuf += (8 * 4);
 		}
 	}
-	
+
 	// Image has been converted.
 	return qimgBuf;
 }
@@ -168,41 +164,37 @@ QImage GcImage::FromRGB5A3(int w, int h, const void *img_buf, int img_siz)
 		return QImage();
 	if (img_siz < ((w * h) * 2))
 		return QImage();
-	
+
 	// RGB5A3 uses 4x4 tiles.
 	if (w % 4 != 0 || h % 4 != 0)
 		return QImage();
-	
+
 	// Calculate the total number of tiles.
 	const int tilesX = (w / 4);
 	const int tilesY = (h / 4);
 	const uint16_t *buf5A3 = (uint16_t*)img_buf;
-	
+
 	// Temporary image buffer.
 	QImage qimgBuf(w, h, QImage::Format_ARGB32);
-	QVector<uint32_t> tileBuf(4 * 4);
-	
-	for (int y = 0; y < tilesY; y++)
-	{
-		for (int x = 0; x < tilesX; x++)
-		{
+	uint32_t tileBuf[4 * 4];
+
+	for (int y = 0; y < tilesY; y++) {
+		for (int x = 0; x < tilesX; x++) {
 			// Convert each tile to ARGB888 manually.
-			uint32_t *tilePtr = tileBuf.data();
-			for (int i = 0; i < 4*4; i++)
-			{
+			uint32_t *tilePtr = &tileBuf[0];
+			for (int i = 0; i < 4*4; i++) {
 				*tilePtr++ = RGB5A3_to_ARGB32(be16_to_cpu(*buf5A3));
-				
+
 				// NOTE: buf5A3 must be incremented OUTSIDE of the
 				// be16_to_cpu() macro! Otherwise, shenanigans will ensue.
 				buf5A3++;
 			}
-			
+
 			// Blit the tile to the main image buffer.
-			BlitTile<uint32_t, 4, 4>((uint32_t*)qimgBuf.bits(), w,
-						tileBuf.constData(), x, y);
+			BlitTile<uint32_t, 4, 4>((uint32_t*)qimgBuf.bits(), w, tileBuf, x, y);
 		}
 	}
-	
+
 	// Image has been converted.
 	return qimgBuf;
 }
