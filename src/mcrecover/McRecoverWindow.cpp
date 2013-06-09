@@ -140,15 +140,8 @@ void McRecoverWindowPrivate::updateLstFileList(void)
 		if (lastSlash >= 0)
 			displayFilename.remove(0, lastSlash + 1);
 
-		// NOTE: 5 blocks are subtracted here in order to
-		// show the user-visible space, e.g. 59 or 251 blocks
-		// instead of 64 or 256 blocks.
-		q->grpFileList->setTitle(
-			q->tr("%1: %2 block(s) (%3 free)")
-				.arg(displayFilename)
-				.arg(card->sizeInBlocks() - 5)
-				.arg(card->freeBlocks())
-			);
+		// Show the filename.
+		q->grpFileList->setTitle(displayFilename);
 	}
 
 	// Resize the columns to fit the contents.
