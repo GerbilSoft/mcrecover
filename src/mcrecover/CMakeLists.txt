@@ -26,6 +26,11 @@ INCLUDE(${QT_USE_FILE})
 FIND_PACKAGE(PCRE REQUIRED)
 INCLUDE_DIRECTORIES(PCRE_INCLUDE_DIR)
 
+IF(WIN32 AND QT_IS_STATIC)
+	# Win32: Qt Static requires some extra libraries.
+	SET(WIN32_LIBS ws2_32 winmm imm32)
+ENDIF(WIN32 AND QT_IS_STATIC)
+
 # Link to Carbon on Mac OS X.
 # TODO: Use Cocoa instead if we're compiling against Qt/Cocoa.
 IF(APPLE)
@@ -123,13 +128,20 @@ QT4_WRAP_CPP(mcrecover_MOC_SOURCES ${mcrecover_MOC_HEADERS})
 
 # TODO: Set Win32 when compiling release build
 # to disable the command prompt window.
-ADD_EXECUTABLE(mcrecover MACOSX_BUNDLE
+ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_SRCS}
 	${mcrecover_COMPAT_SRCS}
 	${mcrecover_MOC_SOURCES}
 	${mcrecover_UIS_H}
 	)
-TARGET_LINK_LIBRARIES(mcrecover ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${PCRE_LIBRARIES})
+TARGET_LINK_LIBRARIES(mcrecover
+	${QT_XML_LIBRARY}
+	${QT_QTGUI_LIBRARY}
+	${QT_QTCORE_LIBRARY}
+	${PCRE_LIBRARIES}
+	${WIN32_LIBS}
+	${APPLE_LIBS}
+	)
 # TODO: Translations.
 #ADD_DEPENDENCIES(gens-qt4 translations_target)
 
