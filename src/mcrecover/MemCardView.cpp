@@ -121,6 +121,7 @@ MemCardView::MemCardView(QWidget *parent)
 	, d(new MemCardViewPrivate(this))
 {
 	setupUi(this);
+	d->updateWidgetDisplay();
 }
 
 MemCardView::~MemCardView()

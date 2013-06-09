@@ -80,6 +80,12 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 		q->lblFilename->clear();
 		q->lblModeTitle->setVisible(false);
 		q->lblMode->setVisible(false);
+		q->lblChecksumAlgorithmTitle->setVisible(false);
+		q->lblChecksumAlgorithm->setVisible(false);
+		q->lblChecksumActualTitle->setVisible(false);
+		q->lblChecksumActual->setVisible(false);
+		q->lblChecksumExpectedTitle->setVisible(false);
+		q->lblChecksumExpected->setVisible(false);
 		return;
 	}
 
@@ -118,7 +124,11 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 	static const QString s_chkHtmlInvalid = QLatin1String("<span style='color: #F00'>%1</span>");
 	static const QString s_chkHtmlLinebreak = QLatin1String("<br/>");
 
-	// Checksums.
+	// Checksum algorithm is always visible.
+	q->lblChecksumAlgorithmTitle->setVisible(true);
+	q->lblChecksumAlgorithm->setVisible(true);
+
+	// Is the checksum known?
 	if (file->checksumStatus() == Checksum::CHKST_UNKNOWN) {
 		// Unknown checksum.
 		q->lblChecksumAlgorithm->setText(q->tr("Unknown"));
@@ -217,6 +227,7 @@ MemCardFileView::MemCardFileView(QWidget *parent)
 	, d(new MemCardFileViewPrivate(this))
 {
 	setupUi(this);
+	d->updateWidgetDisplay();
 }
 
 MemCardFileView::~MemCardFileView()
