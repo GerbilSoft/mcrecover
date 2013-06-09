@@ -11,7 +11,10 @@ MACRO(UNSET var)
 	SET(${var})
 ENDMACRO(UNSET)
 
-list (APPEND CMAKE_MODULE_PATH "${mcrecover_base_SOURCE_DIR}/cmake")
+list (APPEND CMAKE_MODULE_PATH
+	"${mcrecover_base_SOURCE_DIR}/cmake/modules"
+	"${mcrecover_base_SOURCE_DIR}/cmake/macros"
+	)
 
 # Git version information.
 ADD_CUSTOM_TARGET(git_version ALL
@@ -29,6 +32,9 @@ ENDIF()
 #IF (CMAKE_BUILD_TYPE MATCHES ^debug$)
 #	SET(CMAKE_VERBOSE_MAKEFILE ON)
 #ENDIF()
+
+# Check for platform-specific functionality.
+INCLUDE(cmake/platform.cmake)
 
 # Project subdirectories.
 ADD_SUBDIRECTORY(src)
