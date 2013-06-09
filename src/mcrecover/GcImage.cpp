@@ -138,8 +138,7 @@ QImage GcImage::FromCI8(int w, int h, const void *img_buf, int img_siz,
 	for (int y = 0; y < tilesY; y++) {
 		for (int x = 0; x < tilesX; x++) {
 			// Decode the current tile.
-			BlitTile<uint8_t, 8, 4>(qimgBuf.bits(), w,
-						tileBuf, x, y);
+			BlitTile<uint8_t, 8, 4>(qimgBuf.bits(), w, tileBuf, x, y);
 			tileBuf += (8 * 4);
 		}
 	}
