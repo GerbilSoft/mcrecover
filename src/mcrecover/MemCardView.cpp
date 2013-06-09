@@ -78,6 +78,12 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 	q->lblEncoding->setVisible(true);
 
 	// Update the widget display.
+
+	/**
+	 * NOTE: 5 blocks are subtracted here in order to
+	 * show the user-visible space, e.g. 59 or 251 blocks
+	 * instead of 64 or 256 blocks.
+	 */
 	q->lblBlockCount->setText(
 		q->tr("%L1 block(s) (%L2 free)")
 		.arg(card->sizeInBlocks() - 5)
