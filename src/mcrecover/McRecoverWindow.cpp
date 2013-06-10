@@ -163,7 +163,7 @@ void McRecoverWindowPrivate::updateLstFileList(void)
 		// Enable saving.
 		q->actionSave->setEnabled(
 			q->lstFileList->selectionModel()->hasSelection());
-		q->actionSaveAll->setEnabled(true);
+		q->actionSaveAll->setEnabled(card->numFiles() > 0);
 	}
 
 	// Resize the columns to fit the contents.
