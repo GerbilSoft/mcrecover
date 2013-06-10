@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * mcrecover.cpp: Main program.                                            *
+ * McRecoverQApplication.hpp: QApplication subclass.                       *
  *                                                                         *
- * Copyright (c) 2011-2013 by David Korth.                                 *
+ * Copyright (c) 2013 by David Korth.                                      *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,37 +19,48 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#include "mcrecover.hpp"
+#ifndef __MCRECOVER_MCRECOVERQAPPLICATION_HPP__
+#define __MCRECOVER_MCRECOVERQAPPLICATION_HPP__
 
-#include "McRecoverWindow.hpp"
-
-// C includes.
-#include <stdio.h>
-#include <stdlib.h>
-
-// Qt includes.
 #include <QtGui/QApplication>
+#include <QtGui/QIcon>
 
-/**
- * Main entry point.
- * @param argc Number of arguments.
- * @param argv Array of arguments.
- * @return Return value.
- */
-int mcrecover_main(int argc, char *argv[])
+class McRecoverQApplicationPrivate;
+
+class McRecoverQApplication : public QApplication
 {
-	QApplication *mcApp = new QApplication(argc, argv);
-	
-	// Initialize the McRecoverWindow.
-	McRecoverWindow *mcRecoverWindow = new McRecoverWindow();
-	
-	// If a filename was specified, open it.
-	if (argc > 1)
-		mcRecoverWindow->open(QString::fromLocal8Bit(argv[1]));
-	
-	// Show the window.
-	mcRecoverWindow->show();
-	
-	// Run the Qt4 UI.
-	return mcApp->exec();
-}
+	Q_OBJECT
+
+	public:
+		McRecoverQApplication(int &argc, char **argv);
+		McRecoverQApplication(int &argc, char **argv, bool GUIenabled);
+		McRecoverQApplication(int &argc, char **argv, Type type);
+		virtual ~McRecoverQApplication();
+
+		/**
+		 * Get an icon from the system theme.
+		 * @param name Icon name.
+		 * @return QIcon.
+		 */
+		static QIcon IconFromTheme(QString name);
+
+#ifdef Q_OS_WIN32
+		// Win32 event filter.
+		bool winEventFilter(MSG *msg, long *result);
+#endif /* Q_OS_WIN32 */
+
+	private:
+		friend class McRecoverQApplicationPrivate;
+		McRecoverQApplicationPrivate *const d;
+
+		Q_DISABLE_COPY(McRecoverQApplication)
+
+#ifdef Q_OS_WIN32
+		/**
+		 * Set the Qt font to match the system font.
+		 */
+		static void SetFont_Win32(void);
+#endif /* Q_OS_WIN32 */
+};
+
+#endif /* __MCRECOVER_MCRECOVERQAPPLICATION_HPP__ */

@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * mcrecover.cpp: Main program.                                            *
+ * mcrecover.hpp: Main program.                                            *
  *                                                                         *
  * Copyright (c) 2011-2013 by David Korth.                                 *
  *                                                                         *
@@ -19,16 +19,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#include "mcrecover.hpp"
+#ifndef __MCRECOVER_MCRECOVER_HPP__
+#define __MCRECOVER_MCRECOVER_HPP__
 
-#include "McRecoverWindow.hpp"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-// C includes.
-#include <stdio.h>
-#include <stdlib.h>
-
-// Qt includes.
-#include <QtGui/QApplication>
+#ifndef _WIN32
+#define mcrecover_main main
+#endif
 
 /**
  * Main entry point.
@@ -36,20 +36,10 @@
  * @param argv Array of arguments.
  * @return Return value.
  */
-int mcrecover_main(int argc, char *argv[])
-{
-	QApplication *mcApp = new QApplication(argc, argv);
-	
-	// Initialize the McRecoverWindow.
-	McRecoverWindow *mcRecoverWindow = new McRecoverWindow();
-	
-	// If a filename was specified, open it.
-	if (argc > 1)
-		mcRecoverWindow->open(QString::fromLocal8Bit(argv[1]));
-	
-	// Show the window.
-	mcRecoverWindow->show();
-	
-	// Run the Qt4 UI.
-	return mcApp->exec();
+int mcrecover_main(int argc, char *argv[]);
+
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* __MCRECOVER_MCRECOVER_HPP__ */

@@ -1,0 +1,79 @@
+/***************************************************************************
+ * GameCube Memory Card Recovery Program.                                  *
+ * mcrecover.rc: Win32 resource script.                                    *
+ *                                                                         *
+ * Copyright (c) 2013 by David Korth.                                      *
+ *                                                                         *
+ * This program is free software; you can redistribute it and/or modify it *
+ * under the terms of the GNU General Public License as published by the   *
+ * Free Software Foundation; either version 2 of the License, or (at your  *
+ * option) any later version.                                              *
+ *                                                                         *
+ * This program is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ * GNU General Public License for more details.                            *
+ *                                                                         *
+ * You should have received a copy of the GNU General Public License along *
+ * with this program; if not, write to the Free Software Foundation, Inc., *
+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ ***************************************************************************/
+
+// Resource script for GameCube Memory Card Recovery Program.
+#include "mcrecover.rc.h"
+#include "afxres.h"
+#include "winuser.h"
+
+// git version
+#include "git.h"
+
+// Manifest.
+CREATEPROCESS_MANIFEST_RESOURCE_ID	RT_MANIFEST	"mcrecover.exe.manifest"
+
+// TODO: mcrecover version number from cmake.
+#define MCRECOVER_VERSION "0.0.0 (Development Build)"
+#define MCRECOVER_VERSION_WIN32 0,0,0,0
+
+#ifdef MCRECOVER_GIT_VERSION
+#define Win32_RC_FileVersion MCRECOVER_VERSION "\r\n" MCRECOVER_GIT_VERSION
+#else /* !MCRECOVER_GIT_VERSION */
+#define Win32_RC_FileVersion MCRECOVER_VERSION
+#endif /* MCRECOVER_GIT_VERSION */
+
+// Application Version
+VS_VERSION_INFO VERSIONINFO
+	FILEVERSION MCRECOVER_VERSION_WIN32
+	PRODUCTVERSION MCRECOVER_VERSION_WIN32
+	FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+	FILEFLAGS 0x1L
+#else
+	FILEFLAGS 0x0L
+#endif
+	FILEOS 0x40004L
+	FILETYPE 0x1L
+	FILESUBTYPE 0x0L
+BEGIN
+	BLOCK "StringFileInfo"
+	BEGIN
+		BLOCK "040904b0"
+		BEGIN
+			//VALUE "Comments", "\0"
+			//VALUE "CompanyName", "\0"
+			VALUE "FileDescription", "GameCube Memory Card Recovery Program " MCRECOVER_VERSION "\0"
+			VALUE "FileVersion", "GameCube Memory Card Recovery Program " Win32_RC_FileVersion "\0"
+			VALUE "InternalName", "GameCube Memory Card Recovery Program\0"
+			//VALUE "LegalCopyright", "\0"
+			//VALUE "LegalTrademarks", "\0"
+			//VALUE "OriginalFilename", "\0"
+			//VALUE "PrivateBuild", "\0"
+			VALUE "ProductName", "GameCube Memory Card Recovery Program\0"
+			VALUE "ProductVersion", "GameCube Memory Card Recovery Program " Win32_RC_FileVersion "\0"
+			//VALUE "SpecialBuild", "\0"
+		END
+	END
+	BLOCK "VarFileInfo"
+	BEGIN
+		VALUE "Translation", 0x409, 1200
+	END
+END

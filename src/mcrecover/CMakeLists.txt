@@ -82,7 +82,17 @@ SET(mcrecover_SRCS
 	Checksum.cpp
 	MemCardView.cpp
 	IconAnimHelper.cpp
+	McRecoverQApplication.cpp
 	)
+
+# Win32-specific sources.
+IF(WIN32)
+	SET(mcrecover_SRCS
+		${mcrecover_SRCS}
+		McRecoverQApplication_win32.cpp
+		ui/resources/win32/mcrecover.rc
+		)
+ENDIF(WIN32)
 
 # Headers with Qt4 objects.
 SET(mcrecover_MOC_HEADERS
@@ -97,6 +107,7 @@ SET(mcrecover_MOC_HEADERS
 	MemCardFileView.hpp
 	MemCardView.hpp
 	IconAnimHelper.hpp
+	McRecoverQApplication.hpp
 	)
 
 # UI files.
@@ -122,6 +133,20 @@ QT4_WRAP_CPP(mcrecover_MOC_SOURCES ${mcrecover_MOC_HEADERS})
 # TODO: Mac OS X bundle location.
 # TODO: "make install" location.
 
+######################
+# Qt resource files. #
+######################
+
+SET(mcrecover_RCC_SRCS
+	ui/resources/oxygen/oxygen.qrc
+	)
+
+# Add the resource files to the project.
+QT4_ADD_RESOURCES(
+	mcrecover_RCC_O ${mcrecover_RCC_SRCS}
+	OPTIONS -no-compress
+	)
+
 #########################
 # Build the executable. #
 #########################
@@ -133,6 +158,7 @@ ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_COMPAT_SRCS}
 	${mcrecover_MOC_SOURCES}
 	${mcrecover_UIS_H}
+	${mcrecover_RCC_O}
 	)
 TARGET_LINK_LIBRARIES(mcrecover
 	${QT_XML_LIBRARY}

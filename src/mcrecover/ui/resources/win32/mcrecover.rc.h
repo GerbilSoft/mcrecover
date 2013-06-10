@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * mcrecover.cpp: Main program.                                            *
+ * mcrecover.rc.h: Win32 resource script.                                  *
  *                                                                         *
- * Copyright (c) 2011-2013 by David Korth.                                 *
+ * Copyright (c) 2013 by David Korth.                                      *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,37 +19,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#include "mcrecover.hpp"
+#ifndef __GENS_QT4_RESOURCE_H__
+#define __GENS_QT4_RESOURCE_H__
 
-#include "McRecoverWindow.hpp"
+// Icons,
+#define IDI_GENS_APP		0x0001
+#define IDI_GENS_APP_OLD	0x0002
+#define IDI_GENS_MD		0x0003
+#define IDI_SONIC		0x0004
+#define IDI_SONIC_WAITING	0x0005
 
-// C includes.
-#include <stdio.h>
-#include <stdlib.h>
-
-// Qt includes.
-#include <QtGui/QApplication>
-
-/**
- * Main entry point.
- * @param argc Number of arguments.
- * @param argv Array of arguments.
- * @return Return value.
- */
-int mcrecover_main(int argc, char *argv[])
-{
-	QApplication *mcApp = new QApplication(argc, argv);
-	
-	// Initialize the McRecoverWindow.
-	McRecoverWindow *mcRecoverWindow = new McRecoverWindow();
-	
-	// If a filename was specified, open it.
-	if (argc > 1)
-		mcRecoverWindow->open(QString::fromLocal8Bit(argv[1]));
-	
-	// Show the window.
-	mcRecoverWindow->show();
-	
-	// Run the Qt4 UI.
-	return mcApp->exec();
-}
+#endif /* __GENS_QT4_RESOURCE_H__ */
