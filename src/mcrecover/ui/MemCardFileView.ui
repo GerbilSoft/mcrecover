@@ -6,13 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>158</width>
-    <height>190</height>
+    <width>150</width>
+    <height>182</height>
    </rect>
   </property>
   <layout class="QFormLayout" name="formLayout">
    <property name="fieldGrowthPolicy">
     <enum>QFormLayout::ExpandingFieldsGrow</enum>
+   </property>
+   <property name="margin">
+    <number>0</number>
    </property>
    <item row="0" column="0" colspan="2">
     <layout class="QHBoxLayout" name="hboxFileImages">
