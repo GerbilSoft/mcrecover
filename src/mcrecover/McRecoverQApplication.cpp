@@ -204,15 +204,6 @@ McRecoverQApplication::~McRecoverQApplication()
  */
 QIcon McRecoverQApplication::IconFromTheme(QString name)
 {
-#ifndef Q_WS_X11
-	// Check if a system icon exists.
-	// TODO: Add standardPixmap parameter to reduce string comparisons?
-	// TODO: Native Win32 icons for everything else.
-	QStyle *style = McRecoverQApplication::style();
-	if (name == QLatin1String("document-open"))
-		return style->standardPixmap(QStyle::SP_DirOpenIcon);
-#endif
-
 #if QT_VERSION >= 0x040600
 	if (QIcon::hasThemeIcon(name))
 		return QIcon::fromTheme(name);
