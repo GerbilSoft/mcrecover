@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 #include "McRecoverWindow.hpp"
+#include "McRecoverQApplication.hpp"
 
 // MemCard classes.
 #include "MemCard.hpp"
@@ -39,6 +40,7 @@
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDropEvent>
 #include <QtGui/QMessageBox>
+#include <QtGui/QToolBar>
 
 // git version
 #include "git.h"
@@ -76,6 +78,14 @@ class McRecoverWindowPrivate
 
 		// Search dialog.
 		SearchDialog *searchDialog;
+
+		// Memory Card toolbar.
+		QToolBar *mcToolbar;
+
+		/**
+		 * Initialize the Memory Card toolbar.
+		 */
+		void initMcToolbar(void);
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -84,6 +94,7 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, model(new MemCardModel(q))
 	, searchThread(new SearchThread(q))
 	, searchDialog(NULL)
+	, mcToolbar(NULL)
 {
 	// Show icon, description, size, mtime, permission, and gamecode by default.
 	// TODO: Allow the user to customize the columns, and save the 
@@ -116,6 +127,8 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 	// TODO: Wait for searchThread to finish?
 	delete searchDialog;
 	delete searchThread;
+
+	delete mcToolbar;
 }
 
 
@@ -130,6 +143,10 @@ void McRecoverWindowPrivate::updateLstFileList(void)
 
 		// Set the group box's title.
 		q->grpFileList->setTitle(q->tr("No memory card loaded."));
+
+		// Disable saving.
+		q->actionSave->setEnabled(false);
+		q->actionSaveAll->setEnabled(false);
 	} else {
 		// Show the QTreeView headers.
 		q->lstFileList->setHeaderHidden(false);
@@ -142,11 +159,52 @@ void McRecoverWindowPrivate::updateLstFileList(void)
 
 		// Show the filename.
 		q->grpFileList->setTitle(displayFilename);
+
+		// Enable saving.
+		q->actionSave->setEnabled(
+			q->lstFileList->selectionModel()->hasSelection());
+		q->actionSaveAll->setEnabled(true);
 	}
 
 	// Resize the columns to fit the contents.
 	for (int i = 0; i < model->columnCount(); i++)
 		q->lstFileList->resizeColumnToContents(i);
+}
+
+
+/**
+ * Initialize the Memory Card toolbar.
+ */
+void McRecoverWindowPrivate::initMcToolbar(void)
+{
+	// Set action icons.
+	// FIXME: Currently specifying fd.o theme icons in the UI file.
+	// Does this work properly when compiled with Qt <4.8?
+	q->actionOpen->setIcon(
+		McRecoverQApplication::IconFromTheme(QLatin1String("document-open")));
+	q->actionSave->setIcon(
+		McRecoverQApplication::IconFromTheme(QLatin1String("document-save")));
+	q->actionSaveAll->setIcon(
+		McRecoverQApplication::IconFromTheme(QLatin1String("document-save-all")));
+
+	// Disable save actions by default.
+	q->actionSave->setEnabled(false);
+	q->actionSaveAll->setEnabled(false);
+
+	// Initialize the Memory Card Toolbar.
+	mcToolbar = new QToolBar(QLatin1String("Memory Card"), q);
+	mcToolbar->setToolButtonStyle(Qt::ToolButtonIconOnly);
+
+	// Win32 style has a border. Get rid of it.
+	mcToolbar->setStyleSheet(QLatin1String("QToolBar { border: 0px }"));
+
+	// Add actions to the toolbar.
+	mcToolbar->addAction(q->actionOpen);
+	mcToolbar->addAction(q->actionSave);
+	mcToolbar->addAction(q->actionSaveAll);
+
+	// Add the toolbar to the Memory Card information box.
+	q->vboxMemCardInfo->addWidget(mcToolbar);
 }
 
 
@@ -201,6 +259,9 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 
 	// Initialize the memory card's QTreeView.
 	d->updateLstFileList();
+
+	// Initialize the Memory Card toolbar.
+	d->initMcToolbar();
 }
 
 McRecoverWindow::~McRecoverWindow()
@@ -401,6 +462,12 @@ void McRecoverWindow::lstFileList_selectionModel_currentRowChanged(
 	const QModelIndex& current, const QModelIndex& previous)
 {
 	Q_UNUSED(previous)
+
+	// If file(s) are selected, enable the Save action.
+	// FIXME: Selection model is empty due to the initial selection bug
+	// that happens if a file was specified on the command line.
+	//actionSave->setEnabled(lstFileList->selectionModel()->hasSelection());
+	actionSave->setEnabled(current.row() >= 0);
 
 	// Set the MemCardFileView's MemCardFile to the
 	// selected file in the QTreeView.

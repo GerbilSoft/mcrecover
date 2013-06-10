@@ -1,5 +1,5 @@
 <RCC>
-  <qresource prefix="icons/oxygen">
+  <qresource prefix="oxygen">
     <file>index.theme</file>
 
     <file>16x16/document-open.png</file>

@@ -155,6 +155,39 @@
     </item>
    </layout>
   </widget>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset theme="document-open"/>
+   </property>
+   <property name="text">
+    <string>&amp;Open</string>
+   </property>
+   <property name="toolTip">
+    <string>Open a GCN memory card file.</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset theme="document-save"/>
+   </property>
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Save the selected file(s).</string>
+   </property>
+  </action>
+  <action name="actionSaveAll">
+   <property name="icon">
+    <iconset theme="document-save-all"/>
+   </property>
+   <property name="text">
+    <string>Save &amp;All</string>
+   </property>
+   <property name="toolTip">
+    <string>Save all files.</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -176,6 +209,8 @@
   <tabstop>btnSearchLostFiles</tabstop>
   <tabstop>mcfFileView</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="resources/oxygen/oxygen.qrc"/>
+ </resources>
  <connections/>
 </ui>
