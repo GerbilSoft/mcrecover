@@ -88,8 +88,7 @@ void AboutDialogPrivate::initAboutDialogText(void)
 
 	// Build the copyright string.
 	// TODO: More copyrights.
-	QString sCopyrights = QString::fromUtf8(
-			"Copyright (c) 2012-2013 by David Korth.");
+	QString sCopyrights = QLatin1String("Copyright (c) 2012-2013 by David Korth.");
 
 	// Set the copyright string.
 	q->lblCopyrights->setText(sCopyrights);
