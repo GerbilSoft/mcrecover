@@ -282,7 +282,7 @@ void StatusBarManager::setSearchThread(SearchThread *searchThread)
 
 
 /**
- * A memory card image was opened.
+ * A GameCube Memory Card image was opened.
  * @param filename Filename.
  */
 void StatusBarManager::opened(QString filename)
@@ -298,7 +298,7 @@ void StatusBarManager::opened(QString filename)
 
 
 /**
- * The current memory card image was closed.
+ * The current GameCube Memory Card image was closed.
  */
 void StatusBarManager::closed(void)
 {

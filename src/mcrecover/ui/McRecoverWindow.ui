@@ -169,7 +169,7 @@
     <string>&amp;Open</string>
    </property>
    <property name="toolTip">
-    <string>Open a GCN memory card file</string>
+    <string>Open a GameCube Memory Card image</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -245,7 +245,7 @@
     <string>&amp;Close</string>
    </property>
    <property name="toolTip">
-    <string>Close the memory card image</string>
+    <string>Close the GameCube Memory Card image</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>

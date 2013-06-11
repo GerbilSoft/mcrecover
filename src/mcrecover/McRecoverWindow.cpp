@@ -37,6 +37,7 @@
 // Qt includes. (Drag & Drop)
 #include <QtCore/QUrl>
 #include <QtCore/QStack>
+#include <QtGui/QAction>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDropEvent>
 #include <QtGui/QFileDialog>
@@ -307,7 +308,7 @@ McRecoverWindow::~McRecoverWindow()
 
 
 /**
- * Open a GameCube Memory Card file.
+ * Open a GameCube Memory Card image.
  * @param filename Filename.
  */
 void McRecoverWindow::open(QString filename)
@@ -319,7 +320,7 @@ void McRecoverWindow::open(QString filename)
 		delete d->card;
 	}
 
-	// Open the specified memory card file.
+	// Open the specified memory card image.
 	d->card = new MemCard(filename);
 	// TODO: Make sure the card is open.
 	d->model->setMemCard(d->card);
@@ -342,7 +343,7 @@ void McRecoverWindow::open(QString filename)
 
 
 /**
- * Close the currently-opened GameCube Memory Card file.
+ * Close the currently-opened GameCube Memory Card image.
  */
 void McRecoverWindow::close(void)
 {
