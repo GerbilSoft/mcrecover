@@ -19,6 +19,12 @@
    </property>
    <item row="0" column="0" colspan="2">
     <widget class="QLabel" name="lblBlockCount">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string notr="true">%L1 block(s) (%L2 free)</string>
      </property>
@@ -81,6 +87,12 @@
    </item>
    <item row="2" column="1">
     <widget class="QLabel" name="lblEncoding">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string notr="true">???</string>
      </property>

@@ -104,6 +104,12 @@
    </item>
    <item row="1" column="0" colspan="2">
     <widget class="QLabel" name="lblFilename">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string notr="true">Filename</string>
      </property>
@@ -168,6 +174,12 @@
    </item>
    <item row="3" column="1">
     <widget class="QLabel" name="lblChecksumAlgorithm">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string notr="true">Unknown</string>
      </property>
@@ -204,6 +216,12 @@ Checksum:</string>
    </item>
    <item row="4" column="1">
     <widget class="QLabel" name="lblChecksumActual">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="font">
       <font>
        <family>Monospace</family>
@@ -247,6 +265,12 @@ Checksum:</string>
    </item>
    <item row="5" column="1">
     <widget class="QLabel" name="lblChecksumExpected">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="font">
       <font>
        <family>Monospace</family>
