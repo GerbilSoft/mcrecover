@@ -53,9 +53,9 @@ class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
 		void dropEvent(QDropEvent *event);
 
 	protected slots:
-		// Widget slots.
-		void on_btnSearchLostFiles_clicked(void);
-		void on_btnLoadDatabase_clicked(void);
+		// Actions.
+		void on_actionScan_triggered(void);
+		void on_actionExit_triggered(void);
 
 		// MemCardModel slots.
 		void memCardModel_layoutChanged(void);

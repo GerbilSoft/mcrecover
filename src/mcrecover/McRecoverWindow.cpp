@@ -402,9 +402,20 @@ void McRecoverWindow::dropEvent(QDropEvent *event)
 }
 
 
-void McRecoverWindow::on_btnSearchLostFiles_clicked(void)
+/**
+ * Scan for lost files.
+ */
+void McRecoverWindow::on_actionScan_triggered(void)
 {
 	if (!d->card)
+		return;
+
+	// Load the database.
+	// TODO:
+	// - Only if the database is not loaded,
+	//   or if the database file has been changed.
+	int ret = d->searchThread->loadGcnMcFileDb(QLatin1String("GcnMcFileDb.xml"));
+	if (ret != 0)
 		return;
 
 	// Remove lost files from the card.
@@ -419,21 +430,24 @@ void McRecoverWindow::on_btnSearchLostFiles_clicked(void)
 
 	// Search blocks for lost files.
 	// TODO: Handle errors.
-	int ret = d->searchThread->searchMemCard_async(d->card);
+	ret = d->searchThread->searchMemCard_async(d->card);
 	if (ret < 0) {
 		// Error starting the thread.
 		// Use the synchronous version.
 		// TODO: Handle errors.
 		// NOTE: Files will be added by searchThread_searchFinished_slot().
-		int ret = d->searchThread->searchMemCard(d->card);
+		ret = d->searchThread->searchMemCard(d->card);
 	}
 }
 
 
-void McRecoverWindow::on_btnLoadDatabase_clicked(void)
+/**
+ * Exit the program.
+ * TODO: Separate close/exit for Mac OS X?
+ */
+void McRecoverWindow::on_actionExit_triggered(void)
 {
-	int ret = d->searchThread->loadGcnMcFileDb(QLatin1String("GcnMcFileDb.xml"));
-	// TODO: Handle errors.
+	this->close();
 }
 
 

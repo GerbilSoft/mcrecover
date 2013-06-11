@@ -41,37 +41,6 @@
              </property>
             </widget>
            </item>
-           <item>
-            <layout class="QHBoxLayout" name="hboxCmdButtons">
-             <item>
-              <widget class="QPushButton" name="btnLoadDatabase">
-               <property name="text">
-                <string>&amp;Load Database</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="btnSearchLostFiles">
-               <property name="text">
-                <string>&amp;Search for Lost Files</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="hspcCmdButtons">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
           </layout>
          </widget>
         </item>
@@ -274,8 +243,6 @@
  </customwidgets>
  <tabstops>
   <tabstop>lstFileList</tabstop>
-  <tabstop>btnLoadDatabase</tabstop>
-  <tabstop>btnSearchLostFiles</tabstop>
   <tabstop>mcfFileView</tabstop>
  </tabstops>
  <resources>
