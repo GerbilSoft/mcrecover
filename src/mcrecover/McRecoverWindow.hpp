@@ -63,6 +63,7 @@ class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
 		void on_actionClose_triggered(void);
 		void on_actionScan_triggered(void);
 		void on_actionExit_triggered(void);
+		void on_actionAbout_triggered(void);
 
 		// MemCardModel slots.
 		void memCardModel_layoutChanged(void);

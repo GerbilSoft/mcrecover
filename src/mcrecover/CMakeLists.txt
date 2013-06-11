@@ -83,6 +83,7 @@ SET(mcrecover_SRCS
 	MemCardView.cpp
 	IconAnimHelper.cpp
 	McRecoverQApplication.cpp
+	AboutDialog.cpp
 	)
 
 # Win32-specific sources.
@@ -108,6 +109,7 @@ SET(mcrecover_MOC_HEADERS
 	MemCardView.hpp
 	IconAnimHelper.hpp
 	McRecoverQApplication.hpp
+	AboutDialog.hpp
 	)
 
 # UI files.
@@ -115,6 +117,7 @@ SET(mcrecover_UIS
 	ui/McRecoverWindow.ui
 	ui/MemCardFileView.ui
 	ui/MemCardView.ui
+	ui/AboutDialog.ui
 	)
 
 # Generate the header files from the UI files.

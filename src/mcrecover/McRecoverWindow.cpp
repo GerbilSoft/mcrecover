@@ -21,6 +21,7 @@
 
 #include "McRecoverWindow.hpp"
 #include "McRecoverQApplication.hpp"
+#include "AboutDialog.hpp"
 
 // MemCard classes.
 #include "MemCard.hpp"
@@ -507,6 +508,15 @@ void McRecoverWindow::on_actionScan_triggered(void)
 void McRecoverWindow::on_actionExit_triggered(void)
 {
 	this->close();
+}
+
+
+/**
+ * Show the About dialog.
+ */
+void McRecoverWindow::on_actionAbout_triggered(void)
+{
+	AboutDialog::ShowSingle();
 }
 
 
