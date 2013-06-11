@@ -211,10 +211,27 @@ QIcon McRecoverQApplication::IconFromTheme(QString name)
 
 	// System icon doesn't exist.
 	// Get the fallback icon.
+	struct IconSz_t {
+		QString path;
+		int sz;
+	};
+
+	static const IconSz_t iconSz[] = {
+		{QLatin1String(":/oxygen/128x128/"), 128},
+		{QLatin1String(":/oxygen/64x64/"), 64},
+		{QLatin1String(":/oxygen/48x48/"), 48},
+		{QLatin1String(":/oxygen/32x32/"), 32},
+		{QLatin1String(":/oxygen/22x22/"), 22},
+		{QLatin1String(":/oxygen/16x16/"), 16}
+	};
+	static const QString pngExt = QLatin1String(".png");
+
 	QIcon icon;
-	icon.addFile(QLatin1String(":/oxygen/48x48/") + name + QLatin1String(".png"), QSize(48, 48));
-	icon.addFile(QLatin1String(":/oxygen/32x32/") + name + QLatin1String(".png"), QSize(32, 32));
-	icon.addFile(QLatin1String(":/oxygen/22x22/") + name + QLatin1String(".png"), QSize(22, 22));
-	icon.addFile(QLatin1String(":/oxygen/16x16/") + name + QLatin1String(".png"), QSize(16, 16));
+	for (int i = 0; i < (int)(sizeof(iconSz)/sizeof(iconSz[0])); i++) {
+		QPixmap pxm(iconSz[i].path + name + pngExt);
+		if (!pxm.isNull())
+			icon.addPixmap(pxm);
+	}
+
 	return icon;
 }

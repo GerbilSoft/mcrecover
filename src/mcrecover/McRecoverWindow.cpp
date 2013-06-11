@@ -86,6 +86,11 @@ class McRecoverWindowPrivate
 		 * Initialize the Memory Card toolbar.
 		 */
 		void initMcToolbar(void);
+
+		/**
+		 * Update the action enable status.
+		 */
+		void updateActionEnableStatus(void);
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -143,10 +148,6 @@ void McRecoverWindowPrivate::updateLstFileList(void)
 
 		// Set the group box's title.
 		q->grpFileList->setTitle(q->tr("No memory card loaded."));
-
-		// Disable saving.
-		q->actionSave->setEnabled(false);
-		q->actionSaveAll->setEnabled(false);
 	} else {
 		// Show the QTreeView headers.
 		q->lstFileList->setHeaderHidden(false);
@@ -159,12 +160,10 @@ void McRecoverWindowPrivate::updateLstFileList(void)
 
 		// Show the filename.
 		q->grpFileList->setTitle(displayFilename);
-
-		// Enable saving.
-		q->actionSave->setEnabled(
-			q->lstFileList->selectionModel()->hasSelection());
-		q->actionSaveAll->setEnabled(card->numFiles() > 0);
 	}
+
+	// Update the action enable status.
+	updateActionEnableStatus();
 
 	// Resize the columns to fit the contents.
 	for (int i = 0; i < model->columnCount(); i++)
@@ -182,10 +181,14 @@ void McRecoverWindowPrivate::initMcToolbar(void)
 	// Does this work properly when compiled with Qt <4.8?
 	q->actionOpen->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("document-open")));
+	q->actionScan->setIcon(
+		McRecoverQApplication::IconFromTheme(QLatin1String("edit-find")));
 	q->actionSave->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("document-save")));
 	q->actionSaveAll->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("document-save-all")));
+	q->actionAbout->setIcon(
+		McRecoverQApplication::IconFromTheme(QLatin1String("help-about")));
 
 	// Disable save actions by default.
 	q->actionSave->setEnabled(false);
@@ -200,11 +203,36 @@ void McRecoverWindowPrivate::initMcToolbar(void)
 
 	// Add actions to the toolbar.
 	mcToolbar->addAction(q->actionOpen);
+	mcToolbar->addAction(q->actionScan);
 	mcToolbar->addAction(q->actionSave);
 	mcToolbar->addAction(q->actionSaveAll);
 
+	// Make sure the "About" button is right-aligned.
+	QWidget *spacer = new QWidget(q);
+	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	mcToolbar->addWidget(spacer);
+	mcToolbar->addAction(q->actionAbout);
+
 	// Add the toolbar to the Memory Card information box.
 	q->vboxMemCardInfo->addWidget(mcToolbar);
+}
+
+
+void McRecoverWindowPrivate::updateActionEnableStatus(void)
+{
+	if (!card) {
+		// No memory card image is loaded.
+		q->actionScan->setEnabled(false);
+		q->actionSave->setEnabled(false);
+		q->actionSaveAll->setEnabled(false);
+	} else {
+		// Memory card image is loaded.
+		// TODO: Disable open, scan, and save (all) if we're scanning.
+		q->actionScan->setEnabled(true);
+		q->actionSave->setEnabled(
+			q->lstFileList->selectionModel()->hasSelection());
+		q->actionSaveAll->setEnabled(card->numFiles() > 0);
+	}
 }
 
 

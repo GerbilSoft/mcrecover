@@ -2,20 +2,38 @@
   <qresource prefix="oxygen">
     <file>index.theme</file>
 
+    <file>16x16/application-exit.png</file>
+    <file>22x22/application-exit.png</file>
+    <file>32x32/application-exit.png</file>
+    <file>48x48/application-exit.png</file>
+    <file>64x64/application-exit.png</file>
+    <file>128x128/application-exit.png</file>
+
     <file>16x16/document-open.png</file>
-    <file>16x16/document-save.png</file>
-    <file>16x16/document-save-all.png</file>
-
     <file>22x22/document-open.png</file>
-    <file>22x22/document-save.png</file>
-    <file>22x22/document-save-all.png</file>
-
     <file>32x32/document-open.png</file>
-    <file>32x32/document-save.png</file>
-    <file>32x32/document-save-all.png</file>
-
     <file>48x48/document-open.png</file>
+
+    <file>16x16/document-save.png</file>
+    <file>22x22/document-save.png</file>
+    <file>32x32/document-save.png</file>
     <file>48x48/document-save.png</file>
+
+    <file>16x16/document-save-all.png</file>
+    <file>22x22/document-save-all.png</file>
+    <file>32x32/document-save-all.png</file>
     <file>48x48/document-save-all.png</file>
+
+    <file>16x16/edit-find.png</file>
+    <file>22x22/edit-find.png</file>
+    <file>32x32/edit-find.png</file>
+    <file>48x48/edit-find.png</file>
+    <file>64x64/edit-find.png</file>
+    <file>128x128/edit-find.png</file>
+
+    <file>16x16/help-about.png</file>
+    <file>22x22/help-about.png</file>
+    <file>32x32/help-about.png</file>
+    <file>48x48/help-about.png</file>
   </qresource>
 </RCC>
