@@ -26,7 +26,7 @@
       <property name="childrenCollapsible">
        <bool>false</bool>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutwidget">
        <layout class="QVBoxLayout" name="vboxFileList">
         <item>
          <widget class="QGroupBox" name="grpFileList">
@@ -46,7 +46,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutwidget">
        <layout class="QVBoxLayout" name="vboxCardFileInfo">
         <property name="spacing">
          <number>8</number>
@@ -58,30 +58,45 @@
           </property>
           <layout class="QVBoxLayout" name="vboxMemCardInfo">
            <item>
-            <widget class="MemCardView" name="mcCardView" native="true">
-             <property name="minimumSize">
-              <size>
-               <width>200</width>
-               <height>32</height>
-              </size>
+            <widget class="QScrollArea" name="scrlMemCardInfo">
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
              </property>
-             <property name="focusPolicy">
-              <enum>Qt::TabFocus</enum>
+             <property name="horizontalScrollBarPolicy">
+              <enum>Qt::ScrollBarAlwaysOff</enum>
              </property>
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="scrlMemCardInfoWidget">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>354</width>
+                <height>202</height>
+               </rect>
+              </property>
+              <layout class="QVBoxLayout" name="vboxScrlMemCardInfo">
+               <property name="margin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="MemCardView" name="mcCardView" native="true">
+                 <property name="minimumSize">
+                  <size>
+                   <width>200</width>
+                   <height>32</height>
+                  </size>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::TabFocus</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
             </widget>
-           </item>
-           <item>
-            <spacer name="vspcMemCardInfo">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
            </item>
           </layout>
          </widget>
@@ -93,30 +108,45 @@
           </property>
           <layout class="QVBoxLayout" name="vboxFileInfo">
            <item>
-            <widget class="MemCardFileView" name="mcfFileView" native="true">
-             <property name="minimumSize">
-              <size>
-               <width>146</width>
-               <height>32</height>
-              </size>
+            <widget class="QScrollArea" name="scrlFileInfo">
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
              </property>
-             <property name="focusPolicy">
-              <enum>Qt::TabFocus</enum>
+             <property name="horizontalScrollBarPolicy">
+              <enum>Qt::ScrollBarAlwaysOff</enum>
              </property>
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="scrlFileInfoWidget">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>354</width>
+                <height>201</height>
+               </rect>
+              </property>
+              <layout class="QVBoxLayout" name="vboxScrlFileInfo">
+               <property name="margin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="MemCardFileView" name="mcfFileView" native="true">
+                 <property name="minimumSize">
+                  <size>
+                   <width>146</width>
+                   <height>32</height>
+                  </size>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::TabFocus</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
             </widget>
-           </item>
-           <item>
-            <spacer name="vspcFileInfo">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
            </item>
           </layout>
          </widget>
@@ -283,7 +313,9 @@
  </customwidgets>
  <tabstops>
   <tabstop>lstFileList</tabstop>
+  <tabstop>scrlMemCardInfo</tabstop>
   <tabstop>mcCardView</tabstop>
+  <tabstop>scrlFileInfo</tabstop>
   <tabstop>mcfFileView</tabstop>
  </tabstops>
  <resources>

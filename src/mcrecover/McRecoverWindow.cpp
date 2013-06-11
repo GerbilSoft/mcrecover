@@ -270,7 +270,7 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	// Set up the QSplitter sizes.
 	// We want the card info panel to be 160px wide at startup.
 	// TODO: Save positioning settings somewhere?
-	static const int MemCardInfoPanelWidth = 160;
+	static const int MemCardInfoPanelWidth = 256;
 	QList<int> sizes;
 	sizes.reserve(2);
 	sizes.append(this->width() - MemCardInfoPanelWidth);
