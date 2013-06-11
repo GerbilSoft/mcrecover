@@ -292,6 +292,8 @@ void StatusBarManager::opened(QString filename)
 	if (lastSlash >= 0)
 		filename.remove(0, lastSlash + 1);
 
+	d->scanning = false;
+	d->progressBar->setVisible(false);
 	d->lastStatusMessage = tr("Loaded GameCube Memory Card image %1").arg(filename);
 	d->updateStatusBar();
 }
@@ -302,6 +304,8 @@ void StatusBarManager::opened(QString filename)
  */
 void StatusBarManager::closed(void)
 {
+	d->scanning = false;
+	d->progressBar->setVisible(false);
 	d->lastStatusMessage = tr("GameCube Memory Card image closed.");
 	d->updateStatusBar();
 }
