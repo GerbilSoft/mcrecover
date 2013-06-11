@@ -217,10 +217,12 @@ QIcon McRecoverQApplication::IconFromTheme(QString name)
 	};
 
 	static const IconSz_t iconSz[] = {
+		{QLatin1String(":/oxygen/256x256/"), 256},
 		{QLatin1String(":/oxygen/128x128/"), 128},
 		{QLatin1String(":/oxygen/64x64/"), 64},
 		{QLatin1String(":/oxygen/48x48/"), 48},
 		{QLatin1String(":/oxygen/32x32/"), 32},
+		{QLatin1String(":/oxygen/24x24/"), 24},
 		{QLatin1String(":/oxygen/22x22/"), 22},
 		{QLatin1String(":/oxygen/16x16/"), 16}
 	};

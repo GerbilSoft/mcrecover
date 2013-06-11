@@ -24,6 +24,7 @@
 // MemCard classes.
 #include "MemCard.hpp"
 #include "MemCardFile.hpp"
+#include "McRecoverQApplication.hpp"
 
 // Icon animation helper.
 #include "IconAnimHelper.hpp"
@@ -160,11 +161,11 @@ void MemCardModelPrivate::style_t::init(void)
 
 	// Initialize the COL_ISVALID pixmaps.
 	QStyle *style = QApplication::style();
-	pxmIsValid_unknown = style->standardIcon(QStyle::SP_MessageBoxQuestion)
+	pxmIsValid_unknown = McRecoverQApplication::IconFromTheme(QLatin1String("dialog-question"))
 				.pixmap(pxmIsValid_width, pxmIsValid_height);
-	pxmIsValid_invalid = style->standardIcon(QStyle::SP_MessageBoxCritical)
+	pxmIsValid_invalid = McRecoverQApplication::IconFromTheme(QLatin1String("dialog-error"))
 				.pixmap(pxmIsValid_width, pxmIsValid_height);
-	pxmIsValid_good    = style->standardIcon(QStyle::SP_DialogOkButton)
+	pxmIsValid_good    = McRecoverQApplication::IconFromTheme(QLatin1String("dialog-ok-apply"))
 				.pixmap(pxmIsValid_width, pxmIsValid_height);
 }
 
