@@ -14,6 +14,11 @@
     <file>32x32/document-open.png</file>
     <file>48x48/document-open.png</file>
 
+    <file>16x16/document-close.png</file>
+    <file>22x22/document-close.png</file>
+    <file>32x32/document-close.png</file>
+    <file>48x48/document-close.png</file>
+
     <file>16x16/document-save.png</file>
     <file>22x22/document-save.png</file>
     <file>32x32/document-save.png</file>

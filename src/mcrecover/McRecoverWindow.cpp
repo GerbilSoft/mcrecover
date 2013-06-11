@@ -181,6 +181,8 @@ void McRecoverWindowPrivate::initMcToolbar(void)
 	// Does this work properly when compiled with Qt <4.8?
 	q->actionOpen->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("document-open")));
+	q->actionClose->setIcon(
+		McRecoverQApplication::IconFromTheme(QLatin1String("document-close")));
 	q->actionScan->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("edit-find")));
 	q->actionSave->setIcon(
@@ -222,12 +224,14 @@ void McRecoverWindowPrivate::updateActionEnableStatus(void)
 {
 	if (!card) {
 		// No memory card image is loaded.
+		q->actionClose->setEnabled(false);
 		q->actionScan->setEnabled(false);
 		q->actionSave->setEnabled(false);
 		q->actionSaveAll->setEnabled(false);
 	} else {
 		// Memory card image is loaded.
 		// TODO: Disable open, scan, and save (all) if we're scanning.
+		q->actionClose->setEnabled(true);
 		q->actionScan->setEnabled(true);
 		q->actionSave->setEnabled(
 			q->lstFileList->selectionModel()->hasSelection());
