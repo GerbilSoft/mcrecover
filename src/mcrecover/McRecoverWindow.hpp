@@ -54,6 +54,8 @@ class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
 
 	protected slots:
 		// Actions.
+		void on_actionOpen_triggered(void);
+		void on_actionClose_triggered(void);
 		void on_actionScan_triggered(void);
 		void on_actionExit_triggered(void);
 

@@ -39,6 +39,7 @@
 #include <QtCore/QStack>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDropEvent>
+#include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
 #include <QtGui/QToolBar>
 
@@ -406,6 +407,45 @@ void McRecoverWindow::dropEvent(QDropEvent *event)
 
 	// Open the memory card file.
 	open(filename);
+}
+
+
+/**
+ * Open a memory card image.
+ */
+void McRecoverWindow::on_actionOpen_triggered(void)
+{
+	// TODO: Set the default filename.
+	QString filename = QFileDialog::getOpenFileName(this,
+			tr("Open GameCube Memory Card Image"),	// Dialog title
+			QString(),				// Default filename
+			tr("GameCube Memory Card Image") + QLatin1String(" (*.raw);;") +
+			tr("All Files") + QLatin1String(" (*)"));
+
+	if (filename.isEmpty())
+		return;
+
+	// Open the memory card file.
+	open(filename);
+}
+
+
+/**
+ * Close the currently-opened memory card image.
+ */
+void McRecoverWindow::on_actionClose_triggered(void)
+{
+	if (!d->card)
+		return;
+
+	d->model->setMemCard(NULL);
+	mcCardView->setCard(NULL);
+	mcfFileView->setFile(NULL);
+	delete d->card;
+	d->card = NULL;
+
+	// Update the memory card's QTreeView.
+	d->updateLstFileList();
 }
 
 
