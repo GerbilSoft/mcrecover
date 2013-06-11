@@ -212,10 +212,10 @@ QString AboutDialogPrivate::GetDebugInfo(void)
 #include <windows.h>
 
 /**
- * GetCodePageInfo(): Get information about the system code pages.
+ * Get information about the system code pages.
  * @return System code page information.
  */
-QString AboutDialog::GetCodePageInfo(void)
+QString AboutDialogPrivate::GetCodePageInfo(void)
 {
 	QString sCodePageInfo;
 
@@ -234,14 +234,14 @@ QString AboutDialog::GetCodePageInfo(void)
 
 	// TODO: GetCPInfoExU() support?
 	for (int i = 0; i < 2; i++) {
-		sCodePageInfo += tr(m_cpInfo[i].cpStr);
+		sCodePageInfo += AboutDialog::tr(m_cpInfo[i].cpStr);
 
 		// Get the code page information.
 		CPINFOEX cpix;
 		BOOL bRet = GetCPInfoExA(m_cpInfo[i].cp, 0, &cpix);
 		if (!bRet) {
 			//: GetCPInfoExA() call failed.
-			sCodePageInfo += tr("Unknown [GetCPInfoExA() failed]") + QChar(L'\n');
+			sCodePageInfo += AboutDialog::tr("Unknown [GetCPInfoExA() failed]") + QChar(L'\n');
 			continue;
 		}
 
@@ -279,10 +279,10 @@ QString AboutDialog::GetCodePageInfo(void)
 	// Is Gens/GS II using Unicode?
 	if (GetModuleHandleW(NULL) != NULL) {
 		//: Win32: Unicode strings are being used. (WinNT)
-		sCodePageInfo += tr("Using Unicode strings for Win32 API.");
+		sCodePageInfo += AboutDialog::tr("Using Unicode strings for Win32 API.");
 	} else {
 		//: Win32: ANSI strings are being used. (Win9x)
-		sCodePageInfo += tr("Using ANSI strings for Win32 API.");
+		sCodePageInfo += AboutDialog::tr("Using ANSI strings for Win32 API.");
 	}
 	sCodePageInfo += QChar(L'\n');
 
