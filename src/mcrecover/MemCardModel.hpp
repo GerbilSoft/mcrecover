@@ -110,6 +110,12 @@ class MemCardModel : public QAbstractListModel
 		 * @param idx File number.
 		 */
 		void memCard_fileAdded_slot(int idx);
+
+		/**
+		 * MemCard: File was removed.
+		 * @param idx File number.
+		 */
+		void memCard_fileRemoved_slot(int idx);
 };
 
 #endif /* __MCRECOVER_MEMCARDMODEL_HPP__ */

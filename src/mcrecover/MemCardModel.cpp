@@ -160,7 +160,6 @@ void MemCardModelPrivate::style_t::init(void)
 	bgColor_lostFile_alt.setHsv(h, s, v);
 
 	// Initialize the COL_ISVALID pixmaps.
-	QStyle *style = QApplication::style();
 	pxmIsValid_unknown = McRecoverQApplication::IconFromTheme(QLatin1String("dialog-question"))
 				.pixmap(pxmIsValid_width, pxmIsValid_height);
 	pxmIsValid_invalid = McRecoverQApplication::IconFromTheme(QLatin1String("dialog-error"))
@@ -536,6 +535,8 @@ void MemCardModel::setMemCard(MemCard *card)
 			   this, SLOT(memCard_changed_slot()));
 		disconnect(d->card, SIGNAL(fileAdded(int)),
 			   this, SLOT(memCard_fileAdded_slot(int)));
+		disconnect(d->card, SIGNAL(fileRemoved(int)),
+			   this, SLOT(memCard_fileRemoved_slot(int)));
 	}
 
 	d->card = card;
@@ -552,6 +553,8 @@ void MemCardModel::setMemCard(MemCard *card)
 			this, SLOT(memCard_changed_slot()));
 		connect(d->card, SIGNAL(fileAdded(int)),
 			this, SLOT(memCard_fileAdded_slot(int)));
+		connect(d->card, SIGNAL(fileRemoved(int)),
+			this, SLOT(memCard_fileRemoved_slot(int)));
 	}
 
 	// Layout has changed.
@@ -607,7 +610,7 @@ void MemCardModel::memCard_changed_slot(void)
 void MemCardModel::memCard_fileAdded_slot(int idx)
 {
 	// Data has changed.
-	emit beginInsertRows(QModelIndex(), idx, idx);
+	beginInsertRows(QModelIndex(), idx, idx);
 
 	// If this file has an animated icon, add it.
 	MemCardFile *file = d->card->getFile(idx);
@@ -615,7 +618,19 @@ void MemCardModel::memCard_fileAdded_slot(int idx)
 	d->updateAnimTimerState();
 
 	// Done updating.
-	emit endInsertRows();
+	endInsertRows();
+}
+
+
+/**
+ * MemCard: File was removed.
+ * @param idx File number.
+ */
+void MemCardModel::memCard_fileRemoved_slot(int idx)
+{
+	// Data has changed.
+	beginRemoveRows(QModelIndex(), idx, idx);
+	endRemoveRows();
 }
 
 

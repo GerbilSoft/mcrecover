@@ -615,18 +615,14 @@ QVector<uint8_t> MemCard::usedBlockMap(void)
  */
 void MemCard::removeLostFiles(void)
 {
-	bool wasFileDeleted = false;
 	for (int i = d->lstMemCardFile.size() - 1; i >= 0; i--) {
 		MemCardFile *file = d->lstMemCardFile.at(i);
 		if (file->isLostFile()) {
 			// This is a "lost" file. Remove it.
+			emit fileRemoved(i);
 			d->lstMemCardFile.removeAt(i);
-			wasFileDeleted = true;
 		}
 	}
-
-	if (wasFileDeleted)
-		emit changed();
 }
 
 

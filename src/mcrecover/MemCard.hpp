@@ -60,9 +60,17 @@ class MemCard : public QObject
 
 		/**
 		 * File was added to the MemCard.
+		 * * TODO: Add fileAboutToBeAdded?
 		 * @param idx File number.
 		 */
 		void fileAdded(int idx);
+
+		/**
+		 * File was removed from the MemCard.
+		 * TODO: Add fileAboutToBeRemoved?
+		 * @param idx File number.
+		 */
+		void fileRemoved(int idx);
 
 	public:
 		/**
