@@ -204,7 +204,7 @@ void McRecoverWindowPrivate::initMcToolbar(void)
 	mcToolbar->setToolButtonStyle(Qt::ToolButtonIconOnly);
 
 	// Win32 style has a border. Get rid of it.
-	mcToolbar->setStyleSheet(QLatin1String("QToolBar { border: 0px }"));
+	mcToolbar->setStyleSheet(QLatin1String("QToolBar { border: none }"));
 
 	// Add actions to the toolbar.
 	mcToolbar->addAction(q->actionOpen);
