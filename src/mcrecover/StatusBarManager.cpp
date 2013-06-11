@@ -253,7 +253,36 @@ void StatusBarManager::setSearchThread(SearchThread *searchThread)
 }
 
 
-/** Slots. **/
+/** Public Slots. **/
+
+
+/**
+ * A memory card image was opened.
+ * @param filename Filename.
+ */
+void StatusBarManager::opened(QString filename)
+{
+	// Extract the filename from the path.
+	int lastSlash = filename.lastIndexOf(QChar(L'/'));
+	if (lastSlash >= 0)
+		filename.remove(0, lastSlash + 1);
+
+	d->lastStatusMessage = tr("Loaded GameCube Memory Card image %1").arg(filename);
+	d->updateStatusBar();
+}
+
+
+/**
+ * The current memory card image was closed.
+ */
+void StatusBarManager::closed(void)
+{
+	d->lastStatusMessage = tr("GameCube Memory Card image closed.");
+	d->updateStatusBar();
+}
+
+
+/** Private Slots. **/
 
 
 /**

@@ -47,6 +47,11 @@ class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
 		 */
 		void open(QString filename);
 
+		/**
+		 * Close the currently-opened GameCube Memory Card file.
+		 */
+		void close(void);
+
 	protected:
 		// QMainWindow virtual functions: drag and drop.
 		void dragEnterEvent(QDragEnterEvent *event);

@@ -74,6 +74,18 @@ class StatusBarManager : public QObject
 		 */
 		void setSearchThread(SearchThread *searchThread);
 
+	public slots:
+		/**
+		 * A GameCube Memory Card image was opened.
+		 * @param filename Filename.
+		 */
+		void opened(QString filename);
+
+		/**
+		 * The current GameCube Memory Card image was closed.
+		 */
+		void closed(void);
+
 	private slots:
 		/**
 		 * An object has been destroyed.

@@ -332,9 +332,31 @@ void McRecoverWindow::open(QString filename)
 	// Update the memory card's QTreeView.
 	d->updateLstFileList();
 
+	// Update the status bar.
+	d->statusBarManager->opened(filename);
+
 	// FIXME: If a file is opened from the command line,
 	// QTreeView sort-of selects the first file.
 	// (Signal is emitted, but nothing is highlighted.)
+}
+
+
+/**
+ * Close the currently-opened GameCube Memory Card file.
+ */
+void McRecoverWindow::close(void)
+{
+	d->model->setMemCard(NULL);
+	mcCardView->setCard(NULL);
+	mcfFileView->setFile(NULL);
+	delete d->card;
+	d->card = NULL;
+
+	// Update the memory card's QTreeView.
+	d->updateLstFileList();
+
+	// Update the status bar.
+	d->statusBarManager->closed();
 }
 
 
@@ -438,14 +460,7 @@ void McRecoverWindow::on_actionClose_triggered(void)
 	if (!d->card)
 		return;
 
-	d->model->setMemCard(NULL);
-	mcCardView->setCard(NULL);
-	mcfFileView->setFile(NULL);
-	delete d->card;
-	d->card = NULL;
-
-	// Update the memory card's QTreeView.
-	d->updateLstFileList();
+	close();
 }
 
 
