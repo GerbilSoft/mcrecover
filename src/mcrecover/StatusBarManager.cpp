@@ -26,6 +26,7 @@
 
 // Qt includes.
 #include <QtGui/QApplication>
+#include <QtGui/QLabel>
 #include <QtGui/QStatusBar>
 #include <QtGui/QProgressBar>
 
@@ -45,6 +46,9 @@ class StatusBarManagerPrivate
 	public:
 		// Status bar.
 		QStatusBar *statusBar;
+
+		// Message label.
+		QLabel *lblMessage;
 
 		// Progress bar.
 		QProgressBar *progressBar;
@@ -75,6 +79,7 @@ class StatusBarManagerPrivate
 StatusBarManagerPrivate::StatusBarManagerPrivate(StatusBarManager *q)
 	: q(q)
 	, statusBar(NULL)
+	, lblMessage(NULL)
 	, progressBar(NULL)
 	, searchThread(NULL)
 	, scanning(false)
@@ -90,6 +95,7 @@ StatusBarManagerPrivate::StatusBarManagerPrivate(StatusBarManager *q)
 
 StatusBarManagerPrivate::~StatusBarManagerPrivate()
 {
+	delete lblMessage;
 	delete progressBar;
 	delete statusBar;
 }
@@ -119,8 +125,8 @@ void StatusBarManagerPrivate::updateStatusBar(void)
 	}
 
 	// Set the status bar message.
-	if (statusBar)
-		statusBar->showMessage(lastStatusMessage);
+	if (lblMessage)
+		lblMessage->setText(lastStatusMessage);
 
 	// Set the progress bar values.
 	// TODO: Hide the progress bar ~5 seconds after scan is complete?
@@ -137,11 +143,13 @@ void StatusBarManagerPrivate::updateStatusBar(void)
 /** StatusBarManager **/
 
 StatusBarManager::StatusBarManager(QObject *parent)
-	: d(new StatusBarManagerPrivate(this))
+	: QObject(parent)
+	, d(new StatusBarManagerPrivate(this))
 { }
 
 StatusBarManager::StatusBarManager(QStatusBar *statusBar, QObject *parent)
-	: d(new StatusBarManagerPrivate(this))
+	: QObject(parent)
+	, d(new StatusBarManagerPrivate(this))
 {
 	// Initialize the status bar.
 	setStatusBar(statusBar);
@@ -170,6 +178,10 @@ void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 		// Disconnect signals from the current statusBar.
 		disconnect(d->statusBar, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(object_destroyed_slot(QObject*)));
+		disconnect(d->lblMessage, SIGNAL(destroyed(QObject*)),
+			   this, SLOT(object_destroyed_slot(QObject*)));
+		disconnect(d->progressBar, SIGNAL(destroyed(QObject*)),
+			   this, SLOT(object_destroyed_slot(QObject*)));
 
 		// Delete the progress bar.
 		delete d->progressBar;
@@ -183,10 +195,23 @@ void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 		connect(d->statusBar, SIGNAL(destroyed(QObject*)),
 			this, SLOT(object_destroyed_slot(QObject*)));
 
+		// Create a new message label.
+		d->lblMessage = new QLabel();
+		d->lblMessage->setTextFormat(Qt::PlainText);
+		connect(d->lblMessage, SIGNAL(destroyed(QObject*)),
+			this, SLOT(object_destroyed_slot(QObject*)));
+		d->statusBar->addWidget(d->lblMessage);
+
 		// Create a new progress bar.
 		d->progressBar = new QProgressBar();
 		d->progressBar->setVisible(false);
-		d->statusBar->addPermanentWidget(d->progressBar);
+		connect(d->progressBar, SIGNAL(destroyed(QObject*)),
+			this, SLOT(object_destroyed_slot(QObject*)));
+		d->statusBar->addPermanentWidget(d->progressBar, 1);
+
+		// Set the progress bar's size so it doesn't randomly resize.
+		d->progressBar->setMinimumWidth(320);
+		d->progressBar->setMaximumWidth(320);
 
 		// Update the status bar.
 		d->updateStatusBar();
@@ -293,6 +318,8 @@ void StatusBarManager::object_destroyed_slot(QObject *obj)
 {
 	if (obj == d->statusBar)
 		d->statusBar = NULL;
+	else if (obj == d->lblMessage)
+		d->lblMessage = NULL;
 	else if (obj == d->progressBar)
 		d->progressBar = NULL;
 	else if (obj == d->searchThread)
