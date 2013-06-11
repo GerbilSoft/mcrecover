@@ -65,6 +65,9 @@
                <height>32</height>
               </size>
              </property>
+             <property name="focusPolicy">
+              <enum>Qt::TabFocus</enum>
+             </property>
             </widget>
            </item>
            <item>
@@ -265,6 +268,7 @@
  </customwidgets>
  <tabstops>
   <tabstop>lstFileList</tabstop>
+  <tabstop>mcCardView</tabstop>
   <tabstop>mcfFileView</tabstop>
  </tabstops>
  <resources>
