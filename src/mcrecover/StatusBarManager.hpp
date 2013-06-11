@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SearchDialog.hpp: Search dialog.                                        *
+ * StatusBarManager.hpp: Status Bar manager                                *
  *                                                                         *
  * Copyright (c) 2013 by David Korth.                                      *
  *                                                                         *
@@ -19,43 +19,54 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_SEARCHDIALOG_HPP__
-#define __MCRECOVER_SEARCHDIALOG_HPP__
+#ifndef __MCRECOVER_STATUSBARMANAGER_HPP__
+#define __MCRECOVER_STATUSBARMANAGER_HPP__
 
-#include <QtGui/QDialog>
-#include "ui_SearchDialog.h"
+// Qt includes and classes.
+#include <QtCore/QObject>
+class QStatusBar;
 
 // Card definitions.
 #include "card.h"
 
-// Qt classes.
-class QCloseEvent;
-
 // SearchThread.
 class SearchThread;
 
-// SearchDialog private class.
-class SearchDialogPrivate;
+// StatusBarManager private class.
+class StatusBarManagerPrivate;
 
-class SearchDialog : public QDialog, public Ui::SearchDialog
+class StatusBarManager : public QObject
 {
 	Q_OBJECT
 
 	public:
-		SearchDialog(QWidget *parent = 0);
-		~SearchDialog();
+		StatusBarManager(QObject *parent = 0);
+		explicit StatusBarManager(QStatusBar *statusBar, QObject *parent = 0);
+		~StatusBarManager();
 
 	private:
-		friend class SearchDialogPrivate;
-		SearchDialogPrivate *const d;
-		Q_DISABLE_COPY(SearchDialog);
+		friend class StatusBarManagerPrivate;
+		StatusBarManagerPrivate *const d;
+		Q_DISABLE_COPY(StatusBarManager);
 
 	public:
+		/**
+		 * Get the QStatusBar.
+		 * @return QStatusBar.
+		 */
+		QStatusBar *statusBar(void) const;
+
+		/**
+		 * Set the QStatusBar.
+		 * @param statusBar QStatusBar.
+		 */
+		void setStatusBar(QStatusBar *statusBar);
+
 		/**
 		 * Get the SearchThread.
 		 * @return SearchThread.
 		 */
-		SearchThread *searchThread(void);
+		SearchThread *searchThread(void) const;
 
 		/**
 		 * Set the SearchThread.
@@ -65,15 +76,10 @@ class SearchDialog : public QDialog, public Ui::SearchDialog
 
 	private slots:
 		/**
-		 * User closed the window.
-		 * @param event QCloseEvent.
+		 * An object has been destroyed.
+		 * @param obj QObject that was destroyed.
 		 */
-		void closeEvent(QCloseEvent *event);
-
-		/**
-		 * User clicked cancel.
-		 */
-		void reject(void);
+		void object_destroyed_slot(QObject *obj = 0);
 
 		/**
 		 * Search has started.
@@ -109,4 +115,4 @@ class SearchDialog : public QDialog, public Ui::SearchDialog
 		void searchError_slot(QString errorString);
 };
 
-#endif /* __MCRECOVER_SEARCHDIALOG_HPP__ */
+#endif /* __MCRECOVER_STATUSBARMANAGER_HPP__ */

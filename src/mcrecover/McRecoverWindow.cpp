@@ -29,7 +29,7 @@
 
 // Search classes.
 #include "SearchThread.hpp"
-#include "SearchDialog.hpp"
+#include "StatusBarManager.hpp"
 
 // C includes.
 #include <cstdio>
@@ -76,9 +76,6 @@ class McRecoverWindowPrivate
 		// Search thread.
 		SearchThread *searchThread;
 
-		// Search dialog.
-		SearchDialog *searchDialog;
-
 		// Memory Card toolbar.
 		QToolBar *mcToolbar;
 
@@ -91,6 +88,9 @@ class McRecoverWindowPrivate
 		 * Update the action enable status.
 		 */
 		void updateActionEnableStatus(void);
+
+		// Status Bar Manager.
+		StatusBarManager *statusBarManager;
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -98,8 +98,8 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, card(NULL)
 	, model(new MemCardModel(q))
 	, searchThread(new SearchThread(q))
-	, searchDialog(NULL)
 	, mcToolbar(NULL)
+	, statusBarManager(NULL)
 {
 	// Show icon, description, size, mtime, permission, and gamecode by default.
 	// TODO: Allow the user to customize the columns, and save the 
@@ -130,10 +130,10 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 	delete card;
 
 	// TODO: Wait for searchThread to finish?
-	delete searchDialog;
 	delete searchThread;
 
 	delete mcToolbar;
+	delete statusBarManager;
 }
 
 
@@ -195,7 +195,7 @@ void McRecoverWindowPrivate::initMcToolbar(void)
 	q->actionSaveAll->setEnabled(false);
 
 	// Initialize the Memory Card Toolbar.
-	mcToolbar = new QToolBar(QLatin1String("Memory Card"), q);
+	mcToolbar = new QToolBar(q->tr("Memory Card"), q);
 	mcToolbar->setToolButtonStyle(Qt::ToolButtonIconOnly);
 
 	// Win32 style has a border. Get rid of it.
@@ -290,6 +290,9 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 
 	// Initialize the Memory Card toolbar.
 	d->initMcToolbar();
+
+	// Initialize the Status Bar Manager.
+	d->statusBarManager = new StatusBarManager(Ui_McRecoverWindow::statusBar, this);
 }
 
 McRecoverWindow::~McRecoverWindow()
@@ -421,12 +424,8 @@ void McRecoverWindow::on_actionScan_triggered(void)
 	// Remove lost files from the card.
 	d->card->removeLostFiles();
 
-	// Initialize the Search dialog.
-	if (!d->searchDialog) {
-		d->searchDialog = new SearchDialog(this);
-		d->searchDialog->setSearchThread(d->searchThread);
-	}
-	d->searchDialog->open();
+	// Update the status bar manager.
+	d->statusBarManager->setSearchThread(d->searchThread);
 
 	// Search blocks for lost files.
 	// TODO: Handle errors.
