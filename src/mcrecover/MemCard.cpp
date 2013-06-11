@@ -619,8 +619,8 @@ void MemCard::removeLostFiles(void)
 		MemCardFile *file = d->lstMemCardFile.at(i);
 		if (file->isLostFile()) {
 			// This is a "lost" file. Remove it.
-			emit fileRemoved(i);
 			d->lstMemCardFile.removeAt(i);
+			emit fileRemoved(i);
 		}
 	}
 }
