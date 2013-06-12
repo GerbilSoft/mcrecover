@@ -316,6 +316,26 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Need for Speed Underground 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GUGE</gamecode>
+		<company>69</company>
+		<search>
+			<address>0x0010</address>
+			<gameDesc>^NFS Underground 2$</gameDesc>
+			<fileDesc>^(.*)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>NFSU2${F1}</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0050</iconAddress>
+			<iconFormat>0x0002</iconFormat>
+			<iconSpeed>0x0002</iconSpeed>
+			<permission>0x04</permission>
+			<length>7</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Pac-Man World 2</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GP2E</gamecode>
@@ -654,6 +674,27 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Star Fox: Assault</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GF7E</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^STAR FOX: ASSAULT$</gameDesc>
+			<!-- Date format: MM/DD/YYYY HH:MM:SS - TODO: Verify HH instead of H; Verify for PAL! -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>starfox.dat</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x15</iconFormat>
+			<iconSpeed>0x3F</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Super Mario Sunshine</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GMSE</gamecode>
@@ -883,6 +924,27 @@
 			<iconAddress>0x0000</iconAddress>
 			<iconFormat>0x0155</iconFormat>
 			<iconSpeed>0x0155</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Viewtiful Joe</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GVJE</gamecode>
+		<company>08</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^VIEWTIFUL JOE$</gameDesc>
+			<!-- Date format: M/D/YYYY HH:MM:SS - TODO: Verify D instead of DD; Verify for PAL! -->
+			<fileDesc>^(\d{1,2})/(\d{1,2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>VIEWTIFULJOEUSA</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>4</length>
 		</dirEntry>
