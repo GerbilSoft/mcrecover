@@ -283,9 +283,12 @@ GcnMcFileDef *GcnMcFileDbPrivate::parseXml_file(QXmlStreamReader &xml)
 		!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == myTokenType)) {
 		if (xml.tokenType() == QXmlStreamReader::StartElement) {
 			// Check what this element is.
-			if (xml.name() == QLatin1String("description")) {
-				// File description.
-				gcnMcFileDef->description = parseXml_element(xml);
+			if (xml.name() == QLatin1String("gameName")) {
+				// Game name.
+				gcnMcFileDef->gameName = parseXml_element(xml);
+			} else if (xml.name() == QLatin1String("fileInfo")) {
+				// File information.
+				gcnMcFileDef->gameName = parseXml_element(xml);
 			} else if (xml.name() == QLatin1String("gamecode")) {
 				// Game code.
 				gcnMcFileDef->gamecode = parseXml_element(xml);

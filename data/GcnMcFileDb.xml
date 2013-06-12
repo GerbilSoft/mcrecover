@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GcnMcFileDb>
 	<file>
-		<description>Action Replay</description>
+		<gameName>Action Replay</gameName>
+		<fileInfo>Data File</fileInfo>
 		<gamecode>D3GC</gamecode>
 		<company>00</company>
 		<search>
@@ -21,7 +22,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Animal Crossing</description>
+		<gameName>Animal Crossing</gameName>
+		<fileInfo>Town File</fileInfo>
 		<gamecode>GAFE</gamecode>
 		<company>01</company>
 		<search>
@@ -44,7 +46,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Animal Crossing (NES Save Data)</description>
+		<gameName>Animal Crossing</gameName>
+		<fileInfo>NES Save Data</fileInfo>
 		<gamecode>GAFE</gamecode>
 		<company>01</company>
 		<search>
@@ -63,7 +66,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Billy Hatcher and the Giant Egg</description>
+		<gameName>Billy Hatcher and the Giant Egg</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GEZE</gamecode>
 		<company>8P</company>
 		<search>
@@ -83,7 +87,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Crash Bandicoot: The Wrath of Cortex</description>
+		<gameName>Crash Bandicoot: The Wrath of Cortex</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GCBE</gamecode>
 		<company>7D</company>
 		<search>
@@ -102,7 +107,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>F-Zero GX</description>
+		<gameName>F-Zero GX</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GFZE</gamecode>
 		<company>8P</company>
 		<search>
@@ -125,7 +131,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Luigi's Mansion</description>
+		<gameName>Luigi's Mansion</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GLME</gamecode>
 		<company>01</company>
 		<search>
@@ -151,7 +158,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Mario Kart: Double Dash!!</description>
+		<gameName>Mario Kart: Double Dash!!</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GM4E</gamecode>
 		<company>01</company>
 		<search>
@@ -173,7 +181,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Mario Party 4</description>
+		<gameName>Mario Party 4</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GMPE</gamecode>
 		<company>01</company>
 		<search>
@@ -194,7 +203,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Mario Party 5</description>
+		<gameName>Mario Party 5</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GP5E</gamecode>
 		<company>01</company>
 		<search>
@@ -214,7 +224,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Mario Party 6</description>
+		<gameName>Mario Party 6</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GP6E</gamecode>
 		<company>01</company>
 		<search>
@@ -234,7 +245,7 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Mario Party 7</description>
+		<gameName>Mario Party 7</gameName>
 		<gamecode>GP7E</gamecode>
 		<company>01</company>
 		<search>
@@ -256,7 +267,8 @@
 	<file>
 		<!-- NOTE: PAL version uses a different file structure! -->
 		<!-- User will need to select a preferred region. -->
-		<description>Metroid Prime</description>
+		<gameName>Metroid Prime</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GM8E</gamecode>
 		<company>01</company>
 		<search>
@@ -281,7 +293,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Metroid Prime 2: Echoes</description>
+		<gameName>Metroid Prime 2: Echoes</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>G2ME</gamecode>
 		<company>01</company>
 		<search>
@@ -302,7 +315,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Pac-Man World 2</description>
+		<gameName>Pac-Man World 2</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GP2E</gamecode>
 		<company>AF</company>
 		<search>
@@ -321,7 +335,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Paper Mario: The Thousand Year Door</description>
+		<gameName>Paper Mario: The Thousand Year Door</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>G8ME</gamecode>
 		<company>01</company>
 		<search>
@@ -343,7 +358,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Puyo Pop Fever (System File)</description>
+		<gameName>Puyo Pop Fever</gameName>
+		<fileInfo>System File</fileInfo>
 		<gamecode>GPUE</gamecode>
 		<company>8P</company>
 		<search>
@@ -362,7 +378,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Puyo Pop Fever (Replay)</description>
+		<gameName>Puyo Pop Fever</gameName>
+		<fileInfo>Replay File</fileInfo>
 		<gamecode>GPUE</gamecode>
 		<company>8P</company>
 		<search>
@@ -381,7 +398,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Shadow the Hedgehog</description>
+		<gameName>Shadow the Hedgehog</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GUPE</gamecode>
 		<company>8P</company>
 		<search>
@@ -400,7 +418,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Sonic Adventure DX: Director's Cut</description>
+		<gameName>Sonic Adventure DX: Director's Cut</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GXSE</gamecode>
 		<company>8P</company>
 		<search>
@@ -425,7 +444,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Sonic Adventure DX: Director's Cut (Chao Garden)</description>
+		<gameName>Sonic Adventure DX: Director's Cut (Chao Garden)</gameName>
+		<fileInfo>Chao Garden File</fileInfo>
 		<gamecode>GXSE</gamecode>
 		<company>8P</company>
 		<search>
@@ -454,7 +474,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Sonic Adventure 2: Battle</description>
+		<gameName>Sonic Adventure 2: Battle</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GSNE</gamecode>
 		<company>8P</company>
 		<search>
@@ -478,7 +499,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Sonic Adventure 2: Battle (Chao Garden)</description>
+		<gameName>Sonic Adventure 2: Battle</gameName>
+		<fileInfo>Chao Garden File</fileInfo>
 		<gamecode>GSNE</gamecode>
 		<company>8P</company>
 		<search>
@@ -507,7 +529,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Sonic Gems Collection</description>
+		<gameName>Sonic Gems Collection</gameName>
+		<fileInfo>Settings File</fileInfo>
 		<gamecode>G2XE</gamecode>
 		<company>8P</company>
 		<search>
@@ -527,7 +550,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Sonic Gems Collection (Sonic R)</description>
+		<gameName>Sonic Gems Collection</gameName>
+		<fileInfo>Sonic R: Save File</fileInfo>
 		<gamecode>G2XE</gamecode>
 		<company>8P</company>
 		<search>
@@ -546,7 +570,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Sonic Gems Collection (Sonic the Fighters)</description>
+		<gameName>Sonic Gems Collection</gameName>
+		<fileInfo>Sonic the Fighters: Save File</fileInfo>
 		<gamecode>G2XE</gamecode>
 		<company>8P</company>
 		<search>
@@ -565,7 +590,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Sonic Heroes</description>
+		<gameName>Sonic Heroes</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>G9SE</gamecode>
 		<company>8P</company>
 		<search>
@@ -585,7 +611,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Sonic Mega Collection</description>
+		<gameName>Sonic Mega Collection</gameName>
+		<fileInfo>System File</fileInfo>
 		<gamecode>GSOE</gamecode>
 		<company>8P</company>
 		<search>
@@ -605,7 +632,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Sonic Riders</description>
+		<gameName>Sonic Riders</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GXEE</gamecode>
 		<company>8P</company>
 		<search>
@@ -625,7 +653,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Super Mario Sunshine</description>
+		<gameName>Super Mario Sunshine</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GMSE</gamecode>
 		<company>01</company>
 		<search>
@@ -651,7 +680,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Super Monkey Ball 2</description>
+		<gameName>Super Monkey Ball 2</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GM2E</gamecode>
 		<company>8P</company>
 		<search>
@@ -671,7 +701,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>Super Smash Bros. Melee</description>
+		<gameName>Super Smash Bros. Melee</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GALE</gamecode>
 		<company>01</company>
 		<search>
@@ -691,7 +722,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>The Legend of Zelda: Collector's Edition (Zelda 1)</description>
+		<gameName>The Legend of Zelda: Collector's Edition</gameName>
+		<fileInfo>Zelda 1: Save File</fileInfo>
 		<gamecode>PZLE</gamecode>
 		<company>01</company>
 		<search>
@@ -710,7 +742,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>The Legend of Zelda: Collector's Edition (Zelda 2)</description>
+		<gameName>The Legend of Zelda: Collector's Edition</gameName>
+		<fileInfo>Zelda 2: Save File</fileInfo>
 		<gamecode>PZLE</gamecode>
 		<company>01</company>
 		<search>
@@ -729,7 +762,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>The Legend of Zelda: Collector's Edition (Ocarina of Time)</description>
+		<gameName>The Legend of Zelda: Collector's Edition</gameName>
+		<fileInfo>Ocarina of Time: Save File</fileInfo>
 		<gamecode>PZLE</gamecode>
 		<company>01</company>
 		<search>
@@ -748,7 +782,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>The Legend of Zelda: Collector's Edition (Majora's Mask)</description>
+		<gameName>The Legend of Zelda: Collector's Edition</gameName>
+		<fileInfo>Majora's Mask: Save File</fileInfo>
 		<gamecode>PZLE</gamecode>
 		<company>01</company>
 		<search>
@@ -767,7 +802,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>The Legend of Zelda: Four Swords Adventures</description>
+		<gameName>The Legend of Zelda: Four Swords Adventures</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>G4SE</gamecode>
 		<company>01</company>
 		<search>
@@ -787,7 +823,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>The Legend of Zelda: Ocarina of Time / Master Quest</description>
+		<gameName>The Legend of Zelda: Ocarina of Time / Master Quest</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>D43E</gamecode>
 		<company>01</company>
 		<search>
@@ -807,7 +844,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>The Legend of Zelda: The Wind Waker</description>
+		<gameName>The Legend of Zelda: The Wind Waker</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GZLE</gamecode>
 		<company>01</company>
 		<search>
@@ -827,7 +865,8 @@
 		</dirEntry>
 	</file>
 	<file>
-		<description>The Legend of Zelda: Twilight Princess</description>
+		<gameName>The Legend of Zelda: Twilight Princess</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GZLE</gamecode>
 		<company>01</company>
 		<search>

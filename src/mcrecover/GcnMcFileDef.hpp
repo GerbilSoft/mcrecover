@@ -47,7 +47,14 @@ class GcnMcFileDef {
 		Q_DISABLE_COPY(GcnMcFileDef);
 
 	public:
-		QString description;
+		// Game name.
+		QString gameName;
+
+		// File information.
+		// Distinguishes between different types
+		// of files saved by a single game.
+		QString fileInfo;
+
 		QString gamecode;
 		QString company;
 
