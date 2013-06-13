@@ -101,8 +101,8 @@ class MemCardModelPrivate
 			void init(void);
 
 			// Background colors for "lost" files.
-			QColor bgColor_lostFile;
-			QColor bgColor_lostFile_alt;
+			QBrush brush_lostFile;
+			QBrush brush_lostFile_alt;
 
 			// Pixmaps for COL_ISVALID.
 			static const int pxmIsValid_width = 16;
@@ -141,8 +141,8 @@ void MemCardModelPrivate::style_t::init(void)
 
 	// Initialize the background colors for "lost" files.
 	QPalette pal = QApplication::palette("QTreeView");
-	bgColor_lostFile = pal.base().color();
-	bgColor_lostFile_alt = pal.alternateBase().color();
+	QColor bgColor_lostFile = pal.base().color();
+	QColor bgColor_lostFile_alt = pal.alternateBase().color();
 
 	// Adjust the colors to have a yellow hue.
 	int h, s, v;
@@ -158,6 +158,10 @@ void MemCardModelPrivate::style_t::init(void)
 	h = 60;
 	s = (255 - s);
 	bgColor_lostFile_alt.setHsv(h, s, v);
+
+	// Save the background colors in QBrush objects.
+	brush_lostFile = QBrush(bgColor_lostFile);
+	brush_lostFile_alt = QBrush(bgColor_lostFile_alt);
 
 	// Initialize the COL_ISVALID pixmaps.
 	pxmIsValid_unknown = McRecoverQApplication::IconFromTheme(QLatin1String("dialog-question"))
@@ -426,14 +430,14 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 			}
 			break;
 
-		case Qt::BackgroundColorRole:
+		case Qt::BackgroundRole:
 			// "Lost" files should be displayed using a different color.
 			if (file->isLostFile()) {
 				// TODO: Check if the item view is using alternating row colors before using them.
 				if (index.row() & 1)
-					return d->style.bgColor_lostFile_alt;
+					return d->style.brush_lostFile_alt;
 				else
-					return d->style.bgColor_lostFile;
+					return d->style.brush_lostFile;
 			}
 			break;
 
