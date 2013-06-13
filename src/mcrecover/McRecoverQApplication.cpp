@@ -119,15 +119,6 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 
 	// Initialize the mcrecover translation.
 	setMcrTranslation(QLocale::system().name());
-
-	// Connect the crash handler.
-#ifdef HAVE_SIGACTION
-	QObject::connect(q, SIGNAL(signalCrash(int,siginfo_t*,void*)),
-			 q, SLOT(slotCrash(int,siginfo_t*,void*)));
-#else /* !HAVE_SIGACTION */
-	QObject::connect(q, SIGNAL(signalCrash(int)),
-			 q, SLOT(slotCrash(int)));
-#endif /* HAVE_SIGACTION */
 }
 
 

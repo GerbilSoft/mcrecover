@@ -28,7 +28,7 @@
 #include <stdlib.h>
 
 // Qt includes.
-#include <QtGui/QApplication>
+#include "McRecoverQApplication.hpp"
 
 /**
  * Main entry point.
@@ -38,18 +38,18 @@
  */
 int mcrecover_main(int argc, char *argv[])
 {
-	QApplication *mcApp = new QApplication(argc, argv);
-	
+	McRecoverQApplication *mcApp = new McRecoverQApplication(argc, argv);
+
 	// Initialize the McRecoverWindow.
 	McRecoverWindow *mcRecoverWindow = new McRecoverWindow();
-	
+
 	// If a filename was specified, open it.
 	if (argc > 1)
 		mcRecoverWindow->open(QString::fromLocal8Bit(argv[1]));
-	
+
 	// Show the window.
 	mcRecoverWindow->show();
-	
+
 	// Run the Qt4 UI.
 	return mcApp->exec();
 }
