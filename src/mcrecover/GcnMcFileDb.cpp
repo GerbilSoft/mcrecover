@@ -29,6 +29,9 @@
 // GCN Memory Card File Definition class.
 #include "GcnMcFileDef.hpp"
 
+// Variable Replacement.
+#include "VarReplace.hpp"
+
 // C includes.
 #include <stdint.h>
 #include <cstdio>
@@ -685,6 +688,9 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz,
 	// Matching file definition.
 	const GcnMcFileDef *matchFileDef = NULL;
 
+	// Substring matches.
+	QVector<QString> gameDescVars, fileDescVars;
+
 	foreach (uint32_t address, d->addr_file_defs.keys()) {
 		// Make sure this address is within the bounds of the buffer.
 		// Game Description + File Description == 64 bytes. (0x40)
@@ -704,26 +710,29 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz,
 			bool gameDescMatch = false, fileDescMatch = false;
 			int rc;
 
-			// TODO: Save substring matches.
+			// Clear the substring match vectors.
+			// TODO: Only copy substrings if both regexes match?
+			gameDescVars.clear();
+			fileDescVars.clear();
 
 			// Check if the Game Description (US) matches.
-			rc = gcnMcFileDef->search.gameDesc_regex.exec(gameDescUS);
+			rc = gcnMcFileDef->search.gameDesc_regex.exec(gameDescUS, &gameDescVars);
 			if (rc > 0) {
 				gameDescMatch = true;
 			} else {
 				// Check if the Game Description (JP) matches.
-				rc = gcnMcFileDef->search.gameDesc_regex.exec(gameDescJP);
+				rc = gcnMcFileDef->search.gameDesc_regex.exec(gameDescJP, &gameDescVars);
 				if (rc > 0)
 					gameDescMatch = true;
 			}
 
 			// Check if the File Description (US) matches.
-			rc = gcnMcFileDef->search.fileDesc_regex.exec(fileDescUS);
+			rc = gcnMcFileDef->search.fileDesc_regex.exec(fileDescUS, &fileDescVars);
 			if (rc > 0) {
 				fileDescMatch = true;
 			} else {
 				// Check if the File Description (JP) matches.
-				rc = gcnMcFileDef->search.fileDesc_regex.exec(fileDescJP);
+				rc = gcnMcFileDef->search.fileDesc_regex.exec(fileDescJP, &fileDescVars);
 				if (rc > 0)
 					fileDescMatch = true;
 			}
@@ -759,19 +768,25 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz,
 	// Clear the byte array before converting the filename.
 	ba = QByteArray();
 
+	// Substitute variables in the filename.
+	// TODO: Apply variable modifiers first.
+	QString filename = VarReplace::Exec(
+				matchFileDef->dirEntry.filename,
+				gameDescVars, fileDescVars);
+
 	// Filename.
 	if (dirEntry->gamecode[3] == 'J' && d->textCodecJP) {
 		// JP file. Convert to Shift-JIS.
-		ba = d->textCodecJP->fromUnicode(matchFileDef->dirEntry.filename);
+		ba = d->textCodecJP->fromUnicode(filename);
 	} else if (d->textCodecUS) {
 		// US/EU file. Convert to cp1252.
-		ba = d->textCodecUS->fromUnicode(matchFileDef->dirEntry.filename);
+		ba = d->textCodecUS->fromUnicode(filename);
 	}
 
 	if (ba.isEmpty()) {
 		// QByteArray is empty. Conversion failed.
 		// Convert to Latin1 instead.
-		ba = matchFileDef->dirEntry.filename.toLatin1();
+		ba = filename.toLatin1();
 	}
 
 	if (ba.length() > (int)sizeof(dirEntry->filename))
