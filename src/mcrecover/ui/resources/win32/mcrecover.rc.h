@@ -19,14 +19,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __GENS_QT4_RESOURCE_H__
-#define __GENS_QT4_RESOURCE_H__
+#ifndef __MCRECOVER_MCRECOVER_RC_H__
+#define __MCRECOVER_MCRECOVER_RC_H__
 
-// Icons,
-#define IDI_GENS_APP		0x0001
-#define IDI_GENS_APP_OLD	0x0002
-#define IDI_GENS_MD		0x0003
-#define IDI_SONIC		0x0004
-#define IDI_SONIC_WAITING	0x0005
+// Icons, (TODO)
+#define IDI_MCRECOVER_APPLICATION	0x0001
 
-#endif /* __GENS_QT4_RESOURCE_H__ */
+#endif /* __MCRECOVER_MCRECOVER_RC_H__ */

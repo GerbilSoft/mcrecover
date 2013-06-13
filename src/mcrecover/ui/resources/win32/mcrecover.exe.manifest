@@ -7,7 +7,7 @@
 		processorArchitecture="x86"
 	/>
 
-	<description>GameCube Memory Card Recovery Program</description>
+	<description>GCN MemCard Recover</description>
 
 	<!-- Common Controls 6. Needed for visual styles on XP and later. -->
 	<dependency>

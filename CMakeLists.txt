@@ -16,11 +16,22 @@ list (APPEND CMAKE_MODULE_PATH
 	"${mcrecover_base_SOURCE_DIR}/cmake/macros"
 	)
 
+# Program information.
+SET(DESCRIPTION "GCN MemCard Recover")
+SET(AUTHOR "David Korth")
+SET(VERSION_MAJOR "0")
+SET(VERSION_MINOR "0")
+SET(VERSION_PATCH "0")
+SET(VERSION_STRING "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
+SET(VERSION_STRING_WIN32 "${VERSION_MAJOR},${VERSION_MINOR},${VERSION_PATCH},0")
+
 # Git version information.
 ADD_CUSTOM_TARGET(git_version ALL
-	${mcrecover_base_SOURCE_DIR}/git_version.sh -s "${mcrecover_base_SOURCE_DIR}" -o "${mcrecover_base_BINARY_DIR}/git_version.h"
+	${mcrecover_base_SOURCE_DIR}/git_version.sh
+	-s "${mcrecover_base_SOURCE_DIR}"
+	-o "${mcrecover_base_BINARY_DIR}/git_version.h"
 	VERBATIM
-)
+	)
 
 # If no build type is set, default to "debug".
 IF(CMAKE_BUILD_TYPE MATCHES ^$)

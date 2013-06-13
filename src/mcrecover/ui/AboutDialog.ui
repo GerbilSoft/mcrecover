@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>About GameCube Memory Card Recovery Program</string>
+   <string>About GCN MemCard Recover</string>
   </property>
   <layout class="QVBoxLayout" name="vboxDialog">
    <property name="spacing">

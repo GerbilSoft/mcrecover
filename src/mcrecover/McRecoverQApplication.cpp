@@ -76,7 +76,7 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 {
 	// Set application information.
 	QCoreApplication::setOrganizationName(QLatin1String("GerbilSoft"));
-	QCoreApplication::setApplicationName(QLatin1String("GameCube Memory Card Recovery Program"));
+	QCoreApplication::setApplicationName(QLatin1String("GCN MemCard Recover"));
 
 	// Version number. (TODO: Get from CMake.)
 #if 0

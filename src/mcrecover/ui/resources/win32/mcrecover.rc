@@ -19,7 +19,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-// Resource script for GameCube Memory Card Recovery Program.
+// Resource script for GCN MemCard Recover.
 #include "mcrecover.rc.h"
 #include "afxres.h"
 #include "winuser.h"
@@ -60,15 +60,15 @@ BEGIN
 		BEGIN
 			//VALUE "Comments", "\0"
 			//VALUE "CompanyName", "\0"
-			VALUE "FileDescription", "GameCube Memory Card Recovery Program " MCRECOVER_VERSION "\0"
-			VALUE "FileVersion", "GameCube Memory Card Recovery Program " Win32_RC_FileVersion "\0"
-			VALUE "InternalName", "GameCube Memory Card Recovery Program\0"
+			VALUE "FileDescription", "GCN MemCard Recover " MCRECOVER_VERSION "\0"
+			VALUE "FileVersion", "GCN MemCard Recover " Win32_RC_FileVersion "\0"
+			VALUE "InternalName", "GCN MemCard Recover\0"
 			//VALUE "LegalCopyright", "\0"
 			//VALUE "LegalTrademarks", "\0"
 			//VALUE "OriginalFilename", "\0"
 			//VALUE "PrivateBuild", "\0"
-			VALUE "ProductName", "GameCube Memory Card Recovery Program\0"
-			VALUE "ProductVersion", "GameCube Memory Card Recovery Program " Win32_RC_FileVersion "\0"
+			VALUE "ProductName", "GCN MemCard Recover\0"
+			VALUE "ProductVersion", "GCN MemCard Recover " Win32_RC_FileVersion "\0"
 			//VALUE "SpecialBuild", "\0"
 		END
 	END

@@ -96,9 +96,11 @@ void AboutDialogPrivate::initAboutDialogText(void)
 
 	// Build the program title text.
 	// TODO
-	QString sPrgTitle =
-		QLatin1String("<b>GameCube Memory Card<br/>Recovery Program</b>") + sLineBreak +
-		AboutDialog::tr("Version %1").arg(QApplication::applicationVersion()) + sLineBreak;
+	QString sPrgTitle = QLatin1String("<b>") +
+				QApplication::applicationName() +
+				QLatin1String("</b>") + sLineBreak +
+				AboutDialog::tr("Version %1")
+				.arg(QApplication::applicationVersion()) + sLineBreak;
 
 	// Set the program title text.
         q->lblPrgTitle->setText(sPrgTitle);
