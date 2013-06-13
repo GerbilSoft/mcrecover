@@ -84,6 +84,7 @@ SET(mcrecover_SRCS
 	IconAnimHelper.cpp
 	McRecoverQApplication.cpp
 	AboutDialog.cpp
+	VarReplace.cpp
 	)
 
 # Win32-specific sources.
