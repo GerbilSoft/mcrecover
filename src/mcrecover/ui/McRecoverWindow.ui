@@ -14,7 +14,7 @@
    <bool>true</bool>
   </property>
   <property name="windowTitle">
-   <string>GCN MemCard Recover</string>
+   <string notr="true">GCN MemCard Recover</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="hboxMainLayout">
@@ -30,6 +30,9 @@
        <layout class="QVBoxLayout" name="vboxFileList">
         <item>
          <widget class="QGroupBox" name="grpFileList">
+          <property name="title">
+           <string notr="true">No memory card loaded.</string>
+          </property>
           <layout class="QVBoxLayout" name="vboxGrpFileList">
            <item>
             <widget class="QTreeView" name="lstFileList">

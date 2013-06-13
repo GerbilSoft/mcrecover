@@ -45,9 +45,6 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QToolBar>
 
-// git version
-#include "git.h"
-
 
 /** McRecoverWindowPrivate **/
 
@@ -70,6 +67,7 @@ class McRecoverWindowPrivate
 
 		// Filename.
 		QString filename;
+		QString displayFilename;	// filename without subdirectories
 
 		/**
 		 * Update the memory card's QTreeView.
@@ -94,6 +92,11 @@ class McRecoverWindowPrivate
 
 		// Status Bar Manager.
 		StatusBarManager *statusBarManager;
+
+		/**
+		 * Update the window title.
+		 */
+		void updateWindowTitle(void);
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -146,24 +149,15 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 void McRecoverWindowPrivate::updateLstFileList(void)
 {
 	if (!card) {
-		// Hide the QTreeView headers.
-		q->lstFileList->setHeaderHidden(true);
-
 		// Set the group box's title.
 		q->grpFileList->setTitle(q->tr("No memory card loaded."));
 	} else {
-		// Show the QTreeView headers.
-		q->lstFileList->setHeaderHidden(false);
-
-		// Extract the filename from the path.
-		QString displayFilename = filename;
-		int lastSlash = displayFilename.lastIndexOf(QChar(L'/'));
-		if (lastSlash >= 0)
-			displayFilename.remove(0, lastSlash + 1);
-
 		// Show the filename.
 		q->grpFileList->setTitle(displayFilename);
 	}
+
+	// Show the QTreeView headers if a memory card is loaded.
+	q->lstFileList->setHeaderHidden(!card);
 
 	// Update the action enable status.
 	updateActionEnableStatus();
@@ -223,6 +217,9 @@ void McRecoverWindowPrivate::initMcToolbar(void)
 }
 
 
+/**
+ * Update the "enabled" status of the QActions.
+ */
 void McRecoverWindowPrivate::updateActionEnableStatus(void)
 {
 	if (!card) {
@@ -243,6 +240,22 @@ void McRecoverWindowPrivate::updateActionEnableStatus(void)
 }
 
 
+/**
+ * Update the window title.
+ */
+void McRecoverWindowPrivate::updateWindowTitle(void)
+{
+	QString windowTitle;
+	if (card) {
+		windowTitle += displayFilename;
+		windowTitle += QLatin1String(" - ");
+	}
+	windowTitle += QApplication::applicationName();
+
+	q->setWindowTitle(windowTitle);
+}
+
+
 /** McRecoverWindow **/
 
 McRecoverWindow::McRecoverWindow(QWidget *parent)
@@ -250,13 +263,6 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	, d(new McRecoverWindowPrivate(this))
 {
 	setupUi(this);
-
-#ifdef MCRECOVER_GIT_VERSION
-	this->setWindowTitle(this->windowTitle() +
-			QLatin1String(" (") +
-			QLatin1String(MCRECOVER_GIT_VERSION) +
-			QChar(L')'));
-#endif
 
 	// Make sure the window is deleted on close.
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -292,14 +298,11 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	connect(lstFileList->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
 		this, SLOT(lstFileList_selectionModel_currentRowChanged(QModelIndex,QModelIndex)));
 
-	// Initialize the memory card's QTreeView.
+	// Initialize the UI.
 	d->updateLstFileList();
-
-	// Initialize the Memory Card toolbar.
 	d->initMcToolbar();
-
-	// Initialize the Status Bar Manager.
 	d->statusBarManager = new StatusBarManager(Ui_McRecoverWindow::statusBar, this);
+	d->updateWindowTitle();
 }
 
 McRecoverWindow::~McRecoverWindow()
@@ -327,15 +330,20 @@ void McRecoverWindow::open(QString filename)
 	d->model->setMemCard(d->card);
 	d->filename = filename;
 
+	// Extract the filename from the path.
+	d->displayFilename = filename;
+	int lastSlash = d->displayFilename.lastIndexOf(QChar(L'/'));
+	if (lastSlash >= 0)
+		d->displayFilename.remove(0, lastSlash + 1);
+
 	// Set the MemCardView's MemCard to the
 	// selected card in the QTreeView.
 	mcCardView->setCard(d->card);
 
-	// Update the memory card's QTreeView.
+	// Update the UI.
 	d->updateLstFileList();
-
-	// Update the status bar.
 	d->statusBarManager->opened(filename);
+	d->updateWindowTitle();
 
 	// FIXME: If a file is opened from the command line,
 	// QTreeView sort-of selects the first file.
@@ -354,11 +362,14 @@ void McRecoverWindow::close(void)
 	delete d->card;
 	d->card = NULL;
 
-	// Update the memory card's QTreeView.
-	d->updateLstFileList();
+	// Clear the filenames.
+	d->filename.clear();
+	d->displayFilename.clear();
 
-	// Update the status bar.
+	// Update the UI.
+	d->updateLstFileList();
 	d->statusBarManager->closed();
+	d->updateWindowTitle();
 }
 
 
