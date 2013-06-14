@@ -227,6 +227,15 @@ MemCardFileView::MemCardFileView(QWidget *parent)
 	, d(new MemCardFileViewPrivate(this))
 {
 	setupUi(this);
+
+	// Set monospace fonts.
+	QFont fntMonospace;
+	fntMonospace.setFamily(QLatin1String("Monospace"));
+	fntMonospace.setStyleHint(QFont::TypeWriter);
+	lblMode->setFont(fntMonospace);
+	lblChecksumActual->setFont(fntMonospace);
+	lblChecksumExpected->setFont(fntMonospace);
+
 	d->updateWidgetDisplay();
 }
 

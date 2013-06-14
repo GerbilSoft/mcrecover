@@ -420,9 +420,9 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 				case COL_PERMISSION:
 				case COL_GAMECODE: {
 					// These columns should be monospaced.
-					QFont font(QLatin1String("Monospace"));
-					font.setStyleHint(QFont::TypeWriter); // or QFont::Monospace?
-					return font;
+					QFont fntMonospace(QLatin1String("Monospace"));
+					fntMonospace.setStyleHint(QFont::TypeWriter);
+					return fntMonospace;
 				}
 
 				default:
