@@ -233,6 +233,8 @@ MemCardFileView::MemCardFileView(QWidget *parent)
 	fntMonospace.setFamily(QLatin1String("Monospace"));
 	fntMonospace.setStyleHint(QFont::TypeWriter);
 	lblMode->setFont(fntMonospace);
+
+	fntMonospace.setBold(true);
 	lblChecksumActual->setFont(fntMonospace);
 	lblChecksumExpected->setFont(fntMonospace);
 
