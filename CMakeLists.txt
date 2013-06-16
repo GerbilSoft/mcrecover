@@ -16,6 +16,9 @@ list (APPEND CMAKE_MODULE_PATH
 	"${mcrecover_base_SOURCE_DIR}/cmake/macros"
 	)
 
+# Set default build options.
+INCLUDE(cmake/options.cmake)
+
 # Program information.
 SET(DESCRIPTION "GCN MemCard Recover")
 SET(AUTHOR "David Korth")
