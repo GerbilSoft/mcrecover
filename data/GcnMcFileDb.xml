@@ -73,9 +73,26 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Billy Hatcher$</gameDesc>
-			<!-- Date format: MM/DD/YYYY HH:MM - Verify for PAL! -->
+			<!-- Date format: MM/DD/YYYY HH:mm - Verify for PAL! -->
 			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2})$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>billyhatcher</filename>
 			<bannerFormat>0x02</bannerFormat>
@@ -119,6 +136,17 @@
 			<fileDesc>^(\d{2})/(\d{2})/(\d{2})</fileDesc>
 			<!-- TODO: Checksum field? -->
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>f_zero.dat</filename>
 			<bannerFormat>0x02</bannerFormat>
@@ -141,6 +169,14 @@
 			<!-- Date format: M/D - Verify for PAL! -->
 			<fileDesc>^Last saved on (\d{1,2})/(\d{1,2})$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
 		<checksum>
 			<algorithm>AddInvDual16</algorithm>
 			<address>0x3FFC</address>
@@ -170,6 +206,17 @@
 			<!-- Date format: MM/DD/YY - Verify for PAL! -->
 			<fileDesc>^Game Data (\d{2})/(\d{2})/(\d{2})$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>MarioKart Double Dash!!</filename>
 			<bannerFormat>0x01</bannerFormat>
@@ -191,8 +238,26 @@
 			<!-- Date format: MM/DD/YYYY - Verify for PAL! -->
 			<fileDesc>^File (\d)  (\d{2})/(\d{2})/(\d{4})$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>filename</useAs>
+				<type>number</type>
+				<minWidth>1</minWidth>
+				<fillChar>0</fillChar>
+				<align>right</align>
+				<add>-1</add>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
-			<!-- TODO: $F1 needs a -1 modifier. -->
 			<filename>MARIPA4BOX$F1</filename>
 			<bannerFormat>0x01</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
@@ -213,6 +278,17 @@
 			<!-- Date format: MM/DD/YYYY - Verify for PAL! -->
 			<fileDesc>^(\d{2})/(\d{2})/(\d{4})$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>MARIPA5</filename>
 			<bannerFormat>0x01</bannerFormat>
@@ -234,6 +310,17 @@
 			<!-- Date format: MM/DD/YYYY - Verify for PAL! -->
 			<fileDesc>^(\d{2})/(\d{2})/(\d{4})$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>MARIPA6</filename>
 			<bannerFormat>0x05</bannerFormat>
@@ -255,6 +342,17 @@
 			<!-- Date format: MM/DD/YYYY - Verify for PAL! -->
 			<fileDesc>^(\d{2})/(\d{2})/(\d{4})$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>MARIPA7</filename>
 			<bannerFormat>0x05</bannerFormat>
@@ -322,8 +420,25 @@
 			<fileDesc>^(\d{2}).(\d{2}).(\d{2})  (\d{2}):(\d{2})$</fileDesc>
 			<!-- TODO: Checksum field? -->
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
-			<filename>MetroidPrime2</filename> <!-- TODO: Save slot? -->
+			<filename>MetroidPrime2</filename>
 			<bannerFormat>0x01</bannerFormat>
 			<iconAddress>0x0044</iconAddress>
 			<iconFormat>0x01</iconFormat>
@@ -385,6 +500,14 @@
 			     however, mcrecover trims spaces from descriptions! -->
 			<fileDesc>^( \d|\d{1,2})/( \d|\d{2}) save data$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>mariost_save_file</filename>
 			<bannerFormat>0x02</bannerFormat>
@@ -577,6 +700,14 @@
 			<!-- Date format: MM/DD - Verify for PAL! -->
 			<fileDesc>^SETTING DATA (\d{2})/(\d{2})$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>SONIC GEMS_00</filename>
 			<bannerFormat>0x02</bannerFormat>
@@ -665,9 +796,23 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Sonic Mega Collection$</gameDesc>
-			<!-- Date format: MM/DD HH:MM - Verify for PAL! -->
+			<!-- Date format: MM/DD HH:mm - Verify for PAL! -->
 			<fileDesc>^System File (\d{2})/(\d{2}) (\d{2}):(\d{2})$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>minute</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>S_MEGA_SYS</filename>
 			<bannerFormat>0x02</bannerFormat>
@@ -689,6 +834,17 @@
 			<!-- Date format: MM/DD/YY - Verify for PAL! -->
 			<fileDesc>^Game Data\.(\d{2}): (\d{2})/(\d{2})/(\d{2})$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>SONICRIDERS_GAMEDATA_$F1</filename>
 			<bannerFormat>0x01</bannerFormat>
@@ -707,9 +863,29 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^STAR FOX: ASSAULT$</gameDesc>
-			<!-- Date format: MM/DD/YYYY HH:MM:SS - TODO: Verify HH instead of H; Verify for PAL! -->
+			<!-- Date format: MM/DD/YYYY HH:mm:ss - Verify for PAL! -->
 			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>starfox.dat</filename>
 			<bannerFormat>0x05</bannerFormat>
@@ -731,6 +907,14 @@
 			<!-- Date format: M/D - Verify for PAL! -->
 			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
 		<checksum>
 			<algorithm>AddInvDual16</algorithm>
 			<address>0x3FFC</address>
@@ -779,6 +963,17 @@
 			<!-- Date format: YYYY/MM/DD - Verify for PAL! -->
 			<fileDesc>^Game Data (\d{4})/(\d{2})/(\d{2})$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>SuperSmashBros0110290334</filename>
 			<bannerFormat>0x02</bannerFormat>
@@ -880,6 +1075,14 @@
 			<!-- Date format: M/D - Verify for PAL! -->
 			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>gc4sword</filename>
 			<bannerFormat>0x01</bannerFormat>
@@ -901,6 +1104,14 @@
 			<!-- Date format: M/D - Verify for PAL! -->
 			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>ZELDA</filename>
 			<bannerFormat>0x06</bannerFormat>
@@ -922,6 +1133,14 @@
 			<!-- Date format: M/D - Verify for PAL! -->
 			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>gczelda</filename>
 			<bannerFormat>0x01</bannerFormat>
@@ -944,6 +1163,14 @@
 			<!-- Date format: M/D - Verify for PAL! -->
 			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>gczelda2</filename>
 			<bannerFormat>0x05</bannerFormat>
@@ -962,9 +1189,29 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^VIEWTIFUL JOE$</gameDesc>
-			<!-- Date format: M/D/YYYY HH:MM:SS - TODO: Verify D instead of DD; Verify for PAL! -->
+			<!-- Date format: M/D/YYYY HH:mm:ss - TODO: Verify D instead of DD; Verify for PAL! -->
 			<fileDesc>^(\d{1,2})/(\d{1,2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>VIEWTIFULJOEUSA</filename>
 			<bannerFormat>0x02</bannerFormat>
