@@ -683,6 +683,8 @@ void GcnMcFileDbPrivate::parseXml_file_variable(QXmlStreamReader& xml, GcnMcFile
 					varModifierDef.useAs = VarModifierDef::USEAS_TS_MINUTE;
 				else if (str == QLatin1String("second"))
 					varModifierDef.useAs = VarModifierDef::USEAS_TS_SECOND;
+				else if (str == QLatin1String("ampm"))
+					varModifierDef.useAs = VarModifierDef::USEAS_TS_AMPM;
 				else //if (str == QLatin1String("filename"))
 					varModifierDef.useAs = VarModifierDef::USEAS_FILENAME;
 			} else if (xml.name() == QLatin1String("type")) {
