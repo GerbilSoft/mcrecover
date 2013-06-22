@@ -211,6 +211,12 @@ class MemCardFile : public QObject
 		 * @return Checksum status.
 		 */
 		Checksum::ChkStatus checksumStatus(void) const;
+
+		/**
+		 * Get the default GCI filename.
+		 * @return Default GCI filename.
+		 */
+		QString defaultGciFilename(void) const;
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */

@@ -140,6 +140,14 @@ class MemCardFilePrivate
 		 * Calculate the file checksum.
 		 */
 		void calculateChecksum(void);
+
+		/**
+		 * Strip invalid DOS characters from a filename.
+		 * @param filename Filename.
+		 * @param replaceChar Replacement character.
+		 * @return Filename with invalid DOS characters replaced with replaceChar.
+		 */
+		static QString StripInvalidDosChars(QString filename, QChar replaceChar = QChar(L'_'));
 };
 
 
@@ -567,6 +575,50 @@ void MemCardFilePrivate::calculateChecksum(void)
 }
 
 
+/**
+ * Strip invalid DOS characters from a filename.
+ * @param filename Filename.
+ * @param replaceChar Replacement character.
+ * @return Filename with invalid DOS characters replaced with replaceChar.
+ */
+QString MemCardFilePrivate::StripInvalidDosChars(
+				const QString filename,
+				const QChar replaceChar)
+{
+	QString ret(filename);
+	for (int i = (ret.size() - 1); i > 0; i--) {
+		QCharRef chr = ret[i];
+
+		// Reference: http://en.wikipedia.org/wiki/8.3_filename#Directory_table
+		switch (chr.unicode()) {
+			case '"':
+			case '*':
+			case '/':
+			case ':':
+			case '<':
+			case '>':
+			case '?':
+			case '\\':
+			case '[':
+			case ']':
+			case '|':
+				// Invalid DOS character.
+				// (Technically, '[' and ']' are legal on Win32,
+				//  but we'll exclude them anyway.)
+				chr = replaceChar;
+				break;
+
+			default:
+				// Valid character.
+				break;
+		}
+	}
+
+	// Return the adjusted filename.
+	return ret;
+}
+
+
 /** MemCardFile **/
 
 /**
@@ -815,4 +867,35 @@ Checksum::ChkAlgorithm MemCardFile::checksumAlgorithm(void) const
 	if (d->checksumDefs.isEmpty())
 		return Checksum::CHKALG_NONE;
 	return d->checksumDefs.at(0).algorithm;
+}
+
+
+/**
+ * Get the default GCI filename.
+ * @return Default GCI filename.
+ */
+QString MemCardFile::defaultGciFilename(void) const
+{
+	/**
+	 * Filename format:
+	 * GALE01_SuperSmashBros0110290334_066000.gci
+	 * gamecode_filename_startaddress.gci
+	 */
+	QString filename;
+	filename.reserve(d->gamecode.size() + d->company.size() + 1 +
+			 d->filename.size() + 1 + 6 + 4);
+	filename += d->gamecode + d->company + QChar(L'_');
+	filename += d->filename + QChar(L'_');
+
+	// Convert the start address to hexadecimal.
+	char start_address[16];
+	snprintf(start_address, sizeof(start_address), "%06X",
+		 d->dirEntry->block * d->card->blockSize());
+	filename += QLatin1String(start_address);
+
+	// Finish the filename.
+	filename += QLatin1String(".gci");
+
+	// Make sure no invalid DOS characters are present in the filename.
+	return d->StripInvalidDosChars(filename);
 }
