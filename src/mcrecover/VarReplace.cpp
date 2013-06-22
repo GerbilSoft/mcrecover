@@ -371,7 +371,8 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> varModifierD
 
 	if (gcnDateTime) {
 		// Set the GcnDateTime to the current time for now.
-		*gcnDateTime = QDateTime::currentDateTime();
+		const GcnDateTime currentDateTime(GcnDateTime::currentDateTime());
+		*gcnDateTime = currentDateTime;
 
 		// Adjust the date.
 		QDate date = gcnDateTime->date();
@@ -406,6 +407,18 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> varModifierD
 			time.setHMS(hour, minute, second);
 		}
 		gcnDateTime->setTime(time);
+
+		// If the GcnDateTime is in the future,
+		// adjust its years value.
+		if (*gcnDateTime > currentDateTime) {
+			QDate gcnDate = gcnDateTime->date();
+			int curYear = currentDateTime.date().year();
+			if (curYear > 2000)
+				gcnDate.setDate(curYear - 1, gcnDate.month(), gcnDate.day());
+
+			// Update the GcnDateTime.
+			gcnDateTime->setDate(gcnDate);
+		}
 	}
 
 	// Variables modified successfully.
