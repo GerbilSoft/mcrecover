@@ -86,13 +86,13 @@ void AboutDialogPrivate::initAboutDialogText(void)
 	// Line break string.
 	const QString sLineBreak = QLatin1String("<br/>\n");
 
-	// Build the copyright string.
+	// Build the credits text.
 	// TODO: More copyrights.
-	QString sCopyrights = QLatin1String("Copyright (c) 2012-2013 by David Korth.");
+	QString sCredits = QLatin1String("Copyright (c) 2012-2013 by David Korth.");
 
-	// Set the copyright string.
-	q->lblCopyrights->setText(sCopyrights);
-	q->lblCopyrights->setTextFormat(Qt::RichText);
+	// Set the credits text.
+	q->lblCredits->setText(sCredits);
+	q->lblCredits->setTextFormat(Qt::RichText);
 
 	// Build the program title text.
 	// TODO
@@ -113,18 +113,20 @@ void AboutDialogPrivate::initAboutDialogText(void)
 	q->lblDebugInfo->setText(GetDebugInfo());
 	q->lblDebugInfo->setTextFormat(Qt::RichText);
 
-	// Build the credits text. (TODO)
-#if 0
-	// Set the credits text.
-	lblCredits->setText(sCredits);
-	lblCredits->setTextFormat(Qt::RichText);
-#endif
-	
 	if (scrlAreaInit) {
 		// Create the scroll areas.
 		// Qt Designer's QScrollArea implementation is horribly broken.
 		// Also, this has to be done after the labels are set, because
 		// QScrollArea is kinda dumb.
+		QScrollArea *scrlCredits = new QScrollArea();
+		scrlCredits->setFrameShape(QFrame::NoFrame);
+		scrlCredits->setFrameShadow(QFrame::Plain);
+		scrlCredits->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+		scrlCredits->setWidget(q->lblCredits);
+		scrlCredits->setWidgetResizable(true);
+		q->vboxCredits->addWidget(scrlCredits);
+		scrlCredits->setAutoFillBackground(false);
+
 		QScrollArea *scrlIncLibraries = new QScrollArea();
 		scrlIncLibraries->setFrameShape(QFrame::NoFrame);
 		scrlIncLibraries->setFrameShadow(QFrame::Plain);
@@ -142,15 +144,6 @@ void AboutDialogPrivate::initAboutDialogText(void)
 		scrlDebugInfo->setWidgetResizable(true);
 		q->vboxDebugInfo->addWidget(scrlDebugInfo);
 		scrlDebugInfo->setAutoFillBackground(false);
-
-		QScrollArea *scrlCredits = new QScrollArea();
-		scrlCredits->setFrameShape(QFrame::NoFrame);
-		scrlCredits->setFrameShadow(QFrame::Plain);
-		scrlCredits->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-		scrlCredits->setWidget(q->lblCredits);
-		scrlCredits->setWidgetResizable(true);
-		q->vboxCredits->addWidget(scrlCredits);
-		scrlCredits->setAutoFillBackground(false);
 
 		// Scroll areas initialized.
 		scrlAreaInit = true;
