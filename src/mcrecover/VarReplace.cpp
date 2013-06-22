@@ -246,7 +246,10 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> varModifierD
 			       QHash<QString, QString> &vars,
 			       GcnDateTime *gcnDateTime)
 {
-	GcnDateTime tmpGcnDateTime;
+	// Timestamp construction.
+	int year = -1, month = -1, day = -1;
+	int hour = -1, minute = -1, second = -1;
+	int ampm = -1;
 
 	// TODO: Verify that all variables to be modified
 	// were present in vars.
@@ -257,10 +260,10 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> varModifierD
 			continue;
 
 		QString var = vars.value(id);
-		const VarModifierDef &variableDef = varModifierDefs[id];
+		const VarModifierDef &varModifierDef = varModifierDefs[id];
 
 		// Apply the modifier.
-		switch (variableDef.varType) {
+		switch (varModifierDef.varType) {
 			default:
 			case VarModifierDef::VARTYPE_STRING:
 				// Parse as a string.
@@ -271,7 +274,7 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> varModifierD
 				// Parse as a number. (Base 10)
 				// TODO: Add support for other bases?
 				int num = var.toInt(NULL, 10);
-				num += variableDef.addValue;
+				num += varModifierDef.addValue;
 				var = QString::number(num, 10);
 				break;
 			}
@@ -281,30 +284,120 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> varModifierD
 				if (var.size() != 1)
 					return -2;
 				char chr = var.at(0).toLatin1();
-				chr += variableDef.addValue;
+				chr += varModifierDef.addValue;
 				var = QChar::fromLatin1(chr);
 				break;
 			}
 		}
 
 		// Pad the variable with fillChar, if necessary.
-		if (var.size() < variableDef.minWidth) {
-			var.reserve(variableDef.minWidth);
-			QChar fillChar = QChar::fromLatin1(variableDef.fillChar);
-			if (variableDef.fieldAlign == VarModifierDef::FIELDALIGN_LEFT) {
-				while (var.size() < variableDef.minWidth)
+		if (var.size() < varModifierDef.minWidth) {
+			var.reserve(varModifierDef.minWidth);
+			QChar fillChar = QChar::fromLatin1(varModifierDef.fillChar);
+			if (varModifierDef.fieldAlign == VarModifierDef::FIELDALIGN_LEFT) {
+				while (var.size() < varModifierDef.minWidth)
 					var.append(fillChar);
 			} else /*if (variableDef.fieldAlign == VarModifierDef::FIELDALIGN_RIGHT)*/ {
-				while (var.size() < variableDef.minWidth)
+				while (var.size() < varModifierDef.minWidth)
 					var.prepend(fillChar);
 			}
 		}
 
 		// Check if this variable should be used in the GcnDateTime.
-		// TODO
+		int num = var.toInt(NULL, 10);
+		switch (varModifierDef.useAs) {
+			default:
+			case VarModifierDef::USEAS_FILENAME:
+				// Not a GcnDateTime component.
+				break;
+
+			case VarModifierDef::USEAS_TS_YEAR:
+				if (num >= 0 && num <= 99) {
+					// 2-digit year.
+					year = num + 2000;
+				} else if (num >= 2000 && num <= 9999) {
+					// 4-digit year.
+					year = num;
+				} else {
+					// Invalid year.
+					return -3;
+				}
+				break;
+
+			case VarModifierDef::USEAS_TS_MONTH:
+				if (num >= 1 && num <= 12)
+					month = num;
+				else
+					return -4;
+				break;
+
+			case VarModifierDef::USEAS_TS_DAY:
+				if (num >= 1 && num <= 31)
+					day = num;
+				else
+					return -5;
+				break;
+
+			case VarModifierDef::USEAS_TS_HOUR:
+				if (num >= 0 && num <= 23)
+					hour = num;
+				else
+					return -6;
+				break;
+
+			case VarModifierDef::USEAS_TS_MINUTE:
+				if (num >= 0 && num <= 59)
+					minute = num;
+				else
+					return -7;
+				break;
+
+			case VarModifierDef::USEAS_TS_SECOND:
+				if (num >= 0 && num <= 59)
+					second = num;
+				else
+					return -8;
+				break;
+
+			case VarModifierDef::USEAS_TS_AMPM:
+				// TODO: Implement this once I encounter
+				// a save file that actually uses it.
+				break;
+		}
 
 		// Update the variable in the hash.
 		vars.insert(id, var);
+	}
+
+	if (gcnDateTime) {
+		// Set the GcnDateTime to the current time for now.
+		*gcnDateTime = QDateTime::currentDateTime();
+
+		// Adjust the date.
+		QDate date = gcnDateTime->date();
+		if (year == -1)
+			year = date.year();
+		if (month == -1)
+			month = date.month();
+		if (day == -1)
+			day = date.day();
+		date.setDate(year, month, day);
+		gcnDateTime->setDate(date);
+
+		// Adjust the time.
+		QTime time = gcnDateTime->time();
+		if (hour == -1)
+			hour = time.hour();
+		if (minute == -1)
+			minute = time.minute();
+		if (second == -1)
+			second = 0;	// Don't bother using the current second.
+		if (ampm != -1) {
+			hour %= 12;
+			hour += ampm;
+		}
+		time.setHMS(hour, minute, second);
+		gcnDateTime->setTime(time);
 	}
 
 	// Variables modified successfully.
