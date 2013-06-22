@@ -64,6 +64,9 @@ ENDIF(IS_BIG_ENDIAN)
 UNSET(IS_BIG_ENDIAN)
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/byteorder.h.in" "${CMAKE_CURRENT_BINARY_DIR}/byteorder.h")
 
+# Write the config.h file.
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.mcrecover.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.mcrecover.h")
+
 # Sources.
 SET(mcrecover_SRCS
 	mcrecover.cpp
