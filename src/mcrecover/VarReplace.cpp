@@ -375,6 +375,7 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> varModifierD
 
 		// Adjust the date.
 		QDate date = gcnDateTime->date();
+		const bool isDateSet = (year != -1 || month != -1 || day != -1);
 		if (year == -1)
 			year = date.year();
 		if (month == -1)
@@ -386,17 +387,24 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> varModifierD
 
 		// Adjust the time.
 		QTime time = gcnDateTime->time();
-		if (hour == -1)
-			hour = time.hour();
-		if (minute == -1)
-			minute = time.minute();
-		if (second == -1)
-			second = 0;	// Don't bother using the current second.
-		if (ampm != -1) {
-			hour %= 12;
-			hour += ampm;
+		const bool isTimeSet = (hour != -1 || minute != -1);
+		if (isDateSet && !isTimeSet) {
+			// Date was set by the file, but time wasn't.
+			// Assume default of 12:00 AM.
+			time.setHMS(0, 0, 0);
+		} else {
+			if (hour == -1)
+				hour = time.hour();
+			if (minute == -1)
+				minute = time.minute();
+			if (second == -1)
+				second = 0;	// Don't bother using the current second.
+			if (ampm != -1) {
+				hour %= 12;
+				hour += ampm;
+			}
+			time.setHMS(hour, minute, second);
 		}
-		time.setHMS(hour, minute, second);
 		gcnDateTime->setTime(time);
 	}
 
