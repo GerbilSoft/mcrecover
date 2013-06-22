@@ -162,6 +162,10 @@ inline GcnDateTime::GcnDateTime()
 {
 	// GCN timestamps don't have timezones associated with them.
 	m_dateTime.setTimeSpec(Qt::UTC);
+
+	// Initialize the timestamp to 0.
+	// (2000/01/01 12:00 AM UTC)
+	setGcnTimestamp(0);
 }
 
 /**
