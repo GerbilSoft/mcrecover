@@ -32,16 +32,6 @@
 #include <QtCore/QCoreApplication>
 #include <QtGui/QScrollArea>
 
-// OpenGL includes.
-// Needed for GL_VENDOR, GL_RENDERER, GL_VERSION, and glGetString()
-// if Gens/GS II isn't compiled with GLEW support.
-// TODO: #include <QtGui/QGLWidget> instead?
-#ifndef __APPLE__
-#include <GL/gl.h>
-#else
-#include <OpenGL/gl.h>
-#endif
-
 
 class AboutDialogPrivate
 {
