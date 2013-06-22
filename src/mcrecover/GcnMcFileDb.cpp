@@ -770,9 +770,8 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz,
 
 	// Substitute variables in the filename.
 	// TODO: Apply variable modifiers first.
-	QString filename = VarReplace::Exec(
-				matchFileDef->dirEntry.filename,
-				gameDescVars, fileDescVars);
+	QHash<QString, QString> vars = VarReplace::VecsToHash(gameDescVars, fileDescVars);
+	QString filename = VarReplace::Exec(matchFileDef->dirEntry.filename, vars);
 
 	// Filename.
 	if (dirEntry->gamecode[3] == 'J' && d->textCodecJP) {

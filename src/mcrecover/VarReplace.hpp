@@ -52,20 +52,19 @@ class VarReplace
 		static QString Exec(QString str, QHash<QString, QString> vars);
 
 		/**
-		 * Replace variables in a given string.
-		 * @param str String to replace variables in.
-		 * @param gameDescVars Game description variables. ($G1, $G2, etc)
-		 * @param gameDescVars Game description variables. ($F1, $F2, etc)
+		 * Combine vectors of GameDesc variables and FileDesc variables into a QHash.
+		 * @param gameDescVars GameDesc variables.
+		 * @param fileDescVars FileDesc variables.
 		 *
 		 * NOTE: The first variable in each QVector ($G0, $F0) is
 		 * the full match from PCRE. This usually won't be used,
 		 * but is included in the variable hash anyway.
 		 *
-		 * @return str with replaced variables.
+		 * @return QHash containing the variables. (key == ID)
 		 */
-		static QString Exec(QString str,
-				    QVector<QString> gameDescVars,
-				    QVector<QString> fileDescVars);
+		static QHash<QString, QString> VecsToHash(
+					const QVector<QString> gameDescVars,
+					const QVector<QString> fileDescVars);
 };
 
 #endif /* __MCRECOVER_VARREPLACE_HPP__ */
