@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 #include "AboutDialog.hpp"
+#include "git.h"
 
 // C includes.
 #include <string.h>
@@ -101,6 +102,9 @@ void AboutDialogPrivate::initAboutDialogText(void)
 				QLatin1String("</b>") + sLineBreak +
 				AboutDialog::tr("Version %1")
 				.arg(QApplication::applicationVersion()) + sLineBreak;
+#ifdef MCRECOVER_GIT_VERSION
+	sPrgTitle += QLatin1String(MCRECOVER_GIT_VERSION) + sLineBreak;
+#endif
 
 	// Set the program title text.
         q->lblPrgTitle->setText(sPrgTitle);
