@@ -29,7 +29,7 @@
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
-#include <QtGui/QApplication>
+#include <QtCore/QCoreApplication>
 #include <QtGui/QScrollArea>
 
 // OpenGL includes.
@@ -98,10 +98,10 @@ void AboutDialogPrivate::initAboutDialogText(void)
 	// Build the program title text.
 	// TODO
 	QString sPrgTitle = QLatin1String("<b>") +
-				QApplication::applicationName() +
+				QCoreApplication::applicationName() +
 				QLatin1String("</b>") + sLineBreak +
 				AboutDialog::tr("Version %1")
-				.arg(QApplication::applicationVersion()) + sLineBreak;
+				.arg(QCoreApplication::applicationVersion()) + sLineBreak;
 #ifdef MCRECOVER_GIT_VERSION
 	sPrgTitle += QLatin1String(MCRECOVER_GIT_VERSION) + sLineBreak;
 #endif
