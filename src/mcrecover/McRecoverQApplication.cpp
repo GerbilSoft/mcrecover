@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 #include "McRecoverQApplication.hpp"
+#include "config.mcrecover.h"
 
 // Qt includes.
 #include <QtCore/QTranslator>
@@ -78,14 +79,9 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 	QCoreApplication::setOrganizationName(QLatin1String("GerbilSoft"));
 	QCoreApplication::setApplicationName(QLatin1String("GCN MemCard Recover"));
 
-	// Version number. (TODO: Get from CMake.)
-#if 0
-	const QString sVersion = QString::fromLatin1("%1.%2.%3")
-					.arg((LibGens::version >> 24) & 0xFF)
-					.arg((LibGens::version >> 16) & 0xFF)
-					.arg(LibGens::version & 0xFFFF);
+	// Version number.
+	const QString sVersion = QString::fromLatin1(MCRECOVER_VERSION_STRING);
 	QCoreApplication::setApplicationVersion(sVersion);
-#endif
 
 	// Set the application icon. (TODO)
 #if 0
