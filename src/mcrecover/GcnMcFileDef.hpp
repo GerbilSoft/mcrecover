@@ -27,12 +27,11 @@
 
 // Qt includes.
 #include <QtCore/QString>
+#include <QtCore/QHash>
 
-// PCRE wrapper class.
 #include "PcreRegex.hpp"
-
-// Checksum algorithm class.
 #include "Checksum.hpp"
+#include "VarModifierDef.hpp"
 
 class GcnMcFileDef {
 	public:
@@ -94,6 +93,13 @@ class GcnMcFileDef {
 			// NOTE: commentAddress is implied by search.address.
 			//uint32_t commentAddress;
 		} dirEntry;
+
+		/**
+		 * Variable modifiers.
+		 * - Key: Variable ID.
+		 * - Value: Variable modifier definition.
+		 */
+		QHash<QString, VarModifierDef> varModifiers;
 
 		// Make sure all fields are initialized.
 		GcnMcFileDef() {

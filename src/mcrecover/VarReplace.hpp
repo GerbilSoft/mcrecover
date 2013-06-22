@@ -22,6 +22,10 @@
 #ifndef __MCRECOVER_VARREPLACE_HPP__
 #define __MCRECOVER_VARREPLACE_HPP__
 
+// MemCard Recover includes.
+#include "VarModifierDef.hpp"
+#include "GcnDateTime.hpp"
+
 // Qt includes.
 #include <QtCore/qglobal.h>
 #include <QtCore/QHash>
@@ -65,6 +69,16 @@ class VarReplace
 		static QHash<QString, QString> VecsToHash(
 					const QVector<QString> gameDescVars,
 					const QVector<QString> fileDescVars);
+		/**
+		* Apply variable modifiers to a QHash containing variables.
+		* @param varModifierDefs	[in] Variable modifier definitions.
+		* @param vars			[in, out] Variables to modify.
+		* @param gcnDateTime		[out, opt] If specified, GcnDateTime for the timestamp.
+		* @return 0 on success; non-zero if any modifiers failed.
+		*/
+		static int ApplyModifiers(QHash<QString, VarModifierDef> varModifierDefs,
+					  QHash<QString, QString> &vars,
+					  GcnDateTime *gcnDateTime);
 };
 
 #endif /* __MCRECOVER_VARREPLACE_HPP__ */

@@ -31,6 +31,7 @@
 
 // Variable Replacement.
 #include "VarReplace.hpp"
+#include "GcnDateTime.hpp"
 
 // C includes.
 #include <stdint.h>
@@ -94,6 +95,8 @@ class GcnMcFileDbPrivate
 		void parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
 		void parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
 		void parseXml_file_dirEntry(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
+		void parseXml_file_variables(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
+		void parseXml_file_variable(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
 
 		/**
 		 * Error string.
@@ -310,6 +313,9 @@ GcnMcFileDef *GcnMcFileDbPrivate::parseXml_file(QXmlStreamReader &xml)
 			} else if (xml.name() == QLatin1String("dirEntry")) {
 				// Directory entry.
 				parseXml_file_dirEntry(xml, gcnMcFileDef);
+			} else if (xml.name() == QLatin1String("variables")) {
+				// Variable modifiers.
+				parseXml_file_variables(xml, gcnMcFileDef);
 			} else {
 				// Skip unreocgnized tokens.
 				xml.readElementText(QXmlStreamReader::SkipChildElements);
@@ -600,6 +606,133 @@ void GcnMcFileDbPrivate::parseXml_file_dirEntry(QXmlStreamReader &xml, GcnMcFile
 }
 
 
+void GcnMcFileDbPrivate::parseXml_file_variables(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef)
+{
+	static const QString myTokenType = QLatin1String("variables");
+
+	// Check that this is actually a <variables> element.
+	if (xml.tokenType() != QXmlStreamReader::StartElement ||
+	    xml.name() != myTokenType) {
+		// Not a <variables> element.
+		return;
+	}
+
+	// Iterate over the <variables>.
+	xml.readNext();
+	while (!xml.hasError() &&
+		!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == myTokenType)) {
+		if (xml.tokenType() == QXmlStreamReader::StartElement) {
+			// Check what this element is.
+			if (xml.name() == QLatin1String("variable")) {
+				// Variable definition.
+				parseXml_file_variable(xml, gcnMcFileDef);
+			} else {
+				// Skip unreocgnized tokens.
+				xml.readElementText(QXmlStreamReader::SkipChildElements);
+			}
+		}
+
+		// Next token.
+		xml.readNext();
+	}
+}
+
+
+void GcnMcFileDbPrivate::parseXml_file_variable(QXmlStreamReader& xml, GcnMcFileDef* gcnMcFileDef)
+{
+	static const QString myTokenType = QLatin1String("variable");
+
+	// Check that this is actually a <variable> element.
+	if (xml.tokenType() != QXmlStreamReader::StartElement ||
+	    xml.name() != myTokenType) {
+		// Not a <variable> element.
+		return;
+	}
+
+	// Get the variable ID.
+	QString id;
+	QXmlStreamAttributes attributes = xml.attributes();
+	if (attributes.hasAttribute(QLatin1String("id")))
+		id = attributes.value(QLatin1String("id")).toString();
+	if (id.isEmpty()) {
+		// No ID specified.
+		// TODO: Show error message?
+	}
+
+	// Variable modiier definition.
+	VarModifierDef varModifierDef;
+
+	// Iterate over the <variable> properties.
+	xml.readNext();
+	QString str;	// temporary string
+	while (!xml.hasError() &&
+		!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == myTokenType)) {
+		if (xml.tokenType() == QXmlStreamReader::StartElement) {
+			// Check what this element is.
+			if (xml.name() == QLatin1String("useAs")) {
+				str = parseXml_element(xml).toLower();
+				if (str == QLatin1String("year"))
+					varModifierDef.useAs = VarModifierDef::USEAS_TS_YEAR;
+				else if (str == QLatin1String("month"))
+					varModifierDef.useAs = VarModifierDef::USEAS_TS_MONTH;
+				else if (str == QLatin1String("day"))
+					varModifierDef.useAs = VarModifierDef::USEAS_TS_DAY;
+				else if (str == QLatin1String("hour"))
+					varModifierDef.useAs = VarModifierDef::USEAS_TS_HOUR;
+				else if (str == QLatin1String("minute"))
+					varModifierDef.useAs = VarModifierDef::USEAS_TS_MINUTE;
+				else if (str == QLatin1String("second"))
+					varModifierDef.useAs = VarModifierDef::USEAS_TS_SECOND;
+				else //if (str == QLatin1String("filename"))
+					varModifierDef.useAs = VarModifierDef::USEAS_FILENAME;
+			} else if (xml.name() == QLatin1String("type")) {
+				str = parseXml_element(xml).toLower();
+				if (str == QLatin1String("number"))
+					varModifierDef.varType = VarModifierDef::VARTYPE_NUMBER;
+				else if (str == QLatin1String("char"))
+					varModifierDef.varType = VarModifierDef::VARTYPE_CHAR;
+				else //if (str == QLatin1String("string"))
+					varModifierDef.varType = VarModifierDef::VARTYPE_STRING;
+			} else if (xml.name() == QLatin1String("minWidth")) {
+				// Minimum field width.
+				str = parseXml_element(xml);
+				varModifierDef.minWidth = (uint8_t)str.toUInt(NULL, 0);
+			} else if (xml.name() == QLatin1String("fillChar")) {
+				// Fill character.
+				// TODO: Show an error if the string is not exactly 1 character?
+				// TODO: Show an error if the character is not ASCII?
+				str = parseXml_element(xml);
+				const QChar fillChar = (str.isEmpty() ? QChar(L' ') : str.at(0));
+				varModifierDef.fillChar = fillChar.toLatin1();
+			} else if (xml.name() == QLatin1String("align")) {
+				// Field alignment.
+				str = parseXml_element(xml).toLower();
+				if (str == QLatin1String("left"))
+					varModifierDef.fieldAlign = VarModifierDef::FIELDALIGN_LEFT;
+				else //if (str == QLatin1String("right"))
+					varModifierDef.fieldAlign = VarModifierDef::FIELDALIGN_RIGHT;
+			} else if (xml.name() == QLatin1String("add")) {
+				// Add value.
+				// TODO: Show an error if not number or char?
+				str = parseXml_element(xml).toLower();
+				varModifierDef.addValue = str.toInt(NULL, 0);
+			} else {
+				// Skip unreocgnized tokens.
+				xml.readElementText(QXmlStreamReader::SkipChildElements);
+			}
+		}
+
+		// Next token.
+		xml.readNext();
+	}
+
+	// Add the variable modifier definition.
+	// TODO: Show warning if this is a duplicate, or if the ID is invalid.
+	if (!id.isEmpty())
+		gcnMcFileDef->varModifiers.insert(id, varModifierDef);
+}
+
+
 /**
  * Get a comment from the GCN comment block, converted to UTF-8.
  * @param buf Comment block.
@@ -687,6 +820,9 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz,
 
 	// Matching file definition.
 	const GcnMcFileDef *matchFileDef = NULL;
+	QHash<QString, QString> vars;
+	QString filename;
+	GcnDateTime gcnDateTime;
 
 	// Substring matches.
 	QVector<QString> gameDescVars, fileDescVars;
@@ -739,8 +875,14 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz,
 
 			if (gameDescMatch && fileDescMatch) {
 				// Found a match.
-				matchFileDef = gcnMcFileDef;
-				break;
+				// Attempt to apply variable modifiers.
+				vars = VarReplace::VecsToHash(gameDescVars, fileDescVars);
+				int ret = VarReplace::ApplyModifiers(gcnMcFileDef->varModifiers, vars, &gcnDateTime);
+				if (ret == 0) {
+					// Variable modifiers applied successfully.
+					matchFileDef = gcnMcFileDef;
+					break;
+				}
 			}
 		}
 
@@ -769,9 +911,7 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz,
 	ba = QByteArray();
 
 	// Substitute variables in the filename.
-	// TODO: Apply variable modifiers first.
-	QHash<QString, QString> vars = VarReplace::VecsToHash(gameDescVars, fileDescVars);
-	QString filename = VarReplace::Exec(matchFileDef->dirEntry.filename, vars);
+	filename = VarReplace::Exec(matchFileDef->dirEntry.filename, vars);
 
 	// Filename.
 	if (dirEntry->gamecode[3] == 'J' && d->textCodecJP) {
@@ -796,14 +936,13 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz,
 	// Values.
 	/**
 	 * TODO:
-	 * - Construct a proper timestamp.
 	 * - Use the actual starting block?
 	 * - Block offsets for files with commentaddr >= 0x2000
 	 * - Support for variable-length files?
 	 */
 	dirEntry->pad_00	= 0xFF;
 	dirEntry->bannerfmt	= matchFileDef->dirEntry.bannerFormat;
-	dirEntry->lastmodified	= 0;
+	dirEntry->lastmodified	= gcnDateTime.gcnTimestamp();
 	dirEntry->iconaddr	= matchFileDef->dirEntry.iconAddress;
 	dirEntry->iconfmt	= matchFileDef->dirEntry.iconFormat;
 	dirEntry->iconspeed	= matchFileDef->dirEntry.iconSpeed;

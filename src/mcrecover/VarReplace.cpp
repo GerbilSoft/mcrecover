@@ -234,3 +234,79 @@ QHash<QString, QString> VarReplace::VecsToHash(
 
 	return vars;
 }
+
+/**
+ * Apply variable modifiers to a QHash containing variables.
+ * @param varModifierDefs	[in] Variable modifier definitions.
+ * @param vars			[in, out] Variables to modify.
+ * @param gcnDateTime		[out, opt] If specified, GcnDateTime for the timestamp.
+ * @return 0 on success; non-zero if any modifiers failed.
+ */
+int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> varModifierDefs,
+			       QHash<QString, QString> &vars,
+			       GcnDateTime *gcnDateTime)
+{
+	GcnDateTime tmpGcnDateTime;
+
+	// TODO: Verify that all variables to be modified
+	// were present in vars.
+
+	QList<QString> varIDs = vars.keys();
+	foreach (QString id, varIDs) {
+		if (!varModifierDefs.contains(id))
+			continue;
+
+		QString var = vars.value(id);
+		const VarModifierDef &variableDef = varModifierDefs[id];
+
+		// Apply the modifier.
+		switch (variableDef.varType) {
+			default:
+			case VarModifierDef::VARTYPE_STRING:
+				// Parse as a string.
+				// Nothing special needs to be done here...
+				break;
+
+			case VarModifierDef::VARTYPE_NUMBER: {
+				// Parse as a number. (Base 10)
+				// TODO: Add support for other bases?
+				int num = var.toInt(NULL, 10);
+				num += variableDef.addValue;
+				var = QString::number(num, 10);
+				break;
+			}
+
+			case VarModifierDef::VARTYPE_CHAR: {
+				// Parse as an ASCII character.
+				if (var.size() != 1)
+					return -2;
+				char chr = var.at(0).toLatin1();
+				chr += variableDef.addValue;
+				var = QChar::fromLatin1(chr);
+				break;
+			}
+		}
+
+		// Pad the variable with fillChar, if necessary.
+		if (var.size() < variableDef.minWidth) {
+			var.reserve(variableDef.minWidth);
+			QChar fillChar = QChar::fromLatin1(variableDef.fillChar);
+			if (variableDef.fieldAlign == VarModifierDef::FIELDALIGN_LEFT) {
+				while (var.size() < variableDef.minWidth)
+					var.append(fillChar);
+			} else /*if (variableDef.fieldAlign == VarModifierDef::FIELDALIGN_RIGHT)*/ {
+				while (var.size() < variableDef.minWidth)
+					var.prepend(fillChar);
+			}
+		}
+
+		// Check if this variable should be used in the GcnDateTime.
+		// TODO
+
+		// Update the variable in the hash.
+		vars.insert(id, var);
+	}
+
+	// Variables modified successfully.
+	return 0;
+}
