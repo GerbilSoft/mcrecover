@@ -620,8 +620,17 @@
 			<gameDesc>^SONIC HEROES : (\d{2})$</gameDesc>
 			<fileDesc>^EMBLEM : (\d{3})$</fileDesc>
 		</search>
+		<variables>
+			<variable id="G1">
+				<useAs>filename</useAs>
+				<type>number</type>
+				<minWidth>2</minWidth>
+				<fillChar>0</fillChar>
+				<align>right</align>
+				<add>-1</add>
+			</variable>
+		</variables>
 		<dirEntry>
-			<!-- TODO: $G1 needs a -1 modifier. -->
 			<filename>SONICHEROES_$G1</filename>
 			<bannerFormat>0x02</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
