@@ -279,6 +279,23 @@
 			<fileDesc>^(\d{2})\.(\d{2})\.(\d{2})  (\d{2}):(\d{2})$</fileDesc>
 			<!-- TODO: Checksum field? -->
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<!-- NOTE: "A" is not a save slot!
 			     "MetroidPrime B" is used for wear levelling,
