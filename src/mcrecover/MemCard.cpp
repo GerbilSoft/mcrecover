@@ -421,11 +421,11 @@ void MemCardPrivate::loadMemCardFileList(void)
 			continue;
 
 		// Valid directory entry.
-		MemCardFile *mcf = new MemCardFile(q, i, mc_dat, mc_bat);
-		lstMemCardFile.append(mcf);
+		MemCardFile *mcFile = new MemCardFile(q, i, mc_dat, mc_bat);
+		lstMemCardFile.append(mcFile);
 
 		// Mark the file's blocks as used.
-		QVector<uint16_t> fatEntries = mcf->fatEntries();
+		QVector<uint16_t> fatEntries = mcFile->fatEntries();
 		foreach (uint16_t block, fatEntries) {
 			if (block >= 5 && block < usedBlockMap.size()) {
 				// Valid block.
@@ -627,8 +627,8 @@ QVector<uint8_t> MemCard::usedBlockMap(void)
 void MemCard::removeLostFiles(void)
 {
 	for (int i = d->lstMemCardFile.size() - 1; i >= 0; i--) {
-		MemCardFile *file = d->lstMemCardFile.at(i);
-		if (file->isLostFile()) {
+		MemCardFile *mcFile = d->lstMemCardFile.at(i);
+		if (mcFile->isLostFile()) {
 			// This is a "lost" file. Remove it.
 			d->lstMemCardFile.removeAt(i);
 			emit fileRemoved(i);
