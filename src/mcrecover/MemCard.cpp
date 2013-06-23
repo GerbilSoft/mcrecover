@@ -583,6 +583,17 @@ int MemCard::numFiles(void) const
 }
 
 /**
+ * Is the card empty?
+ * @return True if empty; false if not.
+ */
+bool MemCard::isEmpty(void) const
+{
+	if (!isOpen())
+		return true;
+	return d->lstMemCardFile.isEmpty();
+}
+
+/**
  * Get a MemCardFile object.
  * @param idx File number.
  * @return MemCardFile object, or NULL on error.

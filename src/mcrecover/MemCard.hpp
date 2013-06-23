@@ -137,6 +137,12 @@ class MemCard : public QObject
 		int numFiles(void) const;
 
 		/**
+		 * Is the card empty?
+		 * @return True if empty; false if not.
+		 */
+		bool isEmpty(void) const;
+
+		/**
 		 * Get a MemCardFile object.
 		 * @param idx File number.
 		 * @return MemCardFile object, or NULL on error.
