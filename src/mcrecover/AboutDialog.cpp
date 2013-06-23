@@ -50,6 +50,9 @@ class AboutDialogPrivate
 		// Initialize the About Dialog text.
 		void initAboutDialogText(void);
 
+		// Credits.
+		static QString GetCredits(void);
+
 		// Included libraries.
 		static QString GetIncLibraries(void);
 
@@ -78,8 +81,7 @@ void AboutDialogPrivate::initAboutDialogText(void)
 	const QString sLineBreak = QLatin1String("<br/>\n");
 
 	// Build the credits text.
-	// TODO: More copyrights.
-	QString sCredits = QLatin1String("Copyright (c) 2012-2013 by David Korth.");
+	QString sCredits = GetCredits();
 
 	// Set the credits text.
 	q->lblCredits->setText(sCredits);
@@ -146,14 +148,78 @@ void AboutDialogPrivate::initAboutDialogText(void)
 
 
 /**
+ * Credits.
+ */
+QString AboutDialogPrivate::GetCredits(void)
+{
+	static const QString sLineBreak = QLatin1String("<br/>\n");
+	static const QString sIndent = QLatin1String("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+	static const QChar chrBullet(0x2022);  // U+2022: BULLET
+
+	QString credits;
+	credits.reserve(4096);
+	credits += QLatin1String("Copyright (c) 2012-2013 by David Korth.");
+
+	enum CreditType_t {
+		CT_CONTINUE = 0,	// Continue previous type.
+		CT_MCF_CONTRIBUTORS,	// Memory Card File Contributors
+
+		CT_MAX
+	};
+
+	struct CreditsData_t {
+		CreditType_t type;
+		const char *name;
+	};
+
+	// Credits data.
+	static const CreditsData_t CreditsData[] = {
+		{CT_MCF_CONTRIBUTORS,	"gold lightning"},
+		{CT_CONTINUE,		"Henke37"},
+
+		{CT_MAX, NULL}
+	};
+	
+	CreditType_t lastCreditType = CT_CONTINUE;
+	for (const CreditsData_t *creditsData = &CreditsData[0];
+	     creditsData->type < CT_MAX; creditsData++)
+	{
+		if (creditsData->type != CT_CONTINUE &&
+		    creditsData->type != lastCreditType)
+		{
+			// New credit type.
+			credits += sLineBreak + sLineBreak;
+			credits += QLatin1String("<b>");
+
+			switch (creditsData->type) {
+				case CT_MCF_CONTRIBUTORS:
+					credits += AboutDialog::tr("Memory Card File Contributors:");
+					break;
+				default:
+					break;
+			}
+
+			credits += QLatin1String("</b>") + sLineBreak;
+		}
+
+		// Append the contributor's name.
+		credits += sIndent + chrBullet + QChar(L' ') +
+			QLatin1String(creditsData->name) + sLineBreak;
+	}
+
+	return credits;
+}
+
+
+/**
  * Get included libraries.
  * @return Included libraries.
  */
 QString AboutDialogPrivate::GetIncLibraries(void)
 {
 	// Common strings.
+	static const QString sLineBreak = QLatin1String("<br/>\n");
 	const QString sIntCopyOf = AboutDialog::tr("Internal copy of %1.");
-	const QString sLineBreak = QLatin1String("<br/>\n");
 
 	// Included libraries string.
 	QString sIncLibraries;
