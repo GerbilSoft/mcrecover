@@ -33,6 +33,7 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QTextCodec>
 #include <QtCore/QFile>
+#include <QtCore/QIODevice>
 
 /** MemCardFilePrivate **/
 
@@ -916,6 +917,27 @@ int MemCardFile::saveGci(QString filename)
 		return -1;
 	}
 
+	// Write the GCI data.
+	int ret = saveGci(&file);
+	file.close();
+
+	if (ret != 0) {
+		// Error saving the GCI file.
+		file.remove();
+	}
+
+	return ret;
+}
+
+
+/**
+ * Save the file.
+ * @param qioDevice QIODevice to write the GCI data to.
+ * @return 0 on success; non-zero on error.
+ * TODO: Error code constants.
+ */
+int MemCardFile::saveGci(QIODevice *qioDevice)
+{
 	// GCI header is the 64-byte directory entry.
 	// NOTE: This must be byteswapped!
 	card_direntry dirEntry = *d->dirEntry;
@@ -928,25 +950,20 @@ int MemCardFile::saveGci(QString filename)
 	dirEntry.commentaddr	= cpu_to_be32(dirEntry.commentaddr);
 
 	// Write the directory entry.
-	qint64 ret = file.write((char*)&dirEntry, (qint64)sizeof(dirEntry));
+	qint64 ret = qioDevice->write((char*)&dirEntry, (qint64)sizeof(dirEntry));
 	if (ret != (qint64)sizeof(dirEntry)) {
 		// Error saving the directory entry.
-		file.close();
-		file.remove();
 		return -2;
 	}
 
 	// Write the file data.
 	const QByteArray fileData = d->loadFileData();
-	ret = file.write(fileData);
+	ret = qioDevice->write(fileData);
 	if (ret != (qint64)fileData.size()) {
 		// Error saving the file data.
-		file.close();
-		file.remove();
 		return -3;
 	}
 
 	// Finished saving the file.
-	file.close();
 	return 0;
 }

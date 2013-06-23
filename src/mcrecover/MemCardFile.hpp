@@ -29,6 +29,7 @@
 #include <QtCore/QString>
 #include <QtCore/QVector>
 #include <QtGui/QPixmap>
+class QIODevice;
 
 // GcnDateTime: QDateTime wrapper.
 #include "GcnDateTime.hpp"
@@ -224,6 +225,14 @@ class MemCardFile : public QObject
 		 * TODO: Error code constants.
 		 */
 		int saveGci(QString filename);
+
+		/**
+		 * Save the file in GCI format.
+		 * @param qioDevice QIODevice to write the GCI data to.
+		 * @return 0 on success; non-zero on error.
+		 * TODO: Error code constants.
+		 */
+		int saveGci(QIODevice *qioDevice);
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */
