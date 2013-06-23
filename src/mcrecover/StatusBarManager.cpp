@@ -25,6 +25,7 @@
 #include "SearchThread.hpp"
 
 // Qt includes.
+#include <QtCore/QDir>
 #include <QtGui/QApplication>
 #include <QtGui/QLabel>
 #include <QtGui/QStatusBar>
@@ -307,6 +308,21 @@ void StatusBarManager::closed(void)
 	d->scanning = false;
 	d->progressBar->setVisible(false);
 	d->lastStatusMessage = tr("GameCube Memory Card image closed.");
+	d->updateStatusBar();
+}
+
+
+/**
+ * Files were saved.
+ * @param n Number of files saved.
+ * @param path Path files were saved to.
+ */
+void StatusBarManager::filesSaved(int n, QString path)
+{
+	d->scanning = false;
+	d->progressBar->setVisible(false);
+	d->lastStatusMessage = tr("%Ln file(s) saved to %1.", NULL, n)
+				.arg(QDir::toNativeSeparators(path));
 	d->updateStatusBar();
 }
 

@@ -86,6 +86,13 @@ class StatusBarManager : public QObject
 		 */
 		void closed(void);
 
+		/**
+		 * Files were saved.
+		 * @param n Number of files saved.
+		 * @param path Path files were saved to.
+		 */
+		void filesSaved(int n, QString path);
+
 	private slots:
 		/**
 		 * An object has been destroyed.
