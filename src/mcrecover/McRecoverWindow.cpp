@@ -276,7 +276,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 		return;
 	} else if (files.size() == 1 && path.isEmpty()) {
 		// Single file, path not specified.
-		const MemCardFile *file = files.at(0);
+		MemCardFile *file = files.at(0);
 
 		// Prompt the user for a save location.
 		QString filename = QFileDialog::getSaveFileName(q,
@@ -288,8 +288,17 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 		if (filename.isEmpty())
 			return;
 
+		int filesSaved = 0;
+
 		// Save the file.
-		// TODO
+		int ret = file->saveGci(filename);
+		if (ret == 0) {
+			// File saved successfully.
+			filesSaved++;
+		} else {
+			// An error occurred while saving the file.
+			// TODO: Error details.
+		}
 
 		// Update the status bar.
 		const QFileInfo fileInfo(filename);
@@ -303,7 +312,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 			absolutePath += QChar(L'/');
 		}
 
-		statusBarManager->filesSaved(1, absolutePath);
+		statusBarManager->filesSaved(filesSaved, absolutePath);
 		return;
 	} else if (files.size() > 1 && path.isEmpty()) {
 		// Multiple files, path not specified.
@@ -323,7 +332,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 
 	int filesSaved = 0;
 	OverwriteAllStatus overwriteAll = OVERWRITEALL_UNKNOWN;
-	foreach (const MemCardFile *file, files) {
+	foreach (MemCardFile *file, files) {
 		const QString defaultGciFilename = file->defaultGciFilename();
 		QString filename = path + QChar(L'/') + defaultGciFilename;
 		QFile qfile(filename);
@@ -334,7 +343,8 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 				bool overwrite = false;
 				int ret = QMessageBox::warning(q,
 					q->tr("File Already Exists"),
-					q->tr("A file named \"%1\" already exists in the specified directory.") +
+					q->tr("A file named \"%1\" already exists in the specified directory.")
+						.arg(filename) +
 					QLatin1String("\n\n") +
 					q->tr("Do you want to overwrite it?"),
 					(QMessageBox::Yes | QMessageBox::No |
@@ -375,8 +385,14 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 		}
 
 		// Save the file.
-		// TODO
-		filesSaved++;
+		int ret = file->saveGci(filename);
+		if (ret == 0) {
+			// File saved successfully.
+			filesSaved++;
+		} else {
+			// An error occurred while saving the file.
+			// TODO: Error details.
+		}
 	}
 
 	// Update the status bar.
