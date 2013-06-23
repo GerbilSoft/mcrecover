@@ -280,8 +280,9 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 
 		// Prompt the user for a save location.
 		QString filename = QFileDialog::getSaveFileName(q,
-				q->tr("Save File %1").arg(file->filename()),	// Dialog title
-				file->defaultGciFilename(),			// Default filename
+				q->tr("Save GCN Save File %1")
+					.arg(file->filename()),	// Dialog title
+				file->defaultGciFilename(),	// Default filename
 				q->tr("GameCube Save Files") + QLatin1String(" (*.gci);;") +
 				q->tr("All Files") + QLatin1String(" (*)"));
 		if (filename.isEmpty())
@@ -292,12 +293,9 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 		return;
 	} else if (files.size() > 1 && path.isEmpty()) {
 		// Multiple files, path not specified.
-		QString caption = (files.size() >= card->numFiles()
-					? q->tr("Save All Files")
-					: q->tr("Save Multiple Files"));
-
 		// Prompt the user for a save location.
-		path = QFileDialog::getExistingDirectory(q);
+		path = QFileDialog::getExistingDirectory(q,
+				q->tr("Save %n GCN Save File(s)", NULL, files.size()));
 		if (path.isEmpty())
 			return;
 	}
@@ -651,11 +649,44 @@ void McRecoverWindow::on_actionAbout_triggered(void)
 void McRecoverWindow::on_actionSave_triggered(void)
 {
 	QModelIndexList selList = lstFileList->selectionModel()->selectedRows();
+	if (selList.isEmpty())
+		return;
+
 	QVector<MemCardFile*> files;
 	files.reserve(selList.size());
 
 	foreach(QModelIndex idx, selList) {
 		MemCardFile *file = d->card->getFile(idx.row());
+		if (file != NULL)
+			files.append(file);
+	}
+
+	// If there's no files to save, don't do anything.
+	if (files.isEmpty())
+		return;
+
+	// Save the files.
+	d->saveFiles(files);
+}
+
+
+/**
+ * Save all files.
+ */
+void McRecoverWindow::on_actionSaveAll_triggered(void)
+{
+	if (!d->card)
+		return;
+
+	const int numFiles = d->card->numFiles();
+	if (numFiles <= 0)
+		return;
+
+	QVector<MemCardFile*> files;
+	files.reserve(numFiles);
+
+	for (int i = 0; i < numFiles; i++) {
+		MemCardFile *file = d->card->getFile(i);
 		if (file != NULL)
 			files.append(file);
 	}
