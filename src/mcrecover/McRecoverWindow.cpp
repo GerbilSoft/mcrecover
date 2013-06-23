@@ -35,9 +35,11 @@
 // C includes.
 #include <cstdio>
 
-// Qt includes. (Drag & Drop)
+// Qt includes.
 #include <QtCore/QUrl>
 #include <QtCore/QStack>
+#include <QtCore/QVector>
+#include <QtCore/QFile>
 #include <QtGui/QAction>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDropEvent>
@@ -97,6 +99,13 @@ class McRecoverWindowPrivate
 		 * Update the window title.
 		 */
 		void updateWindowTitle(void);
+
+		/**
+		 * Save the specified file(s).
+		 * @param files List of file(s) to save.
+		 * @param path If specified, save file(s) to path using default GCI filenames.
+		 */
+		void saveFiles(QVector<MemCardFile*> files, QString path = QString());
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -253,6 +262,108 @@ void McRecoverWindowPrivate::updateWindowTitle(void)
 	windowTitle += QApplication::applicationName();
 
 	q->setWindowTitle(windowTitle);
+}
+
+
+/**
+ * Save the specified file(s).
+ * @param files List of file(s) to save.
+ * @param path If specified, save file(s) to path using default GCI filenames.
+ */
+void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QString path)
+{
+	if (files.isEmpty()) {
+		return;
+	} else if (files.size() == 1 && path.isEmpty()) {
+		// Single file, path not specified.
+		const MemCardFile *file = files.at(0);
+
+		// Prompt the user for a save location.
+		QString filename = QFileDialog::getSaveFileName(q,
+				q->tr("Save File %1").arg(file->filename()),	// Dialog title
+				file->defaultGciFilename(),			// Default filename
+				q->tr("GameCube Save Files") + QLatin1String(" (*.gci);;") +
+				q->tr("All Files") + QLatin1String(" (*)"));
+		if (filename.isEmpty())
+			return;
+
+		// Save the file.
+		// TODO
+		return;
+	} else if (files.size() > 1 && path.isEmpty()) {
+		// Multiple files, path not specified.
+		QString caption = (files.size() >= card->numFiles()
+					? q->tr("Save All Files")
+					: q->tr("Save Multiple Files"));
+
+		// Prompt the user for a save location.
+		path = QFileDialog::getExistingDirectory(q);
+		if (path.isEmpty())
+			return;
+	}
+
+	// Save files using default filenames to the specified path.
+	enum OverwriteAllStatus {
+		OVERWRITEALL_UNKNOWN	= 0,
+		OVERWRITEALL_YESTOALL	= 1,
+		OVERWRITEALL_NOTOALL	= 2,
+	};
+
+	OverwriteAllStatus overwriteAll = OVERWRITEALL_UNKNOWN;
+	foreach (const MemCardFile *file, files) {
+		const QString defaultGciFilename = file->defaultGciFilename();
+		QString filename = path + QChar(L'/') + defaultGciFilename;
+		QFile qfile(filename);
+
+		// Check if the file exists.
+		if (qfile.exists()) {
+			if (overwriteAll == OVERWRITEALL_UNKNOWN) {
+				bool overwrite = false;
+				int ret = QMessageBox::warning(q,
+					q->tr("File Already Exists"),
+					q->tr("A file named \"%1\" already exists in the specified directory.") +
+					QLatin1String("\n\n") +
+					q->tr("Do you want to overwrite it?"),
+					(QMessageBox::Yes | QMessageBox::No |
+						QMessageBox::YesToAll | QMessageBox::NoToAll),
+					QMessageBox::No);
+				switch (ret) {
+					case QMessageBox::Yes:
+						// Overwrite this file.
+						overwrite = true;
+						break;
+
+					default:
+					case QMessageBox::No:
+					case QMessageBox::Escape:
+						// Don't overwrite this file.
+						overwrite = false;
+						break;
+
+					case QMessageBox::YesToAll:
+						// Overwrite this file and all other files.
+						overwriteAll = OVERWRITEALL_YESTOALL;
+						overwrite = true;
+						break;
+
+					case QMessageBox::NoToAll:
+						// Don't overwrite this file or any other files.
+						overwriteAll = OVERWRITEALL_NOTOALL;
+						overwrite = false;
+						break;
+				}
+
+				if (!overwrite)
+					continue;
+			} else if (overwriteAll == OVERWRITEALL_NOTOALL) {
+				// Don't overwrite any files.
+				continue;
+			}
+		}
+
+		// Save the file.
+		// TODO
+	}
 }
 
 
@@ -528,6 +639,33 @@ void McRecoverWindow::on_actionExit_triggered(void)
 void McRecoverWindow::on_actionAbout_triggered(void)
 {
 	AboutDialog::ShowSingle();
+}
+
+
+/** Save actions. **/
+
+
+/**
+ * Save the selected file(s).
+ */
+void McRecoverWindow::on_actionSave_triggered(void)
+{
+	QModelIndexList selList = lstFileList->selectionModel()->selectedRows();
+	QVector<MemCardFile*> files;
+	files.reserve(selList.size());
+
+	foreach(QModelIndex idx, selList) {
+		MemCardFile *file = d->card->getFile(idx.row());
+		if (file != NULL)
+			files.append(file);
+	}
+
+	// If there's no files to save, don't do anything.
+	if (files.isEmpty())
+		return;
+
+	// Save the files.
+	d->saveFiles(files);
 }
 
 

@@ -25,6 +25,13 @@
 #include <QtGui/QMainWindow>
 #include "ui_McRecoverWindow.h"
 
+// Qt includes.
+#include <QtCore/QString>
+#include <QtCore/QVector>
+
+// MemCard Recover classes.
+class MemCardFile;
+
 class McRecoverWindowPrivate;
 
 class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
@@ -64,6 +71,9 @@ class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
 		void on_actionScan_triggered(void);
 		void on_actionExit_triggered(void);
 		void on_actionAbout_triggered(void);
+
+		// Save actions.
+		void on_actionSave_triggered(void);
 
 		// MemCardModel slots.
 		void memCardModel_layoutChanged(void);
