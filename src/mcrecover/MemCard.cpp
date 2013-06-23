@@ -350,14 +350,14 @@ void MemCardPrivate::loadDirTable(card_dat *dat, uint32_t address, uint32_t *che
 
 	// Byteswap the directory table contents.
 	for (int i = 0; i < NUM_ELEMENTS(dat->entries); i++) {
-		card_direntry *direntry	= &dat->entries[i];
-		direntry->lastmodified	= be32_to_cpu(direntry->lastmodified);
-		direntry->iconaddr	= be32_to_cpu(direntry->iconaddr);
-		direntry->iconfmt	= be16_to_cpu(direntry->iconfmt);
-		direntry->iconspeed	= be16_to_cpu(direntry->iconspeed);
-		direntry->block		= be16_to_cpu(direntry->block);
-		direntry->length	= be16_to_cpu(direntry->length);
-		direntry->commentaddr	= be32_to_cpu(direntry->commentaddr);
+		card_direntry *dirEntry	= &dat->entries[i];
+		dirEntry->lastmodified	= be32_to_cpu(dirEntry->lastmodified);
+		dirEntry->iconaddr	= be32_to_cpu(dirEntry->iconaddr);
+		dirEntry->iconfmt	= be16_to_cpu(dirEntry->iconfmt);
+		dirEntry->iconspeed	= be16_to_cpu(dirEntry->iconspeed);
+		dirEntry->block		= be16_to_cpu(dirEntry->block);
+		dirEntry->length	= be16_to_cpu(dirEntry->length);
+		dirEntry->commentaddr	= be32_to_cpu(dirEntry->commentaddr);
 	}
 
 	// Byteswap the directory control block.
