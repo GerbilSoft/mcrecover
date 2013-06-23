@@ -25,7 +25,6 @@
 #include "card.h"
 
 // Qt includes.
-#include <QtCore/QDateTime>
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QVector>
@@ -217,6 +216,14 @@ class MemCardFile : public QObject
 		 * @return Default GCI filename.
 		 */
 		QString defaultGciFilename(void) const;
+
+		/**
+		 * Save the file in GCI format.
+		 * @param filename Filename for the GCI file.
+		 * @return 0 on success; non-zero on error.
+		 * TODO: Error code constants.
+		 */
+		int saveGci(QString filename);
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */

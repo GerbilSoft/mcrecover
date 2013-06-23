@@ -32,6 +32,7 @@
 // Qt includes.
 #include <QtCore/QByteArray>
 #include <QtCore/QTextCodec>
+#include <QtCore/QFile>
 
 /** MemCardFilePrivate **/
 
@@ -898,4 +899,54 @@ QString MemCardFile::defaultGciFilename(void) const
 
 	// Make sure no invalid DOS characters are present in the filename.
 	return d->StripInvalidDosChars(filename);
+}
+
+
+/**
+ * Save the file.
+ * @param filename Filename for the GCI file.
+ * @return 0 on success; non-zero on error.
+ * TODO: Error code constants.
+ */
+int MemCardFile::saveGci(QString filename)
+{
+	QFile file(filename);
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+		// Error opening the file.
+		return -1;
+	}
+
+	// GCI header is the 64-byte directory entry.
+	// NOTE: This must be byteswapped!
+	card_direntry dirEntry = *d->dirEntry;
+	dirEntry.lastmodified	= cpu_to_be32(dirEntry.lastmodified);
+	dirEntry.iconaddr	= cpu_to_be32(dirEntry.iconaddr);
+	dirEntry.iconfmt	= cpu_to_be16(dirEntry.iconfmt);
+	dirEntry.iconspeed	= cpu_to_be16(dirEntry.iconspeed);
+	dirEntry.block		= cpu_to_be16(dirEntry.block);
+	dirEntry.length		= cpu_to_be16(dirEntry.length);
+	dirEntry.commentaddr	= cpu_to_be32(dirEntry.commentaddr);
+
+	// Write the directory entry.
+	qint64 ret = file.write((char*)&dirEntry, (qint64)sizeof(dirEntry));
+	if (ret != (qint64)sizeof(dirEntry)) {
+		// Error saving the directory entry.
+		file.close();
+		file.remove();
+		return -2;
+	}
+
+	// Write the file data.
+	const QByteArray fileData = d->loadFileData();
+	ret = file.write(fileData);
+	if (ret != (qint64)fileData.size()) {
+		// Error saving the file data.
+		file.close();
+		file.remove();
+		return -3;
+	}
+
+	// Finished saving the file.
+	file.close();
+	return 0;
 }
