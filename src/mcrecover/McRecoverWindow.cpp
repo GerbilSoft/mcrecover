@@ -290,6 +290,20 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 
 		// Save the file.
 		// TODO
+
+		// Update the status bar.
+		const QFileInfo fileInfo(filename);
+		const QDir dir = fileInfo.dir();
+		QString absolutePath = dir.absolutePath();
+
+		// Make sure tha path has a trailing slash.
+		if (!absolutePath.isEmpty() &&
+		    absolutePath.at(absolutePath.size() - 1) != QChar(L'/'))
+		{
+			absolutePath += QChar(L'/');
+		}
+
+		statusBarManager->filesSaved(1, absolutePath);
 		return;
 	} else if (files.size() > 1 && path.isEmpty()) {
 		// Multiple files, path not specified.
@@ -307,6 +321,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 		OVERWRITEALL_NOTOALL	= 2,
 	};
 
+	int filesSaved = 0;
 	OverwriteAllStatus overwriteAll = OVERWRITEALL_UNKNOWN;
 	foreach (const MemCardFile *file, files) {
 		const QString defaultGciFilename = file->defaultGciFilename();
@@ -361,7 +376,21 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 
 		// Save the file.
 		// TODO
+		filesSaved++;
 	}
+
+	// Update the status bar.
+	const QDir dir(path);
+	QString absolutePath = dir.absolutePath();
+
+	// Make sure tha path has a trailing slash.
+	if (!absolutePath.isEmpty() &&
+		absolutePath.at(absolutePath.size() - 1) != QChar(L'/'))
+	{
+		absolutePath += QChar(L'/');
+	}
+
+	statusBarManager->filesSaved(filesSaved, absolutePath);
 }
 
 
