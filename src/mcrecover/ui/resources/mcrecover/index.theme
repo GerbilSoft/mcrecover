@@ -1,0 +1,11 @@
+[Icon Theme]
+Name=mcrecover
+Comment=GCN MemCard Recover
+Inherits=default
+Directories=16x16,128x128
+
+[16x16]
+Size=16
+
+[128x128]
+Size=128

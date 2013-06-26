@@ -88,14 +88,21 @@ void AboutDialogPrivate::initAboutDialogText(void)
 	q->lblCredits->setTextFormat(Qt::RichText);
 
 	// Build the program title text.
-	// TODO
-	QString sPrgTitle = QLatin1String("<b>") +
-				QCoreApplication::applicationName() +
-				QLatin1String("</b>") + sLineBreak +
-				AboutDialog::tr("Version %1")
-				.arg(QCoreApplication::applicationVersion()) + sLineBreak;
+	QString sPrgTitle;
+	sPrgTitle.reserve(4096);
+	sPrgTitle += QLatin1String("<b>") +
+			QCoreApplication::applicationName() +
+			QLatin1String("</b>") + sLineBreak +
+			AboutDialog::tr("Version %1")
+			.arg(QCoreApplication::applicationVersion()) + sLineBreak;
 #ifdef MCRECOVER_GIT_VERSION
 	sPrgTitle += QLatin1String(MCRECOVER_GIT_VERSION) + sLineBreak;
+#endif
+
+#ifdef Q_OS_LINUX
+	// Set the "MegaCard Engine" text.
+	sPrgTitle += sLineBreak +
+			q->tr("Powered by the<br/>\n<b>MegaCard Engine</b><sup>TM</sup>");
 #endif
 
 	// Set the program title text.

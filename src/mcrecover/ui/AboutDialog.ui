@@ -18,7 +18,7 @@
     <number>12</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="hboxPrgTitle">
+    <layout class="QHBoxLayout" name="hboxPrgTitle" stretch="1,2">
      <item>
       <widget class="QLabel" name="lblMcRecoverLogo">
        <property name="sizePolicy">
@@ -27,14 +27,11 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="maximumSize">
-        <size>
-         <width>128</width>
-         <height>96</height>
-        </size>
-       </property>
        <property name="pixmap">
-        <pixmap>:/gens/gens_small.png</pixmap>
+        <pixmap resource="resources/mcrecover/mcrecover.qrc">:/mcrecover/128x128/mcrecover.png</pixmap>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
@@ -49,6 +46,9 @@
    </item>
    <item>
     <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
      <widget class="QWidget" name="tabCredits">
       <attribute name="title">
        <string>C&amp;redits</string>
@@ -174,7 +174,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources/mcrecover/mcrecover.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

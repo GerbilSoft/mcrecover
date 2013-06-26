@@ -84,19 +84,14 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 	QCoreApplication::setApplicationVersion(sVersion);
 
 	// Set the application icon. (TODO)
-#if 0
-	QIcon iconApp;
-	iconApp.addFile(QLatin1String(":/gens/gensgs_48x48.png"), QSize(48, 48));
-	iconApp.addFile(QLatin1String(":/gens/gensgs_32x32.png"), QSize(32, 32));
-	iconApp.addFile(QLatin1String(":/gens/gensgs_16x16.png"), QSize(16, 16));
-	q->setWindowIcon(iconApp);
-#endif
+	QIcon mcrIcon = q->IconFromProgram(QLatin1String("mcrecover"));
+	q->setWindowIcon(mcrIcon);
 
 #if QT_VERSION >= 0x040600
 	// Check if an icon theme is available.
 	if (!QIcon::hasThemeIcon(QLatin1String("application-exit"))) {
 		// Icon theme is not available.
-		// Use built-in Oxygen icon theme.
+		// Use the built-in Oxygen icon theme.
 		// Reference: http://tkrotoff.blogspot.com/2010/02/qiconfromtheme-under-windows.html
 		QIcon::setThemeName(QLatin1String("oxygen"));
 	}
@@ -212,6 +207,48 @@ QIcon McRecoverQApplication::IconFromTheme(QString name)
 		{QLatin1String(":/oxygen/24x24/"), 24},
 		{QLatin1String(":/oxygen/22x22/"), 22},
 		{QLatin1String(":/oxygen/16x16/"), 16}
+	};
+	static const QString pngExt = QLatin1String(".png");
+
+	QIcon icon;
+	for (int i = 0; i < (int)(sizeof(iconSz)/sizeof(iconSz[0])); i++) {
+		QPixmap pxm(iconSz[i].path + name + pngExt);
+		if (!pxm.isNull())
+			icon.addPixmap(pxm);
+	}
+
+	return icon;
+}
+
+
+/**
+ * Get an icon from the MemCard Recover icon set.
+ * @param name Icon name.
+ * @return QIcon.
+ */
+QIcon McRecoverQApplication::IconFromProgram(QString name)
+{
+#if QT_VERSION >= 0x040600
+	if (QIcon::hasThemeIcon(name))
+		return QIcon::fromTheme(name);
+#endif
+
+	// System icon doesn't exist.
+	// Get the fallback icon.
+	struct IconSz_t {
+		QString path;
+		int sz;
+	};
+
+	static const IconSz_t iconSz[] = {
+		{QLatin1String(":/mcrecover/256x256/"), 256},
+		{QLatin1String(":/mcrecover/128x128/"), 128},
+		{QLatin1String(":/mcrecover/64x64/"), 64},
+		{QLatin1String(":/mcrecover/48x48/"), 48},
+		{QLatin1String(":/mcrecover/32x32/"), 32},
+		{QLatin1String(":/mcrecover/24x24/"), 24},
+		{QLatin1String(":/mcrecover/22x22/"), 22},
+		{QLatin1String(":/mcrecover/16x16/"), 16}
 	};
 	static const QString pngExt = QLatin1String(".png");
 

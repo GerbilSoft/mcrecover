@@ -144,6 +144,7 @@ QT4_WRAP_CPP(mcrecover_MOC_SOURCES ${mcrecover_MOC_HEADERS})
 ######################
 
 SET(mcrecover_RCC_SRCS
+	ui/resources/mcrecover/mcrecover.qrc
 	ui/resources/oxygen/oxygen.qrc
 	)
 
