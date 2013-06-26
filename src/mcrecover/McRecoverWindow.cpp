@@ -27,6 +27,7 @@
 #include "MemCard.hpp"
 #include "MemCardFile.hpp"
 #include "MemCardModel.hpp"
+#include "MemCardItemDelegate.hpp"
 
 // Search classes.
 #include "SearchThread.hpp"
@@ -459,6 +460,9 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	// We want the QTreeView to stretch, but not the card info panel.
 	splitter->setStretchFactor(0, 1);
 	splitter->setStretchFactor(1, 0);
+
+	// Initialize lstFileList's item delegate.
+	lstFileList->setItemDelegate(new MemCardItemDelegate(this));
 
 	// Set lstFileList's model.
 	lstFileList->setModel(d->model);
