@@ -100,11 +100,18 @@ void MemCardItemDelegate::paint(QPainter *painter,
 		else
 			painter->setPen(option.palette.text().color());
 
-		painter->drawText(rect, desc.at(0));
+		// Game description.
+		QString gameDescElided = fmGameDesc.elidedText(
+			desc.at(0), Qt::ElideRight, rect.width()-1);
+		painter->drawText(rect, gameDescElided);
+
 		if (desc.size() > 1) {
+			// File description.
 			painter->setFont(fontFileDesc);
 			rect.setY(rect.y() + fmGameDesc.height());
-			painter->drawText(rect, desc.at(1));
+			QString fileDescElided = fmFileDesc.elidedText(
+				desc.at(1), Qt::ElideRight, rect.width()-1);
+			painter->drawText(rect, fileDescElided);
 		}
 
 		painter->restore();
