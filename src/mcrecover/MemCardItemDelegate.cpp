@@ -81,7 +81,12 @@ void MemCardItemDelegate::paint(QPainter *painter,
 		const QFontMetrics fmGameDesc(fontGameDesc);
 
 		QFont fontFileDesc = fontGameDesc;
-		fontFileDesc.setPointSize(fontFileDesc.pointSize() * 4 / 5);
+		int pointSize = fontFileDesc.pointSize();
+		if (pointSize >= 10)
+			pointSize = (pointSize * 4 / 5);
+		else
+			pointSize--;
+		fontFileDesc.setPointSize(pointSize);
 		const QFontMetrics fmFileDesc(fontFileDesc);
 
 		QRect rect = option.rect;
