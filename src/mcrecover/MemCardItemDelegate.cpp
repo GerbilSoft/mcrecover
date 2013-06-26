@@ -52,9 +52,30 @@ void MemCardItemDelegate::paint(QPainter *painter,
 		painter->save();
 
 		// TODO: Save the QTreeView widget, use it to get the style.
-		// TODO: Custom background color?
-		QStyle *style = QApplication::style();
-		style->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
+		bool isBgPainted = false;
+		if (!(option.state & QStyle::State_Selected)) {
+			// Check if a custom background color is specified.
+			QVariant bg_var = index.data(Qt::BackgroundRole);
+			if (bg_var.canConvert<QBrush>()) {
+				QBrush bg = bg_var.value<QBrush>();
+				painter->fillRect(option.rect, bg);
+				isBgPainted = true;
+			} else {
+				// Check for Qt::BackgroundColorRole.
+				bg_var = index.data(Qt::BackgroundColorRole);
+				if (bg_var.canConvert<QColor>()) {
+					QColor bg = bg_var.value<QColor>();
+					painter->fillRect(option.rect, bg);
+					isBgPainted = true;
+				}
+			}
+		}
+
+		if (!isBgPainted) {
+			// Use the default styling.
+			QStyle *style = QApplication::style();
+			style->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
+		}
 
 		QFont fontGameDesc = QApplication::font();
 		const QFontMetrics fmGameDesc(fontGameDesc);
