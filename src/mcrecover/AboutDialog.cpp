@@ -102,7 +102,9 @@ void AboutDialogPrivate::initAboutDialogText(void)
 #ifdef Q_OS_LINUX
 	// Set the "MegaCard Engine" text.
 	sPrgTitle += sLineBreak +
-			q->tr("Powered by the<br/>\n<b>MegaCard Engine</b><sup>TM</sup>");
+		QApplication::translate("AboutDialog",
+			"Powered by the<br/>\n<b>MegaCard Engine</b>™",
+			0, QApplication::UnicodeUTF8);
 #endif
 
 	// Set the program title text.
