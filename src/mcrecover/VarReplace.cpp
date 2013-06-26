@@ -96,7 +96,7 @@ QString VarReplace::Exec(const QString str, const QHash<QString, QString> vars)
 						varDelimEnd = QChar(L')');
 						i++;
 						break;
-					case L')':
+					case L'{':
 						// Braces-style delimiters.
 						varDelimStart = QChar(L'{');
 						varDelimEnd = QChar(L'}');
