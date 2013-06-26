@@ -2,7 +2,7 @@
 Name=Oxygen
 Comment=Minimal KDE Oxygen Theme for GameCube Memory Card Recovery Program
 Inherits=default
-Directories=16x16,22x22,32x32,48x48
+Directories=16x16,22x22,24x24,32x32,48x48,64x64,128x128,256x256
 
 [16x16]
 Size=16
@@ -10,8 +10,20 @@ Size=16
 [22x22]
 Size=22
 
+[24x24]
+Size=24
+
 [32x32]
 Size=32
 
 [48x48]
 Size=48
+
+[64x64]
+Size=64
+
+[128x128]
+Size=128
+
+[256x256]
+Size=256
