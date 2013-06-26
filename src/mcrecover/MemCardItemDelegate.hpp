@@ -25,19 +25,26 @@
 // Qt includes.
 #include <QtGui/QStyledItemDelegate>
 
+class MemCardItemDelegatePrivate;
+
 class MemCardItemDelegate : public QStyledItemDelegate
 {
 	Q_OBJECT
 
 	public:
 		MemCardItemDelegate(QObject* parent = 0);
+		~MemCardItemDelegate();
 
+	private:
+		friend class MemCardItemDelegatePrivate;
+		MemCardItemDelegatePrivate *const d;
+		Q_DISABLE_COPY(MemCardItemDelegate);
+
+	public:
 		void paint(QPainter *painter, const QStyleOptionViewItem &option,
 			   const QModelIndex &index) const;
-#if 0
 		QSize sizeHint(const QStyleOptionViewItem &option,
 			       const QModelIndex &index) const;
-#endif
 };
 
 #endif /* __MCRECOVER_MEMCARDITEMDELEGATE_HPP__ */

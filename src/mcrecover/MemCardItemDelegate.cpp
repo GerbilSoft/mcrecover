@@ -30,19 +30,77 @@
 #include <QtGui/QFontMetrics>
 #include <QtGui/QStyle>
 
+class MemCardItemDelegatePrivate
+{
+	public:
+		MemCardItemDelegatePrivate(MemCardItemDelegate *q);
+
+	private:
+		MemCardItemDelegate *const q;
+		Q_DISABLE_COPY(MemCardItemDelegatePrivate);
+
+	public:
+		QFont fontGameDesc;
+		QFont fontFileDesc;
+
+		/**
+		 * Update the fonts.
+		 */
+		void updateFonts(void);
+};
+
+/** MemCardItemDelegatePrivate **/
+
+MemCardItemDelegatePrivate::MemCardItemDelegatePrivate(MemCardItemDelegate *q)
+	: q(q)
+{
+	updateFonts();
+}
+
+/**
+ * Update the fonts.
+ */
+void MemCardItemDelegatePrivate::updateFonts(void)
+{
+	// TODO: Get the font from the widget.
+	// TODO: Update these if the font changes.
+	fontGameDesc = QApplication::font();
+
+	fontFileDesc = fontGameDesc;
+	int pointSize = fontFileDesc.pointSize();
+	if (pointSize >= 10)
+		pointSize = (pointSize * 4 / 5);
+	else
+		pointSize--;
+	fontFileDesc.setPointSize(pointSize);
+}
+
+
+/** MemCardItemDelegate **/
+
 MemCardItemDelegate::MemCardItemDelegate(QObject* parent)
 	: QStyledItemDelegate(parent)
+	, d(new MemCardItemDelegatePrivate(this))
 { }
+
+MemCardItemDelegate::~MemCardItemDelegate()
+{
+	delete d;
+}
 
 void MemCardItemDelegate::paint(QPainter *painter,
 			const QStyleOptionViewItem &option,
 			const QModelIndex &index) const
 {
-	// TODO: Register custom type for FileDescription.
+	// TODO: Register custom type for FileComments.
 	// For now, just assume that if QModelIndex.column() == 1,
 	// it's the correct one.
 	if (index.isValid() && index.column() == 1) {
-		// File description.
+		// GCN file comments.
+		// TODO: Disambiguate:
+		// - "File Comments" == both lines
+		// - "Game Description" == first line
+		// - "File Description" == second line
 
 		// TODO: Ensure that it has either 1 or 2 lines.
 		QStringList desc = index.data().toString().split(QChar(L'\n'));
@@ -77,22 +135,10 @@ void MemCardItemDelegate::paint(QPainter *painter,
 			style->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
 		}
 
-		QFont fontGameDesc = QApplication::font();
-		const QFontMetrics fmGameDesc(fontGameDesc);
-
-		QFont fontFileDesc = fontGameDesc;
-		int pointSize = fontFileDesc.pointSize();
-		if (pointSize >= 10)
-			pointSize = (pointSize * 4 / 5);
-		else
-			pointSize--;
-		fontFileDesc.setPointSize(pointSize);
-		const QFontMetrics fmFileDesc(fontFileDesc);
-
 		QRect rect = option.rect;
 
 		// TODO: Centering.
-		painter->setFont(fontGameDesc);
+		painter->setFont(d->fontGameDesc);
 
 		// Font color.
 		if (option.state & QStyle::State_Selected)
@@ -101,13 +147,17 @@ void MemCardItemDelegate::paint(QPainter *painter,
 			painter->setPen(option.palette.text().color());
 
 		// Game description.
+		// NOTE: Width is decremented in order to prevent
+		// weird wordwrapping issues.
+		const QFontMetrics fmGameDesc(d->fontGameDesc);
 		QString gameDescElided = fmGameDesc.elidedText(
 			desc.at(0), Qt::ElideRight, rect.width()-1);
 		painter->drawText(rect, gameDescElided);
 
 		if (desc.size() > 1) {
 			// File description.
-			painter->setFont(fontFileDesc);
+			painter->setFont(d->fontFileDesc);
+			const QFontMetrics fmFileDesc(d->fontFileDesc);
 			rect.setY(rect.y() + fmGameDesc.height());
 			QString fileDescElided = fmFileDesc.elidedText(
 				desc.at(1), Qt::ElideRight, rect.width()-1);
@@ -121,7 +171,45 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	}
 }
 
-#if 0
-QSize sizeHint(const QStyleOptionViewItem &option,
-	       const QModelIndex &index) const;
-#endif
+QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
+				    const QModelIndex &index) const
+{
+	// TODO: Register custom type for FileComments.
+	// For now, just assume that if QModelIndex.column() == 1,
+	// it's the correct one.
+	if (index.isValid() && index.column() == 1) {
+		// GCN file comments.
+		// TODO: Disambiguate:
+		// - "File Comments" == both lines
+		// - "Game Description" == first line
+		// - "File Description" == second line
+
+		// TODO: Ensure that it has either 1 or 2 lines.
+		QStringList desc = index.data().toString().split(QChar(L'\n'));
+		if (desc.isEmpty())
+			desc.append(QString());
+
+		// Game description.
+		const QFontMetrics fmGameDesc(d->fontGameDesc);
+		QSize sz = fmGameDesc.size(0, desc.at(0));
+
+		if (desc.size() > 1) {
+			// File description.
+			const QFontMetrics fmFileDesc(d->fontFileDesc);
+			QSize fileSz = fmFileDesc.size(0, desc.at(1));
+			sz.setHeight(sz.height() + fileSz.height());
+			if (fileSz.width() > sz.width())
+				sz.setWidth(fileSz.width());
+		}
+
+		// Increase width by 1 to prevent accidental eliding.
+		// NOTE: We can't just remove the "-1" from paint(),
+		// because that still causes weird wordwrapping.
+		if (sz.width() > 0)
+			sz.setWidth(sz.width() + 1);
+
+		return sz;
+	} else {
+		return QStyledItemDelegate::sizeHint(option, index);
+	}
+}
