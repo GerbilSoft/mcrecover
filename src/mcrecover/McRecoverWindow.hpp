@@ -60,6 +60,9 @@ class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
 		void close(void);
 
 	protected:
+		// State change event. (Used for switching the UI language at runtime.)
+		void changeEvent(QEvent *event);
+
 		// QMainWindow virtual functions: drag and drop.
 		void dragEnterEvent(QDragEnterEvent *event);
 		void dropEvent(QDropEvent *event);

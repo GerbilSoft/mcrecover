@@ -56,6 +56,10 @@ class MemCardView : public QWidget, public Ui::MemCardView
 		 */
 		void setCard(const MemCard *card);
 
+	protected:
+		// State change event. (Used for switching the UI language at runtime.)
+		void changeEvent(QEvent *event);
+
 	protected slots:
 		/**
 		 * MemCard object was destroyed.

@@ -88,6 +88,11 @@ class McRecoverWindowPrivate
 		void initMcToolbar(void);
 
 		/**
+		 * Retranslate the Memory Card toolbar.
+		 */
+		void retranslateMcToolbar(void);
+
+		/**
 		 * Update the action enable status.
 		 */
 		void updateActionEnableStatus(void);
@@ -202,8 +207,8 @@ void McRecoverWindowPrivate::initMcToolbar(void)
 	q->actionSave->setEnabled(false);
 	q->actionSaveAll->setEnabled(false);
 
-	// Initialize the Memory Card Toolbar.
-	mcToolbar = new QToolBar(q->tr("Memory Card"), q);
+	// Initialize the Memory Card toolbar.
+	mcToolbar = new QToolBar(q);
 	mcToolbar->setToolButtonStyle(Qt::ToolButtonIconOnly);
 
 	// Win32 style has a border. Get rid of it.
@@ -221,8 +226,21 @@ void McRecoverWindowPrivate::initMcToolbar(void)
 	mcToolbar->addWidget(spacer);
 	mcToolbar->addAction(q->actionAbout);
 
+	// Retranslate the Memory Card toolbar.
+	retranslateMcToolbar();
+
 	// Add the toolbar to the Memory Card information box.
 	q->vboxMemCardInfo->addWidget(mcToolbar);
+}
+
+
+/**
+ * Retranslate the Memory Card toolbar.
+ */
+void McRecoverWindowPrivate::retranslateMcToolbar(void)
+{
+	if (mcToolbar)
+		mcToolbar->setWindowTitle(q->tr("Memory Card"));
 }
 
 
@@ -524,6 +542,25 @@ void McRecoverWindow::close(void)
 	d->updateLstFileList();
 	d->statusBarManager->closed();
 	d->updateWindowTitle();
+}
+
+
+/**
+ * Widget state has changed.
+ * @param event State change event.
+ */
+void McRecoverWindow::changeEvent(QEvent *event)
+{
+	if (event->type() == QEvent::LanguageChange) {
+		// Retranslate the UI.
+		retranslateUi(this);
+		d->updateLstFileList();
+		d->retranslateMcToolbar();
+		d->updateWindowTitle();
+	}
+
+	// Pass the event to the base class.
+	this->QMainWindow::changeEvent(event);
 }
 
 

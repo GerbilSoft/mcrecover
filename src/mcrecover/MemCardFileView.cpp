@@ -279,6 +279,23 @@ void MemCardFileView::setFile(const MemCardFile *file)
 }
 
 
+/**
+ * Widget state has changed.
+ * @param event State change event.
+ */
+void MemCardFileView::changeEvent(QEvent *event)
+{
+	if (event->type() == QEvent::LanguageChange) {
+		// Retranslate the UI.
+		retranslateUi(this);
+		d->updateWidgetDisplay();
+	}
+
+	// Pass the event to the base class.
+	this->QWidget::changeEvent(event);
+}
+
+
 /** Slots. **/
 
 

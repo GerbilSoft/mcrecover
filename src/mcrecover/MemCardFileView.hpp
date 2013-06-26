@@ -56,6 +56,10 @@ class MemCardFileView : public QWidget, public Ui::MemCardFileView
 		 */
 		void setFile(const MemCardFile *file);
 
+	protected:
+		// State change event. (Used for switching the UI language at runtime.)
+		void changeEvent(QEvent *event);
+
 	protected slots:
 		/**
 		 * MemCardFile object was destroyed.
