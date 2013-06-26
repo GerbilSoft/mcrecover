@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * MemCardFile.hpp: Memory Card file entry class.                          *
  *                                                                         *
- * Copyright (c) 2011 by David Korth.                                      *
+ * Copyright (c) 2012-2013 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
