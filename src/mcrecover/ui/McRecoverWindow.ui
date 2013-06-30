@@ -201,6 +201,9 @@
    <property name="styleSheet">
     <string notr="true">QStatusBar::item { border: none }</string>
    </property>
+   <property name="sizeGripEnabled">
+    <bool>false</bool>
+   </property>
   </widget>
   <action name="actionOpen">
    <property name="icon">
