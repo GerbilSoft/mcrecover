@@ -116,8 +116,8 @@ void AboutDialogPrivate::initAboutDialogText(void)
 	q->lblIncLibraries->setTextFormat(Qt::RichText);
 
 	// Set the debug information text.
+	q->lblDebugInfo->setTextFormat(Qt::PlainText);
 	q->lblDebugInfo->setText(GetDebugInfo());
-	q->lblDebugInfo->setTextFormat(Qt::RichText);
 
 	if (scrlAreaInit) {
 		// Create the scroll areas.
@@ -265,24 +265,21 @@ QString AboutDialogPrivate::GetIncLibraries(void)
  */
 QString AboutDialogPrivate::GetDebugInfo(void)
 {
-	// Line break string.
-	const QString sLineBreak = QLatin1String("<br/>\n");
-
 	// Debug information.
 	QString sDebugInfo =
-		AboutDialog::tr("Compiled using Qt %1.").arg(QLatin1String(QT_VERSION_STR)) + sLineBreak +
-		AboutDialog::tr("Using Qt %1.").arg(QLatin1String(qVersion())) + sLineBreak + sLineBreak;
+		AboutDialog::tr("Compiled using Qt %1.").arg(QLatin1String(QT_VERSION_STR)) + QChar(L'\n') +
+		AboutDialog::tr("Using Qt %1.").arg(QLatin1String(qVersion()));
 
 	// Reserve at least 4 KB for the debug information.
 	sDebugInfo.reserve(4096);
 
 #ifdef Q_OS_WIN32
 	// Win32 code page information.
-	sDebugInfo += GetCodePageInfo() + sLineBreak;
+	sDebugInfo += QChar(L'\n');
+	sDebugInfo += QChar(L'\n') + GetCodePageInfo();
 #endif /* Q_OS_WIN32 */
 
-	// Trim whitespace at the end of sDebugInfo.
-	return sDebugInfo.trimmed();
+	return sDebugInfo;
 }
 
 
@@ -366,7 +363,6 @@ QString AboutDialogPrivate::GetCodePageInfo(void)
 		//: Win32: ANSI strings are being used. (Win9x)
 		sCodePageInfo += AboutDialog::tr("Using ANSI strings for Win32 API.");
 	}
-	sCodePageInfo += QChar(L'\n');
 
 	return sCodePageInfo;
 }
