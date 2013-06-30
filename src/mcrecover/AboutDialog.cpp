@@ -23,6 +23,8 @@
 #include "AboutDialog.hpp"
 #include "git.h"
 
+#include "GcnMcFileDb.hpp"
+
 // C includes.
 #include <string.h>
 
@@ -145,7 +147,9 @@ void AboutDialogPrivate::initAboutDialogText(void)
 		QScrollArea *scrlDebugInfo = new QScrollArea();
 		scrlDebugInfo->setFrameShape(QFrame::NoFrame);
 		scrlDebugInfo->setFrameShadow(QFrame::Plain);
-		scrlDebugInfo->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+		// Don't turn off hscroll because the default db filename might be too long.
+		// TODO: Re-enable this once multiple db files are supported.
+		//scrlDebugInfo->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 		scrlDebugInfo->setWidget(q->lblDebugInfo);
 		scrlDebugInfo->setWidgetResizable(true);
 		q->vboxDebugInfo->addWidget(scrlDebugInfo);
@@ -277,6 +281,14 @@ QString AboutDialogPrivate::GetDebugInfo(void)
 	sDebugInfo += QChar(L'\n');
 	sDebugInfo += QChar(L'\n') + GetCodePageInfo();
 #endif /* Q_OS_WIN32 */
+
+	// Database filename.
+	QString dbFilename = QDir::toNativeSeparators(GcnMcFileDb::GetDefaultDbFilename());
+	sDebugInfo += QChar(L'\n');
+	sDebugInfo += QChar(L'\n') +
+		AboutDialog::tr("Database filename:") +
+		QChar(L'\n') +
+		(!dbFilename.isEmpty() ? dbFilename : QLatin1String("(not found)"));
 
 	return sDebugInfo;
 }
