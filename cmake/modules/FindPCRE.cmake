@@ -41,4 +41,29 @@ find_package_handle_standard_args(PCRE DEFAULT_MSG PCRE_INCLUDE_DIR PCRE_PCRE_LI
 
 set(PCRE_LIBRARIES ${PCRE_PCRE_LIBRARY} ${PCRE_PCREPOSIX_LIBRARY})
 
-mark_as_advanced(PCRE_INCLUDE_DIR PCRE_LIBRARIES PCRE_PCREPOSIX_LIBRARY PCRE_PCRE_LIBRARY)
+# Check if PCRE is static.
+UNSET(PCRE_STATIC)
+IF(WIN32)
+	IF(MINGW)
+		# MinGW DLL import libraries end in .dll.a.
+		# Other .a libraries are static.
+		IF(NOT PCRE_PCRE_LIBRARY MATCHES .dll.a$)
+			SET(PCRE_STATIC 1)
+		ENDIF()
+	ELSE()
+		# TODO: MSVC support.
+		# For now, assume the library is not static.
+		MESSAGE(STATUS "WARNING: MSVC in use; assuming PCRE is static.")
+	ENDIF()
+ELSE(WIN32)
+	# .a on other platforms is usually static.
+	IF(PCRE_PCRE_LIBRARY MATCHES .a$)
+		SET(PCRE_STATIC 1)
+	ENDIF()
+ENDIF(WIN32)
+
+IF(PCRE_STATIC)
+	SET(PCRE_DEFINITIONS ${PCRE_DEFINITIONS} -DPCRE_STATIC)
+ENDIF(PCRE_STATIC)
+
+mark_as_advanced(PCRE_INCLUDE_DIR PCRE_LIBRARIES PCRE_PCREPOSIX_LIBRARY PCRE_PCRE_LIBRARY PCRE_STATIC)
