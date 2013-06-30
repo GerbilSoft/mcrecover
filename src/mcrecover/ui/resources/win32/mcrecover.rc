@@ -21,6 +21,7 @@
 
 // Resource script for GCN MemCard Recover.
 #include "mcrecover.rc.h"
+#include "config.mcrecover.h"
 #include "afxres.h"
 #include "winuser.h"
 
@@ -33,14 +34,13 @@ IDI_MCRECOVER_APPLICATION	ICON		"mcrecover.ico"
 // Manifest.
 CREATEPROCESS_MANIFEST_RESOURCE_ID	RT_MANIFEST	"mcrecover.exe.manifest"
 
-// TODO: mcrecover version number from cmake.
-#define MCRECOVER_VERSION "0.0.0 (Development Build)"
-#define MCRECOVER_VERSION_WIN32 0,0,0,0
+// Version number.
+#define MCRECOVER_VERSION_WIN32 MCRECOVER_VERSION_MAJOR,MCRECOVER_VERSION_MINOR,MCRECOVER_VERSION_PATCH,0
 
 #ifdef MCRECOVER_GIT_VERSION
-#define Win32_RC_FileVersion MCRECOVER_VERSION "\r\n" MCRECOVER_GIT_VERSION
+#define Win32_RC_FileVersion MCRECOVER_VERSION_STRING "\r\n" MCRECOVER_GIT_VERSION
 #else /* !MCRECOVER_GIT_VERSION */
-#define Win32_RC_FileVersion MCRECOVER_VERSION
+#define Win32_RC_FileVersion MCRECOVER_VERSION_STRING
 #endif /* MCRECOVER_GIT_VERSION */
 
 // Application Version
@@ -63,7 +63,7 @@ BEGIN
 		BEGIN
 			//VALUE "Comments", "\0"
 			//VALUE "CompanyName", "\0"
-			VALUE "FileDescription", "GCN MemCard Recover " MCRECOVER_VERSION "\0"
+			VALUE "FileDescription", "GCN MemCard Recover " MCRECOVER_VERSION_STRING "\0"
 			VALUE "FileVersion", "GCN MemCard Recover " Win32_RC_FileVersion "\0"
 			VALUE "InternalName", "GCN MemCard Recover\0"
 			//VALUE "LegalCopyright", "\0"
