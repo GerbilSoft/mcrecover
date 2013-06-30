@@ -35,4 +35,7 @@
 /* Define to 1 if Qt is built as a static library. */
 #cmakedefine QT_IS_STATIC 1
 
+/* Data directory. */
+#define MCRECOVER_DATA_DIRECTORY "@MCRECOVER_DATA_DIRECTORY@"
+
 #endif /* __MCRECOVER_CONFIG_MCRECOVER_H__ */

@@ -962,3 +962,16 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz,
 	// Directory entry matched.
 	return 0;
 }
+
+
+/**
+ * Get the default database filename.
+ * This function checks various paths for GcnMcFileDb.xml,
+ * and returns the first one it finds.
+ * @return Default database filename, or empty string if not found.
+ */
+QString GcnMcFileDb::GetDefaultDbFilename(void)
+{
+	// TODO: Add default filenames.
+	return QString();
+}

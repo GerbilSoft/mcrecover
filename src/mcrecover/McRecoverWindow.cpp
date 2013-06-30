@@ -19,6 +19,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
+#include "config.mcrecover.h"
+
 #include "McRecoverWindow.hpp"
 #include "McRecoverQApplication.hpp"
 #include "AboutDialog.hpp"
@@ -28,6 +30,9 @@
 #include "MemCardFile.hpp"
 #include "MemCardModel.hpp"
 #include "MemCardItemDelegate.hpp"
+
+// File database.
+#include "GcnMcFileDb.hpp"
 
 // Search classes.
 #include "SearchThread.hpp"
@@ -738,11 +743,31 @@ void McRecoverWindow::on_actionScan_triggered(void)
 	if (!d->card)
 		return;
 
+	// Get the database filename.
+	// TODO: Support multiple databases.
+	QString dbFilename = GcnMcFileDb::GetDefaultDbFilename();
+	if (dbFilename.isEmpty()) {
+#ifdef Q_OS_WIN32
+		const char *const def_path_hint =
+			"This file should be located in the data subdirectory in\n"
+			"mcrecover.exe's program directory.";
+#else
+		const char *const def_path_hint =
+			"This file should be located in " MCRECOVER_DATA_DIRECTORY ".\n"
+			"Alternatively, you can place your own version in ~/.config/mcrecover/data/GcnMcFileDb.xml";
+#endif
+
+		QMessageBox::critical(NULL,
+			tr("Database Load Error"),
+			QLatin1String("GcnMcFileDb.xml was not found.\n\n") +
+			QLatin1String(def_path_hint));
+	}
+
 	// Load the database.
 	// TODO:
 	// - Only if the database is not loaded,
 	//   or if the database file has been changed.
-	int ret = d->searchThread->loadGcnMcFileDb(QLatin1String("GcnMcFileDb.xml"));
+	int ret = d->searchThread->loadGcnMcFileDb(dbFilename);
 	if (ret != 0)
 		return;
 

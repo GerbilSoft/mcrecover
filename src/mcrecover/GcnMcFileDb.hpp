@@ -74,6 +74,14 @@ class GcnMcFileDb : public QObject
 		int checkBlock(const void *buf, int siz,
 			card_direntry *dirEntry,
 			QVector<Checksum::ChecksumDef> *checksumDefs = NULL) const;
+
+		/**
+		 * Get the default database filename.
+		 * This function checks various paths for GcnMcFileDb.xml,
+		 * and returns the first one it finds.
+		 * @return Default database filename, or empty string if not found.
+		 */
+		static QString GetDefaultDbFilename(void);
 };
 
 #endif /* __MCRECOVER_GCNMCFILEDB_HPP__ */

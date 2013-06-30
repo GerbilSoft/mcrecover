@@ -6,6 +6,15 @@ cmake_minimum_required(VERSION 2.6)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
+# Data directory.
+IF(WIN32 OR APPLE)
+	# Win32 and Mac OS X don't use `make install`.
+	SET(MCRECOVER_DATA_DIRECTORY "")
+ELSE()
+	# Unix system.
+	SET(MCRECOVER_DATA_DIRECTORY "${CMAKE_INSTALL_PREFIX}/share/mcrecover/data")
+ENDIF()
+
 # Find Qt4.
 # Components used:
 # - QtCore
@@ -202,3 +211,9 @@ SET(MACOSX_BUNDLE_LONG_VERSION_STRING "0.0.0")
 # TODO
 #SET_TARGET_PROPERTIES(mcrecover
 #	PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/ui/resources/mac/Info-CMake.plist")
+
+#################
+# Installation. #
+#################
+
+# TODO
