@@ -344,7 +344,8 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 		case Qt::DisplayRole:
 			switch (section) {
 				case COL_DESCRIPTION:
-					return file->gameDesc() + QChar(L'\n') + file->fileDesc();
+					// TODO: Use special class with Qt metatype for the item delegate.
+					return QString(file->gameDesc() + QChar(L'\n') + file->fileDesc());
 				case COL_SIZE:
 					return file->size();
 				case COL_MTIME:
@@ -352,7 +353,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 				case COL_PERMISSION:
 					return file->permissionAsString();
 				case COL_GAMECODE:
-					return (file->gamecode() + file->company());
+					return QString(file->gamecode() + file->company());
 				case COL_FILENAME:
 					return file->filename();
 				default:
