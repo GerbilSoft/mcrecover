@@ -184,7 +184,7 @@ int GcnMcFileDbPrivate::load(QString filename)
 	QFile file(filename);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		// Error opening the file.
-		// TODO: Show an error message; return a useful error code.
+		errorString = file.errorString();
 		return -1;
 	}
 
