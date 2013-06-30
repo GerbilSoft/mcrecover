@@ -112,8 +112,8 @@ void AboutDialogPrivate::initAboutDialogText(void)
 	q->lblCredits->setText(sCredits);
 
 	// Set the included libraries text.
+	q->lblIncLibraries->setTextFormat(Qt::PlainText);
 	q->lblIncLibraries->setText(GetIncLibraries());
-	q->lblIncLibraries->setTextFormat(Qt::RichText);
 
 	// Set the debug information text.
 	q->lblDebugInfo->setTextFormat(Qt::PlainText);
@@ -229,26 +229,27 @@ QString AboutDialogPrivate::GetCredits(void)
 QString AboutDialogPrivate::GetIncLibraries(void)
 {
 	// Common strings.
-	static const QString sLineBreak = QLatin1String("<br/>\n");
 	const QString sIntCopyOf = AboutDialog::tr("Internal copy of %1.");
 
 	// Included libraries string.
 	QString sIncLibraries;
+	sIncLibraries.reserve(4096);
 
 	// Icon set.
-	sIncLibraries = QLatin1String("Icon set is based on KDE's Oxygen icons.") + sLineBreak +
-		QLatin1String("Copyright (C) 2005-2013 by David Vignoni.") + sLineBreak +
+	sIncLibraries = QLatin1String("Icon set is based on KDE's Oxygen icons.") + QChar(L'\n') +
+		QLatin1String("Copyright (C) 2005-2013 by David Vignoni.") + QChar(L'\n') +
 		QLatin1String("Licenses: CC BY-SA 3.0, GNU LGPL v2.1+");
 
 	// Statically-linked Qt.
 #ifdef QT_IS_STATIC
-	sIncLibraries += sLineBreak + sLineBreak + sIntCopyOf.arg(QLatin1String("Qt " QT_VERSION_STR));
-	sIncLibraries += sLineBreak +
+	sIncLibraries += QChar(L'\n');
+	sIncLibraries += QChar(L'\n') + sIntCopyOf.arg(QLatin1String("Qt " QT_VERSION_STR));
+	sIncLibraries += QChar(L'\n') +
 		QLatin1String("Copyright (C) 1995-2012 Digita Plc and/or its subsidiaries.");
 #if QT_VERSION >= 0x040500
-	sIncLibraries += sLineBreak + QLatin1String("License: GNU GPL v2+");
+	sIncLibraries += QChar(L'\n') + QLatin1String("License: GNU GPL v2+");
 #else
-	sIncLibraries += sLineBreak + QLatin1String("Licenses: GNU LGPL v2.1+, GNU GPL v2+");
+	sIncLibraries += QChar(L'\n') + QLatin1String("Licenses: GNU LGPL v2.1+, GNU GPL v2+");
 #endif /* QT_VERSION */
 #endif /* QT_IS_STATIC */
 
@@ -269,8 +270,6 @@ QString AboutDialogPrivate::GetDebugInfo(void)
 	QString sDebugInfo =
 		AboutDialog::tr("Compiled using Qt %1.").arg(QLatin1String(QT_VERSION_STR)) + QChar(L'\n') +
 		AboutDialog::tr("Using Qt %1.").arg(QLatin1String(qVersion()));
-
-	// Reserve at least 4 KB for the debug information.
 	sDebugInfo.reserve(4096);
 
 #ifdef Q_OS_WIN32
