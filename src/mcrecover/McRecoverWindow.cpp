@@ -722,7 +722,7 @@ void McRecoverWindow::on_actionExit_triggered(void)
  */
 void McRecoverWindow::on_actionAbout_triggered(void)
 {
-	AboutDialog::ShowSingle();
+	AboutDialog::ShowSingle(this);
 }
 
 
