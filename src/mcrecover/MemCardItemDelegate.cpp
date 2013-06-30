@@ -105,6 +105,39 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	// GCN file comments.
 	FileComments fileComments = index.data().value<FileComments>();
 
+	// Overall rectangle for the ItemView.
+	QRect rect = option.rect;
+
+	// Horizontal alignment flags.
+	static const int HALIGN_FLAGS =
+			Qt::AlignLeft |
+			Qt::AlignRight |
+			Qt::AlignHCenter |
+			Qt::AlignJustify;
+
+	// Game description.
+	// NOTE: Width is decremented in order to prevent
+	// weird wordwrapping issues.
+	const QFontMetrics fmGameDesc(d->fontGameDesc);
+	QString gameDescElided = fmGameDesc.elidedText(
+		fileComments.gameDesc(), Qt::ElideRight, rect.width()-1);
+	QRect rectGameDesc = rect;
+	rectGameDesc.setHeight(fmGameDesc.height());
+	rectGameDesc = fmGameDesc.boundingRect(
+		rectGameDesc, (option.displayAlignment & HALIGN_FLAGS), gameDescElided);
+
+	// File description.
+	painter->setFont(d->fontFileDesc);
+	const QFontMetrics fmFileDesc(d->fontFileDesc);
+	rect.setY(rect.y() + fmGameDesc.height());
+	QString fileDescElided = fmFileDesc.elidedText(
+		fileComments.fileDesc(), Qt::ElideRight, rect.width()-1);
+	QRect rectFileDesc = rect;
+	rectFileDesc.setHeight(fmFileDesc.height());
+	rectFileDesc.setY(rectGameDesc.y() + rectGameDesc.height());
+	rectFileDesc = fmGameDesc.boundingRect(
+		rectFileDesc, (option.displayAlignment & HALIGN_FLAGS), fileDescElided);
+
 	painter->save();
 
 	// TODO: Save the QTreeView widget, use it to get the style.
@@ -133,34 +166,16 @@ void MemCardItemDelegate::paint(QPainter *painter,
 		style->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
 	}
 
-	QRect rect = option.rect;
-
-	// TODO: Centering.
-	painter->setFont(d->fontGameDesc);
-
 	// Font color.
 	if (option.state & QStyle::State_Selected)
 		painter->setPen(option.palette.highlightedText().color());
 	else
 		painter->setPen(option.palette.text().color());
 
-	// Game description.
-	// NOTE: Width is decremented in order to prevent
-	// weird wordwrapping issues.
-	const QFontMetrics fmGameDesc(d->fontGameDesc);
-	QString gameDescElided = fmGameDesc.elidedText(
-		fileComments.gameDesc(), Qt::ElideRight, rect.width()-1);
-	painter->drawText(rect, gameDescElided);
-
-	if (!fileComments.fileDesc().isEmpty()) {
-		// File description.
-		painter->setFont(d->fontFileDesc);
-		const QFontMetrics fmFileDesc(d->fontFileDesc);
-		rect.setY(rect.y() + fmGameDesc.height());
-		QString fileDescElided = fmFileDesc.elidedText(
-			fileComments.fileDesc(), Qt::ElideRight, rect.width()-1);
-		painter->drawText(rect, fileDescElided);
-	}
+	painter->setFont(d->fontGameDesc);
+	painter->drawText(rectGameDesc, gameDescElided);
+	painter->setFont(d->fontFileDesc);
+	painter->drawText(rectFileDesc, fileDescElided);
 
 	painter->restore();
 }
@@ -183,14 +198,13 @@ QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 	const QFontMetrics fmGameDesc(d->fontGameDesc);
 	QSize sz = fmGameDesc.size(0, fileComments.gameDesc());
 
-	if (!fileComments.fileDesc().isEmpty()) {
-		// File description.
-		const QFontMetrics fmFileDesc(d->fontFileDesc);
-		QSize fileSz = fmFileDesc.size(0, fileComments.fileDesc());
-		sz.setHeight(sz.height() + fileSz.height());
-		if (fileSz.width() > sz.width())
-			sz.setWidth(fileSz.width());
-	}
+	// File description.
+	const QFontMetrics fmFileDesc(d->fontFileDesc);
+	QSize fileSz = fmFileDesc.size(0, fileComments.fileDesc());
+	sz.setHeight(sz.height() + fileSz.height());
+
+	if (fileSz.width() > sz.width())
+		sz.setWidth(fileSz.width());
 
 	// Increase width by 1 to prevent accidental eliding.
 	// NOTE: We can't just remove the "-1" from paint(),
