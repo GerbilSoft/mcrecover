@@ -1007,6 +1007,11 @@ QString GcnMcFileDb::GetDefaultDbFilename(void)
 
 	// Search the installed data directory.
 	pathList.append(QString::fromUtf8(MCRECOVER_DATA_DIRECTORY));
+
+	// Search the user's .config directory.
+	// TODO: Get default save directory using QSettings?
+	pathList.append(homeDir.absoluteFilePath(QLatin1String("/.config/mcrecover/data")));
+	pathList.append(homeDir.absoluteFilePath(QLatin1String("/.config/mcrecover")));
 #endif /* Q_OS_WIN32 */
 
 	// Search the paths for GcnMcFileDb.xml.
