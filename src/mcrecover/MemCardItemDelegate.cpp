@@ -142,7 +142,7 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	QRect rectFileDesc = rect;
 	rectFileDesc.setHeight(fmFileDesc.height());
 	rectFileDesc.setY(rectGameDesc.y() + rectGameDesc.height());
-	rectFileDesc = fmGameDesc.boundingRect(
+	rectFileDesc = fmFileDesc.boundingRect(
 		rectFileDesc, (textAlignment & HALIGN_FLAGS), fileDescElided);
 
 	painter->save();
