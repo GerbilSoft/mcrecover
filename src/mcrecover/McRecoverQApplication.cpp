@@ -30,6 +30,9 @@
 #include <QtGui/QIcon>
 #include <QtGui/QStyle>
 
+// Custom types for QVariant.
+#include "FileComments.hpp"
+
 
 class McRecoverQApplicationPrivate
 {
@@ -101,6 +104,9 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 	// Set the application font.
 	q->SetFont_Win32();
 #endif /* Q_OS_WIN32 */
+
+	// Register custom types for QVariant.
+	qRegisterMetaType<FileComments>("FileComments");
 
 	// Initialize Qt translators.
 	qtTranslator = new QTranslator(q);

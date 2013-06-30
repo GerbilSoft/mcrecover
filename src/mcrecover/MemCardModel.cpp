@@ -25,6 +25,7 @@
 #include "MemCard.hpp"
 #include "MemCardFile.hpp"
 #include "McRecoverQApplication.hpp"
+#include "FileComments.hpp"
 
 // Icon animation helper.
 #include "IconAnimHelper.hpp"
@@ -344,8 +345,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 		case Qt::DisplayRole:
 			switch (section) {
 				case COL_DESCRIPTION:
-					// TODO: Use special class with Qt metatype for the item delegate.
-					return QString(file->gameDesc() + QChar(L'\n') + file->fileDesc());
+					return qVariantFromValue(FileComments(file->gameDesc(), file->fileDesc()));
 				case COL_SIZE:
 					return file->size();
 				case COL_MTIME:

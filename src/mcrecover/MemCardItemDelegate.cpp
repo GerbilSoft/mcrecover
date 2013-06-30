@@ -22,6 +22,7 @@
 #include "MemCardItemDelegate.hpp"
 
 #include "MemCardModel.hpp"
+#include "FileComments.hpp"
 
 // Qt includes.
 #include <QtGui/QPainter>
@@ -92,124 +93,110 @@ void MemCardItemDelegate::paint(QPainter *painter,
 			const QStyleOptionViewItem &option,
 			const QModelIndex &index) const
 {
-	// TODO: Register custom type for FileComments.
-	// For now, just assume that if QModelIndex.column() == 1,
-	// it's the correct one.
-	if (index.isValid() && index.column() == 1) {
-		// GCN file comments.
-		// TODO: Disambiguate:
-		// - "File Comments" == both lines
-		// - "Game Description" == first line
-		// - "File Description" == second line
-
-		// TODO: Ensure that it has either 1 or 2 lines.
-		QStringList desc = index.data().toString().split(QChar(L'\n'));
-		if (desc.isEmpty())
-			desc.append(QString());
-
-		painter->save();
-
-		// TODO: Save the QTreeView widget, use it to get the style.
-		bool isBgPainted = false;
-		if (!(option.state & QStyle::State_Selected)) {
-			// Check if a custom background color is specified.
-			QVariant bg_var = index.data(Qt::BackgroundRole);
-			if (bg_var.canConvert<QBrush>()) {
-				QBrush bg = bg_var.value<QBrush>();
-				painter->fillRect(option.rect, bg);
-				isBgPainted = true;
-			} else {
-				// Check for Qt::BackgroundColorRole.
-				bg_var = index.data(Qt::BackgroundColorRole);
-				if (bg_var.canConvert<QColor>()) {
-					QColor bg = bg_var.value<QColor>();
-					painter->fillRect(option.rect, bg);
-					isBgPainted = true;
-				}
-			}
-		}
-
-		if (!isBgPainted) {
-			// Use the default styling.
-			QStyle *style = QApplication::style();
-			style->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
-		}
-
-		QRect rect = option.rect;
-
-		// TODO: Centering.
-		painter->setFont(d->fontGameDesc);
-
-		// Font color.
-		if (option.state & QStyle::State_Selected)
-			painter->setPen(option.palette.highlightedText().color());
-		else
-			painter->setPen(option.palette.text().color());
-
-		// Game description.
-		// NOTE: Width is decremented in order to prevent
-		// weird wordwrapping issues.
-		const QFontMetrics fmGameDesc(d->fontGameDesc);
-		QString gameDescElided = fmGameDesc.elidedText(
-			desc.at(0), Qt::ElideRight, rect.width()-1);
-		painter->drawText(rect, gameDescElided);
-
-		if (desc.size() > 1) {
-			// File description.
-			painter->setFont(d->fontFileDesc);
-			const QFontMetrics fmFileDesc(d->fontFileDesc);
-			rect.setY(rect.y() + fmGameDesc.height());
-			QString fileDescElided = fmFileDesc.elidedText(
-				desc.at(1), Qt::ElideRight, rect.width()-1);
-			painter->drawText(rect, fileDescElided);
-		}
-
-		painter->restore();
-	} else {
+	if (!index.isValid() ||
+	    !index.data().canConvert<FileComments>())
+	{
+		// Index is invalid, or this isn't FileComments.
 		// Use the default paint().
 		QStyledItemDelegate::paint(painter, option, index);
+		return;
 	}
+
+	// GCN file comments.
+	FileComments fileComments = index.data().value<FileComments>();
+
+	painter->save();
+
+	// TODO: Save the QTreeView widget, use it to get the style.
+	bool isBgPainted = false;
+	if (!(option.state & QStyle::State_Selected)) {
+		// Check if a custom background color is specified.
+		QVariant bg_var = index.data(Qt::BackgroundRole);
+		if (bg_var.canConvert<QBrush>()) {
+			QBrush bg = bg_var.value<QBrush>();
+			painter->fillRect(option.rect, bg);
+			isBgPainted = true;
+		} else {
+			// Check for Qt::BackgroundColorRole.
+			bg_var = index.data(Qt::BackgroundColorRole);
+			if (bg_var.canConvert<QColor>()) {
+				QColor bg = bg_var.value<QColor>();
+				painter->fillRect(option.rect, bg);
+				isBgPainted = true;
+			}
+		}
+	}
+
+	if (!isBgPainted) {
+		// Use the default styling.
+		QStyle *style = QApplication::style();
+		style->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
+	}
+
+	QRect rect = option.rect;
+
+	// TODO: Centering.
+	painter->setFont(d->fontGameDesc);
+
+	// Font color.
+	if (option.state & QStyle::State_Selected)
+		painter->setPen(option.palette.highlightedText().color());
+	else
+		painter->setPen(option.palette.text().color());
+
+	// Game description.
+	// NOTE: Width is decremented in order to prevent
+	// weird wordwrapping issues.
+	const QFontMetrics fmGameDesc(d->fontGameDesc);
+	QString gameDescElided = fmGameDesc.elidedText(
+		fileComments.gameDesc(), Qt::ElideRight, rect.width()-1);
+	painter->drawText(rect, gameDescElided);
+
+	if (!fileComments.fileDesc().isEmpty()) {
+		// File description.
+		painter->setFont(d->fontFileDesc);
+		const QFontMetrics fmFileDesc(d->fontFileDesc);
+		rect.setY(rect.y() + fmGameDesc.height());
+		QString fileDescElided = fmFileDesc.elidedText(
+			fileComments.fileDesc(), Qt::ElideRight, rect.width()-1);
+		painter->drawText(rect, fileDescElided);
+	}
+
+	painter->restore();
 }
 
 QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 				    const QModelIndex &index) const
 {
-	// TODO: Register custom type for FileComments.
-	// For now, just assume that if QModelIndex.column() == 1,
-	// it's the correct one.
-	if (index.isValid() && index.column() == 1) {
-		// GCN file comments.
-		// TODO: Disambiguate:
-		// - "File Comments" == both lines
-		// - "Game Description" == first line
-		// - "File Description" == second line
-
-		// TODO: Ensure that it has either 1 or 2 lines.
-		QStringList desc = index.data().toString().split(QChar(L'\n'));
-		if (desc.isEmpty())
-			desc.append(QString());
-
-		// Game description.
-		const QFontMetrics fmGameDesc(d->fontGameDesc);
-		QSize sz = fmGameDesc.size(0, desc.at(0));
-
-		if (desc.size() > 1) {
-			// File description.
-			const QFontMetrics fmFileDesc(d->fontFileDesc);
-			QSize fileSz = fmFileDesc.size(0, desc.at(1));
-			sz.setHeight(sz.height() + fileSz.height());
-			if (fileSz.width() > sz.width())
-				sz.setWidth(fileSz.width());
-		}
-
-		// Increase width by 1 to prevent accidental eliding.
-		// NOTE: We can't just remove the "-1" from paint(),
-		// because that still causes weird wordwrapping.
-		if (sz.width() > 0)
-			sz.setWidth(sz.width() + 1);
-
-		return sz;
-	} else {
+	if (!index.isValid() ||
+	    !index.data().canConvert<FileComments>())
+	{
+		// Index is invalid, or this isn't FileComments.
+		// Use the default paint().
 		return QStyledItemDelegate::sizeHint(option, index);
 	}
+
+	// GCN file comments.
+	FileComments fileComments = index.data().value<FileComments>();
+
+	// Game description.
+	const QFontMetrics fmGameDesc(d->fontGameDesc);
+	QSize sz = fmGameDesc.size(0, fileComments.gameDesc());
+
+	if (!fileComments.fileDesc().isEmpty()) {
+		// File description.
+		const QFontMetrics fmFileDesc(d->fontFileDesc);
+		QSize fileSz = fmFileDesc.size(0, fileComments.fileDesc());
+		sz.setHeight(sz.height() + fileSz.height());
+		if (fileSz.width() > sz.width())
+			sz.setWidth(fileSz.width());
+	}
+
+	// Increase width by 1 to prevent accidental eliding.
+	// NOTE: We can't just remove the "-1" from paint(),
+	// because that still causes weird wordwrapping.
+	if (sz.width() > 0)
+		sz.setWidth(sz.width() + 1);
+
+	return sz;
 }

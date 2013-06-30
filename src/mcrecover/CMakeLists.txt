@@ -89,6 +89,7 @@ SET(mcrecover_SRCS
 	AboutDialog.cpp
 	VarReplace.cpp
 	MemCardItemDelegate.cpp
+	FileComments.cpp
 	)
 
 # Win32-specific sources.
