@@ -56,3 +56,4 @@ INCLUDE(cmake/platform.cmake)
 
 # Project subdirectories.
 ADD_SUBDIRECTORY(src)
+ADD_SUBDIRECTORY(data)
