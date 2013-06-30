@@ -68,6 +68,11 @@ class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
 		void dropEvent(QDropEvent *event);
 
 	protected slots:
+		// UI busy functions.
+		void markUiBusy(void);
+		void markUiNotBusy(void);
+
+	protected slots:
 		// Actions.
 		void on_actionOpen_triggered(void);
 		void on_actionClose_triggered(void);

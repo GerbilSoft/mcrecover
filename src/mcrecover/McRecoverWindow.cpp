@@ -35,6 +35,7 @@
 
 // C includes.
 #include <cstdio>
+#include <cassert>
 
 // Qt includes.
 #include <QtCore/QUrl>
@@ -112,6 +113,9 @@ class McRecoverWindowPrivate
 		 * @param path If specified, save file(s) to path using default GCI filenames.
 		 */
 		void saveFiles(QVector<MemCardFile*> files, QString path = QString());
+
+		// UI busy counter.
+		int uiBusyCounter;
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -121,6 +125,7 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, searchThread(new SearchThread(q))
 	, mcToolbar(NULL)
 	, statusBarManager(NULL)
+	, uiBusyCounter(0)
 {
 	// Show icon, description, size, mtime, permission, and gamecode by default.
 	// TODO: Allow the user to customize the columns, and save the 
@@ -143,6 +148,16 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	// Connect the SearchThread slots.
 	QObject::connect(searchThread, SIGNAL(searchFinished(int)),
 			 q, SLOT(searchThread_searchFinished_slot(int)));
+
+	// Connect SearchThread to the mark-as-busy slots.
+	QObject::connect(searchThread, SIGNAL(searchStarted(int,int,int)),
+			 q, SLOT(markUiBusy()));
+	QObject::connect(searchThread, SIGNAL(searchFinished(int)),
+			 q, SLOT(markUiNotBusy()));
+	QObject::connect(searchThread, SIGNAL(searchError(QString)),
+			 q, SLOT(markUiNotBusy()));
+	QObject::connect(searchThread, SIGNAL(destroyed(QObject*)),
+			 q, SLOT(markUiNotBusy()));
 }
 
 McRecoverWindowPrivate::~McRecoverWindowPrivate()
@@ -638,6 +653,49 @@ void McRecoverWindow::dropEvent(QDropEvent *event)
 	// Open the memory card file.
 	open(filename);
 }
+
+
+/**
+ * Mark the UI as busy.
+ * Calls to this function stack, so if markUiBusy()
+ * was called 3 times, markUiNotBusy() must be called 3 times.
+ */
+void McRecoverWindow::markUiBusy(void)
+{
+	d->uiBusyCounter++;
+	if (d->uiBusyCounter == 1) {
+		// UI is now busy.
+		this->setCursor(Qt::WaitCursor);
+		this->Ui_McRecoverWindow::menuBar->setEnabled(false);
+		this->centralWidget()->setEnabled(false);
+	}
+}
+
+
+/**
+ * Mark the UI as not busy.
+ * Calls to this function stack, so if markUiBusy()
+ * was called 3 times, markUiNotBusy() must be called 3 times.
+ */
+void McRecoverWindow::markUiNotBusy(void)
+{
+	if (d->uiBusyCounter <= 0) {
+		// We're already not busy.
+		// Don't decrement the counter, though.
+		return;
+	}
+
+	d->uiBusyCounter--;
+	if (d->uiBusyCounter == 0) {
+		// UI is no longer busy.
+		this->Ui_McRecoverWindow::menuBar->setEnabled(true);
+		this->centralWidget()->setEnabled(true);
+		this->unsetCursor();
+	}
+}
+
+
+/** UI widget slots. **/
 
 
 /**
