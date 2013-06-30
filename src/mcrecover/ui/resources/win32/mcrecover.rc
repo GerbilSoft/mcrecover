@@ -27,6 +27,9 @@
 // git version
 #include "git.h"
 
+// Icons.
+IDI_MCRECOVER_APPLICATION	ICON		"mcrecover.ico"
+
 // Manifest.
 CREATEPROCESS_MANIFEST_RESOURCE_ID	RT_MANIFEST	"mcrecover.exe.manifest"
 

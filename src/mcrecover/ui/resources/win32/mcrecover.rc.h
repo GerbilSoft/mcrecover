@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_MCRECOVER_RC_H__
 #define __MCRECOVER_MCRECOVER_RC_H__
 
-// Icons, (TODO)
+// Icons.
 #define IDI_MCRECOVER_APPLICATION	0x0001
 
 #endif /* __MCRECOVER_MCRECOVER_RC_H__ */
