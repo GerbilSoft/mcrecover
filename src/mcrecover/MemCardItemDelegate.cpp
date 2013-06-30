@@ -89,6 +89,7 @@ MemCardItemDelegate::~MemCardItemDelegate()
 	delete d;
 }
 
+#include <stdio.h>
 void MemCardItemDelegate::paint(QPainter *painter,
 			const QStyleOptionViewItem &option,
 			const QModelIndex &index) const
@@ -105,15 +106,16 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	// GCN file comments.
 	FileComments fileComments = index.data().value<FileComments>();
 
-	// Overall rectangle for the ItemView.
-	QRect rect = option.rect;
-
-	// Horizontal alignment flags.
+	// Alignment flags.
 	static const int HALIGN_FLAGS =
 			Qt::AlignLeft |
 			Qt::AlignRight |
 			Qt::AlignHCenter |
 			Qt::AlignJustify;
+	static const int VALIGN_FLAGS =
+			Qt::AlignTop |
+			Qt::AlignBottom |
+			Qt::AlignVCenter;
 
 	// Get the text alignment.
 	int textAlignment = 0;
@@ -127,8 +129,8 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	// weird wordwrapping issues.
 	const QFontMetrics fmGameDesc(d->fontGameDesc);
 	QString gameDescElided = fmGameDesc.elidedText(
-		fileComments.gameDesc(), Qt::ElideRight, rect.width()-1);
-	QRect rectGameDesc = rect;
+		fileComments.gameDesc(), Qt::ElideRight, option.rect.width()-1);
+	QRect rectGameDesc = option.rect;
 	rectGameDesc.setHeight(fmGameDesc.height());
 	rectGameDesc = fmGameDesc.boundingRect(
 		rectGameDesc, (textAlignment & HALIGN_FLAGS), gameDescElided);
@@ -136,14 +138,40 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	// File description.
 	painter->setFont(d->fontFileDesc);
 	const QFontMetrics fmFileDesc(d->fontFileDesc);
-	rect.setY(rect.y() + fmGameDesc.height());
 	QString fileDescElided = fmFileDesc.elidedText(
-		fileComments.fileDesc(), Qt::ElideRight, rect.width()-1);
-	QRect rectFileDesc = rect;
+		fileComments.fileDesc(), Qt::ElideRight, option.rect.width()-1);
+	QRect rectFileDesc = option.rect;
 	rectFileDesc.setHeight(fmFileDesc.height());
 	rectFileDesc.setY(rectGameDesc.y() + rectGameDesc.height());
 	rectFileDesc = fmFileDesc.boundingRect(
 		rectFileDesc, (textAlignment & HALIGN_FLAGS), fileDescElided);
+
+	// Adjust for vertical alignment.
+	int diff = 0;
+	switch (textAlignment & VALIGN_FLAGS) {
+		default:
+		case Qt::AlignTop:
+			// No adjustment is necessary.
+			break;
+
+		case Qt::AlignBottom:
+			// Bottom alignment.
+			diff = (option.rect.height() - rectGameDesc.height() - rectFileDesc.height());
+			printf("rect: %d, gd: %d, fd: %d, diff: %d\n",
+			       option.rect.height(), rectGameDesc.height(), rectFileDesc.height(), diff);
+			break;
+
+		case Qt::AlignVCenter:
+			// Center alignment.
+			diff = (option.rect.height() - rectGameDesc.height() - rectFileDesc.height());
+			diff /= 2;
+			break;
+	}
+
+	if (diff != 0) {
+		rectGameDesc.translate(0, diff);
+		rectFileDesc.translate(0, diff);
+	}
 
 	painter->save();
 
