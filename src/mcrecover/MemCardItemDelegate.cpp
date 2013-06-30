@@ -115,6 +115,13 @@ void MemCardItemDelegate::paint(QPainter *painter,
 			Qt::AlignHCenter |
 			Qt::AlignJustify;
 
+	// Get the text alignment.
+	int textAlignment = 0;
+	if (index.data(Qt::TextAlignmentRole).canConvert(QVariant::Int))
+		textAlignment = index.data(Qt::TextAlignmentRole).toInt();
+	if (textAlignment == 0)
+		textAlignment = option.displayAlignment;
+
 	// Game description.
 	// NOTE: Width is decremented in order to prevent
 	// weird wordwrapping issues.
@@ -124,7 +131,7 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	QRect rectGameDesc = rect;
 	rectGameDesc.setHeight(fmGameDesc.height());
 	rectGameDesc = fmGameDesc.boundingRect(
-		rectGameDesc, (option.displayAlignment & HALIGN_FLAGS), gameDescElided);
+		rectGameDesc, (textAlignment & HALIGN_FLAGS), gameDescElided);
 
 	// File description.
 	painter->setFont(d->fontFileDesc);
@@ -136,7 +143,7 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	rectFileDesc.setHeight(fmFileDesc.height());
 	rectFileDesc.setY(rectGameDesc.y() + rectGameDesc.height());
 	rectFileDesc = fmGameDesc.boundingRect(
-		rectFileDesc, (option.displayAlignment & HALIGN_FLAGS), fileDescElided);
+		rectFileDesc, (textAlignment & HALIGN_FLAGS), fileDescElided);
 
 	painter->save();
 
