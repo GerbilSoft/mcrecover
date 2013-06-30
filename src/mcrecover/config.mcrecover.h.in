@@ -32,4 +32,7 @@
 #define MCRECOVER_VERSION_PATCH @VERSION_PATCH@
 #define MCRECOVER_VERSION_STRING "@VERSION_STRING@"
 
+/* Define to 1 if Qt is built as a static library. */
+#cmakedefine QT_IS_STATIC 1
+
 #endif /* __MCRECOVER_CONFIG_MCRECOVER_H__ */

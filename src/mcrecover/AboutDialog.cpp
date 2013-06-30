@@ -21,6 +21,7 @@
 
 #include "AboutDialog.hpp"
 #include "git.h"
+#include "config.mcrecover.h"
 
 // C includes.
 #include <string.h>
@@ -234,7 +235,23 @@ QString AboutDialogPrivate::GetIncLibraries(void)
 	// Included libraries string.
 	QString sIncLibraries;
 
-	// TODO: Statically-linked Qt.
+	// Icon set.
+	sIncLibraries = QLatin1String("Icon set is based on KDE's Oxygen icons.") + sLineBreak +
+		QLatin1String("Copyright (C) 2005-2013 by David Vignoni.") + sLineBreak +
+		QLatin1String("Licenses: CC BY-SA 3.0, GNU LGPL v2.1+");
+
+	// Statically-linked Qt.
+#ifdef QT_IS_STATIC
+	sIncLibraries += sLineBreak + sLineBreak + sIntCopyOf.arg(QLatin1String("Qt " QT_VERSION_STR));
+	sIncLibraries += sLineBreak +
+		QLatin1String("Copyright (C) 1995-2012 Digita Plc and/or its subsidiaries.");
+#if QT_VERSION >= 0x040500
+	sIncLibraries += sLineBreak + QLatin1String("License: GNU GPL v2+");
+#else
+	sIncLibraries += sLineBreak + QLatin1String("Licenses: GNU LGPL v2.1+, GNU GPL v2+");
+#endif /* QT_VERSION */
+#endif /* QT_IS_STATIC */
+
 	// TODO: Statically-linked PCRE.
 
 	// Return the included libraries string.
