@@ -19,8 +19,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#include "McRecoverQApplication.hpp"
 #include "config.mcrecover.h"
+#include "McRecoverQApplication.hpp"
 
 // Qt includes.
 #include <QtCore/QTranslator>

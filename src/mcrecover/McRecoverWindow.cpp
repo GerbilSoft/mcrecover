@@ -20,8 +20,8 @@
  ***************************************************************************/
 
 #include "config.mcrecover.h"
-
 #include "McRecoverWindow.hpp"
+
 #include "McRecoverQApplication.hpp"
 #include "AboutDialog.hpp"
 

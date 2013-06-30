@@ -24,6 +24,7 @@
  * - http://www.developer.nokia.com/Community/Wiki/QXmlStreamReader_to_parse_XML_in_Qt
  */
 
+#include "config.mcrecover.h"
 #include "GcnMcFileDb.hpp"
 
 // GCN Memory Card File Definition class.
@@ -40,6 +41,8 @@
 #include <cctype>
 
 // Qt includes.
+#include <QtCore/QCoreApplication>
+#include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QMap>
 #include <QtCore/QTextCodec>
@@ -972,6 +975,50 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz,
  */
 QString GcnMcFileDb::GetDefaultDbFilename(void)
 {
-	// TODO: Add default filenames.
+	QVector<QString> pathList;
+
+#ifdef Q_OS_WIN32
+	// Win32: Search the program's /data/ and main directories.
+	pathList.append(QCoreApplication::applicationDirPath() + QLatin1String("/data"));
+	pathList.append(QCoreApplication::applicationDirPath());
+#else /* !Q_OS_WIN32 */
+	// Check if the program's directory is within the user's home directory.
+	bool isPrgDirInHomeDir = false;
+	QDir prgDir = QDir(QCoreApplication::applicationDirPath());
+	QDir homeDir = QDir::home();
+
+	do {
+		if (prgDir == homeDir) {
+			isPrgDirInHomeDir = true;
+			break;
+		}
+
+		prgDir.cdUp();
+	} while (!prgDir.isRoot());
+
+	if (isPrgDirInHomeDir) {
+		// Program is in the user's home directory.
+		// This usually means they're working on it themselves.
+
+		// Search the program's /data/ and main directories.
+		pathList.append(QCoreApplication::applicationDirPath() + QLatin1String("/data"));
+		pathList.append(QCoreApplication::applicationDirPath());
+	}
+
+	// Search the installed data directory.
+	pathList.append(QString::fromUtf8(MCRECOVER_DATA_DIRECTORY));
+#endif /* Q_OS_WIN32 */
+
+	// Search the paths for GcnMcFileDb.xml.
+	foreach (QString path, pathList) {
+		QDir dir(path);
+		QString filename = dir.absoluteFilePath(QLatin1String("GcnMcFileDb.xml"));
+		if (QFile::exists(filename)) {
+			// Found the database file.
+			return filename;
+		}
+	}
+
+	// Database file not found.
 	return QString();
 }

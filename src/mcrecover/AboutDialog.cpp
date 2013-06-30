@@ -19,9 +19,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
+#include "config.mcrecover.h"
 #include "AboutDialog.hpp"
 #include "git.h"
-#include "config.mcrecover.h"
 
 // C includes.
 #include <string.h>
