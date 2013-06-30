@@ -12,3 +12,10 @@ SET(DATABASE_FILES
 INSTALL(FILES ${DATABASE_FILES}
 	DESTINATION share/mcrecover/data
 	)
+
+# FreeDesktop.org desktop file specification.
+IF(UNIX AND NOT APPLE)
+	INSTALL(FILES mcrecover.desktop
+		DESTINATION share/applications
+		)
+ENDIF(UNIX AND NOT APPLE)

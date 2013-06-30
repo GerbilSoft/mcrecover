@@ -221,3 +221,12 @@ INSTALL(TARGETS mcrecover
 	LIBRARY DESTINATION lib
 	ARCHIVE DESTINATION lib
 	)
+
+# FreeDesktop.org icon specification.
+IF(UNIX AND NOT APPLE)
+	FOREACH(ICON_SIZE 16x16 22x22 24x24 32x32 48x48 64x64 128x128)
+		INSTALL(FILES ui/resources/mcrecover/${ICON_SIZE}/mcrecover.png
+			DESTINATION share/icons/hicolor/${ICON_SIZE}
+			)
+	ENDFOREACH()
+ENDIF(UNIX AND NOT APPLE)
