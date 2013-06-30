@@ -3,6 +3,11 @@
     <file>index.theme</file>
 
     <file>16x16/mcrecover.png</file>
+    <file>22x22/mcrecover.png</file>
+    <file>24x24/mcrecover.png</file>
+    <file>32x32/mcrecover.png</file>
+    <file>48x48/mcrecover.png</file>
+    <file>64x64/mcrecover.png</file>
     <file>128x128/mcrecover.png</file>
   </qresource>
 </RCC>
