@@ -23,6 +23,7 @@
 
 #include "MemCardModel.hpp"
 #include "FileComments.hpp"
+#include "card.h"
 
 // Qt includes.
 #include <QtGui/QPainter>
@@ -222,8 +223,14 @@ QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 	    !index.data().canConvert<FileComments>())
 	{
 		// Index is invalid, or this isn't FileComments.
-		// Use the default paint().
-		return QStyledItemDelegate::sizeHint(option, index);
+		// Use the default sizeHint().
+		QSize sz = QStyledItemDelegate::sizeHint(option, index);
+
+		// Minimum height.
+		static const int MIN_H = (CARD_ICON_H + 4);
+		if (sz.height() < MIN_H)
+			sz.setHeight(MIN_H);
+		return sz;
 	}
 
 	// GCN file comments.
