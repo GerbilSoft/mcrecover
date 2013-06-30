@@ -80,13 +80,6 @@ void AboutDialogPrivate::initAboutDialogText(void)
 	// Line break string.
 	const QString sLineBreak = QLatin1String("<br/>\n");
 
-	// Build the credits text.
-	QString sCredits = GetCredits();
-
-	// Set the credits text.
-	q->lblCredits->setTextFormat(Qt::RichText);
-	q->lblCredits->setText(sCredits);
-
 	// Build the program title text.
 	QString sPrgTitle;
 	sPrgTitle.reserve(4096);
@@ -109,6 +102,13 @@ void AboutDialogPrivate::initAboutDialogText(void)
 
 	// Set the program title text.
         q->lblPrgTitle->setText(sPrgTitle);
+
+	// Build the credits text.
+	QString sCredits = GetCredits();
+
+	// Set the credits text.
+	q->lblCredits->setTextFormat(Qt::RichText);
+	q->lblCredits->setText(sCredits);
 
 	// Set the included libraries text.
 	q->lblIncLibraries->setText(GetIncLibraries());
@@ -208,12 +208,13 @@ QString AboutDialogPrivate::GetCredits(void)
 					break;
 			}
 
-			credits += QLatin1String("</b>") + sLineBreak;
+			credits += QLatin1String("</b>");
 		}
 
 		// Append the contributor's name.
-		credits += sIndent + chrBullet + QChar(L' ') +
-			QLatin1String(creditsData->name) + sLineBreak;
+		credits += sLineBreak + sIndent +
+			chrBullet + QChar(L' ') +
+			QLatin1String(creditsData->name);
 	}
 
 	return credits;
