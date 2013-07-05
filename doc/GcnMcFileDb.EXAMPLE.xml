@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Example GCN Memory Card File Database.
+     For use with GCN MemCard Recover v0.1. -->
+<GcnMcFileDb>
+	<!-- Database information.
+	     This MUST be the first section within GcnMcFileDb. -->
+	<dbInfo>
+		<!-- Database format version. Current version is 0.1. -->
+		<dbFormatVersion>0.1</dbFormatVersion>
+
+		<!-- Database name. -->
+		<dbName>Example Memory Card File Database</name>
+
+		<!-- Database description. -->
+		<dbDesc>Contains example card files to help you to write your own database.</dbDesc>
+
+		<!-- Database version. -->
+		<version>0.1</version>
+
+		<!-- Database author and email address. -->
+		<author>David Korth</author>
+		<email>gerbilsoft@gerbilsoft.com</email>
+	</dbInfo>
+
+	<!-- File definition. -->
+	<file>
+		<!-- Game name. -->
+		<gameName>Sonic Heroes</gameName>
+
+		<!-- File information. Usually "save file", but may
+		     contain something else if a game has different
+		     types of save files, e.g. replays. -->
+		<fileInfo>Save File</fileInfo>
+
+		<!-- Game and company code, e.g. G9SE8P -->
+		<gamecode>G9SE</gamecode>
+		<company>8P</company>
+
+		<!-- Search key. This contains the file descriptions
+		     as seen in the GCN/Wii memory card manager. -->
+		<search>
+			<!-- Address within the save file where the
+			     file descriptions are located. Typical
+			     addresses are 0x0000 and 0x0004. -->
+			<address>0x0000</address>
+
+			<!-- NOTE: The search fields are Perl-compatible
+			     regular expressions. Use parentheses to capture
+			     portions of the string in order to use them
+			     as variables in the resulting filename and/or
+			     as part of the timestamp, if necessary. -->
+
+			<!-- Game description. (First 32 bytes) -->
+			<gameDesc>^SONIC HEROES : (\d{2})$</gameDesc>
+
+			<!-- File description. (Last 32 bytes) -->
+			<fileDesc>^EMBLEM : (\d{3})$</fileDesc>
+		</search>
+
+		<!-- Variable modifiers. -->
+		<variables>
+			<!-- Defined variables are G1-G9, F1-F9.
+			     G1-G9: gameDesc substrings.
+			     F1-F9: fileDesc substrings. --->
+			<variable id="G1">
+				<!-- Determine how to use the current variable:
+				     filename, month, day, year, hour, minute, second, ampm
+				     Optional; default is filename, though any variable
+				     can be used as filename in addition to one other use.
+
+				     NOTE: If something other than filename is specified,
+				     and the value is out of range (e.g. "month" with a
+				     value of 13), the file entry will be treated as if
+				     it does not match. This will help with determining
+				     if a file is USA or PAL, since PAL-region games
+				     typically use D/M/Y, whereas USA-region games
+				     typically use M/D/Y. -->
+				<useAs>filename</useAs>
+
+				<!-- Type: string, number, char
+				     Default is string.
+				     * string: "add" tag not allowed.
+				     * number: "add" tag may add or subtract
+				                a value before formatting.
+				     * char: right-most character in field
+				             will have its ASCII value adjusted.
+				             (Only valid for ASCII characters:
+				              U+0000 - U+007F) -->
+				<type>number</type>
+
+				<!-- Minimum field width. Default is 0. -->
+				<minWidth>2</minWidth>
+
+				<!-- Fill character. Default is ' '.
+				     Must be ASCII: U+0000 - U+007F -->
+				<fillChar>0</fillChar>
+
+				<!-- Alignment. Default is right.
+				     * left:  "0  "
+				     * right: "  0" -->
+				<align>right</align>
+
+				<!-- Add value. Only allowed for number and char.
+				     To subtract, specify a negative number.
+				     * number: Adds the specified value to the number.
+				     * char: Adds the specified value to the ASCII
+				             character value. (e.g. +1 turns 'A' into 'B') -->
+				<add>-1</add>
+			</variable>
+		</variables>
+	</file>
+</GcnMcFileDb>
