@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GcnMcFileDb>
+	<dbInfo>
+		<dbFormatVersion>0.1</dbFormatVersion>
+		<dbName>GCN Memory Card File Database (USA)</dbName>
+		<dbDesc>Definitions for USA (NTSC) GameCube games.</dbDesc>
+		<version>0.1</version>
+		<author>David Korth</author>
+		<email>gerbilsoft@gerbilsoft.com</email>
+	</dbInfo>
 	<file>
 		<gameName>Action Replay</gameName>
 		<fileInfo>Data File</fileInfo>
