@@ -13,9 +13,13 @@ INSTALL(FILES ${DATABASE_FILES}
 	DESTINATION share/mcrecover/data
 	)
 
-# FreeDesktop.org desktop file specification.
 IF(UNIX AND NOT APPLE)
+	# FreeDesktop.org desktop file specification.
 	INSTALL(FILES mcrecover.desktop
 		DESTINATION share/applications
+		)
+	# /usr/share/pixmaps
+	INSTALL(FILES mcrecover.xpm
+		DESTINATION share/pixmaps
 		)
 ENDIF(UNIX AND NOT APPLE)
