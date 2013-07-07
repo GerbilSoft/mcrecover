@@ -471,7 +471,6 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	// TODO: Save positioning settings somewhere?
 	static const int MemCardInfoPanelWidth = 256;
 	QList<int> sizes;
-	sizes.reserve(2);
 	sizes.append(this->width() - MemCardInfoPanelWidth);
 	sizes.append(MemCardInfoPanelWidth);
 	splitter->setSizes(sizes);
