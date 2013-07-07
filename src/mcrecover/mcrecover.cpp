@@ -45,7 +45,7 @@ int mcrecover_main(int argc, char *argv[])
 
 	// If a filename was specified, open it.
 	if (argc > 1)
-		mcRecoverWindow->open(QString::fromLocal8Bit(argv[1]));
+		mcRecoverWindow->openCard(QString::fromLocal8Bit(argv[1]));
 
 	// Show the window.
 	mcRecoverWindow->show();

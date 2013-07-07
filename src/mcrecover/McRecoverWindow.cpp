@@ -510,7 +510,7 @@ McRecoverWindow::~McRecoverWindow()
  * Open a GameCube Memory Card image.
  * @param filename Filename.
  */
-void McRecoverWindow::open(QString filename)
+void McRecoverWindow::openCard(QString filename)
 {
 	if (d->card) {
 		d->model->setMemCard(NULL);
@@ -549,7 +549,7 @@ void McRecoverWindow::open(QString filename)
 /**
  * Close the currently-opened GameCube Memory Card image.
  */
-void McRecoverWindow::close(void)
+void McRecoverWindow::closeCard(void)
 {
 	d->model->setMemCard(NULL);
 	mcCardView->setCard(NULL);
@@ -655,7 +655,7 @@ void McRecoverWindow::dropEvent(QDropEvent *event)
 	event->accept();
 
 	// Open the memory card file.
-	open(filename);
+	openCard(filename);
 }
 
 
@@ -718,7 +718,7 @@ void McRecoverWindow::on_actionOpen_triggered(void)
 		return;
 
 	// Open the memory card file.
-	open(filename);
+	openCard(filename);
 }
 
 
@@ -730,7 +730,7 @@ void McRecoverWindow::on_actionClose_triggered(void)
 	if (!d->card)
 		return;
 
-	close();
+	closeCard();
 }
 
 
@@ -796,6 +796,7 @@ void McRecoverWindow::on_actionScan_triggered(void)
  */
 void McRecoverWindow::on_actionExit_triggered(void)
 {
+	this->closeCard();
 	this->close();
 }
 
