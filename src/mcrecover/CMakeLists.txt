@@ -190,6 +190,43 @@ TARGET_LINK_LIBRARIES(mcrecover
 # TODO: Translations.
 #ADD_DEPENDENCIES(gens-qt4 translations_target)
 
+# NOTE: $<TARGET_FILE:mcrecover> is preferred,
+# but this doesn't seem to work on Ubuntu 10,04.
+# (cmake_2.8.0-5ubuntu1_i386)
+GET_PROPERTY(MCRECOVER_EXE_LOCATION TARGET mcrecover PROPERTY LOCATION)
+
+# Split debug information.
+# References:
+# - http://cmake.3232098.n2.nabble.com/Save-stripped-debugging-information-td6819195.html
+# - http://sourceware.org/bugzilla/show_bug.cgi?id=14527
+#   - If debug symbols are stripped before .gnu_debuglink is added,
+#     the section will be truncated to .gnu_deb, and hence won't
+#     be recognized by gdb.
+IF(SPLIT_DEBUG)
+	FIND_PROGRAM(OBJCOPY objcopy)
+	ADD_CUSTOM_COMMAND(TARGET mcrecover POST_BUILD
+		COMMAND ${OBJCOPY} --only-keep-debug
+			${MCRECOVER_EXE_LOCATION} ${CMAKE_CURRENT_BINARY_DIR}/mcrecover.debug
+		COMMAND ${OBJCOPY} --add-gnu-debuglink=mcrecover.debug
+			${MCRECOVER_EXE_LOCATION}
+		COMMAND ${OBJCOPY} --strip-debug
+			${MCRECOVER_EXE_LOCATION}
+		)
+ENDIF(SPLIT_DEBUG)
+
+IF(COMPRESS_EXE)
+	FIND_PROGRAM(UPX upx)
+	IF(WIN32)
+		SET(UPX_OPTIONS "--compress-icons=0")
+	ENDIF(WIN32)
+	IF(UPX)
+		ADD_CUSTOM_COMMAND(TARGET mcrecover POST_BUILD
+			COMMAND ${UPX} --best --lzma
+				${MCRECOVER_EXE_LOCATION}
+			)
+	ENDIF(UPX)
+ENDIF(COMPRESS_EXE)
+
 # Qt options:
 # - Fast QString concatenation. (Qt 4.6+, plus 4.8-specific version)
 # - Disable implicit QString ASCII casts.
