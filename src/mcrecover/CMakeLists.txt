@@ -229,4 +229,13 @@ IF(UNIX AND NOT APPLE)
 			DESTINATION share/icons/hicolor/${ICON_SIZE}
 			)
 	ENDFOREACH()
+
+	# FreeDesktop.org desktop file specification.
+	INSTALL(FILES ui/resources/mcrecover/xdg/mcrecover.desktop
+		DESTINATION share/applications
+		)
+	# /usr/share/pixmaps
+	INSTALL(FILES ui/resources/mcrecover/xdg/mcrecover.xpm
+		DESTINATION share/pixmaps
+		)
 ENDIF(UNIX AND NOT APPLE)
