@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=GCN MemCard Recover
-Comment=GameCube Memory Card Recovery Program
-Type=Application
-Version=1.0
-Exec=mcrecover %f
-Icon=mcrecover
-MimeType=application/octet-stream
-Categories=Application;Game;Utility;
