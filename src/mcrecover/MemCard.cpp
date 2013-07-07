@@ -38,7 +38,7 @@
 
 // Qt includes.
 #include <QtCore/QFile>
-#include <QtCore/QList>
+#include <QtCore/QVector>
 #include <QtCore/QTextCodec>
 
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
@@ -87,7 +87,7 @@ class MemCardPrivate
 		card_bat *mc_bat;
 
 		// MemCardFile list.
-		QList<MemCardFile*> lstMemCardFile;
+		QVector<MemCardFile*> lstMemCardFile;
 
 		/**
 		 * Used block map.
@@ -627,10 +627,10 @@ QVector<uint8_t> MemCard::usedBlockMap(void)
 void MemCard::removeLostFiles(void)
 {
 	for (int i = d->lstMemCardFile.size() - 1; i >= 0; i--) {
-		MemCardFile *mcFile = d->lstMemCardFile.at(i);
+		const MemCardFile *mcFile = d->lstMemCardFile.at(i);
 		if (mcFile->isLostFile()) {
 			// This is a "lost" file. Remove it.
-			d->lstMemCardFile.removeAt(i);
+			d->lstMemCardFile.remove(i);
 			emit fileRemoved(i);
 		}
 	}
