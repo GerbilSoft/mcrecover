@@ -756,7 +756,7 @@ void McRecoverWindow::on_actionScan_triggered(void)
 			"Alternatively, you can place your own version in ~/.config/mcrecover/data/GcnMcFileDb.xml";
 #endif
 
-		QMessageBox::critical(NULL,
+		QMessageBox::critical(this,
 			tr("Database Load Error"),
 			QLatin1String("GcnMcFileDb.xml was not found.\n\n") +
 			QLatin1String(def_path_hint));
