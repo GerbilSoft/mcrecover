@@ -207,9 +207,8 @@
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset theme="document-open">
-     <normaloff/>
-    </iconset>
+    <iconset resource="resources/oxygen/oxygen.qrc">
+     <normaloff>:/oxygen/16x16/document-open.png</normaloff>:/oxygen/16x16/document-open.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Open</string>
@@ -223,9 +222,8 @@
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset theme="document-save">
-     <normaloff/>
-    </iconset>
+    <iconset resource="resources/oxygen/oxygen.qrc">
+     <normaloff>:/oxygen/16x16/document-save.png</normaloff>:/oxygen/16x16/document-save.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Save</string>
@@ -239,9 +237,8 @@
   </action>
   <action name="actionSaveAll">
    <property name="icon">
-    <iconset theme="document-save-all">
-     <normaloff/>
-    </iconset>
+    <iconset resource="resources/oxygen/oxygen.qrc">
+     <normaloff>:/oxygen/16x16/document-save-all.png</normaloff>:/oxygen/16x16/document-save-all.png</iconset>
    </property>
    <property name="text">
     <string>Save &amp;All</string>
@@ -252,9 +249,8 @@
   </action>
   <action name="actionExit">
    <property name="icon">
-    <iconset theme="application-exit">
-     <normaloff/>
-    </iconset>
+    <iconset resource="resources/oxygen/oxygen.qrc">
+     <normaloff>:/oxygen/16x16/application-exit.png</normaloff>:/oxygen/16x16/application-exit.png</iconset>
    </property>
    <property name="text">
     <string>E&amp;xit</string>
@@ -265,9 +261,8 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset theme="help-about">
-     <normaloff/>
-    </iconset>
+    <iconset resource="resources/oxygen/oxygen.qrc">
+     <normaloff>:/oxygen/16x16/help-about.png</normaloff>:/oxygen/16x16/help-about.png</iconset>
    </property>
    <property name="text">
     <string>&amp;About</string>
@@ -278,9 +273,8 @@
   </action>
   <action name="actionScan">
    <property name="icon">
-    <iconset theme="edit-find">
-     <normaloff/>
-    </iconset>
+    <iconset resource="resources/oxygen/oxygen.qrc">
+     <normaloff>:/oxygen/16x16/edit-find.png</normaloff>:/oxygen/16x16/edit-find.png</iconset>
    </property>
    <property name="text">
     <string>S&amp;can for Lost Files</string>
@@ -291,9 +285,8 @@
   </action>
   <action name="actionClose">
    <property name="icon">
-    <iconset theme="document-close">
-     <normaloff/>
-    </iconset>
+    <iconset resource="resources/oxygen/oxygen.qrc">
+     <normaloff>:/oxygen/16x16/document-close.png</normaloff>:/oxygen/16x16/document-close.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Close</string>
