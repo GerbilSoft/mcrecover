@@ -460,11 +460,17 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	// Make sure the window is deleted on close.
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
 	// Remove the window icon. (Mac "proxy icon")
 	// TODO: Use the memory card file?
 	this->setWindowIcon(QIcon());
 #endif /* Q_WS_MAC */
+
+#ifdef Q_OS_WIN
+	// Hide the QMenuBar border on Win32.
+	this->Ui_McRecoverWindow::menuBar->setStyleSheet(
+		QLatin1String("QMenuBar { border: none }"));
+#endif
 
 	// Set up the QSplitter sizes.
 	// We want the card info panel to be 160px wide at startup.
@@ -496,7 +502,7 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	// Initialize the UI.
 	d->updateLstFileList();
 	d->initMcToolbar();
-	d->statusBarManager = new StatusBarManager(Ui_McRecoverWindow::statusBar, this);
+	d->statusBarManager = new StatusBarManager(this->Ui_McRecoverWindow::statusBar, this);
 	d->updateWindowTitle();
 }
 
