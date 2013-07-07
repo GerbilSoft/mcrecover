@@ -247,7 +247,11 @@ void GcnMcFileDbPrivate::parseXml_GcnMcFileDb(QXmlStreamReader &xml)
 		    xml.name() == QLatin1String("file")) {
 			// Found a <file> element.
 			GcnMcFileDef *gcnMcFileDef = parseXml_file(xml);
-			if (gcnMcFileDef) {
+			if (gcnMcFileDef && gcnMcFileDef->search.address > BLOCK_SIZE_MASK) {
+				// FIXME: Support for files with
+				// search address above 0x1FFF.
+				delete gcnMcFileDef;
+			} else if (gcnMcFileDef) {
 				// Add the file to the database.
 				uint32_t address = gcnMcFileDef->search.address;
 				address &= BLOCK_SIZE_MASK;	// search the specific block only
