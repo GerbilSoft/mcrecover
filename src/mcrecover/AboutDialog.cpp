@@ -322,7 +322,6 @@ QString AboutDialogPrivate::GetCodePageInfo(void)
 		{CP_OEMCP,	QT_TR_NOOP("System OEM code page:")}
 	};
 
-	// TODO: GetCPInfoExU() support?
 	for (int i = 0; i < 2; i++) {
 		sCodePageInfo += AboutDialog::tr(m_cpInfo[i].cpStr);
 
