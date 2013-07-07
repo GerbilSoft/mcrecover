@@ -249,7 +249,7 @@ QString AboutDialogPrivate::GetIncLibraries(void)
 	sIncLibraries += QChar(L'\n');
 	sIncLibraries += QChar(L'\n') + sIntCopyOf.arg(QLatin1String("Qt " QT_VERSION_STR));
 	sIncLibraries += QChar(L'\n') +
-		QLatin1String("Copyright (C) 1995-2012 Digita Plc and/or its subsidiaries.");
+		QLatin1String("Copyright (C) 1995-2013 Digita Plc and/or its subsidiaries.");
 #if QT_VERSION >= 0x040500
 	sIncLibraries += QChar(L'\n') + QLatin1String("Licenses: GNU LGPL v2.1+, GNU GPL v2+");
 #else
