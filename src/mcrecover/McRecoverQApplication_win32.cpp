@@ -134,6 +134,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 	// NOTE: lpCmdLine does not include the program's name.
 	// TODO: qtmain converts GetCommandLineW()'s output to local 8-bit.
 	// Should we just use GetCommandLineA() unconditionally?
+	Q_UNUSED(lpCmdLine)
 	QByteArray cmdParam;
 	wchar_t *cmdLineW = GetCommandLineW();
 	if (cmdLineW)
