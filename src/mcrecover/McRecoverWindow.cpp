@@ -760,6 +760,7 @@ void McRecoverWindow::on_actionScan_triggered(void)
 			tr("Database Load Error"),
 			QLatin1String("GcnMcFileDb.xml was not found.\n\n") +
 			QLatin1String(def_path_hint));
+		return;
 	}
 
 	// Load the database.
