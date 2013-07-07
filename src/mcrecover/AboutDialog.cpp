@@ -35,6 +35,10 @@
 #include <QtCore/QCoreApplication>
 #include <QtGui/QScrollArea>
 
+#ifdef PCRE_STATIC
+#include <pcre.h>
+#endif /* PCRE_STATIC */
+
 
 class AboutDialogPrivate
 {
@@ -257,7 +261,18 @@ QString AboutDialogPrivate::GetIncLibraries(void)
 #endif /* QT_VERSION */
 #endif /* QT_IS_STATIC */
 
-	// TODO: Statically-linked PCRE.
+	// Statically-linked PCRE.
+#ifdef PCRE_STATIC
+	const QString pcreVersionStr = QLatin1String("PCRE %1.%2");
+
+	sIncLibraries += QChar(L'\n');
+	sIncLibraries += QChar(L'\n') + sIntCopyOf.arg(pcreVersionStr
+					.arg(PCRE_MAJOR)
+					.arg(PCRE_MINOR));
+	sIncLibraries += QChar(L'\n') +
+		QLatin1String("Copyright (C) 1997-2013 University of Cambridge.");
+	sIncLibraries += QChar(L'\n') + QLatin1String("License: BSD (3-clause)");
+#endif	
 
 	// Return the included libraries string.
 	return sIncLibraries;
