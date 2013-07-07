@@ -251,9 +251,9 @@ QString AboutDialogPrivate::GetIncLibraries(void)
 	sIncLibraries += QChar(L'\n') +
 		QLatin1String("Copyright (C) 1995-2012 Digita Plc and/or its subsidiaries.");
 #if QT_VERSION >= 0x040500
-	sIncLibraries += QChar(L'\n') + QLatin1String("License: GNU GPL v2+");
-#else
 	sIncLibraries += QChar(L'\n') + QLatin1String("Licenses: GNU LGPL v2.1+, GNU GPL v2+");
+#else
+	sIncLibraries += QChar(L'\n') + QLatin1String("License: GNU GPL v2+");
 #endif /* QT_VERSION */
 #endif /* QT_IS_STATIC */
 
