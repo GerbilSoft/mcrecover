@@ -116,7 +116,7 @@ void StatusBarManagerPrivate::updateStatusBar(void)
 
 		// TODO: Show number of files found?
 		/*
-		QString filesFoundText = q->tr("%n file(s) found.", NULL, lostFilesFound);
+		QString filesFoundText = q->tr("%n lost file(s) found.", NULL, lostFilesFound);
 		q->lblFilesFound->setText(filesFoundText);
 		*/
 
@@ -387,7 +387,7 @@ void StatusBarManager::searchFinished_slot(int lostFilesFound)
 	d->scanning = false;
 	d->lostFilesFound = lostFilesFound;
 	d->currentSearchBlock = d->totalSearchBlocks;
-	d->lastStatusMessage = tr("Scan complete. %Ln file(s) found.", NULL, lostFilesFound);
+	d->lastStatusMessage = tr("Scan complete. %Ln lost file(s) found.", NULL, lostFilesFound);
 	d->updateStatusBar();
 }
 
