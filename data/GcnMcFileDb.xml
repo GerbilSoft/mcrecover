@@ -132,6 +132,129 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Dance Dance Revolution: Mario Mix</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GWZE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^DDR: Mario Mix$</gameDesc>
+			<!-- Date format: YYYY/MM/DD HH:mm - Verify for PAL! -->
+			<!-- TODO: HH or H? -->
+			<fileDesc>^(\d{4})/(\d{2})/(\d{2}) (\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>DDRwithMARIO</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x55</iconFormat>
+			<iconSpeed>0xFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Donkey Kong Jungle Beat</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GYBE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Donkey Kong Jungle Beat$</gameDesc>
+			<fileDesc>^\d* BEATS$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>MainData</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0411</iconFormat>
+			<iconSpeed>0x0FFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Donkey Konga</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GKGE</gamecode>
+		<company>01</company>
+		<search>
+			<!-- Second block. FIXME: Implement block offsets. -->
+			<!-- NOTE: This is also present at 0x4000... -->
+			<address>0x2000</address>
+			<gameDesc>^DONKEY KONGA$</gameDesc>
+			<!-- Date format: MM/DD/YYYY HH:mm:ss - Verify for PAL! -->
+			<!-- TODO: HH or H? -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>DONKEY KONGA SAVEDATA</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x15</iconFormat>
+			<iconSpeed>0x3F</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Eternal Darkness</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GEDE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Eternal Darkness$</gameDesc>
+			<fileDesc>^Game file$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Eternal Darkness</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>15</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>F-Zero GX</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GFZE</gamecode>
@@ -164,6 +287,163 @@
 			<permission>0x1C</permission>
 			<length>4</length>
 			<encrypted>true</encrypted>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Fight Night Round 2</gameName>
+		<fileInfo>Settings File</fileInfo>
+		<gamecode>GEYE</gamecode>
+		<company>69</company>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^EA SPORTS FN 2 SETTINGS$</gameDesc>
+			<!-- Date format: YYYY.M.D - Verify for PAL! -->
+			<fileDesc>^(\d{4})\.(\d{1,2})\.(\d{1,2})$</fileDesc>
+			<!-- TODO: Checksum field? -->
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>settings.sav</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Fight Night Round 2</gameName>
+		<fileInfo>User Profile</fileInfo>
+		<gamecode>GEYE</gamecode>
+		<company>69</company>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^EA SPORTS FN 2 PROFILE$</gameDesc>
+			<!-- Date format: YYYY.M.D - Verify for PAL! -->
+			<fileDesc>^(.*) (\d{4})\.(\d{1,2})\.(\d{1,2})$</fileDesc>
+			<!-- TODO: Checksum field? -->
+		</search>
+		<variables>
+			<variable id="F2">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>${F1}.pro</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>James Bond 007: Everything or Nothing</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GENE</gamecode>
+		<company>69</company>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^007™: Everything or Nothing™$</gameDesc>
+			<fileDesc>^Saved game data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GAME.DAT</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xFFFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>James Bond 007: Everything or Nothing</gameName>
+		<fileInfo>User Profile</fileInfo>
+		<gamecode>GENE</gamecode>
+		<company>69</company>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^007™: Everything or Nothing™$</gameDesc>
+			<fileDesc>^Profile: (.*)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>${F1}.prf</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xFFFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Karaoke Revolution Party</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GK9E</gamecode>
+		<company>A4</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Karaoke Revolution Party$</gameDesc>
+			<fileDesc>^Save file$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>data</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>23</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Lord of the Rings: The Third Age</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>G3AE</gamecode>
+		<company>69</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^LOTR, TTA$</gameDesc>
+			<!-- TODO: Is the "time played" H:MM or HH:MM? -->
+			<fileDesc>^\[(\d{1,3})\] \d{1,2}:\d{2}$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>filename</useAs>
+				<type>number</type>
+				<minWidth>3</minWidth>
+				<fillChar>0</fillChar>
+				<align>right</align>
+				<add>-1</add>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>lotr3game${F1}</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x04</permission>
+			<length>10</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -372,6 +652,108 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Mario Power Tennis</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GOME</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Mario Power Tennis$</gameDesc>
+			<!-- Date format: DD/MM/YYYY HH:mm:ss - Verify for PAL! -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>T040906</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Mario Superstar Baseball</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GYQE</gamecode>
+		<company>01</company>
+		<search>
+			<!-- Second block. FIXME: Implement block offsets. -->
+			<address>0x3000</address>
+			<gameDesc>^Mario Superstar Baseball$</gameDesc>
+			<fileDesc>^Save File$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>MarioBaseball</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>10</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Mega Man Anniversary Collection</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>G6QE</gamecode>
+		<company>08</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Megaman A\.C\.$</gameDesc>
+			<fileDesc>^Megaman A\.C\.$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>MEGAAP</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Mega Man X Collection</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GXGE</gamecode>
+		<company>08</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^MEGAMAN X COLLECTION$</gameDesc>
+			<fileDesc>^\(C\)2005 CAPCOM$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>MEGA MAN X COLLECTION</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
 		<!-- NOTE: PAL version uses a different file structure! -->
 		<!-- User will need to select a preferred region. -->
 		<gameName>Metroid Prime</gameName>
@@ -453,6 +835,69 @@
 			<iconSpeed>0x02</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>MVP Baseball 2005</gameName>
+		<fileInfo>Owner File</fileInfo>
+		<gamecode>GV4E</gamecode>
+		<company>69</company>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^MVP Baseball™ 2005$</gameDesc>
+			<fileDesc>^Owner-(.*)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Owner Mode_${F1}.dat</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<!-- Quite possibly the largest GCN save file I've ever seen! -->
+			<length>207</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>MVP Baseball 2005</gameName>
+		<fileInfo>Rosters File</fileInfo>
+		<gamecode>GV4E</gamecode>
+		<company>69</company>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^MVP Baseball™ 2005$</gameDesc>
+			<fileDesc>^Rosters-(.*)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Rosters_${F1}.dat</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<!-- Second-largest GCN save file I've ever seen, right behind this game's Owner File. -->
+			<length>116</length>
+		</dirEntry>
+	</file>
+	<file>
+		<!-- NOTE: This game might have a fourth or fifth file type... -->
+		<gameName>MVP Baseball 2005</gameName>
+		<fileInfo>User Profile</fileInfo>
+		<gamecode>GV4E</gamecode>
+		<company>69</company>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^MVP Baseball™ 2005$</gameDesc>
+			<fileDesc>^Profile-(.*)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Profile_${F1}.dat</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -902,6 +1347,26 @@
 			<iconSpeed>0x3F</iconSpeed>
 			<permission>0x04</permission>
 			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Star Wars Rogue Leader: Rogue Squadron II</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GSWE</gamecode>
+		<company>64</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Star Wars: Rogue Leader$</gameDesc>
+			<fileDesc>^Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>RogueLeader</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
 		</dirEntry>
 	</file>
 	<file>
