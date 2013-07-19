@@ -61,7 +61,7 @@ class MemCardModelPrivate
 	public:
 		MemCard *card;
 
-		QHash<MemCardFile*, IconAnimHelper*> animState;
+		QHash<const MemCardFile*, IconAnimHelper*> animState;
 
 		/**
 		 * Initialize the animation state for all files.
@@ -72,7 +72,7 @@ class MemCardModelPrivate
 		 * Initialize the animation state for a given file.
 		 * @param file MemCardFile.
 		 */
-		void initAnimState(MemCardFile *file);
+		void initAnimState(const MemCardFile *file);
 
 		/**
 		 * Update the animation timer state.
@@ -199,7 +199,7 @@ void MemCardModelPrivate::initAnimState(void)
 
 	// Initialize the animation state.
 	for (int i = 0; i < card->numFiles(); i++) {
-		MemCardFile *file = card->getFile(i);
+		const MemCardFile *file = card->getFile(i);
 		initAnimState(file);
 	}
 
@@ -212,7 +212,7 @@ void MemCardModelPrivate::initAnimState(void)
  * Initialize the animation state for a given file.
  * @param file MemCardFile.
  */
-void MemCardModelPrivate::initAnimState(MemCardFile *file)
+void MemCardModelPrivate::initAnimState(const MemCardFile *file)
 {
 	int numIcons = file->numIcons();
 	if (numIcons <= 1) {
@@ -251,7 +251,7 @@ void MemCardModelPrivate::animTimerSlot(void)
 
 	// Check for icon animations.
 	for (int i = 0; i < card->numFiles(); i++) {
-		MemCardFile *file = card->getFile(i);
+		const MemCardFile *file = card->getFile(i);
 		IconAnimHelper *helper = animState.value(file);
 		if (!helper)
 			continue;
@@ -328,7 +328,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 		return QVariant();
 
 	// Get the memory card file.
-	MemCardFile *file = d->card->getFile(index.row());
+	const MemCardFile *file = d->card->getFile(index.row());
 
 	// Make sure vIndirectCols is up to date.
 	// NOTE: This is a const function, but it modifies the private class!
@@ -368,7 +368,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 					// Check if this is an animated icon.
 					if (d->animState.contains(file)) {
 						// Animated icon.
-						IconAnimHelper *helper= d->animState.value(file);
+						IconAnimHelper *helper = d->animState.value(file);
 						return helper->icon();
 					} else {
 						// Not an animated icon.
@@ -618,7 +618,7 @@ void MemCardModel::memCard_fileAdded_slot(int idx)
 	beginInsertRows(QModelIndex(), idx, idx);
 
 	// If this file has an animated icon, add it.
-	MemCardFile *file = d->card->getFile(idx);
+	const MemCardFile *file = d->card->getFile(idx);
 	d->initAnimState(file);
 	d->updateAnimTimerState();
 
