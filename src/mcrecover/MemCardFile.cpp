@@ -811,11 +811,7 @@ void MemCardFile::setChecksumDefs(QVector<Checksum::ChecksumDef> checksumDefs)
  * @return Checksum values, or empty QVector if no checksum definitions were set.
  */
 QVector<Checksum::ChecksumValue> MemCardFile::checksumValues(void) const
-{
-	if (d->checksumValues.isEmpty())
-		return QVector<Checksum::ChecksumValue>();
-	return d->checksumValues;
-}
+	{ return d->checksumValues; }
 
 /**
  * Get the checksum field width.
