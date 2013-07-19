@@ -118,12 +118,6 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 	q->lblMode->setText(file->permissionAsString());
 	q->lblMode->setVisible(true);
 
-	// Checksum colors.
-	// TODO: Better colors?
-	static const QString s_chkHtmlGood = QLatin1String("<span style='color: #080'>%1</span>");
-	static const QString s_chkHtmlInvalid = QLatin1String("<span style='color: #F00'>%1</span>");
-	static const QString s_chkHtmlLinebreak = QLatin1String("<br/>");
-
 	// Checksum algorithm is always visible.
 	q->lblChecksumAlgorithmTitle->setVisible(true);
 	q->lblChecksumAlgorithm->setVisible(true);
@@ -150,66 +144,27 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 	q->lblChecksumActualTitle->setVisible(true);
 	q->lblChecksumActual->setVisible(true);
 
-	// Get the checksum values.
-	const QVector<Checksum::ChecksumValue> checksumValues = file->checksumValues();
-	const int fieldWidth = file->checksumFieldWidth();
-	const int reserveSize = ((s_chkHtmlGood.length() + fieldWidth + 5) * checksumValues.size());
-
-	QString s_chkActual_all; s_chkActual_all.reserve(reserveSize);
-	QString s_chkExpected_all;
-	if (file->checksumStatus() == Checksum::CHKST_INVALID)
-		s_chkExpected_all.reserve(reserveSize);
-
-	for (int i = 0; i < checksumValues.size(); i++) {
-		const Checksum::ChecksumValue &value = checksumValues.at(i);
-
-		if (i > 0) {
-			// Add linebreaks or spaces to the checksum strings.
-			if ((i % 2) && fieldWidth <= 4) {
-				// Odd checksum index, 16-bit checksum.
-				// Add a space.
-				s_chkActual_all += QChar(L' ');
-				s_chkExpected_all += QChar(L' ');
-			} else {
-				// Add a linebreak.
-				s_chkActual_all += s_chkHtmlLinebreak;
-				s_chkExpected_all += s_chkHtmlLinebreak;
-			}
-		}
-
-		char s_chkActual[12];
-		char s_chkExpected[12];
-		if (fieldWidth <= 4) {
-			snprintf(s_chkActual, sizeof(s_chkActual), "%04X", value.actual);
-			snprintf(s_chkExpected, sizeof(s_chkExpected), "%04X", value.expected);
-		} else {
-			snprintf(s_chkActual, sizeof(s_chkActual), "%08X", value.actual);
-			snprintf(s_chkExpected, sizeof(s_chkExpected), "%08X", value.expected);
-		}
-
-		// Check if the checksum is valid.
-		if (value.actual == value.expected) {
-			// Checksum is valid.
-			s_chkActual_all += s_chkHtmlGood.arg(QLatin1String(s_chkActual));
-			if (file->checksumStatus() == Checksum::CHKST_INVALID)
-				s_chkExpected_all += s_chkHtmlGood.arg(QLatin1String(s_chkExpected));
-		} else {
-			// Checksum is invalid.
-			s_chkActual_all += s_chkHtmlInvalid.arg(QLatin1String(s_chkActual));
-			if (file->checksumStatus() == Checksum::CHKST_INVALID)
-				s_chkExpected_all += s_chkHtmlInvalid.arg(QLatin1String(s_chkExpected));
-		}
+	// Format the checksum values.
+	QVector<QString> checksumValuesFormatted = file->checksumValuesFormatted();
+	if (checksumValuesFormatted.size() < 1) {
+		// No checksum...
+		q->lblChecksumAlgorithm->setText(q->tr("Unknown"));
+		q->lblChecksumActualTitle->setVisible(false);
+		q->lblChecksumActual->setVisible(false);
+		q->lblChecksumExpectedTitle->setVisible(false);
+		q->lblChecksumExpected->setVisible(false);
+		return;
 	}
 
 	// Set the actual checksum text.
-	q->lblChecksumActual->setText(s_chkActual_all);
+	q->lblChecksumActual->setText(checksumValuesFormatted.at(0));
 
-	if (file->checksumStatus() == Checksum::CHKST_INVALID) {
+	if (checksumValuesFormatted.size() > 1) {
 		// At least one checksum is invalid.
 		// Show the expected checksum.
 		q->lblChecksumExpectedTitle->setVisible(true);
 		q->lblChecksumExpected->setVisible(true);
-		q->lblChecksumExpected->setText(s_chkExpected_all);
+		q->lblChecksumExpected->setText(checksumValuesFormatted.at(1));
 	} else {
 		// Checksums are all valid.
 		// Hide the expected checksum.

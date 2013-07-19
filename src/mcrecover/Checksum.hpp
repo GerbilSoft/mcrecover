@@ -27,6 +27,7 @@
 
 // Qt includes.
 #include <QtCore/QString>
+#include <QtCore/QVector>
 
 class Checksum
 {
@@ -186,6 +187,29 @@ class Checksum
 		 * @return Checksum algorithm name, or empty string if CHKALG_NONE or unknown.
 		 */
 		static QString ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm);
+
+		/**
+		 * Get the checksum field width.
+		 * @param checksumValues Checksum values to check.
+		 * @return 4 for 16-bit checksums; 8 for 32-bit checksums.
+		 */
+		static int ChecksumFieldWidth(QVector<ChecksumValue> checksumValues);
+
+		/**
+		 * Get the checksum status.
+		 * @param checksumValues Checksum values to check.
+		 * @return Checksum status.
+		 */
+		static ChkStatus ChecksumStatus(QVector<ChecksumValue> checksumValues);
+
+		/**
+		 * Format checksum values as HTML for display purposes.
+		 * @param checksumValues Checksum values to format.
+		 * @return QVector containing one or two HTML strings.
+		 * - String 0 contains the actual checksums.
+		 * - String 1, if present, contains the expected checksums.
+		 */
+		static QVector<QString> ChecksumValuesFormatted(QVector<ChecksumValue> checksumValues);
 };
 
 #endif /* __MCRECOVER_CHECKSUM_HPP__ */

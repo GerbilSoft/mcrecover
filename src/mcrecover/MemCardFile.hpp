@@ -194,12 +194,6 @@ class MemCardFile : public QObject
 		QVector<Checksum::ChecksumValue> checksumValues(void) const;
 
 		/**
-		 * Get the checksum field width.
-		 * @return 4 for 16-bit checksums; 8 for 32-bit checksums.
-		 */
-		int checksumFieldWidth(void) const;
-
-		/**
 		 * Get the checksum algorithm.
 		 * NOTE: We're assuming each file only uses one algorithm...
 		 * @return Checksum algorithm.
@@ -211,6 +205,14 @@ class MemCardFile : public QObject
 		 * @return Checksum status.
 		 */
 		Checksum::ChkStatus checksumStatus(void) const;
+
+		/**
+		 * Format checksum values as HTML for display purposes.
+		 * @return QVector containing one or two HTML strings.
+		 * - String 0 contains the actual checksums.
+		 * - String 1, if present, contains the expected checksums.
+		 */
+		QVector<QString> checksumValuesFormatted(void) const;
 
 		/**
 		 * Get the default GCI filename.

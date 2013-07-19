@@ -814,48 +814,6 @@ QVector<Checksum::ChecksumValue> MemCardFile::checksumValues(void) const
 	{ return d->checksumValues; }
 
 /**
- * Get the checksum field width.
- * @return 4 for 16-bit checksums; 8 for 32-bit checksums.
- */
-int MemCardFile::checksumFieldWidth(void) const
-{
-	// TODO: Maybe this should go in the Checksum class...
-	if (d->checksumValues.isEmpty())
-		return 4;
-
-	for (int i = (d->checksumValues.size() - 1); i >= 0; i--) {
-		const Checksum::ChecksumValue &value = d->checksumValues.at(i);
-		if (value.expected > 0xFFFF || value.actual > 0xFFFF) {
-			// Checksums are 32-bit.
-			return 8;
-		}
-	}
-
-	// Checksums are 16-bit.
-	return 4;
-}
-
-/**
- * Get the checksum status.
- * @return Checksum status.
- */
-Checksum::ChkStatus MemCardFile::checksumStatus(void) const
-{
-	if (d->checksumDefs.isEmpty())
-		return Checksum::CHKST_UNKNOWN;
-
-	for (int i = 0; i < d->checksumValues.count(); i++) {
-		const Checksum::ChecksumValue &checksumValue = d->checksumValues.at(i);
-		if (checksumValue.expected != checksumValue.actual)
-			return Checksum::CHKST_INVALID;
-	}
-
-	// All checksums are good.
-	return Checksum::CHKST_GOOD;
-}
-
-
-/**
  * Get the checksum algorithm.
  * NOTE: We're assuming each file only uses one algorithm...
  * @return Checksum algorithm.
@@ -866,6 +824,22 @@ Checksum::ChkAlgorithm MemCardFile::checksumAlgorithm(void) const
 		return Checksum::CHKALG_NONE;
 	return d->checksumDefs.at(0).algorithm;
 }
+
+/**
+ * Get the checksum status.
+ * @return Checksum status.
+ */
+Checksum::ChkStatus MemCardFile::checksumStatus(void) const
+	{ return Checksum::ChecksumStatus(d->checksumValues); }
+
+/**
+ * Format checksum values as HTML for display purposes.
+ * @return QVector containing one or two HTML strings.
+ * - String 0 contains the actual checksums.
+ * - String 1, if present, contains the expected checksums.
+ */
+QVector<QString> MemCardFile::checksumValuesFormatted(void) const
+	{ return Checksum::ChecksumValuesFormatted(d->checksumValues); }
 
 
 /**

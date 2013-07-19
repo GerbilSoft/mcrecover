@@ -24,6 +24,9 @@
 
 #include "byteswap.h"
 
+// C includes. (C++ namespace)
+#include <cstdio>
+
 
 /** Algorithms. **/
 
@@ -271,4 +274,125 @@ QString Checksum::ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm)
 		case CHKALG_SONICCHAOGARDEN:
 			return QLatin1String("Sonic Chao Garden");
 	}
+}
+
+
+/**
+ * Get the checksum field width.
+ * @param checksumValues Checksum values to check.
+ * @return 4 for 16-bit checksums; 8 for 32-bit checksums.
+ */
+int Checksum::ChecksumFieldWidth(const QVector<ChecksumValue> checksumValues)
+{
+	if (checksumValues.isEmpty())
+		return 4;
+
+	for (int i = (checksumValues.size() - 1); i >= 0; i--) {
+		const Checksum::ChecksumValue &value = checksumValues.at(i);
+		if (value.expected > 0xFFFF || value.actual > 0xFFFF) {
+			// Checksums are 32-bit.
+			return 8;
+		}
+	}
+
+	// Checksums are 16-bit.
+	return 4;
+}
+
+
+/**
+ * Get the checksum status.
+ * @param checksumValues Checksum values to check.
+ * @return Checksum status.
+ */
+Checksum::ChkStatus Checksum::ChecksumStatus(const QVector<ChecksumValue> checksumValues)
+{
+	if (checksumValues.isEmpty())
+		return Checksum::CHKST_UNKNOWN;
+
+	for (int i = 0; i < checksumValues.count(); i++) {
+		const Checksum::ChecksumValue &checksumValue = checksumValues.at(i);
+		if (checksumValue.expected != checksumValue.actual)
+			return Checksum::CHKST_INVALID;
+	}
+
+	// All checksums are good.
+	return Checksum::CHKST_GOOD;
+}
+
+
+/**
+ * Format checksum values as HTML for display purposes.
+ * @param checksumValues Checksum values to format.
+ * @return QVector containing one or two HTML strings.
+ * - String 0 contains the actual checksums.
+ * - String 1, if present, contains the expected checksums.
+ */
+QVector<QString> Checksum::ChecksumValuesFormatted(const QVector<ChecksumValue> checksumValues)
+{
+	// Checksum colors.
+	// TODO: Better colors?
+	static const QString s_chkHtmlGood = QLatin1String("<span style='color: #080'>%1</span>");
+	static const QString s_chkHtmlInvalid = QLatin1String("<span style='color: #F00'>%1</span>");
+	static const QString s_chkHtmlLinebreak = QLatin1String("<br/>");
+
+	// Get the checksum values.
+	const int fieldWidth = ChecksumFieldWidth(checksumValues);
+	const int reserveSize = ((s_chkHtmlGood.length() + fieldWidth + 5) * checksumValues.size());
+
+	// Get the checksum status.
+	const Checksum::ChkStatus checksumStatus = ChecksumStatus(checksumValues);
+
+	QString s_chkActual_all; s_chkActual_all.reserve(reserveSize);
+	QString s_chkExpected_all;
+	if (checksumStatus == Checksum::CHKST_INVALID)
+		s_chkExpected_all.reserve(reserveSize);
+
+	for (int i = 0; i < checksumValues.size(); i++) {
+		const Checksum::ChecksumValue &value = checksumValues.at(i);
+
+		if (i > 0) {
+			// Add linebreaks or spaces to the checksum strings.
+			if ((i % 2) && fieldWidth <= 4) {
+				// Odd checksum index, 16-bit checksum.
+				// Add a space.
+				s_chkActual_all += QChar(L' ');
+				s_chkExpected_all += QChar(L' ');
+			} else {
+				// Add a linebreak.
+				s_chkActual_all += s_chkHtmlLinebreak;
+				s_chkExpected_all += s_chkHtmlLinebreak;
+			}
+		}
+
+		char s_chkActual[12];
+		char s_chkExpected[12];
+		if (fieldWidth <= 4) {
+			snprintf(s_chkActual, sizeof(s_chkActual), "%04X", value.actual);
+			snprintf(s_chkExpected, sizeof(s_chkExpected), "%04X", value.expected);
+		} else {
+			snprintf(s_chkActual, sizeof(s_chkActual), "%08X", value.actual);
+			snprintf(s_chkExpected, sizeof(s_chkExpected), "%08X", value.expected);
+		}
+
+		// Check if the checksum is valid.
+		if (value.actual == value.expected) {
+			// Checksum is valid.
+			s_chkActual_all += s_chkHtmlGood.arg(QLatin1String(s_chkActual));
+			if (checksumStatus == Checksum::CHKST_INVALID)
+				s_chkExpected_all += s_chkHtmlGood.arg(QLatin1String(s_chkExpected));
+		} else {
+			// Checksum is invalid.
+			s_chkActual_all += s_chkHtmlInvalid.arg(QLatin1String(s_chkActual));
+			if (checksumStatus == Checksum::CHKST_INVALID)
+				s_chkExpected_all += s_chkHtmlInvalid.arg(QLatin1String(s_chkExpected));
+		}
+	}
+
+	// Return the checksum strings.
+	QVector<QString> ret;
+	ret.push_back(s_chkActual_all);
+	if (checksumStatus == Checksum::CHKST_INVALID)
+		ret.push_back(s_chkExpected_all);
+	return ret;
 }
