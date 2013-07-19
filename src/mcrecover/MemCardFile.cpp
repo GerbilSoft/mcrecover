@@ -136,6 +136,15 @@ class MemCardFilePrivate
 		};
 
 		/**
+		 * Determine if an address + length is within fileSize.
+		 * @param address Address.
+		 * @param length Length.
+		 * @param fileSize File size.
+		 * @return True if the address + length is within fileSize; false if not.
+		 */
+		static bool IsInFile(uint32_t address, uint32_t length, uint32_t fileSize);
+
+		/**
 		 * Load the banner and icon images.
 		 */
 		void loadImages(void);
@@ -364,6 +373,23 @@ QByteArray MemCardFilePrivate::loadFileData(void)
 
 
 /**
+ * Determine if an address + length is within fileSize.
+ * @param address Address.
+ * @param length Length.
+ * @param fileSize File size.
+ * @return True if the address + length is within fileSize; false if not.
+ */
+inline bool MemCardFilePrivate::IsInFile(uint32_t address, uint32_t length, uint32_t fileSize)
+{
+	if (address > fileSize || length > fileSize)
+		return false;
+
+	uint64_t addrPlusLen = ((uint64_t)address + (uint64_t)length);
+	return !(addrPlusLen > (uint64_t)fileSize);
+}
+
+
+/**
  * Load the banner and icon images.
  */
 void MemCardFilePrivate::loadImages(void)
@@ -383,7 +409,7 @@ void MemCardFilePrivate::loadImages(void)
 			// CI8 palette is right after the banner.
 			// (256 entries in RGB5A3 format.)
 			imageSize = (CARD_BANNER_W * CARD_BANNER_H * 1);
-			if ((int)(iconAddr + imageSize) > fileData.size())
+			if (!IsInFile(iconAddr, imageSize, (uint32_t)fileData.size()))
 				break;
 			bannerImg = GcImage::FromCI8(CARD_BANNER_W, CARD_BANNER_H,
 					&fileData.constData()[iconAddr], imageSize,
@@ -393,7 +419,7 @@ void MemCardFilePrivate::loadImages(void)
 
 		case CARD_BANNER_RGB:
 			imageSize = (CARD_BANNER_W * CARD_BANNER_H * 2);
-			if ((int)(iconAddr + imageSize) > fileData.size())
+			if (!IsInFile(iconAddr, imageSize, (uint32_t)fileData.size()))
 				break;
 			bannerImg = GcImage::FromRGB5A3(CARD_BANNER_W, CARD_BANNER_H,
 					&fileData.constData()[iconAddr], imageSize);
@@ -442,7 +468,7 @@ void MemCardFilePrivate::loadImages(void)
 				// CI8 palette is right after the icon.
 				// (256 entries in RGB5A3 format.)
 				imageSize = (CARD_ICON_W * CARD_ICON_H * 1);
-				if ((int)(iconAddr + imageSize + 0x200) > fileData.size())
+				if (!IsInFile(iconAddr, (imageSize + 0x200), (uint32_t)fileData.size()))
 					break;
 				QImage icon = GcImage::FromCI8(CARD_ICON_W, CARD_ICON_H,
 						&fileData.constData()[iconAddr], imageSize,
@@ -454,7 +480,7 @@ void MemCardFilePrivate::loadImages(void)
 
 			case CARD_BANNER_RGB: {
 				imageSize = (CARD_ICON_W * CARD_ICON_H * 2);
-				if ((int)(iconAddr + imageSize) > fileData.size())
+				if (!IsInFile(iconAddr, imageSize, (uint32_t)fileData.size()))
 					break;
 				QImage icon = GcImage::FromRGB5A3(CARD_ICON_W, CARD_ICON_H,
 						&fileData.constData()[iconAddr], imageSize);
@@ -477,7 +503,7 @@ void MemCardFilePrivate::loadImages(void)
 	if (!lst_CI8_SHARED.isEmpty()) {
 		// Process CI8 SHARED icons.
 		// TODO: Convert the palette once instead of every time?
-		if ((int)(iconAddr + 0x200) > fileData.size()) {
+		if (!IsInFile(iconAddr, 0x200, (uint32_t)fileData.size())) {
 			// Out of bounds.
 			// Delete the NULL icons.
 			for (int i = (icons.size() - 1); i >= 0; i--) {
