@@ -125,7 +125,7 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 	// Is the checksum known?
 	if (file->checksumStatus() == Checksum::CHKST_UNKNOWN) {
 		// Unknown checksum.
-		q->lblChecksumAlgorithm->setText(q->tr("Unknown"));
+		q->lblChecksumAlgorithm->setText(q->tr("Unknown", "checksum"));
 		q->lblChecksumActualTitle->setVisible(false);
 		q->lblChecksumActual->setVisible(false);
 		q->lblChecksumExpectedTitle->setVisible(false);
@@ -148,7 +148,7 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 	QVector<QString> checksumValuesFormatted = file->checksumValuesFormatted();
 	if (checksumValuesFormatted.size() < 1) {
 		// No checksum...
-		q->lblChecksumAlgorithm->setText(q->tr("Unknown"));
+		q->lblChecksumAlgorithm->setText(q->tr("Unknown", "checksum"));
 		q->lblChecksumActualTitle->setVisible(false);
 		q->lblChecksumActual->setVisible(false);
 		q->lblChecksumExpectedTitle->setVisible(false);
