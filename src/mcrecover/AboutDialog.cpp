@@ -192,7 +192,9 @@ QString AboutDialogPrivate::GetCredits(void)
 
 	// Credits data.
 	static const CreditsData_t CreditsData[] = {
-		{CT_MCF_CONTRIBUTORS,	"Jeff Turner"},		// NTSC-U
+		{CT_MCF_CONTRIBUTORS,	"MainMemory"},		// NTSC-U, fragmented card
+		{CT_CONTINUE,		"Carbuncle"},		// NTSC-U (aka megamanblue)
+		{CT_CONTINUE,		"Jeff Turner"},		// NTSC-U
 		{CT_CONTINUE,		"gold lightning"},	// NTSC-U
 		{CT_CONTINUE,		"Thomas Vasto"},	// PAL
 		{CT_CONTINUE,		"Henke37"},		// PAL
