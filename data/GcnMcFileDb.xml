@@ -86,13 +86,13 @@
 		</search>
 		<variables>
 			<variable id="F1">
-				<useAs>year</useAs>
-			</variable>
-			<variable id="F2">
 				<useAs>month</useAs>
 			</variable>
-			<variable id="F3">
+			<variable id="F2">
 				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
 			</variable>
 			<variable id="F4">
 				<useAs>hour</useAs>
