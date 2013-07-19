@@ -92,7 +92,7 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 	 */
 	q->lblBlockCount->setText(
 		q->tr("%L1 block(s) (%L2 free)")
-		.arg(card->sizeInBlocks() - 5)
+		.arg(card->sizeInBlocksNoSys())
 		.arg(card->freeBlocks()));
 
 	// Encoding.

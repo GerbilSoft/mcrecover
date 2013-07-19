@@ -186,9 +186,8 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	// the filesystem is heavily corrupted, or the file
 	// isn't actually a GCN Memory Card image.
 	int length = dirEntry->length;
-	const int cardSize = (card->sizeInBlocks() - 5);
-	if (length > cardSize)
-		length = cardSize;
+	if (length > card->sizeInBlocksNoSys())
+		length = card->sizeInBlocksNoSys();
 
 	// Load the FAT entries.
 	fatEntries.clear();
@@ -346,8 +345,7 @@ uint16_t MemCardFilePrivate::fileBlockAddrToPhysBlockAddr(uint16_t fileBlock)
 QByteArray MemCardFilePrivate::loadFileData(void)
 {
 	const int blockSize = card->blockSize();
-	const int cardSize = (card->sizeInBlocks() - 5);
-	if (this->size() > cardSize) {
+	if (this->size() > card->sizeInBlocksNoSys()) {
 		// File is larger than the card.
 		// This shouldn't happen...
 		return QByteArray();

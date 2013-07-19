@@ -94,6 +94,13 @@ class MemCard : public QObject
 		int sizeInBlocks(void) const;
 
 		/**
+		 * Get the size of the memory card, in blocks. [minus 5 reserved blocks]
+		 * NOTE: Does NOT include the 5 reserved blocks. (e.g. MC1019 would return 1019)
+		 * @return Size of memory card, in blocks. (Negative on error)
+		 */
+		int sizeInBlocksNoSys(void) const;
+
+		/**
 		 * Get the number of free blocks.
 		 * @return Free blocks. (Negative on error)
 		 */
