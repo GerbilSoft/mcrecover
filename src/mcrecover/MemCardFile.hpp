@@ -126,10 +126,10 @@ class MemCardFile : public QObject
 		QString permissionAsString(void) const;
 
 		/**
-		 * Get the size, in blocks.
-		 * @return Size, in blocks.
+		 * Get the file size, in blocks.
+		 * @return File size, in blocks.
 		 */
-		uint8_t size(void) const;
+		uint16_t size(void) const;
 
 		/**
 		 * Get the banner image.

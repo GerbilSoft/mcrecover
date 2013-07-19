@@ -111,6 +111,12 @@ class MemCardFilePrivate
 		QVector<QPixmap> icons;
 
 		/**
+		 * Get the file size, in blocks.
+		 * @return File size, in blocks.
+		 */
+		uint16_t size(void) const;
+
+		/**
 		 * Convert a file block number to a physical block number.
 		 * @param fileBlock File block number.
 		 * @return Physical block number, or negative on error.
@@ -175,13 +181,22 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	// Load the directory table information.
 	dirEntry = &dat->entries[fileIdx];
 
+	// Clamp file length to the size of the memory card.
+	// This shouldn't happen, but it's possible if either
+	// the filesystem is heavily corrupted, or the file
+	// isn't actually a GCN Memory Card image.
+	int length = dirEntry->length;
+	const int cardSize = (card->sizeInBlocks() - 5);
+	if (length > cardSize)
+		length = cardSize;
+
 	// Load the FAT entries.
 	fatEntries.clear();
-	fatEntries.reserve(dirEntry->length);
+	fatEntries.reserve(length);
 	uint16_t last_block = dirEntry->block;
 	if (last_block >= 5 && last_block != 0xFFFF) {
 		fatEntries.append(last_block);
-		for (int i = 1; i < dirEntry->length; i++) {
+		for (int i = length; i > 1; i--) {
 			last_block = bat->fat[last_block - 5];
 			if (last_block == 0xFFFF || last_block < 5)
 				break;
@@ -299,6 +314,19 @@ void MemCardFilePrivate::init(void)
 
 
 /**
+ * Get the file size, in blocks.
+ * @return File size, in blocks.
+ */
+uint16_t MemCardFilePrivate::size(void) const
+{
+	// NOTE: We're using fatEntries.size() instead of
+	// dirEntry.length, since the directory entry may
+	// contain invalid data.
+	return fatEntries.size();
+}
+
+
+/**
  * Convert a file block number to a physical block number.
  * @param fileBlock File block number.
  * @return Physical block number, or negative on error.
@@ -318,14 +346,18 @@ uint16_t MemCardFilePrivate::fileBlockAddrToPhysBlockAddr(uint16_t fileBlock)
 QByteArray MemCardFilePrivate::loadFileData(void)
 {
 	const int blockSize = card->blockSize();
-	if (dirEntry->length > card->sizeInBlocks())
+	const int cardSize = (card->sizeInBlocks() - 5);
+	if (this->size() > cardSize) {
+		// File is larger than the card.
+		// This shouldn't happen...
 		return QByteArray();
+	}
 
 	QByteArray fileData;
-	fileData.resize(dirEntry->length * blockSize);
+	fileData.resize(this->size() * blockSize);
 
 	uint8_t *fileDataPtr = (uint8_t*)fileData.data();
-	for (int i = 0; i < dirEntry->length; i++, fileDataPtr += blockSize) {
+	for (int i = 0; i < this->size(); i++, fileDataPtr += blockSize) {
 		const uint16_t physBlockAddr = fileBlockAddrToPhysBlockAddr(i);
 		card->readBlock(fileDataPtr, blockSize, physBlockAddr);
 	}
@@ -727,8 +759,8 @@ QString MemCardFile::permissionAsString(void) const
  * Get the size, in blocks.
  * @return Size, in blocks.
  */
-uint8_t MemCardFile::size(void) const
-	{ return d->dirEntry->length; }
+uint16_t MemCardFile::size(void) const
+	{ return d->size(); }
 
 /**
  * Get the banner image.
