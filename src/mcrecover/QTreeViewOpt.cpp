@@ -22,6 +22,25 @@
 
 #include "QTreeViewOpt.hpp"
 
+// Qt classes.
+#include <QtGui/QHeaderView>
+#include <QtGui/QMenu>
+#include <QtGui/QAction>
+
+QTreeViewOpt::QTreeViewOpt(QWidget *parent)
+	: QTreeView(parent)
+{
+	// Connect the signal for hiding/showing columns.
+	this->header()->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(this->header(), SIGNAL(customContextMenuRequested(QPoint)),
+		this, SLOT(showColumnContextMenu(QPoint)));
+}
+
+/**
+ * Data has changed in the item model.
+ * @param topLeft Top-left item.
+ * @param bottomRight Bottom-right item.
+ */
 void QTreeViewOpt::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
 	bool propagateEvent = true;
@@ -44,4 +63,67 @@ void QTreeViewOpt::dataChanged(const QModelIndex &topLeft, const QModelIndex &bo
 		// Propagate the dataChanged() event.
 		QTreeView::dataChanged(topLeft, bottomRight);
 	}
+}
+
+/**
+ * Show the column context menu.
+ * Based on KSysGuard's KSysGuardProcessList::showColumnContextMenu().
+ * @param point Point where context menu was requested.
+ */
+void QTreeViewOpt::showColumnContextMenu(const QPoint &point)
+{
+	QMenu *menu = new QMenu();
+	QAction *action;
+
+	int index = this->header()->logicalIndexAt(point);
+	if (index >= 0) {
+		// Column is selected. Add an option to hide it.
+		action = new QAction(menu);
+		// Set data to negative index (minus 1) to hide a column,
+		// and positive index to show a column.
+		action->setData(-index - 1);
+		action->setText(tr("Hide Column '%1'")
+				.arg(this->model()->headerData(index, Qt::Horizontal, Qt::DisplayRole).toString()));
+		menu->addAction(action);
+
+		if (this->header()->sectionsHidden())
+			menu->addSeparator();
+	}
+
+	// Add options to show hidden columns.
+	if (this->header()->sectionsHidden()) {
+		int num_sections = this->model()->columnCount();
+		for (int i = 0; i < num_sections; i++) {
+			if (this->header()->isSectionHidden(i)) {
+				action = new QAction(menu);
+				action->setText(tr("Show Column '%1'")
+					.arg(this->model()->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString()));
+				// Set data to negative index (minus 1) to hide a column,
+				// and positive index to show a column.
+				action->setData(i);
+				menu->addAction(action);
+			}
+		}
+	}
+
+	// Show the menu and wait for the user to select an option.
+	QAction *result = menu->exec(this->header()->mapToGlobal(point));
+	if (!result) {
+		// Menu was cancelled.
+		menu->deleteLater();
+		return;
+	}
+
+	// Show/hide the selected column.
+	// TODO: Save column visibility settings somewhere.
+	int i = result->data().toInt();
+	if (i < 0) {
+		this->hideColumn(-1 - i);
+	} else {
+		this->showColumn(i);
+		this->resizeColumnToContents(i);
+		this->resizeColumnToContents(this->model()->columnCount());
+	}
+
+	menu->deleteLater();
 }

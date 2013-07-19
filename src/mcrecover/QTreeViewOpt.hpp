@@ -30,8 +30,7 @@ class QTreeViewOpt : public QTreeView
 	Q_OBJECT
 
 	public:
-		QTreeViewOpt(QWidget *parent = 0)
-			: QTreeView(parent) { }
+		QTreeViewOpt(QWidget *parent = 0);
 		virtual ~QTreeViewOpt() { }
 
 	private:
@@ -39,6 +38,9 @@ class QTreeViewOpt : public QTreeView
 
 	public:
 		virtual void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+
+	protected slots:
+		void showColumnContextMenu(const QPoint &point);
 };
 
 #endif /* __MCRECOVER_QTREEVIEWOPT_HPP__ */
