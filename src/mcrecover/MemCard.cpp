@@ -26,9 +26,6 @@
 // MemCardFile
 #include "MemCardFile.hpp"
 
-// Checksum algorithms.
-#include "Checksum.hpp"
-
 // C includes. (C++ namespace)
 #include <cstring>
 #include <cstdio>
@@ -75,6 +72,9 @@ class MemCardPrivate
 
 		// QTextCodec for memory card text encoding.
 		QTextCodec *textCodec;
+
+		// Header checksum.
+		Checksum::ChecksumValue headerChecksumValue;
 
 		// Memory card data.
 		// Table 0 == main; Table 1 == backup.
@@ -217,6 +217,9 @@ int MemCardPrivate::loadSysInfo(void)
 	file->seek(0);
 	file->read((char*)&mc_header, sizeof(mc_header));
 
+	// Calculate the header checksum.
+	headerChecksumValue.actual = Checksum::AddInvDual16((uint16_t*)&mc_header, 0x1FC);
+
 	// Byteswap the header contents.
 	mc_header.formatTime	= be64_to_cpu(mc_header.formatTime);
 	mc_header.sramBias	= be32_to_cpu(mc_header.sramBias);
@@ -226,6 +229,10 @@ int MemCardPrivate::loadSysInfo(void)
 	mc_header.encoding	= be16_to_cpu(mc_header.encoding);
 	mc_header.chksum1	= be16_to_cpu(mc_header.chksum1);
 	mc_header.chksum2	= be16_to_cpu(mc_header.chksum2);
+
+	// Get the expected header checksum.
+	headerChecksumValue.expected = (mc_header.chksum1 << 16) |
+				       (mc_header.chksum2);
 
 	/**
 	 * NOTE: formatTime appears to be in units of (CPU clock / 12).
@@ -688,3 +695,12 @@ MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry, QVector<uint16_
 	emit fileAdded(d->lstMemCardFile.size() - 1);
 	return file;
 }
+
+
+/**
+ * Get the header checksum value.
+ * NOTE: Header checksum is always AddInvDual16.
+ * @return Header checksum value.
+ */
+Checksum::ChecksumValue MemCard::headerChecksumValue(void) const
+	{ return d->headerChecksumValue; }

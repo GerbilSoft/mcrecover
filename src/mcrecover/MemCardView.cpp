@@ -22,6 +22,10 @@
 #include "MemCardView.hpp"
 
 #include "MemCard.hpp"
+#include "Checksum.hpp"
+
+// C includes.
+#include <stdlib.h>
 
 
 /** MemCardViewPrivate **/
@@ -63,19 +67,21 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 		// Hide the widget display.
 		// TODO: Better method?
 		q->lblBlockCount->setVisible(false);
-		q->lblSerialNumberTitle->setVisible(false);
-		q->lblSerialNumber->setVisible(false);
 		q->lblEncodingTitle->setVisible(false);
 		q->lblEncoding->setVisible(false);
+		q->lblChecksumActualTitle->setVisible(false);
+		q->lblChecksumActual->setVisible(false);
+		q->lblChecksumExpectedTitle->setVisible(false);
+		q->lblChecksumExpected->setVisible(false);
 		return;
 	}
 
 	// Show the widget display.
 	q->lblBlockCount->setVisible(true);
-	q->lblSerialNumberTitle->setVisible(true);
-	q->lblSerialNumber->setVisible(true);
 	q->lblEncodingTitle->setVisible(true);
 	q->lblEncoding->setVisible(true);
+	q->lblChecksumActualTitle->setVisible(true);
+	q->lblChecksumActual->setVisible(true);
 
 	// Update the widget display.
 
@@ -88,21 +94,6 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 		q->tr("%L1 block(s) (%L2 free)")
 		.arg(card->sizeInBlocks() - 5)
 		.arg(card->freeBlocks()));
-
-	// Serial number.
-	QString serial_text = card->serialNumber();
-
-	// Split into lines of 8 characters each.
-	// TODO: Optimize using QString substrings?
-	QString serial_text_split;
-	serial_text_split.reserve(serial_text.size() * 4 / 3);
-	for (int i = 0; i < serial_text.size(); i++) {
-		if (i > 0 && !(i % 8))
-			serial_text_split.append(QChar(L'\n'));
-		serial_text_split.append(serial_text.at(i));
-	}
-		 
-	q->lblSerialNumber->setText(serial_text_split);
 
 	// Encoding.
 	QString encoding;
@@ -117,6 +108,35 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 			break;
 	}
 	q->lblEncoding->setText(encoding);
+
+	// Format the header checksum.
+	QVector<Checksum::ChecksumValue> checksumValues;
+	checksumValues.append(card->headerChecksumValue());
+	QVector<QString> checksumValuesFormatted = Checksum::ChecksumValuesFormatted(checksumValues);
+	if (checksumValuesFormatted.size() < 1) {
+		// No checksum...
+		q->lblChecksumActual->setText(q->tr("Unknown", "checksum"));
+		q->lblChecksumExpectedTitle->setVisible(false);
+		q->lblChecksumExpected->setVisible(false);
+		return;
+	}
+
+	// Set the actual checksum text.
+	q->lblChecksumActual->setText(checksumValuesFormatted.at(0));
+
+	if (checksumValuesFormatted.size() > 1) {
+		// At least one checksum is invalid.
+		// Show the expected checksum.
+		q->lblChecksumExpectedTitle->setVisible(true);
+		q->lblChecksumExpected->setVisible(true);
+		q->lblChecksumExpected->setText(checksumValuesFormatted.at(1));
+	} else {
+		// Checksums are all valid.
+		// Hide the expected checksum.
+		q->lblChecksumExpectedTitle->setVisible(false);
+		q->lblChecksumExpected->setVisible(false);
+		q->lblChecksumExpected->clear();
+	}
 }
 
 
@@ -132,7 +152,9 @@ MemCardView::MemCardView(QWidget *parent)
 	QFont fntMonospace;
 	fntMonospace.setFamily(QLatin1String("Monospace"));
 	fntMonospace.setStyleHint(QFont::TypeWriter);
-	lblSerialNumber->setFont(fntMonospace);
+	fntMonospace.setBold(true);
+	lblChecksumActual->setFont(fntMonospace);
+	lblChecksumExpected->setFont(fntMonospace);
 
 	d->updateWidgetDisplay();
 }

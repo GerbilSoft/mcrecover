@@ -31,6 +31,7 @@
 class QTextCodec;
 
 #include "card.h"
+#include "Checksum.hpp"
 
 // MemCardFile
 class MemCardFile;
@@ -176,6 +177,13 @@ class MemCard : public QObject
 		 * @return MemCardFile added to the MemCard, or NULL on error.
 		 */
 		MemCardFile *addLostFile(const card_direntry *dirEntry, QVector<uint16_t> fatEntries);
+
+		/**
+		 * Get the header checksum value.
+		 * NOTE: Header checksum is always AddInvDual16.
+		 * @return Header checksum value.
+		 */
+		Checksum::ChecksumValue headerChecksumValue(void) const;
 };
 
 #endif /* __MCRECOVER_MEMCARD_HPP__ */
