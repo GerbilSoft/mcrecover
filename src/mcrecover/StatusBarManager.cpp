@@ -109,7 +109,7 @@ void StatusBarManagerPrivate::updateStatusBar(void)
 {
 	if (scanning) {
 		// We're scanning for files.
-		lastStatusMessage = q->tr("Scanning block #%L1 (%L2 scanned, %L3 remaining)")
+		lastStatusMessage = q->tr("Scanning block #%L1 (%L2 scanned, %L3 remaining)...")
 					.arg(currentPhysBlock)
 					.arg(currentSearchBlock)
 					.arg(totalSearchBlocks - currentSearchBlock);
@@ -126,8 +126,17 @@ void StatusBarManagerPrivate::updateStatusBar(void)
 	}
 
 	// Set the status bar message.
-	if (lblMessage)
+	if (lblMessage) {
 		lblMessage->setText(lastStatusMessage);
+
+		// HACK: Workaround for the label sometimes
+		// not resizing fully on Qt/Linux, resulting
+		// in truncated text.
+		int w = statusBar->width();
+		if (progressBar)
+			w -= progressBar->width();
+		lblMessage->resize(w, lblMessage->height());
+	}
 
 	// Set the progress bar values.
 	// TODO: Hide the progress bar ~5 seconds after scan is complete?
