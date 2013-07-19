@@ -23,6 +23,7 @@
 
 #include "MemCard.hpp"
 #include "Checksum.hpp"
+#include "McRecoverQApplication.hpp"
 
 // C includes.
 #include <stdlib.h>
@@ -67,6 +68,7 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 		// Hide the widget display.
 		// TODO: Better method?
 		q->lblBlockCount->setVisible(false);
+		q->lblStatusIcon->setVisible(false);
 		q->lblEncodingTitle->setVisible(false);
 		q->lblEncoding->setVisible(false);
 		q->lblChecksumActualTitle->setVisible(false);
@@ -84,16 +86,62 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 	q->lblChecksumActual->setVisible(true);
 
 	// Update the widget display.
+	bool isCardHeaderValid = true;
 
-	/**
-	 * NOTE: 5 blocks are subtracted here in order to
-	 * show the user-visible space, e.g. 59 or 251 blocks
-	 * instead of 64 or 256 blocks.
-	 */
-	q->lblBlockCount->setText(
-		q->tr("%L1 block(s) (%L2 free)")
-		.arg(card->sizeInBlocksNoSys())
-		.arg(card->freeBlocks()));
+	// Format the header checksum.
+	QVector<Checksum::ChecksumValue> checksumValues;
+	checksumValues.append(card->headerChecksumValue());
+	QVector<QString> checksumValuesFormatted = Checksum::ChecksumValuesFormatted(checksumValues);
+	if (checksumValuesFormatted.size() < 1) {
+		// No checksum...
+		q->lblChecksumActual->setText(q->tr("Unknown", "checksum"));
+		q->lblChecksumExpectedTitle->setVisible(false);
+		q->lblChecksumExpected->setVisible(false);
+	} else {
+		// Set the actual checksum text.
+		q->lblChecksumActual->setText(checksumValuesFormatted.at(0));
+
+		if (checksumValuesFormatted.size() > 1) {
+			// At least one checksum is invalid.
+			isCardHeaderValid = false;
+			// Show the expected checksum.
+			q->lblChecksumExpectedTitle->setVisible(true);
+			q->lblChecksumExpected->setVisible(true);
+			q->lblChecksumExpected->setText(checksumValuesFormatted.at(1));
+		} else {
+			// Checksums are all valid.
+			// Hide the expected checksum.
+			q->lblChecksumExpectedTitle->setVisible(false);
+			q->lblChecksumExpected->setVisible(false);
+			q->lblChecksumExpected->clear();
+		}
+	}
+
+	// Validate some other aspects of the card header.
+	if (isCardHeaderValid) {
+		if (card->freeBlocks() > card->sizeInBlocksNoSys()) {
+			// Free blocks count is wrong.
+			isCardHeaderValid = false;
+		}
+		// TODO: Other aspects.
+	}
+
+	// Block count.
+	q->lblBlockCount->setText(q->tr("%L1 block(s) (%L2 free)")
+				.arg(card->sizeInBlocksNoSys())
+				.arg(card->freeBlocks()));
+
+	// Status icon.
+	if (isCardHeaderValid) {
+		// Card header is valid.
+		q->lblStatusIcon->setVisible(false);
+	} else {
+		// Card header is invalid.
+		QIcon icon = McRecoverQApplication::IconFromTheme(QLatin1String("dialog-error"));
+		// TODO: What size?
+		q->lblStatusIcon->setPixmap(icon.pixmap(16, 16));
+		q->lblStatusIcon->setVisible(true);
+	}
 
 	// Encoding.
 	QString encoding;
@@ -108,35 +156,6 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 			break;
 	}
 	q->lblEncoding->setText(encoding);
-
-	// Format the header checksum.
-	QVector<Checksum::ChecksumValue> checksumValues;
-	checksumValues.append(card->headerChecksumValue());
-	QVector<QString> checksumValuesFormatted = Checksum::ChecksumValuesFormatted(checksumValues);
-	if (checksumValuesFormatted.size() < 1) {
-		// No checksum...
-		q->lblChecksumActual->setText(q->tr("Unknown", "checksum"));
-		q->lblChecksumExpectedTitle->setVisible(false);
-		q->lblChecksumExpected->setVisible(false);
-		return;
-	}
-
-	// Set the actual checksum text.
-	q->lblChecksumActual->setText(checksumValuesFormatted.at(0));
-
-	if (checksumValuesFormatted.size() > 1) {
-		// At least one checksum is invalid.
-		// Show the expected checksum.
-		q->lblChecksumExpectedTitle->setVisible(true);
-		q->lblChecksumExpected->setVisible(true);
-		q->lblChecksumExpected->setText(checksumValuesFormatted.at(1));
-	} else {
-		// Checksums are all valid.
-		// Hide the expected checksum.
-		q->lblChecksumExpectedTitle->setVisible(false);
-		q->lblChecksumExpected->setVisible(false);
-		q->lblChecksumExpected->clear();
-	}
 }
 
 
