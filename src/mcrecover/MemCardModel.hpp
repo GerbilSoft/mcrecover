@@ -37,15 +37,14 @@ class MemCardModel : public QAbstractListModel
 	public:
 		MemCardModel(QObject *parent = 0);
 		~MemCardModel();
-		
+
 	private:
 		friend class MemCardModelPrivate;
 		MemCardModelPrivate *const d;
 		Q_DISABLE_COPY(MemCardModel);
-	
+
 	public:
-		enum Column
-		{
+		enum Column {
 			COL_ICON,		// Icon.
 			COL_BANNER,		// Banner.
 			COL_DESCRIPTION,	// Description. (both fields)
@@ -58,34 +57,20 @@ class MemCardModel : public QAbstractListModel
 			
 			COL_MAX
 		};
-		
+
 		// Qt Model/View interface.
 		int rowCount(const QModelIndex& parent = QModelIndex()) const;
 		int columnCount(const QModelIndex& parent = QModelIndex()) const;
-		
+
 		QVariant data(const QModelIndex& index, int role) const;
 		QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-		
+
 		/**
 		 * Set the memory card to use in this model.
 		 * @param card Memory card.
 		 */
 		void setMemCard(MemCard *card);
-		
-		/**
-		 * Check if a column is visible.
-		 * @param column Column number.
-		 * @return True if the column is visible; false if not.
-		 */
-		bool isColumnVisible(int column);
-		
-		/**
-		 * Set a column's visibility status.
-		 * @param column Column number.
-		 * @param visible True to show the column; false to hide it.
-		 */
-		void setColumnVisible(int column, bool visible);
-	
+
 	private slots:
 		/**
 		 * Animation timer slot.

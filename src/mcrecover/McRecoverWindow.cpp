@@ -132,18 +132,6 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, statusBarManager(NULL)
 	, uiBusyCounter(0)
 {
-	// Show icon, description, size, mtime, permission, and gamecode by default.
-	// TODO: Allow the user to customize the columns, and save the 
-	// customized columns somewhere.
-	model->setColumnVisible(MemCardModel::COL_ICON, true);
-	model->setColumnVisible(MemCardModel::COL_BANNER, false);
-	model->setColumnVisible(MemCardModel::COL_DESCRIPTION, true);
-	model->setColumnVisible(MemCardModel::COL_SIZE, true);
-	model->setColumnVisible(MemCardModel::COL_MTIME, true);
-	model->setColumnVisible(MemCardModel::COL_PERMISSION, true);
-	model->setColumnVisible(MemCardModel::COL_GAMECODE, true);
-	model->setColumnVisible(MemCardModel::COL_FILENAME, false);
-
 	// Connect the MemCardModel slots.
 	QObject::connect(model, SIGNAL(layoutChanged()),
 			 q, SLOT(memCardModel_layoutChanged()));
@@ -494,6 +482,18 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 
 	// Don't expand the last header column to fill the QTreeView.
 	lstFileList->header()->setStretchLastSection(false);
+
+	// Show icon, description, size, mtime, permission, and gamecode by default.
+	// TODO: Allow the user to customize the columns, and save the 
+	// customized columns somewhere.
+	lstFileList->setColumnHidden(MemCardModel::COL_ICON, false);
+	lstFileList->setColumnHidden(MemCardModel::COL_BANNER, true);
+	lstFileList->setColumnHidden(MemCardModel::COL_DESCRIPTION, false);
+	lstFileList->setColumnHidden(MemCardModel::COL_SIZE, false);
+	lstFileList->setColumnHidden(MemCardModel::COL_MTIME, false);
+	lstFileList->setColumnHidden(MemCardModel::COL_PERMISSION, false);
+	lstFileList->setColumnHidden(MemCardModel::COL_GAMECODE, false);
+	lstFileList->setColumnHidden(MemCardModel::COL_FILENAME, true);
 
 	// Connect the lstFileList slots.
 	connect(lstFileList->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),

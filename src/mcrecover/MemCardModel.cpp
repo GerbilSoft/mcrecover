@@ -88,12 +88,6 @@ class MemCardModelPrivate
 		 */
 		void animTimerSlot(void);
 
-		// Visible columns.
-		std::bitset<MemCardModel::COL_MAX> colsVisible;
-		QVector<int> vIndirectCols;	// indirect columns
-		bool vIndirectCols_dirty;
-		void refreshVisibleColumns(void);
-
 		// Style variables.
 		struct style_t {
 			/**
@@ -119,10 +113,6 @@ MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	: q(q)
 	, card(NULL)
 	, animTimer(new QTimer(q))
-
-	// Default to all columns visible.
-	, colsVisible(~0)
-	, vIndirectCols_dirty(true)
 {
 	// Connect animTimer's timeout() signal.
 	QObject::connect(&animTimer, SIGNAL(timeout()),
@@ -269,27 +259,6 @@ void MemCardModelPrivate::animTimerSlot(void)
 }
 
 
-/**
- * Refresh the indirect columns vector.
- */
-void MemCardModelPrivate::refreshVisibleColumns(void)
-{
-	vIndirectCols.clear();
-	vIndirectCols.reserve(MemCardModel::COL_MAX);
-
-	for (int i = 0; i < (int)colsVisible.size(); i++) {
-		if (colsVisible.test(i))
-			vIndirectCols.push_back(i);
-	}
-
-	// vIndirectCols is no longer dirty.
-	vIndirectCols_dirty = false;
-
-	// Notify the UI that the layout has changed.
-	emit q->layoutChanged();
-}
-
-
 /** MemCardModel **/
 
 MemCardModel::MemCardModel(QObject *parent)
@@ -310,13 +279,7 @@ int MemCardModel::rowCount(const QModelIndex& parent) const
 int MemCardModel::columnCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
-	
-	// Make sure vIndirectCols is up to date.
-	// NOTE: This is a const function, but it modifies the private class!
-	if (d->vIndirectCols_dirty)
-		d->refreshVisibleColumns();
-	
-	return d->vIndirectCols.size();
+	return COL_MAX;
 }
 
 
@@ -330,20 +293,10 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 	// Get the memory card file.
 	const MemCardFile *file = d->card->getFile(index.row());
 
-	// Make sure vIndirectCols is up to date.
-	// NOTE: This is a const function, but it modifies the private class!
-	if (d->vIndirectCols_dirty)
-		d->refreshVisibleColumns();
-
-	// Get the column identifier.
-	int section = index.column();
-	if (section >= d->vIndirectCols.size())
-		return QVariant();
-	section = d->vIndirectCols.at(section);
-
+	// TODO: Move some of this to MemCardItemDelegate?
 	switch (role) {
 		case Qt::DisplayRole:
-			switch (section) {
+			switch (index.column()) {
 				case COL_DESCRIPTION:
 					return qVariantFromValue(FileComments(file->gameDesc(), file->fileDesc()));
 				case COL_SIZE:
@@ -363,7 +316,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 
 		case Qt::DecorationRole:
 			// Images must use Qt::DecorationRole.
-			switch (section) {
+			switch (index.column()) {
 				case COL_ICON:
 					// Check if this is an animated icon.
 					if (d->animState.contains(file)) {
@@ -401,7 +354,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 			break;
 
 		case Qt::TextAlignmentRole:
-			switch (section) {
+			switch (index.column()) {
 				case COL_SIZE:
 				case COL_PERMISSION:
 				case COL_GAMECODE:
@@ -416,7 +369,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 			break;
 
 		case Qt::FontRole:
-			switch (section) {
+			switch (index.column()) {
 				case COL_SIZE:
 				case COL_PERMISSION:
 				case COL_GAMECODE: {
@@ -444,7 +397,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 
 		case Qt::SizeHintRole:
 			// Increase row height by 4px.
-			switch (section) {
+			switch (index.column()) {
 				case COL_ICON:
 					return QSize(CARD_ICON_W, (CARD_ICON_H + 4));
 				case COL_BANNER:
@@ -469,16 +422,6 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	Q_UNUSED(orientation);
-
-	// Make sure vIndirectCols is up to date.
-	// NOTE: This is a const function, but it modifies the private class!
-	if (d->vIndirectCols_dirty)
-		d->refreshVisibleColumns();
-
-	// Get the column identifier.
-	if (section >= d->vIndirectCols.size())
-		return QVariant();
-	section = d->vIndirectCols.at(section);
 
 	switch (role) {
 		case Qt::DisplayRole:
@@ -636,44 +579,4 @@ void MemCardModel::memCard_fileRemoved_slot(int idx)
 	// Data has changed.
 	beginRemoveRows(QModelIndex(), idx, idx);
 	endRemoveRows();
-}
-
-
-/**
- * Check if a column is visible.
- * @param column Column number.
- * @return True if the column is visible; false if not.
- */
-bool MemCardModel::isColumnVisible(int column)
-{
-	if (column < 0 || column >= COL_MAX)
-		return false;
-
-	return d->colsVisible.test(column);
-}
-
-
-/**
- * Set a column's visibility status.
- * @param column Column number.
- * @param visible True to show the column; false to hide it.
- */
-void MemCardModel::setColumnVisible(int column, bool visible)
-{
-	if (column < 0 || column >= COL_MAX)
-		return;
-	if (isColumnVisible(column) == !!visible)
-		return;
-
-	// Change the visibility of this column.
-	if (visible)
-		d->colsVisible.set(column);
-	else
-		d->colsVisible.reset(column);
-
-	// d->vIndirectCols needs to be updated.
-	d->vIndirectCols_dirty = true;
-
-	// Layout has changed.
-	emit layoutChanged();
 }
