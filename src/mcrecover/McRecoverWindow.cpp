@@ -186,8 +186,10 @@ void McRecoverWindowPrivate::updateLstFileList(void)
 	updateActionEnableStatus();
 
 	// Resize the columns to fit the contents.
-	for (int i = 0; i < model->columnCount(); i++)
+	int num_sections = model->columnCount();
+	for (int i = 0; i < num_sections; i++)
 		q->lstFileList->resizeColumnToContents(i);
+	q->lstFileList->resizeColumnToContents(num_sections);
 }
 
 
