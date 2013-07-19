@@ -99,6 +99,7 @@ SET(mcrecover_SRCS
 	VarReplace.cpp
 	MemCardItemDelegate.cpp
 	FileComments.cpp
+	QTreeViewOpt.cpp
 	)
 
 # Win32-specific sources.
@@ -126,6 +127,7 @@ SET(mcrecover_MOC_HEADERS
 	McRecoverQApplication.hpp
 	AboutDialog.hpp
 	MemCardItemDelegate.hpp
+	QTreeViewOpt.hpp
 	)
 
 # UI files.
