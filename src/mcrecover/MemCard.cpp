@@ -253,7 +253,11 @@ int MemCardPrivate::loadSysInfo(void)
 		// Alternatively, Shift-JIS is used, but we couldn't find
 		// a QTextCodec for Shift-JIS. This shouldn't happen, but
 		// it's possible...
-		textCodec = QTextCodec::codecForName("latin1");
+
+		// NOTE: If cp1252 isn't found, textCodec will end
+		// up being NULL, in which case everything will
+		// default to latin1 (iso-8859-1).
+		textCodec = QTextCodec::codecForName("cp1252");
 	}
 
 	// TODO: Adjust for block size?
