@@ -52,7 +52,7 @@ void QTreeViewOpt::dataChanged(const QModelIndex &topLeft, const QModelIndex &bo
 
 		// Get the viewport rect.
 		QRect viewportRect(QPoint(0, 0), this->viewport()->size());
-		if (!viewportRect.contains(itemRect)) {
+		if (!viewportRect.intersects(itemRect)) {
 			// Item is NOT visible.
 			// Don't propagate the event.
 			propagateEvent = false;
