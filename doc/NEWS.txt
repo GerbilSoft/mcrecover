@@ -1,0 +1,36 @@
+GCN MemCard Recover
+Version 0.1
+
+Copyright (c) 2012-2013 by David Korth.
+Email: gerbilsoft@gerbilsoft.com
+
+================================================================
+
+GCN MemCard Recover v0.1
+[released 2013/07/xx]
+
+- Initial release.
+
+- Supports extracting regular files from GCN memory card dumps.
+  "Regular" files in this case means files that are normally
+  visible in the system memory card manager.
+
+- Supports searching for "lost" files in GCN memory card dumps.
+  "Lost" files are files that aren't normally accessible because
+  their file entries were removed, either due to corruption in
+  the directory tables or accidental reformatting.
+
+- Includes a database with 61 different file entries. This initial
+  database only has NTSC-U games, and some file entries are not
+  usable at the moment due to limitations in the scanning engine.
+
+- Scanning engine cannot currently search for files whose descriptions
+  are not stored in the first block of the file.
+
+- Variable modification system does not yet support files with
+  multiple slots whose slot IDs are not described in the file
+  description field.
+
+================================================================
+
+EOF

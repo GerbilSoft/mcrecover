@@ -16,6 +16,7 @@ SET(LICENSE_FILES
 
 SET(DOC_FILES
 	README.txt
+	NEWS.txt
 	GcnMcFileDb.EXAMPLE.xml
 	)
 
