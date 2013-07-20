@@ -42,8 +42,10 @@
 		</search>
 		<dirEntry>
 			<!-- TODO: Verify that the "A" in "MURA" is a slot ID,
-			     and what are the valid slot ID? -->
-			<filename>DobutsunomoriP_MUR$SL</filename>
+			     and what are the valid slot IDs? -->
+			<!--<filename>DobutsunomoriP_MUR$SL</filename>-->
+			<!-- TODO: Implement $SL support. -->
+			<filename>DobutsunomoriP_MURA</filename>
 			<slots>ABCDEFGHIJKLMNOPQRSTUVWXYZ</slots> <!-- FIXME: Not implemented yet... -->
 			<bannerFormat>0x01</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
