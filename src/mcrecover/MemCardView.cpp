@@ -140,6 +140,7 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 		QIcon icon = McRecoverQApplication::IconFromTheme(QLatin1String("dialog-error"));
 		// TODO: What size?
 		q->lblStatusIcon->setPixmap(icon.pixmap(16, 16));
+		q->lblStatusIcon->setToolTip(q->tr("Memory card header is corrupted."));
 		q->lblStatusIcon->setVisible(true);
 	}
 
