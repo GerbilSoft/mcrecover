@@ -80,6 +80,20 @@ SET(CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
 #SET(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.txt")
 #SET(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_CURRENT_SOURCE_DIR}/WELCOME.txt")
 
+# CPack: Source package settings.
+# NOTE: Double-escape is required because the unescaped
+# string # is written to CPackSourceConfig.cmake, which
+# is then unescaped.
+SET(CPACK_SOURCE_GENERATOR "TGZ")
+SET(CPACK_SOURCE_IGNORE_FILES
+	"build.*/"
+	"build.*\\\\.sh"
+	"\\\\.git/"
+	"\\\\.gitignore"
+	"FOR FUTURE USE/"
+	".kdev4/"
+	)
+
 IF(CMAKE_SYSTEM_PROCESSOR MATCHES "^(i.|x)86\$")
 	SET(CPACK_PACKAGE_SYSTEM_PROCESSOR "i386")
 ELSE()
