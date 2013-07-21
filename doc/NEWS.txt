@@ -7,7 +7,7 @@ Email: gerbilsoft@gerbilsoft.com
 ================================================================
 
 GCN MemCard Recover v0.1
-[released 2013/07/xx]
+[released 2013/07/21]
 
 - Initial release.
 
