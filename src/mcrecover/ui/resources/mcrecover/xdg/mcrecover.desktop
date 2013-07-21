@@ -5,4 +5,4 @@ Type=Application
 Version=1.0
 Exec=mcrecover %f
 Icon=mcrecover
-Categories=Application;Game;Utility;
+Categories=Game;Application;Utility;
