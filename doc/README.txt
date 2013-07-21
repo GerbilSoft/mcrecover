@@ -4,7 +4,7 @@ Version 0.1
 Copyright (c) 2012-2013 by David Korth.
 Email: gerbilsoft@gerbilsoft.com
 
-Licensed under the GNU General Public License v2.
+This program is licensed under the GNU General Public License v2.
 See Section X for more information.
 
 ================================================================
@@ -224,8 +224,7 @@ structure of GameCube memory card images:
 http://hitmen.c02.at/files/yagcd/yagcd/chap12.html
 
 Finally, support for GCN MemCard Recover is available at:
-- Sonic Retro: http://forums.sonicretro.org/index.php?showtopic=27687
-  - [TODO: New topic on Retro]
+- Sonic Retro: http://forums.sonicretro.org/index.php?showtopic=31772
 - GBAtemp: http://gbatemp.net/threads/gcn-memcard-recover.349406/
 - Email: gerbilsoft@gerbilsoft.com
 - IRC: irc.badnik.net #retrotech
