@@ -299,7 +299,7 @@ int MemCardPrivate::loadSysInfo(void)
 
 	// Select the directory table.
 	mc_dat = &mc_dat_int[dirTable];
-	printf("Dir Table == %d\n", dirTable);
+	fprintf(stderr, "Dir Table == %d\n", dirTable);
 
 	// Block allocation tables.
 	loadBlockTable(&mc_bat_int[0], CARD_SYSBAT, &checksum_actual[0]);
@@ -335,7 +335,7 @@ int MemCardPrivate::loadSysInfo(void)
 
 	// Select the directory table.
 	mc_bat = &mc_bat_int[blockTable];
-	printf("Block Table == %d\n", blockTable);
+	fprintf(stderr, "Block Table == %d\n", blockTable);
 	return 0;
 }
 
