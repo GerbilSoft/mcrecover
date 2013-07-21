@@ -26,6 +26,7 @@
 
 // Qt includes.
 #include <QtCore/QDir>
+#include <QtCore/QDateTime>
 #include <QtGui/QApplication>
 #include <QtGui/QLabel>
 #include <QtGui/QStatusBar>
@@ -75,6 +76,11 @@ class StatusBarManagerPrivate
 		int currentSearchBlock;
 		int totalSearchBlocks;
 		int lostFilesFound;
+
+		// Last update time.
+		int64_t lastUpdateTime;
+		// Only allow updates once every 20ms (or longer).
+		static const int UPDATE_INTERVAL_MIN = 20;
 };
 
 StatusBarManagerPrivate::StatusBarManagerPrivate(StatusBarManager *q)
@@ -372,6 +378,7 @@ void StatusBarManager::searchStarted_slot(int totalPhysBlocks, int totalSearchBl
 	d->currentSearchBlock = 0;
 	d->totalSearchBlocks = totalSearchBlocks;
 	d->lostFilesFound = 0;
+	d->lastUpdateTime = QDateTime::currentMSecsSinceEpoch();
 	d->updateStatusBar();
 }
 
@@ -413,7 +420,11 @@ void StatusBarManager::searchUpdate_slot(int currentPhysBlock, int currentSearch
 	d->currentPhysBlock = currentPhysBlock;
 	d->currentSearchBlock = currentSearchBlock;
 	d->lostFilesFound = lostFilesFound;
-	d->updateStatusBar();
+
+	// Check if we should update the status bar.
+	int64_t curTime = QDateTime::currentMSecsSinceEpoch();
+	if ((curTime - d->UPDATE_INTERVAL_MIN) > d->lastUpdateTime)
+		d->updateStatusBar();
 }
 
 /**
