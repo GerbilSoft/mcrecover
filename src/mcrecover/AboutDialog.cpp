@@ -68,6 +68,9 @@ class AboutDialogPrivate
 #ifdef Q_OS_WIN
 		static QString GetCodePageInfo(void);
 #endif /* Q_OS_WIN */
+
+		// Support.
+		static QString GetSupport(void);
 };
 
 // Static member initialization.
@@ -76,6 +79,7 @@ AboutDialog *AboutDialogPrivate::ms_AboutDialog = NULL;
 
 AboutDialogPrivate::AboutDialogPrivate(AboutDialog* q)
 	: q(q)
+	, scrlAreaInit(false)
 { }
 
 
@@ -85,7 +89,7 @@ AboutDialogPrivate::AboutDialogPrivate(AboutDialog* q)
 void AboutDialogPrivate::initAboutDialogText(void)
 {
 	// Line break string.
-	const QString sLineBreak = QLatin1String("<br/>\n");
+	static const QString sLineBreak = QLatin1String("<br/>\n");
 
 	// Build the program title text.
 	QString sPrgTitle;
@@ -128,7 +132,11 @@ void AboutDialogPrivate::initAboutDialogText(void)
 	q->lblDebugInfo->setTextFormat(Qt::PlainText);
 	q->lblDebugInfo->setText(GetDebugInfo());
 
-	if (scrlAreaInit) {
+	// Set the support text.
+	q->lblSupport->setTextFormat(Qt::RichText);
+	q->lblSupport->setText(GetSupport());
+
+	if (!scrlAreaInit) {
 		// Create the scroll areas.
 		// Qt Designer's QScrollArea implementation is horribly broken.
 		// Also, this has to be done after the labels are set, because
@@ -161,6 +169,15 @@ void AboutDialogPrivate::initAboutDialogText(void)
 		scrlDebugInfo->setWidgetResizable(true);
 		q->vboxDebugInfo->addWidget(scrlDebugInfo);
 		scrlDebugInfo->setAutoFillBackground(false);
+
+		QScrollArea *scrlSupport = new QScrollArea();
+		scrlSupport->setFrameShape(QFrame::NoFrame);
+		scrlSupport->setFrameShadow(QFrame::Plain);
+		scrlSupport->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+		scrlSupport->setWidget(q->lblSupport);
+		scrlSupport->setWidgetResizable(true);
+		q->vboxSupport->addWidget(scrlSupport);
+		scrlSupport->setAutoFillBackground(false);
 
 		// Scroll areas initialized.
 		scrlAreaInit = true;
@@ -401,6 +418,59 @@ QString AboutDialogPrivate::GetCodePageInfo(void)
 }
 #endif /* Q_OS_WIN */
 
+
+/**
+ * Support.
+ */
+QString AboutDialogPrivate::GetSupport(void)
+{
+	static const QString sLineBreak = QLatin1String("<br/>\n");
+	static const QChar chrBullet(0x2022);  // U+2022: BULLET
+
+	QString strSupport;
+	strSupport.reserve(4096);
+	strSupport = AboutDialog::tr(
+			"For technical support, you can visit the following websites:") +
+			sLineBreak;
+
+	struct supportSite_t {
+		const char *name;
+		const char *url;
+	};
+
+	// Support sites.
+	const supportSite_t supportSites[] = {
+		{QT_TR_NOOP("Sonic Retro"), "http://forums.sonicretro.org/index.php?showtopic=31772"},
+		{QT_TR_NOOP("GBAtemp"), "http://gbatemp.net/threads/gcn-memcard-recover.349406/"},
+		{NULL, NULL}
+	};
+
+	for (const supportSite_t *supportSite = &supportSites[0];
+	     supportSite->name != NULL; supportSite++)
+	{
+		QString siteUrl = QLatin1String(supportSite->url);
+		QString siteName = QLatin1String(supportSite->name);
+		QString siteUrlHtml = QLatin1String("<a href=\"") +
+					siteUrl +
+					QLatin1String("\">") +
+					siteName +
+					QLatin1String("</a>");
+
+		strSupport += chrBullet + QChar(L' ') + siteUrlHtml + sLineBreak;
+	}
+
+	// Email the author.
+	strSupport += sLineBreak +
+			AboutDialog::tr(
+				"You can also email the developer directly:") +
+			sLineBreak + chrBullet +
+			QLatin1String(
+				"<a href=\"mailto:gerbilsoft@gerbilsoft.com\">"
+				"gerbilsoft@gerbilsoft.com"
+				"</a>");
+
+	return strSupport;
+}
 
 /** AboutDialog **/
 
