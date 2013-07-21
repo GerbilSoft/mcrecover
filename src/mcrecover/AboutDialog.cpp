@@ -65,9 +65,9 @@ class AboutDialogPrivate
 
 		// Debug information.
 		static QString GetDebugInfo(void);
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 		static QString GetCodePageInfo(void);
-#endif /* Q_OS_WIN32 */
+#endif /* Q_OS_WIN */
 };
 
 // Static member initialization.
@@ -299,11 +299,11 @@ QString AboutDialogPrivate::GetDebugInfo(void)
 		AboutDialog::tr("Using Qt %1.").arg(QLatin1String(qVersion()));
 	sDebugInfo.reserve(4096);
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 	// Win32 code page information.
 	sDebugInfo += QChar(L'\n');
 	sDebugInfo += QChar(L'\n') + GetCodePageInfo();
-#endif /* Q_OS_WIN32 */
+#endif /* Q_OS_WIN */
 
 	// Database filename.
 	QString dbFilename = QDir::toNativeSeparators(GcnMcFileDb::GetDefaultDbFilename());
@@ -317,7 +317,7 @@ QString AboutDialogPrivate::GetDebugInfo(void)
 }
 
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 #define WIN32_LEAN_AND_MEAN
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -399,7 +399,7 @@ QString AboutDialogPrivate::GetCodePageInfo(void)
 
 	return sCodePageInfo;
 }
-#endif /* Q_OS_WIN32 */
+#endif /* Q_OS_WIN */
 
 
 /** AboutDialog **/
@@ -421,7 +421,7 @@ AboutDialog::AboutDialog(QWidget *parent)
 	// Make sure the window is deleted on close.
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
 	// Remove the window icon. (Mac "proxy icon")
 	this->setWindowIcon(QIcon());
 

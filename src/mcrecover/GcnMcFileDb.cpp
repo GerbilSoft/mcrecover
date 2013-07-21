@@ -981,11 +981,11 @@ QString GcnMcFileDb::GetDefaultDbFilename(void)
 {
 	QVector<QString> pathList;
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 	// Win32: Search the program's /data/ and main directories.
 	pathList.append(QCoreApplication::applicationDirPath() + QLatin1String("/data"));
 	pathList.append(QCoreApplication::applicationDirPath());
-#else /* !Q_OS_WIN32 */
+#else /* !Q_OS_WIN */
 	// Check if the program's directory is within the user's home directory.
 	bool isPrgDirInHomeDir = false;
 	QDir prgDir = QDir(QCoreApplication::applicationDirPath());
@@ -1016,7 +1016,7 @@ QString GcnMcFileDb::GetDefaultDbFilename(void)
 	// TODO: Get default save directory using QSettings?
 	pathList.append(homeDir.absoluteFilePath(QLatin1String("/.config/mcrecover/data")));
 	pathList.append(homeDir.absoluteFilePath(QLatin1String("/.config/mcrecover")));
-#endif /* Q_OS_WIN32 */
+#endif /* Q_OS_WIN */
 
 	// Search the paths for GcnMcFileDb.xml.
 	foreach (QString path, pathList) {

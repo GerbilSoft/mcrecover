@@ -100,10 +100,10 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 	}
 #endif
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 	// Set the application font.
 	q->SetFont_Win32();
-#endif /* Q_OS_WIN32 */
+#endif /* Q_OS_WIN */
 
 	// Register custom types for QVariant.
 	qRegisterMetaType<FileComments>("FileComments");

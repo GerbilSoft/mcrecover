@@ -454,7 +454,7 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	// Remove the window icon. (Mac "proxy icon")
 	// TODO: Use the memory card file?
 	this->setWindowIcon(QIcon());
-#endif /* Q_WS_MAC */
+#endif /* Q_OS_MAC */
 
 #ifdef Q_OS_WIN
 	// Hide the QMenuBar border on Win32.
@@ -758,7 +758,7 @@ void McRecoverWindow::on_actionScan_triggered(void)
 	// TODO: Support multiple databases.
 	QString dbFilename = GcnMcFileDb::GetDefaultDbFilename();
 	if (dbFilename.isEmpty()) {
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 		const char *const def_path_hint =
 			"This file should be located in the data subdirectory in\n"
 			"mcrecover.exe's program directory.";
