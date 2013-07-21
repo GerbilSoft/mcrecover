@@ -261,6 +261,11 @@ INSTALL(TARGETS mcrecover
 	RUNTIME DESTINATION "${DIR_INSTALL_EXE}"
 	LIBRARY DESTINATION "${DIR_INSTALL_DLL}"
 	ARCHIVE DESTINATION "${DIR_INSTALL_LIB}"
+	COMPONENT "program"
+	)
+INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/mcrecover.debug"
+	DESTINATION "${DIR_INSTALL_EXE_DEBUG}"
+	COMPONENT "debug"
 	)
 
 # FreeDesktop.org icon specification.
@@ -268,15 +273,18 @@ IF(UNIX AND NOT APPLE)
 	FOREACH(ICON_SIZE 16x16 22x22 24x24 32x32 48x48 64x64 128x128)
 		INSTALL(FILES ui/resources/mcrecover/${ICON_SIZE}/mcrecover.png
 			DESTINATION share/icons/hicolor/${ICON_SIZE}/apps
+			COMPONENT "desktop-icon"
 			)
 	ENDFOREACH()
 
 	# FreeDesktop.org desktop file specification.
 	INSTALL(FILES ui/resources/mcrecover/xdg/mcrecover.desktop
 		DESTINATION share/applications
+		COMPONENT "desktop-icon"
 		)
 	# /usr/share/pixmaps
 	INSTALL(FILES ui/resources/mcrecover/xdg/mcrecover.xpm
 		DESTINATION share/pixmaps
+		COMPONENT "desktop-icon"
 		)
 ENDIF(UNIX AND NOT APPLE)
