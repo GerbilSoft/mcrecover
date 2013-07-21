@@ -50,13 +50,9 @@ class MemCardItemDelegatePrivate
 		Q_DISABLE_COPY(MemCardItemDelegatePrivate);
 
 	public:
-		QFont fontGameDesc;
-		QFont fontFileDesc;
-
-		/**
-		 * Update the fonts.
-		 */
-		void updateFonts(void);
+		// Font retrieval.
+		QFont fontGameDesc(const QWidget *widget = 0);
+		QFont fontFileDesc(const QWidget *widget = 0);
 
 #ifdef Q_OS_WIN
 		// Win32: Theming functions.
@@ -72,15 +68,6 @@ class MemCardItemDelegatePrivate
 
 /** MemCardItemDelegatePrivate **/
 
-#ifdef Q_OS_WIN
-typedef bool (WINAPI *PtrIsAppThemed)(void);
-typedef bool (WINAPI *PtrIsThemeActive)(void);
-
-static HMODULE pUxThemeDll = NULL;
-static PtrIsAppThemed pIsAppThemed = NULL;
-static PtrIsThemeActive pIsThemeActive = NULL;
-#endif /* Q_OS_WIN */
-
 MemCardItemDelegatePrivate::MemCardItemDelegatePrivate(MemCardItemDelegate *q)
 	: q(q)
 #ifdef Q_OS_WIN
@@ -88,8 +75,6 @@ MemCardItemDelegatePrivate::MemCardItemDelegatePrivate(MemCardItemDelegate *q)
 	, m_isVistaTheme(false)
 #endif /* Q_OS_WIN */
 {
-	updateFonts();
-
 #ifdef Q_OS_WIN
 	// Update the XP theming info.
 	isXPTheme(true);
@@ -97,24 +82,48 @@ MemCardItemDelegatePrivate::MemCardItemDelegatePrivate(MemCardItemDelegate *q)
 }
 
 /**
- * Update the fonts.
+ * Get the Game Description font.
+ * @param widget Relevant widget. (If NULL, use QApplication.)
+ * @return Game Description font.
  */
-void MemCardItemDelegatePrivate::updateFonts(void)
+QFont MemCardItemDelegatePrivate::fontGameDesc(const QWidget *widget)
 {
-	// TODO: Get the font from the widget.
-	// TODO: Update these if the font changes.
-	fontGameDesc = QApplication::font();
+	// TODO: This should be cached, but we don't have a
+	// reasonable way to update it if the system font
+	// is changed...
+	return (widget != NULL
+		? widget->font()
+		: QApplication::font());
+}
 
-	fontFileDesc = fontGameDesc;
+/**
+ * Get the File Description font.
+ * @param widget Relevant widget. (If NULL, use QApplication.)
+ * @return File Description font.
+ */
+QFont MemCardItemDelegatePrivate::fontFileDesc(const QWidget *widget)
+{
+	// TODO: This should be cached, but we don't have a
+	// reasonable way to update it if the system font
+	// is changed...
+	QFont fontFileDesc = fontGameDesc(widget);
 	int pointSize = fontFileDesc.pointSize();
 	if (pointSize >= 10)
 		pointSize = (pointSize * 4 / 5);
 	else
 		pointSize--;
 	fontFileDesc.setPointSize(pointSize);
+	return fontFileDesc;
 }
 
 #ifdef Q_OS_WIN
+typedef bool (WINAPI *PtrIsAppThemed)(void);
+typedef bool (WINAPI *PtrIsThemeActive)(void);
+
+static HMODULE pUxThemeDll = NULL;
+static PtrIsAppThemed pIsAppThemed = NULL;
+static PtrIsThemeActive pIsThemeActive = NULL;
+
 /**
  * Resolve symbols for XP/Vista theming.
  * Based on QWindowsXPStyle::resolveSymbols(). (qt-4.8.5)
@@ -213,10 +222,15 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	if (textAlignment == 0)
 		textAlignment = option.displayAlignment;
 
+	// Get the fonts.
+	QStyleOptionViewItemV4 bgOption = option;
+	QFont fontGameDesc = d->fontGameDesc(bgOption.widget);
+	QFont fontFileDesc = d->fontFileDesc(bgOption.widget);
+
 	// Game description.
 	// NOTE: Width is decremented in order to prevent
 	// weird wordwrapping issues.
-	const QFontMetrics fmGameDesc(d->fontGameDesc);
+	const QFontMetrics fmGameDesc(fontGameDesc);
 	QString gameDescElided = fmGameDesc.elidedText(
 		fileComments.gameDesc(), Qt::ElideRight, option.rect.width()-1);
 	QRect rectGameDesc = option.rect;
@@ -225,8 +239,8 @@ void MemCardItemDelegate::paint(QPainter *painter,
 		rectGameDesc, (textAlignment & HALIGN_FLAGS), gameDescElided);
 
 	// File description.
-	painter->setFont(d->fontFileDesc);
-	const QFontMetrics fmFileDesc(d->fontFileDesc);
+	painter->setFont(fontFileDesc);
+	const QFontMetrics fmFileDesc(fontFileDesc);
 	QString fileDescElided = fmFileDesc.elidedText(
 		fileComments.fileDesc(), Qt::ElideRight, option.rect.width()-1);
 	QRect rectFileDesc = option.rect;
@@ -264,7 +278,6 @@ void MemCardItemDelegate::paint(QPainter *painter,
 
 	// Draw the background color first.
 	QVariant bg_var = index.data(Qt::BackgroundRole);
-	QStyleOptionViewItemV4 bgOption = option;
 	QBrush bg;
 	if (bg_var.canConvert<QBrush>()) {
 		bg = bg_var.value<QBrush>();
@@ -300,9 +313,9 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	else
 		painter->setPen(bgOption.palette.text().color());
 
-	painter->setFont(d->fontGameDesc);
+	painter->setFont(fontGameDesc);
 	painter->drawText(rectGameDesc, gameDescElided);
-	painter->setFont(d->fontFileDesc);
+	painter->setFont(fontFileDesc);
 	painter->drawText(rectFileDesc, fileDescElided);
 
 	painter->restore();
@@ -328,12 +341,17 @@ QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 	// GCN file comments.
 	FileComments fileComments = index.data().value<FileComments>();
 
+	// Get the fonts.
+	QStyleOptionViewItemV4 bgOption = option;
+	QFont fontGameDesc = d->fontGameDesc(bgOption.widget);
+	QFont fontFileDesc = d->fontFileDesc(bgOption.widget);
+
 	// Game description.
-	const QFontMetrics fmGameDesc(d->fontGameDesc);
+	const QFontMetrics fmGameDesc(fontGameDesc);
 	QSize sz = fmGameDesc.size(0, fileComments.gameDesc());
 
 	// File description.
-	const QFontMetrics fmFileDesc(d->fontFileDesc);
+	const QFontMetrics fmFileDesc(fontFileDesc);
 	QSize fileSz = fmFileDesc.size(0, fileComments.fileDesc());
 	sz.setHeight(sz.height() + fileSz.height());
 
