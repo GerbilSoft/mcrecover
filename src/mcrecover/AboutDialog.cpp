@@ -463,7 +463,7 @@ QString AboutDialogPrivate::GetSupport(void)
 	strSupport += sLineBreak +
 			AboutDialog::tr(
 				"You can also email the developer directly:") +
-			sLineBreak + chrBullet +
+			sLineBreak + chrBullet + QChar(L' ') +
 			QLatin1String(
 				"<a href=\"mailto:gerbilsoft@gerbilsoft.com\">"
 				"gerbilsoft@gerbilsoft.com"
