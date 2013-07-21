@@ -458,8 +458,12 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 
 #ifdef Q_OS_WIN
 	// Hide the QMenuBar border on Win32.
+	// FIXME: This causes the menu bar to be "truncated" when using
+	// the Aero theme on Windows Vista and 7.
+#if 0
 	this->Ui_McRecoverWindow::menuBar->setStyleSheet(
 		QLatin1String("QMenuBar { border: none }"));
+#endif
 #endif
 
 	// Set up the QSplitter sizes.
