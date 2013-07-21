@@ -165,16 +165,16 @@ bool McRecoverQApplication::winEventFilter(MSG *msg, long *result)
 {
 	Q_UNUSED(result)
 
-	if (msg->message != WM_SETTINGCHANGE &&
-	    msg->wParam != SPI_SETNONCLIENTMETRICS)
+	if (msg->message == WM_SETTINGCHANGE &&
+	    msg->wParam == SPI_SETNONCLIENTMETRICS)
 	{
-		// McRecoverQApplication doesn't handle this message.
-		return false;
+		// WM_SETTINGCHANGE / SPI_SETNONCLIENTMETRICS.
+		// Update the Qt font.
+		SetFont_Win32();
+	} else if (msg->message == WM_THEMECHANGED) {
+		// WM_THEMECHANGED: XP/Vista theme has changed.
+		emit themeChanged();
 	}
-
-	// WM_SETTINGCHANGE / SPI_SETNONCLIENTMETRICS.
-	// Update the Qt font.
-	SetFont_Win32();
 
 	// Allow QApplication to handle this message anyway.
 	return false;

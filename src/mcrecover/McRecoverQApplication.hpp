@@ -51,10 +51,10 @@ class McRecoverQApplication : public QApplication
 		 */
 		static QIcon IconFromProgram(QString name);
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 		// Win32 event filter.
 		bool winEventFilter(MSG *msg, long *result);
-#endif /* Q_OS_WIN32 */
+#endif /* Q_OS_WIN */
 
 	private:
 		friend class McRecoverQApplicationPrivate;
@@ -62,12 +62,20 @@ class McRecoverQApplication : public QApplication
 
 		Q_DISABLE_COPY(McRecoverQApplication)
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 		/**
 		 * Set the Qt font to match the system font.
 		 */
 		static void SetFont_Win32(void);
-#endif /* Q_OS_WIN32 */
+#endif /* Q_OS_WIN */
+
+	signals:
+		/**
+		 * The system theme has changed.
+		 * Currently only triggered on Windows via WM_THEMECHANGED.
+		 * TODO: Add Linux/X11 support.
+		 */
+		void themeChanged(void);
 };
 
 #endif /* __MCRECOVER_MCRECOVERQAPPLICATION_HPP__ */

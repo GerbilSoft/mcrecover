@@ -24,6 +24,7 @@
 #include "MemCardModel.hpp"
 #include "FileComments.hpp"
 #include "card.h"
+#include "McRecoverQApplication.hpp"
 
 // Qt includes.
 #include <QtGui/QPainter>
@@ -58,7 +59,6 @@ class MemCardItemDelegatePrivate
 		// Win32: Theming functions.
 	private:
 		bool m_isXPTheme;
-		bool m_isVistaTheme;
 		static bool resolveSymbols(void);
 	public:
 		bool isXPTheme(bool update = false);
@@ -72,7 +72,6 @@ MemCardItemDelegatePrivate::MemCardItemDelegatePrivate(MemCardItemDelegate *q)
 	: q(q)
 #ifdef Q_OS_WIN
 	, m_isXPTheme(false)
-	, m_isVistaTheme(false)
 #endif /* Q_OS_WIN */
 {
 #ifdef Q_OS_WIN
@@ -181,7 +180,14 @@ bool MemCardItemDelegatePrivate::isVistaTheme(void)
 MemCardItemDelegate::MemCardItemDelegate(QObject *parent)
 	: QStyledItemDelegate(parent)
 	, d(new MemCardItemDelegatePrivate(this))
-{ }
+{
+	// Connect the "themeChanged" signal.
+	McRecoverQApplication *mcrqa = qobject_cast<McRecoverQApplication*>(McRecoverQApplication::instance());
+	if (mcrqa) {
+		connect(mcrqa, SIGNAL(themeChanged()),
+			this, SLOT(themeChanged_slot()));
+	}
+}
 
 MemCardItemDelegate::~MemCardItemDelegate()
 {
@@ -365,4 +371,17 @@ QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 		sz.setWidth(sz.width() + 1);
 
 	return sz;
+}
+
+/** Slots. **/
+
+/**
+ * The system theme has changed.
+ */
+void MemCardItemDelegate::themeChanged_slot(void)
+{
+#ifdef Q_OS_WIN
+	// Update the XP theming info.
+	d->isXPTheme(true);
+#endif
 }

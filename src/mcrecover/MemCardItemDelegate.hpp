@@ -45,6 +45,12 @@ class MemCardItemDelegate : public QStyledItemDelegate
 			   const QModelIndex &index) const;
 		QSize sizeHint(const QStyleOptionViewItem &option,
 			       const QModelIndex &index) const;
+
+	private slots:
+		/**
+		 * The system theme has changed.
+		 */
+		void themeChanged_slot(void);
 };
 
 #endif /* __MCRECOVER_MEMCARDITEMDELEGATE_HPP__ */
