@@ -90,7 +90,6 @@ MemCardItemDelegate::~MemCardItemDelegate()
 	delete d;
 }
 
-#include <stdio.h>
 void MemCardItemDelegate::paint(QPainter *painter,
 			const QStyleOptionViewItem &option,
 			const QModelIndex &index) const
@@ -158,8 +157,6 @@ void MemCardItemDelegate::paint(QPainter *painter,
 		case Qt::AlignBottom:
 			// Bottom alignment.
 			diff = (option.rect.height() - rectGameDesc.height() - rectFileDesc.height());
-			printf("rect: %d, gd: %d, fd: %d, diff: %d\n",
-			       option.rect.height(), rectGameDesc.height(), rectFileDesc.height(), diff);
 			break;
 
 		case Qt::AlignVCenter:
