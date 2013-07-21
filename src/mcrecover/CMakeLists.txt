@@ -204,14 +204,17 @@ GET_PROPERTY(MCRECOVER_EXE_LOCATION TARGET mcrecover PROPERTY LOCATION)
 #   - If debug symbols are stripped before .gnu_debuglink is added,
 #     the section will be truncated to .gnu_deb, and hence won't
 #     be recognized by gdb.
+# - FIXME: If the above .gnu_debuglink workaround is used, Windows XP
+#   and Windows 7 will claim that the executable isn't a valid Win32
+#   executable. (Wine ignores it and works fine!)
 IF(SPLIT_DEBUG)
 	FIND_PROGRAM(OBJCOPY objcopy)
 	ADD_CUSTOM_COMMAND(TARGET mcrecover POST_BUILD
 		COMMAND ${OBJCOPY} --only-keep-debug
 			${MCRECOVER_EXE_LOCATION} ${CMAKE_CURRENT_BINARY_DIR}/mcrecover.debug
-		COMMAND ${OBJCOPY} --add-gnu-debuglink=mcrecover.debug
-			${MCRECOVER_EXE_LOCATION}
 		COMMAND ${OBJCOPY} --strip-debug
+			${MCRECOVER_EXE_LOCATION}
+		COMMAND ${OBJCOPY} --add-gnu-debuglink=mcrecover.debug
 			${MCRECOVER_EXE_LOCATION}
 		)
 ENDIF(SPLIT_DEBUG)
