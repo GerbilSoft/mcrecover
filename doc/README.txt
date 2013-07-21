@@ -55,15 +55,20 @@ The program will likely work well on systems with specifications as
 low as Intel Pentium II with 256 MB RAM.
 
 Supported operating systems:
-- Microsoft Windows XP, Vista, 7
+- Microsoft Windows XP SP3, Vista SP1, 7
 - Microsoft Windows Server 2003, 2008, 2008 R2
 - Ubuntu Linux 10.04+ (i386, amd64)
 - Gentoo Linux (i386, amd64)
 - Other Linux 2.6.x / 3.x systems
 
-Windows 2000 may work; however, the Qt runtime no longer supports
-Windows 2000. If you are attempting to run GCN MemCard Recover on
-Windows 2000 and encounter issues, please let me know.
+Windows 2000 may work; however, the Qt runtime lists Windows XP SP3
+as its oldest-supported Windows operating system. If you are
+attempting to run GCN MemCard Recover on Windows 2000 and
+encounter issues, please let me know.
+
+Windows XP and Windows Vista are only supported with thier latest
+service packs. Older service packs may work, but you may encounter
+issues.
 
 Windows 8 is not officially supported, though GCN MemCard Recover
 should run as long as the Win32 subsystem is working.
@@ -82,6 +87,12 @@ GCN MemCard Recover requires the following libraries:
   - NOTE: Qt 5 is not currently supported.
 - libpcre (8.33 or later recommended)
 - cmake 2.6 or later. (2.8.10.2+ recommended)
+
+On Ubuntu Linux systems, the following packages contain the
+development headers required for compiling the program:
+- build-essential
+- libqt4-dev
+- libpcre3-dev
 
 GCN MemCard Recover has been compiled with gcc-4.4 and 4.8.
 Other versions should work, though versions earlier than 4.4
@@ -122,10 +133,18 @@ is available at http://wiibrew.org/wiki/Homebrew_setup .
 
 GCMM is more up-to-date and has more functionality, so GCMM is recommended.
 
-You will need an SD card in order to dump the memory card.
+You will need an SD card or USB mass storage device in order to
+dump the memory card.
 
 To dump a GameCube memory card to an SD card in GCMM:
-1. [TODO: exact steps]
+1. Start GCMM from The Homebrew Channel.
+2. Press A if you're using an SD card or B if you're using a
+   USB mass storage device.
+3. Select "Raw Backup". (L+Y on GCN controller, B+'-' on Wii Remote.)
+4. Press A to dump the memory card in Slot A or B for Slot B.
+   The memory card image will be dumped to the MCBACKUP directory
+   on the SD card or USB mass storage device.
+5. Press Start (GCN) or Home (Wii Remote) to exit.
 
 Once the memory card image is dumped, you can open the image file
 in GCN MemCard Recover:
