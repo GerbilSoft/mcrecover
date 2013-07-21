@@ -121,7 +121,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 	if (GetVersionExA(&osVersionInfo)) {
 		if (osVersionInfo.dwMajorVersion > 6 ||
 		    (osVersionInfo.dwMajorVersion == 6 &&
-		     osVersionInfo.dwMajorVersion >= 2))
+		     osVersionInfo.dwMinorVersion >= 2))
 		{
 			MessageBoxA(NULL,
 				"You are using an app-based operating system.\n"
