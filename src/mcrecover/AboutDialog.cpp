@@ -96,8 +96,11 @@ void AboutDialogPrivate::initAboutDialogText(void)
 			AboutDialog::tr("Version %1")
 			.arg(QCoreApplication::applicationVersion()) + sLineBreak;
 #ifdef MCRECOVER_GIT_VERSION
-	sPrgTitle += QLatin1String(MCRECOVER_GIT_VERSION) + sLineBreak;
-#endif
+	sPrgTitle += QString::fromUtf8(MCRECOVER_GIT_VERSION) + sLineBreak;
+#ifdef MCRECOVER_GIT_DESCRIBE
+	sPrgTitle += QString::fromUtf8(MCRECOVER_GIT_DESCRIBE) + sLineBreak;
+#endif /* MCRECOVER_GIT_DESCRIBE */
+#endif /* MCRECOVER_GIT_DESCRIBE */
 
 #ifdef Q_OS_LINUX
 	// Set the "MegaCard Engine" text.

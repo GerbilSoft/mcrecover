@@ -197,6 +197,11 @@ if [ "x$git_repo_dir" != "x" ] && [ "x${abs_repo_dir}" = "x${abs_srcdir}/.git" ]
         if [ "x$($GIT diff-files)" = "x" ] && [ "x$($GIT diff-index --cached HEAD)" = "x" ]; then
             git_dirty=no
         fi
+
+	# dkorth changes [2013/07/21 10:18 AM EDT]
+	# Get the current git description.
+	# (String will be empty if no description is available or if git is too old.)
+	git_describe=`$GIT describe --abbrev=8`
     fi
 fi
 
@@ -249,6 +254,15 @@ else
 
         echo "/* Branch this tree is on */"
         echo "#define GIT_BRANCH \"$git_branch\""
+        echo ""
+
+        if [ "x$git_describe" = "x" ]; then
+            echo "/* git-describe: no description available (no tag?) */"
+            echo "#undef GIT_DESCRIBE"
+        else
+            echo "/* git-describe (e.g. tag, number of commits since tag) */"
+            echo "#define GIT_DESCRIBE \"${git_describe}\""
+        fi
         echo ""
 
         # Any uncommitted changes we should know about?
