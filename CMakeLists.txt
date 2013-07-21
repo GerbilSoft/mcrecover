@@ -71,6 +71,7 @@ SET(CPACK_PACKAGE_VERSION ${VERSION_STRING})
 
 # CPack: Debian package settings.
 SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.3.4), libgcc1 (>= 1:4.1.1), libstdc++6 (>= 4.1.1), libqtcore4 (>= 4:4.6.0), libqt4-xml (>= 4:4.6.0), libqtgui4 (>= 4:4.6.0), libpcre3")
+SET(CPACK_DEBIAN_PACKAGE_BUILDS_DEPENDS "libqt4-dev (>= 4:4.6.0), libpcre3-dev")
 SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 SET(CPACK_DEBIAN_PACKAGE_SECTION "games")
 SET(CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
