@@ -32,7 +32,7 @@ class MemCardItemDelegate : public QStyledItemDelegate
 	Q_OBJECT
 
 	public:
-		MemCardItemDelegate(QObject* parent = 0);
+		MemCardItemDelegate(QObject *parent);
 		~MemCardItemDelegate();
 
 	private:
