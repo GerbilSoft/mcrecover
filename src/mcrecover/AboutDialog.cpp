@@ -98,17 +98,17 @@ void AboutDialogPrivate::initAboutDialogText(void)
 			QCoreApplication::applicationName() +
 			QLatin1String("</b>") + sLineBreak +
 			AboutDialog::tr("Version %1")
-			.arg(QCoreApplication::applicationVersion()) + sLineBreak;
+			.arg(QCoreApplication::applicationVersion());
 #ifdef MCRECOVER_GIT_VERSION
-	sPrgTitle += QString::fromUtf8(MCRECOVER_GIT_VERSION) + sLineBreak;
+	sPrgTitle += sLineBreak + QString::fromUtf8(MCRECOVER_GIT_VERSION);
 #ifdef MCRECOVER_GIT_DESCRIBE
-	sPrgTitle += QString::fromUtf8(MCRECOVER_GIT_DESCRIBE) + sLineBreak;
+	sPrgTitle += sLineBreak + QString::fromUtf8(MCRECOVER_GIT_DESCRIBE);
 #endif /* MCRECOVER_GIT_DESCRIBE */
 #endif /* MCRECOVER_GIT_DESCRIBE */
 
 #ifdef Q_OS_LINUX
 	// Set the "MegaCard Engine" text.
-	sPrgTitle += sLineBreak +
+	sPrgTitle += sLineBreak + sLineBreak +
 		QApplication::translate("AboutDialog",
 			"Powered by the<br/>\n<b>MegaCard Engine</b>™",
 			0, QApplication::UnicodeUTF8);
@@ -182,6 +182,9 @@ void AboutDialogPrivate::initAboutDialogText(void)
 		// Scroll areas initialized.
 		scrlAreaInit = true;
 	}
+
+	// Set initial focus to the tabWidget.
+	q->tabWidget->setFocus();
 }
 
 
