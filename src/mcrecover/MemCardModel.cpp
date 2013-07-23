@@ -472,10 +472,13 @@ QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int 
  */
 void MemCardModel::setMemCard(MemCard *card)
 {
-	emit layoutAboutToBeChanged();
-
 	// Disconnect the MemCard's changed() signal if a MemCard is already set.
 	if (d->card) {
+		// Notify the view that we're about to remove all rows.
+		int numFiles = d->card->numFiles();
+		if (numFiles > 0)
+			beginRemoveRows(QModelIndex(), 0, (numFiles - 1));
+
 		// TODO: More fine-grained changed() for the specific files.
 		disconnect(d->card, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(memCard_destroyed_slot(QObject*)));
@@ -485,11 +488,23 @@ void MemCardModel::setMemCard(MemCard *card)
 			   this, SLOT(memCard_fileAdded_slot(int)));
 		disconnect(d->card, SIGNAL(fileRemoved(int)),
 			   this, SLOT(memCard_fileRemoved_slot(int)));
+
+		d->card = NULL;
+
+		// Done removing rows.
+		if (numFiles > 0)
+			endRemoveRows();
 	}
 
-	d->card = card;
+	if (card) {
+		// Notify the view that we're about to add rows.
+		int numFiles = card->numFiles();
+		if (numFiles > 0)
+			beginInsertRows(QModelIndex(), 0, (numFiles - 1));
 
-	if (d->card) {
+		// Set the card.
+		d->card = card;
+
 		// Initialize the animation state.
 		d->initAnimState();
 
@@ -503,10 +518,11 @@ void MemCardModel::setMemCard(MemCard *card)
 			this, SLOT(memCard_fileAdded_slot(int)));
 		connect(d->card, SIGNAL(fileRemoved(int)),
 			this, SLOT(memCard_fileRemoved_slot(int)));
-	}
 
-	// Layout has changed.
-	emit layoutChanged();
+		// Done adding rows.
+		if (numFiles > 0)
+			endInsertRows();
+	}
 }
 
 
@@ -526,9 +542,12 @@ void MemCardModel::memCard_destroyed_slot(QObject *obj)
 {
 	if (obj == d->card) {
 		// Our MemCard was destroyed.
-		emit layoutAboutToBeChanged();
+		int numFiles = d->card->numFiles();
+		if (numFiles > 0)
+			beginRemoveRows(QModelIndex(), 0, (numFiles - 1));
 		d->card = NULL;
-		emit layoutChanged();
+		if (numFiles > 0)
+			endRemoveRows();
 	}
 }
 
@@ -539,6 +558,10 @@ void MemCardModel::memCard_destroyed_slot(QObject *obj)
  */
 void MemCardModel::memCard_changed_slot(void)
 {
+	// FIXME: Use aboutToAddFiles / aboutToRemoveFiles / etc.
+	// layoutAboutToBeChanged() is incorrect and can result
+	// in a segmentation fault.
+
 	// NOTE: Not sure if layoutAboutToBeChanged() should be emitted here...
 	// TODO: Emit "aboutToChange()" from MemCard?
 	emit layoutAboutToBeChanged();
@@ -557,6 +580,8 @@ void MemCardModel::memCard_changed_slot(void)
  */
 void MemCardModel::memCard_fileAdded_slot(int idx)
 {
+	// FIXME: Use aboutToBeAdded().
+
 	// Data has changed.
 	beginInsertRows(QModelIndex(), idx, idx);
 
@@ -576,6 +601,7 @@ void MemCardModel::memCard_fileAdded_slot(int idx)
  */
 void MemCardModel::memCard_fileRemoved_slot(int idx)
 {
+	// FIXME: Use aboutToBeRemoved().
 	// Data has changed.
 	beginRemoveRows(QModelIndex(), idx, idx);
 	endRemoveRows();
