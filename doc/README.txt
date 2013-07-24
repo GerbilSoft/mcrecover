@@ -1,5 +1,5 @@
 GCN MemCard Recover
-Version 0.1
+Version 0.1+
 
 Copyright (c) 2012-2013 by David Korth.
 Email: gerbilsoft@gerbilsoft.com
@@ -87,6 +87,7 @@ GCN MemCard Recover requires the following libraries:
   - NOTE: Qt 5 is not currently supported.
 - libpcre (8.33 or later recommended)
 - cmake 2.6 or later. (2.8.10.2+ recommended)
+  - cmake-2.8.7+ is required for Windows builds.
 
 On Ubuntu Linux systems, the following packages contain the
 development headers required for compiling the program:
