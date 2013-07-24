@@ -138,10 +138,11 @@ class MemCard : public QObject
 		int encoding(void) const;
 
 		/**
-		 * Get the QTextCodec for the memory card encoding.
+		 * Get the QTextCodec for a given region.
+		 * @param region Region code. (If 0, use the memory card's encoding.)
 		 * @return QTextCodec.
 		 */
-		QTextCodec *textCodec(void) const;
+		QTextCodec *textCodec(char region = 0) const;
 
 		/**
 		 * Get the number of files in the file table.

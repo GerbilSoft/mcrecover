@@ -54,6 +54,14 @@ class MemCardPrivate
 		Q_DISABLE_COPY(MemCardPrivate);
 
 	public:
+		// Static initialization.
+		static void StaticInit(void);
+
+		// QTextCodec for memory card text encoding.
+		static QTextCodec *TextCodecUS;	// cp1252
+		static QTextCodec *TextCodecJP;	// Shift-JIS
+
+	public:
 		QString filename;
 		QFile *file;
 
@@ -69,9 +77,6 @@ class MemCardPrivate
 		 * Includes the 5 reserved blocks at the beginning.
 		 */
 		int numBlocks;
-
-		// QTextCodec for memory card text encoding.
-		QTextCodec *textCodec;
 
 		// Header checksum.
 		Checksum::ChecksumValue headerChecksumValue;
@@ -127,10 +132,13 @@ class MemCardPrivate
 		void loadMemCardFileList(void);
 };
 
+// Text codecs.
+QTextCodec *MemCardPrivate::TextCodecUS = NULL;	// cp1252
+QTextCodec *MemCardPrivate::TextCodecJP = NULL;	// Shift-JIS
+
 MemCardPrivate::MemCardPrivate(MemCard *q, QString filename)
 	: q(q)
 	, file(NULL)
-	, textCodec(NULL)
 	, mc_dat(NULL)
 	, mc_bat(NULL)
 {
@@ -180,6 +188,26 @@ MemCardPrivate::~MemCardPrivate()
 	if (file) {
 		file->close();
 		delete file;
+	}
+}
+
+
+/**
+ * Static member initialization.
+ */
+void MemCardPrivate::StaticInit(void)
+{
+	static bool init = false;
+	if (!init) {
+		init = true;
+
+		// Text codecs.
+		TextCodecUS = QTextCodec::codecForName("cp1252");
+		TextCodecJP = QTextCodec::codecForName("Shift-JIS");
+
+		// If Shift-JIS isn't available, use cp1252.
+		if (!TextCodecJP)
+			TextCodecJP = TextCodecUS;
 	}
 }
 
@@ -242,23 +270,6 @@ int MemCardPrivate::loadSysInfo(void)
 	 *
 	 * Don't bother determining the actual formatTime right now.
 	 */
-
-	// Get the QTextCodec for the memory card's text encoding.
-	if ((mc_header.encoding & SYS_FONT_ENCODING_MASK) == SYS_FONT_ENCODING_SJIS) {
-		// Shift-JIS encoding.
-		textCodec = QTextCodec::codecForName("Shift-JIS");
-	}
-	if (!textCodec) {
-		// "ANSI" encoding is used.
-		// Alternatively, Shift-JIS is used, but we couldn't find
-		// a QTextCodec for Shift-JIS. This shouldn't happen, but
-		// it's possible...
-
-		// NOTE: If cp1252 isn't found, textCodec will end
-		// up being NULL, in which case everything will
-		// default to latin1 (iso-8859-1).
-		textCodec = QTextCodec::codecForName("cp1252");
-	}
 
 	// TODO: Adjust for block size?
 	// TODO: Store the actual and expected DAT/BAT checksums?
@@ -599,11 +610,37 @@ int MemCard::encoding(void) const
 
 
 /**
- * Get the QTextCodec for the memory card encoding.
+ * Get the QTextCodec for a given region.
+ * @param region Region code. (If 0, use the memory card's encoding.)
  * @return QTextCodec.
  */
-QTextCodec *MemCard::textCodec(void) const
-	{ return d->textCodec; }
+QTextCodec *MemCard::textCodec(char region) const
+{
+	if (!isOpen())
+		return NULL;
+
+	switch (region) {
+		case 0:
+			// Use the memory card's encoding.
+			return ((d->mc_header.encoding & SYS_FONT_ENCODING_MASK)
+				? d->TextCodecJP
+				: d->TextCodecUS);
+
+		case 'J':
+		case 'S':
+			// Japanese.
+			// NOTE: 'S' appears in RELSAB, which is used for
+			// some prototypes, including Sonic Adventure DX
+			// and Metroid Prime 3. Assume Japanese fornow.
+			// TODO: Implement a Shift-JIS heuristic for 'S'.
+			return d->TextCodecJP;
+
+		default:
+			// US, Europe, Australia.
+			// TODO: Korea?
+			return d->TextCodecUS;
+	}
+}
 
 
 /**
