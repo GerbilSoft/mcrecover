@@ -54,24 +54,28 @@ class MemCard : public QObject
 
 	signals:
 		/**
-		 * MemCard has changed.
-		 * TODO: Specify if files were added, removed, etc.
+		 * Files are about to be added to the MemCard.
+		 * @param start First file index.
+		 * @param end Last file index.
 		 */
-		void changed(void);
+		void filesAboutToBeInserted(int start, int end);
 
 		/**
-		 * File was added to the MemCard.
-		 * * TODO: Add fileAboutToBeAdded()?
-		 * @param idx File number.
+		 * Files have been added to the MemCard.
 		 */
-		void fileAdded(int idx);
+		void filesInserted(void);
 
 		/**
-		 * File was removed from the MemCard.
-		 * TODO: Add fileAboutToBeRemoved()?
-		 * @param idx File number.
+		 * Files are about to be removed from the MemCard.
+		 * @param start First file index.
+		 * @param end Last file index.
 		 */
-		void fileRemoved(int idx);
+		void filesAboutToBeRemoved(int start, int end);
+
+		/**
+		 * Files have been removed from the MemCard.
+		 */
+		void filesRemoved(void);
 
 	public:
 		/**

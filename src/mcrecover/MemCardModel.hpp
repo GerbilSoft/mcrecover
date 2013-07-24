@@ -85,22 +85,28 @@ class MemCardModel : public QAbstractListModel
 		void memCard_destroyed_slot(QObject *obj = 0);
 
 		/**
-		 * MemCard has changed.
-		 * TODO: More fine-grained slot for specific files.
+		 * Files are about to be added to the MemCard.
+		 * @param start First file index.
+		 * @param end Last file index.
 		 */
-		void memCard_changed_slot(void);
+		void memCard_filesAboutToBeInserted_slot(int start, int end);
 
 		/**
-		 * MemCard: File was added.
-		 * @param idx File number.
+		 * Files have been added to the MemCard.
 		 */
-		void memCard_fileAdded_slot(int idx);
+		void memCard_filesInserted_slot(void);
 
 		/**
-		 * MemCard: File was removed.
-		 * @param idx File number.
+		 * Files are about to be removed from the MemCard.
+		 * @param start First file index.
+		 * @param end Last file index.
 		 */
-		void memCard_fileRemoved_slot(int idx);
+		void memCard_filesAboutToBeRemoved_slot(int start, int end);
+
+		/**
+		 * Files have been removed from the MemCard.
+		 */
+		void memCard_filesRemoved_slot(void);
 };
 
 #endif /* __MCRECOVER_MEMCARDMODEL_HPP__ */

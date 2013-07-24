@@ -107,12 +107,18 @@ class MemCardModelPrivate
 			QPixmap pxmIsValid_good;
 		};
 		style_t style;
+
+		// Row insert start/end indexes.
+		int insertStart;
+		int insertEnd;
 };
 
 MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	: q(q)
 	, card(NULL)
 	, animTimer(new QTimer(q))
+	, insertStart(-1)
+	, insertEnd(-1)
 {
 	// Connect animTimer's timeout() signal.
 	QObject::connect(&animTimer, SIGNAL(timeout()),
@@ -479,15 +485,17 @@ void MemCardModel::setMemCard(MemCard *card)
 		if (numFiles > 0)
 			beginRemoveRows(QModelIndex(), 0, (numFiles - 1));
 
-		// TODO: More fine-grained changed() for the specific files.
+		// Disconnect the MemCard's signals.
 		disconnect(d->card, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(memCard_destroyed_slot(QObject*)));
-		disconnect(d->card, SIGNAL(changed()),
-			   this, SLOT(memCard_changed_slot()));
-		disconnect(d->card, SIGNAL(fileAdded(int)),
-			   this, SLOT(memCard_fileAdded_slot(int)));
-		disconnect(d->card, SIGNAL(fileRemoved(int)),
-			   this, SLOT(memCard_fileRemoved_slot(int)));
+		disconnect(d->card, SIGNAL(filesAboutToBeInserted(int,int)),
+			   this, SLOT(memCard_filesAboutToBeInserted_slot(int,int)));
+		disconnect(d->card, SIGNAL(filesInserted()),
+			   this, SLOT(memCard_filesInserted_slot()));
+		disconnect(d->card, SIGNAL(filesAboutToBeRemoved(int,int)),
+			   this, SLOT(memCard_filesAboutToBeRemoved_slot(int,int)));
+		disconnect(d->card, SIGNAL(filesRemoved()),
+			   this, SLOT(memCard_filesRemoved_slot()));
 
 		d->card = NULL;
 
@@ -508,16 +516,17 @@ void MemCardModel::setMemCard(MemCard *card)
 		// Initialize the animation state.
 		d->initAnimState();
 
-		// Connect the MemCard's changed() signal.
-		// TODO: More fine-grained changed() for the specific files.
+		// Connect the MemCard's signals.
 		connect(d->card, SIGNAL(destroyed(QObject*)),
 			this, SLOT(memCard_destroyed_slot(QObject*)));
-		connect(d->card, SIGNAL(changed()),
-			this, SLOT(memCard_changed_slot()));
-		connect(d->card, SIGNAL(fileAdded(int)),
-			this, SLOT(memCard_fileAdded_slot(int)));
-		connect(d->card, SIGNAL(fileRemoved(int)),
-			this, SLOT(memCard_fileRemoved_slot(int)));
+		connect(d->card, SIGNAL(filesAboutToBeInserted(int,int)),
+			this, SLOT(memCard_filesAboutToBeInserted_slot(int,int)));
+		connect(d->card, SIGNAL(filesInserted()),
+			this, SLOT(memCard_filesInserted_slot()));
+		connect(d->card, SIGNAL(filesAboutToBeRemoved(int,int)),
+			this, SLOT(memCard_filesAboutToBeRemoved_slot(int,int)));
+		connect(d->card, SIGNAL(filesRemoved()),
+			this, SLOT(memCard_filesRemoved_slot()));
 
 		// Done adding rows.
 		if (numFiles > 0)
@@ -553,56 +562,66 @@ void MemCardModel::memCard_destroyed_slot(QObject *obj)
 
 
 /**
- * MemCard has changed.
- * TODO: More fine-grained slot for specific files.
+ * Files are about to be added to the MemCard.
+ * @param start First file index.
+ * @param end Last file index.
  */
-void MemCardModel::memCard_changed_slot(void)
+void MemCardModel::memCard_filesAboutToBeInserted_slot(int start, int end)
 {
-	// FIXME: Use aboutToAddFiles / aboutToRemoveFiles / etc.
-	// layoutAboutToBeChanged() is incorrect and can result
-	// in a segmentation fault.
+	// Start adding rows.
+	beginInsertRows(QModelIndex(), start, end);
 
-	// NOTE: Not sure if layoutAboutToBeChanged() should be emitted here...
-	// TODO: Emit "aboutToChange()" from MemCard?
-	emit layoutAboutToBeChanged();
-
-	// Redo all the animation states.
-	d->initAnimState();
-
-	// Done updating.
-	emit layoutChanged();
+	// Save the start/end indexes.
+	d->insertStart = start;
+	d->insertEnd = end;
 }
 
-
 /**
- * MemCard: File was added.
- * @param idx File number.
+ * Files have been added to the MemCard.
  */
-void MemCardModel::memCard_fileAdded_slot(int idx)
+void MemCardModel::memCard_filesInserted_slot(void)
 {
-	// FIXME: Use aboutToBeAdded().
+	// If these files have animated icons, add them.
+	if (d->insertStart >= 0 && d->insertEnd >= 0) {
+		for (int i = d->insertStart; i <= d->insertEnd; i++) {
+			const MemCardFile *file = d->card->getFile(i);
+			d->initAnimState(file);
+		}
 
-	// Data has changed.
-	beginInsertRows(QModelIndex(), idx, idx);
+		// Reset the row insert start/end indexes.
+		d->insertStart = -1;
+		d->insertEnd = -1;
+	}
 
-	// If this file has an animated icon, add it.
-	const MemCardFile *file = d->card->getFile(idx);
-	d->initAnimState(file);
+	// Update the animation timer state.
 	d->updateAnimTimerState();
 
-	// Done updating.
+	// Done adding rows.
 	endInsertRows();
 }
 
+/**
+ * Files are about to be removed from the MemCard.
+ * @param start First file index.
+ * @param end Last file index.
+ */
+void MemCardModel::memCard_filesAboutToBeRemoved_slot(int start, int end)
+{
+	// Start removing rows.
+	beginRemoveRows(QModelIndex(), start, end);
+
+	// Remove animation states for these files.
+	for (int i = start; i <= end; i++) {
+		const MemCardFile *file = d->card->getFile(i);
+		d->animState.remove(file);
+	}
+}
 
 /**
- * MemCard: File was removed.
- * @param idx File number.
+ * Files have been removed from the MemCard.
  */
-void MemCardModel::memCard_fileRemoved_slot(int idx)
+void MemCardModel::memCard_filesRemoved_slot(void)
 {
-	// FIXME: Use aboutToBeRemoved().
-	// Data has changed.
-	beginRemoveRows(QModelIndex(), idx, idx);
+	// Done removing rows.
 	endRemoveRows();
 }

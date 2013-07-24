@@ -418,9 +418,16 @@ void MemCardPrivate::loadMemCardFileList(void)
 		return;
 
 	// Clear the current MemCardFile list.
+	int init_size = lstMemCardFile.size();
+	if (init_size > 0)
+		emit q->filesAboutToBeRemoved(0, (init_size - 1));
 	qDeleteAll(lstMemCardFile);
 	lstMemCardFile.clear();
-	lstMemCardFile.reserve(NUM_ELEMENTS(mc_dat->entries));
+	if (init_size > 0)
+		emit q->filesRemoved();
+
+	QVector<MemCardFile*> lstMemCardFile_new;
+	lstMemCardFile_new.reserve(NUM_ELEMENTS(mc_dat->entries));
 
 	// Byteswap the directory table contents.
 	for (int i = 0; i < NUM_ELEMENTS(mc_dat->entries); i++) {
@@ -433,7 +440,7 @@ void MemCardPrivate::loadMemCardFileList(void)
 
 		// Valid directory entry.
 		MemCardFile *mcFile = new MemCardFile(q, i, mc_dat, mc_bat);
-		lstMemCardFile.append(mcFile);
+		lstMemCardFile_new.append(mcFile);
 
 		// Mark the file's blocks as used.
 		QVector<uint16_t> fatEntries = mcFile->fatEntries();
@@ -451,8 +458,12 @@ void MemCardPrivate::loadMemCardFileList(void)
 		}
 	}
 
-	// File list has changed.
-	emit q->changed();
+	if (!lstMemCardFile_new.isEmpty()) {
+		// Files have been added to the memory card.
+		emit q->filesAboutToBeInserted(0, (lstMemCardFile_new.size() - 1));
+		lstMemCardFile.swap(lstMemCardFile_new);
+		emit q->filesInserted();
+	}
 }
 
 
@@ -654,8 +665,9 @@ void MemCard::removeLostFiles(void)
 		const MemCardFile *mcFile = d->lstMemCardFile.at(i);
 		if (mcFile->isLostFile()) {
 			// This is a "lost" file. Remove it.
+			emit filesAboutToBeRemoved(i, i);
 			d->lstMemCardFile.remove(i);
-			emit fileRemoved(i);
+			emit filesRemoved();
 		}
 	}
 }
@@ -708,8 +720,10 @@ MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry, QVector<uint16_
 		return NULL;
 
 	MemCardFile *file = new MemCardFile(this, dirEntry, fatEntries);
+	int idx = d->lstMemCardFile.size();
+	emit filesAboutToBeInserted(idx, idx);
 	d->lstMemCardFile.append(file);
-	emit fileAdded(d->lstMemCardFile.size() - 1);
+	emit filesInserted();
 	return file;
 }
 
