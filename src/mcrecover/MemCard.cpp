@@ -142,6 +142,9 @@ MemCardPrivate::MemCardPrivate(MemCard *q, QString filename)
 	, mc_dat(NULL)
 	, mc_bat(NULL)
 {
+	// Initialize static variables.
+	StaticInit();
+
 	// TODO: Set an error code somewhere.
 
 	// Save the filename.
