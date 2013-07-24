@@ -1,13 +1,14 @@
 PROJECT(data)
-cmake_minimum_required(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 #################
 # Installation. #
 #################
 
 INCLUDE(DirInstallPaths)
+INCLUDE(ConvertTextFilesToNative)
 
-SET(DATABASE_FILES
+CONVERT_TEXT_FILES_TO_NATIVE(DATABASE_FILES
 	GcnMcFileDb.xml
 	)
 

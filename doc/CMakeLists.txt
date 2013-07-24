@@ -1,25 +1,26 @@
 PROJECT(doc)
-cmake_minimum_required(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 #################
 # Installation. #
 #################
 
 INCLUDE(DirInstallPaths)
+INCLUDE(ConvertTextFilesToNative)
 
-SET(LICENSE_FILES
+CONVERT_TEXT_FILES_TO_NATIVE(LICENSE_FILES
 	gpl-2.0.txt
 	lgpl-2.1.txt
 	cc-by-sa-3.0.txt
 	bsd-3.txt
 	)
 
-SET(README_FILES
+CONVERT_TEXT_FILES_TO_NATIVE(README_FILES
 	README.txt
 	NEWS.txt
 	)
 
-SET(EXAMPLE_FILES
+CONVERT_TEXT_FILES_TO_NATIVE(EXAMPLE_FILES
 	GcnMcFileDb.EXAMPLE.xml
 	)
 
