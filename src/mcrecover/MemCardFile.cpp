@@ -304,7 +304,10 @@ void MemCardFilePrivate::init(void)
 
 	// Convert the descriptions to UTF-8.
 	// Trim the descriptions while we're at it.
-	QTextCodec *textCodec = card->textCodec();
+	char region = (gamecode.size() >= 4
+			? gamecode.at(3).toLatin1()
+			: 0);
+	QTextCodec *textCodec = card->textCodec(region);
 	if (!textCodec) {
 		// No text codec was found.
 		// Default to Latin-1.
