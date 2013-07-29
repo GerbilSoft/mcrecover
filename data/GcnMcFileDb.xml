@@ -4,7 +4,7 @@
 		<dbFormatVersion>0.1</dbFormatVersion>
 		<dbName>GCN Memory Card File Database (USA)</dbName>
 		<dbDesc>Definitions for USA (NTSC) GameCube games.</dbDesc>
-		<version>0.1</version>
+		<version>0.1+</version>
 		<author>David Korth</author>
 		<email>gerbilsoft@gerbilsoft.com</email>
 	</dbInfo>
@@ -51,7 +51,8 @@
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x01</iconFormat>
 			<iconSpeed>0x03</iconSpeed>
-			<permission>0x04</permission>
+			<!-- NOTE: LocalH's save file has the file mode set to -MCP. -->
+			<permission>0x1C</permission>
 			<length>57</length>
 		</dirEntry>
 	</file>
@@ -358,6 +359,66 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Final Fantasy: Crystal Chronicles</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GCCE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^FF Crystal Chronicles$</gameDesc>
+			<fileDesc>^$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>FFCC</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x55</iconFormat>
+			<iconSpeed>0xAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>22</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Fire Emblem: Path of Radiance</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GFEE</gamecode>
+		<company>01</company>
+		<search>
+			<!-- Fourth block. FIXME: Implement block offsets. -->
+			<address>0x6000</address>
+			<gameDesc>^Fire Emblem: Path of Radiance$</gameDesc>
+			<!-- Date format: M/D/YY HH:mm - Verify for PAL! -->
+			<!-- TODO: Verify D, Y, HH, mm -->
+			<fileDesc>^(\d{1,2})/(\d{1,2})/(\d{1,2}) (\d{1,2}):(\d{1,2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>FIREEMBLEM8J</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x15</iconFormat>
+			<iconSpeed>0x3B</iconSpeed>
+			<permission>0x0C</permission>
+			<length>19</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>James Bond 007: Everything or Nothing</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GENE</gamecode>
@@ -481,6 +542,26 @@
 			<iconSpeed>0xFFFF</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Mario Golf: Toadstool Tour</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GFTE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Mario Golf Toadstool Tour$</gameDesc>
+			<fileDesc>^Save Game$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>MG342452</filename>
+			<bannerFormat>0x04</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>13</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -974,6 +1055,30 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Pikmin</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GPIE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Pikmin$</gameDesc>
+			<!-- "Blocks"?! This seems completely out of place, until
+			     you remember that on the GameCube file manager, the
+			     file description is located directly to the right of
+			     the file's block count. -->
+			<fileDesc>^Blocks$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Pikmin dataFile</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x4041</iconFormat>
+			<iconSpeed>0xFFFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>19</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Puyo Pop Fever</gameName>
 		<fileInfo>System File</fileInfo>
 		<gamecode>GPUE</gamecode>
@@ -1011,6 +1116,56 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Resident Evil 4</gameName>
+		<fileInfo>System File</fileInfo>
+		<gamecode>G4BE</gamecode>
+		<company>08</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^resident evil 4$</gameDesc>
+			<fileDesc>^Systemfile$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>bh4_system</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Resident Evil 4</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>G4BE</gamecode>
+		<company>08</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^resident evil 4$</gameDesc>
+			<fileDesc>^FILE (\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>filename</useAs>
+				<type>number</type>
+				<minWidth>2</minWidth>
+				<fillChar>0</fillChar>
+				<align>right</align>
+				<add>-1</add>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>bh4_data${F1}</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>8</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -1460,6 +1615,38 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Tales of Symphonia</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GQSE</gamecode>
+		<company>AF</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^TALES OF SYMPHONIA$</gameDesc>
+			<!-- TODO: Second line is H:MM (play time) - assuming at least 4 digits for hours maximum... -->
+			<!-- TODO: Is it M or MM? -->
+			<fileDesc>^No.(\d{3}) Lv ( \d|\d{1,2})    (\d{1,4}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>filename</useAs>
+				<type>number</type>
+				<minWidth>3</minWidth>
+				<fillChar>0</fillChar>
+				<align>right</align>
+				<add>-1</add>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>TOS_${F1}</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>The Legend of Zelda: Collector's Edition</gameName>
 		<fileInfo>Zelda 1: Save File</fileInfo>
 		<gamecode>PZLE</gamecode>
@@ -1695,6 +1882,26 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Wario World</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GWWE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^WARIO WORLD$</gameDesc>
+			<fileDesc>^This is WARIO'S data!$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>WARIO WORLD</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0A</iconFormat>
+			<iconSpeed>0x01</iconSpeed>
+			<permission>0x04</permission>
+			<length>10</length>
 		</dirEntry>
 	</file>
 </GcnMcFileDb>
