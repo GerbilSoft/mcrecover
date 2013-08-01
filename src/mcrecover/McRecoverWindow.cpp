@@ -213,8 +213,7 @@ void McRecoverWindowPrivate::initMcToolbar(void)
 	// Make sure the "About" button is right-aligned.
 	QWidget *spacer = new QWidget(q);
 	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	q->toolBar->addWidget(spacer);
-	q->toolBar->addAction(q->actionAbout);
+	q->toolBar->insertWidget(q->actionAbout, spacer);
 }
 
 
