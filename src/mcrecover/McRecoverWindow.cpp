@@ -48,6 +48,7 @@
 #include <QtCore/QVector>
 #include <QtCore/QFile>
 #include <QtGui/QAction>
+#include <QtGui/QActionGroup>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDropEvent>
 #include <QtGui/QFileDialog>
@@ -113,6 +114,9 @@ class McRecoverWindowPrivate
 
 		// UI busy counter.
 		int uiBusyCounter;
+
+		// QActionGroup for "Preferred region" buttons.
+		QActionGroup *actgrpRegion;
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -122,6 +126,7 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, searchThread(new SearchThread(q))
 	, statusBarManager(nullptr)
 	, uiBusyCounter(0)
+	, actgrpRegion(nullptr)
 {
 	// Connect the MemCardModel slots.
 	QObject::connect(model, SIGNAL(layoutChanged()),
@@ -153,6 +158,7 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 	delete searchThread;
 
 	delete statusBarManager;
+	delete actgrpRegion;
 }
 
 
@@ -189,8 +195,6 @@ void McRecoverWindowPrivate::updateLstFileList(void)
 void McRecoverWindowPrivate::initMcToolbar(void)
 {
 	// Set action icons.
-	// FIXME: Currently specifying fd.o theme icons in the UI file.
-	// Does this work properly when compiled with Qt <4.8?
 	q->actionOpen->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("document-open")));
 	q->actionClose->setIcon(
@@ -209,6 +213,23 @@ void McRecoverWindowPrivate::initMcToolbar(void)
 	// Disable save actions by default.
 	q->actionSave->setEnabled(false);
 	q->actionSaveAll->setEnabled(false);
+
+	// Add a label for the "Preferred region" buttons.
+	// TODO: Add an extra space before the label...
+	QLabel *lblPreferredRegion = new QLabel(q->tr("Preferred region:"));
+	q->toolBar->insertWidget(q->actionRegionUS, lblPreferredRegion);
+
+	// Create a QActionGroup for the "Preferred region" buttons.
+	actgrpRegion = new QActionGroup(q);
+	actgrpRegion->addAction(q->actionRegionUS);
+	actgrpRegion->addAction(q->actionRegionEU);
+	actgrpRegion->addAction(q->actionRegionJP);
+	actgrpRegion->addAction(q->actionRegionKR);
+
+	// Set an initial "Preferred region".
+	// TODO: Determine default based on system locale.
+	// TODO: Save last selected region somewhere.
+	q->actionRegionUS->setChecked(true);
 
 	// Make sure the "About" button is right-aligned.
 	QWidget *spacer = new QWidget(q);

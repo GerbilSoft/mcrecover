@@ -228,6 +228,11 @@
    <addaction name="actionScan"/>
    <addaction name="actionSave"/>
    <addaction name="actionSaveAll"/>
+   <addaction name="separator"/>
+   <addaction name="actionRegionUS"/>
+   <addaction name="actionRegionEU"/>
+   <addaction name="actionRegionJP"/>
+   <addaction name="actionRegionKR"/>
    <addaction name="actionAbout"/>
   </widget>
   <action name="actionOpen">
@@ -323,6 +328,66 @@
     <string>Ctrl+W</string>
    </property>
   </action>
+  <action name="actionRegionUS">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/flags/flags.qrc">
+     <normaloff>:/flags/flag-us.png</normaloff>:/flags/flag-us.png</iconset>
+   </property>
+   <property name="text">
+    <string>USA</string>
+   </property>
+   <property name="toolTip">
+    <string>USA</string>
+   </property>
+  </action>
+  <action name="actionRegionEU">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/flags/flags.qrc">
+     <normaloff>:/flags/flag-gb.png</normaloff>:/flags/flag-gb.png</iconset>
+   </property>
+   <property name="text">
+    <string>Europe</string>
+   </property>
+   <property name="toolTip">
+    <string>Europe</string>
+   </property>
+  </action>
+  <action name="actionRegionJP">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/flags/flags.qrc">
+     <normaloff>:/flags/flag-jp.png</normaloff>:/flags/flag-jp.png</iconset>
+   </property>
+   <property name="text">
+    <string>Japan</string>
+   </property>
+   <property name="toolTip">
+    <string>Japan</string>
+   </property>
+  </action>
+  <action name="actionRegionKR">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/flags/flags.qrc">
+     <normaloff>:/flags/flag-kr.png</normaloff>:/flags/flag-kr.png</iconset>
+   </property>
+   <property name="text">
+    <string>South Korea</string>
+   </property>
+   <property name="toolTip">
+    <string>South Korea</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -352,6 +417,7 @@
  </tabstops>
  <resources>
   <include location="resources/oxygen/oxygen.qrc"/>
+  <include location="resources/flags/flags.qrc"/>
  </resources>
  <connections/>
 </ui>
