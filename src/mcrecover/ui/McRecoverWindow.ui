@@ -86,7 +86,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>373</width>
-                <height>202</height>
+                <height>187</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="vboxScrlMemCardInfo">
@@ -136,7 +136,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>373</width>
-                <height>201</height>
+                <height>186</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="vboxScrlFileInfo">
@@ -207,6 +207,27 @@
    <property name="sizeGripEnabled">
     <bool>false</bool>
    </property>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::TopToolBarArea</set>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionOpen"/>
+   <addaction name="actionScan"/>
+   <addaction name="actionSave"/>
+   <addaction name="actionSaveAll"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">

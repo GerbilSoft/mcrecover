@@ -86,18 +86,10 @@ class McRecoverWindowPrivate
 		// Search thread.
 		SearchThread *searchThread;
 
-		// Memory Card toolbar.
-		QToolBar *mcToolbar;
-
 		/**
 		 * Initialize the Memory Card toolbar.
 		 */
 		void initMcToolbar(void);
-
-		/**
-		 * Retranslate the Memory Card toolbar.
-		 */
-		void retranslateMcToolbar(void);
 
 		/**
 		 * Update the action enable status.
@@ -128,7 +120,6 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, card(nullptr)
 	, model(new MemCardModel(q))
 	, searchThread(new SearchThread(q))
-	, mcToolbar(nullptr)
 	, statusBarManager(nullptr)
 	, uiBusyCounter(0)
 {
@@ -161,7 +152,6 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 	// TODO: Wait for searchThread to finish?
 	delete searchThread;
 
-	delete mcToolbar;
 	delete statusBarManager;
 }
 
@@ -211,6 +201,8 @@ void McRecoverWindowPrivate::initMcToolbar(void)
 		McRecoverQApplication::IconFromTheme(QLatin1String("document-save")));
 	q->actionSaveAll->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("document-save-all")));
+	q->actionExit->setIcon(
+		McRecoverQApplication::IconFromTheme(QLatin1String("application-exit")));
 	q->actionAbout->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("help-about")));
 
@@ -218,40 +210,11 @@ void McRecoverWindowPrivate::initMcToolbar(void)
 	q->actionSave->setEnabled(false);
 	q->actionSaveAll->setEnabled(false);
 
-	// Initialize the Memory Card toolbar.
-	mcToolbar = new QToolBar(q);
-	mcToolbar->setToolButtonStyle(Qt::ToolButtonIconOnly);
-
-	// Win32 style has a border. Get rid of it.
-	mcToolbar->setStyleSheet(QLatin1String("QToolBar { border: none }"));
-
-	// Add actions to the toolbar.
-	mcToolbar->addAction(q->actionOpen);
-	mcToolbar->addAction(q->actionScan);
-	mcToolbar->addAction(q->actionSave);
-	mcToolbar->addAction(q->actionSaveAll);
-
 	// Make sure the "About" button is right-aligned.
 	QWidget *spacer = new QWidget(q);
 	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	mcToolbar->addWidget(spacer);
-	mcToolbar->addAction(q->actionAbout);
-
-	// Retranslate the Memory Card toolbar.
-	retranslateMcToolbar();
-
-	// Add the toolbar to the Memory Card information box.
-	q->vboxMemCardInfo->addWidget(mcToolbar);
-}
-
-
-/**
- * Retranslate the Memory Card toolbar.
- */
-void McRecoverWindowPrivate::retranslateMcToolbar(void)
-{
-	if (mcToolbar)
-		mcToolbar->setWindowTitle(q->tr("Memory Card"));
+	q->toolBar->addWidget(spacer);
+	q->toolBar->addAction(q->actionAbout);
 }
 
 
@@ -590,7 +553,6 @@ void McRecoverWindow::changeEvent(QEvent *event)
 		// Retranslate the UI.
 		retranslateUi(this);
 		d->updateLstFileList();
-		d->retranslateMcToolbar();
 		d->updateWindowTitle();
 	}
 
