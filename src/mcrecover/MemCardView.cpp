@@ -52,7 +52,7 @@ class MemCardViewPrivate
 
 MemCardViewPrivate::MemCardViewPrivate(MemCardView *q)
 	: q(q)
-	, card(NULL)
+	, card(nullptr)
 { }
 
 MemCardViewPrivate::~MemCardViewPrivate()
@@ -245,7 +245,7 @@ void MemCardView::memCard_destroyed_slot(QObject *obj)
 {
 	if (obj == d->card) {
 		// Our MemCard was destroyed.
-		d->card = NULL;
+		d->card = nullptr;
 
 		// Update the widget display.
 		d->updateWidgetDisplay();

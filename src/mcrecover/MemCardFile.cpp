@@ -231,8 +231,8 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	: q(q)
 	, card(card)
 	, fileIdx(-1)
-	, dat(NULL)
-	, bat(NULL)
+	, dat(nullptr)
+	, bat(nullptr)
 	, banner(QPixmap())
 {
 	// Take a copy of the constructed directory entry.

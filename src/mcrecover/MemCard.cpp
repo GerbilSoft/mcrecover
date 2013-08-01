@@ -133,14 +133,14 @@ class MemCardPrivate
 };
 
 // Text codecs.
-QTextCodec *MemCardPrivate::TextCodecUS = NULL;	// cp1252
-QTextCodec *MemCardPrivate::TextCodecJP = NULL;	// Shift-JIS
+QTextCodec *MemCardPrivate::TextCodecUS = nullptr;	// cp1252
+QTextCodec *MemCardPrivate::TextCodecJP = nullptr;	// Shift-JIS
 
 MemCardPrivate::MemCardPrivate(MemCard *q, QString filename)
 	: q(q)
-	, file(NULL)
-	, mc_dat(NULL)
-	, mc_bat(NULL)
+	, file(nullptr)
+	, mc_dat(nullptr)
+	, mc_bat(nullptr)
 {
 	// Initialize static variables.
 	StaticInit();
@@ -151,7 +151,7 @@ MemCardPrivate::MemCardPrivate(MemCard *q, QString filename)
 	this->filename = filename;
 	if (filename.isEmpty()) {
 		// No filename specified.
-		file = NULL;
+		file = nullptr;
 		return;
 	}
 
@@ -160,7 +160,7 @@ MemCardPrivate::MemCardPrivate(MemCard *q, QString filename)
 	if (!file->open(QIODevice::ReadOnly)) {
 		// Error opening the file.
 		delete file;
-		file = NULL;
+		file = nullptr;
 		return;
 	}
 
@@ -367,7 +367,7 @@ void MemCardPrivate::loadDirTable(card_dat *dat, uint32_t address, uint32_t *che
 	file->read((char*)dat, sizeof(*dat));
 
 	// Calculate the checksums.
-	if (checksum != NULL) {
+	if (checksum != nullptr) {
 		*checksum = Checksum::AddInvDual16(
 			reinterpret_cast<const uint16_t*>(dat),
 			(uint32_t)(sizeof(*dat) - 4));
@@ -405,7 +405,7 @@ void MemCardPrivate::loadBlockTable(card_bat *bat, uint32_t address, uint32_t *c
 	file->read((char*)bat, sizeof(*bat));
 
 	// Calculate the checksums.
-	if (checksum != NULL) {
+	if (checksum != nullptr) {
 		*checksum = Checksum::AddInvDual16(
 			(reinterpret_cast<const uint16_t*>(bat) + 2),
 			(uint32_t)(sizeof(*bat) - 4));
@@ -620,7 +620,7 @@ int MemCard::encoding(void) const
 QTextCodec *MemCard::textCodec(char region) const
 {
 	if (!isOpen())
-		return NULL;
+		return nullptr;
 
 	switch (region) {
 		case 0:
@@ -671,14 +671,14 @@ bool MemCard::isEmpty(void) const
 /**
  * Get a MemCardFile object.
  * @param idx File number.
- * @return MemCardFile object, or NULL on error.
+ * @return MemCardFile object, or nullptr on error.
  */
 MemCardFile *MemCard::getFile(int idx)
 {
 	if (!isOpen())
-		return NULL;
+		return nullptr;
 	if (idx < 0 || idx >= d->lstMemCardFile.size())
-		return NULL;
+		return nullptr;
 	return d->lstMemCardFile.at(idx);
 }
 
@@ -717,12 +717,12 @@ void MemCard::removeLostFiles(void)
  * Add a "lost" file.
  * NOTE: This is a debugging version.
  * Add more comprehensive versions with a block map specification.
- * @return MemCardFile added to the MemCard, or NULL on error.
+ * @return MemCardFile added to the MemCard, or nullptr on error.
  */
 MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry)
 {
 	if (!isOpen())
-		return NULL;
+		return nullptr;
 
 	// Initialize the FAT entries baesd on start/length.
 	// TODO: Check for block collisions and skip used blocks.
@@ -752,12 +752,12 @@ MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry)
  * Add a "lost" file.
  * @param dirEntry Directory entry.
  * @param fatEntries FAT entries.
- * @return MemCardFile added to the MemCard, or NULL on error.
+ * @return MemCardFile added to the MemCard, or nullptr on error.
  */
 MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry, QVector<uint16_t> fatEntries)
 {
 	if (!isOpen())
-		return NULL;
+		return nullptr;
 
 	MemCardFile *file = new MemCardFile(this, dirEntry, fatEntries);
 	int idx = d->lstMemCardFile.size();

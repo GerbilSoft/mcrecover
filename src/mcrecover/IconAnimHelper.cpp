@@ -66,7 +66,7 @@ class IconAnimHelperPrivate
 
 IconAnimHelperPrivate::IconAnimHelperPrivate(IconAnimHelper *q)
 	: q(q)
-	, file(NULL)
+	, file(nullptr)
 {
 	reset();
 }
@@ -274,7 +274,7 @@ void IconAnimHelper::memCardFile_destroyed_slot(QObject *obj)
 {
 	if (obj == d->file) {
 		// Our MemCardFile was destroyed.
-		d->file = NULL;
+		d->file = nullptr;
 		d->reset();
 	}
 }

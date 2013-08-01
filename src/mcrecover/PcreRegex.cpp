@@ -35,7 +35,7 @@
 
 
 PcreRegex::PcreRegex()
-	: m_regex(NULL)
+	: m_regex(nullptr)
 { }
 
 PcreRegex::PcreRegex(QString regex)
@@ -67,7 +67,7 @@ int PcreRegex::setRegex(QString regex, int *errOffset)
 
 	// Don't allow empty regular expressions.
 	if (regex.isEmpty()) {
-		m_regex = NULL;
+		m_regex = nullptr;
 		return -1; // NOTE: Not an actual pcre_compile2() error code...
 	}
 
@@ -84,7 +84,7 @@ int PcreRegex::setRegex(QString regex, int *errOffset)
 		&errorcode,		// error code
 		&error,			// error message
 		&erroffset,		// error offset
-		NULL);			// use default character tables
+		nullptr);		// use default character tables
 
 	if (!m_regex) {
 		// Regex compilation failed.
@@ -116,7 +116,7 @@ int PcreRegex::exec(QByteArray subjectUtf8, QVector<QString> *outVector) const
 
 	int rc = pcre_exec(
 		m_regex,			// compiled regex
-		NULL,				// pattern not studied
+		nullptr,			// pattern not studied
 		subjectUtf8.constData(),	// subject string
 		subjectUtf8.size(),		// size of subject string
 		0,				// start at offset 0 in the subject
@@ -147,7 +147,7 @@ int PcreRegex::exec(QByteArray subjectUtf8, QVector<QString> *outVector) const
 		}
 
 		// Convert the list of strings to QVector<QString>.
-		for (const char **listiter = listptr; *listiter != NULL; listiter++) {
+		for (const char **listiter = listptr; *listiter != nullptr; listiter++) {
 			QString str = QString::fromUtf8(*listiter);
 			outVector->append(str);
 		}

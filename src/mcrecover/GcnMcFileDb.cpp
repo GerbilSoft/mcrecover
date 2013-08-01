@@ -284,7 +284,7 @@ GcnMcFileDef *GcnMcFileDbPrivate::parseXml_file(QXmlStreamReader &xml)
 	if (xml.tokenType() != QXmlStreamReader::StartElement ||
 	    xml.name() != myTokenType) {
 		// Not a <file> element.
-		return NULL;
+		return nullptr;
 	}
 
 	GcnMcFileDef *gcnMcFileDef = new GcnMcFileDef;
@@ -389,7 +389,7 @@ void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDe
 			if (xml.name() == QLatin1String("address")) {
 				// Search address.
 				QString address_str = parseXml_element(xml);
-				gcnMcFileDef->search.address = address_str.toUInt(NULL, 0);
+				gcnMcFileDef->search.address = address_str.toUInt(nullptr, 0);
 			} else if (xml.name() == QLatin1String("gameDesc")) {
 				// Game description. (regex)
 				gcnMcFileDef->search.gameDesc = parseXml_element(xml);
@@ -453,7 +453,7 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 
 				// Polynomial attribute. (CRC-16, CRC-32)
 				if (attributes.hasAttribute(QLatin1String("poly")))
-					poly = attributes.value(QLatin1String("poly")).toString().toUInt(NULL, 0);
+					poly = attributes.value(QLatin1String("poly")).toString().toUInt(nullptr, 0);
 				else
 					poly = 0;
 
@@ -461,7 +461,7 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 			} else if (xml.name() == QLatin1String("address")) {
 				// Checksum address.
 				QString address_str = parseXml_element(xml);
-				checksumDef.address = address_str.toUInt(NULL, 0);
+				checksumDef.address = address_str.toUInt(nullptr, 0);
 			} else if (xml.name() == QLatin1String("range")) {
 				// Checksummed area.
 				QXmlStreamAttributes attributes = xml.attributes();
@@ -469,9 +469,9 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 				    attributes.hasAttribute(QLatin1String("length"))) {
 					// Required attributes are present.
 					checksumDef.start =
-						attributes.value(QLatin1String("start")).toString().toUInt(NULL, 0);
+						attributes.value(QLatin1String("start")).toString().toUInt(nullptr, 0);
 					checksumDef.length =
-						attributes.value(QLatin1String("length")).toString().toUInt(NULL, 0);
+						attributes.value(QLatin1String("length")).toString().toUInt(nullptr, 0);
 				} else {
 					// Attributes missing.
 					// TODO: Show error message?
@@ -483,7 +483,7 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 				if (attributes.hasAttribute(QLatin1String("instances"))) {
 					// Number of instances.
 					instances =
-						attributes.value(QLatin1String("instances")).toString().toUInt(NULL, 0);
+						attributes.value(QLatin1String("instances")).toString().toUInt(nullptr, 0);
 				} else {
 					// Instances not specified.
 					instances = INSTANCES_DEFAULT;
@@ -492,7 +492,7 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 				if (attributes.hasAttribute(QLatin1String("increment"))) {
 					// Byte increment between checksums.
 					increment =
-						attributes.value(QLatin1String("increment")).toString().toUInt(NULL, 0);
+						attributes.value(QLatin1String("increment")).toString().toUInt(nullptr, 0);
 				} else {
 					// Increment not specified.
 					increment = INCREMENT_DEFAULT;
@@ -580,27 +580,27 @@ void GcnMcFileDbPrivate::parseXml_file_dirEntry(QXmlStreamReader &xml, GcnMcFile
 			} else if (xml.name() == QLatin1String("bannerFormat")) {
 				// Banner format.
 				str = parseXml_element(xml);
-				gcnMcFileDef->dirEntry.bannerFormat = (uint8_t)str.toUInt(NULL, 0);
+				gcnMcFileDef->dirEntry.bannerFormat = (uint8_t)str.toUInt(nullptr, 0);
 			} else if (xml.name() == QLatin1String("iconAddress")) {
 				// Icon address.
 				str = parseXml_element(xml);
-				gcnMcFileDef->dirEntry.iconAddress = str.toUInt(NULL, 0);
+				gcnMcFileDef->dirEntry.iconAddress = str.toUInt(nullptr, 0);
 			} else if (xml.name() == QLatin1String("iconFormat")) {
 				// Icon format.
 				str = parseXml_element(xml);
-				gcnMcFileDef->dirEntry.iconFormat = str.toUShort(NULL, 0);
+				gcnMcFileDef->dirEntry.iconFormat = str.toUShort(nullptr, 0);
 			} else if (xml.name() == QLatin1String("iconSpeed")) {
 				// Icon speed.
 				str = parseXml_element(xml);
-				gcnMcFileDef->dirEntry.iconSpeed = str.toUShort(NULL, 0);
+				gcnMcFileDef->dirEntry.iconSpeed = str.toUShort(nullptr, 0);
 			} else if (xml.name() == QLatin1String("permission")) {
 				// Permission.
 				str = parseXml_element(xml);
-				gcnMcFileDef->dirEntry.permission = (uint8_t)str.toUInt(NULL, 0);
+				gcnMcFileDef->dirEntry.permission = (uint8_t)str.toUInt(nullptr, 0);
 			} else if (xml.name() == QLatin1String("length")) {
 				// Length, in blocks.
 				str = parseXml_element(xml);
-				gcnMcFileDef->dirEntry.length = str.toUShort(NULL, 0);
+				gcnMcFileDef->dirEntry.length = str.toUShort(nullptr, 0);
 			} else {
 				// Skip unreocgnized tokens.
 				xml.readElementText(QXmlStreamReader::SkipChildElements);
@@ -705,7 +705,7 @@ void GcnMcFileDbPrivate::parseXml_file_variable(QXmlStreamReader& xml, GcnMcFile
 			} else if (xml.name() == QLatin1String("minWidth")) {
 				// Minimum field width.
 				str = parseXml_element(xml);
-				varModifierDef.minWidth = (uint8_t)str.toUInt(NULL, 0);
+				varModifierDef.minWidth = (uint8_t)str.toUInt(nullptr, 0);
 			} else if (xml.name() == QLatin1String("fillChar")) {
 				// Fill character.
 				// TODO: Show an error if the string is not exactly 1 character?
@@ -724,7 +724,7 @@ void GcnMcFileDbPrivate::parseXml_file_variable(QXmlStreamReader& xml, GcnMcFile
 				// Add value.
 				// TODO: Show an error if not number or char?
 				str = parseXml_element(xml).toLower();
-				varModifierDef.addValue = str.toInt(NULL, 0);
+				varModifierDef.addValue = str.toInt(nullptr, 0);
 			} else {
 				// Skip unreocgnized tokens.
 				xml.readElementText(QXmlStreamReader::SkipChildElements);
@@ -828,7 +828,7 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz,
 	// another function somewhere else.)
 
 	// Matching file definition.
-	const GcnMcFileDef *matchFileDef = NULL;
+	const GcnMcFileDef *matchFileDef = nullptr;
 	QHash<QString, QString> vars;
 	QString filename;
 	GcnDateTime gcnDateTime;

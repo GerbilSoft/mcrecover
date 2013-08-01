@@ -57,7 +57,7 @@ class MemCardFileViewPrivate
 
 MemCardFileViewPrivate::MemCardFileViewPrivate(MemCardFileView *q)
 	: q(q)
-	, file(NULL)
+	, file(nullptr)
 {
 	// Connect animTimer's timeout() signal.
 	QObject::connect(&animTimer, SIGNAL(timeout()),
@@ -262,7 +262,7 @@ void MemCardFileView::memCardFile_destroyed_slot(QObject *obj)
 {
 	if (obj == d->file) {
 		// Our MemCardFile was destroyed.
-		d->file = NULL;
+		d->file = nullptr;
 
 		// Update the widget display.
 		d->updateWidgetDisplay();

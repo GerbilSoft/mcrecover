@@ -159,7 +159,7 @@ class MemCard : public QObject
 		/**
 		 * Get a MemCardFile object.
 		 * @param idx File number.
-		 * @return MemCardFile object, or NULL on error.
+		 * @return MemCardFile object, or nullptr on error.
 		 */
 		MemCardFile *getFile(int idx);
 
@@ -179,7 +179,7 @@ class MemCard : public QObject
 		 * Add a "lost" file.
 		 * NOTE: This is a debugging version.
 		 * Add more comprehensive versions with a block map specification.
-		 * @return MemCardFile added to the MemCard, or NULL on error.
+		 * @return MemCardFile added to the MemCard, or nullptr on error.
 		 */
 		MemCardFile *addLostFile(const card_direntry *dirEntry);
 
@@ -187,7 +187,7 @@ class MemCard : public QObject
 		 * Add a "lost" file.
 		 * @param dirEntry Directory entry.
 		 * @param fatEntries FAT entries.
-		 * @return MemCardFile added to the MemCard, or NULL on error.
+		 * @return MemCardFile added to the MemCard, or nullptr on error.
 		 */
 		MemCardFile *addLostFile(const card_direntry *dirEntry, QVector<uint16_t> fatEntries);
 

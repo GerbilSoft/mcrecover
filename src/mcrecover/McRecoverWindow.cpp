@@ -125,11 +125,11 @@ class McRecoverWindowPrivate
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	: q(q)
-	, card(NULL)
+	, card(nullptr)
 	, model(new MemCardModel(q))
 	, searchThread(new SearchThread(q))
-	, mcToolbar(NULL)
-	, statusBarManager(NULL)
+	, mcToolbar(nullptr)
+	, statusBarManager(nullptr)
 	, uiBusyCounter(0)
 {
 	// Connect the MemCardModel slots.
@@ -347,7 +347,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 		// Multiple files, path not specified.
 		// Prompt the user for a save location.
 		path = QFileDialog::getExistingDirectory(q,
-				q->tr("Save %Ln GCN Save File(s)", NULL, files.size()));
+				q->tr("Save %Ln GCN Save File(s)", nullptr, files.size()));
 		if (path.isEmpty())
 			return;
 	}
@@ -525,9 +525,9 @@ McRecoverWindow::~McRecoverWindow()
 void McRecoverWindow::openCard(QString filename)
 {
 	if (d->card) {
-		d->model->setMemCard(NULL);
-		mcCardView->setCard(NULL);
-		mcfFileView->setFile(NULL);
+		d->model->setMemCard(nullptr);
+		mcCardView->setCard(nullptr);
+		mcfFileView->setFile(nullptr);
 		delete d->card;
 	}
 
@@ -563,11 +563,11 @@ void McRecoverWindow::openCard(QString filename)
  */
 void McRecoverWindow::closeCard(void)
 {
-	d->model->setMemCard(NULL);
-	mcCardView->setCard(NULL);
-	mcfFileView->setFile(NULL);
+	d->model->setMemCard(nullptr);
+	mcCardView->setCard(nullptr);
+	mcfFileView->setFile(nullptr);
 	delete d->card;
-	d->card = NULL;
+	d->card = nullptr;
 
 	// Clear the filenames.
 	d->filename.clear();
@@ -839,7 +839,7 @@ void McRecoverWindow::on_actionSave_triggered(void)
 
 	foreach(QModelIndex idx, selList) {
 		MemCardFile *file = d->card->getFile(idx.row());
-		if (file != NULL)
+		if (file != nullptr)
 			files.append(file);
 	}
 
@@ -869,7 +869,7 @@ void McRecoverWindow::on_actionSaveAll_triggered(void)
 
 	for (int i = 0; i < numFiles; i++) {
 		MemCardFile *file = d->card->getFile(i);
-		if (file != NULL)
+		if (file != nullptr)
 			files.append(file);
 	}
 

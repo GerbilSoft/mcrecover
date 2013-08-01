@@ -35,10 +35,10 @@ class AboutDialog : public QDialog, public Ui::AboutDialog
 	Q_OBJECT
 	
 	public:
-		static void ShowSingle(QWidget *parent = NULL);
+		static void ShowSingle(QWidget *parent = nullptr);
 
 	protected:
-		AboutDialog(QWidget *parent = NULL);
+		AboutDialog(QWidget *parent = nullptr);
 		~AboutDialog();
 
 	private:

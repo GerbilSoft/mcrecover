@@ -74,7 +74,7 @@ class AboutDialogPrivate
 };
 
 // Static member initialization.
-AboutDialog *AboutDialogPrivate::ms_AboutDialog = NULL;
+AboutDialog *AboutDialogPrivate::ms_AboutDialog = nullptr;
 
 
 AboutDialogPrivate::AboutDialogPrivate(AboutDialog* q)
@@ -223,7 +223,7 @@ QString AboutDialogPrivate::GetCredits(void)
 		{CT_CONTINUE,		"Henke37"},		// PAL
 		{CT_CONTINUE,		"Gordon Griffin"},	// NTSC-U
 
-		{CT_MAX, NULL}
+		{CT_MAX, nullptr}
 	};
 	
 	CreditType_t lastCreditType = CT_CONTINUE;
@@ -409,7 +409,7 @@ QString AboutDialogPrivate::GetCodePageInfo(void)
 	}
 
 	// Is Gens/GS II using Unicode?
-	if (GetModuleHandleW(NULL) != NULL) {
+	if (GetModuleHandleW(nullptr) != nullptr) {
 		//: Win32: Unicode strings are being used. (WinNT)
 		sCodePageInfo += AboutDialog::tr("Using Unicode strings for Win32 API.");
 	} else {
@@ -445,11 +445,11 @@ QString AboutDialogPrivate::GetSupport(void)
 	const supportSite_t supportSites[] = {
 		{QT_TR_NOOP("Sonic Retro"), "http://forums.sonicretro.org/index.php?showtopic=31772"},
 		{QT_TR_NOOP("GBAtemp"), "http://gbatemp.net/threads/gcn-memcard-recover.349406/"},
-		{NULL, NULL}
+		{nullptr, nullptr}
 	};
 
 	for (const supportSite_t *supportSite = &supportSites[0];
-	     supportSite->name != NULL; supportSite++)
+	     supportSite->name != nullptr; supportSite++)
 	{
 		QString siteUrl = QLatin1String(supportSite->url);
 		QString siteName = QLatin1String(supportSite->name);
@@ -519,9 +519,7 @@ AboutDialog::AboutDialog(QWidget *parent)
  */
 AboutDialog::~AboutDialog()
 {
-	// Clear the m_AboutDialog pointer.
-	AboutDialogPrivate::ms_AboutDialog = NULL;
-
+	AboutDialogPrivate::ms_AboutDialog = nullptr;
 	delete d;
 }
 
@@ -532,7 +530,7 @@ AboutDialog::~AboutDialog()
  */
 void AboutDialog::ShowSingle(QWidget *parent)
 {
-	if (AboutDialogPrivate::ms_AboutDialog != NULL) {
+	if (AboutDialogPrivate::ms_AboutDialog != nullptr) {
 		// About Dialog is already displayed.
 		// Activate the dialog.
 		AboutDialogPrivate::ms_AboutDialog->activateWindow();

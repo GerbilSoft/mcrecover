@@ -90,7 +90,7 @@ static int SetSecurityOptions(void)
 	PFNHSI pfnHeapSetInformation = (PFNHSI)GetProcAddress(hKernel32, "HeapSetInformation");
 	if (pfnHeapSetInformation) {
 		// HeapEnableTerminationOnCorruption == 1
-		pfnHeapSetInformation(NULL, 1, NULL, 0);
+		pfnHeapSetInformation(nullptr, 1, nullptr, 0);
 	}
 
 	if (hKernel32)
@@ -123,7 +123,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 		    (osVersionInfo.dwMajorVersion == 6 &&
 		     osVersionInfo.dwMinorVersion >= 2))
 		{
-			MessageBoxA(NULL,
+			MessageBoxA(nullptr,
 				"You are using an app-based operating system.\n"
 				"GCN MemCard Recover is a real program, not an app.\n"
 				"As such, proper operation cannot be guaranteed.",
@@ -191,7 +191,7 @@ void McRecoverQApplication::SetFont_Win32(void)
 	::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(ncm), &ncm, 0);
 
 	int nFontSize = 0;
-	HDC hDC = ::GetDC(NULL);
+	HDC hDC = ::GetDC(nullptr);
 
 	// Calculate the font size in points.
 	// http://www.codeguru.com/forum/showthread.php?t=476244

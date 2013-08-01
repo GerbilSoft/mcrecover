@@ -80,10 +80,10 @@ class StatusBarManagerPrivate
 
 StatusBarManagerPrivate::StatusBarManagerPrivate(StatusBarManager *q)
 	: q(q)
-	, statusBar(NULL)
-	, lblMessage(NULL)
-	, progressBar(NULL)
-	, searchThread(NULL)
+	, statusBar(nullptr)
+	, lblMessage(nullptr)
+	, progressBar(nullptr)
+	, searchThread(nullptr)
 	, scanning(false)
 	, currentPhysBlock(0)
 	, totalPhysBlocks(0)
@@ -117,7 +117,7 @@ void StatusBarManagerPrivate::updateStatusBar(void)
 
 		// TODO: Show number of files found?
 		/*
-		QString filesFoundText = q->tr("%n lost file(s) found.", NULL, lostFilesFound);
+		QString filesFoundText = q->tr("%n lost file(s) found.", nullptr, lostFilesFound);
 		q->lblFilesFound->setText(filesFoundText);
 		*/
 
@@ -193,7 +193,7 @@ void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 
 		// Delete the progress bar.
 		delete d->progressBar;
-		d->progressBar = NULL;
+		d->progressBar = nullptr;
 	}
 
 	d->statusBar = statusBar;
@@ -328,7 +328,7 @@ void StatusBarManager::filesSaved(int n, QString path)
 {
 	d->scanning = false;
 	d->progressBar->setVisible(false);
-	d->lastStatusMessage = tr("%Ln file(s) saved to %1.", NULL, n)
+	d->lastStatusMessage = tr("%Ln file(s) saved to %1.", nullptr, n)
 				.arg(QDir::toNativeSeparators(path));
 	d->updateStatusBar();
 }
@@ -344,13 +344,13 @@ void StatusBarManager::filesSaved(int n, QString path)
 void StatusBarManager::object_destroyed_slot(QObject *obj)
 {
 	if (obj == d->statusBar)
-		d->statusBar = NULL;
+		d->statusBar = nullptr;
 	else if (obj == d->lblMessage)
-		d->lblMessage = NULL;
+		d->lblMessage = nullptr;
 	else if (obj == d->progressBar)
-		d->progressBar = NULL;
+		d->progressBar = nullptr;
 	else if (obj == d->searchThread)
-		d->searchThread = NULL;
+		d->searchThread = nullptr;
 }
 
 
@@ -394,7 +394,7 @@ void StatusBarManager::searchFinished_slot(int lostFilesFound)
 	d->scanning = false;
 	d->lostFilesFound = lostFilesFound;
 	d->currentSearchBlock = d->totalSearchBlocks;
-	d->lastStatusMessage = tr("Scan complete. %Ln lost file(s) found.", NULL, lostFilesFound);
+	d->lastStatusMessage = tr("Scan complete. %Ln lost file(s) found.", nullptr, lostFilesFound);
 	d->updateStatusBar();
 }
 

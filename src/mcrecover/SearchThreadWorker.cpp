@@ -78,9 +78,9 @@ SearchThreadWorkerPrivate::SearchThreadWorkerPrivate(SearchThreadWorker* q)
 	: q(q)
 {
 	// NULL these out by default.
-	thread_info.card = NULL;
-	thread_info.db = NULL;
-	thread_info.orig_thread = NULL;
+	thread_info.card = nullptr;
+	thread_info.db = nullptr;
+	thread_info.orig_thread = nullptr;
 	thread_info.searchUsedBlocks = false;
 }
 

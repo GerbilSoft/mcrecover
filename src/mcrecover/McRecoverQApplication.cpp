@@ -68,8 +68,8 @@ class McRecoverQApplicationPrivate
 
 McRecoverQApplicationPrivate::McRecoverQApplicationPrivate(McRecoverQApplication *q)
 	: q(q)
-	, qtTranslator(NULL)
-	, mcrTranslator(NULL)
+	, qtTranslator(nullptr)
+	, mcrTranslator(nullptr)
 { }
 
 /**

@@ -273,7 +273,7 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> varModifierD
 			case VarModifierDef::VARTYPE_NUMBER: {
 				// Parse as a number. (Base 10)
 				// TODO: Add support for other bases?
-				int num = var.toInt(NULL, 10);
+				int num = var.toInt(nullptr, 10);
 				num += varModifierDef.addValue;
 				var = QString::number(num, 10);
 				break;
@@ -304,7 +304,7 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> varModifierD
 		}
 
 		// Check if this variable should be used in the GcnDateTime.
-		int num = var.toInt(NULL, 10);
+		int num = var.toInt(nullptr, 10);
 		switch (varModifierDef.useAs) {
 			default:
 			case VarModifierDef::USEAS_FILENAME:

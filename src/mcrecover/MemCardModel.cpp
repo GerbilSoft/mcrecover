@@ -115,7 +115,7 @@ class MemCardModelPrivate
 
 MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	: q(q)
-	, card(NULL)
+	, card(nullptr)
 	, animTimer(new QTimer(q))
 	, insertStart(-1)
 	, insertEnd(-1)
@@ -145,13 +145,13 @@ void MemCardModelPrivate::style_t::init(void)
 	int h, s, v;
 
 	// "Lost" file. (Main)
-	bgColor_lostFile.getHsv(&h, &s, &v, NULL);
+	bgColor_lostFile.getHsv(&h, &s, &v, nullptr);
 	h = 60;
 	s = (255 - s);
 	bgColor_lostFile.setHsv(h, s, v);
 
 	// "Lost" file. (Alternate)
-	bgColor_lostFile_alt.getHsv(&h, &s, &v, NULL);
+	bgColor_lostFile_alt.getHsv(&h, &s, &v, nullptr);
 	h = 60;
 	s = (255 - s);
 	bgColor_lostFile_alt.setHsv(h, s, v);
@@ -279,7 +279,7 @@ MemCardModel::~MemCardModel()
 int MemCardModel::rowCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
-	return (d->card != NULL ? d->card->numFiles() : 0);
+	return (d->card != nullptr ? d->card->numFiles() : 0);
 }
 
 int MemCardModel::columnCount(const QModelIndex& parent) const
@@ -497,7 +497,7 @@ void MemCardModel::setMemCard(MemCard *card)
 		disconnect(d->card, SIGNAL(filesRemoved()),
 			   this, SLOT(memCard_filesRemoved_slot()));
 
-		d->card = NULL;
+		d->card = nullptr;
 
 		// Done removing rows.
 		if (numFiles > 0)
@@ -554,7 +554,7 @@ void MemCardModel::memCard_destroyed_slot(QObject *obj)
 		int numFiles = d->card->numFiles();
 		if (numFiles > 0)
 			beginRemoveRows(QModelIndex(), 0, (numFiles - 1));
-		d->card = NULL;
+		d->card = nullptr;
 		if (numFiles > 0)
 			endRemoveRows();
 	}

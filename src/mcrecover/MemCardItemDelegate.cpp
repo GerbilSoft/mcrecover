@@ -82,7 +82,7 @@ MemCardItemDelegatePrivate::MemCardItemDelegatePrivate(MemCardItemDelegate *q)
 
 /**
  * Get the Game Description font.
- * @param widget Relevant widget. (If NULL, use QApplication.)
+ * @param widget Relevant widget. (If nullptr, use QApplication.)
  * @return Game Description font.
  */
 QFont MemCardItemDelegatePrivate::fontGameDesc(const QWidget *widget)
@@ -90,14 +90,14 @@ QFont MemCardItemDelegatePrivate::fontGameDesc(const QWidget *widget)
 	// TODO: This should be cached, but we don't have a
 	// reasonable way to update it if the system font
 	// is changed...
-	return (widget != NULL
+	return (widget != nullptr
 		? widget->font()
 		: QApplication::font());
 }
 
 /**
  * Get the File Description font.
- * @param widget Relevant widget. (If NULL, use QApplication.)
+ * @param widget Relevant widget. (If nullptr, use QApplication.)
  * @return File Description font.
  */
 QFont MemCardItemDelegatePrivate::fontFileDesc(const QWidget *widget)
@@ -119,9 +119,9 @@ QFont MemCardItemDelegatePrivate::fontFileDesc(const QWidget *widget)
 typedef bool (WINAPI *PtrIsAppThemed)(void);
 typedef bool (WINAPI *PtrIsThemeActive)(void);
 
-static HMODULE pUxThemeDll = NULL;
-static PtrIsAppThemed pIsAppThemed = NULL;
-static PtrIsThemeActive pIsThemeActive = NULL;
+static HMODULE pUxThemeDll = nullptr;
+static PtrIsAppThemed pIsAppThemed = nullptr;
+static PtrIsThemeActive pIsThemeActive = nullptr;
 
 /**
  * Resolve symbols for XP/Vista theming.
@@ -142,7 +142,7 @@ bool MemCardItemDelegatePrivate::resolveSymbols(void)
 		tried = true;
 	}
 
-	return (pIsAppThemed != NULL);
+	return (pIsAppThemed != nullptr);
 }
 
 /**

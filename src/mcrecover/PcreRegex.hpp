@@ -48,14 +48,14 @@ class PcreRegex
 		 * @param errOffset	[out, opt] Error offset if the regex compilation fails.
 		 * @return 0 on success; pcre_compile() error on failure.
 		 */
-		int setRegex(QString regex, int *errOffset = NULL);
+		int setRegex(QString regex, int *errOffset = nullptr);
 
 		/**
 		 * Is a regular expression set?
 		 * @return True if set; false if not.
 		 */
 		bool isRegexSet(void) const
-			{ return (m_regex != NULL); }
+			{ return (m_regex != nullptr); }
 
 		/**
 		 * Execute a regular expression.
@@ -63,7 +63,7 @@ class PcreRegex
 		 * @param outVector	[out, opt] Output vector for substring matches.
 		 * @return Number of substring matches on success, or PCRE_ERROR_* value (negative number) on error.
 		 */
-		int exec(QByteArray subjectUtf8, QVector<QString> *outVector = NULL) const;
+		int exec(QByteArray subjectUtf8, QVector<QString> *outVector = nullptr) const;
 
 	protected:
 		// Compiled PCRE regular expression.

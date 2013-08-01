@@ -71,7 +71,7 @@ SearchThreadPrivate::SearchThreadPrivate(SearchThread* q)
 	: q(q)
 	, db(new GcnMcFileDb(q))
 	, worker(new SearchThreadWorker())
-	, workerThread(NULL)
+	, workerThread(nullptr)
 {
 	// Signal passthrough.
 	QObject::connect(worker, SIGNAL(searchStarted(int,int,int)),
@@ -108,7 +108,7 @@ void SearchThreadPrivate::stopWorkerThread(void)
 	workerThread->wait();
 	// TODO: Maybe we should keep the thread allocated?
 	delete workerThread;
-	workerThread = NULL;
+	workerThread = nullptr;
 }
 
 
@@ -136,7 +136,7 @@ int SearchThread::loadGcnMcFileDb(QString filename)
 	if (ret != 0) {
 		// TODO: Set the error string.
 		// For now, just show a message box.
-		QMessageBox::critical(NULL,
+		QMessageBox::critical(nullptr,
 			tr("Database Load Error"),
 			tr("Error loading the GCN Memory Card File database:") +
 			QLatin1String("\n\n") + d->db->errorString());

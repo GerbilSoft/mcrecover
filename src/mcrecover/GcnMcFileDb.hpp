@@ -73,7 +73,7 @@ class GcnMcFileDb : public QObject
 		 */
 		int checkBlock(const void *buf, int siz,
 			card_direntry *dirEntry,
-			QVector<Checksum::ChecksumDef> *checksumDefs = NULL) const;
+			QVector<Checksum::ChecksumDef> *checksumDefs = nullptr) const;
 
 		/**
 		 * Get the default database filename.
