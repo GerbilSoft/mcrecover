@@ -84,6 +84,14 @@ class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
 		void on_actionSave_triggered(void);
 		void on_actionSaveAll_triggered(void);
 
+		/**
+		 * Set the preferred region.
+		 * This slot is triggered by a QSignalMapper that
+		 * maps the various QActions.
+		 * @param preferredRegion Preferred region. (actually char)
+		 */
+		void setPreferredRegion_slot(int preferredRegion);
+
 		// MemCardModel slots.
 		void memCardModel_layoutChanged(void);
 		void memCardModel_rowsInserted(void);

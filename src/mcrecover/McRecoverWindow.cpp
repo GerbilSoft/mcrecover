@@ -47,6 +47,7 @@
 #include <QtCore/QStack>
 #include <QtCore/QVector>
 #include <QtCore/QFile>
+#include <QtCore/QSignalMapper>
 #include <QtGui/QAction>
 #include <QtGui/QActionGroup>
 #include <QtGui/QDragEnterEvent>
@@ -117,6 +118,14 @@ class McRecoverWindowPrivate
 
 		// QActionGroup for "Preferred region" buttons.
 		QActionGroup *actgrpRegion;
+
+		// Preferred region.
+		// Possible values: 0, 'E', 'P', 'J', 'K'
+		// 0 indicates no preferred region.
+		char preferredRegion;
+
+		// QSignalMapper for mapping the "preferred region" buttons.
+		QSignalMapper *mapperPreferredRegion;
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -127,6 +136,8 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, statusBarManager(nullptr)
 	, uiBusyCounter(0)
 	, actgrpRegion(nullptr)
+	, preferredRegion(0)
+	, mapperPreferredRegion(new QSignalMapper(q))
 {
 	// Connect the MemCardModel slots.
 	QObject::connect(model, SIGNAL(layoutChanged()),
@@ -147,6 +158,10 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 			 q, SLOT(markUiNotBusy()));
 	QObject::connect(searchThread, SIGNAL(destroyed(QObject*)),
 			 q, SLOT(markUiNotBusy()));
+
+	// Connect the QSignalMapper slots for "preferred region" selection.
+	QObject::connect(mapperPreferredRegion, SIGNAL(mapped(int)),
+			 q, SLOT(setPreferredRegion_slot(int)));
 }
 
 McRecoverWindowPrivate::~McRecoverWindowPrivate()
@@ -226,10 +241,30 @@ void McRecoverWindowPrivate::initMcToolbar(void)
 	actgrpRegion->addAction(q->actionRegionJP);
 	actgrpRegion->addAction(q->actionRegionKR);
 
+	// Connect QAction signals to the QSignalMapper.
+	QObject::connect(q->actionRegionUS, SIGNAL(triggered()),
+			 mapperPreferredRegion, SLOT(map()));
+	QObject::connect(q->actionRegionEU, SIGNAL(triggered()),
+			 mapperPreferredRegion, SLOT(map()));
+	QObject::connect(q->actionRegionJP, SIGNAL(triggered()),
+			 mapperPreferredRegion, SLOT(map()));
+	QObject::connect(q->actionRegionKR, SIGNAL(triggered()),
+			 mapperPreferredRegion, SLOT(map()));
+
+	// Set the mappings in the QSignalMapper.
+	mapperPreferredRegion->setMapping(q->actionRegionUS, 'E');
+	mapperPreferredRegion->setMapping(q->actionRegionEU, 'P');
+	mapperPreferredRegion->setMapping(q->actionRegionJP, 'J');
+	mapperPreferredRegion->setMapping(q->actionRegionKR, 'K');
+
 	// Set an initial "Preferred region".
 	// TODO: Determine default based on system locale.
 	// TODO: Save last selected region somewhere.
+	// NOTE: We're not calling trigger(), since we know
+	// which button is being checked. Hence, we need to
+	// set this->preferredRegion manually.
 	q->actionRegionUS->setChecked(true);
+	this->preferredRegion = 'E';
 
 	// Make sure the "About" button is right-aligned.
 	QWidget *spacer = new QWidget(q);
@@ -862,6 +897,16 @@ void McRecoverWindow::on_actionSaveAll_triggered(void)
 	// Save the files.
 	d->saveFiles(files);
 }
+
+
+/**
+ * Set the preferred region.
+ * This slot is triggered by a QSignalMapper that
+ * maps the various QActions.
+ * @param preferredRegion Preferred region. (actually char)
+ */
+void McRecoverWindow::setPreferredRegion_slot(int preferredRegion)
+	{ d->preferredRegion = static_cast<char>(preferredRegion); }
 
 
 void McRecoverWindow::memCardModel_layoutChanged(void)
