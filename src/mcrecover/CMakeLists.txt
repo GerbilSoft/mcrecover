@@ -108,6 +108,7 @@ SET(mcrecover_SRCS
 	MemCardItemDelegate.cpp
 	FileComments.cpp
 	QTreeViewOpt.cpp
+	TaskbarButtonManager/TaskbarButtonManager.cpp
 	)
 
 # Win32-specific sources.
@@ -136,6 +137,7 @@ SET(mcrecover_MOC_H
 	AboutDialog.hpp
 	MemCardItemDelegate.hpp
 	QTreeViewOpt.hpp
+	TaskbarButtonManager/TaskbarButtonManager.hpp
 	)
 
 # UI files.
@@ -168,11 +170,9 @@ IF(QT_QTDBUS_FOUND)
 	IF(UNIX AND NOT APPLE)
 		SET(mcrecover_DBUS_SRCS
 			${mcrecover_DBUS_SRCS}
-			TaskbarButtonManager/TaskbarButtonManager.cpp
 			TaskbarButtonManager/DockManager.cpp
 			)
 		SET(mcrecover_DBUS_MOC_H
-			TaskbarButtonManager/TaskbarButtonManager.hpp
 			TaskbarButtonManager/DockManager.hpp
 			)
 
