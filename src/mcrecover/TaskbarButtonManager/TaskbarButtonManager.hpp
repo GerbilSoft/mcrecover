@@ -49,7 +49,7 @@ class TaskbarButtonManager : public QObject
 		 * Get the window this TaskbarButtonManager is managing.
 		 * @return Window.
 		 */
-		QWidget *window(void);
+		QWidget *window(void) const;
 
 		/**
 		 * Set the window this TaskbarButtonManager should manage.
@@ -73,7 +73,7 @@ class TaskbarButtonManager : public QObject
 		 * Get the progress bar value.
 		 * @return Value.
 		 */
-		int progressBarValue(void);
+		int progressBarValue(void) const;
 
 		/**
 		 * Set the progress bar value.
@@ -85,7 +85,7 @@ class TaskbarButtonManager : public QObject
 		 * Get the progress bar's maximum value.
 		 * @return Maximum value.
 		 */
-		int progressBarMax(void);
+		int progressBarMax(void) const;
 
 		/**
 		 * Set the progress bar's maximum value.

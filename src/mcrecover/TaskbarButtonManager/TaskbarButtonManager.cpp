@@ -72,7 +72,7 @@ TaskbarButtonManager::~TaskbarButtonManager()
  * Get the window this TaskbarButtonManager is managing.
  * @return Window.
  */
-QWidget *TaskbarButtonManager::window(void)
+QWidget *TaskbarButtonManager::window(void) const
 	{ return d->window; }
 
 /**
@@ -112,7 +112,7 @@ void TaskbarButtonManager::clearProgressBar(void)
  * Get the progress bar value.
  * @return Value.
  */
-int TaskbarButtonManager::progressBarValue(void)
+int TaskbarButtonManager::progressBarValue(void) const
 	{ return d->progressBarValue; }
 
 /**
@@ -131,7 +131,7 @@ void TaskbarButtonManager::setProgressBarValue(int value)
  * Get the progress bar's maximum value.
  * @return Maximum value.
  */
-int TaskbarButtonManager::progressBarMax(void)
+int TaskbarButtonManager::progressBarMax(void) const
 	{ return d->progressBarMax; }
 
 /**
