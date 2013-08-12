@@ -184,6 +184,10 @@ void DockManagerPrivate::update(void)
 {
 	if (!ifDockItem)
 		return;
+	if (!ifDockItem->isValid()) {
+		close();
+		return;
+	}
 
 	// Update the DockItem.
 	QVariantMap dockItemProps;
