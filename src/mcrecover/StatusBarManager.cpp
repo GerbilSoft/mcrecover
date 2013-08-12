@@ -32,9 +32,8 @@
 #include <QtGui/QStatusBar>
 #include <QtGui/QProgressBar>
 
-// DockManager.
-// TODO: General "TaskbarButtonManager" with multiple implementations.
-#include "TaskbarButtonManager/DockManager.hpp"
+// taskbarButtonManager.
+#include "TaskbarButtonManager/TaskbarButtonManager.hpp"
 
 
 /** StatusBarManagerPrivate **/
@@ -85,9 +84,8 @@ class StatusBarManagerPrivate
 		// progress bar after the search has completed.
 		static const int SECONDS_TO_HIDE_PROGRESS_BAR = 5;
 
-		// DockManager.
-		// TODO: Cross-platform factory object?
-		DockManager *dockManager;
+		// TaskbarButtonManager.
+		TaskbarButtonManager *taskbarButtonManager;
 
 		// Timer for hiding the progress bar.
 		QTimer tmrHideProgressBar;
@@ -105,7 +103,7 @@ StatusBarManagerPrivate::StatusBarManagerPrivate(StatusBarManager *q)
 	, currentSearchBlock(0)
 	, totalSearchBlocks(0)
 	, lostFilesFound(0)
-	, dockManager(new DockManager(q))
+	, taskbarButtonManager(TaskbarButtonManager::Instance(q))
 {
 	// Default message.
 	lastStatusMessage = q->tr("Ready.");
@@ -122,7 +120,7 @@ StatusBarManagerPrivate::~StatusBarManagerPrivate()
 	delete lblMessage;
 	delete progressBar;
 	delete statusBar;
-	delete dockManager;
+	delete taskbarButtonManager;
 }
 
 
@@ -167,14 +165,14 @@ void StatusBarManagerPrivate::updateStatusBar(void)
 	if (progressBar && progressBar->isVisible()) {
 		progressBar->setMaximum(totalSearchBlocks);
 		progressBar->setValue(currentSearchBlock);
-		if (dockManager) {
+		if (taskbarButtonManager) {
 			// TODO: Set max only in initialization?
-			dockManager->setProgressBarValue(currentSearchBlock);
-			dockManager->setProgressBarMax(totalSearchBlocks);
+			taskbarButtonManager->setProgressBarValue(currentSearchBlock);
+			taskbarButtonManager->setProgressBarMax(totalSearchBlocks);
 		}
 	} else {
-		if (dockManager)
-			dockManager->clearProgressBar();
+		if (taskbarButtonManager)
+			taskbarButtonManager->clearProgressBar();
 	}
 }
 
@@ -225,8 +223,9 @@ void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 		disconnect(d->progressBar, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(object_destroyed_slot(QObject*)));
 
-		// Clear the DockManager window.
-		d->dockManager->setWindow(nullptr);
+		// Clear the TaskbarButtonManager window.
+		if (d->taskbarButtonManager)
+			d->taskbarButtonManager->setWindow(nullptr);
 
 		// Delete the progress bar.
 		delete d->progressBar;
@@ -258,9 +257,9 @@ void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 		d->progressBar->setMinimumWidth(320);
 		d->progressBar->setMaximumWidth(320);
 
-		// Set the DockManager's window to the status bar's topmost parent window.
-		QWidget *window = d->statusBar->window();
-		d->dockManager->setWindow(window);
+		// Set the TaskbarButtonmanager's window to the status bar's topmost parent window.
+		if (d->taskbarButtonManager)
+			d->taskbarButtonManager->setWindow(d->statusBar->window());
 
 		// Update the status bar.
 		d->updateStatusBar();

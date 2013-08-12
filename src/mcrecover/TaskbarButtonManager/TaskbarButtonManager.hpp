@@ -35,14 +35,29 @@ class TaskbarButtonManager : public QObject
 	Q_PROPERTY(int progressBarValue READ progressBarValue WRITE setProgressBarValue)
 	Q_PROPERTY(int progressBarMax READ progressBarMax WRITE setProgressBarMax)
 
-	public:
+	protected:
 		TaskbarButtonManager(QObject *parent = 0);
+	public:
 		virtual ~TaskbarButtonManager();
 
 	private:
 		friend class TaskbarButtonManagerPrivate;
 		TaskbarButtonManagerPrivate *const d;
 		Q_DISABLE_COPY(TaskbarButtonManager);
+
+	public:
+		/**
+		 * Is this TaskbarButtonManager usable?
+		 * @return True if usable; false if not.
+		 */
+		static bool IsUsable(void);
+
+		/**
+		 * Get a system-specific TaskbarButtonManager.
+		 * @param parent Parent object.
+		 * @return System-specific TaskbarButtonManager, or nullptr on error.
+		 */
+		static TaskbarButtonManager *Instance(QObject *parent = 0);
 
 	public:
 		/**

@@ -24,6 +24,12 @@
 // Qt includes.
 #include <QtGui/QWidget>
 
+// Available TaskbarButtonManager classes.
+#include <config.mcrecover.h>
+#ifdef QT_QTDBUS_FOUND
+#include "DockManager.hpp"
+#endif /* QT_QTDBUS_FOUND */
+
 class TaskbarButtonManagerPrivate
 {
 	public:
@@ -66,6 +72,39 @@ TaskbarButtonManager::TaskbarButtonManager(QObject* parent)
 
 TaskbarButtonManager::~TaskbarButtonManager()
 	{ delete d; }
+
+
+/**
+ * Is this TaskbarButtonManager usable?
+ * @return True if usable; false if not.
+ */
+bool TaskbarButtonManager::IsUsable(void)
+{
+	// Base class is not usable...
+	return false;
+}
+
+
+/**
+ * Get a system-specific TaskbarButtonManager.
+ * @param parent Parent object.
+ * @return System-specific TaskbarButtonManager, or nullptr on error.
+ */
+TaskbarButtonManager *TaskbarButtonManager::Instance(QObject *parent)
+{
+	TaskbarButtonManager *mgr = nullptr;
+
+	// Check the various implementations.
+#ifdef QT_QTDBUS_FOUND
+	// DockManager
+	if (DockManager::IsUsable()) {
+		// DockManager is usable.
+		mgr = new DockManager(parent);
+	}
+#endif
+
+	return mgr;
+}
 
 
 /**

@@ -32,12 +32,19 @@ class DockManager : public TaskbarButtonManager
 
 	public:
 		DockManager(QObject *parent = 0);
-		~DockManager();
+		virtual ~DockManager();
 
 	private:
 		friend class DockManagerPrivate;
 		DockManagerPrivate *const d;
 		Q_DISABLE_COPY(DockManager);
+
+	public:
+		/**
+		 * Is this TaskbarButtonManager usable?
+		 * @return True if usable; false if not.
+		 */
+		static bool IsUsable(void);
 
 	public:
 		/**

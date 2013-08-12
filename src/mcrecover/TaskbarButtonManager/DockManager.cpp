@@ -54,6 +54,13 @@ class DockManagerPrivate
 		void close(void);
 
 		/**
+		 * Get the DockManager interface.
+		 * @param parent Parent for the DockManager interface object.
+		 * @return DockManager interface, or nullptr on error.
+		 */
+		static NetLaunchpadDockManagerInterface *GetDockManagerInterface(QObject *parent = 0);
+
+		/**
 		 * Connect to the DockManager.
 		 * @return 0 on success; non-zero on error.
 		 */
@@ -106,6 +113,32 @@ void DockManagerPrivate::close(void)
 
 
 /**
+ * Get the DockManager interface.
+ * @param parent Parent for the DockManager interface object.
+ * @return DockManager interface, or nullptr on error.
+ */
+NetLaunchpadDockManagerInterface *DockManagerPrivate::GetDockManagerInterface(QObject *parent)
+{
+	// Get the session bus.
+	QDBusConnection bus = QDBusConnection::sessionBus();
+
+	// Connect to the DockManager over D-Bus.
+	NetLaunchpadDockManagerInterface *ifDockManager;
+	ifDockManager = new NetLaunchpadDockManagerInterface(
+				QLatin1String("net.launchpad.DockManager"),
+				QLatin1String("/net/launchpad/DockManager"),
+				bus, parent);
+	if (!ifDockManager->isValid()) {
+		// Cannot connect to the DockManager.
+		delete ifDockManager;
+		ifDockManager = nullptr;
+	}
+
+	return ifDockManager;
+}
+
+
+/**
  * Connect to the DockManager.
  * @return 0 on success; non-zero on error.
  */
@@ -122,16 +155,9 @@ int DockManagerPrivate::connectToDockManager(void)
 	QDBusConnection bus = QDBusConnection::sessionBus();
 
 	// Connect to the DockManager over D-Bus.
-	ifDockManager = new NetLaunchpadDockManagerInterface(
-				QLatin1String("net.launchpad.DockManager"),
-				QLatin1String("/net/launchpad/DockManager"),
-				bus, q);
-	if (!ifDockManager->isValid()) {
-		// Cannot connect to the DockManager.
-		delete ifDockManager;
-		ifDockManager = nullptr;
+	ifDockManager = GetDockManagerInterface(q);
+	if (!ifDockManager)
 		return 1;
-	}
 
 	// DockManager connected.
 	// Get the DockItem for the window.
@@ -215,6 +241,19 @@ DockManager::DockManager(QObject* parent)
 
 DockManager::~DockManager()
 	{ delete d; }
+
+/**
+ * Is this TaskbarButtonManager usable?
+ * @return True if usable; false if not.
+ */
+bool DockManager::IsUsable(void)
+{
+	NetLaunchpadDockManagerInterface *ifDockManager =
+		DockManagerPrivate::GetDockManagerInterface();
+	bool isUsable = !!ifDockManager;
+	delete ifDockManager;
+	return isUsable;
+}
 
 
 /**

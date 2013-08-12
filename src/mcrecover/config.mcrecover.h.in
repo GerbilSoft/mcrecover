@@ -35,6 +35,9 @@
 /* Define to 1 if Qt is built as a static library. */
 #cmakedefine QT_IS_STATIC 1
 
+/* Define to 1 if QtDBus was found. */
+#cmakedefine QT_QTDBUS_FOUND 1
+
 /* Data directory. */
 #define MCRECOVER_DATA_DIRECTORY "@MCRECOVER_DATA_DIRECTORY@"
 
