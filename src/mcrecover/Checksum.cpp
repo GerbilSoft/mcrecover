@@ -22,7 +22,7 @@
 #include "Checksum.hpp"
 #include "SonicChaoGarden.h"
 
-#include "byteswap.h"
+#include "util/byteswap.h"
 
 // C includes. (C++ namespace)
 #include <cstdio>

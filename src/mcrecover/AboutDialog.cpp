@@ -21,7 +21,7 @@
 
 #include "config.mcrecover.h"
 #include "AboutDialog.hpp"
-#include "git.h"
+#include "util/git.h"
 
 #include "GcnMcFileDb.hpp"
 

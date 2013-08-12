@@ -21,7 +21,7 @@
 
 #include "MemCard.hpp"
 #include "card.h"
-#include "byteswap.h"
+#include "util/byteswap.h"
 
 // MemCardFile
 #include "MemCardFile.hpp"

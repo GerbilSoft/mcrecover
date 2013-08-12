@@ -24,7 +24,7 @@
 
 // NOTE: This file is generated at compile-time.
 // It's located in the binary directory.
-#include "byteorder.h"
+#include "util/byteorder.h"
 
 #define __swab16(x) (((x) << 8) | ((x) >> 8))
 

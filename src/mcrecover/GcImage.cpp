@@ -22,7 +22,7 @@
 #include "GcImage.hpp"
 
 // Byteswapping macros.
-#include "byteswap.h"
+#include "util/byteswap.h"
 
 // C includes.
 #include <stdint.h>
