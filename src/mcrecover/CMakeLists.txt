@@ -19,8 +19,16 @@ ENDIF()
 # Components used:
 # - QtCore
 # - QtGui
+# - QtXml
+# - QtDBus (optional; used for DockManager / Unity API)
 SET(MCRECOVER_QT4_MIN_VERSION 4.6.0)
-FIND_PACKAGE(Qt4 ${MCRECOVER_QT4_MIN_VERSION} COMPONENTS QtCore QtGui QtXml)
+SET(MCRECOVER_QT_COMPONENTS QtCore QtGui QtXml)
+IF(ENABLE_DBUS)
+	SET(MCRECOVER_QT_COMPONENTS ${MCRECOVER_QT_COMPONENTS} QtDBus)
+ENDIF(ENABLE_DBUS)
+
+FIND_PACKAGE(Qt4 ${MCRECOVER_QT4_MIN_VERSION}
+	COMPONENTS ${MCRECOVER_QT_COMPONENTS})
 IF(NOT QT_QTCORE_FOUND)
 	MESSAGE(FATAL_ERROR "QtCore not found! Please install Qt ${MCRECOVER_QT4_MIN_VERSION} or higher.")
 ELSEIF(NOT QT_QTGUI_FOUND)
@@ -112,7 +120,7 @@ IF(WIN32)
 ENDIF(WIN32)
 
 # Headers with Qt4 objects.
-SET(mcrecover_MOC_HEADERS
+SET(mcrecover_MOC_H
 	MemCard.hpp
 	MemCardFile.hpp
 	McRecoverWindow.hpp
@@ -141,8 +149,35 @@ SET(mcrecover_UIS
 # Generate the header files from the UI files.
 QT4_WRAP_UI(mcrecover_UIS_H ${mcrecover_UIS})
 
-# Create .moc files for sources that need them.
-QT4_WRAP_CPP(mcrecover_MOC_SOURCES ${mcrecover_MOC_HEADERS})
+# Create MOC source files for classes that need them.
+QT4_WRAP_CPP(mcrecover_MOC_SRCS ${mcrecover_MOC_H})
+
+IF(QT_QTDBUS_FOUND)
+	# QtDBus found.
+	# Enable DockManager / Unity API support.
+	# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
+	# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
+	INCLUDE(QtDBusInterfaceNoNS)
+	QT4_ADD_DBUS_INTERFACES_NONS(
+		mcrecover_DBUS_SRCS
+		INCLUDE dbus/DBusMetatypes.hpp
+		dbus/net.launchpad.DockItem.xml
+		dbus/net.launchpad.DockManager.xml
+		)
+
+	IF(UNIX AND NOT APPLE)
+		SET(mcrecover_DBUS_SRCS
+			${mcrecover_DBUS_SRCS}
+			TaskbarButtonManager/DockManager.cpp
+			)
+		SET(mcrecover_DBUS_MOC_H
+			TaskbarButtonManager/DockManager.hpp
+			)
+
+		# Create MOC source files for classes that need them.
+		QT4_WRAP_CPP(mcrecover_DBUS_MOC_SRCS ${mcrecover_DBUS_MOC_H})
+	ENDIF(UNIX AND NOT APPLE)
+ENDIF(QT_QTDBUS_FOUND)
 
 #################
 # Translations. #
@@ -177,10 +212,11 @@ QT4_ADD_RESOURCES(
 # to disable the command prompt window.
 ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_SRCS}
-	${mcrecover_COMPAT_SRCS}
-	${mcrecover_MOC_SOURCES}
+	${mcrecover_MOC_SRCS}
 	${mcrecover_UIS_H}
 	${mcrecover_RCC_O}
+	${mcrecover_DBUS_SRCS}
+	${mcrecover_DBUS_MOC_SRCS}
 	)
 TARGET_LINK_LIBRARIES(mcrecover
 	${QT_XML_LIBRARY}
@@ -190,6 +226,10 @@ TARGET_LINK_LIBRARIES(mcrecover
 	${WIN32_LIBS}
 	${APPLE_LIBS}
 	)
+IF(QT_QTDBUS_FOUND)
+	TARGET_LINK_LIBRARIES(mcrecover ${QT_QTDBUS_LIBRARY})
+ENDIF(QT_QTDBUS_FOUND)
+
 # TODO: Translations.
 #ADD_DEPENDENCIES(gens-qt4 translations_target)
 

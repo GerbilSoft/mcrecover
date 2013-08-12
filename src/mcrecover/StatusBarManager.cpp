@@ -32,6 +32,10 @@
 #include <QtGui/QStatusBar>
 #include <QtGui/QProgressBar>
 
+// DockManager.
+// TODO: General "TaskbarButtonManager" with multiple implementations.
+#include "TaskbarButtonManager/DockManager.hpp"
+
 
 /** StatusBarManagerPrivate **/
 
@@ -76,6 +80,10 @@ class StatusBarManagerPrivate
 		int currentSearchBlock;
 		int totalSearchBlocks;
 		int lostFilesFound;
+
+		// DockManager.
+		// TODO: Cross-platform factory object?
+		DockManager *dockManager;
 };
 
 StatusBarManagerPrivate::StatusBarManagerPrivate(StatusBarManager *q)
@@ -90,6 +98,7 @@ StatusBarManagerPrivate::StatusBarManagerPrivate(StatusBarManager *q)
 	, currentSearchBlock(0)
 	, totalSearchBlocks(0)
 	, lostFilesFound(0)
+	, dockManager(new DockManager(q))
 {
 	// Default message.
 	lastStatusMessage = q->tr("Ready.");
@@ -100,6 +109,7 @@ StatusBarManagerPrivate::~StatusBarManagerPrivate()
 	delete lblMessage;
 	delete progressBar;
 	delete statusBar;
+	delete dockManager;
 }
 
 
@@ -141,9 +151,14 @@ void StatusBarManagerPrivate::updateStatusBar(void)
 
 	// Set the progress bar values.
 	// TODO: Hide the progress bar ~5 seconds after scan is complete?
-	if (progressBar) {
+	if (progressBar && progressBar->isVisible()) {
 		progressBar->setMaximum(totalSearchBlocks);
 		progressBar->setValue(currentSearchBlock);
+		if (dockManager)
+			dockManager->setProgressBar(currentSearchBlock, totalSearchBlocks);
+	} else {
+		if (dockManager)
+			dockManager->clearProgressBar();
 	}
 }
 
@@ -191,6 +206,9 @@ void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 		disconnect(d->progressBar, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(object_destroyed_slot(QObject*)));
 
+		// Clear the DockManager window.
+		d->dockManager->setWindow(nullptr);
+
 		// Delete the progress bar.
 		delete d->progressBar;
 		d->progressBar = nullptr;
@@ -220,6 +238,10 @@ void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 		// Set the progress bar's size so it doesn't randomly resize.
 		d->progressBar->setMinimumWidth(320);
 		d->progressBar->setMaximumWidth(320);
+
+		// Set the DockManager's window to the status bar's topmost parent window.
+		QWidget *window = d->statusBar->window();
+		d->dockManager->setWindow(window);
 
 		// Update the status bar.
 		d->updateStatusBar();
