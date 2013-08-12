@@ -132,6 +132,13 @@ class StatusBarManager : public QObject
 		 * @param errorString Error string.
 		 */
 		void searchError_slot(QString errorString);
+
+		/**
+		 * Hide the progress bar.
+		 * This is usually done a few seconds after the
+		 * search is completed.
+		 */
+		void hideProgressBar_slot(void);
 };
 
 #endif /* __MCRECOVER_STATUSBARMANAGER_HPP__ */

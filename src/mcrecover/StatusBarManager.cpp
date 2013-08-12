@@ -26,7 +26,7 @@
 
 // Qt includes.
 #include <QtCore/QDir>
-#include <QtCore/QDateTime>
+#include <QtCore/QTimer>
 #include <QtGui/QApplication>
 #include <QtGui/QLabel>
 #include <QtGui/QStatusBar>
@@ -81,9 +81,16 @@ class StatusBarManagerPrivate
 		int totalSearchBlocks;
 		int lostFilesFound;
 
+		// Number of seconds to wait before hiding the
+		// progress bar after the search has completed.
+		static const int SECONDS_TO_HIDE_PROGRESS_BAR = 5;
+
 		// DockManager.
 		// TODO: Cross-platform factory object?
 		DockManager *dockManager;
+
+		// Timer for hiding the progress bar.
+		QTimer tmrHideProgressBar;
 };
 
 StatusBarManagerPrivate::StatusBarManagerPrivate(StatusBarManager *q)
@@ -102,6 +109,12 @@ StatusBarManagerPrivate::StatusBarManagerPrivate(StatusBarManager *q)
 {
 	// Default message.
 	lastStatusMessage = q->tr("Ready.");
+
+	// Initialize the timer.
+	tmrHideProgressBar.setInterval(SECONDS_TO_HIDE_PROGRESS_BAR * 1000);
+	tmrHideProgressBar.setSingleShot(true);
+	QObject::connect(&tmrHideProgressBar, SIGNAL(timeout()),
+			 q, SLOT(hideProgressBar_slot()));
 }
 
 StatusBarManagerPrivate::~StatusBarManagerPrivate()
@@ -197,6 +210,9 @@ QStatusBar *StatusBarManager::statusBar(void) const
  */
 void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 {
+	// Stop the Hide Progress Bar timer.
+	d->tmrHideProgressBar.stop();
+
 	if (d->statusBar) {
 		// Disconnect signals from the current statusBar.
 		disconnect(d->statusBar, SIGNAL(destroyed(QObject*)),
@@ -326,6 +342,9 @@ void StatusBarManager::opened(QString filename)
 	d->progressBar->setVisible(false);
 	d->lastStatusMessage = tr("Loaded GameCube Memory Card image %1").arg(filename);
 	d->updateStatusBar();
+
+	// Stop the Hide Progress Bar timer.
+	d->tmrHideProgressBar.stop();
 }
 
 
@@ -338,6 +357,9 @@ void StatusBarManager::closed(void)
 	d->progressBar->setVisible(false);
 	d->lastStatusMessage = tr("GameCube Memory Card image closed.");
 	d->updateStatusBar();
+
+	// Stop the Hide Progress Bar timer.
+	d->tmrHideProgressBar.stop();
 }
 
 
@@ -353,6 +375,9 @@ void StatusBarManager::filesSaved(int n, QString path)
 	d->lastStatusMessage = tr("%Ln file(s) saved to %1.", nullptr, n)
 				.arg(QDir::toNativeSeparators(path));
 	d->updateStatusBar();
+
+	// Stop the Hide Progress Bar timer.
+	d->tmrHideProgressBar.stop();
 }
 
 
@@ -369,9 +394,12 @@ void StatusBarManager::object_destroyed_slot(QObject *obj)
 		d->statusBar = nullptr;
 	else if (obj == d->lblMessage)
 		d->lblMessage = nullptr;
-	else if (obj == d->progressBar)
+	else if (obj == d->progressBar) {
+		// Stop the Hide Progress Bar timer.
+		d->tmrHideProgressBar.stop();
+		
 		d->progressBar = nullptr;
-	else if (obj == d->searchThread)
+	} else if (obj == d->searchThread)
 		d->searchThread = nullptr;
 }
 
@@ -393,6 +421,9 @@ void StatusBarManager::searchStarted_slot(int totalPhysBlocks, int totalSearchBl
 	d->totalSearchBlocks = totalSearchBlocks;
 	d->lostFilesFound = 0;
 	d->updateStatusBar();
+
+	// Stop the Hide Progress Bar timer.
+	d->tmrHideProgressBar.stop();
 }
 
 /**
@@ -404,6 +435,10 @@ void StatusBarManager::searchCancelled_slot(void)
 	d->scanning = false;
 	d->lastStatusMessage = tr("Scan cancelled.");
 	d->updateStatusBar();
+
+	// Stop the Hide Progress Bar timer.
+	// TODO: (or keep it running?)
+	d->tmrHideProgressBar.stop();
 }
 
 /**
@@ -418,6 +453,9 @@ void StatusBarManager::searchFinished_slot(int lostFilesFound)
 	d->currentSearchBlock = d->totalSearchBlocks;
 	d->lastStatusMessage = tr("Scan complete. %Ln lost file(s) found.", nullptr, lostFilesFound);
 	d->updateStatusBar();
+
+	// Hide the progress bar after a few seconds.
+	d->tmrHideProgressBar.start();
 }
 
 /**
@@ -445,4 +483,18 @@ void StatusBarManager::searchError_slot(QString errorString)
 	d->scanning = false;
 	d->lastStatusMessage = tr("An error occurred while scanning: %1")
 				.arg(errorString);
+
+	// TODO: Keep the progress bar visible but indicate an error.
+}
+
+
+/**
+ * Hide the progress bar.
+ * This is usually done a few seconds after the
+ * search is completed.
+ */
+void StatusBarManager::hideProgressBar_slot(void)
+{
+	d->progressBar->setVisible(false);
+	d->updateStatusBar();
 }
