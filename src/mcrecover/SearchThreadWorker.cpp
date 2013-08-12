@@ -163,9 +163,6 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
 		return -2;
 	}
 
-	// Current directory entry.
-	SearchData searchData;
-
 	// Block buffer.
 	const int blockSize = card->blockSize();
 	void *buf = malloc(blockSize);
@@ -192,9 +189,15 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
 		}
 
 		// Check the block in the database.
-		ret = db->checkBlock(buf, blockSize, &(searchData.dirEntry), &(searchData.checksumDefs));
-		if (!ret) {
+		QVector<SearchData> searchDataEntries;
+		searchDataEntries = db->checkBlock(buf, blockSize);
+		// TODO: Search for preferred region. For now, just use the first hit.
+		if (!searchDataEntries.isEmpty()) {
 			// Matched!
+			// NOTE: GcnMcFileDb doesn't initialize fatEntries.
+			// Hence, we have to make a copy and initialize the list.
+			SearchData searchData = searchDataEntries.at(0);
+
 			fprintf(stderr, "FOUND A MATCH: %-.4s%-.2s %-.32s\n",
 				searchData.dirEntry.gamecode,
 				searchData.dirEntry.company,

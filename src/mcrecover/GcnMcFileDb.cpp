@@ -118,6 +118,18 @@ class GcnMcFileDbPrivate
 		 * @param textCodec QTextCodec. (If nullptr, use latin1.)
 		 */
 		static QByteArray GetGcnCommentUtf8(const char *buf, int siz, QTextCodec *textCodec);
+
+		/**
+		 * Construct a SearchData entry.
+		 * @param matchFileDef	[in] File definition.
+		 * @param vars		[in] Variables.
+		 * @param gcnDateTime	[in] GCN timestamp.
+		 * @return SearchData entry.
+		 */
+		SearchData constructSearchData(
+			const GcnMcFileDef *matchFileDef,
+			QHash<QString, QString> vars,
+			GcnDateTime gcnDateTime) const;
 };
 
 GcnMcFileDbPrivate::GcnMcFileDbPrivate(GcnMcFileDb *q)
@@ -776,6 +788,87 @@ QByteArray GcnMcFileDbPrivate::GetGcnCommentUtf8(const char *buf, int siz, QText
 }
 
 
+/**
+ * Construct a SearchData entry.
+ * @param matchFileDef	[in] File definition.
+ * @param vars		[in] Variables.
+ * @param gcnDateTime	[in] GCN timestamp.
+ * @return SearchData entry.
+ */
+SearchData GcnMcFileDbPrivate::constructSearchData(
+	const GcnMcFileDef *matchFileDef,
+	const QHash<QString, QString> vars,
+	const GcnDateTime gcnDateTime) const
+{
+	// TODO: Implicitly share SearchData?
+	SearchData searchData;
+	card_direntry *const dirEntry = &searchData.dirEntry;
+	memset(dirEntry, 0x00, sizeof(*dirEntry));
+	
+	QByteArray ba;
+
+	// Game code.
+	ba = matchFileDef->gamecode.toLatin1();
+	strncpy(dirEntry->gamecode, ba.constData(), sizeof(dirEntry->gamecode));
+
+	// Company code.
+	ba = matchFileDef->company.toLatin1();
+	strncpy(dirEntry->company, ba.constData(), sizeof(dirEntry->company));
+
+	// Clear the byte array before converting the filename.
+	ba = QByteArray();
+
+	// Substitute variables in the filename.
+	QString filename = VarReplace::Exec(matchFileDef->dirEntry.filename, vars);
+
+	// Filename.
+	if (dirEntry->gamecode[3] == 'J' && textCodecJP) {
+		// JP file. Convert to Shift-JIS.
+		ba = textCodecJP->fromUnicode(filename);
+	} else if (textCodecUS) {
+		// US/EU file. Convert to cp1252.
+		ba = textCodecUS->fromUnicode(filename);
+	}
+
+	if (ba.isEmpty()) {
+		// QByteArray is empty. Conversion failed.
+		// Convert to Latin1 instead.
+		ba = filename.toLatin1();
+	}
+
+	if (ba.length() > (int)sizeof(dirEntry->filename))
+		ba.resize(sizeof(dirEntry->filename));
+	strncpy(dirEntry->filename, ba.constData(), sizeof(dirEntry->filename));
+	// TODO: Make sure the filename is null-terminated?
+
+	// Values.
+	/**
+	 * TODO:
+	 * - Use the actual starting block?
+	 * - Block offsets for files with commentaddr >= 0x2000
+	 * - Support for variable-length files?
+	 */
+	dirEntry->pad_00	= 0xFF;
+	dirEntry->bannerfmt	= matchFileDef->dirEntry.bannerFormat;
+	dirEntry->lastmodified	= gcnDateTime.gcnTimestamp();
+	dirEntry->iconaddr	= matchFileDef->dirEntry.iconAddress;
+	dirEntry->iconfmt	= matchFileDef->dirEntry.iconFormat;
+	dirEntry->iconspeed	= matchFileDef->dirEntry.iconSpeed;
+	dirEntry->permission	= matchFileDef->dirEntry.permission;
+	dirEntry->copytimes	= 0;
+	dirEntry->block		= 5;	// FIXME
+	dirEntry->length	= matchFileDef->dirEntry.length;
+	dirEntry->pad_01	= 0xFFFF;
+	dirEntry->commentaddr	= matchFileDef->search.address;
+
+	// Checksum data.
+	searchData.checksumDefs = matchFileDef->checksumDefs;
+
+	// Return the SearchData entry.
+	return searchData;
+}
+
+
 /** GcnMcFileDb **/
 
 GcnMcFileDb::GcnMcFileDb(QObject *parent)
@@ -813,28 +906,14 @@ QString GcnMcFileDb::errorString(void) const
 
 /**
  * Check a GCN memory card block to see if it matches any search patterns.
- * @param buf		[in] GCN memory card block to check.
- * @param siz		[in] Size of buf. (Should be BLOCK_SIZE == 0x2000.)
- * @param dirEntry	[out] Constructed directory entry if a pattern matched.
- * @param checksumDefs	[out, opt] Checksum definitions for the file.
- * @return 0 if a pattern was matched; non-zero if not.
+ * @param buf	[in] GCN memory card block to check.
+ * @param siz	[in] Size of buf. (Should be BLOCK_SIZE == 0x2000.)
+ * @return QVector of matches, or empty QVector if no matches were found.
  */
-int GcnMcFileDb::checkBlock(const void *buf, int siz,
-	card_direntry *dirEntry,
-	QVector<Checksum::ChecksumDef> *checksumDefs) const
+QVector<SearchData> GcnMcFileDb::checkBlock(const void *buf, int siz) const
 {
-	// TODO: Return a list of FAT entries.
-	// (May require more info from MemCard, and might need to be in
-	// another function somewhere else.)
-
-	// Matching file definition.
-	const GcnMcFileDef *matchFileDef = nullptr;
-	QHash<QString, QString> vars;
-	QString filename;
-	GcnDateTime gcnDateTime;
-
-	// Substring matches.
-	QVector<QString> gameDescVars, fileDescVars;
+	// File entry matches.
+	QVector<SearchData> fileMatches;
 
 	foreach (uint32_t address, d->addr_file_defs.keys()) {
 		// Make sure this address is within the bounds of the buffer.
@@ -855,10 +934,9 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz,
 			bool gameDescMatch = false, fileDescMatch = false;
 			int rc;
 
-			// Clear the substring match vectors.
+			// Substring matches.
 			// TODO: Only copy substrings if both regexes match?
-			gameDescVars.clear();
-			fileDescVars.clear();
+			QVector<QString> gameDescVars, fileDescVars;
 
 			// Check if the Game Description (US) matches.
 			rc = gcnMcFileDef->search.gameDesc_regex.exec(gameDescUS, &gameDescVars);
@@ -884,90 +962,23 @@ int GcnMcFileDb::checkBlock(const void *buf, int siz,
 
 			if (gameDescMatch && fileDescMatch) {
 				// Found a match.
+				QHash<QString, QString> vars;
+				GcnDateTime gcnDateTime;
+
 				// Attempt to apply variable modifiers.
 				vars = VarReplace::VecsToHash(gameDescVars, fileDescVars);
 				int ret = VarReplace::ApplyModifiers(gcnMcFileDef->varModifiers, vars, &gcnDateTime);
 				if (ret == 0) {
 					// Variable modifiers applied successfully.
-					matchFileDef = gcnMcFileDef;
-					break;
+					// Construct a SearchData struct for this file entry.
+					fileMatches.append(d->constructSearchData(gcnMcFileDef, vars, gcnDateTime));
 				}
 			}
 		}
-
-		if (matchFileDef)
-			break;
 	}
 
-	if (!matchFileDef) {
-		// No match.
-		return -1;
-	}
-
-	// Construct the directory entry for this file.
-	memset(dirEntry, 0x00, sizeof(*dirEntry));
-	QByteArray ba;
-
-	// Game code.
-	ba = matchFileDef->gamecode.toLatin1();
-	strncpy(dirEntry->gamecode, ba.constData(), sizeof(dirEntry->gamecode));
-
-	// Company code.
-	ba = matchFileDef->company.toLatin1();
-	strncpy(dirEntry->company, ba.constData(), sizeof(dirEntry->company));
-
-	// Clear the byte array before converting the filename.
-	ba = QByteArray();
-
-	// Substitute variables in the filename.
-	filename = VarReplace::Exec(matchFileDef->dirEntry.filename, vars);
-
-	// Filename.
-	if (dirEntry->gamecode[3] == 'J' && d->textCodecJP) {
-		// JP file. Convert to Shift-JIS.
-		ba = d->textCodecJP->fromUnicode(filename);
-	} else if (d->textCodecUS) {
-		// US/EU file. Convert to cp1252.
-		ba = d->textCodecUS->fromUnicode(filename);
-	}
-
-	if (ba.isEmpty()) {
-		// QByteArray is empty. Conversion failed.
-		// Convert to Latin1 instead.
-		ba = filename.toLatin1();
-	}
-
-	if (ba.length() > (int)sizeof(dirEntry->filename))
-		ba.resize(sizeof(dirEntry->filename));
-	strncpy(dirEntry->filename, ba.constData(), sizeof(dirEntry->filename));
-	// TODO: Make sure the filename is null-terminated?
-
-	// Values.
-	/**
-	 * TODO:
-	 * - Use the actual starting block?
-	 * - Block offsets for files with commentaddr >= 0x2000
-	 * - Support for variable-length files?
-	 */
-	dirEntry->pad_00	= 0xFF;
-	dirEntry->bannerfmt	= matchFileDef->dirEntry.bannerFormat;
-	dirEntry->lastmodified	= gcnDateTime.gcnTimestamp();
-	dirEntry->iconaddr	= matchFileDef->dirEntry.iconAddress;
-	dirEntry->iconfmt	= matchFileDef->dirEntry.iconFormat;
-	dirEntry->iconspeed	= matchFileDef->dirEntry.iconSpeed;
-	dirEntry->permission	= matchFileDef->dirEntry.permission;
-	dirEntry->copytimes	= 0;
-	dirEntry->block		= 5;	// FIXME
-	dirEntry->length	= matchFileDef->dirEntry.length;
-	dirEntry->pad_01	= 0xFFFF;
-	dirEntry->commentaddr	= matchFileDef->search.address;
-
-	// Checksum data.
-	if (checksumDefs)
-		*checksumDefs = matchFileDef->checksumDefs;
-
-	// Directory entry matched.
-	return 0;
+	// Return the matched files.
+	return fileMatches;
 }
 
 

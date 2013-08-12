@@ -28,6 +28,9 @@
 // Checksum algorithm class.
 #include "Checksum.hpp"
 
+// Search data.
+#include "SearchData.hpp"
+
 // Qt includes.
 #include <QtCore/QObject>
 #include <QtCore/QString>
@@ -65,15 +68,11 @@ class GcnMcFileDb : public QObject
 
 		/**
 		 * Check a GCN memory card block to see if it matches any search patterns.
-		 * @param buf		[in] GCN memory card block to check.
-		 * @param siz		[in] Size of buf. (Should be BLOCK_SIZE == 0x2000.)
-		 * @param dirEntry	[out] Constructed directory entry if a pattern matched.
-		 * @param checksumDef	[out, opt] Checksum definitions for the file.
-		 * @return 0 if a pattern was matched; non-zero if not.
+		 * @param buf	[in] GCN memory card block to check.
+		 * @param siz	[in] Size of buf. (Should be BLOCK_SIZE == 0x2000.)
+		 * @return QVector of matches, or empty QVector if no matches were found.
 		 */
-		int checkBlock(const void *buf, int siz,
-			card_direntry *dirEntry,
-			QVector<Checksum::ChecksumDef> *checksumDefs = nullptr) const;
+		QVector<SearchData> checkBlock(const void *buf, int siz) const;
 
 		/**
 		 * Get the default database filename.
