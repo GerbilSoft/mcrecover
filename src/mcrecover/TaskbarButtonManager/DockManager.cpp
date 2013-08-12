@@ -73,14 +73,6 @@ class DockManagerPrivate
 		// DockManager.
 		NetLaunchpadDockManagerInterface *ifDockManager;
 		NetLaunchpadDockItemInterface *ifDockItem;
-
-	public:
-		// Window.
-		QWidget *window;
-
-		// Status elements.
-		int progressBarValue;	// Current progress. (-1 for no bar)
-		int progressBarMax;	// Maximum progress.
 };
 
 
@@ -88,12 +80,16 @@ DockManagerPrivate::DockManagerPrivate(DockManager *const q)
 	: q(q)
 	, ifDockManager(nullptr)
 	, ifDockItem(nullptr)
-	, window(nullptr)
-	, progressBarValue(0)
-	, progressBarMax(100)
 {
 	// Make sure the DBus metatypes are registered.
 	registerDBusMetatypes();
+}
+
+
+DockManagerPrivate::~DockManagerPrivate()
+{
+	// Close all DockManager connections.
+	close();
 }
 
 
@@ -119,7 +115,7 @@ int DockManagerPrivate::connectToDockManager(void)
 	close();
 
 	// If we don't have a window specified, don't do anything.
-	if (!window)
+	if (!q->window())
 		return -1;
 
 	// Get the session bus.
@@ -194,12 +190,14 @@ void DockManagerPrivate::update(void)
 
 	// Progress.
 	int progress;
-	if (progressBarValue < 0 || progressBarMax <= 0) {
+	int curVal = q->progressBarValue();
+	int curMax = q->progressBarMax();
+	if (curVal < 0 || curMax <= 0) {
 		progress = -1;
-	} else if (progressBarValue >= progressBarMax) {
+	} else if (curVal >= curMax) {
 		progress = 100;
 	} else {
-		progress = (int)(((float)progressBarValue / (float)progressBarMax) * 100);
+		progress = (int)(((float)curVal / (float)curMax) * 100);
 	}
 	dockItemProps[QLatin1String("progress")] = progress;
 
@@ -207,57 +205,38 @@ void DockManagerPrivate::update(void)
 }
 
 
-DockManagerPrivate::~DockManagerPrivate()
-{
-	// Close all DockManager connections.
-	close();
-}
-
-
 /** DockManager **/
 
 
 DockManager::DockManager(QObject* parent)
-	: QObject(parent)
+	: TaskbarButtonManager(parent)
 	, d(new DockManagerPrivate(this))
-{
-
-}
+{ }
 
 DockManager::~DockManager()
-{
-	delete d;
-}
+	{ delete d; }
 
 
 /**
- * Get the window this DockManager is managing.
- * @return Window.
- */
-QWidget *DockManager::window(void)
-	{ return d->window; }
-
-/**
- * Set the window this DockManager should manage.
+ * Set the window this TaskbarButtonManager should manage.
  * This must be a top-level window in order to work properly.
+ *
+ * Subclasses should reimplement this function if special
+ * initialization is required to set up the taskbar button.
+ *
+ * TODO: Make a separate protected function that setWindow() calls?
+ *
  * @param window Window.
  */
 void DockManager::setWindow(QWidget *window)
 {
-	if (d->window) {
-		// Disconnect slots from the existing window.
-		disconnect(d->window, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(windowDestroyed_slot(QObject*)));
-		d->close();
-	}
+	// Disconnect any existing connections.
+	d->close();
 
-	d->window = window;
+	// Set the new window.
+	TaskbarButtonManager::setWindow(window);
 
-	if (d->window) {
-		// Connect slots to the new window.
-		connect(d->window, SIGNAL(destroyed(QObject*)),
-			this, SLOT(windowDestroyed_slot(QObject*)));
-
+	if (window != nullptr) {
 		// Connect to the DockManager.
 		// HACK: Make sure it's after the window is initialized.
 		QTimer::singleShot(100, this, SLOT(setWindow_timer_slot()));
@@ -266,72 +245,13 @@ void DockManager::setWindow(QWidget *window)
 
 
 /**
- * Clear the progress bar.
+ * Update the taskbar button.
  */
-void DockManager::clearProgressBar(void)
-{
-	d->progressBarValue = -1;
-	d->progressBarMax = -1;
-	d->update();
-}
-
-/**
- * Get the progress bar value.
- * @return Value.
- */
-int DockManager::progressBarValue(void)
-	{ return d->progressBarValue; }
-
-/**
- * Set the progress bar value.
- * @param value Value.
- */
-void DockManager::setProgressBarValue(int value)
-{
-	if (d->progressBarValue != value) {
-		d->progressBarValue = value;
-		d->update();
-	}
-}
-
-/**
- * Get the progress bar's maximum value.
- * @return Maximum value.
- */
-int DockManager::progressBarMax(void)
-	{ return d->progressBarMax; }
-
-/**
- * Set the progress bar's maximum value.
- * @param max Maximum value.
- */
-void DockManager::setProgressBarMax(int max)
-{
-	if (d->progressBarMax != max) {
-		d->progressBarMax = max;
-		d->update();
-	}
-}
+void DockManager::update(void)
+	{ d->update(); }
 
 
 /** Slots **/
-
-
-/**
- * Window we're managing was destroyed.
- * @param obj QObject that was destroyed.
- */
-void DockManager::windowDestroyed_slot(QObject *obj)
-{
-	if (!d->window || !obj)
-		return;
-
-	if (obj == d->window) {
-		// This was our window.
-		d->window = nullptr;
-		d->close();
-	}
-}
 
 
 /**

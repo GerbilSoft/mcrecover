@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * DockManager.cpp: DockManager D-Bus implementation.                      *
+ * TaskbarButtonManager.hpp: Taskbar button manager base class.            *
  *                                                                         *
  * Copyright (c) 2013 by David Korth.                                      *
  *                                                                         *
@@ -19,27 +19,38 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_DOCKMANAGER_HPP__
-#define __MCRECOVER_DOCKMANAGER_HPP__
+#ifndef __MCRECOVER_TASKBARBUTTONMANAGER_HPP__
+#define __MCRECOVER_TASKBARBUTTONMANAGER_HPP__
 
-#include "TaskbarButtonManager.hpp"
+#include <QtCore/QObject>
+class QWidget;
 
-class DockManagerPrivate;
+class TaskbarButtonManagerPrivate;
 
-class DockManager : public TaskbarButtonManager
+class TaskbarButtonManager : public QObject
 {
 	Q_OBJECT
 
+	Q_PROPERTY(QWidget* window READ window WRITE setWindow)
+	Q_PROPERTY(int progressBarValue READ progressBarValue WRITE setProgressBarValue)
+	Q_PROPERTY(int progressBarMax READ progressBarMax WRITE setProgressBarMax)
+
 	public:
-		DockManager(QObject *parent = 0);
-		~DockManager();
+		TaskbarButtonManager(QObject *parent = 0);
+		virtual ~TaskbarButtonManager();
 
 	private:
-		friend class DockManagerPrivate;
-		DockManagerPrivate *const d;
-		Q_DISABLE_COPY(DockManager);
+		friend class TaskbarButtonManagerPrivate;
+		TaskbarButtonManagerPrivate *const d;
+		Q_DISABLE_COPY(TaskbarButtonManager);
 
 	public:
+		/**
+		 * Get the window this TaskbarButtonManager is managing.
+		 * @return Window.
+		 */
+		QWidget *window(void);
+
 		/**
 		 * Set the window this TaskbarButtonManager should manage.
 		 * This must be a top-level window in order to work properly.
@@ -53,19 +64,47 @@ class DockManager : public TaskbarButtonManager
 		 */
 		virtual void setWindow(QWidget *window);
 
+		/**
+		 * Clear the progress bar.
+		 */
+		void clearProgressBar(void);
+
+		/**
+		 * Get the progress bar value.
+		 * @return Value.
+		 */
+		int progressBarValue(void);
+
+		/**
+		 * Set the progress bar value.
+		 * @param current Value.
+		 */
+		void setProgressBarValue(int value);
+
+		/**
+		 * Get the progress bar's maximum value.
+		 * @return Maximum value.
+		 */
+		int progressBarMax(void);
+
+		/**
+		 * Set the progress bar's maximum value.
+		 * @param max Maximum value.
+		 */
+		void setProgressBarMax(int max);
+
 	protected:
 		/**
 		 * Update the taskbar button.
 		 */
-		void update(void);
+		virtual void update(void) = 0;
 
-	private slots:
+	protected slots:
 		/**
-		 * HACK: Timer for window initialization.
-		 * If we attempt to get the dock item before the
-		 * window is fully initialized, we won't find it.
+		 * Window we're managing was destroyed.
+		 * @param obj QObject that was destroyed.
 		 */
-		void setWindow_timer_slot(void);
+		void windowDestroyed_slot(QObject *obj);
 };
 
-#endif /* __MCRECOVER_DOCKMANAGER_HPP__ */
+#endif /* __MCRECOVER_TASKBARBUTTONMANAGER_HPP__ */
