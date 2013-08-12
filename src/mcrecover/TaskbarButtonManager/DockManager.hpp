@@ -31,6 +31,10 @@ class DockManager : public QObject
 {
 	Q_OBJECT
 
+	Q_PROPERTY(QWidget* window READ window WRITE setWindow)
+	Q_PROPERTY(int progressBarValue READ progressBarValue WRITE setProgressBarValue)
+	Q_PROPERTY(int progressBarMax READ progressBarMax WRITE setProgressBarMax)
+
 	public:
 		DockManager(QObject *parent = 0);
 		~DockManager();
@@ -60,11 +64,28 @@ class DockManager : public QObject
 		void clearProgressBar(void);
 
 		/**
-		 * Set the progress bar value.
-		 * @param current Current progress.
-		 * @param max Maximum progress.
+		 * Get the progress bar value.
+		 * @return Value.
 		 */
-		void setProgressBar(int current, int max);
+		int progressBarValue(void);
+
+		/**
+		 * Set the progress bar value.
+		 * @param current Value.
+		 */
+		void setProgressBarValue(int value);
+
+		/**
+		 * Get the progress bar's maximum value.
+		 * @return Maximum value.
+		 */
+		int progressBarMax(void);
+
+		/**
+		 * Set the progress bar's maximum value.
+		 * @param max Maximum value.
+		 */
+		void setProgressBarMax(int max);
 
 	private slots:
 		/**

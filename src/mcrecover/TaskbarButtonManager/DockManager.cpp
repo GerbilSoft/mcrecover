@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * DockManager.cpp: DockManager D-Bus implementation.                       *
+ * DockManager.hpp: DockManager D-Bus implementation.                      *
  *                                                                         *
  * Copyright (c) 2013 by David Korth.                                      *
  *                                                                         *
@@ -79,8 +79,8 @@ class DockManagerPrivate
 		QWidget *window;
 
 		// Status elements.
-		int progressCurrent;	// Current progress. (-1 for no bar)
-		int progressMax;	// Maximum progress.
+		int progressBarValue;	// Current progress. (-1 for no bar)
+		int progressBarMax;	// Maximum progress.
 };
 
 
@@ -89,8 +89,8 @@ DockManagerPrivate::DockManagerPrivate(DockManager *const q)
 	, ifDockManager(nullptr)
 	, ifDockItem(nullptr)
 	, window(nullptr)
-	, progressCurrent(0)
-	, progressMax(100)
+	, progressBarValue(0)
+	, progressBarMax(100)
 {
 	// Make sure the DBus metatypes are registered.
 	registerDBusMetatypes();
@@ -194,12 +194,12 @@ void DockManagerPrivate::update(void)
 
 	// Progress.
 	int progress;
-	if (progressCurrent < 0 || progressMax <= 0) {
+	if (progressBarValue < 0 || progressBarMax <= 0) {
 		progress = -1;
-	} else if (progressCurrent >= progressMax) {
+	} else if (progressBarValue >= progressBarMax) {
 		progress = 100;
 	} else {
-		progress = (int)(((float)progressCurrent / (float)progressMax) * 100);
+		progress = (int)(((float)progressBarValue / (float)progressBarMax) * 100);
 	}
 	dockItemProps[QLatin1String("progress")] = progress;
 
@@ -270,21 +270,47 @@ void DockManager::setWindow(QWidget *window)
  */
 void DockManager::clearProgressBar(void)
 {
-	d->progressCurrent = -1;
-	d->progressMax = -1;
+	d->progressBarValue = -1;
+	d->progressBarMax = -1;
 	d->update();
 }
 
 /**
- * Set the progress bar value.
- * @param current Current progress.
- * @param max Maximum progress.
+ * Get the progress bar value.
+ * @return Value.
  */
-void DockManager::setProgressBar(int current, int max)
+int DockManager::progressBarValue(void)
+	{ return d->progressBarValue; }
+
+/**
+ * Set the progress bar value.
+ * @param value Value.
+ */
+void DockManager::setProgressBarValue(int value)
 {
-	d->progressCurrent = current;
-	d->progressMax = max;
-	d->update();
+	if (d->progressBarValue != value) {
+		d->progressBarValue = value;
+		d->update();
+	}
+}
+
+/**
+ * Get the progress bar's maximum value.
+ * @return Maximum value.
+ */
+int DockManager::progressBarMax(void)
+	{ return d->progressBarMax; }
+
+/**
+ * Set the progress bar's maximum value.
+ * @param max Maximum value.
+ */
+void DockManager::setProgressBarMax(int max)
+{
+	if (d->progressBarMax != max) {
+		d->progressBarMax = max;
+		d->update();
+	}
 }
 
 

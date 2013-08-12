@@ -167,8 +167,11 @@ void StatusBarManagerPrivate::updateStatusBar(void)
 	if (progressBar && progressBar->isVisible()) {
 		progressBar->setMaximum(totalSearchBlocks);
 		progressBar->setValue(currentSearchBlock);
-		if (dockManager)
-			dockManager->setProgressBar(currentSearchBlock, totalSearchBlocks);
+		if (dockManager) {
+			// TODO: Set max only in initialization?
+			dockManager->setProgressBarValue(currentSearchBlock);
+			dockManager->setProgressBarMax(totalSearchBlocks);
+		}
 	} else {
 		if (dockManager)
 			dockManager->clearProgressBar();
