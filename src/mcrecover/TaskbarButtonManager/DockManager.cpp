@@ -182,8 +182,6 @@ int DockManagerPrivate::connectToDockManager(void)
  */
 void DockManagerPrivate::update(void)
 {
-	if (window && !ifDockItem)
-		connectToDockManager();
 	if (!ifDockItem)
 		return;
 
