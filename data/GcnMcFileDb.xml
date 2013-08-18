@@ -115,6 +115,37 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Chibi Robo</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GGTE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Chibi-Robo!$</gameDesc>
+			<!-- TODO: Verify number of slots. -->
+			<fileDesc>^\((\d{1,2})\) Time Played: ( \d|\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>filename</useAs>
+				<type>number</type>
+				<minWidth>1</minWidth>
+				<fillChar>0</fillChar>
+				<align>right</align>
+				<add>-1</add>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>CHIBIROBO($F1)</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>6</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Crash Bandicoot: The Wrath of Cortex</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GCBE</gamecode>
@@ -517,7 +548,7 @@
 		<search>
 			<address>0x1C00</address>
 			<gameDesc>^Luigi's Mansion$</gameDesc>
-			<!-- Date format: M/D - Verify for PAL! -->
+			<!-- Date format: M/D -->
 			<fileDesc>^Last saved on (\d{1,2})/(\d{1,2})$</fileDesc>
 		</search>
 		<variables>
@@ -1792,7 +1823,7 @@
 		<search>
 			<address>0x1C00</address>
 			<gameDesc>^Zelda: The Wind Waker$</gameDesc>
-			<!-- Date format: M/D - Verify for PAL! -->
+			<!-- Date format: M/D -->
 			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
 		</search>
 		<variables>
