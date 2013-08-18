@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GcnMcFileDb>
+	<dbInfo>
+		<dbFormatVersion>0.1</dbFormatVersion>
+		<dbName>GCN Memory Card File Database (Homebrew)</dbName>
+		<dbDesc>Definitions for homebrew GameCube games.</dbDesc>
+		<version>0.1+</version>
+		<author>David Korth</author>
+		<email>gerbilsoft@gerbilsoft.com</email>
+	</dbInfo>
 	<file>
 		<gameName>NeoPop</gameName>
 		<fileInfo>Save File</fileInfo>
