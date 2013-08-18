@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GcnMcFileDb>
+	<file>
+		<!-- TODO: File metadata is from GameFAQs. Redo this from a more reliable source. -->
+		<gameName>Bloody Roar: Primal Fury</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GBLP</gamecode>
+		<company>52</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^BLOODY ROAR: PF$</gameDesc>
+			<fileDesc>^Hyper-beast fighting$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>BLOODY_ROAR_EXTREME</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x01C0</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<!-- NOTE: Update with an actual PAL save! -->
+		<gameName>Mario Party 4</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GMPP</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Mario Party 4$</gameDesc>
+			<!-- Date format: DD/MM/YYYY -->
+			<fileDesc>^File (\d)  (\d{2})/(\d{2})/(\d{4})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>filename</useAs>
+				<type>number</type>
+				<add>-1</add>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>MARIPA4BOX${F1}</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0055</iconFormat>
+			<iconSpeed>0x00AA</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<!-- NOTE: Update with an actual PAL save! -->
+		<gameName>Mario Party 5</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GP5P</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Mario Party 5$</gameDesc>
+			<!-- Date format: DD/MM/YYYY -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>MARIPA5</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0055</iconFormat>
+			<iconSpeed>0x00AA</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
+		<!-- NOTE: Update with an actual PAL save! -->
+		<gameName>Mario Party 6</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GP6P</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Mario Party 6$</gameDesc>
+			<!-- Date format: DD/MM/YYYY -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>MARIPA6</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0055</iconFormat>
+			<iconSpeed>0x00AA</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
+		<!-- NOTE: Update with an actual PAL save! -->
+		<gameName>Mario Party 7</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GP7P</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Mario Party 7$</gameDesc>
+			<!-- Date format: DD/MM/YYYY -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>MARIPA7</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0055</iconFormat>
+			<iconSpeed>0x00AA</iconSpeed>
+			<permission>0x04</permission>
+			<length>6</length>
+		</dirEntry>
+	</file>
+	<file>
+		<!-- NOTE: USA version uses a different file structure! -->
+		<!-- User will need to select a preferred region. -->
+		<description>Metroid Prime</description>
+		<gamecode>GM8P</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Metroid Prime$</gameDesc>
+			<!-- Date format: DD.MM.YY HH:mm -->
+			<fileDesc>^(\d{2})\.(\d{2})\.(\d{2})  (\d{2})\:(\d{2})$</fileDesc>
+			<!-- TODO: Checksum field? -->
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>MetroidPrime</filename>
+			<bannerFormat>1</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<!-- NOTE: Using NTSC metadata. (Couldn't find GUGP69 save file.) -->
+		<gameName>Need for Speed Underground 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GUGP</gamecode>
+		<company>69</company>
+		<search>
+			<address>0x0010</address>
+			<gameDesc>^NFS Underground 2$</gameDesc>
+			<fileDesc>^(.*)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>NFSU2${F1}</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0050</iconAddress>
+			<iconFormat>0x0002</iconFormat>
+			<iconSpeed>0x0002</iconSpeed>
+			<permission>0x04</permission>
+			<length>7</length>
+		</dirEntry>
+	</file>
+	<file>
+		<!-- TODO: File metadata is from GameFAQs. Redo this from a more reliable source. -->
+		<!-- NOTE: USA metadata appears to be the same as EUR. -->
+		<gameName>Resident Evil</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GBIP</gamecode>
+		<company>08</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Resident Evil   .*</gameDesc>
+			<!-- TODO: Verify maximum length of $F3. -->
+			<fileDesc>^(\d)\.(.*)/(\d{2})/(.*)$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>filename</useAs>
+				<type>number</type>
+				<add>-1</add>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>BIOHAZARD FILE V5 ${F1}</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0002</iconFormat>
+			<iconSpeed>0x0002</iconSpeed>
+			<permission>0x04</permission>
+			<length>8</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Super Smash Bros. Melee</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GALP</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Super Smash Bros. Melee$</gameDesc>
+			<!-- Date format: DD/MM/YYYY -->
+			<fileDesc>^(Game Data|Spielstand|Données|Datos|Dati Gioco) (\d{2})/(\d{2})/(\d{4})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>SuperSmashBros0110290334</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>11</length>
+		</dirEntry>
+	</file>
+</GcnMcFileDb>
