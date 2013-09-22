@@ -89,10 +89,17 @@ class SearchThread : public QObject
 	public:
 		/**
 		 * Load a GCN Memory Card File database.
-		 * @param filename Filename of GCN Memory Card File database.
+		 * @param dbFilename Filename of GCN Memory Card File database.
 		 * @return 0 on success; non-zero on error. (Check error string!)
 		 */
-		int loadGcnMcFileDb(QString filename);
+		int loadGcnMcFileDb(QString dbFilename);
+
+		/**
+		 * Load multiple GCN Memory Card File databases.
+		 * @param dbFilenames Filenames of GCN Memory Card File database.
+		 * @return 0 on success; non-zero on error. (Check error string!)
+		 */
+		int loadGcnMcFileDbs(QVector<QString> dbFilenames);
 
 		/**
 		 * Get the list of files found in the last successful search.

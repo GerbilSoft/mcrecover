@@ -49,8 +49,8 @@ class SearchThreadPrivate
 		Q_DISABLE_COPY(SearchThreadPrivate);
 
 	public:
-		// GCN Memory Card File Database.
-		GcnMcFileDb *db;
+		// GCN Memory Card File databases.
+		QVector<GcnMcFileDb*> dbs;
 
 		// Worker object.
 		// NOTE: This object cannot have a parent;
@@ -69,7 +69,6 @@ class SearchThreadPrivate
 
 SearchThreadPrivate::SearchThreadPrivate(SearchThread* q)
 	: q(q)
-	, db(new GcnMcFileDb(q))
 	, worker(new SearchThreadWorker())
 	, workerThread(nullptr)
 {
@@ -92,7 +91,8 @@ SearchThreadPrivate::SearchThreadPrivate(SearchThread* q)
 SearchThreadPrivate::~SearchThreadPrivate()
 {
 	delete worker;
-	delete db;
+	qDeleteAll(dbs);
+	dbs.clear();
 }
 
 
@@ -130,19 +130,62 @@ SearchThread::~SearchThread()
  * @param filename Filename of GCN Memory Card File database.
  * @return 0 on success; non-zero on error. (Check error string!)
  */
-int SearchThread::loadGcnMcFileDb(QString filename)
+int SearchThread::loadGcnMcFileDb(QString dbFilename)
 {
-	int ret = d->db->load(filename);
+	qDeleteAll(d->dbs);
+	d->dbs.clear();
+
+	GcnMcFileDb *db = new GcnMcFileDb(this);
+	int ret = db->load(dbFilename);
 	if (ret != 0) {
 		// TODO: Set the error string.
 		// For now, just show a message box.
 		QMessageBox::critical(nullptr,
 			tr("Database Load Error"),
 			tr("Error loading the GCN Memory Card File database:") +
-			QLatin1String("\n\n") + d->db->errorString());
+			QLatin1String("\n\n") + db->errorString());
+
+		delete db;
+		db = nullptr;
 	}
 
+	if (db != nullptr)
+		d->dbs.append(db);
 	return ret;
+}
+
+
+/**
+ * Load multiple GCN Memory Card File databases.
+ * @param dbFilenames Filenames of GCN Memory Card File database.
+ * @return 0 on success; non-zero on error. (Check error string!)
+ */
+int SearchThread::loadGcnMcFileDbs(QVector<QString> dbFilenames)
+{
+	qDeleteAll(d->dbs);
+	d->dbs.clear();
+
+	if (dbFilenames.isEmpty())
+		return 0;
+
+	// Load the databases.
+	foreach (QString dbFilename, dbFilenames) {
+		GcnMcFileDb *db = new GcnMcFileDb(this);
+		int ret = db->load(dbFilename);
+		if (!ret)
+			d->dbs.append(db);
+		else
+			delete db;
+	}
+
+	// TODO: Report if any DBs were unable to be loaded.
+	// For now, just error if no DBs could be loaded.
+	if (d->dbs.isEmpty()) {
+		// TODO: Set the error string.
+		return -1;
+	}
+
+	return 0;
 }
 
 
@@ -175,8 +218,12 @@ int SearchThread::searchMemCard(MemCard *card, bool searchUsedBlocks)
 		return -255;	// TODO: Error code constant?
 	}
 
+	// Don't do anything if no databases are loaded.
+	if (d->dbs.isEmpty())
+		return 0;
+
 	// Search for files.
-	return d->worker->searchMemCard(card, d->db, searchUsedBlocks);
+	return d->worker->searchMemCard(card, d->dbs, searchUsedBlocks);
 }
 
 
@@ -201,10 +248,14 @@ int SearchThread::searchMemCard_async(MemCard *card, bool searchUsedBlocks)
 		return -255;	// TODO: Error code constant?
 	}
 
+	// Don't do anything if no databases are loaded.
+	if (d->dbs.isEmpty())
+		return 0;
+
 	// Set up the worker thread.
 	d->workerThread = new QThread(this);
 	d->worker->moveToThread(d->workerThread);
-	d->worker->setThreadInfo(card, d->db, QThread::currentThread(), searchUsedBlocks);
+	d->worker->setThreadInfo(card, d->dbs, QThread::currentThread(), searchUsedBlocks);
 
 	connect(d->workerThread, SIGNAL(started()),
 		d->worker, SLOT(searchMemCard_threaded()));

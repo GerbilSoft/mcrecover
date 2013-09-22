@@ -63,7 +63,7 @@ class SearchThreadWorkerPrivate
 		// is called by a thread's started() signal.
 		struct {
 			MemCard *card;
-			const GcnMcFileDb *db;
+			QVector<GcnMcFileDb*> dbs;
 
 			// Original thread.
 			QThread *orig_thread;
@@ -79,7 +79,7 @@ SearchThreadWorkerPrivate::SearchThreadWorkerPrivate(SearchThreadWorker* q)
 {
 	// NULL these out by default.
 	thread_info.card = nullptr;
-	thread_info.db = nullptr;
+	thread_info.dbs.clear();
 	thread_info.orig_thread = nullptr;
 	thread_info.searchUsedBlocks = false;
 }
@@ -112,19 +112,19 @@ QLinkedList<SearchData> SearchThreadWorker::filesFoundList(void)
 /**
  * Search a memory card for "lost" files.
  * @param card Memory Card to search.
- * @param db GcnMcFileDb to use.
+ * @param dbs Vector of GcnMcFileDb to use.
  * @param searchUsedBlocks If true, search all blocks, not just empty blocks.
  * @return Number of files found on success; negative on error.
  *
  * If successful, retrieve the file list using dirEntryList().
  * If an error occurs, check the errorString(). (TODO)(
  */
-int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
+int SearchThreadWorker::searchMemCard(MemCard *card, const QVector<GcnMcFileDb*> dbs,
 				      bool searchUsedBlocks)
 {
 	d->filesFoundList.clear();
 
-	if (!db) {
+	if (dbs.isEmpty()) {
 		// Database is not loaded.
 		// TODO: Set an error string somewhere.
 		return -1;
@@ -188,9 +188,13 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
 			continue;
 		}
 
-		// Check the block in the database.
+		// Check the block in the databases.
 		QVector<SearchData> searchDataEntries;
-		searchDataEntries = db->checkBlock(buf, blockSize);
+		foreach (GcnMcFileDb *db, dbs) {
+			QVector<SearchData> curEntries = db->checkBlock(buf, blockSize);
+			searchDataEntries += curEntries;
+		}
+
 		// TODO: Search for preferred region. For now, just use the first hit.
 		if (!searchDataEntries.isEmpty()) {
 			// Matched!
@@ -304,15 +308,15 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const GcnMcFileDb *db,
  * We can't pass these when starting the thread, so
  * we have to set them up first.
  * @param card Memory Card to search.
- * @param db GcnMcFileDb to use.
+ * @param dbs Vector of GcnMcFileDb to use.
  * @param orig_thread Thread to move back to once completed.
  * @param searchUsedBlocks If true, search all blocks, not just empty blocks.
  */
-void SearchThreadWorker::setThreadInfo(MemCard *card, const GcnMcFileDb *db,
+void SearchThreadWorker::setThreadInfo(MemCard *card, const QVector<GcnMcFileDb*> dbs,
 				       QThread *orig_thread, bool searchUsedBlocks)
 {
 	d->thread_info.card = card;
-	d->thread_info.db = db;
+	d->thread_info.dbs = dbs; // TODO: Convert to QVector<const GcnMcFileDb*>?
 	d->thread_info.orig_thread = orig_thread;
 	d->thread_info.searchUsedBlocks = searchUsedBlocks;
 }
@@ -326,7 +330,7 @@ void SearchThreadWorker::setThreadInfo(MemCard *card, const GcnMcFileDb *db,
 void SearchThreadWorker::searchMemCard_threaded(void)
 {
 	if (!d->thread_info.card ||
-	    !d->thread_info.db ||
+	    d->thread_info.dbs.isEmpty() ||
 	    !d->thread_info.orig_thread)
 	{
 		// Thread information was not set.
@@ -341,7 +345,7 @@ void SearchThreadWorker::searchMemCard_threaded(void)
 	}
 
 	// Search the memory card.
-	searchMemCard(d->thread_info.card, d->thread_info.db, d->thread_info.searchUsedBlocks);
+	searchMemCard(d->thread_info.card, d->thread_info.dbs, d->thread_info.searchUsedBlocks);
 
 	// Move back to the original thread.
 	moveToThread(d->thread_info.orig_thread);

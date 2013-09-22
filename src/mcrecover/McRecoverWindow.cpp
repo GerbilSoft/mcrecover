@@ -791,11 +791,11 @@ void McRecoverWindow::on_actionScan_triggered(void)
 		return;
 	}
 
-	// Load the database.
+	// Load the databases.
 	// TODO:
 	// - Only if the database is not loaded,
 	//   or if the database file has been changed.
-	int ret = d->searchThread->loadGcnMcFileDb(dbFilenames.at(0));
+	int ret = d->searchThread->loadGcnMcFileDbs(dbFilenames);
 	if (ret != 0)
 		return;
 
