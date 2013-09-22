@@ -983,12 +983,14 @@ QVector<SearchData> GcnMcFileDb::checkBlock(const void *buf, int siz) const
 
 
 /**
- * Get the default database filename.
- * This function checks various paths for GcnMcFileDb.xml,
- * and returns the first one it finds.
- * @return Default database filename, or empty string if not found.
+ * Get a list of database files.
+ * This function checks various paths for *.xml.
+ * If two files with the same filename are found,
+ * the one in the higher-precedence directory gets
+ * higher precedence.
+ * @return List of database files.
  */
-QString GcnMcFileDb::GetDefaultDbFilename(void)
+QVector<QString> GcnMcFileDb::GetDbFilenames(void)
 {
 	QVector<QString> pathList;
 
@@ -1029,16 +1031,34 @@ QString GcnMcFileDb::GetDefaultDbFilename(void)
 	pathList.append(homeDir.absoluteFilePath(QLatin1String("/.config/mcrecover")));
 #endif /* Q_OS_WIN */
 
-	// Search the paths for GcnMcFileDb.xml.
+	// Name filters.
+	static const char nameFilters_c[8][6] = {
+		"*.xml", "*.xmL", "*.xMl", "*.xML",
+		"*.Xml", "*.XmL", "*.XMl", "*.XML"
+	};
+
+	QStringList nameFilters;
+	nameFilters.reserve(8);
+	for (int i = 0; i < 8; i++)
+		nameFilters << QLatin1String(nameFilters_c[i]);
+
+	// Search the paths for XML files.
+	QVector<QString> xmlFileList;
+	xmlFileList.reserve(pathList.size());
+	static const QDir::Filters filters = (QDir::Files | QDir::Readable);
+#ifdef Q_OS_WIN
+	static const QDir::SortFlags sortFlags = (QDir::Name | QDir::IgnoreCase);
+#else /* !Q_OS_WIN */
+	static const QDir::SortFlags sortFlags = (QDir::Name);
+#endif /* Q_OS_WIN */
+
 	foreach (QString path, pathList) {
 		QDir dir(path);
-		QString filename = dir.absoluteFilePath(QLatin1String("GcnMcFileDb.xml"));
-		if (QFile::exists(filename)) {
-			// Found the database file.
-			return filename;
+		QFileInfoList files = dir.entryInfoList(nameFilters, filters, sortFlags);
+		foreach (QFileInfo file, files) {
+			xmlFileList.append(file.absoluteFilePath());
 		}
 	}
 
-	// Database file not found.
-	return QString();
+	return xmlFileList;
 }

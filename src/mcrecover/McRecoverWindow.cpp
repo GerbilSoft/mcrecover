@@ -771,23 +771,22 @@ void McRecoverWindow::on_actionScan_triggered(void)
 	if (!d->card)
 		return;
 
-	// Get the database filename.
-	// TODO: Support multiple databases.
-	QString dbFilename = GcnMcFileDb::GetDefaultDbFilename();
-	if (dbFilename.isEmpty()) {
+	// Get the database filenames.
+	QVector<QString> dbFilenames = GcnMcFileDb::GetDbFilenames();
+	if (dbFilenames.isEmpty()) {
 #ifdef Q_OS_WIN
 		const char *const def_path_hint =
-			"This file should be located in the data subdirectory in\n"
+			"The database files should be located in the data subdirectory in\n"
 			"mcrecover.exe's program directory.";
 #else
 		const char *const def_path_hint =
-			"This file should be located in " MCRECOVER_DATA_DIRECTORY ".\n"
-			"Alternatively, you can place your own version in ~/.config/mcrecover/data/GcnMcFileDb.xml";
+			"The database files should be located in " MCRECOVER_DATA_DIRECTORY ".\n"
+			"Alternatively, you can place your own version in ~/.config/mcrecover/data/";
 #endif
 
 		QMessageBox::critical(this,
 			tr("Database Load Error"),
-			QLatin1String("GcnMcFileDb.xml was not found.\n\n") +
+			QLatin1String("No GCN MemCard file databases were found.\n\n") +
 			QLatin1String(def_path_hint));
 		return;
 	}
@@ -796,7 +795,7 @@ void McRecoverWindow::on_actionScan_triggered(void)
 	// TODO:
 	// - Only if the database is not loaded,
 	//   or if the database file has been changed.
-	int ret = d->searchThread->loadGcnMcFileDb(dbFilename);
+	int ret = d->searchThread->loadGcnMcFileDb(dbFilenames.at(0));
 	if (ret != 0)
 		return;
 

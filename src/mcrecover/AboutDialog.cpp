@@ -313,6 +313,9 @@ QString AboutDialogPrivate::GetIncLibraries(void)
  */
 QString AboutDialogPrivate::GetDebugInfo(void)
 {
+	static const QString sIndent = QLatin1String("        ");
+	static const QChar chrBullet(0x2022);  // U+2022: BULLET
+
 	// Debug information.
 	QString sDebugInfo =
 		AboutDialog::tr("Compiled using Qt %1.").arg(QLatin1String(QT_VERSION_STR)) + QChar(L'\n') +
@@ -325,13 +328,23 @@ QString AboutDialogPrivate::GetDebugInfo(void)
 	sDebugInfo += QChar(L'\n') + GetCodePageInfo();
 #endif /* Q_OS_WIN */
 
-	// Database filename.
-	QString dbFilename = QDir::toNativeSeparators(GcnMcFileDb::GetDefaultDbFilename());
+	// Database filenames.
+	// TODO: List loaded databases.
+	QVector<QString> dbFilenames = GcnMcFileDb::GetDbFilenames();
 	sDebugInfo += QChar(L'\n');
 	sDebugInfo += QChar(L'\n') +
-		AboutDialog::tr("Database filename:") +
-		QChar(L'\n') +
-		(!dbFilename.isEmpty() ? dbFilename : QLatin1String("(not found)"));
+		AboutDialog::tr("Available databases:") + QChar(L'\n');
+	if (dbFilenames.isEmpty()) {
+		sDebugInfo += chrBullet + QChar(L' ') + AboutDialog::tr("(none found)");
+	} else {
+		for (int i = 0; i < dbFilenames.size(); i++) {
+			if (i != 0)
+				sDebugInfo += QChar(L'\n');
+			sDebugInfo += sIndent + chrBullet + QChar(L' ');
+			// TODO: If relative to executable directory, replace with "./"
+			sDebugInfo += QDir::toNativeSeparators(dbFilenames.at(i));
+		}
+	}
 
 	return sDebugInfo;
 }

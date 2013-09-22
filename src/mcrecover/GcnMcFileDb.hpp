@@ -75,12 +75,14 @@ class GcnMcFileDb : public QObject
 		QVector<SearchData> checkBlock(const void *buf, int siz) const;
 
 		/**
-		 * Get the default database filename.
-		 * This function checks various paths for GcnMcFileDb.xml,
-		 * and returns the first one it finds.
-		 * @return Default database filename, or empty string if not found.
+		 * Get a list of database files.
+		 * This function checks various paths for *.xml.
+		 * If two files with the same filename are found,
+		 * the one in the higher-precedence directory gets
+		 * higher precedence.
+		 * @return List of database files.
 		 */
-		static QString GetDefaultDbFilename(void);
+		static QVector<QString> GetDbFilenames(void);
 };
 
 #endif /* __MCRECOVER_GCNMCFILEDB_HPP__ */
