@@ -29,6 +29,10 @@
 // GcImage class.
 #include "GcImage.hpp"
 
+// C++ includes.
+#include <vector>
+using std::vector;
+
 // Qt includes.
 #include <QtCore/QByteArray>
 #include <QtCore/QTextCodec>
@@ -401,12 +405,12 @@ void MemCardFilePrivate::loadImages(void)
 	QByteArray fileData = loadFileData();
 	if (fileData.isEmpty())
 		return;
-	
+
 	// Decode the banner.
 	uint32_t iconAddr = dirEntry->iconaddr;
 	uint32_t imageSize = 0;
-	QImage bannerImg;
-	
+	GcImage *gcBannerImg = nullptr;
+
 	switch (dirEntry->bannerfmt & CARD_BANNER_MASK) {
 		case CARD_BANNER_CI:
 			// CI8 palette is right after the banner.
@@ -414,9 +418,9 @@ void MemCardFilePrivate::loadImages(void)
 			imageSize = (CARD_BANNER_W * CARD_BANNER_H * 1);
 			if (!IsInFile(iconAddr, imageSize, (uint32_t)fileData.size()))
 				break;
-			bannerImg = GcImage::FromCI8(CARD_BANNER_W, CARD_BANNER_H,
-					&fileData.constData()[iconAddr], imageSize,
-					&fileData.constData()[iconAddr + imageSize], 0x200);
+			gcBannerImg = GcImage::fromCI8(CARD_BANNER_W, CARD_BANNER_H,
+					(const uint8_t*)&fileData.constData()[iconAddr], imageSize,
+					(const uint16_t*)&fileData.constData()[iconAddr + imageSize], 0x200);
 			iconAddr += imageSize + 0x200;
 			break;
 
@@ -424,8 +428,8 @@ void MemCardFilePrivate::loadImages(void)
 			imageSize = (CARD_BANNER_W * CARD_BANNER_H * 2);
 			if (!IsInFile(iconAddr, imageSize, (uint32_t)fileData.size()))
 				break;
-			bannerImg = GcImage::FromRGB5A3(CARD_BANNER_W, CARD_BANNER_H,
-					&fileData.constData()[iconAddr], imageSize);
+			gcBannerImg = GcImage::fromRGB5A3(CARD_BANNER_W, CARD_BANNER_H,
+					(const uint16_t*)&fileData.constData()[iconAddr], imageSize);
 			iconAddr += imageSize;
 			break;
 
@@ -433,9 +437,42 @@ void MemCardFilePrivate::loadImages(void)
 			break;
 	}
 
-	if (!bannerImg.isNull()) {
+	if (gcBannerImg) {
 		// Set the new banner image.
-		banner = QPixmap::fromImage(bannerImg);
+		QImage::Format imgFmt;
+		GcImage::PxFmt pxFmt = gcBannerImg->pxFmt();
+		switch (pxFmt) {
+			case GcImage::PXFMT_CI8:
+				imgFmt = QImage::Format_Indexed8;
+				break;
+			case GcImage::PXFMT_ARGB32:
+				imgFmt = QImage::Format_ARGB32;
+				break;
+			default:
+				imgFmt = QImage::Format_Invalid;
+				break;
+		}
+
+		if (imgFmt == QImage::Format_Invalid) {
+			banner = QPixmap();
+		} else {
+			QImage bannerImg((const uint8_t*)gcBannerImg->imageData(),
+					 gcBannerImg->width(),
+					 gcBannerImg->height(),
+					 imgFmt);
+			if (pxFmt == GcImage::PXFMT_CI8) {
+				const uint32_t *palette = gcBannerImg->palette();
+				if (palette) {
+					vector<uint32_t> vPalette;
+					vPalette.assign(palette, palette + 256);
+					bannerImg.setColorTable(QVector<QRgb>::fromStdVector(vPalette));
+				}
+			}
+			banner = QPixmap::fromImage(bannerImg);
+		}
+
+		delete gcBannerImg;
+		gcBannerImg = nullptr;
 	} else {
 		// No banner image.
 		banner = QPixmap();
@@ -445,6 +482,7 @@ void MemCardFilePrivate::loadImages(void)
 	QVector<CI8_SHARED_data> lst_CI8_SHARED;
 	icons.clear();
 
+#if 0
 	uint16_t iconfmt = dirEntry->iconfmt;
 	for (int i = 0; i < CARD_MAXICONS; i++) {
 		if ((iconfmt & CARD_ICON_MASK) == CARD_ICON_CI_SHARED) {
@@ -523,6 +561,7 @@ void MemCardFilePrivate::loadImages(void)
 			}
 		}
 	}
+#endif
 }
 
 

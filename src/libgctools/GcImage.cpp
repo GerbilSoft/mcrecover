@@ -1,5 +1,5 @@
 /***************************************************************************
- * GameCube Memory Card Recovery Program.                                  *
+ * GameCube Tools Library.                                                 *
  * GcImage.cpp: GameCube image format handler.                             *
  *                                                                         *
  * Copyright (c) 2012-2013 by David Korth.                                 *
@@ -25,13 +25,106 @@
 #include "util/byteswap.h"
 
 // C includes.
-#include <stdint.h>
+#include <stdlib.h>
 
-// Qt includes.
-#include <QtGui/QImage>
-#include <QtGui/QPainter>
-#include <QtCore/QVector>
+// C++ includes.
+#include <vector>
+using std::vector;
 
+/** GcImagePrivate **/
+
+class GcImagePrivate
+{
+	public:
+		GcImagePrivate(GcImage *const q);
+		~GcImagePrivate();
+
+	private:
+		GcImage *const q;
+		// TODO: Copy Qt's Q_DISABLE_COPY() macro.
+		GcImagePrivate(const GcImagePrivate &);
+		GcImagePrivate &operator=(const GcImagePrivate &);
+
+	public:
+		/**
+		 * Initialize the GcImage.
+		 * @param w Width.
+		 * @param h Height.
+		 * @param pxFmt Pixel format.
+		 */
+		void init(int w, int h, GcImage::PxFmt pxFmt);
+
+		void *imageData;
+		size_t imageData_len;
+		vector<uint32_t> palette;
+		GcImage::PxFmt pxFmt;
+		int width;
+		int height;
+};
+
+GcImagePrivate::GcImagePrivate(GcImage *const q)
+	: q(q)
+	, imageData(nullptr)
+	, imageData_len(0)
+	, pxFmt(GcImage::PXFMT_NONE)
+	, width(0)
+	, height(0)
+{ }
+
+GcImagePrivate::~GcImagePrivate()
+	{ free(imageData); }
+
+/**
+ * Initialize the GcImage.
+ * @param w Width.
+ * @param h Height.
+ * @param pxFmt Pixel format.
+ */
+void GcImagePrivate::init(int w, int h, GcImage::PxFmt pxFmt)
+{
+	// Clear all existing image data.
+	free(imageData);
+	imageData = nullptr;
+	imageData_len = 0;
+	palette.clear();
+	width = 0;
+	height = 0;
+	this->pxFmt = GcImage::PXFMT_NONE;
+
+	if (w > 0 && h > 0) {
+		size_t imgSize;
+		switch (pxFmt) {
+			case GcImage::PXFMT_CI8:
+				imgSize = (w * h);
+				break;
+			case GcImage::PXFMT_ARGB32:
+				imgSize = (w * h * 4);
+				break;
+			default:
+				imgSize = 0;
+				break;
+		}
+
+		if (imgSize > 0) {
+			imageData = malloc(imgSize);
+			if (imageData) {
+				imageData_len = imgSize;
+				width = w;
+				height = h;
+				this->pxFmt = pxFmt;
+			}
+		}
+	}
+}
+
+/** GcImage **/
+
+GcImage::GcImage()
+	: d(new GcImagePrivate(this))
+{ }
+
+GcImage::~GcImage()
+	{ delete d; }
 
 /**
  * Convert an RGB5A3 pixel to ARGB32.
@@ -95,7 +188,7 @@ static inline void BlitTile(pixel *imgBuf, int pitch,
 
 
 /**
- * Convert a GameCube CI8 image to QImage.
+ * Convert a GameCube CI8 image to GcImage.
  * @param w Image width.
  * @param h Image height.
  * @param img_buf CI8 image buffer.
@@ -104,96 +197,119 @@ static inline void BlitTile(pixel *imgBuf, int pitch,
  * @param pal_siz Size of palette data. [must be >= 0x200]
  * @return QImage, or empty QImage on error.
  */
-QImage GcImage::FromCI8(int w, int h, const void *img_buf, int img_siz,
-			const void *pal_buf, int pal_siz)
+GcImage *GcImage::fromCI8(int w, int h,
+			const uint8_t *img_buf, int img_siz,
+			const uint16_t *pal_buf, int pal_siz)
 {
 	// Verify parameters.
 	if (w < 0 || h < 0)
-		return QImage();
+		return nullptr;
 	if (img_siz < (w * h) || pal_siz < 0x200)
-		return QImage();
+		return nullptr;
 
 	// CI8 uses 8x4 tiles.
 	if (w % 8 != 0 || h % 4 != 0)
-		return QImage();
+		return nullptr;
 
 	// Calculate the total number of tiles.
 	const int tilesX = (w / 8);
 	const int tilesY = (h / 4);
 
+	// Create a GcImage.
+	GcImage *gcImage = new GcImage();
+	GcImagePrivate *const d = gcImage->d;
+	d->init(w, h, PXFMT_CI8);
+
 	// Convert the palette.
-	QVector<QRgb> palette;
-	palette.resize(256);
-	uint16_t *pal5A3 = (uint16_t*)pal_buf;
+	// TODO: Optimize using pointers instead of indexes?
+	d->palette.resize(256);
 	for (int i = 0; i < 256; i++) {
-		palette[i] = RGB5A3_to_ARGB32(be16_to_cpu(*pal5A3));
-		pal5A3++;
+		d->palette[i] = RGB5A3_to_ARGB32(be16_to_cpu(pal_buf[i]));
 	}
 
-	// Temporary image buffer.
-	QImage qimgBuf(w, h, QImage::Format_Indexed8);
-	qimgBuf.setColorTable(palette);
-	const uint8_t *tileBuf = (const uint8_t*)img_buf;
+	// Tile pointer.
+	const uint8_t *tileBuf = img_buf;
 
 	for (int y = 0; y < tilesY; y++) {
 		for (int x = 0; x < tilesX; x++) {
 			// Decode the current tile.
-			BlitTile<uint8_t, 8, 4>(qimgBuf.bits(), w, tileBuf, x, y);
+			BlitTile<uint8_t, 8, 4>((uint8_t*)d->imageData, w, tileBuf, x, y);
 			tileBuf += (8 * 4);
 		}
 	}
 
 	// Image has been converted.
-	return qimgBuf;
+	return gcImage;
 }
 
 
 /**
- * Convert a GameCube RGB5A3 image to QImage.
+ * Convert a GameCube RGB5A3 image to GcImage.
  * @param w Image width.
  * @param h Image height.
  * @param img_buf CI8 image buffer.
  * @param img_siz Size of image data. [must be >= (w*h)*2]
- * @return QImage, or empty QImage on error.
+ * @return GcImage, or nullptr on error.
  */
-QImage GcImage::FromRGB5A3(int w, int h, const void *img_buf, int img_siz)
+GcImage *GcImage::fromRGB5A3(int w, int h, const uint16_t *img_buf, int img_siz)
 {
 	// Verify parameters.
 	if (w < 0 || h < 0)
-		return QImage();
+		return nullptr;
 	if (img_siz < ((w * h) * 2))
-		return QImage();
+		return nullptr;
 
 	// RGB5A3 uses 4x4 tiles.
 	if (w % 4 != 0 || h % 4 != 0)
-		return QImage();
+		return nullptr;
 
 	// Calculate the total number of tiles.
 	const int tilesX = (w / 4);
 	const int tilesY = (h / 4);
-	const uint16_t *buf5A3 = (uint16_t*)img_buf;
 
-	// Temporary image buffer.
-	QImage qimgBuf(w, h, QImage::Format_ARGB32);
-	uint32_t tileBuf[4 * 4];
+	// Create a GcImage.
+	GcImage *gcImage = new GcImage();
+	GcImagePrivate *const d = gcImage->d;
+	d->init(w, h, PXFMT_ARGB32);
+
+	// Temporary tile buffer.
+	uint32_t tileBuf[32];
 
 	for (int y = 0; y < tilesY; y++) {
 		for (int x = 0; x < tilesX; x++) {
 			// Convert each tile to ARGB888 manually.
-			uint32_t *tilePtr = &tileBuf[0];
-			for (int i = 0; i < 4*4; i++) {
-				*tilePtr++ = RGB5A3_to_ARGB32(be16_to_cpu(*buf5A3));
-
-				// NOTE: buf5A3 must be incremented OUTSIDE of the
-				// be16_to_cpu() macro! Otherwise, shenanigans will ensue.
-				buf5A3++;
+			// TODO: Optimize using pointers instead of indexes?
+			for (int i = 0; i < 4*4; i++, img_buf++) {
+				tileBuf[i] = RGB5A3_to_ARGB32(be16_to_cpu(*img_buf));
 			}
 
 			// Blit the tile to the main image buffer.
-			BlitTile<uint32_t, 4, 4>((uint32_t*)qimgBuf.bits(), w, tileBuf, x, y);
+			BlitTile<uint32_t, 4, 4>((uint32_t*)d->imageData, w, tileBuf, x, y);
 		}
 	}
 
 	// Image has been converted.
-	return qimgBuf;
+	return gcImage;
+}
+
+GcImage::PxFmt GcImage::pxFmt(void) const
+	{ return d->pxFmt; }
+const void *GcImage::imageData(void) const
+	{ return d->imageData; }
+size_t GcImage::imageData_len(void) const
+	{ return d->imageData_len; }
+int GcImage::width(void) const
+	{ return d->width; }
+int GcImage::height(void) const
+	{ return d->height; }
+
+/**
+ * Get the image palette.
+ * @return Pointer to 256-element ARGB888 palette, or NULL if no palette.
+ */
+const uint32_t *GcImage::palette(void) const
+{
+	if (d->pxFmt != PXFMT_CI8 || d->palette.size() != 256)
+		return nullptr;
+	return d->palette.data();
 }
