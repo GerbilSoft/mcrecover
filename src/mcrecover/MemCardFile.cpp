@@ -28,10 +28,7 @@
 
 // GcImage class.
 #include "GcImage.hpp"
-
-// C++ includes.
-#include <vector>
-using std::vector;
+#include "GcToolsQt.hpp"
 
 // Qt includes.
 #include <QtCore/QByteArray>
@@ -439,40 +436,12 @@ void MemCardFilePrivate::loadImages(void)
 
 	if (gcBannerImg) {
 		// Set the new banner image.
-		QImage::Format imgFmt;
-		GcImage::PxFmt pxFmt = gcBannerImg->pxFmt();
-		switch (pxFmt) {
-			case GcImage::PXFMT_CI8:
-				imgFmt = QImage::Format_Indexed8;
-				break;
-			case GcImage::PXFMT_ARGB32:
-				imgFmt = QImage::Format_ARGB32;
-				break;
-			default:
-				imgFmt = QImage::Format_Invalid;
-				break;
-		}
-
-		if (imgFmt == QImage::Format_Invalid) {
+		QImage qBannerImg = gcImageToQImage(gcBannerImg);
+		if (!qBannerImg.isNull())
+			banner = QPixmap::fromImage(qBannerImg);
+		else
 			banner = QPixmap();
-		} else {
-			QImage bannerImg((const uint8_t*)gcBannerImg->imageData(),
-					 gcBannerImg->width(),
-					 gcBannerImg->height(),
-					 imgFmt);
-			if (pxFmt == GcImage::PXFMT_CI8) {
-				const uint32_t *palette = gcBannerImg->palette();
-				if (palette) {
-					vector<uint32_t> vPalette;
-					vPalette.assign(palette, palette + 256);
-					bannerImg.setColorTable(QVector<QRgb>::fromStdVector(vPalette));
-				}
-			}
-			banner = QPixmap::fromImage(bannerImg);
-		}
-
 		delete gcBannerImg;
-		gcBannerImg = nullptr;
 	} else {
 		// No banner image.
 		banner = QPixmap();

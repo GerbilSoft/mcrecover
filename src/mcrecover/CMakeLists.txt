@@ -105,6 +105,7 @@ SET(mcrecover_SRCS
 	FileComments.cpp
 	QTreeViewOpt.cpp
 	TaskbarButtonManager/TaskbarButtonManager.cpp
+	GcToolsQt.cpp
 	)
 
 # Win32-specific sources.
