@@ -197,7 +197,20 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>&amp;Options</string>
+    </property>
+    <addaction name="actionPreferredRegion"/>
+    <addaction name="actionRegionUS"/>
+    <addaction name="actionRegionEU"/>
+    <addaction name="actionRegionJP"/>
+    <addaction name="actionRegionKR"/>
+    <addaction name="separator"/>
+    <addaction name="actionSearchUsedBlocks"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuOptions"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
@@ -337,7 +350,7 @@
      <normaloff>:/flags/flag-us.png</normaloff>:/flags/flag-us.png</iconset>
    </property>
    <property name="text">
-    <string>USA</string>
+    <string>&amp;USA</string>
    </property>
    <property name="toolTip">
     <string>USA</string>
@@ -352,7 +365,7 @@
      <normaloff>:/flags/flag-gb.png</normaloff>:/flags/flag-gb.png</iconset>
    </property>
    <property name="text">
-    <string>Europe</string>
+    <string>&amp;Europe</string>
    </property>
    <property name="toolTip">
     <string>Europe</string>
@@ -367,7 +380,7 @@
      <normaloff>:/flags/flag-jp.png</normaloff>:/flags/flag-jp.png</iconset>
    </property>
    <property name="text">
-    <string>Japan</string>
+    <string>&amp;Japan</string>
    </property>
    <property name="toolTip">
     <string>Japan</string>
@@ -382,10 +395,26 @@
      <normaloff>:/flags/flag-kr.png</normaloff>:/flags/flag-kr.png</iconset>
    </property>
    <property name="text">
-    <string>South Korea</string>
+    <string>South &amp;Korea</string>
    </property>
    <property name="toolTip">
     <string>South Korea</string>
+   </property>
+  </action>
+  <action name="actionPreferredRegion">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Preferred Region:</string>
+   </property>
+  </action>
+  <action name="actionSearchUsedBlocks">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Search U&amp;sed Blocks</string>
    </property>
   </action>
  </widget>
