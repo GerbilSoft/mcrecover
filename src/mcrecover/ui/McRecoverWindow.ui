@@ -10,6 +10,9 @@
     <height>540</height>
    </rect>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::NoContextMenu</enum>
+  </property>
   <property name="acceptDrops">
    <bool>true</bool>
   </property>
@@ -222,6 +225,9 @@
    </property>
   </widget>
   <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>Main Toolbar</string>
+   </property>
    <property name="movable">
     <bool>false</bool>
    </property>
