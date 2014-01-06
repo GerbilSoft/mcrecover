@@ -203,14 +203,15 @@ QLinkedList<SearchData> SearchThread::filesFoundList(void)
 /**
  * Search a memory card for "lost" files.
  * Synchronous search; non-threaded.
- * @param card Memory Card to search.
- * @param searchUsedBlocks If true, search all blocks, not just empty blocks.
+ * @param card Memory Card to search
+ * @param preferredRegion Preferred region.
+ * @param searchUsedBlocks If true, search all blocks, not just blocks marked as empty.
  * @return Number of files found on success; negative on error.
  *
  * If successful, retrieve the file list using dirEntryList().
  * If an error occurs, check the errorString(). (TODO)(
  */
-int SearchThread::searchMemCard(MemCard *card, bool searchUsedBlocks)
+int SearchThread::searchMemCard(MemCard *card, char preferredRegion, bool searchUsedBlocks)
 {
 	// TODO: Mutex?
 	if (d->workerThread) {
@@ -223,7 +224,7 @@ int SearchThread::searchMemCard(MemCard *card, bool searchUsedBlocks)
 		return 0;
 
 	// Search for files.
-	return d->worker->searchMemCard(card, d->dbs, searchUsedBlocks);
+	return d->worker->searchMemCard(card, d->dbs, preferredRegion, searchUsedBlocks);
 }
 
 
@@ -231,6 +232,7 @@ int SearchThread::searchMemCard(MemCard *card, bool searchUsedBlocks)
  * Search a memory card for "lost" files.
  * Asynchronous search; uses a separate thread.
  * @param card Memory Card to search.
+ * @param preferredRegion Preferred region.
  * @param searchUsedBlocks If true, search all blocks, not just empty blocks.
  * @return 0 if the thread started successfully; non-zero on error.
  *
@@ -240,7 +242,7 @@ int SearchThread::searchMemCard(MemCard *card, bool searchUsedBlocks)
  * - searchFinished(): Search has completed.
  * - searchError(): Search failed due to an error.
  */
-int SearchThread::searchMemCard_async(MemCard *card, bool searchUsedBlocks)
+int SearchThread::searchMemCard_async(MemCard *card, char preferredRegion, bool searchUsedBlocks)
 {
 	// TODO: Mutex?
 	if (d->workerThread) {
@@ -255,7 +257,7 @@ int SearchThread::searchMemCard_async(MemCard *card, bool searchUsedBlocks)
 	// Set up the worker thread.
 	d->workerThread = new QThread(this);
 	d->worker->moveToThread(d->workerThread);
-	d->worker->setThreadInfo(card, d->dbs, QThread::currentThread(), searchUsedBlocks);
+	d->worker->setThreadInfo(card, d->dbs, QThread::currentThread(), preferredRegion, searchUsedBlocks);
 
 	connect(d->workerThread, SIGNAL(started()),
 		d->worker, SLOT(searchMemCard_threaded()));

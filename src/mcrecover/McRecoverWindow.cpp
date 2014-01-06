@@ -810,13 +810,13 @@ void McRecoverWindow::on_actionScan_triggered(void)
 
 	// Search blocks for lost files.
 	// TODO: Handle errors.
-	ret = d->searchThread->searchMemCard_async(d->card, searchUsedBlocks);
+	ret = d->searchThread->searchMemCard_async(d->card, d->preferredRegion, searchUsedBlocks);
 	if (ret < 0) {
 		// Error starting the thread.
 		// Use the synchronous version.
 		// TODO: Handle errors.
 		// NOTE: Files will be added by searchThread_searchFinished_slot().
-		ret = d->searchThread->searchMemCard(d->card, searchUsedBlocks);
+		ret = d->searchThread->searchMemCard(d->card, d->preferredRegion, searchUsedBlocks);
 	}
 }
 

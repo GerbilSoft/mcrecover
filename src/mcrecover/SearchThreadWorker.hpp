@@ -108,13 +108,15 @@ class SearchThreadWorker : public QObject
 		 * Search a memory card for "lost" files.
 		 * @param card Memory Card to search.
 		 * @param dbs Vector of GcnMcFileDb to use.
-		 * @param searchUsedBlocks If true, search all blocks, not just empty blocks.
+		 * @param preferredRegion Preferred region.
+		 * @param searchUsedBlocks If true, search all blocks, not just blocks marked as empty.
 		 * @return Number of files found on success; negative on error.
 		 *
 		 * If successful, retrieve the file list using dirEntryList().
 		 * If an error occurs, check the errorString(). (TODO)(
 		 */
-		int searchMemCard(MemCard *card, const QVector<GcnMcFileDb*> dbs, bool searchUsedBlocks = false);
+		int searchMemCard(MemCard *card, const QVector<GcnMcFileDb*> dbs,
+				char preferredRegion = 0, bool searchUsedBlocks = false);
 
 		/**
 		 * Set internal information for threading purposes.
@@ -124,10 +126,12 @@ class SearchThreadWorker : public QObject
 		 * @param card Memory Card to search.
 		 * @param dbs Vector of GcnMcFileDb to use.
 		 * @param orig_thread Thread to move back to once completed.
-		 * @param searchUsedBlocks If true, search all blocks, not just empty blocks.
+		 * @param preferredRegion Preferred region.
+		 * @param searchUsedBlocks If true, search all blocks, not just blocks marked as empty.
 		 */
 		void setThreadInfo(MemCard *card, const QVector<GcnMcFileDb*> dbs,
-				   QThread *orig_thread, bool searchUsedBlocks = false);
+				QThread *orig_thread,
+				char preferredRegion = 0, bool searchUsedBlocks = false);
 
 	public slots:
 		/**
