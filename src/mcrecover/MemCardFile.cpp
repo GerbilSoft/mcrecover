@@ -451,7 +451,6 @@ void MemCardFilePrivate::loadImages(void)
 	QVector<CI8_SHARED_data> lst_CI8_SHARED;
 	icons.clear();
 
-#if 0
 	uint16_t iconfmt = dirEntry->iconfmt;
 	for (int i = 0; i < CARD_MAXICONS; i++) {
 		if ((iconfmt & CARD_ICON_MASK) == CARD_ICON_CI_SHARED) {
@@ -480,10 +479,16 @@ void MemCardFilePrivate::loadImages(void)
 				imageSize = (CARD_ICON_W * CARD_ICON_H * 1);
 				if (!IsInFile(iconAddr, (imageSize + 0x200), (uint32_t)fileData.size()))
 					break;
-				QImage icon = GcImage::FromCI8(CARD_ICON_W, CARD_ICON_H,
-						&fileData.constData()[iconAddr], imageSize,
-						&fileData.constData()[iconAddr + imageSize], 0x200);
-				icons.append(QPixmap::fromImage(icon));
+				GcImage *gcIcon = GcImage::fromCI8(CARD_ICON_W, CARD_ICON_H,
+						(const uint8_t*)&fileData.constData()[iconAddr], imageSize,
+						(const uint16_t*)&fileData.constData()[iconAddr + imageSize], 0x200);
+				if (gcIcon) {
+					QImage qIcon = gcImageToQImage(gcIcon);
+					icons.append(QPixmap::fromImage(qIcon));
+					delete gcIcon;
+				} else {
+					icons.append(QPixmap());
+				}
 				iconAddr += imageSize + 0x200;
 				break;
 			}
@@ -492,9 +497,15 @@ void MemCardFilePrivate::loadImages(void)
 				imageSize = (CARD_ICON_W * CARD_ICON_H * 2);
 				if (!IsInFile(iconAddr, imageSize, (uint32_t)fileData.size()))
 					break;
-				QImage icon = GcImage::FromRGB5A3(CARD_ICON_W, CARD_ICON_H,
-						&fileData.constData()[iconAddr], imageSize);
-				icons.append(QPixmap::fromImage(icon));
+				GcImage *gcIcon = GcImage::fromRGB5A3(CARD_ICON_W, CARD_ICON_H,
+						(const uint16_t*)&fileData.constData()[iconAddr], imageSize);
+				if (gcIcon) {
+					QImage qIcon = gcImageToQImage(gcIcon);
+					icons.append(QPixmap::fromImage(qIcon));
+					delete gcIcon;
+				} else {
+					icons.append(QPixmap());
+				}
 				iconAddr += imageSize;
 				break;
 			}
@@ -523,14 +534,17 @@ void MemCardFilePrivate::loadImages(void)
 		} else {
 			// Process each icon.
 			foreach (const CI8_SHARED_data& data, lst_CI8_SHARED) {
-				QImage icon = GcImage::FromCI8(CARD_ICON_W, CARD_ICON_H,
-							&fileData.constData()[data.iconAddr], imageSize,
-							&fileData.constData()[iconAddr], 0x200);
-				icons[data.iconIdx] = QPixmap::fromImage(icon);
+				GcImage *gcIcon = GcImage::fromCI8(CARD_ICON_W, CARD_ICON_H,
+							(const uint8_t*)&fileData.constData()[data.iconAddr], imageSize,
+							(const uint16_t*)&fileData.constData()[iconAddr], 0x200);
+				if (gcIcon) {
+					QImage qIcon = gcImageToQImage(gcIcon);
+					icons[data.iconIdx] = QPixmap::fromImage(qIcon);
+					delete gcIcon;
+				}
 			}
 		}
 	}
-#endif
 }
 
 
