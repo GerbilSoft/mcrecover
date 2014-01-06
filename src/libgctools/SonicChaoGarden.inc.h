@@ -1,6 +1,6 @@
 /***************************************************************************
- * GameCube Memory Card Recovery Program.                                  *
- * SonicChaoGarden.h: SonicChaoGarden algorithm data.                      *
+ * GameCube Tools Library.                                                 *
+ * SonicChaoGarden.inc.h: SonicChaoGarden algorithm data.                  *
  *                                                                         *
  * Copyright (c) 2013 by David Korth.                                      *
  *                                                                         *
@@ -19,8 +19,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_SONICCHAOGARDEN_H__
-#define __MCRECOVER_SONICCHAOGARDEN_H__
+#ifndef __LIBGCTOOLS_SONICCHAOGARDEN_INC_H__
+#define __LIBGCTOOLS_SONICCHAOGARDEN_INC_H__
 
 // C includes.
 #include <stdint.h>
@@ -80,4 +80,4 @@ static const uint32_t SonicChaoGarden_CRC32_Table[256] = {
 	0xEE6F2B94, 0xB40BBE37, 0x810C8EA1, 0xDA05DF1B, 0xED02EF8D
 };
 
-#endif /* __MCRECOVER_SONICCHAOGARDEN_H__ */
+#endif /* __LIBGCTOOLS_SONICCHAOGARDEN_INC_H__ */

@@ -24,6 +24,9 @@
 
 #include "card.h"
 
+// C++ includes.
+#include <vector>
+
 // Qt includes.
 #include <QtCore/QObject>
 #include <QtCore/QString>

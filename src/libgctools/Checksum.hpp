@@ -1,5 +1,5 @@
 /***************************************************************************
- * GameCube Memory Card Recovery Program.                                  *
+ * GameCube Tools Library.                                                 *
  * Checksum.hpp: Checksum algorithm class.                                 *
  *                                                                         *
  * Copyright (c) 2013 by David Korth.                                      *
@@ -19,22 +19,29 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_CHECKSUM_HPP__
-#define __MCRECOVER_CHECKSUM_HPP__
+#ifndef __LIBGCTOOLS_CHECKSUM_HPP__
+#define __LIBGCTOOLS_CHECKSUM_HPP__
 
 // C includes.
 #include <stdint.h>
 
-// Qt includes.
-#include <QtCore/QString>
-#include <QtCore/QVector>
+// C++ includes.
+#include <string>
+#include <vector>
 
+/**
+ * GCN checksum algorithm class.
+ * Contains algorithms for GCN save files.
+ *
+ * NOTE: All string parameters are ASCII.
+ */
 class Checksum
 {
 	private:
 		// Static class.
 		Checksum();
 		~Checksum();
+		// TODO: Copy Qt's Q_DISABLE_COPY() macro.
 		Checksum(const Checksum &);
 		Checksum &operator=(const Checksum &);
 
@@ -172,35 +179,35 @@ class Checksum
 		 * @param algorithm Checksum algorithm name.
 		 * @return ChkAlgorithm. (If unknown, returns CHKALG_NONE.)
 		 */
-		static ChkAlgorithm ChkAlgorithmFromString(QString algorithm);
+		static ChkAlgorithm ChkAlgorithmFromString(const char *algorithm);
 
 		/**
 		 * Get a checksum algorithm name from a ChkAlgorithm.
 		 * @param algorithm ChkAlgorithm.
-		 * @return Checksum algorithm name, or empty string if CHKALG_NONE or unknown.
+		 * @return Checksum algorithm name, or nullptr if CHKALG_NONE or unknown.
 		 */
-		static QString ChkAlgorithmToString(ChkAlgorithm algorithm);
+		static const char *ChkAlgorithmToString(ChkAlgorithm algorithm);
 
 		/**
 		 * Get a nicely formatted checksum algorithm name from a ChkAlgorithm.
 		 * @param algorithm ChkAlgorithm.
-		 * @return Checksum algorithm name, or empty string if CHKALG_NONE or unknown.
+		 * @return Checksum algorithm name, or nullptr if CHKALG_NONE or unknown.
 		 */
-		static QString ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm);
+		static const char *ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm);
 
 		/**
 		 * Get the checksum field width.
 		 * @param checksumValues Checksum values to check.
 		 * @return 4 for 16-bit checksums; 8 for 32-bit checksums.
 		 */
-		static int ChecksumFieldWidth(QVector<ChecksumValue> checksumValues);
+		static int ChecksumFieldWidth(const std::vector<ChecksumValue>& checksumValues);
 
 		/**
 		 * Get the checksum status.
 		 * @param checksumValues Checksum values to check.
 		 * @return Checksum status.
 		 */
-		static ChkStatus ChecksumStatus(QVector<ChecksumValue> checksumValues);
+		static ChkStatus ChecksumStatus(const std::vector<ChecksumValue>& checksumValues);
 
 		/**
 		 * Format checksum values as HTML for display purposes.
@@ -209,7 +216,7 @@ class Checksum
 		 * - String 0 contains the actual checksums.
 		 * - String 1, if present, contains the expected checksums.
 		 */
-		static QVector<QString> ChecksumValuesFormatted(QVector<ChecksumValue> checksumValues);
+		static std::vector<std::string> ChecksumValuesFormatted(const std::vector<ChecksumValue>& checksumValues);
 };
 
-#endif /* __MCRECOVER_CHECKSUM_HPP__ */
+#endif /* __LIBGCTOOLS_CHECKSUM_HPP__ */

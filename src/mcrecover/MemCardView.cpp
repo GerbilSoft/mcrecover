@@ -28,6 +28,11 @@
 // C includes.
 #include <stdlib.h>
 
+// C++ includes.
+#include <string>
+#include <vector>
+using std::string;
+using std::vector;
 
 /** MemCardViewPrivate **/
 
@@ -57,7 +62,6 @@ MemCardViewPrivate::MemCardViewPrivate(MemCardView *q)
 
 MemCardViewPrivate::~MemCardViewPrivate()
 { }
-
 
 /**
  * Update the widget display.
@@ -89,9 +93,9 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 	bool isCardHeaderValid = true;
 
 	// Format the header checksum.
-	QVector<Checksum::ChecksumValue> checksumValues;
-	checksumValues.append(card->headerChecksumValue());
-	QVector<QString> checksumValuesFormatted = Checksum::ChecksumValuesFormatted(checksumValues);
+	vector<Checksum::ChecksumValue> checksumValues;
+	checksumValues.push_back(card->headerChecksumValue());
+	vector<string> checksumValuesFormatted = Checksum::ChecksumValuesFormatted(checksumValues);
 	if (checksumValuesFormatted.size() < 1) {
 		// No checksum...
 		q->lblChecksumActual->setText(q->tr("Unknown", "checksum"));
@@ -99,7 +103,8 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 		q->lblChecksumExpected->setVisible(false);
 	} else {
 		// Set the actual checksum text.
-		q->lblChecksumActual->setText(checksumValuesFormatted.at(0));
+		q->lblChecksumActual->setText(
+			QString::fromStdString(checksumValuesFormatted.at(0)));
 
 		if (checksumValuesFormatted.size() > 1) {
 			// At least one checksum is invalid.
@@ -107,7 +112,8 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 			// Show the expected checksum.
 			q->lblChecksumExpectedTitle->setVisible(true);
 			q->lblChecksumExpected->setVisible(true);
-			q->lblChecksumExpected->setText(checksumValuesFormatted.at(1));
+			q->lblChecksumExpected->setText(
+				QString::fromStdString(checksumValuesFormatted.at(1)));
 		} else {
 			// Checksums are all valid.
 			// Hide the expected checksum.

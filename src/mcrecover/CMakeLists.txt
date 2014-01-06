@@ -95,7 +95,6 @@ SET(mcrecover_SRCS
 	PcreRegex.cpp
 	GcnDateTime.cpp
 	MemCardFileView.cpp
-	Checksum.cpp
 	MemCardView.cpp
 	IconAnimHelper.cpp
 	McRecoverQApplication.cpp

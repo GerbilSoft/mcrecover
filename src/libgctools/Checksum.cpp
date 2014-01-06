@@ -1,5 +1,5 @@
 /***************************************************************************
- * GameCube Memory Card Recovery Program.                                  *
+ * GameCube Tools Library.                                                 *
  * Checksum.cpp: Checksum algorithm class.                                 *
  *                                                                         *
  * Copyright (c) 2013 by David Korth.                                      *
@@ -20,16 +20,21 @@
  ***************************************************************************/
 
 #include "Checksum.hpp"
-#include "SonicChaoGarden.h"
+#include "SonicChaoGarden.inc.h"
 
 #include "util/byteswap.h"
 
 // C includes. (C++ namespace)
 #include <cstdio>
+#include <cstring>
 
+// C++ includes.
+#include <string>
+#include <vector>
+using std::string;
+using std::vector;
 
 /** Algorithms. **/
-
 
 /**
  * CRC-16 algorithm.
@@ -55,7 +60,6 @@ uint16_t Checksum::Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly)
 
 	return ~crc;
 }
-
 
 /**
  * AddInvDual16 algorithm.
@@ -104,7 +108,6 @@ uint32_t Checksum::AddInvDual16(const uint16_t *buf, uint32_t siz)
 	return ((chk1 << 16) | chk2);
 }
 
-
 /**
  * AddBytes32 algorithm.
  * Adds all bytes together in a uint32_t.
@@ -131,7 +134,6 @@ uint32_t Checksum::AddBytes32(const uint8_t *buf, uint32_t siz)
 	return checksum;
 }
 
-
 /**
  * SonicChaoGarden algorithm.
  * @param buf Data buffer.
@@ -151,9 +153,7 @@ uint32_t Checksum::SonicChaoGarden(const uint8_t *buf, uint32_t siz)
 	return (a4 ^ v4);
 }
 
-
 /** General functions. **/
-
 
 /**
  * Get the checksum for a block of data.
@@ -192,30 +192,29 @@ uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, u
 	return 0;
 }
 
-
 /**
  * Get a ChkAlgorithm from a checksum algorithm name.
  * @param algorithm Checksum algorithm name.
  * @return ChkAlgorithm. (If unknown, returns CHKALG_NONE.)
  */
-Checksum::ChkAlgorithm Checksum::ChkAlgorithmFromString(QString algorithm)
+Checksum::ChkAlgorithm Checksum::ChkAlgorithmFromString(const char *algorithm)
 {
-	if (algorithm == QLatin1String("crc16") ||
-	    algorithm == QLatin1String("crc-16"))
+	if (!strcmp(algorithm, "crc16") ||
+	    !strcmp(algorithm, "crc-16"))
 	{
 		return CHKALG_CRC16;
 	}
-	else if (algorithm == QLatin1String("crc32") ||
-		 algorithm == QLatin1String("crc-32"))
+	else if (!strcmp(algorithm, "crc32") ||
+		 !strcmp(algorithm, "crc-32"))
 	{
 		return CHKALG_CRC32;
-	} else if (algorithm == QLatin1String("addinvdual16")) {
+	} else if (!strcmp(algorithm, "addinvdual16")) {
 		return CHKALG_ADDINVDUAL16;
-	} else if (algorithm == QLatin1String("addbytes32")) {
+	} else if (!strcmp(algorithm, "addbytes32")) {
 		return CHKALG_ADDBYTES32;
 	}
-	else if (algorithm == QLatin1String("sonicchaogarden") ||
-		 algorithm == QLatin1String("sonic chao garden"))
+	else if (!strcmp(algorithm, "sonicchaogarden") ||
+		 !strcmp(algorithm, "sonic chao garden"))
 	{
 		return CHKALG_SONICCHAOGARDEN;
 	}
@@ -224,70 +223,67 @@ Checksum::ChkAlgorithm Checksum::ChkAlgorithmFromString(QString algorithm)
 	return CHKALG_NONE;
 }
 
-
 /**
  * Get a checksum algorithm name from a ChkAlgorithm.
  * @param algorithm ChkAlgorithm.
- * @return Checksum algorithm name, or empty string if CHKALG_NONE or unknown.
+ * @return Checksum algorithm name, or nullptr if CHKALG_NONE or unknown.
  */
-QString Checksum::ChkAlgorithmToString(ChkAlgorithm algorithm)
+const char *Checksum::ChkAlgorithmToString(ChkAlgorithm algorithm)
 {
 	switch (algorithm) {
 		default:
 		case CHKALG_NONE:
-			return QString();
+			return nullptr;
 
 		case CHKALG_CRC16:
-			return QLatin1String("CRC-16");
+			return "CRC-16";
 		case CHKALG_CRC32:
-			return QLatin1String("CRC-32");
+			return "CRC-32";
 		case CHKALG_ADDINVDUAL16:
-			return QLatin1String("AddInvDual16");
+			return "AddInvDual16";
 		case CHKALG_ADDBYTES32:
-			return QLatin1String("AddBytes32");
+			return "AddBytes32";
 		case CHKALG_SONICCHAOGARDEN:
-			return QLatin1String("SonicChaoGarden");
+			return "SonicChaoGarden";
 	}
 }
-
 
 /**
  * Get a nicely formatted checksum algorithm name from a ChkAlgorithm.
  * @param algorithm ChkAlgorithm.
- * @return Checksum algorithm name, or empty string if CHKALG_NONE or unknown.
+ * @return Checksum algorithm name, or nullptr if CHKALG_NONE or unknown.
  */
-QString Checksum::ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm)
+const char *Checksum::ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm)
 {
 	switch (algorithm) {
 		default:
 		case CHKALG_NONE:
-			return QString();
+			return nullptr;
 
 		case CHKALG_CRC16:
-			return QLatin1String("CRC-16");
+			return "CRC-16";
 		case CHKALG_CRC32:
-			return QLatin1String("CRC-32");
+			return "CRC-32";
 		case CHKALG_ADDINVDUAL16:
-			return QLatin1String("AddInvDual16");
+			return "AddInvDual16";
 		case CHKALG_ADDBYTES32:
-			return QLatin1String("AddBytes32");
+			return "AddBytes32";
 		case CHKALG_SONICCHAOGARDEN:
-			return QLatin1String("Sonic Chao Garden");
+			return "Sonic Chao Garden";
 	}
 }
-
 
 /**
  * Get the checksum field width.
  * @param checksumValues Checksum values to check.
  * @return 4 for 16-bit checksums; 8 for 32-bit checksums.
  */
-int Checksum::ChecksumFieldWidth(const QVector<ChecksumValue> checksumValues)
+int Checksum::ChecksumFieldWidth(const vector<ChecksumValue>& checksumValues)
 {
-	if (checksumValues.isEmpty())
+	if (checksumValues.empty())
 		return 4;
 
-	for (int i = (checksumValues.size() - 1); i >= 0; i--) {
+	for (int i = ((int)checksumValues.size() - 1); i >= 0; i--) {
 		const Checksum::ChecksumValue &value = checksumValues.at(i);
 		if (value.expected > 0xFFFF || value.actual > 0xFFFF) {
 			// Checksums are 32-bit.
@@ -305,12 +301,12 @@ int Checksum::ChecksumFieldWidth(const QVector<ChecksumValue> checksumValues)
  * @param checksumValues Checksum values to check.
  * @return Checksum status.
  */
-Checksum::ChkStatus Checksum::ChecksumStatus(const QVector<ChecksumValue> checksumValues)
+Checksum::ChkStatus Checksum::ChecksumStatus(const vector<ChecksumValue>& checksumValues)
 {
-	if (checksumValues.isEmpty())
+	if (checksumValues.empty())
 		return Checksum::CHKST_UNKNOWN;
 
-	for (int i = 0; i < checksumValues.count(); i++) {
+	for (int i = ((int)checksumValues.size() - 1); i >= 0; i--) {
 		const Checksum::ChecksumValue &checksumValue = checksumValues.at(i);
 		if (checksumValue.expected != checksumValue.actual)
 			return Checksum::CHKST_INVALID;
@@ -328,27 +324,26 @@ Checksum::ChkStatus Checksum::ChecksumStatus(const QVector<ChecksumValue> checks
  * - String 0 contains the actual checksums.
  * - String 1, if present, contains the expected checksums.
  */
-QVector<QString> Checksum::ChecksumValuesFormatted(const QVector<ChecksumValue> checksumValues)
+vector<string> Checksum::ChecksumValuesFormatted(const vector<ChecksumValue>& checksumValues)
 {
 	// Checksum colors.
 	// TODO: Better colors?
-	static const QString s_chkHtmlGood = QLatin1String("<span style='color: #080'>%1</span>");
-	static const QString s_chkHtmlInvalid = QLatin1String("<span style='color: #F00'>%1</span>");
-	static const QString s_chkHtmlLinebreak = QLatin1String("<br/>");
+	static const char s_chkHtmlLinebreak[] = "<br/>";
 
 	// Get the checksum values.
 	const int fieldWidth = ChecksumFieldWidth(checksumValues);
-	const int reserveSize = ((s_chkHtmlGood.length() + fieldWidth + 5) * checksumValues.size());
+	// Assume 34 characters per checksum entry.
+	const int reserveSize = ((34 + fieldWidth + 5) * (int)checksumValues.size());
 
 	// Get the checksum status.
 	const Checksum::ChkStatus checksumStatus = ChecksumStatus(checksumValues);
 
-	QString s_chkActual_all; s_chkActual_all.reserve(reserveSize);
-	QString s_chkExpected_all;
+	string s_chkActual_all; s_chkActual_all.reserve(reserveSize);
+	string s_chkExpected_all;
 	if (checksumStatus == Checksum::CHKST_INVALID)
 		s_chkExpected_all.reserve(reserveSize);
 
-	for (int i = 0; i < checksumValues.size(); i++) {
+	for (int i = 0; i < (int)checksumValues.size(); i++) {
 		const Checksum::ChecksumValue &value = checksumValues.at(i);
 
 		if (i > 0) {
@@ -356,8 +351,8 @@ QVector<QString> Checksum::ChecksumValuesFormatted(const QVector<ChecksumValue> 
 			if ((i % 2) && fieldWidth <= 4) {
 				// Odd checksum index, 16-bit checksum.
 				// Add a space.
-				s_chkActual_all += QChar(L' ');
-				s_chkExpected_all += QChar(L' ');
+				s_chkActual_all += ' ';
+				s_chkExpected_all += ' ';
 			} else {
 				// Add a linebreak.
 				s_chkActual_all += s_chkHtmlLinebreak;
@@ -378,19 +373,29 @@ QVector<QString> Checksum::ChecksumValuesFormatted(const QVector<ChecksumValue> 
 		// Check if the checksum is valid.
 		if (value.actual == value.expected) {
 			// Checksum is valid.
-			s_chkActual_all += s_chkHtmlGood.arg(QLatin1String(s_chkActual));
-			if (checksumStatus == Checksum::CHKST_INVALID)
-				s_chkExpected_all += s_chkHtmlGood.arg(QLatin1String(s_chkExpected));
+			s_chkActual_all += "<span style='color: #080'>";
+			s_chkActual_all += + s_chkActual;
+			s_chkActual_all += "</span>";
+			if (checksumStatus == Checksum::CHKST_INVALID) {
+				s_chkExpected_all += "<span style='color: #080'>";
+				s_chkExpected_all += s_chkExpected;
+				s_chkExpected_all += "</span>";
+			}
 		} else {
 			// Checksum is invalid.
-			s_chkActual_all += s_chkHtmlInvalid.arg(QLatin1String(s_chkActual));
-			if (checksumStatus == Checksum::CHKST_INVALID)
-				s_chkExpected_all += s_chkHtmlInvalid.arg(QLatin1String(s_chkExpected));
+			s_chkActual_all += "<span style='color: #F00'>";
+			s_chkActual_all += s_chkActual;
+			s_chkActual_all += "</span>";
+			if (checksumStatus == Checksum::CHKST_INVALID) {
+				s_chkExpected_all += "<span style='color: #F00'>";
+				s_chkExpected_all += s_chkExpected;
+				s_chkExpected_all += "</span>";
+			}
 		}
 	}
 
 	// Return the checksum strings.
-	QVector<QString> ret;
+	vector<string> ret;
 	ret.push_back(s_chkActual_all);
 	if (checksumStatus == Checksum::CHKST_INVALID)
 		ret.push_back(s_chkExpected_all);

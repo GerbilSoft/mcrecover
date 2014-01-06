@@ -30,6 +30,12 @@
 #include "GcImage.hpp"
 #include "GcToolsQt.hpp"
 
+// C++ includes.
+#include <string>
+#include <vector>
+using std::string;
+using std::vector;
+
 // Qt includes.
 #include <QtCore/QByteArray>
 #include <QtCore/QTextCodec>
@@ -555,7 +561,7 @@ void MemCardFilePrivate::calculateChecksum(void)
 {
 	checksumValues.clear();
 
-	if (checksumDefs.isEmpty()) {
+	if (checksumDefs.empty()) {
 		// No checksum definitions were set.
 		return;
 	}
@@ -571,7 +577,7 @@ void MemCardFilePrivate::calculateChecksum(void)
 	uint8_t *data = reinterpret_cast<uint8_t*>(fileData.data());
 
 	// Process all of the checksum definitions.
-	for (int i = 0; i < checksumDefs.count(); i++) {
+	for (int i = 0; i < (int)checksumDefs.size(); i++) {
 		const Checksum::ChecksumDef &checksumDef = checksumDefs.at(i);
 
 		if (checksumDef.algorithm == Checksum::CHKALG_NONE ||
@@ -653,7 +659,7 @@ void MemCardFilePrivate::calculateChecksum(void)
 		Checksum::ChecksumValue checksumValue;
 		checksumValue.expected = expected;
 		checksumValue.actual = actual;
-		checksumValues.append(checksumValue);
+		checksumValues.push_back(checksumValue);
 	}
 }
 
@@ -911,7 +917,7 @@ Checksum::ChkAlgorithm MemCardFile::checksumAlgorithm(void) const
  * @return Checksum status.
  */
 Checksum::ChkStatus MemCardFile::checksumStatus(void) const
-	{ return Checksum::ChecksumStatus(d->checksumValues); }
+	{ return Checksum::ChecksumStatus(d->checksumValues.toStdVector()); }
 
 /**
  * Format checksum values as HTML for display purposes.
@@ -920,7 +926,15 @@ Checksum::ChkStatus MemCardFile::checksumStatus(void) const
  * - String 1, if present, contains the expected checksums.
  */
 QVector<QString> MemCardFile::checksumValuesFormatted(void) const
-	{ return Checksum::ChecksumValuesFormatted(d->checksumValues); }
+{
+	vector<string> vs = Checksum::ChecksumValuesFormatted(d->checksumValues.toStdVector());
+	QVector<QString> ret;
+	ret.reserve((int)vs.size());
+	for (int i = 0; i < (int)vs.size(); i++) {
+		ret.append(QString::fromStdString(vs[i]));
+	}
+	return ret;
+}
 
 
 /**

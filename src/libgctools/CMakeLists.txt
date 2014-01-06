@@ -21,6 +21,7 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/util/byteorder.h.in" "${CMAKE_CURREN
 # Sources.
 SET(libgctools_SRCS
 	GcImage.cpp
+	Checksum.cpp
 	)
 
 # Build the library.
