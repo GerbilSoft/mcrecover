@@ -101,6 +101,12 @@ class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
 
 		// lstFileList slots.
 		void lstFileList_selectionModel_currentRowChanged(const QModelIndex& current, const QModelIndex& previous);
+
+		/**
+		 * Set the translation.
+		 * @param tsLocale Translation to use. (locale tag)
+		 */
+		void setTranslation_slot(QString tsLocale);
 };
 
 #endif /* __MCRECOVER_MCRECOVERWINDOW_HPP__ */

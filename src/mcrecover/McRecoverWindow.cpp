@@ -185,10 +185,8 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 			 q, SLOT(setPreferredRegion_slot(int)));
 
 	// Connect the QSignalMapper slot for translations.
-	/* TODO
 	QObject::connect(mapperTS, SIGNAL(mapped(QString)),
 			 q, SLOT(setTranslation_slot(QString)));
-	*/
 }
 
 McRecoverWindowPrivate::~McRecoverWindowPrivate()
@@ -496,6 +494,8 @@ void McRecoverWindowPrivate::rets_actTsSysDefault(void)
 	if (!actTsSysDefault) {
 		actTsSysDefault = new QAction(q);
 		actTsSysDefault->setCheckable(true);
+		QObject::connect(actTsSysDefault, SIGNAL(triggered()),
+				 mapperTS, SLOT(map()));
 	}
 	//: Translation: System Default (retrieved from system settings)
 	QString tsSysLocale = QLocale::system().name();
@@ -532,6 +532,8 @@ void McRecoverWindowPrivate::initTsMenu(void)
 		actTs->setCheckable(true);
 		vActionsTS.append(actTs);
 		actgrpTS->addAction(actTs);
+		QObject::connect(actTs, SIGNAL(triggered()),
+				 mapperTS, SLOT(map()));
 		mapperTS->setMapping(actTs, tsLocale);
 		q->menuLanguage->addAction(actTs);
 	}
@@ -1014,7 +1016,6 @@ void McRecoverWindow::memCardModel_rowsInserted(void)
 	d->updateLstFileList();
 }
 
-
 /**
  * Search has completed.
  * @param lostFilesFound Number of "lost" files found.
@@ -1040,7 +1041,6 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 	}
 }
 
-
 /**
  * lstFileList selectionModel: Current row selection has changed.
  * @param current Current index.
@@ -1060,4 +1060,13 @@ void McRecoverWindow::lstFileList_selectionModel_currentRowChanged(
 	// Set the MemCardFileView's MemCardFile to the
 	// selected file in the QTreeView.
 	mcfFileView->setFile(d->card->getFile(current.row()));
+}
+
+/**
+ * Set the translation.
+ * @param tsLocale Translation to use. (locale tag)
+ */
+void McRecoverWindow::setTranslation_slot(QString tsLocale)
+{
+	TranslationManager::instance()->setTranslation(tsLocale);
 }
