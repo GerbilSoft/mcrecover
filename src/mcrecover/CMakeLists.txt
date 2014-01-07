@@ -184,8 +184,7 @@ ENDIF(QT_QTDBUS_FOUND)
 # Translations. #
 #################
 
-# TODO
-#ADD_SUBDIRECTORY(translations)
+ADD_SUBDIRECTORY(translations)
 # TODO: Mac OS X bundle location.
 # TODO: "make install" location.
 
@@ -232,8 +231,8 @@ IF(QT_QTDBUS_FOUND)
 	TARGET_LINK_LIBRARIES(mcrecover ${QT_QTDBUS_LIBRARY})
 ENDIF(QT_QTDBUS_FOUND)
 
-# TODO: Translations.
-#ADD_DEPENDENCIES(gens-qt4 translations_target)
+# Translations.
+ADD_DEPENDENCIES(mcrecover translations_target)
 
 # NOTE: $<TARGET_FILE:mcrecover> is preferred,
 # but this doesn't seem to work on Ubuntu 10,04.
