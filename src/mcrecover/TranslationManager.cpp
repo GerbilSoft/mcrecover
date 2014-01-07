@@ -171,7 +171,10 @@ void TranslationManager::setTranslation(QString locale)
 	//: Translation file author. Put your name here.
 	QString tsAuthor = McRecoverQApplication::tr("David Korth", "ts-author");
 	Q_UNUSED(tsAuthor)
-	//: Language this translation provides.
-	QString tsLanguage = McRecoverQApplication::tr("C", "ts-author");
+	//: Language this translation provides, e.g. "English (US)".
+	QString tsLanguage = McRecoverQApplication::tr("Default", "ts-author");
 	Q_UNUSED(tsLanguage)
+	//: Locale name, e.g. "en_US".
+	QString tsLocale = McRecoverQApplication::tr("C", "ts-author");
+	Q_UNUSED(tsLocale)
 }
