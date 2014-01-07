@@ -293,6 +293,7 @@
     </message>
     <message>
         <location filename="../ui/McRecoverWindow.ui" line="421"/>
+        <location filename="../McRecoverWindow.cpp" line="323"/>
         <source>Preferred Region:</source>
         <translation>pr3f3rr3d r3610n:</translation>
     </message>
@@ -302,33 +303,28 @@
         <translation>534rch u&amp;53d bl0ck5</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="220"/>
+        <location filename="../McRecoverWindow.cpp" line="228"/>
         <source>No memory card loaded.</source>
         <translation>n0 m3m0ry c4rd l04d3d.</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="267"/>
-        <source>Preferred region:</source>
-        <translation>pr3f3rr3d r3610n:</translation>
-    </message>
-    <message>
-        <location filename="../McRecoverWindow.cpp" line="363"/>
+        <location filename="../McRecoverWindow.cpp" line="380"/>
         <source>Save GCN Save File %1</source>
         <translation>54v3 6cn 54v3 f1l3 %1</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="366"/>
+        <location filename="../McRecoverWindow.cpp" line="383"/>
         <source>GameCube Save Files</source>
         <translation>64m3cub3 54v3 f1l35</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="367"/>
-        <location filename="../McRecoverWindow.cpp" line="832"/>
+        <location filename="../McRecoverWindow.cpp" line="384"/>
+        <location filename="../McRecoverWindow.cpp" line="850"/>
         <source>All Files</source>
         <translation>4ll f1l35</translation>
     </message>
     <message numerus="yes">
-        <location filename="../McRecoverWindow.cpp" line="401"/>
+        <location filename="../McRecoverWindow.cpp" line="418"/>
         <source>Save %Ln GCN Save File(s)</source>
         <translation>
             <numerusform>54v3 %Ln 6cn 54v3 f1l3</numerusform>
@@ -336,12 +332,12 @@
         </translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="425"/>
+        <location filename="../McRecoverWindow.cpp" line="442"/>
         <source>File Already Exists</source>
         <translation>f1l3 4lr34dy 3x1575</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="426"/>
+        <location filename="../McRecoverWindow.cpp" line="443"/>
         <source>A file named &quot;%1&quot; already exists in the specified directory.
 
 Do you want to overwrite it?</source>
@@ -350,42 +346,42 @@ Do you want to overwrite it?</source>
 d0 y0u w4n7 70 0v3rwr173 17?</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="503"/>
+        <location filename="../McRecoverWindow.cpp" line="520"/>
         <source>System Default (%1)</source>
         <comment>ts-language</comment>
         <translation>5y573m d3f4ul7 (%1)</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="829"/>
+        <location filename="../McRecoverWindow.cpp" line="847"/>
         <source>Open GameCube Memory Card Image</source>
         <translation>0p3n 64m3cub3 m3m0ry c4rd 1m463</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="831"/>
+        <location filename="../McRecoverWindow.cpp" line="849"/>
         <source>GameCube Memory Card Image</source>
         <translation>64m3cub3 m3m0ry c4rd 1m463</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="866"/>
+        <location filename="../McRecoverWindow.cpp" line="884"/>
         <source>The database files should be located in the data subdirectory in
 mcrecover.exe&apos;s program directory.</source>
         <translation>7h3 d474b453 f1l35 5h0uld b3 l0c473d 1n 7h3 d474 5ubd1r3c70ry 1n
 mcr3c0v3r.3x3&apos;5 pr06r4m d1r3c70ry.</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="870"/>
+        <location filename="../McRecoverWindow.cpp" line="888"/>
         <source>The database files should be located in %1.
 Alternatively, you can place your own version in ~/.config/mcrecover/data/</source>
         <translation>7h3 d474b453 f1l35 5h0uld b3 l0c473d 1n %1.
 4l73rn471v3ly, y0u c4n pl4c3 y0ur 0wn v3r510n 1n ~/.c0nf16/mcr3c0v3r/d474/</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="877"/>
+        <location filename="../McRecoverWindow.cpp" line="895"/>
         <source>Database Load Error</source>
         <translation>d474b453 l04d 3rr0r</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="878"/>
+        <location filename="../McRecoverWindow.cpp" line="896"/>
         <source>No GCN MemCard file databases were found.</source>
         <translation>n0 6cn m3mc4rd f1l3 d474b4535 w3r3 f0und.</translation>
     </message>
