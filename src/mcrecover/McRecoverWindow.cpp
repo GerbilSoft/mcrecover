@@ -365,7 +365,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 		// Multiple files, path not specified.
 		// Prompt the user for a save location.
 		path = QFileDialog::getExistingDirectory(q,
-				McRecoverWindow::tr("Save %Ln GCN Save File(s)", nullptr, files.size()));
+				McRecoverWindow::tr("Save %Ln GCN Save File(s)", "", files.size()));
 		if (path.isEmpty())
 			return;
 	}

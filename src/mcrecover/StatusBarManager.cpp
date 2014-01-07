@@ -373,7 +373,7 @@ void StatusBarManager::filesSaved(int n, QString path)
 {
 	d->scanning = false;
 	d->progressBar->setVisible(false);
-	d->lastStatusMessage = tr("%Ln file(s) saved to %1.", nullptr, n)
+	d->lastStatusMessage = tr("%Ln file(s) saved to %1.", "", n)
 				.arg(QDir::toNativeSeparators(path));
 	d->updateStatusBar();
 
@@ -452,7 +452,7 @@ void StatusBarManager::searchFinished_slot(int lostFilesFound)
 	d->scanning = false;
 	d->lostFilesFound = lostFilesFound;
 	d->currentSearchBlock = d->totalSearchBlocks;
-	d->lastStatusMessage = tr("Scan complete. %Ln lost file(s) found.", nullptr, lostFilesFound);
+	d->lastStatusMessage = tr("Scan complete. %Ln lost file(s) found.", "", lostFilesFound);
 	d->updateStatusBar();
 
 	// Hide the progress bar after a few seconds.
