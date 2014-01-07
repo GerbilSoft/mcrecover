@@ -178,3 +178,55 @@ void TranslationManager::setTranslation(QString locale)
 	QString tsLocale = McRecoverQApplication::tr("C", "ts-locale");
 	Q_UNUSED(tsLocale)
 }
+
+/**
+ * Enumerate available translations.
+ * NOTE: This only checks MemCard Recover translations.
+ * If a Qt translation exists but MemCard Recover doesn't have
+ * that translation, it won't show up.
+ * @return Map of available translations. (Key == locale, Value == description)
+ */
+QMap<QString, QString> TranslationManager::enumerate(void)
+{
+	// Name filters.
+	// Remember that compiled translations have the
+	// extension *.qm, not *.ts.
+	static const char nameFilters_c[4][5] = {
+		"*.qm", "*.qM", "*.Qm", "*.QM",
+	};
+
+	QStringList nameFilters;
+	nameFilters.reserve(8);
+	for (int i = 0; i < 8; i++)
+		nameFilters << QLatin1String(nameFilters_c[i]);
+
+	// Search the paths for TS files.
+	static const QDir::Filters filters = (QDir::Files | QDir::Readable);
+#ifdef Q_OS_WIN
+	static const QDir::SortFlags sortFlags = (QDir::Name | QDir::IgnoreCase);
+#else /* !Q_OS_WIN */
+	static const QDir::SortFlags sortFlags = (QDir::Name);
+#endif /* Q_OS_WIN */
+
+	QMap<QString, QString> tsMap;
+	QTranslator tmpTs;
+	foreach (QString path, d->pathList) {
+		QDir dir(path);
+		QFileInfoList files = dir.entryInfoList(nameFilters, filters, sortFlags);
+		foreach (QFileInfo file, files) {
+			// Get the locale information.
+			// TODO: Also get the author information?
+			if (tmpTs.load(file.absoluteFilePath())) {
+				QString tsLocale = tmpTs.translate("McRecoverQApplication", "Default", "ts-locale");
+				if (!tsMap.contains(tsLocale)) {
+					// Add the translation to the map.
+					QString tsLanguage = tmpTs.translate("McRecoverQApplication", "C", "ts-language");
+					tsMap.insert(tsLocale, tsLanguage);
+				}
+			}
+		}
+	}
+
+	// Translations enumerated.
+	return tsMap;
+}

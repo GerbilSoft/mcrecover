@@ -24,6 +24,7 @@
 
 // Qt includes.
 #include <QtCore/QString>
+#include <QtCore/QMap>
 
 class TranslationManagerPrivate;
 
@@ -46,6 +47,15 @@ class TranslationManager
 		 * @param locale Locale, e.g. "en_US". (Empty string is untranslated.)
 		 */
 		void setTranslation(QString locale);
+
+		/**
+		 * Enumerate available translations.
+		 * NOTE: This only checks MemCard Recover translations.
+		 * If a Qt translation exists but MemCard Recover doesn't have
+		 * that translation, it won't show up.
+		 * @return Map of available translations. (Key == locale, Value == description)
+		 */
+		QMap<QString, QString> enumerate(void);
 };
 
 #endif /* __MCRECOVER_TRANSLATIONMGR_HPP__ */
