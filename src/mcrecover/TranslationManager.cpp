@@ -217,10 +217,10 @@ QMap<QString, QString> TranslationManager::enumerate(void)
 			// Get the locale information.
 			// TODO: Also get the author information?
 			if (tmpTs.load(file.absoluteFilePath())) {
-				QString tsLocale = tmpTs.translate("McRecoverQApplication", "Default", "ts-locale");
+				QString tsLocale = tmpTs.translate("McRecoverQApplication", "C", "ts-locale");
 				if (!tsMap.contains(tsLocale)) {
 					// Add the translation to the map.
-					QString tsLanguage = tmpTs.translate("McRecoverQApplication", "C", "ts-language");
+					QString tsLanguage = tmpTs.translate("McRecoverQApplication", "Default", "ts-language");
 					tsMap.insert(tsLocale, tsLanguage);
 				}
 			}
