@@ -19,9 +19,11 @@ INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}/../libgctools")
 IF(WIN32 OR APPLE)
 	# Win32 and Mac OS X don't use `make install`.
 	SET(MCRECOVER_DATA_DIRECTORY "")
+	SET(MCRECOVER_TRANSLATIONS_DIRECTORY "")
 ELSE()
 	# Unix system.
 	SET(MCRECOVER_DATA_DIRECTORY "${CMAKE_INSTALL_PREFIX}/share/mcrecover/data")
+	SET(MCRECOVER_TRANSLATIONS_DIRECTORY "${CMAKE_INSTALL_PREFIX}/share/mcrecover/translations")
 ENDIF()
 
 # Find Qt4.
@@ -105,6 +107,7 @@ SET(mcrecover_SRCS
 	QTreeViewOpt.cpp
 	TaskbarButtonManager/TaskbarButtonManager.cpp
 	GcToolsQt.cpp
+	TranslationManager.cpp
 	)
 
 # Win32-specific sources.

@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * config.mcrecover.h.in: GCN MemCard Recover configuration. (source file) *
+ * TranslationManager.hpp: Qt translation manager.                         *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2014 by David Korth.                                      *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,32 +19,33 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_CONFIG_MCRECOVER_H__
-#define __MCRECOVER_CONFIG_MCRECOVER_H__
+#ifndef __MCRECOVER_TRANSLATIONMGR_HPP__
+#define __MCRECOVER_TRANSLATIONMGR_HPP__
 
-/* Program information. */
-#define MCRECOVER_DESCRIPTION "@DESCRIPTION@"
-#define MCRECOVER_AUTHOR "@AUTHOR@"
+// Qt includes.
+#include <QtCore/QString>
 
-/* Program version. */
-#define MCRECOVER_VERSION_MAJOR @VERSION_MAJOR@
-#define MCRECOVER_VERSION_MINOR @VERSION_MINOR@
-#define MCRECOVER_VERSION_PATCH @VERSION_PATCH@
-#if @VERSION_DEVEL@ != 0
-#define MCRECOVER_VERSION_DEVEL @VERSION_DEVEL@
-#endif
-#define MCRECOVER_VERSION_STRING "@VERSION_STRING@"
+class TranslationManagerPrivate;
 
-/* Define to 1 if Qt is built as a static library. */
-#cmakedefine QT_IS_STATIC 1
+class TranslationManager
+{
+	private:
+		TranslationManager();
+		~TranslationManager();
 
-/* Define to 1 if QtDBus was found. */
-#cmakedefine QT_QTDBUS_FOUND 1
+	private:
+		friend class TranslationManagerPriate;
+		TranslationManagerPrivate *const d;
+		Q_DISABLE_COPY(TranslationManager)
 
-/* Data directory. */
-#define MCRECOVER_DATA_DIRECTORY "@MCRECOVER_DATA_DIRECTORY@"
+	public:
+		static TranslationManager *instance(void);
 
-/* Translations directory. */
-#define MCRECOVER_TRANSLATIONS_DIRECTORY "@MCRECOVER_TRANSLATIONS_DIRECTORY@"
+		/**
+		 * Set the translation.
+		 * @param locale Locale, e.g. "en_US". (Empty string is untranslated.)
+		 */
+		void setTranslation(QString locale);
+};
 
-#endif /* __MCRECOVER_CONFIG_MCRECOVER_H__ */
+#endif /* __MCRECOVER_TRANSLATIONMGR_HPP__ */

@@ -33,6 +33,10 @@
 // Custom types for QVariant.
 #include "FileComments.hpp"
 
+// Translation Manager.
+#include "TranslationManager.hpp"
+
+/** McRecoverQApplicationPrivate **/
 
 class McRecoverQApplicationPrivate
 {
@@ -48,28 +52,10 @@ class McRecoverQApplicationPrivate
 
 		// Initialize McRecoverQApplication.
 		void mcrqaInit(void);
-
-		/**
-		 * Set the McRecover translation.
-		 * @param locale Locale name, e.g. "en_US".
-		 */
-		void setMcrTranslation(QString locale);
-
-	private:
-		// Qt translators.
-		QTranslator *qtTranslator;
-		QTranslator *mcrTranslator;
 };
-
-
-/**************************************
- * McRecoverQApplicationPrivate functions. *
- **************************************/
 
 McRecoverQApplicationPrivate::McRecoverQApplicationPrivate(McRecoverQApplication *q)
 	: q(q)
-	, qtTranslator(nullptr)
-	, mcrTranslator(nullptr)
 { }
 
 /**
@@ -86,7 +72,7 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 	const QString sVersion = QString::fromLatin1(MCRECOVER_VERSION_STRING);
 	QCoreApplication::setApplicationVersion(sVersion);
 
-	// Set the application icon. (TODO)
+	// Set the application icon.
 	QIcon mcrIcon = q->IconFromProgram(QLatin1String("mcrecover"));
 	q->setWindowIcon(mcrIcon);
 
@@ -108,57 +94,12 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 	// Register custom types for QVariant.
 	qRegisterMetaType<FileComments>("FileComments");
 
-	// Initialize Qt translators.
-	qtTranslator = new QTranslator(q);
-	q->installTranslator(qtTranslator);
-	mcrTranslator = new QTranslator(q);
-	q->installTranslator(mcrTranslator);
-
-	// Initialize the mcrecover translation.
-	setMcrTranslation(QLocale::system().name());
+	// Initialize the TranslationManager.
+	TranslationManager *tsm = TranslationManager::instance();
+	tsm->setTranslation(QLocale::system().name());
 }
 
-
-/**
- * Set the McRecover translation.
- * @param locale Locale name, e.g. "en_US".
- */
-void McRecoverQApplicationPrivate::setMcrTranslation(QString locale)
-{
-	// Initialize the Qt translation system.
-	// TODO: Allow switching languages on the fly?
-	// TODO: Check in the following directories:
-	// * Qt library directory
-	// * Application/translations/
-	// * Application/
-	// * config/
-	qtTranslator->load(
-		QLatin1String("qt_") + locale,
-		QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-
-	// Initialize the McRecover translator.
-	// TODO: Check in the following directories:
-	// * Application/translations/
-	// * Application/
-	// * config/
-	QDir appDir(QApplication::applicationDirPath());
-	mcrTranslator->load(
-		QLatin1String("mcrecover_") + locale,
-		appDir.absoluteFilePath(QLatin1String("translations/")));
-
-	/** Translation file information. **/
-
-	//: Translation file author. Put your name here.
-	QString tsAuthor = McRecoverQApplication::tr("David Korth", "ts-author");
-	Q_UNUSED(tsAuthor)
-
-	// TODO: Allow the program to access the translation file information.
-}
-
-
-/*******************************
- * McRecoverQApplication functions. *
- *******************************/
+/** McRecoverQApplication **/
 
 McRecoverQApplication::McRecoverQApplication(int &argc, char **argv)
 	: QApplication(argc, argv)
