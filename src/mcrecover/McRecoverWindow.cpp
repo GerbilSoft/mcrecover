@@ -863,19 +863,20 @@ void McRecoverWindow::on_actionScan_triggered(void)
 	QVector<QString> dbFilenames = GcnMcFileDb::GetDbFilenames();
 	if (dbFilenames.isEmpty()) {
 #ifdef Q_OS_WIN
-		const char *const def_path_hint =
+		QString def_path_hint = tr(
 			"The database files should be located in the data subdirectory in\n"
-			"mcrecover.exe's program directory.";
+			"mcrecover.exe's program directory.");
 #else
-		const char *const def_path_hint =
-			"The database files should be located in " MCRECOVER_DATA_DIRECTORY ".\n"
-			"Alternatively, you can place your own version in ~/.config/mcrecover/data/";
+		QString def_path_hint = tr(
+			"The database files should be located in %1.\n"
+			"Alternatively, you can place your own version in ~/.config/mcrecover/data/")
+			.arg(QLatin1String(MCRECOVER_DATA_DIRECTORY));
 #endif
 
 		QMessageBox::critical(this,
 			tr("Database Load Error"),
-			QLatin1String("No GCN MemCard file databases were found.\n\n") +
-			QLatin1String(def_path_hint));
+			tr("No GCN MemCard file databases were found.") +
+			QLatin1String("\n\n") + def_path_hint);
 		return;
 	}
 
