@@ -93,9 +93,14 @@ class McRecoverWindowPrivate
 		SearchThread *searchThread;
 
 		/**
-		 * Initialize the Memory Card toolbar.
+		 * Initialize the toolbar.
 		 */
-		void initMcToolbar(void);
+		void initToolbar(void);
+
+		/**
+		 * Retranslate the toolbar.
+		 */
+		void retranslateToolbar(void);
 
 		/**
 		 * Update the action enable status.
@@ -126,6 +131,7 @@ class McRecoverWindowPrivate
 		 * 0 indicates no preferred region.
 		 */
 		char preferredRegion;
+		QLabel *lblPreferredRegion;
 		QActionGroup *actgrpRegion;
 		QSignalMapper *mapperPreferredRegion;
 
@@ -154,6 +160,7 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, statusBarManager(nullptr)
 	, uiBusyCounter(0)
 	, preferredRegion(0)
+	, lblPreferredRegion(nullptr)
 	, actgrpRegion(nullptr)
 	, mapperPreferredRegion(new QSignalMapper(q))
 	, actTsSysDefault(nullptr)
@@ -198,6 +205,8 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 	delete searchThread;
 
 	delete statusBarManager;
+
+	delete lblPreferredRegion;
 	delete actgrpRegion;
 
 	// NOTE: These probably aren't needed, and might actually
@@ -208,7 +217,6 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 	vActionsTS.clear();
 	delete actgrpTS;
 }
-
 
 /**
  * Update the memory card's QTreeView.
@@ -236,11 +244,10 @@ void McRecoverWindowPrivate::updateLstFileList(void)
 	q->lstFileList->resizeColumnToContents(num_sections);
 }
 
-
 /**
- * Initialize the Memory Card toolbar.
+ * Initialize the toolbar.
  */
-void McRecoverWindowPrivate::initMcToolbar(void)
+void McRecoverWindowPrivate::initToolbar(void)
 {
 	// Set action icons.
 	q->actionOpen->setIcon(
@@ -264,7 +271,7 @@ void McRecoverWindowPrivate::initMcToolbar(void)
 
 	// Add a label for the "Preferred region" buttons.
 	// TODO: Add an extra space before the label...
-	QLabel *lblPreferredRegion = new QLabel(McRecoverWindow::tr("Preferred region:"));
+	lblPreferredRegion = new QLabel();
 	q->toolBar->insertWidget(q->actionRegionUS, lblPreferredRegion);
 
 	// Create a QActionGroup for the "Preferred region" buttons.
@@ -303,8 +310,18 @@ void McRecoverWindowPrivate::initMcToolbar(void)
 	QWidget *spacer = new QWidget(q);
 	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	q->toolBar->insertWidget(q->actionAbout, spacer);
+
+	// Retranslate the toolbar.
+	retranslateToolbar();
 }
 
+/**
+ * Retranslate the toolbar.
+ */
+void McRecoverWindowPrivate::retranslateToolbar(void)
+{
+	lblPreferredRegion->setText(McRecoverWindow::tr("Preferred Region:"));
+}
 
 /**
  * Update the "enabled" status of the QActions.
@@ -611,7 +628,7 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 
 	// Initialize the UI.
 	d->updateLstFileList();
-	d->initMcToolbar();
+	d->initToolbar();
 	d->initTsMenu();
 	d->statusBarManager = new StatusBarManager(this->Ui_McRecoverWindow::statusBar, this);
 	d->updateWindowTitle();
@@ -696,6 +713,7 @@ void McRecoverWindow::changeEvent(QEvent *event)
 		retranslateUi(this);
 		d->updateLstFileList();
 		d->updateWindowTitle();
+		d->retranslateToolbar();
 		d->rets_actTsSysDefault();
 	}
 
