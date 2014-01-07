@@ -109,6 +109,7 @@
     </message>
     <message>
         <location filename="../TranslationManager.cpp" line="175"/>
+        <location filename="../TranslationManager.cpp" line="223"/>
         <source>Default</source>
         <comment>ts-language</comment>
         <extracomment>Language this translation provides, e.g. &quot;English (US)&quot;.</extracomment>
@@ -116,6 +117,7 @@
     </message>
     <message>
         <location filename="../TranslationManager.cpp" line="178"/>
+        <location filename="../TranslationManager.cpp" line="220"/>
         <source>C</source>
         <comment>ts-locale</comment>
         <extracomment>Locale name, e.g. &quot;en_US&quot;.</extracomment>
@@ -150,176 +152,181 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="229"/>
+        <location filename="../ui/McRecoverWindow.ui" line="217"/>
+        <source>&amp;Language</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../ui/McRecoverWindow.ui" line="235"/>
         <source>Main Toolbar</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="263"/>
+        <location filename="../ui/McRecoverWindow.ui" line="269"/>
         <source>&amp;Open</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="266"/>
+        <location filename="../ui/McRecoverWindow.ui" line="272"/>
         <source>Open a GameCube Memory Card image</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="269"/>
+        <location filename="../ui/McRecoverWindow.ui" line="275"/>
         <source>Ctrl+O</source>
         <extracomment>Shortcut for opening a GameCube Memory Card image.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="278"/>
+        <location filename="../ui/McRecoverWindow.ui" line="284"/>
         <source>&amp;Save</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="281"/>
+        <location filename="../ui/McRecoverWindow.ui" line="287"/>
         <source>Save the selected file(s)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="284"/>
+        <location filename="../ui/McRecoverWindow.ui" line="290"/>
         <source>Ctrl+S</source>
         <extracomment>Shortcut for saving the currently selected file.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="293"/>
+        <location filename="../ui/McRecoverWindow.ui" line="299"/>
         <source>Save &amp;All</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="296"/>
+        <location filename="../ui/McRecoverWindow.ui" line="302"/>
         <source>Save all files</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="305"/>
+        <location filename="../ui/McRecoverWindow.ui" line="311"/>
         <source>E&amp;xit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="308"/>
+        <location filename="../ui/McRecoverWindow.ui" line="314"/>
         <source>Exit the program</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="317"/>
+        <location filename="../ui/McRecoverWindow.ui" line="323"/>
         <source>&amp;About</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="320"/>
+        <location filename="../ui/McRecoverWindow.ui" line="326"/>
         <source>About this program</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="329"/>
+        <location filename="../ui/McRecoverWindow.ui" line="335"/>
         <source>S&amp;can for Lost Files</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="332"/>
+        <location filename="../ui/McRecoverWindow.ui" line="338"/>
         <source>Scan the memory card image for lost files</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="341"/>
+        <location filename="../ui/McRecoverWindow.ui" line="347"/>
         <source>&amp;Close</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="344"/>
+        <location filename="../ui/McRecoverWindow.ui" line="350"/>
         <source>Close the GameCube Memory Card image</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="347"/>
+        <location filename="../ui/McRecoverWindow.ui" line="353"/>
         <source>Ctrl+W</source>
         <extracomment>Shortcut for closing the current GameCube Memory Card image.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="359"/>
+        <location filename="../ui/McRecoverWindow.ui" line="365"/>
         <source>&amp;USA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="362"/>
+        <location filename="../ui/McRecoverWindow.ui" line="368"/>
         <source>USA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="374"/>
+        <location filename="../ui/McRecoverWindow.ui" line="380"/>
         <source>&amp;Europe</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="377"/>
+        <location filename="../ui/McRecoverWindow.ui" line="383"/>
         <source>Europe</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="389"/>
+        <location filename="../ui/McRecoverWindow.ui" line="395"/>
         <source>&amp;Japan</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="392"/>
+        <location filename="../ui/McRecoverWindow.ui" line="398"/>
         <source>Japan</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="404"/>
+        <location filename="../ui/McRecoverWindow.ui" line="410"/>
         <source>South &amp;Korea</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="407"/>
+        <location filename="../ui/McRecoverWindow.ui" line="413"/>
         <source>South Korea</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="415"/>
+        <location filename="../ui/McRecoverWindow.ui" line="421"/>
         <source>Preferred Region:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="423"/>
+        <location filename="../ui/McRecoverWindow.ui" line="429"/>
         <source>Search U&amp;sed Blocks</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="187"/>
+        <location filename="../McRecoverWindow.cpp" line="222"/>
         <source>No memory card loaded.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="234"/>
+        <location filename="../McRecoverWindow.cpp" line="269"/>
         <source>Preferred region:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="330"/>
+        <location filename="../McRecoverWindow.cpp" line="365"/>
         <source>Save GCN Save File %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="333"/>
+        <location filename="../McRecoverWindow.cpp" line="368"/>
         <source>GameCube Save Files</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="334"/>
-        <location filename="../McRecoverWindow.cpp" line="741"/>
+        <location filename="../McRecoverWindow.cpp" line="369"/>
+        <location filename="../McRecoverWindow.cpp" line="830"/>
         <source>All Files</source>
         <translation></translation>
     </message>
     <message numerus="yes">
-        <location filename="../McRecoverWindow.cpp" line="368"/>
+        <location filename="../McRecoverWindow.cpp" line="403"/>
         <source>Save %Ln GCN Save File(s)</source>
         <translation>
             <numerusform>Save %Ln GCN Save File</numerusform>
@@ -327,29 +334,35 @@
         </translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="392"/>
+        <location filename="../McRecoverWindow.cpp" line="427"/>
         <source>File Already Exists</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="393"/>
+        <location filename="../McRecoverWindow.cpp" line="428"/>
         <source>A file named &quot;%1&quot; already exists in the specified directory.
 
 Do you want to overwrite it?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="738"/>
+        <location filename="../McRecoverWindow.cpp" line="503"/>
+        <source>System Default (%1)</source>
+        <comment>ts-language</comment>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../McRecoverWindow.cpp" line="827"/>
         <source>Open GameCube Memory Card Image</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="740"/>
+        <location filename="../McRecoverWindow.cpp" line="829"/>
         <source>GameCube Memory Card Image</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="785"/>
+        <location filename="../McRecoverWindow.cpp" line="874"/>
         <source>Database Load Error</source>
         <translation></translation>
     </message>
