@@ -106,7 +106,7 @@ StatusBarManagerPrivate::StatusBarManagerPrivate(StatusBarManager *q)
 	, taskbarButtonManager(TaskbarButtonManager::Instance(q))
 {
 	// Default message.
-	lastStatusMessage = q->tr("Ready.");
+	lastStatusMessage = StatusBarManager::tr("Ready.");
 
 	// Initialize the timer.
 	tmrHideProgressBar.setInterval(SECONDS_TO_HIDE_PROGRESS_BAR * 1000);
@@ -131,14 +131,13 @@ void StatusBarManagerPrivate::updateStatusBar(void)
 {
 	if (scanning) {
 		// We're scanning for files.
-		lastStatusMessage = q->tr("Scanning block #%L1 (%L2 scanned, %L3 remaining)...")
+		lastStatusMessage = StatusBarManager::tr("Scanning block #%L1 (%L2 scanned, %L3 remaining)...")
 					.arg(currentPhysBlock)
 					.arg(currentSearchBlock)
 					.arg(totalSearchBlocks - currentSearchBlock);
 
-		// TODO: Show number of files found?
-		/*
-		QString filesFoundText = q->tr("%n lost file(s) found.", nullptr, lostFilesFound);
+		/* TODO: Show number of files found?
+		QString filesFoundText = StatusBarManager::tr("%n lost file(s) found.", nullptr, lostFilesFound);
 		q->lblFilesFound->setText(filesFoundText);
 		*/
 

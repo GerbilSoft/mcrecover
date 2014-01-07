@@ -98,7 +98,7 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 	vector<string> checksumValuesFormatted = Checksum::ChecksumValuesFormatted(checksumValues);
 	if (checksumValuesFormatted.size() < 1) {
 		// No checksum...
-		q->lblChecksumActual->setText(q->tr("Unknown", "checksum"));
+		q->lblChecksumActual->setText(MemCardView::tr("Unknown", "checksum"));
 		q->lblChecksumExpectedTitle->setVisible(false);
 		q->lblChecksumExpected->setVisible(false);
 	} else {
@@ -133,7 +133,7 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 	}
 
 	// Block count.
-	q->lblBlockCount->setText(q->tr("%L1 block(s) (%L2 free)")
+	q->lblBlockCount->setText(MemCardView::tr("%L1 block(s) (%L2 free)")
 				.arg(card->sizeInBlocksNoSys())
 				.arg(card->freeBlocks()));
 
@@ -146,7 +146,7 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 		QIcon icon = McRecoverQApplication::IconFromTheme(QLatin1String("dialog-error"));
 		// TODO: What size?
 		q->lblStatusIcon->setPixmap(icon.pixmap(16, 16));
-		q->lblStatusIcon->setToolTip(q->tr("Memory card header is corrupted."));
+		q->lblStatusIcon->setToolTip(MemCardView::tr("Memory card header is corrupted."));
 		q->lblStatusIcon->setVisible(true);
 	}
 

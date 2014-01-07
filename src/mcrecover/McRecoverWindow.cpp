@@ -184,7 +184,7 @@ void McRecoverWindowPrivate::updateLstFileList(void)
 {
 	if (!card) {
 		// Set the group box's title.
-		q->grpFileList->setTitle(q->tr("No memory card loaded."));
+		q->grpFileList->setTitle(McRecoverWindow::tr("No memory card loaded."));
 	} else {
 		// Show the filename.
 		q->grpFileList->setTitle(displayFilename);
@@ -231,7 +231,7 @@ void McRecoverWindowPrivate::initMcToolbar(void)
 
 	// Add a label for the "Preferred region" buttons.
 	// TODO: Add an extra space before the label...
-	QLabel *lblPreferredRegion = new QLabel(q->tr("Preferred region:"));
+	QLabel *lblPreferredRegion = new QLabel(McRecoverWindow::tr("Preferred region:"));
 	q->toolBar->insertWidget(q->actionRegionUS, lblPreferredRegion);
 
 	// Create a QActionGroup for the "Preferred region" buttons.
@@ -327,11 +327,11 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 
 		// Prompt the user for a save location.
 		QString filename = QFileDialog::getSaveFileName(q,
-				q->tr("Save GCN Save File %1")
+				McRecoverWindow::tr("Save GCN Save File %1")
 					.arg(file->filename()),	// Dialog title
 				file->defaultGciFilename(),	// Default filename
-				q->tr("GameCube Save Files") + QLatin1String(" (*.gci);;") +
-				q->tr("All Files") + QLatin1String(" (*)"));
+				McRecoverWindow::tr("GameCube Save Files") + QLatin1String(" (*.gci);;") +
+				McRecoverWindow::tr("All Files") + QLatin1String(" (*)"));
 		if (filename.isEmpty())
 			return;
 
@@ -365,7 +365,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 		// Multiple files, path not specified.
 		// Prompt the user for a save location.
 		path = QFileDialog::getExistingDirectory(q,
-				q->tr("Save %Ln GCN Save File(s)", nullptr, files.size()));
+				McRecoverWindow::tr("Save %Ln GCN Save File(s)", nullptr, files.size()));
 		if (path.isEmpty())
 			return;
 	}
@@ -389,13 +389,10 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 			if (overwriteAll == OVERWRITEALL_UNKNOWN) {
 				bool overwrite = false;
 				int ret = QMessageBox::warning(q,
-					q->tr("File Already Exists"),
-					q->tr("A file named \"%1\" already exists in the specified directory.")
-						.arg(filename) +
-					QLatin1String("\n\n") +
-					q->tr("Do you want to overwrite it?"),
-					(QMessageBox::Yes | QMessageBox::No |
-						QMessageBox::YesToAll | QMessageBox::NoToAll),
+					McRecoverWindow::tr("File Already Exists"),
+					McRecoverWindow::tr("A file named \"%1\" already exists in the specified directory.\n\n"
+							    "Do you want to overwrite it?").arg(filename) +
+					(QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll),
 					QMessageBox::No);
 				switch (ret) {
 					case QMessageBox::Yes:

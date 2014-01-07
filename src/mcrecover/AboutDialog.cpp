@@ -373,9 +373,9 @@ QString AboutDialogPrivate::GetCodePageInfo(void)
 
 	cpInfo m_cpInfo[2] = {
 		//: Win32: ANSI code page. (e.g. 1252 for US/English, 932 for Japanese)
-		{CP_ACP,	QT_TR_NOOP("System ANSI code page:")},
+		{CP_ACP,	QT_TRANSLATE_NOOP(AboutDialog, "System ANSI code page:")},
 		//: Win32: OEM code page. (e.g. 437 for US/English)
-		{CP_OEMCP,	QT_TR_NOOP("System OEM code page:")}
+		{CP_OEMCP,	QT_TRANSLATE_NOOP(AboutDialog, "System OEM code page:")}
 	};
 
 	for (int i = 0; i < 2; i++) {
@@ -456,8 +456,8 @@ QString AboutDialogPrivate::GetSupport(void)
 
 	// Support sites.
 	const supportSite_t supportSites[] = {
-		{QT_TR_NOOP("Sonic Retro"), "http://forums.sonicretro.org/index.php?showtopic=31772"},
-		{QT_TR_NOOP("GBAtemp"), "http://gbatemp.net/threads/gcn-memcard-recover.349406/"},
+		{QT_TRANSLATE_NOOP(AboutDialog, "Sonic Retro"), "http://forums.sonicretro.org/index.php?showtopic=31772"},
+		{QT_TRANSLATE_NOOP(AboutDialog, "GBAtemp"), "http://gbatemp.net/threads/gcn-memcard-recover.349406/"},
 		{nullptr, nullptr}
 	};
 
