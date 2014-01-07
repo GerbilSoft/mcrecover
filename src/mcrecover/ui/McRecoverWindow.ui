@@ -266,7 +266,7 @@
     <string>Open a GameCube Memory Card image</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+O</string>
+    <string extracomment="Shortcut for opening a GameCube Memory Card image.">Ctrl+O</string>
    </property>
   </action>
   <action name="actionSave">
@@ -281,7 +281,7 @@
     <string>Save the selected file(s)</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+S</string>
+    <string extracomment="Shortcut for saving the currently selected file.">Ctrl+S</string>
    </property>
   </action>
   <action name="actionSaveAll">
@@ -344,7 +344,7 @@
     <string>Close the GameCube Memory Card image</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+W</string>
+    <string extracomment="Shortcut for closing the current GameCube Memory Card image.">Ctrl+W</string>
    </property>
   </action>
   <action name="actionRegionUS">
