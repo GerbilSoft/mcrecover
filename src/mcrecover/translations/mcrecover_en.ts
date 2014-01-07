@@ -110,14 +110,14 @@
     <message>
         <location filename="../TranslationManager.cpp" line="175"/>
         <source>Default</source>
-        <comment>ts-author</comment>
+        <comment>ts-language</comment>
         <extracomment>Language this translation provides, e.g. &quot;English (US)&quot;.</extracomment>
         <translation>English (US)</translation>
     </message>
     <message>
         <location filename="../TranslationManager.cpp" line="178"/>
         <source>C</source>
-        <comment>ts-author</comment>
+        <comment>ts-locale</comment>
         <extracomment>Locale name, e.g. &quot;en_US&quot;.</extracomment>
         <translation>en_US</translation>
     </message>
