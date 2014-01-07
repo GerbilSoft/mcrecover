@@ -270,7 +270,6 @@ void McRecoverWindowPrivate::initToolbar(void)
 	q->actionSaveAll->setEnabled(false);
 
 	// Add a label for the "Preferred region" buttons.
-	// TODO: Add an extra space before the label...
 	lblPreferredRegion = new QLabel();
 	q->toolBar->insertWidget(q->actionRegionUS, lblPreferredRegion);
 
@@ -320,7 +319,9 @@ void McRecoverWindowPrivate::initToolbar(void)
  */
 void McRecoverWindowPrivate::retranslateToolbar(void)
 {
-	lblPreferredRegion->setText(McRecoverWindow::tr("Preferred Region:"));
+	// TODO: Better way to add space other than, well, adding space.
+	lblPreferredRegion->setText(QChar(L' ') +
+		McRecoverWindow::tr("Preferred Region:") + QChar(L' '));
 }
 
 /**
