@@ -38,6 +38,9 @@
 #include "SearchThread.hpp"
 #include "StatusBarManager.hpp"
 
+// Translation Manager.
+#include "TranslationManager.hpp"
+
 // C includes.
 #include <cstdio>
 #include <cassert>
@@ -48,6 +51,7 @@
 #include <QtCore/QVector>
 #include <QtCore/QFile>
 #include <QtCore/QSignalMapper>
+#include <QtCore/QLocale>
 #include <QtGui/QAction>
 #include <QtGui/QActionGroup>
 #include <QtGui/QDragEnterEvent>
@@ -116,16 +120,30 @@ class McRecoverWindowPrivate
 		// UI busy counter.
 		int uiBusyCounter;
 
-		// QActionGroup for "Preferred region" buttons.
-		QActionGroup *actgrpRegion;
-
-		// Preferred region.
-		// Possible values: 0, 'E', 'P', 'J', 'K'
-		// 0 indicates no preferred region.
+		/**
+		 * "Preferred Region" selection.
+		 * Possible values: 0, 'E', 'P', 'J', 'K'
+		 * 0 indicates no preferred region.
+		 */
 		char preferredRegion;
-
-		// QSignalMapper for mapping the "preferred region" buttons.
+		QActionGroup *actgrpRegion;
 		QSignalMapper *mapperPreferredRegion;
+
+		// Translations.
+		QAction *actTsSysDefault;
+		QVector<QAction*> vActionsTS;
+		QActionGroup *actgrpTS;
+		QSignalMapper *mapperTS;
+
+		/**
+		 * Retranslate the "System Default" language action.
+		 */
+		void rets_actTsSysDefault(void);
+
+		/**
+		 * Initialize the Translations menu.
+		 */
+		void initTsMenu(void);
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -135,9 +153,12 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, searchThread(new SearchThread(q))
 	, statusBarManager(nullptr)
 	, uiBusyCounter(0)
-	, actgrpRegion(nullptr)
 	, preferredRegion(0)
+	, actgrpRegion(nullptr)
 	, mapperPreferredRegion(new QSignalMapper(q))
+	, actTsSysDefault(nullptr)
+	, actgrpTS(nullptr)
+	, mapperTS(new QSignalMapper(q))
 {
 	// Connect the MemCardModel slots.
 	QObject::connect(model, SIGNAL(layoutChanged()),
@@ -159,9 +180,15 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	QObject::connect(searchThread, SIGNAL(destroyed(QObject*)),
 			 q, SLOT(markUiNotBusy()));
 
-	// Connect the QSignalMapper slots for "preferred region" selection.
+	// Connect the QSignalMapper slot for "Preferred Region" selection.
 	QObject::connect(mapperPreferredRegion, SIGNAL(mapped(int)),
 			 q, SLOT(setPreferredRegion_slot(int)));
+
+	// Connect the QSignalMapper slot for translations.
+	/* TODO
+	QObject::connect(mapperTS, SIGNAL(mapped(QString)),
+			 q, SLOT(setTranslation_slot(QString)));
+	*/
 }
 
 McRecoverWindowPrivate::~McRecoverWindowPrivate()
@@ -174,6 +201,14 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 
 	delete statusBarManager;
 	delete actgrpRegion;
+
+	// NOTE: These probably aren't needed, and might actually
+	// decrease performance due to menuLanguage receiving
+	// "destroyed" signals for all of these actions.
+	delete actTsSysDefault;
+	qDeleteAll(vActionsTS);
+	vActionsTS.clear();
+	delete actgrpTS;
 }
 
 
@@ -453,6 +488,58 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 	statusBarManager->filesSaved(filesSaved, absolutePath);
 }
 
+/**
+ * Retranslate the "System Default" language action.
+ */
+void McRecoverWindowPrivate::rets_actTsSysDefault(void)
+{
+	if (!actTsSysDefault) {
+		actTsSysDefault = new QAction(q);
+		actTsSysDefault->setCheckable(true);
+	}
+	//: Translation: System Default (retrieved from system settings)
+	QString tsSysLocale = QLocale::system().name();
+	actTsSysDefault->setText(
+		McRecoverWindow::tr("System Default (%1)", "ts-language").arg(tsSysLocale));
+	mapperTS->setMapping(actTsSysDefault, tsSysLocale);
+}
+
+/**
+ * Initialize the Translations menu.
+ */
+void McRecoverWindowPrivate::initTsMenu(void)
+{
+	// Clear the Translations menu first.
+	q->menuLanguage->clear();
+	if (actgrpTS)
+		delete actgrpTS;
+	qDeleteAll(vActionsTS);
+	vActionsTS.clear();
+	actgrpTS = new QActionGroup(q);
+
+	// Add the system default translation.
+	rets_actTsSysDefault();
+	actgrpTS->addAction(actTsSysDefault);
+	q->menuLanguage->addAction(actTsSysDefault);
+
+	// Add all other translations.
+	q->menuLanguage->addSeparator();
+	QMap<QString, QString> tsMap = TranslationManager::instance()->enumerate();
+	vActionsTS.reserve(tsMap.size());
+	foreach (QString tsLocale, tsMap.keys()) {
+		QString tsLanguage = tsMap.value(tsLocale);
+		QAction *actTs = new QAction(tsLanguage, q);
+		actTs->setCheckable(true);
+		vActionsTS.append(actTs);
+		actgrpTS->addAction(actTs);
+		mapperTS->setMapping(actTs, tsLocale);
+		q->menuLanguage->addAction(actTs);
+	}
+
+	// Set the default language.
+	// TODO: If user set a language before, reload that setting.
+	actTsSysDefault->setChecked(true);
+}
 
 /** McRecoverWindow **/
 
@@ -523,6 +610,7 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	// Initialize the UI.
 	d->updateLstFileList();
 	d->initMcToolbar();
+	d->initTsMenu();
 	d->statusBarManager = new StatusBarManager(this->Ui_McRecoverWindow::statusBar, this);
 	d->updateWindowTitle();
 }
@@ -606,6 +694,7 @@ void McRecoverWindow::changeEvent(QEvent *event)
 		retranslateUi(this);
 		d->updateLstFileList();
 		d->updateWindowTitle();
+		d->rets_actTsSysDefault();
 	}
 
 	// Pass the event to the base class.
