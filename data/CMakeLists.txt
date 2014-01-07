@@ -9,7 +9,9 @@ INCLUDE(DirInstallPaths)
 INCLUDE(ConvertTextFilesToNative)
 
 CONVERT_TEXT_FILES_TO_NATIVE(DATABASE_FILES
-	GcnMcFileDb.xml
+	GcnMcFileDb.USA.xml
+	GcnMcFileDb.PAL.xml
+	GcnMcFileDb.Homebrew.xml
 	)
 
 INSTALL(FILES ${DATABASE_FILES}
