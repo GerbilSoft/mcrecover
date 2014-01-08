@@ -48,7 +48,30 @@ class MemCardFilePrivate;
 class MemCardFile : public QObject
 {
 	Q_OBJECT
-	
+
+	Q_PROPERTY(QString gamecode READ gamecode)
+	Q_PROPERTY(QString company READ company)
+	Q_PROPERTY(QString filename READ filename)
+	Q_PROPERTY(GcnDateTime lastModified READ lastModified)
+	Q_PROPERTY(QString gameDesc READ gameDesc)
+	Q_PROPERTY(QString fileDesc READ fileDesc)
+	Q_PROPERTY(uint8_t permission READ permission)
+	Q_PROPERTY(uint16_t size READ size)
+	Q_PROPERTY(QPixmap banner READ banner)
+	Q_PROPERTY(int numIcons READ numIcons)
+	// TODO: Icon array?
+	Q_PROPERTY(int iconAnimMode READ iconAnimMode)
+	Q_PROPERTY(bool lostFile READ isLostFile)
+	Q_PROPERTY(QVector<uint16_t> fatEntries READ fatEntries)
+	/* TODO: Register Checksum metatypes?
+	Q_PROPERTY(QVector<Checksum::ChecksumDef> checksumDefs READ checksumDefs WRITE setChecksumDefs)
+	Q_PROPERTY(QVector<Checksum::ChecksumValue> checksumValues READ checksumValues WRITE setChecksumValues)
+	Q_PROPERTY(Checksum::ChkAlgorithm checksumAlgorithm READ checksumAlgorithm)
+	Q_PROPERTY(Checksum::ChkStatus checksumStatus READ checksumStatus)
+	// TODO: checksumValuesFormatted?
+	*/
+	Q_PROPERTY(QString defaultGciFilename READ defaultGciFilename)
+
 	public:
 		/**
 		 * Create a MemCardFile for a MemCard.

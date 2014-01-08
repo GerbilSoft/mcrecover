@@ -33,7 +33,9 @@ class MemCardViewPrivate;
 class MemCardView : public QWidget, public Ui::MemCardView
 {
 	Q_OBJECT
-	
+
+	Q_PROPERTY(const MemCard* card READ card WRITE setCard)
+
 	public:
 		MemCardView(QWidget *parent = 0);
 		~MemCardView();

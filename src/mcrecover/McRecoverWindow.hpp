@@ -106,7 +106,7 @@ class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
 		 * Set the translation.
 		 * @param tsLocale Translation to use. (locale tag)
 		 */
-		void setTranslation_slot(QString tsLocale);
+		void setTranslation_slot(const QString &tsLocale);
 };
 
 #endif /* __MCRECOVER_MCRECOVERWINDOW_HPP__ */

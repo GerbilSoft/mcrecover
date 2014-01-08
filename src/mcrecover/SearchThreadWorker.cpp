@@ -123,7 +123,7 @@ QLinkedList<SearchData> SearchThreadWorker::filesFoundList(void)
  * If successful, retrieve the file list using dirEntryList().
  * If an error occurs, check the errorString(). (TODO)(
  */
-int SearchThreadWorker::searchMemCard(MemCard *card, const QVector<GcnMcFileDb*> dbs,
+int SearchThreadWorker::searchMemCard(MemCard *card, const QVector<GcnMcFileDb*> &dbs,
 				      char preferredRegion, bool searchUsedBlocks)
 {
 	d->filesFoundList.clear();
@@ -339,7 +339,7 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const QVector<GcnMcFileDb*>
  * @param preferredRegion Preferred region.
  * @param searchUsedBlocks If true, search all blocks, not just blocks marked as empty.
  */
-void SearchThreadWorker::setThreadInfo(MemCard *card, const QVector<GcnMcFileDb*> dbs,
+void SearchThreadWorker::setThreadInfo(MemCard *card, const QVector<GcnMcFileDb*> &dbs,
 				       QThread *orig_thread,
 				       char preferredRegion, bool searchUsedBlocks)
 {

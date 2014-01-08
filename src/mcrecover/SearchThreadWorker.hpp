@@ -92,13 +92,6 @@ class SearchThreadWorker : public QObject
 
 	public:
 		/**
-		 * Load a GCN Memory Card File database.
-		 * @param filename Filename of GCN Memory Card File database.
-		 * @return 0 on success; non-zero on error. (Check error string!)
-		 */
-		int loadGcnMcFileDb(QString filename);
-
-		/**
 		 * Get the list of files found in the last successful search.
 		 * @return List of files found.
 		 */
@@ -115,7 +108,7 @@ class SearchThreadWorker : public QObject
 		 * If successful, retrieve the file list using dirEntryList().
 		 * If an error occurs, check the errorString(). (TODO)(
 		 */
-		int searchMemCard(MemCard *card, const QVector<GcnMcFileDb*> dbs,
+		int searchMemCard(MemCard *card, const QVector<GcnMcFileDb*> &dbs,
 				char preferredRegion = 0, bool searchUsedBlocks = false);
 
 		/**
@@ -129,7 +122,7 @@ class SearchThreadWorker : public QObject
 		 * @param preferredRegion Preferred region.
 		 * @param searchUsedBlocks If true, search all blocks, not just blocks marked as empty.
 		 */
-		void setThreadInfo(MemCard *card, const QVector<GcnMcFileDb*> dbs,
+		void setThreadInfo(MemCard *card, const QVector<GcnMcFileDb*> &dbs,
 				QThread *orig_thread,
 				char preferredRegion = 0, bool searchUsedBlocks = false);
 

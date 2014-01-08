@@ -136,7 +136,7 @@ TranslationManager* TranslationManager::instance(void)
  * Set the translation.
  * @param locale Locale, e.g. "en_US". (Empty string is untranslated.)
  */
-void TranslationManager::setTranslation(QString locale)
+void TranslationManager::setTranslation(const QString &locale)
 {
 	// Initialize the Qt translation system.
 	QString qtLocale = QLatin1String("qt_") + locale;

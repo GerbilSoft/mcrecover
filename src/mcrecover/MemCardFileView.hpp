@@ -33,7 +33,9 @@ class MemCardFileViewPrivate;
 class MemCardFileView : public QWidget, public Ui::MemCardFileView
 {
 	Q_OBJECT
-	
+
+	Q_PROPERTY(const MemCardFile* file READ file WRITE setFile)
+
 	public:
 		MemCardFileView(QWidget *parent = 0);
 		~MemCardFileView();

@@ -38,7 +38,7 @@ PcreRegex::PcreRegex()
 	: m_regex(nullptr)
 { }
 
-PcreRegex::PcreRegex(QString regex)
+PcreRegex::PcreRegex(const QString &regex)
 {
 	// NOTE: If regex compilation fails, no error will be returned.
 	setRegex(regex);
@@ -59,7 +59,7 @@ PcreRegex::~PcreRegex()
  * @param errOffset	[out, opt] Error offset if the regex compilation fails.
  * @return 0 on success; pcre_compile() error code on failure.
  */
-int PcreRegex::setRegex(QString regex, int *errOffset)
+int PcreRegex::setRegex(const QString &regex, int *errOffset)
 {
 	// Free the existing regex if one is set.
 	if (m_regex)

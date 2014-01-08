@@ -46,7 +46,7 @@ class FileComments
 		 * Set the Game Description field.
 		 * @param gameDesc Game Description field.
 		 */
-		void setGameDesc(QString gameDesc);
+		void setGameDesc(const QString &gameDesc);
 
 		/**
 		 * Get the File Description field.
@@ -58,7 +58,7 @@ class FileComments
 		 * Set the File Description field.
 		 * @param fileDesc File Description field.
 		 */
-		void setFileDesc(QString fileDesc);
+		void setFileDesc(const QString &fileDesc);
 
 		/**
 		 * Convert the file comments to a single string.
@@ -75,12 +75,12 @@ Q_DECLARE_METATYPE(FileComments)
 
 inline QString FileComments::gameDesc(void) const
 	{ return m_gameDesc; }
-inline void FileComments::setGameDesc(QString gameDesc)
+inline void FileComments::setGameDesc(const QString &gameDesc)
 	{ m_gameDesc = gameDesc; }
 
 inline QString FileComments::fileDesc(void) const
 	{ return m_fileDesc; }
-inline void FileComments::setFileDesc(QString fileDesc)
+inline void FileComments::setFileDesc(const QString &fileDesc)
 	{ m_fileDesc = fileDesc; }
 
 #endif /* __MCRECOVER_FILECOMMENTS_HPP__ */

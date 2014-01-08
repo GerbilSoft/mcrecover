@@ -53,7 +53,7 @@ class VarReplace
 		 *
 		 * @return str with replaced variables.
 		 */
-		static QString Exec(QString str, QHash<QString, QString> vars);
+		static QString Exec(QString str, const QHash<QString, QString> &vars);
 
 		/**
 		 * Combine vectors of GameDesc variables and FileDesc variables into a QHash.
@@ -67,8 +67,8 @@ class VarReplace
 		 * @return QHash containing the variables. (key == ID)
 		 */
 		static QHash<QString, QString> VecsToHash(
-					const QVector<QString> gameDescVars,
-					const QVector<QString> fileDescVars);
+					const QVector<QString> &gameDescVars,
+					const QVector<QString> &fileDescVars);
 		/**
 		* Apply variable modifiers to a QHash containing variables.
 		* @param varModifierDefs	[in] Variable modifier definitions.
@@ -76,7 +76,7 @@ class VarReplace
 		* @param gcnDateTime		[out, opt] If specified, GcnDateTime for the timestamp.
 		* @return 0 on success; non-zero if any modifiers failed.
 		*/
-		static int ApplyModifiers(QHash<QString, VarModifierDef> varModifierDefs,
+		static int ApplyModifiers(const QHash<QString, VarModifierDef> &varModifierDefs,
 					  QHash<QString, QString> &vars,
 					  GcnDateTime *gcnDateTime);
 };

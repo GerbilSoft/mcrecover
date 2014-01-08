@@ -1091,9 +1091,10 @@ void McRecoverWindow::lstFileList_selectionModel_currentRowChanged(
  * Set the translation.
  * @param tsLocale Translation to use. (locale tag)
  */
-void McRecoverWindow::setTranslation_slot(QString tsLocale)
+void McRecoverWindow::setTranslation_slot(const QString &tsLocale)
 {
-	if (tsLocale.isEmpty())
-		tsLocale = QLocale::system().name();
-	TranslationManager::instance()->setTranslation(tsLocale);
+	TranslationManager::instance()->setTranslation(
+		(!tsLocale.isEmpty()
+			? tsLocale
+			: QLocale::system().name()));
 }

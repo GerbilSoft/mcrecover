@@ -90,7 +90,7 @@ class GcnMcFileDbPrivate
 		 * @param filename Filename of the database file.
 		 * @return 0 on success; non-zero on error. (Check errorString()!)
 		 */
-		int load(QString filename);
+		int load(const QString &filename);
 
 		void parseXml_GcnMcFileDb(QXmlStreamReader &xml);
 		GcnMcFileDef *parseXml_file(QXmlStreamReader &xml);
@@ -128,8 +128,8 @@ class GcnMcFileDbPrivate
 		 */
 		SearchData constructSearchData(
 			const GcnMcFileDef *matchFileDef,
-			QHash<QString, QString> vars,
-			GcnDateTime gcnDateTime) const;
+			const QHash<QString, QString> &vars,
+			const GcnDateTime &gcnDateTime) const;
 };
 
 GcnMcFileDbPrivate::GcnMcFileDbPrivate(GcnMcFileDb *q)
@@ -190,7 +190,7 @@ void GcnMcFileDbPrivate::clear(void)
  * @param filename Filename of the database file.
  * @return 0 on success; non-zero on error.
  */
-int GcnMcFileDbPrivate::load(QString filename)
+int GcnMcFileDbPrivate::load(const QString &filename)
 {
 	// Clear the loaded database.
 	clear();
@@ -797,8 +797,8 @@ QByteArray GcnMcFileDbPrivate::GetGcnCommentUtf8(const char *buf, int siz, QText
  */
 SearchData GcnMcFileDbPrivate::constructSearchData(
 	const GcnMcFileDef *matchFileDef,
-	const QHash<QString, QString> vars,
-	const GcnDateTime gcnDateTime) const
+	const QHash<QString, QString> &vars,
+	const GcnDateTime &gcnDateTime) const
 {
 	// TODO: Implicitly share SearchData?
 	SearchData searchData;
@@ -887,7 +887,7 @@ GcnMcFileDb::~GcnMcFileDb()
  * @param filename Filename of the database file.
  * @return 0 on success; non-zero on error.
  */
-int GcnMcFileDb::load(QString filename)
+int GcnMcFileDb::load(const QString &filename)
 {
 	return d->load(filename);
 }

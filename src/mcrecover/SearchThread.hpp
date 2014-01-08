@@ -92,14 +92,14 @@ class SearchThread : public QObject
 		 * @param dbFilename Filename of GCN Memory Card File database.
 		 * @return 0 on success; non-zero on error. (Check error string!)
 		 */
-		int loadGcnMcFileDb(QString dbFilename);
+		int loadGcnMcFileDb(const QString &dbFilename);
 
 		/**
 		 * Load multiple GCN Memory Card File databases.
 		 * @param dbFilenames Filenames of GCN Memory Card File database.
 		 * @return 0 on success; non-zero on error. (Check error string!)
 		 */
-		int loadGcnMcFileDbs(QVector<QString> dbFilenames);
+		int loadGcnMcFileDbs(const QVector<QString> &dbFilenames);
 
 		/**
 		 * Get the list of files found in the last successful search.
@@ -155,7 +155,7 @@ class SearchThread : public QObject
 		 * An error has occurred during the search.
 		 * @param errorString Error string.
 		 */
-		void searchError_slot(QString errorString);
+		void searchError_slot(const QString &errorString);
 };
 
 #endif /* __MCRECOVER_SEARCHTHREAD_HPP__ */

@@ -46,7 +46,9 @@ class TranslationManager
 		 * Set the translation.
 		 * @param locale Locale, e.g. "en_US". (Empty string is untranslated.)
 		 */
-		void setTranslation(QString locale);
+		void setTranslation(const QString &locale);
+
+		// TODO: Add a function to get the current translation?
 
 		/**
 		 * Enumerate available translations.

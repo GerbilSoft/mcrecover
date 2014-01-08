@@ -57,7 +57,7 @@ class GcnMcFileDb : public QObject
 		 * @param filename Filename of the database file.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int load(QString filename);
+		int load(const QString &filename);
 
 		/**
 		 * Get the error string.

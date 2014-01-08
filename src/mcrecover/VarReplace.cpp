@@ -57,7 +57,7 @@ class VarReplacePrivate
  *
  * @return str with replaced variables.
  */
-QString VarReplace::Exec(const QString str, const QHash<QString, QString> vars)
+QString VarReplace::Exec(const QString str, const QHash<QString, QString> &vars)
 {
 	// Variable format: $VAR, ${VAR}, $(VAR)
 	QString workStr;
@@ -216,8 +216,8 @@ QString VarReplace::Exec(const QString str, const QHash<QString, QString> vars)
  * @return QHash containing the variables. (key == ID)
  */
 QHash<QString, QString> VarReplace::VecsToHash(
-			const QVector<QString> gameDescVars,
-			const QVector<QString> fileDescVars)
+			const QVector<QString> &gameDescVars,
+			const QVector<QString> &fileDescVars)
 {
 	QHash<QString, QString> vars;
 	QString varName;
@@ -242,7 +242,7 @@ QHash<QString, QString> VarReplace::VecsToHash(
  * @param gcnDateTime		[out, opt] If specified, GcnDateTime for the timestamp.
  * @return 0 on success; non-zero if any modifiers failed.
  */
-int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> varModifierDefs,
+int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifierDefs,
 			       QHash<QString, QString> &vars,
 			       GcnDateTime *gcnDateTime)
 {

@@ -70,7 +70,7 @@ class GcnDateTime
 		 * Set the QDateTime using a QDateTime.
 		 * @param qDateTime QDateTime.
 		 */
-		void setQDateTime(QDateTime qDateTime);
+		void setQDateTime(const QDateTime &qDateTime);
 
 		/**
 		 * Get the QDateTime from the QDateTime.
@@ -155,6 +155,8 @@ class GcnDateTime
 		QDateTime m_dateTime;
 };
 
+Q_DECLARE_METATYPE(GcnDateTime)
+
 /**
  * Initialize a null GcnDateTime.
  */
@@ -210,7 +212,7 @@ inline uint32_t GcnDateTime::gcnTimestamp(void) const
  * Set the QDateTime using a QDateTime.
  * @param qDateTime QDateTime.
  */
-inline void GcnDateTime::setQDateTime(QDateTime qDateTime)
+inline void GcnDateTime::setQDateTime(const QDateTime &qDateTime)
 {
 	m_dateTime = qDateTime;
 	m_dateTime.setTimeSpec(Qt::UTC);

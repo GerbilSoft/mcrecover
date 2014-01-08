@@ -42,14 +42,14 @@ class McRecoverQApplication : public QApplication
 		 * @param name Icon name.
 		 * @return QIcon.
 		 */
-		static QIcon IconFromTheme(QString name);
+		static QIcon IconFromTheme(const QString &name);
 
 		/**
 		 * Get an icon from the MemCard Recover icon set.
 		 * @param name Icon name.
 		 * @return QIcon.
 		 */
-		static QIcon IconFromProgram(QString name);
+		static QIcon IconFromProgram(const QString &name);
 
 #ifdef Q_OS_WIN
 		// Win32 event filter.

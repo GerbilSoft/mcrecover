@@ -34,7 +34,7 @@ class PcreRegex
 {
 	public:
 		PcreRegex();
-		PcreRegex(QString regex);
+		PcreRegex(const QString &regex);
 		~PcreRegex();
 
 	private:
@@ -48,7 +48,7 @@ class PcreRegex
 		 * @param errOffset	[out, opt] Error offset if the regex compilation fails.
 		 * @return 0 on success; pcre_compile() error on failure.
 		 */
-		int setRegex(QString regex, int *errOffset = nullptr);
+		int setRegex(const QString &regex, int *errOffset = nullptr);
 
 		/**
 		 * Is a regular expression set?

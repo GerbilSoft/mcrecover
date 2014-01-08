@@ -39,6 +39,9 @@ class StatusBarManager : public QObject
 {
 	Q_OBJECT
 
+	Q_PROPERTY(QStatusBar* statusBar READ statusBar WRITE setStatusBar)
+	Q_PROPERTY(SearchThread* searchThread READ searchThread WRITE setSearchThread)
+
 	public:
 		StatusBarManager(QObject *parent = 0);
 		explicit StatusBarManager(QStatusBar *statusBar, QObject *parent = 0);

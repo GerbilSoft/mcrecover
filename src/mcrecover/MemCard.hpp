@@ -42,7 +42,21 @@ class MemCardPrivate;
 class MemCard : public QObject
 {
 	Q_OBJECT
-	
+
+	Q_PROPERTY(bool open READ isOpen)
+	Q_PROPERTY(QString filename READ filename)
+	Q_PROPERTY(int sizeInBlocks READ sizeInBlocks)
+	Q_PROPERTY(int sizeInBlocksNoSys READ sizeInBlocksNoSys)
+	Q_PROPERTY(int freeBlocks READ freeBlocks)
+	Q_PROPERTY(int blockSize READ blockSize)
+	Q_PROPERTY(QString serialNumber READ serialNumber)
+	Q_PROPERTY(int encoding READ encoding)
+	Q_PROPERTY(QTextCodec* textCodec READ textCodec)
+	Q_PROPERTY(int numFiles READ numFiles)
+	Q_PROPERTY(bool Empty READ isEmpty)
+	// TODO: Register Checksum::ChecksumValue metatype?
+	//Q_PROPERTY(Checksum::ChecksumValue headerChecksumValue READ headerChecksumValue)
+
 	public:
 		MemCard(const QString& filename, QObject *parent = 0);
 		~MemCard();

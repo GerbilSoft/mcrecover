@@ -32,6 +32,7 @@
 
 // Custom types for QVariant.
 #include "FileComments.hpp"
+#include "GcnDateTime.hpp"
 
 // Translation Manager.
 #include "TranslationManager.hpp"
@@ -93,6 +94,7 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 
 	// Register custom types for QVariant.
 	qRegisterMetaType<FileComments>("FileComments");
+	qRegisterMetaType<GcnDateTime>("GcnDateTime");
 
 	// Initialize the TranslationManager.
 	TranslationManager *tsm = TranslationManager::instance();
@@ -131,7 +133,7 @@ McRecoverQApplication::~McRecoverQApplication()
  * @param name Icon name.
  * @return QIcon.
  */
-QIcon McRecoverQApplication::IconFromTheme(QString name)
+QIcon McRecoverQApplication::IconFromTheme(const QString &name)
 {
 #if QT_VERSION >= 0x040600
 	if (QIcon::hasThemeIcon(name))
@@ -173,7 +175,7 @@ QIcon McRecoverQApplication::IconFromTheme(QString name)
  * @param name Icon name.
  * @return QIcon.
  */
-QIcon McRecoverQApplication::IconFromProgram(QString name)
+QIcon McRecoverQApplication::IconFromProgram(const QString &name)
 {
 #if QT_VERSION >= 0x040600
 	if (QIcon::hasThemeIcon(name))

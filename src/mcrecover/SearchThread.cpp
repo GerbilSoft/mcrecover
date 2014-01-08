@@ -130,7 +130,7 @@ SearchThread::~SearchThread()
  * @param filename Filename of GCN Memory Card File database.
  * @return 0 on success; non-zero on error. (Check error string!)
  */
-int SearchThread::loadGcnMcFileDb(QString dbFilename)
+int SearchThread::loadGcnMcFileDb(const QString &dbFilename)
 {
 	qDeleteAll(d->dbs);
 	d->dbs.clear();
@@ -160,7 +160,7 @@ int SearchThread::loadGcnMcFileDb(QString dbFilename)
  * @param dbFilenames Filenames of GCN Memory Card File database.
  * @return 0 on success; non-zero on error. (Check error string!)
  */
-int SearchThread::loadGcnMcFileDbs(QVector<QString> dbFilenames)
+int SearchThread::loadGcnMcFileDbs(const QVector<QString> &dbFilenames)
 {
 	qDeleteAll(d->dbs);
 	d->dbs.clear();
@@ -299,7 +299,7 @@ void SearchThread::searchFinished_slot(int lostFilesFound)
  * An error has occurred during the search.
  * @param errorString Error string.
  */
-void SearchThread::searchError_slot(QString errorString)
+void SearchThread::searchError_slot(const QString &errorString)
 {
 	if (d->workerThread) {
 		d->worker->moveToThread(QThread::currentThread());
