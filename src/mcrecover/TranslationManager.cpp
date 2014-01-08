@@ -186,7 +186,7 @@ void TranslationManager::setTranslation(QString locale)
  * that translation, it won't show up.
  * @return Map of available translations. (Key == locale, Value == description)
  */
-QMap<QString, QString> TranslationManager::enumerate(void)
+QMap<QString, QString> TranslationManager::enumerate(void) const
 {
 	// Name filters.
 	// Remember that compiled translations have the

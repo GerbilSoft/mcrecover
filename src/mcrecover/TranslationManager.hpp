@@ -55,7 +55,7 @@ class TranslationManager
 		 * that translation, it won't show up.
 		 * @return Map of available translations. (Key == locale, Value == description)
 		 */
-		QMap<QString, QString> enumerate(void);
+		QMap<QString, QString> enumerate(void) const;
 };
 
 #endif /* __MCRECOVER_TRANSLATIONMGR_HPP__ */
