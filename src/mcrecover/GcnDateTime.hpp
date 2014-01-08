@@ -46,6 +46,7 @@ class GcnDateTime
 		GcnDateTime();
 		GcnDateTime(uint32_t gcnTimestamp);
 		GcnDateTime(const QDateTime &other);
+		GcnDateTime(const GcnDateTime &other);
 
 		/**
 		 * Time difference between Unix and GCN epochs, in seconds.
@@ -189,6 +190,17 @@ inline GcnDateTime::GcnDateTime(uint32_t gcnTimestamp)
  */
 inline GcnDateTime::GcnDateTime(const QDateTime &other)
 	: m_dateTime(other)
+{
+	// GCN timestamps don't have timezones associated with them.
+	m_dateTime.setTimeSpec(Qt::UTC);
+}
+
+/**
+ * Create a GcnDateTime from another GcnDateTime.
+ * @param other GcnDateTime.
+ */
+inline GcnDateTime::GcnDateTime(const GcnDateTime &other)
+	: m_dateTime(other.qDateTime())
 {
 	// GCN timestamps don't have timezones associated with them.
 	m_dateTime.setTimeSpec(Qt::UTC);
