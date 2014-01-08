@@ -516,10 +516,10 @@ void McRecoverWindowPrivate::rets_actTsSysDefault(void)
 				 mapperTS, SLOT(map()));
 	}
 	//: Translation: System Default (retrieved from system settings)
-	QString tsSysLocale = QLocale::system().name();
 	actTsSysDefault->setText(
-		McRecoverWindow::tr("System Default (%1)", "ts-language").arg(tsSysLocale));
-	mapperTS->setMapping(actTsSysDefault, tsSysLocale);
+		McRecoverWindow::tr("System Default (%1)", "ts-language")
+				.arg(QLocale::system().name()));
+	mapperTS->setMapping(actTsSysDefault, QString());
 }
 
 /**
@@ -716,6 +716,11 @@ void McRecoverWindow::changeEvent(QEvent *event)
 		d->updateWindowTitle();
 		d->retranslateToolbar();
 		d->rets_actTsSysDefault();
+	} else if (event->type() == QEvent::LocaleChange) {
+		// Locale change usually requires a UI retranslation.
+		QAction *actionTS = d->actgrpTS->checkedAction();
+		if (actionTS)
+			actionTS->trigger();
 	}
 
 	// Pass the event to the base class.
@@ -1088,5 +1093,7 @@ void McRecoverWindow::lstFileList_selectionModel_currentRowChanged(
  */
 void McRecoverWindow::setTranslation_slot(QString tsLocale)
 {
+	if (tsLocale.isEmpty())
+		tsLocale = QLocale::system().name();
 	TranslationManager::instance()->setTranslation(tsLocale);
 }
