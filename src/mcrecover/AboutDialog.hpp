@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * AboutDialog.hpp: About dialog.                                          *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2014 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
