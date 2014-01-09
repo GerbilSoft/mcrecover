@@ -174,7 +174,7 @@ void GcnMcFileDbPrivate::clear(void)
 {
 	// Delete all GcnMcFileDefs.
 	for (QMap<uint32_t, QVector<GcnMcFileDef*>*>::iterator iter = addr_file_defs.begin();
-	     iter != addr_file_defs.end(); iter++)
+	     iter != addr_file_defs.end(); ++iter)
 	{
 		QVector<GcnMcFileDef*> *vec = *iter;
 		qDeleteAll(*vec);
