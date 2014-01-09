@@ -44,8 +44,6 @@ IF(NOT QT_QTCORE_FOUND)
 	MESSAGE(FATAL_ERROR "QtCore not found! Please install Qt ${MCRECOVER_QT4_MIN_VERSION} or higher.")
 ELSEIF(NOT QT_QTGUI_FOUND)
 	MESSAGE(FATAL_ERROR "QtGui not found! Please install Qt ${MCRECOVER_QT4_MIN_VERSION} or higher.")
-ELSEIF(NOT QT_QTXML_FOUND)
-	MESSAGE(FATAL_ERROR "QtXml not found! Please install Qt ${MCRECOVER_QT4_MIN_VERSION} or higher.")
 ENDIF()
 
 INCLUDE(${QT_USE_FILE})
