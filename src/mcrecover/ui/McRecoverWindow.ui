@@ -19,6 +19,9 @@
   <property name="windowTitle">
    <string notr="true">GCN MemCard Recover</string>
   </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>true</bool>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="hboxMainLayout">
     <item>
