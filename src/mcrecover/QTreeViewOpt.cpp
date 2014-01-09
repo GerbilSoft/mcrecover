@@ -3,7 +3,7 @@
  * QTreeViewOpt.cpp: QTreeView with drawing optimizations.                 *
  * Specifically, don't update rows that are offscreen.			   *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2014 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -126,4 +126,12 @@ void QTreeViewOpt::showColumnContextMenu(const QPoint &point)
 	}
 
 	menu->deleteLater();
+}
+
+/** Shh... it's a secret to everybody. **/
+
+void QTreeViewOpt::keyPressEvent(QKeyEvent *event)
+{
+	QTreeView::keyPressEvent(event);
+	emit keyPress(event);
 }

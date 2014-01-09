@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * McRecoverWindow.cpp: Main window.                                       *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2012-2014 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -60,6 +60,8 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QToolBar>
 
+// Shh... it's a secret to everybody.
+#include "sekrit/HerpDerpEggListener.hpp"
 
 /** McRecoverWindowPrivate **/
 
@@ -152,6 +154,9 @@ class McRecoverWindowPrivate
 		 * Initialize the Translations menu.
 		 */
 		void initTsMenu(void);
+
+		// Shh... it's a secret to everybody.
+		HerpDerpEggListener *herpDerp;
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -168,6 +173,7 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, actTsSysDefault(nullptr)
 	, actgrpTS(nullptr)
 	, mapperTS(new QSignalMapper(q))
+	, herpDerp(new HerpDerpEggListener(q))
 {
 	// Connect the MemCardModel slots.
 	QObject::connect(model, SIGNAL(layoutChanged()),
@@ -650,6 +656,10 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	d->statusBarManager = new StatusBarManager(
 		this->Ui_McRecoverWindow::statusBar, this);
 	d->updateWindowTitle();
+
+	// Shh... it's a secret to everybody.
+	QObject::connect(lstFileList, SIGNAL(keyPress(QKeyEvent*)),
+			 d->herpDerp, SLOT(widget_keyPress(QKeyEvent*)));
 }
 
 McRecoverWindow::~McRecoverWindow()

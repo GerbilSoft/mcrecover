@@ -108,6 +108,11 @@ SET(mcrecover_SRCS
 	TranslationManager.cpp
 	)
 
+# Shh... it's a secret to everybody.
+SET(mcrecover_SEKRIT_SRCS
+	sekrit/HerpDerpEggListener.cpp
+	)
+
 # Win32-specific sources.
 IF(WIN32)
 	SET(mcrecover_SRCS
@@ -137,6 +142,10 @@ SET(mcrecover_MOC_H
 	TaskbarButtonManager/TaskbarButtonManager.hpp
 	)
 
+SET(mcrecover_SEKRIT_MOC_H
+	sekrit/HerpDerpEggListener.hpp
+	)
+
 # UI files.
 SET(mcrecover_UIS
 	ui/McRecoverWindow.ui
@@ -149,7 +158,7 @@ SET(mcrecover_UIS
 QT4_WRAP_UI(mcrecover_UIS_H ${mcrecover_UIS})
 
 # Create MOC source files for classes that need them.
-QT4_WRAP_CPP(mcrecover_MOC_SRCS ${mcrecover_MOC_H})
+QT4_WRAP_CPP(mcrecover_MOC_SRCS ${mcrecover_MOC_H} ${mcrecover_SEKRIT_MOC_H})
 
 IF(QT_QTDBUS_FOUND)
 	# QtDBus found.
@@ -210,6 +219,7 @@ QT4_ADD_RESOURCES(
 # to disable the command prompt window.
 ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_SRCS}
+	${mcrecover_SEKRIT_SRCS}
 	${mcrecover_MOC_SRCS}
 	${mcrecover_UIS_H}
 	${mcrecover_RCC_O}

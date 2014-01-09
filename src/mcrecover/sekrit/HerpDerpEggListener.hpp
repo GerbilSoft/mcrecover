@@ -1,9 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * QTreeViewOpt.hpp: QTreeView with drawing optimizations.                 *
- * Specifically, don't update rows that are offscreen.			   *
+ * HerpDerpEggListener.hpp: Listener for... something. (shh)               *
  *                                                                         *
- * Copyright (c) 2013-2014 by David Korth.                                 *
+ * Copyright (c) 2014 by David Korth.                                      *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -20,35 +19,41 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_QTREEVIEWOPT_HPP__
-#define __MCRECOVER_QTREEVIEWOPT_HPP__
+#ifndef __MCRECOVER_SEKRIT_HERPDERPEGGLISTENER_HPP__
+#define __MCRECOVER_SEKRIT_HERPDERPEGGLISTENER_HPP__
 
 // Qt includes and classes.
-#include <QtGui/QTreeView>
+#include <QtCore/QObject>
 class QKeyEvent;
 
-class QTreeViewOpt : public QTreeView
+// HerpDerpEggListener private class.
+class HerpDerpEggListenerPrivate;
+
+class HerpDerpEggListener : public QObject
 {
 	Q_OBJECT
 
 	public:
-		QTreeViewOpt(QWidget *parent = 0);
-		virtual ~QTreeViewOpt() { }
+		HerpDerpEggListener(QObject *parent = 0);
+		~HerpDerpEggListener();
 
+	protected:
+		HerpDerpEggListenerPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(HerpDerpEggListener)
 	private:
-		Q_DISABLE_COPY(QTreeViewOpt);
+		Q_DISABLE_COPY(HerpDerpEggListener)
 
 	public:
-		virtual void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+		enum DetectType {
+			DT_NONE,
+			DT_H,
+			DT_Q,
+		};
+		DetectType detectType(void) const;
+		void setDetectType(DetectType detectType);
 
-	protected slots:
-		void showColumnContextMenu(const QPoint &point);
-
-	/** Shh... it's a secret to everybody. **/
-	protected:
-		virtual void keyPressEvent(QKeyEvent *event);
-	signals:
-		void keyPress(QKeyEvent *event);
+	public slots:
+		void widget_keyPress(QKeyEvent *event);
 };
 
-#endif /* __MCRECOVER_QTREEVIEWOPT_HPP__ */
+#endif /* __MCRECOVER_SEARCHTHREAD_HPP__ */

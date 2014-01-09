@@ -1,9 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * QTreeViewOpt.hpp: QTreeView with drawing optimizations.                 *
- * Specifically, don't update rows that are offscreen.			   *
+ * HerpDerpEggListener.cpp: Listener for... something. (shh)               *
  *                                                                         *
- * Copyright (c) 2013-2014 by David Korth.                                 *
+ * Copyright (c) 2014 by David Korth.                                      *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -20,35 +19,66 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_QTREEVIEWOPT_HPP__
-#define __MCRECOVER_QTREEVIEWOPT_HPP__
+#include "HerpDerpEggListener.hpp"
 
-// Qt includes and classes.
-#include <QtGui/QTreeView>
-class QKeyEvent;
+/** HerpDerpEggListenerPrivate **/
 
-class QTreeViewOpt : public QTreeView
+class HerpDerpEggListenerPrivate
 {
-	Q_OBJECT
-
 	public:
-		QTreeViewOpt(QWidget *parent = 0);
-		virtual ~QTreeViewOpt() { }
+		HerpDerpEggListenerPrivate(HerpDerpEggListener *q);
+		~HerpDerpEggListenerPrivate();
 
-	private:
-		Q_DISABLE_COPY(QTreeViewOpt);
-
-	public:
-		virtual void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
-
-	protected slots:
-		void showColumnContextMenu(const QPoint &point);
-
-	/** Shh... it's a secret to everybody. **/
 	protected:
-		virtual void keyPressEvent(QKeyEvent *event);
-	signals:
-		void keyPress(QKeyEvent *event);
+		HerpDerpEggListener *const q_ptr;
+		Q_DECLARE_PUBLIC(HerpDerpEggListener)
+	private:
+		Q_DISABLE_COPY(HerpDerpEggListenerPrivate)
+
+	public:
+		HerpDerpEggListener::DetectType detectType;
 };
 
-#endif /* __MCRECOVER_QTREEVIEWOPT_HPP__ */
+HerpDerpEggListenerPrivate::HerpDerpEggListenerPrivate(HerpDerpEggListener *q)
+	: q_ptr(q)
+	, detectType(HerpDerpEggListener::DT_NONE)
+{ }	
+
+HerpDerpEggListenerPrivate::~HerpDerpEggListenerPrivate()
+{ }
+
+/** HerpDerpEggListener **/
+
+HerpDerpEggListener::HerpDerpEggListener(QObject *parent)
+	: QObject(parent)
+	, d_ptr(new HerpDerpEggListenerPrivate(this))
+{ }
+
+HerpDerpEggListener::~HerpDerpEggListener()
+{
+	Q_D(HerpDerpEggListener);
+	delete d;
+}
+
+HerpDerpEggListener::DetectType HerpDerpEggListener::detectType(void) const
+{
+	Q_D(const HerpDerpEggListener);
+	return d->detectType;
+}
+
+void HerpDerpEggListener::setDetectType(DetectType detectType)
+{
+	Q_D(HerpDerpEggListener);
+	d->detectType = detectType;
+	// TODO: Update detect status.
+}
+
+/**
+ * Key press listener.
+ * @param event Key press event.
+ */
+void HerpDerpEggListener::widget_keyPress(QKeyEvent *event)
+{
+	// TODO
+	Q_UNUSED(event)
+}
