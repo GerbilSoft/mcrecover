@@ -51,10 +51,11 @@ class SearchThreadWorker : public QObject
 		SearchThreadWorker(QObject *parent = 0);
 		~SearchThreadWorker();
 
+	protected:
+		SearchThreadWorkerPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(SearchThreadWorker)
 	private:
-		friend class SearchThreadWorkerPrivate;
-		SearchThreadWorkerPrivate *const d;
-		Q_DISABLE_COPY(SearchThreadWorker);
+		Q_DISABLE_COPY(SearchThreadWorker)
 
 	signals:
 		/**

@@ -39,10 +39,11 @@ class IconAnimHelper : public QObject
 		IconAnimHelper(const MemCardFile *file);
 		~IconAnimHelper();
 
+	protected:
+		IconAnimHelperPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(IconAnimHelper)
 	private:
-		friend class IconAnimHelperPrivate;
-		IconAnimHelperPrivate *const d;
-		Q_DISABLE_COPY(IconAnimHelper);
+		Q_DISABLE_COPY(IconAnimHelper)
 
 	public:
 		/**

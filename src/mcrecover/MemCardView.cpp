@@ -42,9 +42,11 @@ class MemCardViewPrivate
 		MemCardViewPrivate(MemCardView *q);
 		~MemCardViewPrivate();
 
+	protected:
+		MemCardView *const q_ptr;
+		Q_DECLARE_PUBLIC(MemCardView)
 	private:
-		MemCardView *const q;
-		Q_DISABLE_COPY(MemCardViewPrivate);
+		Q_DISABLE_COPY(MemCardViewPrivate)
 
 	public:
 		const MemCard *card;
@@ -56,7 +58,7 @@ class MemCardViewPrivate
 };
 
 MemCardViewPrivate::MemCardViewPrivate(MemCardView *q)
-	: q(q)
+	: q_ptr(q)
 	, card(nullptr)
 { }
 
@@ -68,6 +70,8 @@ MemCardViewPrivate::~MemCardViewPrivate()
  */
 void MemCardViewPrivate::updateWidgetDisplay(void)
 {
+	Q_Q(MemCardView);
+
 	if (!card) {
 		// Hide the widget display.
 		// TODO: Better method?
@@ -165,12 +169,11 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 	q->lblEncoding->setText(encoding);
 }
 
-
 /** McRecoverWindow **/
 
 MemCardView::MemCardView(QWidget *parent)
 	: QWidget(parent)
-	, d(new MemCardViewPrivate(this))
+	, d_ptr(new MemCardViewPrivate(this))
 {
 	setupUi(this);
 
@@ -182,21 +185,25 @@ MemCardView::MemCardView(QWidget *parent)
 	lblChecksumActual->setFont(fntMonospace);
 	lblChecksumExpected->setFont(fntMonospace);
 
+	Q_D(MemCardView);
 	d->updateWidgetDisplay();
 }
 
 MemCardView::~MemCardView()
 {
+	Q_D(MemCardView);
 	delete d;
 }
-
 
 /**
  * Get the MemCard being displayed.
  * @return MemCard.
  */
 const MemCard *MemCardView::card(void) const
-	{ return d->card; }
+{
+	Q_D(const MemCardView);
+	return d->card;
+}
 
 /**
  * Set the MemCard being displayed.
@@ -204,6 +211,8 @@ const MemCard *MemCardView::card(void) const
  */
 void MemCardView::setCard(const MemCard *card)
 {
+	Q_D(MemCardView);
+
 	// Disconnect the MemCard's destroyed() signal if a MemCard is already set.
 	if (d->card) {
 		disconnect(d->card, SIGNAL(destroyed(QObject*)),
@@ -222,7 +231,6 @@ void MemCardView::setCard(const MemCard *card)
 	d->updateWidgetDisplay();
 }
 
-
 /**
  * Widget state has changed.
  * @param event State change event.
@@ -231,6 +239,7 @@ void MemCardView::changeEvent(QEvent *event)
 {
 	if (event->type() == QEvent::LanguageChange) {
 		// Retranslate the UI.
+		Q_D(MemCardView);
 		retranslateUi(this);
 		d->updateWidgetDisplay();
 	}
@@ -239,9 +248,7 @@ void MemCardView::changeEvent(QEvent *event)
 	this->QWidget::changeEvent(event);
 }
 
-
 /** Slots. **/
-
 
 /**
  * MemCard object was destroyed.
@@ -249,6 +256,8 @@ void MemCardView::changeEvent(QEvent *event)
  */
 void MemCardView::memCard_destroyed_slot(QObject *obj)
 {
+	Q_D(MemCardView);
+
 	if (obj == d->card) {
 		// Our MemCard was destroyed.
 		d->card = nullptr;

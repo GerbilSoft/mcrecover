@@ -54,9 +54,11 @@ class MemCardModelPrivate
 		MemCardModelPrivate(MemCardModel *q);
 		~MemCardModelPrivate();
 
+	protected:
+		MemCardModel *const q_ptr;
+		Q_DECLARE_PUBLIC(MemCardModel)
 	private:
-		MemCardModel *const q;
-		Q_DISABLE_COPY(MemCardModelPrivate);
+		Q_DISABLE_COPY(MemCardModelPrivate)
 
 	public:
 		MemCard *card;
@@ -114,7 +116,7 @@ class MemCardModelPrivate
 };
 
 MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
-	: q(q)
+	: q_ptr(q)
 	, card(nullptr)
 	, animTimer(new QTimer(q))
 	, insertStart(-1)
@@ -127,7 +129,6 @@ MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	// Initialize the style variables.
 	style.init();
 }
-
 
 /**
  * Initialize the style variables.
@@ -178,7 +179,6 @@ MemCardModelPrivate::~MemCardModelPrivate()
 	animState.clear();
 }
 
-
 /**
  * Initialize the animation state.
  */
@@ -203,7 +203,6 @@ void MemCardModelPrivate::initAnimState(void)
 	updateAnimTimerState();
 }
 
-
 /**
  * Initialize the animation state for a given file.
  * @param file MemCardFile.
@@ -221,7 +220,6 @@ void MemCardModelPrivate::initAnimState(const MemCardFile *file)
 	animState.insert(file, helper);
 }
 
-
 /**
  * Update the animation timer state.
  * Starts the timer if animated icons are present; stops the timer if not.
@@ -234,7 +232,6 @@ void MemCardModelPrivate::updateAnimTimerState(void)
 		animTimer.stop();
 }
 
-
 /**
  * Animation timer "slot".
  */
@@ -246,6 +243,7 @@ void MemCardModelPrivate::animTimerSlot(void)
 	}
 
 	// Check for icon animations.
+	Q_Q(MemCardModel);
 	for (int i = 0; i < card->numFiles(); i++) {
 		const MemCardFile *file = card->getFile(i);
 		IconAnimHelper *helper = animState.value(file);
@@ -264,21 +262,24 @@ void MemCardModelPrivate::animTimerSlot(void)
 	}
 }
 
-
 /** MemCardModel **/
 
 MemCardModel::MemCardModel(QObject *parent)
 	: QAbstractListModel(parent)
-	, d(new MemCardModelPrivate(this))
+	, d_ptr(new MemCardModelPrivate(this))
 { }
 
 MemCardModel::~MemCardModel()
-	{ delete d; }
+{
+	Q_D(MemCardModel);
+	delete d;
+}
 
 
 int MemCardModel::rowCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
+	Q_D(const MemCardModel);
 	return (d->card != nullptr ? d->card->numFiles() : 0);
 }
 
@@ -288,9 +289,9 @@ int MemCardModel::columnCount(const QModelIndex& parent) const
 	return COL_MAX;
 }
 
-
 QVariant MemCardModel::data(const QModelIndex& index, int role) const
 {
+	Q_D(const MemCardModel);
 	if (!d->card || !index.isValid())
 		return QVariant();
 	if (index.row() >= rowCount())
@@ -424,7 +425,6 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 	return QVariant();
 }
 
-
 QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	Q_UNUSED(orientation);
@@ -471,13 +471,14 @@ QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int 
 	return QVariant();
 }
 
-
 /**
  * Set the memory card to use in this model.
  * @param card Memory card.
  */
 void MemCardModel::setMemCard(MemCard *card)
 {
+	Q_D(MemCardModel);
+
 	// Disconnect the MemCard's changed() signal if a MemCard is already set.
 	if (d->card) {
 		// Notify the view that we're about to remove all rows.
@@ -534,14 +535,15 @@ void MemCardModel::setMemCard(MemCard *card)
 	}
 }
 
-
 /**
  * Animation timer slot.
  * Wrapper for MemCardModelPrivate::animTimerSlot().
  */
 void MemCardModel::animTimerSlot(void)
-	{ d->animTimerSlot(); }
-
+{
+	Q_D(MemCardModel);
+	d->animTimerSlot();
+}
 
 /**
  * MemCard object was destroyed.
@@ -549,6 +551,8 @@ void MemCardModel::animTimerSlot(void)
  */
 void MemCardModel::memCard_destroyed_slot(QObject *obj)
 {
+	Q_D(MemCardModel);
+
 	if (obj == d->card) {
 		// Our MemCard was destroyed.
 		int numFiles = d->card->numFiles();
@@ -559,7 +563,6 @@ void MemCardModel::memCard_destroyed_slot(QObject *obj)
 			endRemoveRows();
 	}
 }
-
 
 /**
  * Files are about to be added to the MemCard.
@@ -572,6 +575,7 @@ void MemCardModel::memCard_filesAboutToBeInserted_slot(int start, int end)
 	beginInsertRows(QModelIndex(), start, end);
 
 	// Save the start/end indexes.
+	Q_D(MemCardModel);
 	d->insertStart = start;
 	d->insertEnd = end;
 }
@@ -581,6 +585,8 @@ void MemCardModel::memCard_filesAboutToBeInserted_slot(int start, int end)
  */
 void MemCardModel::memCard_filesInserted_slot(void)
 {
+	Q_D(MemCardModel);
+
 	// If these files have animated icons, add them.
 	if (d->insertStart >= 0 && d->insertEnd >= 0) {
 		for (int i = d->insertStart; i <= d->insertEnd; i++) {
@@ -611,6 +617,7 @@ void MemCardModel::memCard_filesAboutToBeRemoved_slot(int start, int end)
 	beginRemoveRows(QModelIndex(), start, end);
 
 	// Remove animation states for these files.
+	Q_D(MemCardModel);
 	for (int i = start; i <= end; i++) {
 		const MemCardFile *file = d->card->getFile(i);
 		d->animState.remove(file);

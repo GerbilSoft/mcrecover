@@ -61,10 +61,11 @@ class MemCard : public QObject
 		MemCard(const QString& filename, QObject *parent = 0);
 		~MemCard();
 
+	protected:
+		MemCardPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(MemCard)
 	private:
-		friend class MemCardPrivate;
-		MemCardPrivate *const d;
-		Q_DISABLE_COPY(MemCard);
+		Q_DISABLE_COPY(MemCard)
 
 	signals:
 		/**

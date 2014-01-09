@@ -44,9 +44,11 @@ class SearchThreadPrivate
 		SearchThreadPrivate(SearchThread *q);
 		~SearchThreadPrivate();
 
+	protected:
+		SearchThread *const q_ptr;
+		Q_DECLARE_PUBLIC(SearchThread)
 	private:
-		SearchThread *const q;
-		Q_DISABLE_COPY(SearchThreadPrivate);
+		Q_DISABLE_COPY(SearchThreadPrivate)
 
 	public:
 		// GCN Memory Card File databases.
@@ -66,9 +68,8 @@ class SearchThreadPrivate
 		void stopWorkerThread(void);
 };
 
-
 SearchThreadPrivate::SearchThreadPrivate(SearchThread* q)
-	: q(q)
+	: q_ptr(q)
 	, worker(new SearchThreadWorker())
 	, workerThread(nullptr)
 {
@@ -95,7 +96,6 @@ SearchThreadPrivate::~SearchThreadPrivate()
 	dbs.clear();
 }
 
-
 /**
  * Stop the worker thread.
  */
@@ -111,19 +111,18 @@ void SearchThreadPrivate::stopWorkerThread(void)
 	workerThread = nullptr;
 }
 
-
 /** SearchThread **/
 
 SearchThread::SearchThread(QObject *parent)
 	: QObject(parent)
-	, d(new SearchThreadPrivate(this))
+	, d_ptr(new SearchThreadPrivate(this))
 { }
 
 SearchThread::~SearchThread()
 {
+	Q_D(SearchThread);
 	delete d;
 }
-
 
 /**
  * Load a GCN Memory Card File database.
@@ -132,6 +131,7 @@ SearchThread::~SearchThread()
  */
 int SearchThread::loadGcnMcFileDb(const QString &dbFilename)
 {
+	Q_D(SearchThread);
 	qDeleteAll(d->dbs);
 	d->dbs.clear();
 
@@ -154,7 +154,6 @@ int SearchThread::loadGcnMcFileDb(const QString &dbFilename)
 	return ret;
 }
 
-
 /**
  * Load multiple GCN Memory Card File databases.
  * @param dbFilenames Filenames of GCN Memory Card File database.
@@ -162,6 +161,7 @@ int SearchThread::loadGcnMcFileDb(const QString &dbFilename)
  */
 int SearchThread::loadGcnMcFileDbs(const QVector<QString> &dbFilenames)
 {
+	Q_D(SearchThread);
 	qDeleteAll(d->dbs);
 	d->dbs.clear();
 
@@ -188,7 +188,6 @@ int SearchThread::loadGcnMcFileDbs(const QVector<QString> &dbFilenames)
 	return 0;
 }
 
-
 /**
  * Get the list of files found in the last successful search.
  * @return List of files found.
@@ -196,9 +195,9 @@ int SearchThread::loadGcnMcFileDbs(const QVector<QString> &dbFilenames)
 QLinkedList<SearchData> SearchThread::filesFoundList(void)
 {
 	// TODO: Not while thread is running...
+	Q_D(SearchThread);
 	return d->worker->filesFoundList();
 }
-
 
 /**
  * Search a memory card for "lost" files.
@@ -213,6 +212,8 @@ QLinkedList<SearchData> SearchThread::filesFoundList(void)
  */
 int SearchThread::searchMemCard(MemCard *card, char preferredRegion, bool searchUsedBlocks)
 {
+	Q_D(SearchThread);
+
 	// TODO: Mutex?
 	if (d->workerThread) {
 		// Thread is running.
@@ -226,7 +227,6 @@ int SearchThread::searchMemCard(MemCard *card, char preferredRegion, bool search
 	// Search for files.
 	return d->worker->searchMemCard(card, d->dbs, preferredRegion, searchUsedBlocks);
 }
-
 
 /**
  * Search a memory card for "lost" files.
@@ -244,6 +244,8 @@ int SearchThread::searchMemCard(MemCard *card, char preferredRegion, bool search
  */
 int SearchThread::searchMemCard_async(MemCard *card, char preferredRegion, bool searchUsedBlocks)
 {
+	Q_D(SearchThread);
+
 	// TODO: Mutex?
 	if (d->workerThread) {
 		// Thread is already running.
@@ -269,7 +271,6 @@ int SearchThread::searchMemCard_async(MemCard *card, char preferredRegion, bool 
 	return 0;
 }
 
-
 /** Slots. **/
 
 /**
@@ -277,6 +278,7 @@ int SearchThread::searchMemCard_async(MemCard *card, char preferredRegion, bool 
  */
 void SearchThread::searchCancelled_slot(void)
 {
+	Q_D(SearchThread);
 	if (d->workerThread)
 		d->stopWorkerThread();
 
@@ -289,6 +291,7 @@ void SearchThread::searchCancelled_slot(void)
  */
 void SearchThread::searchFinished_slot(int lostFilesFound)
 {
+	Q_D(SearchThread);
 	if (d->workerThread)
 		d->stopWorkerThread();
 
@@ -301,6 +304,7 @@ void SearchThread::searchFinished_slot(int lostFilesFound)
  */
 void SearchThread::searchError_slot(const QString &errorString)
 {
+	Q_D(SearchThread);
 	if (d->workerThread) {
 		d->worker->moveToThread(QThread::currentThread());
 		d->stopWorkerThread();

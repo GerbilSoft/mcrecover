@@ -47,10 +47,11 @@ class StatusBarManager : public QObject
 		explicit StatusBarManager(QStatusBar *statusBar, QObject *parent = 0);
 		~StatusBarManager();
 
+	protected:
+		StatusBarManagerPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(StatusBarManager)
 	private:
-		friend class StatusBarManagerPrivate;
-		StatusBarManagerPrivate *const d;
-		Q_DISABLE_COPY(StatusBarManager);
+		Q_DISABLE_COPY(StatusBarManager)
 
 	public:
 		/**

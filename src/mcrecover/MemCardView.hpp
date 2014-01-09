@@ -40,10 +40,11 @@ class MemCardView : public QWidget, public Ui::MemCardView
 		MemCardView(QWidget *parent = 0);
 		~MemCardView();
 
+	protected:
+		MemCardViewPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(MemCardView)
 	private:
-		friend class MemCardViewPrivate;
-		MemCardViewPrivate *const d;
-		Q_DISABLE_COPY(MemCardView);
+		Q_DISABLE_COPY(MemCardView)
 
 	public:
 		/**

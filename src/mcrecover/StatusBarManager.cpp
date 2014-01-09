@@ -44,9 +44,11 @@ class StatusBarManagerPrivate
 		StatusBarManagerPrivate(StatusBarManager *q);
 		~StatusBarManagerPrivate();
 
+	protected:
+		StatusBarManager *const q_ptr;
+		Q_DECLARE_PUBLIC(StatusBarManager)
 	private:
-		StatusBarManager *const q;
-		Q_DISABLE_COPY(StatusBarManagerPrivate);
+		Q_DISABLE_COPY(StatusBarManagerPrivate)
 
 	public:
 		// Status bar.
@@ -92,7 +94,7 @@ class StatusBarManagerPrivate
 };
 
 StatusBarManagerPrivate::StatusBarManagerPrivate(StatusBarManager *q)
-	: q(q)
+	: q_ptr(q)
 	, statusBar(nullptr)
 	, lblMessage(nullptr)
 	, progressBar(nullptr)
@@ -122,7 +124,6 @@ StatusBarManagerPrivate::~StatusBarManagerPrivate()
 	delete statusBar;
 	delete taskbarButtonManager;
 }
-
 
 /**
  * Update the status bar.
@@ -175,17 +176,16 @@ void StatusBarManagerPrivate::updateStatusBar(void)
 	}
 }
 
-
 /** StatusBarManager **/
 
 StatusBarManager::StatusBarManager(QObject *parent)
 	: QObject(parent)
-	, d(new StatusBarManagerPrivate(this))
+	, d_ptr(new StatusBarManagerPrivate(this))
 { }
 
 StatusBarManager::StatusBarManager(QStatusBar *statusBar, QObject *parent)
 	: QObject(parent)
-	, d(new StatusBarManagerPrivate(this))
+	, d_ptr(new StatusBarManagerPrivate(this))
 {
 	// Initialize the status bar.
 	setStatusBar(statusBar);
@@ -193,16 +193,19 @@ StatusBarManager::StatusBarManager(QStatusBar *statusBar, QObject *parent)
 
 StatusBarManager::~StatusBarManager()
 {
+	Q_D(StatusBarManager);
 	delete d;
 }
-
 
 /**
  * Get the QStatusBar.
  * @return QStatusBar.
  */
 QStatusBar *StatusBarManager::statusBar(void) const
-	{ return d->statusBar; }
+{
+	Q_D(const StatusBarManager);
+	return d->statusBar;
+}
 
 /**
  * Set the QStatusBar.
@@ -210,6 +213,8 @@ QStatusBar *StatusBarManager::statusBar(void) const
  */
 void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 {
+	Q_D(StatusBarManager);
+
 	// Stop the Hide Progress Bar timer.
 	d->tmrHideProgressBar.stop();
 
@@ -265,13 +270,15 @@ void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 	}
 }
 
-
 /**
  * Get the SearchThread.
  * @return SearchThread.
  */
 SearchThread *StatusBarManager::searchThread(void) const
-	{ return d->searchThread; }
+{
+	Q_D(const StatusBarManager);
+	return d->searchThread;
+}
 
 /**
  * Set the SearchThread.
@@ -279,6 +286,8 @@ SearchThread *StatusBarManager::searchThread(void) const
  */
 void StatusBarManager::setSearchThread(SearchThread *searchThread)
 {
+	Q_D(StatusBarManager);
+
 	if (d->searchThread) {
 		// Disconnect signals from the current searchThread.
 		disconnect(d->searchThread, SIGNAL(destroyed(QObject*)),
@@ -324,9 +333,7 @@ void StatusBarManager::setSearchThread(SearchThread *searchThread)
 	d->updateStatusBar();
 }
 
-
 /** Public Slots. **/
-
 
 /**
  * A GameCube Memory Card image was opened.
@@ -339,6 +346,7 @@ void StatusBarManager::opened(QString filename)
 	if (lastSlash >= 0)
 		filename.remove(0, lastSlash + 1);
 
+	Q_D(StatusBarManager);
 	d->scanning = false;
 	d->progressBar->setVisible(false);
 	d->lastStatusMessage = tr("Loaded GameCube Memory Card image %1").arg(filename);
@@ -348,12 +356,12 @@ void StatusBarManager::opened(QString filename)
 	d->tmrHideProgressBar.stop();
 }
 
-
 /**
  * The current GameCube Memory Card image was closed.
  */
 void StatusBarManager::closed(void)
 {
+	Q_D(StatusBarManager);
 	d->scanning = false;
 	d->progressBar->setVisible(false);
 	d->lastStatusMessage = tr("GameCube Memory Card image closed.");
@@ -363,7 +371,6 @@ void StatusBarManager::closed(void)
 	d->tmrHideProgressBar.stop();
 }
 
-
 /**
  * Files were saved.
  * @param n Number of files saved.
@@ -371,6 +378,7 @@ void StatusBarManager::closed(void)
  */
 void StatusBarManager::filesSaved(int n, QString path)
 {
+	Q_D(StatusBarManager);
 	d->scanning = false;
 	d->progressBar->setVisible(false);
 	d->lastStatusMessage = tr("%Ln file(s) saved to %1.", "", n)
@@ -381,9 +389,7 @@ void StatusBarManager::filesSaved(int n, QString path)
 	d->tmrHideProgressBar.stop();
 }
 
-
 /** Private Slots. **/
-
 
 /**
  * An object has been destroyed.
@@ -391,19 +397,20 @@ void StatusBarManager::filesSaved(int n, QString path)
  */
 void StatusBarManager::object_destroyed_slot(QObject *obj)
 {
-	if (obj == d->statusBar)
+	Q_D(StatusBarManager);
+
+	if (obj == d->statusBar) {
 		d->statusBar = nullptr;
-	else if (obj == d->lblMessage)
+	} else if (obj == d->lblMessage) {
 		d->lblMessage = nullptr;
-	else if (obj == d->progressBar) {
+	} else if (obj == d->progressBar) {
 		// Stop the Hide Progress Bar timer.
 		d->tmrHideProgressBar.stop();
-		
 		d->progressBar = nullptr;
-	} else if (obj == d->searchThread)
+	} else if (obj == d->searchThread) {
 		d->searchThread = nullptr;
+	}
 }
-
 
 /**
  * Search has started.
@@ -413,6 +420,8 @@ void StatusBarManager::object_destroyed_slot(QObject *obj)
  */
 void StatusBarManager::searchStarted_slot(int totalPhysBlocks, int totalSearchBlocks, int firstPhysBlock)
 {
+	Q_D(StatusBarManager);
+
 	// Initialize the search status.
 	d->scanning = true;
 	// NOTE: When scanning, lastStatusMessage is set by updateStatusBar().
@@ -432,6 +441,8 @@ void StatusBarManager::searchStarted_slot(int totalPhysBlocks, int totalSearchBl
  */
 void StatusBarManager::searchCancelled_slot(void)
 {
+	Q_D(StatusBarManager);
+
 	// TODO
 	d->scanning = false;
 	d->lastStatusMessage = tr("Scan cancelled.");
@@ -448,6 +459,8 @@ void StatusBarManager::searchCancelled_slot(void)
  */
 void StatusBarManager::searchFinished_slot(int lostFilesFound)
 {
+	Q_D(StatusBarManager);
+
 	// Update the search status.
 	d->scanning = false;
 	d->lostFilesFound = lostFilesFound;
@@ -467,6 +480,8 @@ void StatusBarManager::searchFinished_slot(int lostFilesFound)
  */
 void StatusBarManager::searchUpdate_slot(int currentPhysBlock, int currentSearchBlock, int lostFilesFound)
 {
+	Q_D(StatusBarManager);
+
 	// Update the search status.
 	// NOTE: When scanning, lastStatusMessage is set by updateStatusBar().
 	d->currentPhysBlock = currentPhysBlock;
@@ -481,13 +496,14 @@ void StatusBarManager::searchUpdate_slot(int currentPhysBlock, int currentSearch
  */
 void StatusBarManager::searchError_slot(QString errorString)
 {
+	Q_D(StatusBarManager);
+
 	d->scanning = false;
 	d->lastStatusMessage = tr("An error occurred while scanning: %1")
 				.arg(errorString);
 
 	// TODO: Keep the progress bar visible but indicate an error.
 }
-
 
 /**
  * Hide the progress bar.
@@ -496,6 +512,7 @@ void StatusBarManager::searchError_slot(QString errorString)
  */
 void StatusBarManager::hideProgressBar_slot(void)
 {
+	Q_D(StatusBarManager);
 	d->progressBar->setVisible(false);
 	d->updateStatusBar();
 }

@@ -41,23 +41,15 @@
 
 class McRecoverQApplicationPrivate
 {
-	public:
-		McRecoverQApplicationPrivate(McRecoverQApplication *q);
-
 	private:
-		McRecoverQApplication *const q;
+		McRecoverQApplicationPrivate() { }
+		~McRecoverQApplicationPrivate() { }
 		Q_DISABLE_COPY(McRecoverQApplicationPrivate)
 
 	public:
-		void init(void);
-
 		// Initialize McRecoverQApplication.
-		void mcrqaInit(void);
+		static void mcrqaInit(void);
 };
-
-McRecoverQApplicationPrivate::McRecoverQApplicationPrivate(McRecoverQApplication *q)
-	: q(q)
-{ }
 
 /**
  * McRecoverQApplication initialization function.
@@ -74,8 +66,8 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 	QCoreApplication::setApplicationVersion(sVersion);
 
 	// Set the application icon.
-	QIcon mcrIcon = q->IconFromProgram(QLatin1String("mcrecover"));
-	q->setWindowIcon(mcrIcon);
+	QIcon mcrIcon = McRecoverQApplication::IconFromProgram(QLatin1String("mcrecover"));
+	McRecoverQApplication::setWindowIcon(mcrIcon);
 
 #if QT_VERSION >= 0x040600
 	// Check if an icon theme is available.
@@ -89,7 +81,7 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 
 #ifdef Q_OS_WIN
 	// Set the application font.
-	q->SetFont_Win32();
+	McRecoverQApplication::SetFont_Win32();
 #endif /* Q_OS_WIN */
 
 	// Register custom types for QVariant.
@@ -105,28 +97,21 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 
 McRecoverQApplication::McRecoverQApplication(int &argc, char **argv)
 	: QApplication(argc, argv)
-	, d(new McRecoverQApplicationPrivate(this))
 {
-	d->mcrqaInit();
+	McRecoverQApplicationPrivate::mcrqaInit();
 }
 
 McRecoverQApplication::McRecoverQApplication(int &argc, char **argv, bool GUIenabled)
 	: QApplication(argc, argv, GUIenabled)
-	, d(new McRecoverQApplicationPrivate(this))
 {
-	d->mcrqaInit();
+	McRecoverQApplicationPrivate::mcrqaInit();
 }
 
 McRecoverQApplication::McRecoverQApplication(int &argc, char **argv, Type type)
 	: QApplication(argc, argv, type)
-	, d(new McRecoverQApplicationPrivate(this))
 {
-	d->mcrqaInit();
+	McRecoverQApplicationPrivate::mcrqaInit();
 }
-
-McRecoverQApplication::~McRecoverQApplication()
-	{ delete d; }
-
 
 /**
  * Get an icon from the system theme.
@@ -168,7 +153,6 @@ QIcon McRecoverQApplication::IconFromTheme(const QString &name)
 
 	return icon;
 }
-
 
 /**
  * Get an icon from the MemCard Recover icon set.

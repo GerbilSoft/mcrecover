@@ -34,9 +34,10 @@ class TranslationManager
 		TranslationManager();
 		~TranslationManager();
 
+	protected:
+		TranslationManagerPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(TranslationManager)
 	private:
-		friend class TranslationManagerPriate;
-		TranslationManagerPrivate *const d;
 		Q_DISABLE_COPY(TranslationManager)
 
 	public:

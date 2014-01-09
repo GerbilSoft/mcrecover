@@ -42,10 +42,11 @@ class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
 		McRecoverWindow(QWidget *parent = 0);
 		~McRecoverWindow();
 
+	protected:
+		McRecoverWindowPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(McRecoverWindow)
 	private:
-		friend class McRecoverWindowPrivate;
-		McRecoverWindowPrivate *const d;
-		Q_DISABLE_COPY(McRecoverWindow);
+		Q_DISABLE_COPY(McRecoverWindow)
 
 	public:
 		/**

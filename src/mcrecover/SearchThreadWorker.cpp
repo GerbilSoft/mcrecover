@@ -46,9 +46,11 @@ class SearchThreadWorkerPrivate
 	public:
 		SearchThreadWorkerPrivate(SearchThreadWorker *q);
 
+	protected:
+		SearchThreadWorker *const q_ptr;
+		Q_DECLARE_PUBLIC(SearchThreadWorker)
 	private:
-		SearchThreadWorker *const q;
-		Q_DISABLE_COPY(SearchThreadWorkerPrivate);
+		Q_DISABLE_COPY(SearchThreadWorkerPrivate)
 
 	public:
 		/**
@@ -76,9 +78,8 @@ class SearchThreadWorkerPrivate
 		} thread_info;
 };
 
-
 SearchThreadWorkerPrivate::SearchThreadWorkerPrivate(SearchThreadWorker* q)
-	: q(q)
+	: q_ptr(q)
 {
 	// NULL these out by default.
 	thread_info.card = nullptr;
@@ -87,19 +88,18 @@ SearchThreadWorkerPrivate::SearchThreadWorkerPrivate(SearchThreadWorker* q)
 	thread_info.searchUsedBlocks = false;
 }
 
-
 /** SearchThreadWorker **/
 
 SearchThreadWorker::SearchThreadWorker(QObject *parent)
 	: QObject(parent)
-	, d(new SearchThreadWorkerPrivate(this))
+	, d_ptr(new SearchThreadWorkerPrivate(this))
 { }
 
 SearchThreadWorker::~SearchThreadWorker()
 {
+	Q_D(SearchThreadWorker);
 	delete d;
 }
-
 
 /**
  * Get the list of files found in the last successful search.
@@ -108,9 +108,9 @@ SearchThreadWorker::~SearchThreadWorker()
 QLinkedList<SearchData> SearchThreadWorker::filesFoundList(void)
 {
 	// TODO: Not while thread is running...
+	Q_D(SearchThreadWorker);
 	return d->filesFoundList;
 }
-
 
 /**
  * Search a memory card for "lost" files.
@@ -126,6 +126,7 @@ QLinkedList<SearchData> SearchThreadWorker::filesFoundList(void)
 int SearchThreadWorker::searchMemCard(MemCard *card, const QVector<GcnMcFileDb*> &dbs,
 				      char preferredRegion, bool searchUsedBlocks)
 {
+	Q_D(SearchThreadWorker);
 	d->filesFoundList.clear();
 
 	if (dbs.isEmpty()) {
@@ -327,7 +328,6 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const QVector<GcnMcFileDb*>
 	return d->filesFoundList.size();
 }
 
-
 /**
  * Set internal information for threading purposes.
  * This is basically the parameters to searchMemCard().
@@ -343,13 +343,13 @@ void SearchThreadWorker::setThreadInfo(MemCard *card, const QVector<GcnMcFileDb*
 				       QThread *orig_thread,
 				       char preferredRegion, bool searchUsedBlocks)
 {
+	Q_D(SearchThreadWorker);
 	d->thread_info.card = card;
 	d->thread_info.dbs = dbs; // TODO: Convert to QVector<const GcnMcFileDb*>?
 	d->thread_info.orig_thread = orig_thread;
 	d->thread_info.preferredRegion = preferredRegion;
 	d->thread_info.searchUsedBlocks = searchUsedBlocks;
 }
-
 
 /**
  * Search the memory card for "lost" files.
@@ -358,6 +358,8 @@ void SearchThreadWorker::setThreadInfo(MemCard *card, const QVector<GcnMcFileDb*
  */
 void SearchThreadWorker::searchMemCard_threaded(void)
 {
+	Q_D(SearchThreadWorker);
+
 	if (!d->thread_info.card ||
 	    d->thread_info.dbs.isEmpty() ||
 	    !d->thread_info.orig_thread)

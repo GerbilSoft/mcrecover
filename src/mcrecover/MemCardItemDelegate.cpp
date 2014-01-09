@@ -46,14 +46,16 @@ class MemCardItemDelegatePrivate
 	public:
 		MemCardItemDelegatePrivate(MemCardItemDelegate *q);
 
+	protected:
+		MemCardItemDelegate *const q_ptr;
+		Q_DECLARE_PUBLIC(MemCardItemDelegate)
 	private:
-		MemCardItemDelegate *const q;
-		Q_DISABLE_COPY(MemCardItemDelegatePrivate);
+		Q_DISABLE_COPY(MemCardItemDelegatePrivate)
 
 	public:
 		// Font retrieval.
-		QFont fontGameDesc(const QWidget *widget = 0);
-		QFont fontFileDesc(const QWidget *widget = 0);
+		QFont fontGameDesc(const QWidget *widget = 0) const;
+		QFont fontFileDesc(const QWidget *widget = 0) const;
 
 #ifdef Q_OS_WIN
 		// Win32: Theming functions.
@@ -69,7 +71,7 @@ class MemCardItemDelegatePrivate
 /** MemCardItemDelegatePrivate **/
 
 MemCardItemDelegatePrivate::MemCardItemDelegatePrivate(MemCardItemDelegate *q)
-	: q(q)
+	: q_ptr(q)
 #ifdef Q_OS_WIN
 	, m_isXPTheme(false)
 #endif /* Q_OS_WIN */
@@ -85,7 +87,7 @@ MemCardItemDelegatePrivate::MemCardItemDelegatePrivate(MemCardItemDelegate *q)
  * @param widget Relevant widget. (If nullptr, use QApplication.)
  * @return Game Description font.
  */
-QFont MemCardItemDelegatePrivate::fontGameDesc(const QWidget *widget)
+QFont MemCardItemDelegatePrivate::fontGameDesc(const QWidget *widget) const
 {
 	// TODO: This should be cached, but we don't have a
 	// reasonable way to update it if the system font
@@ -100,7 +102,7 @@ QFont MemCardItemDelegatePrivate::fontGameDesc(const QWidget *widget)
  * @param widget Relevant widget. (If nullptr, use QApplication.)
  * @return File Description font.
  */
-QFont MemCardItemDelegatePrivate::fontFileDesc(const QWidget *widget)
+QFont MemCardItemDelegatePrivate::fontFileDesc(const QWidget *widget) const
 {
 	// TODO: This should be cached, but we don't have a
 	// reasonable way to update it if the system font
@@ -174,12 +176,11 @@ bool MemCardItemDelegatePrivate::isVistaTheme(void)
 }
 #endif /* Q_OS_WIN */
 
-
 /** MemCardItemDelegate **/
 
 MemCardItemDelegate::MemCardItemDelegate(QObject *parent)
 	: QStyledItemDelegate(parent)
-	, d(new MemCardItemDelegatePrivate(this))
+	, d_ptr(new MemCardItemDelegatePrivate(this))
 {
 	// Connect the "themeChanged" signal.
 	McRecoverQApplication *mcrqa = qobject_cast<McRecoverQApplication*>(McRecoverQApplication::instance());
@@ -191,6 +192,7 @@ MemCardItemDelegate::MemCardItemDelegate(QObject *parent)
 
 MemCardItemDelegate::~MemCardItemDelegate()
 {
+	Q_D(MemCardItemDelegate);
 	delete d;
 }
 
@@ -229,6 +231,7 @@ void MemCardItemDelegate::paint(QPainter *painter,
 		textAlignment = option.displayAlignment;
 
 	// Get the fonts.
+	Q_D(const MemCardItemDelegate);
 	QStyleOptionViewItemV4 bgOption = option;
 	QFont fontGameDesc = d->fontGameDesc(bgOption.widget);
 	QFont fontFileDesc = d->fontFileDesc(bgOption.widget);
@@ -348,6 +351,7 @@ QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 	FileComments fileComments = index.data().value<FileComments>();
 
 	// Get the fonts.
+	Q_D(const MemCardItemDelegate);
 	QStyleOptionViewItemV4 bgOption = option;
 	QFont fontGameDesc = d->fontGameDesc(bgOption.widget);
 	QFont fontFileDesc = d->fontFileDesc(bgOption.widget);

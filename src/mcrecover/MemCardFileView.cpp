@@ -36,9 +36,11 @@ class MemCardFileViewPrivate
 		MemCardFileViewPrivate(MemCardFileView *q);
 		~MemCardFileViewPrivate();
 
+	protected:
+		MemCardFileView *const q_ptr;
+		Q_DECLARE_PUBLIC(MemCardFileView)
 	private:
-		MemCardFileView *const q;
-		Q_DISABLE_COPY(MemCardFileViewPrivate);
+		Q_DISABLE_COPY(MemCardFileViewPrivate)
 
 	public:
 		const MemCardFile *file;
@@ -56,7 +58,7 @@ class MemCardFileViewPrivate
 };
 
 MemCardFileViewPrivate::MemCardFileViewPrivate(MemCardFileView *q)
-	: q(q)
+	: q_ptr(q)
 	, file(nullptr)
 {
 	// Connect animTimer's timeout() signal.
@@ -67,12 +69,13 @@ MemCardFileViewPrivate::MemCardFileViewPrivate(MemCardFileView *q)
 MemCardFileViewPrivate::~MemCardFileViewPrivate()
 { }
 
-
 /**
  * Update the widget display.
  */
 void MemCardFileViewPrivate::updateWidgetDisplay(void)
 {
+	Q_Q(MemCardFileView);
+
 	if (!file) {
 		// Clear the widget display.
 		q->lblFileIcon->clear();
@@ -175,12 +178,11 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 	}
 }
 
-
 /** McRecoverWindow **/
 
 MemCardFileView::MemCardFileView(QWidget *parent)
 	: QWidget(parent)
-	, d(new MemCardFileViewPrivate(this))
+	, d_ptr(new MemCardFileViewPrivate(this))
 {
 	setupUi(this);
 
@@ -194,21 +196,25 @@ MemCardFileView::MemCardFileView(QWidget *parent)
 	lblChecksumActual->setFont(fntMonospace);
 	lblChecksumExpected->setFont(fntMonospace);
 
+	Q_D(MemCardFileView);
 	d->updateWidgetDisplay();
 }
 
 MemCardFileView::~MemCardFileView()
 {
+	Q_D(MemCardFileView);
 	delete d;
 }
-
 
 /**
  * Get the MemCardFile being displayed.
  * @return MemCardFile.
  */
 const MemCardFile *MemCardFileView::file(void) const
-	{ return d->file; }
+{
+	Q_D(const MemCardFileView);
+	return d->file;
+}
 
 /**
  * Set the MemCardFile being displayed.
@@ -216,6 +222,8 @@ const MemCardFile *MemCardFileView::file(void) const
  */
 void MemCardFileView::setFile(const MemCardFile *file)
 {
+	Q_D(MemCardFileView);
+
 	// Disconnect the MemCardFile's destroyed() signal if a MemCardFile is already set.
 	if (d->file) {
 		disconnect(d->file, SIGNAL(destroyed(QObject*)),
@@ -243,6 +251,7 @@ void MemCardFileView::changeEvent(QEvent *event)
 {
 	if (event->type() == QEvent::LanguageChange) {
 		// Retranslate the UI.
+		Q_D(MemCardFileView);
 		retranslateUi(this);
 		d->updateWidgetDisplay();
 	}
@@ -251,9 +260,7 @@ void MemCardFileView::changeEvent(QEvent *event)
 	this->QWidget::changeEvent(event);
 }
 
-
 /** Slots. **/
-
 
 /**
  * MemCardFile object was destroyed.
@@ -261,6 +268,8 @@ void MemCardFileView::changeEvent(QEvent *event)
  */
 void MemCardFileView::memCardFile_destroyed_slot(QObject *obj)
 {
+	Q_D(MemCardFileView);
+
 	if (obj == d->file) {
 		// Our MemCardFile was destroyed.
 		d->file = nullptr;
@@ -276,6 +285,8 @@ void MemCardFileView::memCardFile_destroyed_slot(QObject *obj)
  */
 void MemCardFileView::animTimer_slot(void)
 {
+	Q_D(MemCardFileView);
+
 	if (!d->file || !d->helper.isAnimated()) {
 		// No file is loaded, or the file doesn't have an animated icon.
 		// Stop the animation timer.

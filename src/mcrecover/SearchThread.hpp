@@ -47,10 +47,11 @@ class SearchThread : public QObject
 		SearchThread(QObject *parent = 0);
 		~SearchThread();
 
+	protected:
+		SearchThreadPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(SearchThread)
 	private:
-		friend class SearchThreadPrivate;
-		SearchThreadPrivate *const d;
-		Q_DISABLE_COPY(SearchThread);
+		Q_DISABLE_COPY(SearchThread)
 
 	signals:
 		/**

@@ -41,9 +41,11 @@ class TranslationManagerPrivate
 		TranslationManagerPrivate(TranslationManager *q);
 		~TranslationManagerPrivate();
 
+	protected:
+		TranslationManager *const q_ptr;
+		Q_DECLARE_PUBLIC(TranslationManager)
 	private:
-		TranslationManager *const q;
-		Q_DISABLE_COPY(TranslationManagerPrivate);
+		Q_DISABLE_COPY(TranslationManagerPrivate)
 
 	public:
 		static TranslationManager *instance;
@@ -61,7 +63,7 @@ class TranslationManagerPrivate
 TranslationManager *TranslationManagerPrivate::instance = nullptr;
 
 TranslationManagerPrivate::TranslationManagerPrivate(TranslationManager *q)
-	: q(q)
+	: q_ptr(q)
 	, qtTranslator(new QTranslator())
 	, prgTranslator(new QTranslator())
 {
@@ -119,11 +121,14 @@ TranslationManagerPrivate::~TranslationManagerPrivate()
 /** TranslationManager **/
 
 TranslationManager::TranslationManager()
-	: d(new TranslationManagerPrivate(this))
+	: d_ptr(new TranslationManagerPrivate(this))
 { }
 
 TranslationManager::~TranslationManager()
-	{ delete d; }
+{
+	Q_D(TranslationManager);
+	delete d;
+}
 
 TranslationManager* TranslationManager::instance(void)
 {
@@ -138,6 +143,8 @@ TranslationManager* TranslationManager::instance(void)
  */
 void TranslationManager::setTranslation(const QString &locale)
 {
+	Q_D(TranslationManager);
+
 	// Initialize the Qt translation system.
 	QString qtLocale = QLatin1String("qt_") + locale;
 	bool isQtSysTranslator = false;
@@ -208,6 +215,7 @@ QMap<QString, QString> TranslationManager::enumerate(void) const
 	static const QDir::SortFlags sortFlags = (QDir::Name);
 #endif /* Q_OS_WIN */
 
+	Q_D(const TranslationManager);
 	QMap<QString, QString> tsMap;
 	QTranslator tmpTs;
 	foreach (QString path, d->pathList) {

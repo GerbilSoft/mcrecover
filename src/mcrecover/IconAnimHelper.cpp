@@ -29,9 +29,11 @@ class IconAnimHelperPrivate
 	public:
 		IconAnimHelperPrivate(IconAnimHelper *q);
 
+	protected:
+		IconAnimHelper *const q_ptr;
+		Q_DECLARE_PUBLIC(IconAnimHelper)
 	private:
-		IconAnimHelper *const q;
-		Q_DISABLE_COPY(IconAnimHelperPrivate);
+		Q_DISABLE_COPY(IconAnimHelperPrivate)
 
 	public:
 		const MemCardFile *file;
@@ -65,7 +67,7 @@ class IconAnimHelperPrivate
 
 
 IconAnimHelperPrivate::IconAnimHelperPrivate(IconAnimHelper *q)
-	: q(q)
+	: q_ptr(q)
 	, file(nullptr)
 {
 	reset();
@@ -175,11 +177,11 @@ bool IconAnimHelperPrivate::tick(void)
 
 
 IconAnimHelper::IconAnimHelper()
-	: d(new IconAnimHelperPrivate(this))
+	: d_ptr(new IconAnimHelperPrivate(this))
 { }
 
 IconAnimHelper::IconAnimHelper(const MemCardFile* file)
-	: d(new IconAnimHelperPrivate(this))
+	: d_ptr(new IconAnimHelperPrivate(this))
 {
 	// Set the initial MemCardFile.
 	setFile(file);
@@ -187,16 +189,18 @@ IconAnimHelper::IconAnimHelper(const MemCardFile* file)
 
 IconAnimHelper::~IconAnimHelper()
 {
-	delete d;
+	delete d_ptr;
 }
-
 
 /**
  * Get the MemCardFile this IconAnimHelper is handling.
  * @return MemCardFile.
  */
 const MemCardFile *IconAnimHelper::file(void) const
-	{ return d->file; }
+{
+	Q_D(const IconAnimHelper);
+	return d->file;
+}
 
 /**
  * Set the MemCardFile this IconAnimHelper should handle.
@@ -204,6 +208,8 @@ const MemCardFile *IconAnimHelper::file(void) const
  */
 void IconAnimHelper::setFile(const MemCardFile *file)
 {
+	Q_D(IconAnimHelper);
+
 	// Disconnect the MemCardFile's destroyed() signal if a MemCardFile is already set.
 	if (d->file) {
 		disconnect(d->file, SIGNAL(destroyed(QObject*)),
@@ -222,22 +228,25 @@ void IconAnimHelper::setFile(const MemCardFile *file)
 	d->reset();
 }
 
-
 /**
  * Reset the animation state.
  * WRAPPER FUNCTION for d->reset().
  */
 void IconAnimHelper::reset(void)
-	{ d->reset(); }
-
+{
+	Q_D(IconAnimHelper);
+	d->reset();
+}
 
 /**
  * Does this file have an animated icon?
  * @return True if the icon is animated; false if not, or if no file is loaded.
  */
 bool IconAnimHelper::isAnimated(void) const
-	{ return d->enabled; }
-
+{
+	Q_D(const IconAnimHelper);
+	return d->enabled;
+}
 
 /**
  * Get the current icon for this file.
@@ -245,6 +254,7 @@ bool IconAnimHelper::isAnimated(void) const
  */
 QPixmap IconAnimHelper::icon(void) const
 {
+	Q_D(const IconAnimHelper);
 	if (!d->file)
 		return QPixmap();
 
@@ -253,18 +263,18 @@ QPixmap IconAnimHelper::icon(void) const
 	return d->file->icon(d->lastValidFrame);
 }
 
-
 /**
  * Timer tick for the animation counter.
  * WRAPPER FUNCTION for d->tick().
  * @return True if the current icon has been changed; false if not.
  */
 bool IconAnimHelper::tick(void)
-	{ return d->tick(); }
-
+{
+	Q_D(IconAnimHelper);
+	return d->tick();
+}
 
 /** Slots. **/
-
 
 /**
  * MemCardFile object was destroyed.
@@ -272,6 +282,8 @@ bool IconAnimHelper::tick(void)
  */
 void IconAnimHelper::memCardFile_destroyed_slot(QObject *obj)
 {
+	Q_D(IconAnimHelper);
+
 	if (obj == d->file) {
 		// Our MemCardFile was destroyed.
 		d->file = nullptr;

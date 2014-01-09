@@ -38,10 +38,11 @@ class MemCardModel : public QAbstractListModel
 		MemCardModel(QObject *parent = 0);
 		~MemCardModel();
 
+	protected:
+		MemCardModelPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(MemCardModel)
 	private:
-		friend class MemCardModelPrivate;
-		MemCardModelPrivate *const d;
-		Q_DISABLE_COPY(MemCardModel);
+		Q_DISABLE_COPY(MemCardModel)
 
 	public:
 		enum Column {

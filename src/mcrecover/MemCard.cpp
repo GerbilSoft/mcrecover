@@ -49,9 +49,11 @@ class MemCardPrivate
 		~MemCardPrivate();
 		void init(void);
 
+	protected:
+		MemCard *const q_ptr;
+		Q_DECLARE_PUBLIC(MemCard)
 	private:
-		MemCard *const q;
-		Q_DISABLE_COPY(MemCardPrivate);
+		Q_DISABLE_COPY(MemCardPrivate)
 
 	public:
 		// Static initialization.
@@ -137,7 +139,7 @@ QTextCodec *MemCardPrivate::TextCodecUS = nullptr;	// cp1252
 QTextCodec *MemCardPrivate::TextCodecJP = nullptr;	// Shift-JIS
 
 MemCardPrivate::MemCardPrivate(MemCard *q, QString filename)
-	: q(q)
+	: q_ptr(q)
 	, file(nullptr)
 	, mc_dat(nullptr)
 	, mc_bat(nullptr)
@@ -214,7 +216,6 @@ void MemCardPrivate::StaticInit(void)
 	}
 }
 
-
 /**
  * Initialize MemCardPrivate.
  * This must be run *after* MemCard is initialized!
@@ -231,7 +232,6 @@ void MemCardPrivate::init(void)
 	// Load the MemCardFile list.
 	loadMemCardFileList();
 }
-
 
 /**
  * Load the memory card system information.
@@ -353,7 +353,6 @@ int MemCardPrivate::loadSysInfo(void)
 	return 0;
 }
 
-
 /**
  * Load a directory table.
  * @param dat		[out] card_dat to store the directory table in.
@@ -391,7 +390,6 @@ void MemCardPrivate::loadDirTable(card_dat *dat, uint32_t address, uint32_t *che
 	dat->dircntrl.chksum2 = be16_to_cpu(dat->dircntrl.chksum2);
 }
 
-
 /**
  * Load a block allocation table.
  * @param bat		[out] card_bat to store the block allocation table in.
@@ -422,7 +420,6 @@ void MemCardPrivate::loadBlockTable(card_bat *bat, uint32_t address, uint32_t *c
 		bat->fat[i] = be16_to_cpu(bat->fat[i]);
 }
 
-
 /**
  * Load the MemCardFile list.
  */
@@ -430,6 +427,8 @@ void MemCardPrivate::loadMemCardFileList(void)
 {
 	if (!file)
 		return;
+
+	Q_Q(MemCard);
 
 	// Clear the current MemCardFile list.
 	int init_size = lstMemCardFile.size();
@@ -480,34 +479,42 @@ void MemCardPrivate::loadMemCardFileList(void)
 	}
 }
 
-
 /** MemCard **/
 
 MemCard::MemCard(const QString& filename, QObject *parent)
 	: QObject(parent)
-	, d(new MemCardPrivate(this, filename))
+	, d_ptr(new MemCardPrivate(this, filename))
 {
 	// Initialize MemCardPrivate.
+	Q_D(MemCard);
 	d->init();
 }
 
 MemCard::~MemCard()
-	{ delete d; }
-
+{
+	Q_D(MemCard);
+	delete d;
+}
 
 /**
  * Check if the memory card is open.
  * @return True if open; false if not.
  */
 bool MemCard::isOpen(void) const
-	{ return !!(d->file); }
+{
+	Q_D(const MemCard);
+	return !!(d->file);
+}
 
 /**
  * Get the memory card filename.
  * @return Memory card filename, or empty string if not open.
  */
 QString MemCard::filename(void) const
-	{ return d->filename; }
+{
+	Q_D(const MemCard);
+	return d->filename;
+}
 
 /**
  * Get the size of the memory card, in blocks.
@@ -518,6 +525,7 @@ int MemCard::sizeInBlocks(void) const
 {
 	if (!isOpen())
 		return -1;
+	Q_D(const MemCard);
 	return d->numBlocks;
 }
 
@@ -530,6 +538,7 @@ int MemCard::sizeInBlocksNoSys(void) const
 {
 	if (!isOpen())
 		return -1;
+	Q_D(const MemCard);
 	return (d->numBlocks - 5);
 }
 
@@ -541,6 +550,7 @@ int MemCard::freeBlocks(void) const
 {
 	if (!isOpen())
 		return -1;
+	Q_D(const MemCard);
 	return d->mc_bat->freeblocks;
 }
 
@@ -552,9 +562,9 @@ int MemCard::blockSize(void) const
 {
 	if (!isOpen())
 		return -1;
+	Q_D(const MemCard);
 	return d->blockSize;
 }
-
 
 /**
  * Read a block.
@@ -571,6 +581,7 @@ int MemCard::readBlock(void *buf, int siz, uint16_t blockIdx)
 		return -2;
 	
 	// Read the specified block.
+	Q_D(MemCard);
 	d->file->seek((int)blockIdx * blockSize());
 	return (int)d->file->read((char*)buf, blockSize());
 }
@@ -584,7 +595,7 @@ QString MemCard::serialNumber(void) const
 {
 	// TODO: We're returning the 12-byte serial number.
 	// Should we return the 8-byte F-Zero GX / PSO serial number instead?
-
+	Q_D(const MemCard);
 	QString serial_text;
 	char tmp[4];
 
@@ -608,6 +619,7 @@ int MemCard::encoding(void) const
 {
 	if (!isOpen())
 		return -1;
+	Q_D(const MemCard);
 	return (d->mc_header.encoding & SYS_FONT_ENCODING_MASK);
 }
 
@@ -622,6 +634,7 @@ QTextCodec *MemCard::textCodec(char region) const
 	if (!isOpen())
 		return nullptr;
 
+	Q_D(const MemCard);
 	switch (region) {
 		case 0:
 			// Use the memory card's encoding.
@@ -654,6 +667,7 @@ int MemCard::numFiles(void) const
 {
 	if (!isOpen())
 		return -1;
+	Q_D(const MemCard);
 	return d->lstMemCardFile.size();
 }
 
@@ -665,6 +679,7 @@ bool MemCard::isEmpty(void) const
 {
 	if (!isOpen())
 		return true;
+	Q_D(const MemCard);
 	return d->lstMemCardFile.isEmpty();
 }
 
@@ -677,6 +692,7 @@ MemCardFile *MemCard::getFile(int idx)
 {
 	if (!isOpen())
 		return nullptr;
+	Q_D(MemCard);
 	if (idx < 0 || idx >= d->lstMemCardFile.size())
 		return nullptr;
 	return d->lstMemCardFile.at(idx);
@@ -692,6 +708,7 @@ QVector<uint8_t> MemCard::usedBlockMap(void)
 {
 	if (!isOpen())
 		return QVector<uint8_t>();
+	Q_D(MemCard);
 	return d->usedBlockMap;
 }
 
@@ -701,6 +718,7 @@ QVector<uint8_t> MemCard::usedBlockMap(void)
  */
 void MemCard::removeLostFiles(void)
 {
+	Q_D(MemCard);
 	for (int i = d->lstMemCardFile.size() - 1; i >= 0; i--) {
 		const MemCardFile *mcFile = d->lstMemCardFile.at(i);
 		if (mcFile->isLostFile()) {
@@ -759,6 +777,7 @@ MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry, QVector<uint16_
 	if (!isOpen())
 		return nullptr;
 
+	Q_D(MemCard);
 	MemCardFile *file = new MemCardFile(this, dirEntry, fatEntries);
 	int idx = d->lstMemCardFile.size();
 	emit filesAboutToBeInserted(idx, idx);
@@ -774,4 +793,7 @@ MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry, QVector<uint16_
  * @return Header checksum value.
  */
 Checksum::ChecksumValue MemCard::headerChecksumValue(void) const
-	{ return d->headerChecksumValue; }
+{
+	Q_D(const MemCard);
+	return d->headerChecksumValue;
+}

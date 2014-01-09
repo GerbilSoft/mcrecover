@@ -35,8 +35,12 @@ class McRecoverQApplication : public QApplication
 		McRecoverQApplication(int &argc, char **argv);
 		McRecoverQApplication(int &argc, char **argv, bool GUIenabled);
 		McRecoverQApplication(int &argc, char **argv, Type type);
-		virtual ~McRecoverQApplication();
+		virtual ~McRecoverQApplication() { }
 
+	private:
+		Q_DISABLE_COPY(McRecoverQApplication)
+
+	public:
 		/**
 		 * Get an icon from the system theme.
 		 * @param name Icon name.
@@ -55,12 +59,6 @@ class McRecoverQApplication : public QApplication
 		// Win32 event filter.
 		bool winEventFilter(MSG *msg, long *result);
 #endif /* Q_OS_WIN */
-
-	private:
-		friend class McRecoverQApplicationPrivate;
-		McRecoverQApplicationPrivate *const d;
-
-		Q_DISABLE_COPY(McRecoverQApplication)
 
 #ifdef Q_OS_WIN
 		/**

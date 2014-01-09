@@ -41,10 +41,11 @@ class AboutDialog : public QDialog, public Ui::AboutDialog
 		AboutDialog(QWidget *parent = nullptr);
 		~AboutDialog();
 
+	protected:
+		AboutDialogPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(AboutDialog)
 	private:
-		friend class AboutDialogPrivate;
-		AboutDialogPrivate *const d;
-		Q_DISABLE_COPY(AboutDialog);
+		Q_DISABLE_COPY(AboutDialog)
 
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)

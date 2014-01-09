@@ -35,10 +35,11 @@ class MemCardItemDelegate : public QStyledItemDelegate
 		MemCardItemDelegate(QObject *parent);
 		~MemCardItemDelegate();
 
+	protected:
+		MemCardItemDelegatePrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(MemCardItemDelegate)
 	private:
-		friend class MemCardItemDelegatePrivate;
-		MemCardItemDelegatePrivate *const d;
-		Q_DISABLE_COPY(MemCardItemDelegate);
+		Q_DISABLE_COPY(MemCardItemDelegate)
 
 	public:
 		void paint(QPainter *painter, const QStyleOptionViewItem &option,

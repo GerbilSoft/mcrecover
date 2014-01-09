@@ -69,9 +69,11 @@ class McRecoverWindowPrivate
 		McRecoverWindowPrivate(McRecoverWindow *q);
 		~McRecoverWindowPrivate();
 
+	protected:
+		McRecoverWindow *const q_ptr;
+		Q_DECLARE_PUBLIC(McRecoverWindow)
 	private:
-		McRecoverWindow *const q;
-		Q_DISABLE_COPY(McRecoverWindowPrivate);
+		Q_DISABLE_COPY(McRecoverWindowPrivate)
 
 	public:
 		// Memory Card instance.
@@ -153,7 +155,7 @@ class McRecoverWindowPrivate
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
-	: q(q)
+	: q_ptr(q)
 	, card(nullptr)
 	, model(new MemCardModel(q))
 	, searchThread(new SearchThread(q))
@@ -223,6 +225,8 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
  */
 void McRecoverWindowPrivate::updateLstFileList(void)
 {
+	Q_Q(McRecoverWindow);
+
 	if (!card) {
 		// Set the group box's title.
 		q->grpFileList->setTitle(McRecoverWindow::tr("No memory card loaded."));
@@ -249,6 +253,8 @@ void McRecoverWindowPrivate::updateLstFileList(void)
  */
 void McRecoverWindowPrivate::initToolbar(void)
 {
+	Q_Q(McRecoverWindow);
+
 	// Set action icons.
 	q->actionOpen->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("document-open")));
@@ -329,6 +335,8 @@ void McRecoverWindowPrivate::retranslateToolbar(void)
  */
 void McRecoverWindowPrivate::updateActionEnableStatus(void)
 {
+	Q_Q(McRecoverWindow);
+
 	if (!card) {
 		// No memory card image is loaded.
 		q->actionClose->setEnabled(false);
@@ -359,6 +367,7 @@ void McRecoverWindowPrivate::updateWindowTitle(void)
 	}
 	windowTitle += QApplication::applicationName();
 
+	Q_Q(McRecoverWindow);
 	q->setWindowTitle(windowTitle);
 }
 
@@ -370,6 +379,8 @@ void McRecoverWindowPrivate::updateWindowTitle(void)
  */
 void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QString path)
 {
+	Q_Q(McRecoverWindow);
+
 	if (files.isEmpty()) {
 		return;
 	} else if (files.size() == 1 && path.isEmpty()) {
@@ -510,6 +521,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 void McRecoverWindowPrivate::rets_actTsSysDefault(void)
 {
 	if (!actTsSysDefault) {
+		Q_Q(McRecoverWindow);
 		actTsSysDefault = new QAction(q);
 		actTsSysDefault->setCheckable(true);
 		QObject::connect(actTsSysDefault, SIGNAL(triggered()),
@@ -527,6 +539,8 @@ void McRecoverWindowPrivate::rets_actTsSysDefault(void)
  */
 void McRecoverWindowPrivate::initTsMenu(void)
 {
+	Q_Q(McRecoverWindow);
+
 	// Clear the Translations menu first.
 	q->menuLanguage->clear();
 	if (actgrpTS)
@@ -565,7 +579,7 @@ void McRecoverWindowPrivate::initTsMenu(void)
 
 McRecoverWindow::McRecoverWindow(QWidget *parent)
 	: QMainWindow(parent)
-	, d(new McRecoverWindowPrivate(this))
+	, d_ptr(new McRecoverWindowPrivate(this))
 {
 	setupUi(this);
 
@@ -587,6 +601,8 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 		QLatin1String("QMenuBar { border: none }"));
 #endif
 #endif
+
+	Q_D(McRecoverWindow);
 
 	// Set up the QSplitter sizes.
 	// We want the card info panel to be 160px wide at startup.
@@ -631,13 +647,14 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	d->updateLstFileList();
 	d->initToolbar();
 	d->initTsMenu();
-	d->statusBarManager = new StatusBarManager(this->Ui_McRecoverWindow::statusBar, this);
+	d->statusBarManager = new StatusBarManager(
+		this->Ui_McRecoverWindow::statusBar, this);
 	d->updateWindowTitle();
 }
 
 McRecoverWindow::~McRecoverWindow()
 {
-	delete d;
+	delete d_ptr;
 }
 
 
@@ -647,6 +664,8 @@ McRecoverWindow::~McRecoverWindow()
  */
 void McRecoverWindow::openCard(QString filename)
 {
+	Q_D(McRecoverWindow);
+
 	if (d->card) {
 		d->model->setMemCard(nullptr);
 		mcCardView->setCard(nullptr);
@@ -686,6 +705,8 @@ void McRecoverWindow::openCard(QString filename)
  */
 void McRecoverWindow::closeCard(void)
 {
+	Q_D(McRecoverWindow);
+
 	d->model->setMemCard(nullptr);
 	mcCardView->setCard(nullptr);
 	mcfFileView->setFile(nullptr);
@@ -709,6 +730,8 @@ void McRecoverWindow::closeCard(void)
  */
 void McRecoverWindow::changeEvent(QEvent *event)
 {
+	Q_D(McRecoverWindow);
+
 	if (event->type() == QEvent::LanguageChange) {
 		// Retranslate the UI.
 		retranslateUi(this);
@@ -807,6 +830,7 @@ void McRecoverWindow::dropEvent(QDropEvent *event)
  */
 void McRecoverWindow::markUiBusy(void)
 {
+	Q_D(McRecoverWindow);
 	d->uiBusyCounter++;
 	if (d->uiBusyCounter == 1) {
 		// UI is now busy.
@@ -824,6 +848,7 @@ void McRecoverWindow::markUiBusy(void)
  */
 void McRecoverWindow::markUiNotBusy(void)
 {
+	Q_D(McRecoverWindow);
 	if (d->uiBusyCounter <= 0) {
 		// We're already not busy.
 		// Don't decrement the counter, though.
@@ -868,6 +893,7 @@ void McRecoverWindow::on_actionOpen_triggered(void)
  */
 void McRecoverWindow::on_actionClose_triggered(void)
 {
+	Q_D(McRecoverWindow);
 	if (!d->card)
 		return;
 
@@ -880,6 +906,7 @@ void McRecoverWindow::on_actionClose_triggered(void)
  */
 void McRecoverWindow::on_actionScan_triggered(void)
 {
+	Q_D(McRecoverWindow);
 	if (!d->card)
 		return;
 
@@ -966,6 +993,8 @@ void McRecoverWindow::on_actionSave_triggered(void)
 	if (selList.isEmpty())
 		return;
 
+	Q_D(McRecoverWindow);
+
 	QVector<MemCardFile*> files;
 	files.reserve(selList.size());
 
@@ -989,6 +1018,7 @@ void McRecoverWindow::on_actionSave_triggered(void)
  */
 void McRecoverWindow::on_actionSaveAll_triggered(void)
 {
+	Q_D(McRecoverWindow);
 	if (!d->card)
 		return;
 
@@ -1021,7 +1051,10 @@ void McRecoverWindow::on_actionSaveAll_triggered(void)
  * @param preferredRegion Preferred region. (actually char)
  */
 void McRecoverWindow::setPreferredRegion_slot(int preferredRegion)
-	{ d->preferredRegion = static_cast<char>(preferredRegion); }
+{
+	Q_D(McRecoverWindow);
+	d->preferredRegion = static_cast<char>(preferredRegion);
+}
 
 
 void McRecoverWindow::memCardModel_layoutChanged(void)
@@ -1029,6 +1062,7 @@ void McRecoverWindow::memCardModel_layoutChanged(void)
 	// Update the QTreeView columns, etc.
 	// FIXME: This doesn't work the first time a file is added...
 	// (possibly needs a dataChanged() signal)
+	Q_D(McRecoverWindow);
 	d->updateLstFileList();
 }
 
@@ -1038,6 +1072,7 @@ void McRecoverWindow::memCardModel_rowsInserted(void)
 	// A new file entry was added to the MemCard.
 	// Update the QTreeView columns.
 	// FIXME: This doesn't work the first time a file is added...
+	Q_D(McRecoverWindow);
 	d->updateLstFileList();
 }
 
@@ -1048,6 +1083,7 @@ void McRecoverWindow::memCardModel_rowsInserted(void)
 void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 {
 	Q_UNUSED(lostFilesFound)
+	Q_D(McRecoverWindow);
 
 	// Remove lost files from the card.
 	d->card->removeLostFiles();
@@ -1075,6 +1111,7 @@ void McRecoverWindow::lstFileList_selectionModel_currentRowChanged(
 	const QModelIndex& current, const QModelIndex& previous)
 {
 	Q_UNUSED(previous)
+	Q_D(McRecoverWindow);
 
 	// If file(s) are selected, enable the Save action.
 	// FIXME: Selection model is empty due to the initial selection bug

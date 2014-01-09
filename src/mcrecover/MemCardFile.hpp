@@ -97,10 +97,11 @@ class MemCardFile : public QObject
 
 		~MemCardFile();
 	
+	protected:
+		MemCardFilePrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(MemCardFile)
 	private:
-		friend class MemCardFilePrivate;
-		MemCardFilePrivate *const d;
-		Q_DISABLE_COPY(MemCardFile);
+		Q_DISABLE_COPY(MemCardFile)
 
 	public:
 		/**

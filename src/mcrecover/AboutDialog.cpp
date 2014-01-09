@@ -45,9 +45,11 @@ class AboutDialogPrivate
 	public:
 		AboutDialogPrivate(AboutDialog *q);
 
+	protected:
+		AboutDialog *const q_ptr;
+		Q_DECLARE_PUBLIC(AboutDialog)
 	private:
-		AboutDialog *const q;
-		Q_DISABLE_COPY(AboutDialogPrivate);
+		Q_DISABLE_COPY(AboutDialogPrivate)
 
 	public:
 		static AboutDialog *ms_AboutDialog;
@@ -78,7 +80,7 @@ AboutDialog *AboutDialogPrivate::ms_AboutDialog = nullptr;
 
 
 AboutDialogPrivate::AboutDialogPrivate(AboutDialog* q)
-	: q(q)
+	: q_ptr(q)
 	, scrlAreaInit(false)
 { }
 
@@ -113,6 +115,8 @@ void AboutDialogPrivate::initAboutDialogText(void)
 			"Powered by the<br/>\n<b>MegaCard Engine</b>™",
 			0, QApplication::UnicodeUTF8);
 #endif
+
+	Q_Q(AboutDialog);
 
 	// Set the program title text.
         q->lblPrgTitle->setText(sPrgTitle);
@@ -500,7 +504,7 @@ AboutDialog::AboutDialog(QWidget *parent)
 		Qt::WindowSystemMenuHint |
 		Qt::WindowMinimizeButtonHint |
 		Qt::WindowCloseButtonHint)
-	, d(new AboutDialogPrivate(this))
+	, d_ptr(new AboutDialogPrivate(this))
 {
 	setupUi(this);
 
@@ -523,6 +527,7 @@ AboutDialog::AboutDialog(QWidget *parent)
 #endif
 
 	// Initialize the About Dialog text.
+	Q_D(AboutDialog);
 	d->initAboutDialogText();
 }
 
@@ -533,7 +538,7 @@ AboutDialog::AboutDialog(QWidget *parent)
 AboutDialog::~AboutDialog()
 {
 	AboutDialogPrivate::ms_AboutDialog = nullptr;
-	delete d;
+	delete d_ptr;
 }
 
 
@@ -567,6 +572,7 @@ void AboutDialog::changeEvent(QEvent *event)
 		retranslateUi(this);
 
 		// Reinitialize the About Dialog text.
+		Q_D(AboutDialog);
 		d->initAboutDialogText();
 	}
 
