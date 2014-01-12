@@ -1322,7 +1322,7 @@
 		</checksum>
 		<dirEntry>
 			<filename>SONIC2B__ALF</filename>
-			<bannerFormat>0xCD</bannerFormat>
+			<bannerFormat>0x0D</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x5555</iconFormat>
 			<iconSpeed>0x5555</iconSpeed>
