@@ -132,6 +132,7 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const QVector<GcnMcFileDb*>
 	if (dbs.isEmpty()) {
 		// Database is not loaded.
 		// TODO: Set an error string somewhere.
+		emit searchCancelled();
 		return -1;
 	}
 
@@ -163,9 +164,12 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const QVector<GcnMcFileDb*>
 	}
 
 	if (blockSearchList.isEmpty()) {
-		// Should not happen...
+		// No blocks to search.
+		// This may happen if searchUsedBlocks == false
+		// and the card is full.
 		// TODO: Set an error string somewhere.
-		return -2;
+		emit searchCancelled();
+		return 0;
 	}
 
 	// Block buffer.
