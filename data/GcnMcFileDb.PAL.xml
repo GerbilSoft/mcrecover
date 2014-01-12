@@ -9,6 +9,72 @@
 		<email>gerbilsoft@gerbilsoft.com</email>
 	</dbInfo>
 	<file>
+		<gameName>Animal Crossing</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GAFP</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Animal Crossing$</gameDesc>
+			<!-- TODO: What characters are valid for the town name? -->
+			<fileDesc>^(.*) Town Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<!-- TODO: Verify that the "A" in "MURA" is a slot ID,
+			     and what are the valid slot IDs? -->
+			<!--<filename>DobutsunomoriP_MUR$SL</filename>-->
+			<!-- TODO: Implement $SL support. -->
+			<filename>DobutsunomoriP_MURA</filename>
+			<slots>ABCDEFGHIJKLMNOPQRSTUVWXYZ</slots> <!-- FIXME: Not implemented yet... -->
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x1C</permission>
+			<length>57</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Animal Crossing</gameName>
+		<fileInfo>NES Save Data</fileInfo>
+		<gamecode>GAFP</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Animal Crossing$</gameDesc>
+			<fileDesc>^NES Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>DobutsunomoriP_F_SAVE</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Battalion Wars</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>G8WP</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Battalion Wars$</gameDesc>
+			<fileDesc>^Campaign and settings$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Battalion Wars</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
 		<!-- TODO: File metadata is from GameFAQs. Redo this from a more reliable source. -->
 		<gameName>Bloody Roar: Primal Fury</gameName>
 		<fileInfo>Save File</fileInfo>
@@ -59,6 +125,123 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>6</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Donkey Kong Jungle Beat</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GYBP</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Donkey Kong Jungle Beat$</gameDesc>
+			<fileDesc>^\d* BEATS$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>MainData</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0411</iconFormat>
+			<iconSpeed>0x0FFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Donkey Konga</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GKGP</gamecode>
+		<company>01</company>
+		<search>
+			<!-- Second block. FIXME: Implement block offsets. -->
+			<!-- NOTE: This is also present at 0x4000... -->
+			<address>0x2000</address>
+			<gameDesc>^DONKEY KONGA$</gameDesc>
+			<!-- Date format: DD/MM/YYYY HH:mm:ss -->
+			<!-- TODO: HH or H? -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>DONKEY KONGA SAVEDATA</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x15</iconFormat>
+			<iconSpeed>0x3F</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Eternal Darkness</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GEDP</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Eternal Darkness$</gameDesc>
+			<fileDesc>^Game file$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Eternal Darkness</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>15</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>F-Zero GX</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GFZP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^F-ZERO GX$</gameDesc>
+			<!-- Date format: YY/MM/DD -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{2}) .*$</fileDesc>
+			<!-- TODO: Checksum algorithm is known, but depends on card serial number. -->
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>f_zero.dat</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0060</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x1C</permission>
+			<length>4</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -235,15 +418,42 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Metal Gear Solid: The Twin Snakes</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GGSP</gamecode>
+		<company>A4</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^MGS: The Twin Snakes Game$</gameDesc>
+			<!-- Date format: YYYY-MM-DD HHHH:mm:ss -->
+			<!-- NOTE: HHHH:mm:ss is time *played*, not the time saved! -->
+			<fileDesc>^(\d{4})-(\d{2})-(\d{2}) (\d{4}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<dirEntry>
+			<!-- FIXME: Filename is a ton of indecipherable garbage!
+			     g[NV](\d{2})YYYYMMDDHHHHmmss(\d{7}).F
+			     Figure out what all this crap means later.
+			     For now, just use known values from a few save files. -->
+			<filename>gV38$F1$F2$F3$F4$F5$F63501245QF</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
 		<!-- NOTE: USA version uses a different file structure! -->
 		<!-- User will need to select a preferred region. -->
-		<description>Metroid Prime</description>
+		<gameName>Metroid Prime</gameName>
+		<fileInfo>Save File</fileInfo>
 		<gamecode>GM8P</gamecode>
 		<company>01</company>
 		<search>
 			<address>0x0004</address>
 			<gameDesc>^Metroid Prime$</gameDesc>
-			<!-- Date format: DD.MM.YY HH:mm -->
+			<!-- Date format: DD.MM.YY  HH:mm -->
 			<fileDesc>^(\d{2})\.(\d{2})\.(\d{2})  (\d{2})\:(\d{2})$</fileDesc>
 			<!-- TODO: Checksum field? -->
 		</search>
@@ -266,7 +476,46 @@
 		</variables>
 		<dirEntry>
 			<filename>MetroidPrime</filename>
-			<bannerFormat>1</bannerFormat>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Metroid Prime 2: Echoes</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>G2MP</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Metroid Prime 2 Echoes$</gameDesc>
+			<!-- Date format: DD.MM.YY HH:mm -->
+			<fileDesc>^(\d{2}).(\d{2}).(\d{2})  (\d{2}):(\d{2})$</fileDesc>
+			<!-- TODO: Checksum field? -->
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>MetroidPrime2</filename>
+			<bannerFormat>0x01</bannerFormat>
 			<iconAddress>0x0044</iconAddress>
 			<iconFormat>0x01</iconFormat>
 			<iconSpeed>0x02</iconSpeed>
@@ -293,6 +542,226 @@
 			<iconSpeed>0x0002</iconSpeed>
 			<permission>0x04</permission>
 			<length>7</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Paper Mario: The Thousand Year Door</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>G8MP</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Paper Mario$</gameDesc>
+			<!-- Date format: MM/DD, with leading spaces. -->
+			<!-- NOTE: Months less than 10 will have a leading space;
+			     however, mcrecover trims spaces from descriptions! -->
+			<fileDesc>^( \d|\d{1,2})/( \d|\d{2}) save data$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>mariost_save_file</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>17</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Phantasy Star Online: Episodes I &amp; II</gameName>
+		<fileInfo>System File</fileInfo>
+		<gamecode>GPOP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^PSO EPISODE I &amp; II$</gameDesc>
+			<fileDesc>^SYSTEM_FILE$</fileDesc>
+			<!-- TODO: Checksum algorithm is known, but depends on card serial number. -->
+		</search>
+		<dirEntry>
+			<filename>PSO_SYSTEM</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x1C</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Phantasy Star Online: Episodes I &amp; II</gameName>
+		<fileInfo>Character File</fileInfo>
+		<gamecode>GPOP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^PSO EPISODE I &amp; II$</gameDesc>
+			<fileDesc>^CHARACTER_FILE$</fileDesc>
+			<!-- TODO: Checksum algorithm is known, but depends on card serial number. -->
+		</search>
+		<dirEntry>
+			<filename>PSO_CHARACTER</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x1C</permission>
+			<length>11</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Phantasy Star Online: Episodes I &amp; II</gameName>
+		<fileInfo>Guild Card File</fileInfo>
+		<gamecode>GPOP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^PSO EPISODE I &amp; II$</gameDesc>
+			<fileDesc>^GUILDCARD_FILE$</fileDesc>
+			<!-- TODO: Checksum algorithm is known, but depends on card serial number. -->
+		</search>
+		<dirEntry>
+			<filename>PSO_GUILDCARD</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x1C</permission>
+			<length>10</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Phantasy Star Online: Episode III</gameName>
+		<fileInfo>System File</fileInfo>
+		<gamecode>GPSP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^PSO EPISODE III$</gameDesc>
+			<fileDesc>^SYSTEM_FILE$</fileDesc>
+			<!-- TODO: Checksum algorithm is known, but depends on card serial number. -->
+		</search>
+		<dirEntry>
+			<filename>PSO3_SYSTEM</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x1C</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Phantasy Star Online: Episode III</gameName>
+		<fileInfo>Character File</fileInfo>
+		<gamecode>GPSP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^PSO EPISODE III$</gameDesc>
+			<fileDesc>^CHARACTER_FILE$</fileDesc>
+			<!-- TODO: Checksum algorithm is known, but depends on card serial number. -->
+		</search>
+		<dirEntry>
+			<filename>PSO3_CHARACTER</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x1C</permission>
+			<length>15</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Phantasy Star Online: Episode III</gameName>
+		<fileInfo>Guild Card File</fileInfo>
+		<gamecode>GPSP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^PSO EPISODE III$</gameDesc>
+			<fileDesc>^GUILDCARD_FILE$</fileDesc>
+			<!-- TODO: Checksum algorithm is known, but depends on card serial number. -->
+		</search>
+		<dirEntry>
+			<filename>PSO3_GUILDCARD</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x1C</permission>
+			<length>10</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Pikmin 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GPVP</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x1800</address>
+			<gameDesc>^PIKMIN 2$</gameDesc>
+			<!-- Date format: MM/DD/YYYY HH:mm:ss -->
+			<!-- TODO: Verify HH length. -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{1,2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>Pikmin2_SaveData</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x05</iconFormat>
+			<iconSpeed>0x0F</iconSpeed>
+			<permission>0x04</permission>
+			<length>27</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Pokémon Colosseum</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GC6P</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<!-- TODO: Non-English descriptions? -->
+			<gameDesc>^POKéMON COLOSSEUM$</gameDesc>
+			<fileDesc>^SAVE FILE$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>pokemon_colosseum</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x1C</permission>
+			<length>48</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -326,6 +795,462 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>SEGA Network Information</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>G9AP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SEGA Network Information$</gameDesc>
+			<fileDesc>^ISP,Network setting$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>sega_network_information</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x1C</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Shadow the Hedgehog</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GUPP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SHADOW THE HEDGEHOG$</gameDesc>
+			<fileDesc>^GAME DATA$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SHADOWTHEHEDGEHOG</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x4042</iconFormat>
+			<iconSpeed>0xFFF2</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Skies of Arcadia Legends</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GEAP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Skies of Arcadia Legends$</gameDesc>
+			<fileDesc>^#(\d{1,3}) .*$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>filename</useAs>
+				<type>number</type>
+				<minWidth>3</minWidth>
+				<fillChar>0</fillChar>
+				<align>right</align>
+				<add>-1</add>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>SA_LEGENDS.$F1</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Sonic Adventure DX: Director's Cut</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GXSP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Sonic Adventure DX  File (\d)$</gameDesc>
+			<fileDesc>^Emblem collected :(  \d| \d{2}|\d{3})$</fileDesc>
+		</search>
+		<checksum>
+			<algorithm>CRC-16</algorithm>
+			<!-- NOTE: Stored as uint32_t in the file; we only need uint16_t. -->
+			<address>0x1442</address>
+			<range start="0x1444" length="0x056C" />
+		</checksum>
+		<dirEntry>
+			<filename>SONICADVENTURE_DX_PLAYRECORD_$G1</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x01</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Sonic Adventure DX: Director's Cut</gameName>
+		<fileInfo>Chao Garden File</fileInfo>
+		<gamecode>GXSP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Sonic Adventure DX$</gameDesc>
+			<fileDesc>^Chao Garden$</fileDesc>
+		</search>
+		<checksum>
+			<algorithm>SonicChaoGarden</algorithm>
+			<!-- NOTE: Checksum is NOT a contiguous uint32_t.
+			     This is the starting address of the entire
+			     checksum block. -->
+			<!-- Banner+icons take up 0x3040 bytes. -->
+			<!-- Chao Garden checksum is at 0xC818 after the banner. -->
+			<address>0xF858</address>
+			<range start="0x3040" length="0xC820" />
+		</checksum>
+		<dirEntry>
+			<filename>SONICADVENTURE_DX_CHAOGARDEN</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x0C</permission>
+			<length>8</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Sonic Adventure 2: Battle</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GSNP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SONIC ADVENTURE 2 BATTLE$</gameDesc>
+			<fileDesc>^FILE(\d{2}):(  \d| \d{2}|\d{3}) Emblems?$</fileDesc>
+		</search>
+		<checksum>
+			<algorithm>AddBytes32</algorithm>
+			<address>0x2840</address>
+			<range start="0x2844" length="0x34A0" />
+		</checksum>
+		<dirEntry>
+			<filename>SONIC2B__S$F1</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0A</iconFormat>
+			<iconSpeed>0x0F</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Sonic Adventure 2: Battle</gameName>
+		<fileInfo>Chao Garden File</fileInfo>
+		<gamecode>GSNP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SONIC ADVENTURE 2 BATTLE$</gameDesc>
+			<fileDesc>^CHAO GARDEN DATA$</fileDesc>
+		</search>
+		<checksum>
+			<algorithm>SonicChaoGarden</algorithm>
+			<!-- NOTE: Checksum is NOT a contiguous uint32_t.
+			     This is the starting address of the entire
+			     checksum block. -->
+			<!-- Banner+icons take up 0x3040 bytes. -->
+			<!-- Chao Garden checksum is at 0xCA64 after the banner. -->
+			<address>0xFAA4</address>
+			<range start="0x3040" length="0xCA6C" />
+		</checksum>
+		<dirEntry>
+			<filename>SONIC2B__ALF</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x0C</permission>
+			<length>8</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Sonic Gems Collection</gameName>
+		<fileInfo>Settings File</fileInfo>
+		<gamecode>G2XP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SONIC GEMS COLLECTION$</gameDesc>
+			<!-- Date format: MM/DD -->
+			<fileDesc>^SETTING DATA (\d{2})/(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>SONIC GEMS_00</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x4042</iconFormat>
+			<iconSpeed>0xFFF2</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Sonic Gems Collection</gameName>
+		<fileInfo>Sonic R: Save File</fileInfo>
+		<gamecode>G2XP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SONIC GEMS COLLECTION$</gameDesc>
+			<fileDesc>^SONIC R : Game Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SONIC_R</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Sonic Gems Collection</gameName>
+		<fileInfo>Sonic the Fighters: Save File</fileInfo>
+		<gamecode>G2XP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SONIC GEMS COLLECTION$</gameDesc>
+			<fileDesc>^SONIC F : SYSTEM FILE$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>STF.DAT</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Sonic Heroes</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>G9SP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SONIC HEROES : (\d{2})$</gameDesc>
+			<fileDesc>^EMBLEM : (\d{3})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="G1">
+				<useAs>filename</useAs>
+				<type>number</type>
+				<minWidth>2</minWidth>
+				<fillChar>0</fillChar>
+				<align>right</align>
+				<add>-1</add>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>SONICHEROES_$G1</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Sonic Mega Collection</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GSOP</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Sonic Mega Collection$</gameDesc>
+			<!-- Date format: MM/DD HH:mm -->
+			<fileDesc>^System File (\d{2})/(\d{2}) (\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>minute</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>S_MEGA_SYS</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>SoulCalibur 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GRSP</gamecode>
+		<company>AF</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SoulCalibur 2$</gameDesc>
+			<!-- Date format: DD/MM/YYYY HH:mm:ss -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>sc2_0.dat</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xAAAF</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Star Wars: Rebel Strike - Rogue Squadron III</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GLRP</gamecode>
+		<company>64</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Star Wars: Rebel Strike$</gameDesc>
+			<fileDesc>^Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>RebelStrike</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Star Wars: Rogue Leader - Rogue Squadron II</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GSWP</gamecode>
+		<company>64</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Star Wars: Rogue Leader$</gameDesc>
+			<fileDesc>^Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>RogueLeader</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Super Monkey Ball</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GMBP</gamecode>
+		<company>8P</company>
+		<search>
+			<!-- Third block. FIXME: Implement block offsets. -->
+			<address>0x5804</address>
+			<gameDesc>^Super Monkey Ball$</gameDesc>
+			<!-- Date format: MMDDYY HH:mm -->
+			<fileDesc>GameData(\d{2})(\d{2})(\d{2}) (\d{2}):(\d{2})</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>super_monkey_ball.sys</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0004</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0x1555</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Super Monkey Ball 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GM2P</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^SUPER MONKEY BALL 2$</gameDesc>
+			<fileDesc>^Game Data$</fileDesc>
+			<!-- TODO: Checksum field? -->
+		</search>
+		<dirEntry>
+			<filename>super_monkey_ball_2.dat</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0060</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Super Smash Bros. Melee</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GALP</gamecode>
@@ -337,13 +1262,13 @@
 			<fileDesc>^(Game Data|Spielstand|Données|Datos|Dati Gioco) (\d{2})/(\d{2})/(\d{4})$</fileDesc>
 		</search>
 		<variables>
-			<variable id="F2">
+			<variable id="F1">
 				<useAs>day</useAs>
 			</variable>
-			<variable id="F3">
+			<variable id="F2">
 				<useAs>month</useAs>
 			</variable>
-			<variable id="F4">
+			<variable id="F3">
 				<useAs>year</useAs>
 			</variable>
 		</variables>
@@ -355,6 +1280,116 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>11</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>The Legend of Zelda: Collector's Edition</gameName>
+		<fileInfo>Zelda 1: Save File</fileInfo>
+		<gamecode>PZLP</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x1C00</address>
+			<gameDesc>^Zelda: Collector's Edition$</gameDesc>
+			<fileDesc>^THE LEGEND OF ZELDA$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>NES_ZELDA1_SAVE</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x15</iconFormat>
+			<iconSpeed>0x3F</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>The Legend of Zelda: Collector's Edition</gameName>
+		<fileInfo>Zelda 2: Save File</fileInfo>
+		<gamecode>PZLP</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x1C00</address>
+			<gameDesc>^Zelda: Collector's Edition$</gameDesc>
+			<fileDesc>^THE ADVENTURE OF LINK$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>NES_ZELDA2_SAVE</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x15</iconFormat>
+			<iconSpeed>0x3F</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>The Legend of Zelda: Collector's Edition</gameName>
+		<fileInfo>Majora's Mask: Save File</fileInfo>
+		<gamecode>PZLP</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x002C</address>
+			<gameDesc>^Zelda: Collector's Edition$</gameDesc>
+			<fileDesc>^MAJORA'S MASK$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>ZELDA2</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x006C</iconAddress>
+			<iconFormat>0x2A</iconFormat>
+			<iconSpeed>0x3F</iconSpeed>
+			<permission>0x04</permission>
+			<length>21</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>The Legend of Zelda: Four Swords Adventures</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>G4SP</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x1C00</address>
+			<gameDesc>^Four Swords Adventures$</gameDesc>
+			<!-- Date format: D/M -->
+			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>gc4sword</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>The Legend of Zelda: Ocarina of Time / Master Quest</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>D43P</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x002C</address>
+			<gameDesc>^Zelda: Ocarina of Time$</gameDesc>
+			<!-- Date format: M/D -->
+			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>ZELDA</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x006C</iconAddress>
+			<iconFormat>0x2A</iconFormat>
+			<iconSpeed>0x2A</iconSpeed>
+			<permission>0x04</permission>
+			<length>15</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -385,6 +1420,110 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>12</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>TimeSplitters 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GTSP</gamecode>
+		<company>4F</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^TimeSplitters 2$</gameDesc>
+			<fileDesc>^Profile\((.*)\)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>$F1.son</filename>
+			<bannerFormat>0xFB</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>VIEWTIFUL JOE</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GVJP</gamecode>
+		<company>08</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^VIEWTIFUL JOE$</gameDesc>
+			<!-- Date format: D/M/YYYY HH:mm:ss -->
+			<!-- TODO: Verify M instead of MM! -->
+			<fileDesc>^(\d{1,2})/(\d{1,2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>VIEWTIFULJOEEUR</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Viewtiful Joe 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>G2VP</gamecode>
+		<company>08</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Viewtiful Joe 2$</gameDesc>
+			<!-- Date format: D/M/YYYY HH:mm:ss -->
+			<!-- TODO: Verify HH length. -->
+			<fileDesc>^(\d{1,2})/(\d{1,2})/(\d{4}) (\d{1,2}):(\d{1,2}):(\d{1,2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>VIEWTIFULJOE2EUR</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>17</length>
 		</dirEntry>
 	</file>
 </GcnMcFileDb>
