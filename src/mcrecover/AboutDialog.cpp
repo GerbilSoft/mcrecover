@@ -226,6 +226,7 @@ QString AboutDialogPrivate::GetCredits(void)
 		{CT_CONTINUE,		"Thomas Vasto"},	// PAL
 		{CT_CONTINUE,		"Henke37"},		// PAL
 		{CT_CONTINUE,		"Gordon Griffin"},	// NTSC-U
+		{CT_CONTINUE,		"McLaglen"},		// PAL (aka Mainman)
 
 		{CT_MAX, nullptr}
 	};
