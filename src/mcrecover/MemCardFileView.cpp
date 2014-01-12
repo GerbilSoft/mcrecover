@@ -24,9 +24,11 @@
 #include "MemCardFile.hpp"
 #include "IconAnimHelper.hpp"
 
+// XML template dialog.
+#include "XmlTemplateDialog.hpp"
+
 // Qt includes.
 #include <QtCore/QTimer>
-
 
 /** MemCardFileViewPrivate **/
 
@@ -80,6 +82,7 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 		// Clear the widget display.
 		q->lblFileIcon->clear();
 		q->lblFileBanner->clear();
+		q->btnXML->setVisible(false);
 		q->lblFilename->clear();
 		q->lblModeTitle->setVisible(false);
 		q->lblMode->setVisible(false);
@@ -112,6 +115,9 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 		q->lblFileBanner->setPixmap(banner);
 	else
 		q->lblFileBanner->clear();
+
+	// XML button.
+	q->btnXML->setVisible(true);
 
 	// Filename.
 	q->lblFilename->setText(file->filename());
@@ -300,4 +306,14 @@ void MemCardFileView::animTimer_slot(void)
 		// Icon has been updated.
 		lblFileIcon->setPixmap(d->helper.icon());
 	}
+}
+
+/**
+ * XML button was pressed.
+ */
+void MemCardFileView::on_btnXML_clicked(void)
+{
+	Q_D(MemCardFileView);
+	XmlTemplateDialog *xmlTemplateDialog = new XmlTemplateDialog(d->file, this);
+	xmlTemplateDialog->show();
 }

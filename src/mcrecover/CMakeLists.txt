@@ -106,6 +106,7 @@ SET(mcrecover_SRCS
 	TaskbarButtonManager/TaskbarButtonManager.cpp
 	GcToolsQt.cpp
 	TranslationManager.cpp
+	XmlTemplateDialog.cpp
 	)
 
 # Shh... it's a secret to everybody.
@@ -140,6 +141,7 @@ SET(mcrecover_MOC_H
 	MemCardItemDelegate.hpp
 	QTreeViewOpt.hpp
 	TaskbarButtonManager/TaskbarButtonManager.hpp
+	XmlTemplateDialog.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H
@@ -152,6 +154,7 @@ SET(mcrecover_UIS
 	ui/MemCardFileView.ui
 	ui/MemCardView.ui
 	ui/AboutDialog.ui
+	ui/XmlTemplateDialog.ui
 	)
 
 # Generate the header files from the UI files.

@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * MemCardFileView.hpp: MemCardFile view widget.                           *
+ * XmlTemplateDialog.hpp: XML template dialog.                             *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2014 by David Korth.                                      *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,66 +19,37 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MEMCARDFILEVIEW_HPP__
-#define __MCRECOVER_MEMCARDFILEVIEW_HPP__
+#ifndef __MCRECOVER_XMLTEMPLATEDIALOG_HPP__
+#define __MCRECOVER_XMLTEMPLATEDIALOG_HPP__
 
-#include <QtGui/QWidget>
-#include "ui_MemCardFileView.h"
+#include <QtGui/QDialog>
+#include "ui_XmlTemplateDialog.h"
 
-// MemCardFile class.
+// MemCard classes.
 class MemCardFile;
 
-class MemCardFileViewPrivate;
+class XmlTemplateDialogPrivate;
 
-class MemCardFileView : public QWidget, public Ui::MemCardFileView
+class XmlTemplateDialog : public QDialog, public Ui::XmlTemplateDialog
 {
 	Q_OBJECT
 
-	Q_PROPERTY(const MemCardFile* file READ file WRITE setFile)
-
 	public:
-		MemCardFileView(QWidget *parent = 0);
-		~MemCardFileView();
+		XmlTemplateDialog(QWidget *parent = nullptr);
+		XmlTemplateDialog(const MemCardFile *file, QWidget *parent = nullptr);
+		~XmlTemplateDialog();
+	private:
+		void init(void);
 
 	protected:
-		MemCardFileViewPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(MemCardFileView)
+		XmlTemplateDialogPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(XmlTemplateDialog)
 	private:
-		Q_DISABLE_COPY(MemCardFileView)
-
-	public:
-		/**
-		 * Get the MemCardFile being displayed.
-		 * @return MemCardFile.
-		 */
-		const MemCardFile *file(void) const;
-
-		/**
-		 * Set the MemCardFile being displayed.
-		 * @param file MemCardFile.
-		 */
-		void setFile(const MemCardFile *file);
+		Q_DISABLE_COPY(XmlTemplateDialog)
 
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
 		void changeEvent(QEvent *event);
-
-	protected slots:
-		/**
-		 * MemCardFile object was destroyed.
-		 * @param obj QObject that was destroyed.
-		 */
-		void memCardFile_destroyed_slot(QObject *obj = 0);
-
-		/**
-		 * Animation timer slot.
-		 */
-		void animTimer_slot(void);
-
-		/**
-		 * XML button was pressed.
-		 */
-		void on_btnXML_clicked(void);
 };
 
-#endif /* __MCRECOVER_MEMCARDFILEVIEW_HPP__ */
+#endif /* __MCRECOVER_XMLTEMPLATEDIALOG_HPP__ */
