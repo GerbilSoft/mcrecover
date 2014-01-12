@@ -26,7 +26,6 @@
 
 // Qt includes.
 #include <QtCore/QXmlStreamWriter>
-#include <QTextCodec>
 
 // C includes. (C++ namespace)
 #include <cstdio>
