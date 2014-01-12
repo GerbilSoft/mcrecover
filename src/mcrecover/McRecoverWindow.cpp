@@ -957,6 +957,11 @@ void McRecoverWindow::on_actionScan_triggered(void)
 
 	// Should we search used blocks?
 	const bool searchUsedBlocks = actionSearchUsedBlocks->isChecked();
+	if (!searchUsedBlocks && d->card->freeBlocks() <= 0) {
+		// TODO: Print a message in the status bar.
+		// For now, the search thread will simply indicate
+		// that the search has been cancelled.
+	}
 
 	// Search blocks for lost files.
 	// TODO: Handle errors.
