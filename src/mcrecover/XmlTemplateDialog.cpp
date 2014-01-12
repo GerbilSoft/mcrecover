@@ -63,15 +63,18 @@ void XmlTemplateDialogPrivate::updateWindowText(void)
 
 	QString winTitle, templateDesc;
 	if (file) {
+		QString gameID = file->gamecode() + file->company();
+
 		//: Window title: %1 == game ID; %2 == internal filename.
 		winTitle = XmlTemplateDialog::tr("Generated XML Template: %1/%2")
-			.arg(file->gamecode() + file->company())
+			.arg(gameID)
 			.arg(file->filename());
+
 		//: Template description: %1 == game ID; %2 == internal filename.
 		templateDesc = XmlTemplateDialog::tr(
 			"Generated XML template for: %1/%2\n"
 			"You may need to add variable modifiers.")
-			.arg(file->gamecode() + file->company())
+			.arg(gameID)
 			.arg(file->filename());
 	} else {
 		//: Window title: No file loaded.
