@@ -47,8 +47,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QTextCodec>
 #include <QtCore/QVector>
-#include <QtXml/QXmlStreamReader>
-
+#include <QtCore/QXmlStreamReader>
 
 class GcnMcFileDbPrivate
 {
