@@ -29,71 +29,71 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="100"/>
+        <location filename="../AboutDialog.cpp" line="102"/>
         <source>Version %1</source>
         <translation></translation>
     </message>
     <message utf8="true">
-        <location filename="../AboutDialog.cpp" line="112"/>
+        <location filename="../AboutDialog.cpp" line="114"/>
         <source>Powered by the&lt;br/&gt;
 &lt;b&gt;MegaCard Engine&lt;/b&gt;™</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="242"/>
+        <location filename="../AboutDialog.cpp" line="246"/>
         <source>Memory Card File Contributors:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="268"/>
+        <location filename="../AboutDialog.cpp" line="272"/>
         <source>Internal copy of %1.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="321"/>
+        <location filename="../AboutDialog.cpp" line="325"/>
         <source>Compiled using Qt %1.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="322"/>
+        <location filename="../AboutDialog.cpp" line="326"/>
         <source>Using Qt %1.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="336"/>
+        <location filename="../AboutDialog.cpp" line="340"/>
         <source>Available databases:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="338"/>
+        <location filename="../AboutDialog.cpp" line="342"/>
         <source>(none found)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="389"/>
+        <location filename="../AboutDialog.cpp" line="393"/>
         <source>Unknown [GetCPInfoExA() failed]</source>
         <extracomment>GetCPInfoExA() call failed.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="427"/>
+        <location filename="../AboutDialog.cpp" line="431"/>
         <source>Using Unicode strings for Win32 API.</source>
         <extracomment>Win32: Unicode strings are being used. (WinNT)</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="430"/>
+        <location filename="../AboutDialog.cpp" line="434"/>
         <source>Using ANSI strings for Win32 API.</source>
         <extracomment>Win32: ANSI strings are being used. (Win9x)</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="448"/>
+        <location filename="../AboutDialog.cpp" line="452"/>
         <source>For technical support, you can visit the following websites:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="480"/>
+        <location filename="../AboutDialog.cpp" line="484"/>
         <source>You can also email the developer directly:</source>
         <translation></translation>
     </message>
@@ -101,23 +101,23 @@
 <context>
     <name>McRecoverQApplication</name>
     <message>
-        <location filename="../TranslationManager.cpp" line="172"/>
+        <location filename="../TranslationManager.cpp" line="179"/>
         <source>David Korth</source>
         <comment>ts-author</comment>
         <extracomment>Translation file author. Put your name here.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TranslationManager.cpp" line="175"/>
-        <location filename="../TranslationManager.cpp" line="223"/>
+        <location filename="../TranslationManager.cpp" line="182"/>
+        <location filename="../TranslationManager.cpp" line="231"/>
         <source>Default</source>
         <comment>ts-language</comment>
         <extracomment>Language this translation provides, e.g. &quot;English (US)&quot;.</extracomment>
         <translation>English (US)</translation>
     </message>
     <message>
-        <location filename="../TranslationManager.cpp" line="178"/>
-        <location filename="../TranslationManager.cpp" line="220"/>
+        <location filename="../TranslationManager.cpp" line="185"/>
+        <location filename="../TranslationManager.cpp" line="228"/>
         <source>C</source>
         <comment>ts-locale</comment>
         <extracomment>Locale name, e.g. &quot;en_US&quot;.</extracomment>
@@ -127,202 +127,202 @@
 <context>
     <name>McRecoverWindow</name>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="72"/>
+        <location filename="../ui/McRecoverWindow.ui" line="75"/>
         <source>Memory Card Details</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="122"/>
+        <location filename="../ui/McRecoverWindow.ui" line="125"/>
         <source>File Information</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="186"/>
+        <location filename="../ui/McRecoverWindow.ui" line="189"/>
         <source>&amp;File</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="199"/>
+        <location filename="../ui/McRecoverWindow.ui" line="202"/>
         <source>&amp;Help</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="205"/>
+        <location filename="../ui/McRecoverWindow.ui" line="208"/>
         <source>&amp;Options</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="217"/>
+        <location filename="../ui/McRecoverWindow.ui" line="220"/>
         <source>&amp;Language</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="235"/>
+        <location filename="../ui/McRecoverWindow.ui" line="238"/>
         <source>Main Toolbar</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="269"/>
+        <location filename="../ui/McRecoverWindow.ui" line="272"/>
         <source>&amp;Open</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="272"/>
+        <location filename="../ui/McRecoverWindow.ui" line="275"/>
         <source>Open a GameCube Memory Card image</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="275"/>
+        <location filename="../ui/McRecoverWindow.ui" line="278"/>
         <source>Ctrl+O</source>
         <extracomment>Shortcut for opening a GameCube Memory Card image.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="284"/>
+        <location filename="../ui/McRecoverWindow.ui" line="287"/>
         <source>&amp;Save</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="287"/>
+        <location filename="../ui/McRecoverWindow.ui" line="290"/>
         <source>Save the selected file(s)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="290"/>
+        <location filename="../ui/McRecoverWindow.ui" line="293"/>
         <source>Ctrl+S</source>
         <extracomment>Shortcut for saving the currently selected file.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="299"/>
+        <location filename="../ui/McRecoverWindow.ui" line="302"/>
         <source>Save &amp;All</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="302"/>
+        <location filename="../ui/McRecoverWindow.ui" line="305"/>
         <source>Save all files</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="311"/>
+        <location filename="../ui/McRecoverWindow.ui" line="314"/>
         <source>E&amp;xit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="314"/>
+        <location filename="../ui/McRecoverWindow.ui" line="317"/>
         <source>Exit the program</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="323"/>
+        <location filename="../ui/McRecoverWindow.ui" line="326"/>
         <source>&amp;About</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="326"/>
+        <location filename="../ui/McRecoverWindow.ui" line="329"/>
         <source>About this program</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="335"/>
+        <location filename="../ui/McRecoverWindow.ui" line="338"/>
         <source>S&amp;can for Lost Files</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="338"/>
+        <location filename="../ui/McRecoverWindow.ui" line="341"/>
         <source>Scan the memory card image for lost files</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="347"/>
+        <location filename="../ui/McRecoverWindow.ui" line="350"/>
         <source>&amp;Close</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="350"/>
+        <location filename="../ui/McRecoverWindow.ui" line="353"/>
         <source>Close the GameCube Memory Card image</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="353"/>
+        <location filename="../ui/McRecoverWindow.ui" line="356"/>
         <source>Ctrl+W</source>
         <extracomment>Shortcut for closing the current GameCube Memory Card image.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="365"/>
+        <location filename="../ui/McRecoverWindow.ui" line="368"/>
         <source>&amp;USA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="368"/>
+        <location filename="../ui/McRecoverWindow.ui" line="371"/>
         <source>USA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="380"/>
+        <location filename="../ui/McRecoverWindow.ui" line="383"/>
         <source>&amp;Europe</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="383"/>
+        <location filename="../ui/McRecoverWindow.ui" line="386"/>
         <source>Europe</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="395"/>
+        <location filename="../ui/McRecoverWindow.ui" line="398"/>
         <source>&amp;Japan</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="398"/>
+        <location filename="../ui/McRecoverWindow.ui" line="401"/>
         <source>Japan</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="410"/>
+        <location filename="../ui/McRecoverWindow.ui" line="413"/>
         <source>South &amp;Korea</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="413"/>
+        <location filename="../ui/McRecoverWindow.ui" line="416"/>
         <source>South Korea</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="421"/>
-        <location filename="../McRecoverWindow.cpp" line="323"/>
+        <location filename="../ui/McRecoverWindow.ui" line="424"/>
+        <location filename="../McRecoverWindow.cpp" line="336"/>
         <source>Preferred Region:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="429"/>
+        <location filename="../ui/McRecoverWindow.ui" line="432"/>
         <source>Search U&amp;sed Blocks</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="228"/>
+        <location filename="../McRecoverWindow.cpp" line="238"/>
         <source>No memory card loaded.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="380"/>
+        <location filename="../McRecoverWindow.cpp" line="398"/>
         <source>Save GCN Save File %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="383"/>
+        <location filename="../McRecoverWindow.cpp" line="401"/>
         <source>GameCube Save Files</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="384"/>
-        <location filename="../McRecoverWindow.cpp" line="850"/>
+        <location filename="../McRecoverWindow.cpp" line="402"/>
+        <location filename="../McRecoverWindow.cpp" line="891"/>
         <source>All Files</source>
         <translation></translation>
     </message>
     <message numerus="yes">
-        <location filename="../McRecoverWindow.cpp" line="418"/>
+        <location filename="../McRecoverWindow.cpp" line="436"/>
         <source>Save %Ln GCN Save File(s)</source>
         <translation>
             <numerusform>Save %Ln GCN Save File</numerusform>
@@ -330,52 +330,53 @@
         </translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="442"/>
+        <location filename="../McRecoverWindow.cpp" line="460"/>
         <source>File Already Exists</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="443"/>
+        <location filename="../McRecoverWindow.cpp" line="461"/>
         <source>A file named &quot;%1&quot; already exists in the specified directory.
 
 Do you want to overwrite it?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="520"/>
+        <location filename="../McRecoverWindow.cpp" line="538"/>
         <source>System Default (%1)</source>
         <comment>ts-language</comment>
+        <extracomment>Translation: System Default (retrieved from system settings)</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="847"/>
+        <location filename="../McRecoverWindow.cpp" line="888"/>
         <source>Open GameCube Memory Card Image</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="849"/>
+        <location filename="../McRecoverWindow.cpp" line="890"/>
         <source>GameCube Memory Card Image</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="884"/>
+        <location filename="../McRecoverWindow.cpp" line="927"/>
         <source>The database files should be located in the data subdirectory in
 mcrecover.exe&apos;s program directory.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="888"/>
+        <location filename="../McRecoverWindow.cpp" line="931"/>
         <source>The database files should be located in %1.
 Alternatively, you can place your own version in ~/.config/mcrecover/data/</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="895"/>
+        <location filename="../McRecoverWindow.cpp" line="938"/>
         <source>Database Load Error</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="896"/>
+        <location filename="../McRecoverWindow.cpp" line="939"/>
         <source>No GCN MemCard file databases were found.</source>
         <translation></translation>
     </message>
@@ -383,32 +384,32 @@ Alternatively, you can place your own version in ~/.config/mcrecover/data/</sour
 <context>
     <name>MemCardFileView</name>
     <message>
-        <location filename="../ui/MemCardFileView.ui" line="130"/>
+        <location filename="../ui/MemCardFileView.ui" line="137"/>
         <source>&amp;Mode:</source>
         <extracomment>File permissions. (Known as &quot;mode&quot; on Unix systems.)</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/MemCardFileView.ui" line="161"/>
+        <location filename="../ui/MemCardFileView.ui" line="168"/>
         <source>Checksum
 &amp;Algorithm:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/MemCardFileView.ui" line="200"/>
+        <location filename="../ui/MemCardFileView.ui" line="207"/>
         <source>&amp;Calculated
 Checksum:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/MemCardFileView.ui" line="246"/>
+        <location filename="../ui/MemCardFileView.ui" line="253"/>
         <source>E&amp;xpected
 Checksum:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../MemCardFileView.cpp" line="128"/>
-        <location filename="../MemCardFileView.cpp" line="152"/>
+        <location filename="../MemCardFileView.cpp" line="146"/>
+        <location filename="../MemCardFileView.cpp" line="170"/>
         <source>Unknown</source>
         <comment>checksum</comment>
         <translation></translation>
@@ -477,18 +478,18 @@ Checksum:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../MemCardView.cpp" line="101"/>
+        <location filename="../MemCardView.cpp" line="105"/>
         <source>Unknown</source>
         <comment>checksum</comment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../MemCardView.cpp" line="136"/>
+        <location filename="../MemCardView.cpp" line="140"/>
         <source>%L1 block(s) (%L2 free)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../MemCardView.cpp" line="149"/>
+        <location filename="../MemCardView.cpp" line="153"/>
         <source>Memory card header is corrupted.</source>
         <translation></translation>
     </message>
@@ -522,27 +523,27 @@ Checksum:</source>
 <context>
     <name>StatusBarManager</name>
     <message>
-        <location filename="../StatusBarManager.cpp" line="109"/>
+        <location filename="../StatusBarManager.cpp" line="111"/>
         <source>Ready.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../StatusBarManager.cpp" line="134"/>
+        <location filename="../StatusBarManager.cpp" line="135"/>
         <source>Scanning block #%L1 (%L2 scanned, %L3 remaining)...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../StatusBarManager.cpp" line="344"/>
+        <location filename="../StatusBarManager.cpp" line="352"/>
         <source>Loaded GameCube Memory Card image %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../StatusBarManager.cpp" line="359"/>
+        <location filename="../StatusBarManager.cpp" line="367"/>
         <source>GameCube Memory Card image closed.</source>
         <translation></translation>
     </message>
     <message numerus="yes">
-        <location filename="../StatusBarManager.cpp" line="376"/>
+        <location filename="../StatusBarManager.cpp" line="384"/>
         <source>%Ln file(s) saved to %1.</source>
         <translation>
             <numerusform>%Ln file saved to %1.</numerusform>
@@ -550,12 +551,12 @@ Checksum:</source>
         </translation>
     </message>
     <message>
-        <location filename="../StatusBarManager.cpp" line="437"/>
+        <location filename="../StatusBarManager.cpp" line="448"/>
         <source>Scan cancelled.</source>
         <translation></translation>
     </message>
     <message numerus="yes">
-        <location filename="../StatusBarManager.cpp" line="455"/>
+        <location filename="../StatusBarManager.cpp" line="468"/>
         <source>Scan complete. %Ln lost file(s) found.</source>
         <translation>
             <numerusform>Scan complete. %Ln lost file found.</numerusform>
@@ -563,8 +564,47 @@ Checksum:</source>
         </translation>
     </message>
     <message>
-        <location filename="../StatusBarManager.cpp" line="485"/>
+        <location filename="../StatusBarManager.cpp" line="502"/>
         <source>An error occurred while scanning: %1</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>XmlTemplateDialog</name>
+    <message>
+        <location filename="../XmlTemplateDialog.cpp" line="80"/>
+        <source>Generated XML Template: %1/%2</source>
+        <extracomment>Window title: %1 == game ID; %2 == internal filename.</extracomment>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../XmlTemplateDialog.cpp" line="85"/>
+        <source>Generated XML template for: %1/%2
+You will need to edit gameName and fileInfo,
+and may also need to add variable modifiers.</source>
+        <extracomment>Template description: %1 == game ID; %2 == internal filename.</extracomment>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../XmlTemplateDialog.cpp" line="93"/>
+        <source>Generated XML Template: No file loaded</source>
+        <extracomment>Window title: No file loaded.</extracomment>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../XmlTemplateDialog.cpp" line="95"/>
+        <source>No file loaded.</source>
+        <extracomment>Template description: No file loaded.</extracomment>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../XmlTemplateDialog.cpp" line="126"/>
+        <source>Game Name</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../XmlTemplateDialog.cpp" line="127"/>
+        <source>Save File</source>
         <translation></translation>
     </message>
 </context>
