@@ -611,11 +611,6 @@ y0u w1ll n33d 70 3d17 64m3n4m3 4nd f1l31nf0,
         <translation>n0 f1l3 l04d3d.</translation>
     </message>
     <message>
-        <location filename="../XmlTemplateDialog.cpp" line="126"/>
-        <source>Game Name</source>
-        <translation></translation>
-    </message>
-    <message>
         <location filename="../XmlTemplateDialog.cpp" line="127"/>
         <source>Save File</source>
         <translation></translation>

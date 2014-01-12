@@ -598,11 +598,6 @@ and may also need to add variable modifiers.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../XmlTemplateDialog.cpp" line="126"/>
-        <source>Game Name</source>
-        <translation></translation>
-    </message>
-    <message>
         <location filename="../XmlTemplateDialog.cpp" line="127"/>
         <source>Save File</source>
         <translation></translation>
