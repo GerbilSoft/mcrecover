@@ -124,7 +124,7 @@ void XmlTemplateDialogPrivate::generateXmlTemplate(void)
 	// <file> block.
 	xml.writeStartElement(QLatin1String("file"));
 	xml.writeTextElement(QLatin1String("gameName"), XmlTemplateDialog::tr("Game Name"));
-	xml.writeTextElement(QLatin1String("fileInfo"), XmlTemplateDialog::tr("File Information"));
+	xml.writeTextElement(QLatin1String("fileInfo"), XmlTemplateDialog::tr("Save File"));
 	xml.writeTextElement(QLatin1String("gamecode"), file->gamecode());
 	xml.writeTextElement(QLatin1String("company"), file->company());
 
