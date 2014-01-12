@@ -24,6 +24,13 @@
 // MemCard
 #include "MemCardFile.hpp"
 
+// Qt includes.
+#include <QtCore/QXmlStreamWriter>
+#include <QTextCodec>
+
+// C includes. (C++ namespace)
+#include <cstdio>
+
 /** XmlTemplateDialogPrivate **/
 
 class XmlTemplateDialogPrivate
@@ -47,6 +54,11 @@ class XmlTemplateDialogPrivate
 		 * Update the window text.
 		 */
 		void updateWindowText(void);
+
+		/**
+		 * Generate the XML template.
+		 */
+		void generateXmlTemplate(void);
 };
 
 XmlTemplateDialogPrivate::XmlTemplateDialogPrivate(XmlTemplateDialog* q, const MemCardFile *file)
@@ -73,19 +85,89 @@ void XmlTemplateDialogPrivate::updateWindowText(void)
 		//: Template description: %1 == game ID; %2 == internal filename.
 		templateDesc = XmlTemplateDialog::tr(
 			"Generated XML template for: %1/%2\n"
-			"You may need to add variable modifiers.")
+			"You will need to edit gameName and fileInfo,\n"
+			"and may also need to add variable modifiers.")
 			.arg(gameID)
 			.arg(file->filename());
 	} else {
 		//: Window title: No file loaded.
 		winTitle = XmlTemplateDialog::tr("Generated XML Template: No file loaded");
 		//: Template description: No file loaded.
-		templateDesc = XmlTemplateDialog::tr("No file loaded.") + QChar(L'\n');
+		templateDesc = XmlTemplateDialog::tr("No file loaded.") + QChar(L'\n') + QChar(L'\n');
 	}
 
 	q->setWindowTitle(winTitle);
 	q->lblTemplateDesc->setText(templateDesc);
 	q->txtTemplate->setPlainText(xmlTemplate);
+}
+
+/**
+ * Generate the XML template.
+ */
+void XmlTemplateDialogPrivate::generateXmlTemplate(void)
+{
+	xmlTemplate.clear();
+	xmlTemplate.reserve(1024);
+
+	if (!file) {
+		// No file is loaded.
+		return;
+	}
+
+	const card_direntry *dirEntry = file->dirEntry();
+	char tmp[16];
+
+	QXmlStreamWriter xml(&xmlTemplate);
+	xml.setAutoFormatting(true);
+	xml.setAutoFormattingIndent(-1);
+	xml.writeStartDocument();
+
+	// <file> block.
+	xml.writeStartElement(QLatin1String("file"));
+	xml.writeTextElement(QLatin1String("gameName"), XmlTemplateDialog::tr("Game Name"));
+	xml.writeTextElement(QLatin1String("fileInfo"), XmlTemplateDialog::tr("File Information"));
+	xml.writeTextElement(QLatin1String("gamecode"), file->gamecode());
+	xml.writeTextElement(QLatin1String("company"), file->company());
+
+	// <search> block.
+	xml.writeStartElement(QLatin1String("search"));
+	snprintf(tmp, sizeof(tmp), "0x%04X", dirEntry->commentaddr);
+	xml.writeTextElement(QLatin1String("address"), QLatin1String(tmp));
+	// FIXME: gameDesc and fileDesc need to be escaped for PCRE.
+	xml.writeTextElement(QLatin1String("gameDesc"), file->gameDesc());
+	xml.writeTextElement(QLatin1String("fileDesc"), file->fileDesc());
+	xml.writeEndElement();
+
+	// <variables> block.
+	// TODO: Autodetect certain variables?
+
+	// <dirEntry> block.
+	xml.writeStartElement(QLatin1String("dirEntry"));
+	xml.writeTextElement(QLatin1String("filename"), file->filename());
+	snprintf(tmp, sizeof(tmp), "0x%02X", dirEntry->bannerfmt);
+	xml.writeTextElement(QLatin1String("bannerFormat"), QLatin1String(tmp));
+	snprintf(tmp, sizeof(tmp), "0x%04X", dirEntry->iconaddr);
+	xml.writeTextElement(QLatin1String("iconAddress"), QLatin1String(tmp));
+	snprintf(tmp, sizeof(tmp), (dirEntry->iconfmt <= 0xFF ? "0x%02X" : "0x%04X"), dirEntry->iconfmt);
+	xml.writeTextElement(QLatin1String("iconFormat"), QLatin1String(tmp));
+	snprintf(tmp, sizeof(tmp), (dirEntry->iconspeed <= 0xFF ? "0x%02X" : "0x%04X"), dirEntry->iconspeed);
+	xml.writeTextElement(QLatin1String("iconSpeed"), QLatin1String(tmp));
+	snprintf(tmp, sizeof(tmp), "0x%02X", dirEntry->permission);
+	xml.writeTextElement(QLatin1String("permission"), QLatin1String(tmp));
+	xml.writeTextElement(QLatin1String("length"), QString::number(file->size()));
+	xml.writeEndElement();
+
+	// </file>
+	xml.writeEndElement();
+
+	// End of fragment.
+	xml.writeEndDocument();
+
+	// Remove the "<?xml" line.
+	// This is an XML fragment, not a full document.
+	int n = xmlTemplate.indexOf(L'\n');
+	if (n >= 0)
+		xmlTemplate.remove(0, n + 1);
 }
 
 /** XmlTemplateDialog **/
@@ -138,12 +220,11 @@ void XmlTemplateDialog::init(void)
 	this->setWindowIcon(QIcon());
 #endif
 
-	Q_D(XmlTemplateDialog);
-
-	// Generate the XML.
-	// TODO
+	// FIXME: QPlainTextEdit cursor doesn't show up when readOnly.
 
 	// Update the window text.
+	Q_D(XmlTemplateDialog);
+	d->generateXmlTemplate();
 	d->updateWindowText();
 }
 
@@ -167,6 +248,7 @@ void XmlTemplateDialog::changeEvent(QEvent *event)
 
 		// Update the window text to retranslate descriptions.
 		Q_D(XmlTemplateDialog);
+		d->generateXmlTemplate();
 		d->updateWindowText();
 	}
 

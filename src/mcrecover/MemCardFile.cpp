@@ -1197,3 +1197,13 @@ int MemCardFile::saveGci(QIODevice *qioDevice)
 	// Finished saving the file.
 	return 0;
 }
+
+/**
+ * Get the directory entry.
+ * @return Directory entry.
+ */
+const card_direntry *MemCardFile::dirEntry(void) const
+{
+	Q_D(const MemCardFile);
+	return d->dirEntry;
+}

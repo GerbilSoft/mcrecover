@@ -262,6 +262,12 @@ class MemCardFile : public QObject
 		 * TODO: Error code constants.
 		 */
 		int saveGci(QIODevice *qioDevice);
+
+		/**
+		 * Get the directory entry.
+		 * @return Directory entry.
+		 */
+		const card_direntry *dirEntry(void) const;
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */

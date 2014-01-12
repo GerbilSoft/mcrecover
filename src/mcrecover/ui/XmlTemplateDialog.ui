@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>540</width>
+    <width>640</width>
     <height>400</height>
    </rect>
   </property>
@@ -18,7 +18,8 @@
     <widget class="QLabel" name="lblTemplateDesc">
      <property name="text">
       <string notr="true">Generated XML template.
-PLACEHOLDER; actual text is in XmlTemplateDialog.cpp.</string>
+*** PLACEHOLDER ***
+Actual text is in XmlTemplateDialog.cpp.</string>
      </property>
      <property name="textFormat">
       <enum>Qt::PlainText</enum>
@@ -35,8 +36,8 @@ PLACEHOLDER; actual text is in XmlTemplateDialog.cpp.</string>
        <family>Monospace</family>
       </font>
      </property>
-     <property name="readOnly">
-      <bool>true</bool>
+     <property name="lineWrapMode">
+      <enum>QPlainTextEdit::NoWrap</enum>
      </property>
     </widget>
    </item>
