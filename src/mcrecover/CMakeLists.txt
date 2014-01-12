@@ -107,6 +107,7 @@ SET(mcrecover_SRCS
 	GcToolsQt.cpp
 	TranslationManager.cpp
 	XmlTemplateDialog.cpp
+	XmlTemplateDialogManager.cpp
 	)
 
 # Shh... it's a secret to everybody.
@@ -142,6 +143,7 @@ SET(mcrecover_MOC_H
 	QTreeViewOpt.hpp
 	TaskbarButtonManager/TaskbarButtonManager.hpp
 	XmlTemplateDialog.hpp
+	XmlTemplateDialogManager.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H

@@ -26,6 +26,7 @@
 
 // XML template dialog.
 #include "XmlTemplateDialog.hpp"
+#include "XmlTemplateDialogManager.hpp"
 
 // Qt includes.
 #include <QtCore/QTimer>
@@ -57,11 +58,17 @@ class MemCardFileViewPrivate
 		 * Update the widget display.
 		 */
 		void updateWidgetDisplay(void);
+
+		/**
+		 * XmlTemplateDialog manager.
+		 */
+		XmlTemplateDialogManager *xmlTemplateDialogManager;
 };
 
 MemCardFileViewPrivate::MemCardFileViewPrivate(MemCardFileView *q)
 	: q_ptr(q)
 	, file(nullptr)
+	, xmlTemplateDialogManager(new XmlTemplateDialogManager(q))
 {
 	// Connect animTimer's timeout() signal.
 	QObject::connect(&animTimer, SIGNAL(timeout()),
@@ -69,7 +76,9 @@ MemCardFileViewPrivate::MemCardFileViewPrivate(MemCardFileView *q)
 }
 
 MemCardFileViewPrivate::~MemCardFileViewPrivate()
-{ }
+{
+	delete xmlTemplateDialogManager;
+}
 
 /**
  * Update the widget display.
@@ -314,6 +323,7 @@ void MemCardFileView::animTimer_slot(void)
 void MemCardFileView::on_btnXML_clicked(void)
 {
 	Q_D(MemCardFileView);
-	XmlTemplateDialog *xmlTemplateDialog = new XmlTemplateDialog(d->file, this);
-	xmlTemplateDialog->show();
+	XmlTemplateDialog *dialog = d->xmlTemplateDialogManager->create(d->file, this);
+	dialog->show();
+	dialog->activateWindow();
 }
