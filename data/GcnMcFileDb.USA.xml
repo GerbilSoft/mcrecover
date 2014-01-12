@@ -234,7 +234,7 @@
 			<!-- NOTE: This is also present at 0x4000... -->
 			<address>0x2000</address>
 			<gameDesc>^DONKEY KONGA$</gameDesc>
-			<!-- Date format: MM/DD/YYYY HH:mm:ss - Verify for PAL! -->
+			<!-- Date format: MM/DD/YYYY HH:mm:ss -->
 			<!-- TODO: HH or H? -->
 			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
 		</search>
@@ -296,10 +296,9 @@
 		<search>
 			<address>0x0004</address>
 			<gameDesc>^F-ZERO GX$</gameDesc>
-			<!-- Date format: YY/MM/DD - Verify for PAL! -->
-			<!-- TODO: Example field was "13/06/01 A" - what's the A for? -->
-			<fileDesc>^(\d{2})/(\d{2})/(\d{2})</fileDesc>
-			<!-- TODO: Checksum field? -->
+			<!-- Date format: YY/MM/DD -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{2}) .*$</fileDesc>
+			<!-- TODO: Checksum algorithm is known, but depends on card serial number. -->
 		</search>
 		<variables>
 			<variable id="F1">
@@ -320,7 +319,6 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x1C</permission>
 			<length>4</length>
-			<encrypted>true</encrypted>
 		</dirEntry>
 	</file>
 	<file>
@@ -920,7 +918,7 @@
 		<search>
 			<address>0x0004</address>
 			<gameDesc>^Metroid Prime 2 Echoes$</gameDesc>
-			<!-- Date format: MM.DD.YY HH:mm - Verify for PAL! -->
+			<!-- Date format: MM.DD.YY HH:mm -->
 			<fileDesc>^(\d{2}).(\d{2}).(\d{2})  (\d{2}):(\d{2})$</fileDesc>
 			<!-- TODO: Checksum field? -->
 		</search>
@@ -1062,7 +1060,7 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Paper Mario$</gameDesc>
-			<!-- Date format: MM/DD, with leading spaces - Verify for PAL! -->
+			<!-- Date format: MM/DD, with leading spaces. -->
 			<!-- NOTE: Months less than 10 will have a leading space;
 			     however, mcrecover trims spaces from descriptions! -->
 			<fileDesc>^( \d|\d{1,2})/( \d|\d{2}) save data$</fileDesc>
@@ -1338,7 +1336,7 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^SONIC GEMS COLLECTION$</gameDesc>
-			<!-- Date format: MM/DD - Verify for PAL! -->
+			<!-- Date format: MM/DD -->
 			<fileDesc>^SETTING DATA (\d{2})/(\d{2})$</fileDesc>
 		</search>
 		<variables>
@@ -1437,7 +1435,7 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Sonic Mega Collection$</gameDesc>
-			<!-- Date format: MM/DD HH:mm - Verify for PAL! -->
+			<!-- Date format: MM/DD HH:mm -->
 			<fileDesc>^System File (\d{2})/(\d{2}) (\d{2}):(\d{2})$</fileDesc>
 		</search>
 		<variables>
@@ -1538,7 +1536,7 @@
 		</dirEntry>
 	</file>
 	<file>
-		<gameName>Star Wars Rogue Leader: Rogue Squadron II</gameName>
+		<gameName>Star Wars: Rogue Leader - Rogue Squadron II</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GSWE</gamecode>
 		<company>64</company>
@@ -1765,7 +1763,7 @@
 		<search>
 			<address>0x1C00</address>
 			<gameDesc>^Four Swords Adventures$</gameDesc>
-			<!-- Date format: M/D - Verify for PAL! -->
+			<!-- Date format: M/D -->
 			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
 		</search>
 		<variables>
@@ -1794,7 +1792,7 @@
 		<search>
 			<address>0x002C</address>
 			<gameDesc>^Zelda: Ocarina of Time$</gameDesc>
-			<!-- Date format: M/D - Verify for PAL! -->
+			<!-- Date format: M/D -->
 			<fileDesc>^(\d{1,2})/(\d{1,2}) Save Data$</fileDesc>
 		</search>
 		<variables>
@@ -1882,7 +1880,8 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^VIEWTIFUL JOE$</gameDesc>
-			<!-- Date format: M/D/YYYY HH:mm:ss - TODO: Verify D instead of DD; Verify for PAL! -->
+			<!-- Date format: M/D/YYYY HH:mm:ss -->
+			<!-- TODO: Verify D instead of DD! -->
 			<fileDesc>^(\d{1,2})/(\d{1,2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
 		</search>
 		<variables>
