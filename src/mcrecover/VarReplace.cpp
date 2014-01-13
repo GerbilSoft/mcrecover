@@ -408,9 +408,12 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifier
 		}
 		gcnDateTime->setTime(time);
 
-		// If the GcnDateTime is in the future,
-		// adjust its years value.
-		if (*gcnDateTime > currentDateTime) {
+		// If the GcnDateTime is more than one day
+		// in the future, adjust its years value.
+		// (One-day variance is allowed due to timezone differences.)
+		const uint32_t gcnTS = currentDateTime.gcnTimestamp() + 86400;
+		const GcnDateTime adjCurrentDateTime(gcnTS);
+		if (*gcnDateTime > adjCurrentDateTime) {
 			QDate gcnDate = gcnDateTime->date();
 			int curYear = currentDateTime.date().year();
 			if (curYear > 2000)
