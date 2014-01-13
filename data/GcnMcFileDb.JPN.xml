@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GcnMcFileDb>
+	<dbInfo>
+		<dbFormatVersion>0.1</dbFormatVersion>
+		<dbName>GCN Memory Card File Database (JPN)</dbName>
+		<dbDesc>Definitions for Japanese (NTSC) GameCube games.</dbDesc>
+		<version>0.1+</version>
+		<author>David Korth</author>
+		<email>gerbilsoft@gerbilsoft.com</email>
+	</dbInfo>
+	<file>
+		<gameName>biohazard4</gameName>
+		<fileInfo>System File</fileInfo>
+		<gamecode>G4BJ</gamecode>
+		<company>08</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^biohazard4 システムファイル$</gameDesc>
+			<!-- Date format: YYYY/MM/DD HH:mm:ss -->
+			<fileDesc>^(\d{4})/(\d{2})/(\d{2}) (\d{2}):(\d{2}):(\d{2}) 更新$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>bh4_system</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+</GcnMcFileDb>
