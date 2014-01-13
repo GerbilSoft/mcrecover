@@ -60,11 +60,12 @@ class MemCardItemDelegatePrivate
 #ifdef Q_OS_WIN
 		// Win32: Theming functions.
 	private:
-		bool m_isXPTheme;
+		// HACK: Mark this as mutable so const functions can update it.
+		mutable bool m_isXPTheme;
 		static bool resolveSymbols(void);
 	public:
-		bool isXPTheme(bool update = false);
-		bool isVistaTheme(void);
+		bool isXPTheme(bool update = false) const;
+		bool isVistaTheme(void) const;
 #endif /* Q_OS_WIN */
 };
 
@@ -153,7 +154,7 @@ bool MemCardItemDelegatePrivate::resolveSymbols(void)
  * @param update Update the system theming status.
  * @return True if a Windows XP theme is in use; false if not.
  */
-bool MemCardItemDelegatePrivate::isXPTheme(bool update)
+bool MemCardItemDelegatePrivate::isXPTheme(bool update) const
 {
 	if (!update)
 		return m_isXPTheme;
@@ -168,7 +169,7 @@ bool MemCardItemDelegatePrivate::isXPTheme(bool update)
  * Based on QWindowsVistaStyle::useVista(). (qt-4.8.5)
  * @return True if a Windows Vista theme is in use; false if not.
  */
-bool MemCardItemDelegatePrivate::isVistaTheme(void)
+bool MemCardItemDelegatePrivate::isVistaTheme(void) const
 {
 	return (isXPTheme() &&
 		QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA &&
@@ -386,6 +387,7 @@ void MemCardItemDelegate::themeChanged_slot(void)
 {
 #ifdef Q_OS_WIN
 	// Update the XP theming info.
+	Q_D(MemCardItemDelegate);
 	d->isXPTheme(true);
 #endif
 }
