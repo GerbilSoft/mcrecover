@@ -1525,6 +1525,68 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Spongebob Squarepants: Battle for Bikini Bottom</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GQPE</gamecode>
+		<company>78</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Battle for Bikini Bottom$</gameDesc>
+			<!-- Date format: MM/DD/YYYY HH:mm:ss - Verify for PAL! -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<!-- TODO: Does this game have multiple save slots? -->
+			<filename>SpongeBob00</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>10</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Spyro: Enter the Dragonfly</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GS8E</gamecode>
+		<company>7D</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Spyro: Enter the Dragonfly$</gameDesc>
+			<fileDesc>^Saved Game$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>spyro</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>8</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Star Fox: Assault</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GF7E</gamecode>
