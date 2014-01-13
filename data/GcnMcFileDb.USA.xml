@@ -1138,6 +1138,26 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Pokémon Channel</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GPAE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Pokémon Channel$</gameDesc>
+			<fileDesc>^Saved Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>PCH3.BIN</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0A</iconFormat>
+			<iconSpeed>0x0F</iconSpeed>
+			<permission>0x0C</permission>
+			<length>22</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Puyo Pop Fever</gameName>
 		<fileInfo>System File</fileInfo>
 		<gamecode>GPUE</gamecode>
