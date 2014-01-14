@@ -48,7 +48,7 @@ ENDIF(ENABLE_LTO)
 SET(MCRECOVER_CFLAGS_COMMON "")
 SET(MCRECOVER_CXXFLAGS_COMMON "${MCRECOVER_CXX_NO_RTTI_CFLAG} ${MCRECOVER_CXX_NO_EXCEPTIONS_CFLAG}")
 # NOTE: Commit visibility changes after the MSVC changes.
-FOREACH(FLAG_TEST "-Wall" "-Wextra" "-fstrict-aliasing -fvisibility=hidden -fvisibility-inlines-hidden")
+FOREACH(FLAG_TEST "-Wall" "-Wextra" "-fstrict-aliasing" "-fvisibility=hidden" "-fvisibility-inlines-hidden")
 	CHECK_C_COMPILER_FLAG("${FLAG_TEST}" CFLAG_${FLAG_TEST})
 	IF(CFLAG_${FLAG_TEST})
 		SET(MCRECOVER_CFLAGS_COMMON "${MCRECOVER_CFLAGS_COMMON} ${FLAG_TEST}")
