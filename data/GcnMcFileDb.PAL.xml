@@ -472,6 +472,17 @@
 			<!-- NOTE: HHHH:mm:ss is time *played*, not the time saved! -->
 			<fileDesc>^(\d{4})-(\d{2})-(\d{2}) (\d{4}):(\d{2}):(\d{2})$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<!-- FIXME: Filename is a ton of indecipherable garbage!
 			     g[NV](\d{2})YYYYMMDDHHHHmmss(\d{7}).F
