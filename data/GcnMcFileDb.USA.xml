@@ -9,27 +9,6 @@
 		<email>gerbilsoft@gerbilsoft.com</email>
 	</dbInfo>
 	<file>
-		<gameName>Action Replay</gameName>
-		<fileInfo>Data File</fileInfo>
-		<gamecode>D3GC</gamecode>
-		<company>00</company>
-		<search>
-			<address>0x0000</address>
-			<!-- TODO: Is V 1.14 the only known version? -->
-			<gameDesc>^Action Replay V (\d)\.(\d{1,2})$</gameDesc>
-			<fileDesc>^$</fileDesc>
-		</search>
-		<dirEntry>
-			<filename>DATELCOD.BIN</filename>
-			<bannerFormat>0x00</bannerFormat>
-			<iconAddress>0x0040</iconAddress>
-			<iconFormat>0x02</iconFormat>
-			<iconSpeed>0x02</iconSpeed>
-			<permission>0x04</permission>
-			<length>2</length>
-		</dirEntry>
-	</file>
-	<file>
 		<gameName>Animal Crossing</gameName>
 		<fileInfo>Town File</fileInfo>
 		<gamecode>GAFE</gamecode>
