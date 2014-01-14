@@ -9,22 +9,28 @@ INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
 # If C++ 2011 isn't available, compatibility definitions will be enabled.
 # NOTE: CHECK_CXX11_COMPILER_FLAG() needs to be called here again.
 # It worked without this previously due to old config.h files in the build directory.
-INCLUDE(CheckCXXSourceCompiles)
-INCLUDE(CheckCXX11CompilerFlag)
-CHECK_CXX11_COMPILER_FLAG(MCRECOVER_CXX11_CXXFLAG)
+#INCLUDE(CheckCXXSourceCompiles)
+#INCLUDE(CheckCXX11CompilerFlag)
+# FIXME: Move this to a module and add MSVC support.
+#CHECK_CXX11_COMPILER_FLAG(MCRECOVER_CXX11_CXXFLAG)
 
-SET(SAFE_CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS}")
-SET(CMAKE_REQUIRED_DEFINITIONS "${MCRECOVER_CXX11_CXXFLAG}")
-CHECK_CXX_SOURCE_COMPILES("int main(void) { void *ptr = nullptr; return 0; }" HAVE_CXX_2011)
-SET(CMAKE_REQUIRED_DEFINITIONS "${SAFE_CMAKE_REQUIRED_DEFINITIONS}")
-UNSET(SAFE_CMAKE_REQUIRED_DEFINITIONS)
+#SET(SAFE_CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS}")
+#SET(CMAKE_REQUIRED_DEFINITIONS "${MCRECOVER_CXX11_CXXFLAG}")
+#CHECK_CXX_SOURCE_COMPILES("int main(void) { void *ptr = nullptr; return 0; }" HAVE_CXX_2011)
+#SET(CMAKE_REQUIRED_DEFINITIONS "${SAFE_CMAKE_REQUIRED_DEFINITIONS}")
+#UNSET(SAFE_CMAKE_REQUIRED_DEFINITIONS)
 
+SET(HAVE_CXX_2011 1)
 CONFIGURE_FILE("c++11-compat.h.in" "${CMAKE_CURRENT_BINARY_DIR}/c++11-compat.h")
 
 # C++11 compatibility header.
 # NOTE: This must be included regardless of C++11 support in the compiler.
 # gcc-4.6 supports some C++11, but is missing explicit virtual overrides.
-SET(MCRECOVER_CXX11_COMPAT_HEADER "-include ${CMAKE_BINARY_DIR}/src/c++11-compat.h")
+IF(MSVC)
+	SET(MCRECOVER_CXX11_COMPAT_HEADER "-FI${CMAKE_BINARY_DIR}/src/c++11-compat.h")
+ELSE(MSVC)
+	SET(MCRECOVER_CXX11_COMPAT_HEADER "-include ${CMAKE_BINARY_DIR}/src/c++11-compat.h")
+ENDIF(MSVC)
 SET(MCRECOVER_CXXFLAG_CXX11_COMPAT ${MCRECOVER_CXX11_COMPAT_HEADER})
 
 # Add the C++11 compatibility header to CFLAGS/CXXFLAGS.

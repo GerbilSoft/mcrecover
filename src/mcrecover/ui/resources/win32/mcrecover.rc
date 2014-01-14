@@ -22,8 +22,7 @@
 // Resource script for GCN MemCard Recover.
 #include "mcrecover.rc.h"
 #include "config.mcrecover.h"
-#include "afxres.h"
-#include "winuser.h"
+#include "windows.h"
 
 // git version
 #include "util/git.h"

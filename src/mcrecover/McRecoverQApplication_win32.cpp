@@ -29,6 +29,9 @@
 // Include "mcrecover.hpp" first for mcrecover_main().
 #include "mcrecover.hpp"
 
+// C includes.
+#include <stdint.h>
+
 // C includes. (C++ namespace)
 #include <cstring>
 
@@ -45,6 +48,11 @@
 #endif
 #ifndef PROCESS_DEP_DISABLE_ATL_THUNK_EMULATION
 #define PROCESS_DEP_DISABLE_ATL_THUNK_EMULATION 0x2
+#endif
+
+// WM_THEMECHANGED (requires _WIN32_WINNT >= 0x0501)
+#ifndef WM_THEMECHANGED
+#define WM_THEMECHANGED 0x031A
 #endif
 
 // QtCore includes.
@@ -137,10 +145,15 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 	Q_UNUSED(lpCmdLine)
 	QByteArray cmdParam;
 	wchar_t *cmdLineW = GetCommandLineW();
-	if (cmdLineW)
-		cmdParam = QString::fromWCharArray(cmdLineW).toLocal8Bit();
-	else
+	if (cmdLineW) {
+		// NOTE: Qt/MSVC usually has wchar_t *not* defined as a native type,
+		// but MSVC defaults to wchar_t as a native type.
+		// Use the UTF-16 version to prevent compatibility issues.
+		// TODO: Convert to UTF-8 instead of "local 8-bit"?
+		cmdParam = QString::fromUtf16(reinterpret_cast<const uint16_t*>(cmdLineW)).toLocal8Bit();
+	} else {
 		cmdParam = QByteArray(GetCommandLineA());
+	}
 
 	// Tokenize the command line parameters.
 	int argc = 0;

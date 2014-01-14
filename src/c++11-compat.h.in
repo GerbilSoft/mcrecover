@@ -97,4 +97,9 @@ namespace std
 #define final
 #endif
 
+#ifdef _MSC_VER
+// MSVC doesn't provide snprintf() - instead, it has _snprintf().
+#define snprintf(str, size, format, ...) _snprintf(str, size, format, __VA_ARGS__)
+#endif /* _MSC_VER */
+
 #endif /* __CXX11_COMPAT_H__ */

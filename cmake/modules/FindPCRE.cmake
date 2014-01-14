@@ -52,8 +52,9 @@ IF(WIN32)
 		ENDIF()
 	ELSE()
 		# TODO: MSVC support.
-		# For now, assume the library is not static.
-		MESSAGE(STATUS "WARNING: MSVC in use; assuming PCRE is static.")
+		# For now, assume the library is static.
+		MESSAGE(WARNING "MSVC in use; assuming PCRE is static.")
+		SET(PCRE_STATIC 1)
 	ENDIF()
 ELSE(WIN32)
 	# .a on other platforms is usually static.
