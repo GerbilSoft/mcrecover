@@ -80,7 +80,7 @@ class GcImage
 			// 256-color image.
 			PXFMT_CI8	= 1,
 
-			// 32-bit ARGB.
+			// 32-bit ARGB. (converted from RGB5A3)
 			PXFMT_ARGB32	= 2,
 		};
 
