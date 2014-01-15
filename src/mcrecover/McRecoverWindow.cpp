@@ -155,6 +155,14 @@ class McRecoverWindowPrivate
 		 */
 		void initTsMenu(void);
 
+		/**
+		 * "Animated Icon Format" selection.
+		 * TODO: Use an enum from the icon exporting class.
+		 */
+		int animIconFormat;
+		QActionGroup *actgrpAnimIconFormat;
+		QSignalMapper *mapperAnimIconFormat;
+
 		// Shh... it's a secret to everybody.
 		HerpDerpEggListener *herpDerp;
 };
@@ -168,11 +176,13 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, uiBusyCounter(0)
 	, preferredRegion(0)
 	, lblPreferredRegion(nullptr)
-	, actgrpRegion(nullptr)
+	, actgrpRegion(new QActionGroup(q))
 	, mapperPreferredRegion(new QSignalMapper(q))
 	, actTsSysDefault(nullptr)
 	, actgrpTS(nullptr)
 	, mapperTS(new QSignalMapper(q))
+	, actgrpAnimIconFormat(new QActionGroup(q))
+	, mapperAnimIconFormat(new QSignalMapper(q))
 	, herpDerp(new HerpDerpEggListener(q))
 {
 	// Connect the MemCardModel slots.
@@ -199,6 +209,10 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	QObject::connect(mapperPreferredRegion, SIGNAL(mapped(int)),
 			 q, SLOT(setPreferredRegion_slot(int)));
 
+	// Connect the QSignalMapper slot for the animated icon format selection.
+	QObject::connect(mapperAnimIconFormat, SIGNAL(mapped(int)),
+			 q, SLOT(setAnimIconFormat_slot(int)));
+
 	// Connect the QSignalMapper slot for translations.
 	QObject::connect(mapperTS, SIGNAL(mapped(QString)),
 			 q, SLOT(setTranslation_slot(QString)));
@@ -216,6 +230,10 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 
 	delete lblPreferredRegion;
 	delete actgrpRegion;
+	delete mapperPreferredRegion;
+
+	delete actgrpAnimIconFormat;
+	delete mapperAnimIconFormat;
 
 	// NOTE: These probably aren't needed, and might actually
 	// decrease performance due to menuLanguage receiving
@@ -285,8 +303,7 @@ void McRecoverWindowPrivate::initToolbar(void)
 	lblPreferredRegion = new QLabel();
 	q->toolBar->insertWidget(q->actionRegionUSA, lblPreferredRegion);
 
-	// Create a QActionGroup for the "Preferred region" buttons.
-	actgrpRegion = new QActionGroup(q);
+	// Set up the QActionGroup for the "Preferred region" buttons.
 	actgrpRegion->addAction(q->actionRegionUSA);
 	actgrpRegion->addAction(q->actionRegionPAL);
 	actgrpRegion->addAction(q->actionRegionJPN);
@@ -316,6 +333,34 @@ void McRecoverWindowPrivate::initToolbar(void)
 	// set this->preferredRegion manually.
 	q->actionRegionUSA->setChecked(true);
 	this->preferredRegion = 'E';
+
+	// Set up the QActionGroup for the "Animated Icon Format" options.
+	actgrpAnimIconFormat->addAction(q->actionAnimAPNG);
+	actgrpAnimIconFormat->addAction(q->actionAnimGIF);
+	actgrpAnimIconFormat->addAction(q->actionAnimPNGfpf);
+	actgrpAnimIconFormat->addAction(q->actionAnimPNGvs);
+	actgrpAnimIconFormat->addAction(q->actionAnimPNGhs);
+
+	// Connect QAction signals to the QSignalMapper.
+	QObject::connect(q->actionAnimAPNG, SIGNAL(triggered()),
+			 mapperAnimIconFormat, SLOT(map()));
+	QObject::connect(q->actionAnimGIF, SIGNAL(triggered()),
+			 mapperAnimIconFormat, SLOT(map()));
+	QObject::connect(q->actionAnimPNGfpf, SIGNAL(triggered()),
+			 mapperAnimIconFormat, SLOT(map()));
+	QObject::connect(q->actionAnimPNGvs, SIGNAL(triggered()),
+			 mapperAnimIconFormat, SLOT(map()));
+	QObject::connect(q->actionAnimPNGhs, SIGNAL(triggered()),
+			 mapperAnimIconFormat, SLOT(map()));
+
+	// Set an initial animated icon format.
+	// TODO: Determine default based on available codecs.
+	// TODO: Save last selected format somewhere.
+	// NOTE: We're not calling trigger(), since we know
+	// which button is being checked. Hence, we need to
+	// set this->preferredRegion manually.
+	q->actionAnimAPNG->setChecked(true);
+	this->animIconFormat = 0;	// TODO: Enum value.
 
 	// Make sure the "About" button is right-aligned.
 	QWidget *spacer = new QWidget(q);
@@ -1058,7 +1103,6 @@ void McRecoverWindow::on_actionSaveAll_triggered(void)
 	d->saveFiles(files);
 }
 
-
 /**
  * Set the preferred region.
  * This slot is triggered by a QSignalMapper that
@@ -1071,6 +1115,18 @@ void McRecoverWindow::setPreferredRegion_slot(int preferredRegion)
 	d->preferredRegion = static_cast<char>(preferredRegion);
 }
 
+/**
+ * Set the animated icon format.
+ * This slot is triggered by a QSignalMapper that
+ * maps the various QActions.
+ * @param animIconFormat Animated icon format.
+ */
+void McRecoverWindow::setAnimIconFormat_slot(int animIconFormat)
+{
+	// TODO: Enum.
+	Q_D(McRecoverWindow);
+	d->animIconFormat = animIconFormat;
+}
 
 void McRecoverWindow::memCardModel_layoutChanged(void)
 {
@@ -1080,7 +1136,6 @@ void McRecoverWindow::memCardModel_layoutChanged(void)
 	Q_D(McRecoverWindow);
 	d->updateLstFileList();
 }
-
 
 void McRecoverWindow::memCardModel_rowsInserted(void)
 {

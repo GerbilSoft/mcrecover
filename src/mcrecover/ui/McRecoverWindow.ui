@@ -214,6 +214,13 @@
     <addaction name="actionRegionKOR"/>
     <addaction name="separator"/>
     <addaction name="actionSearchUsedBlocks"/>
+    <addaction name="separator"/>
+    <addaction name="actionAnimatedIconFormat"/>
+    <addaction name="actionAnimAPNG"/>
+    <addaction name="actionAnimGIF"/>
+    <addaction name="actionAnimPNGfpf"/>
+    <addaction name="actionAnimPNGvs"/>
+    <addaction name="actionAnimPNGhs"/>
    </widget>
    <widget class="QMenu" name="menuLanguage">
     <property name="title">
@@ -430,6 +437,54 @@
    </property>
    <property name="text">
     <string>Search U&amp;sed Blocks</string>
+   </property>
+  </action>
+  <action name="actionAnimatedIconFormat">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Animated Icon Format:</string>
+   </property>
+  </action>
+  <action name="actionAnimAPNG">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>APNG</string>
+   </property>
+  </action>
+  <action name="actionAnimGIF">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>GIF</string>
+   </property>
+  </action>
+  <action name="actionAnimPNGfpf">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>PNG (file per frame)</string>
+   </property>
+  </action>
+  <action name="actionAnimPNGvs">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>PNG (vertical strip)</string>
+   </property>
+  </action>
+  <action name="actionAnimPNGhs">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>PNG (horizontal strip)</string>
    </property>
   </action>
  </widget>
