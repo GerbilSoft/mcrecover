@@ -56,10 +56,6 @@ int GcImageWriterPrivate::writePng(const GcImage *image, const char *filename)
 	if (!image || !filename)
 		return -EINVAL;
 
-	// TODO: Support CI8.
-	if (image->pxFmt() != GcImage::PXFMT_ARGB32)
-		return -EINVAL;
-
 	// TODO: fopen() wrapper to convert UTF-8 filename on Windows.
 	FILE *fpng = fopen(filename, "wb");
 	if (!fpng)
@@ -98,7 +94,6 @@ int GcImageWriterPrivate::writePng(const GcImage *image, const char *filename)
 	const int w = image->width();
 	const int h = image->height();
 
-	// TODO: Support CI8.
 	switch (image->pxFmt()) {
 		case GcImage::PXFMT_ARGB32:
 			png_set_IHDR(png_ptr, info_ptr, w, h,
@@ -108,10 +103,31 @@ int GcImageWriterPrivate::writePng(const GcImage *image, const char *filename)
 					PNG_FILTER_TYPE_DEFAULT);
 			break;
 
-		case GcImage::PXFMT_CI8:
+		case GcImage::PXFMT_CI8: {
+			png_set_IHDR(png_ptr, info_ptr, w, h,
+					8, PNG_COLOR_TYPE_PALETTE,
+					PNG_INTERLACE_NONE,
+					PNG_COMPRESSION_TYPE_DEFAULT,
+					PNG_FILTER_TYPE_DEFAULT);
+
+			// Set the palette and tRNS values.
+			png_color png_pal[256];
+			uint8_t png_tRNS[256];
+			const uint32_t *palette = image->palette();
+			for (int i = 0; i < 256; i++) {
+				png_pal[i].red   = ((palette[i] >> 16) & 0xFF);
+				png_pal[i].green = ((palette[i] >> 8) & 0xFF);
+				png_pal[i].blue  = (palette[i] & 0xFF);
+				png_tRNS[i]      = ((palette[i] >> 24) & 0xFF);
+			}
+			png_set_PLTE(png_ptr, info_ptr, png_pal, sizeof(png_pal)/sizeof(png_pal[0]));
+			png_set_tRNS(png_ptr, info_ptr, png_tRNS, sizeof(png_tRNS)/sizeof(png_tRNS[0]), nullptr);
+			break;
+		}
+
 		default:
 			// Unsupported pixel format.
-			png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
+			png_destroy_write_struct(&png_ptr, (png_infopp)nullptr);
 			fclose(fpng);
 			return -EINVAL;
 	}
@@ -123,26 +139,30 @@ int GcImageWriterPrivate::writePng(const GcImage *image, const char *filename)
 	//ppng_set_swap(png_ptr);
 
 	// Calculate the row pointers.
-	const png_byte **row_pointers = static_cast<const png_byte**>(malloc(sizeof(png_byte*) * h));
+	int pitch;
 	switch (image->pxFmt()) {
-		case GcImage::PXFMT_ARGB32: {
-			const uint8_t *imageData = (const uint8_t*)image->imageData();
-			const int pitch = (w * 4);
-			for (int y = 0; y < h; y++, imageData += pitch)
-				row_pointers[y] = imageData;
-			// TODO: What format on big-endian?
-			png_set_bgr(png_ptr);
+		case GcImage::PXFMT_ARGB32:
+			pitch = (w * 4);
 			break;
-		}
 
 		case GcImage::PXFMT_CI8:
+			pitch = w;
+			break;
+
 		default:
 			// Unsupported pixel format.
-			free(row_pointers);
-			png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
+			png_destroy_write_struct(&png_ptr, (png_infopp)nullptr);
 			fclose(fpng);
 			return -EINVAL;
 	}
+
+	const uint8_t *imageData = (const uint8_t*)image->imageData();
+	const png_byte **row_pointers = static_cast<const png_byte**>(malloc(sizeof(png_byte*) * h));
+	for (int y = 0; y < h; y++, imageData += pitch)
+		row_pointers[y] = imageData;
+
+	// TODO: What format on big-endian?
+	png_set_bgr(png_ptr);
 
 	// Write the image data.
 	png_write_rows(png_ptr, (png_bytepp)row_pointers, h);
