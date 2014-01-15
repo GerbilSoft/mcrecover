@@ -115,6 +115,10 @@ class MemCardFilePrivate
 		QString gameDesc;	// Game description.
 		QString fileDesc;	// File description.
 
+		// GcImages.
+		GcImage *gcBanner;
+		QVector<GcImage*> gcIcons;
+
 		// Images.
 		QPixmap banner;
 		QVector<QPixmap> icons;
@@ -281,6 +285,11 @@ MemCardFilePrivate::~MemCardFilePrivate()
 		// Free it.
 		free((void*)dirEntry);
 	}
+
+	// Delete GcImages.
+	delete gcBanner;
+	qDeleteAll(gcIcons);
+	gcIcons.clear();
 }
 
 /**
@@ -647,29 +656,28 @@ QVector<GcImage*> MemCardFilePrivate::loadIconImages(void)
 void MemCardFilePrivate::loadImages(void)
 {
 	// Load the banner.
-	GcImage *gcBannerImg = loadBannerImage();
-	if (gcBannerImg) {
+	this->gcBanner = loadBannerImage();
+	if (gcBanner) {
 		// Set the new banner image.
-		QImage qBannerImg = gcImageToQImage(gcBannerImg);
-		if (!qBannerImg.isNull())
-			banner = QPixmap::fromImage(qBannerImg);
+		QImage qBanner = gcImageToQImage(gcBanner);
+		if (!qBanner.isNull())
+			banner = QPixmap::fromImage(qBanner);
 		else
 			banner = QPixmap();
-		delete gcBannerImg;
 	} else {
 		// No banner image.
 		banner = QPixmap();
 	}
 
 	// Load the icons.
-	QVector<GcImage*> gcIconVector = loadIconImages();
+	this->gcIcons = loadIconImages();
 	icons.clear();
-	icons.reserve(gcIconVector.size());
-	foreach (GcImage *gcImage, gcIconVector) {
-		if (gcImage) {
-			QImage qIconImg = gcImageToQImage(gcImage);
-			if (!qIconImg.isNull())
-				icons.append(QPixmap::fromImage(qIconImg));
+	icons.reserve(gcIcons.size());
+	foreach (GcImage *gcIcon, gcIcons) {
+		if (gcIcon) {
+			QImage qIcon = gcImageToQImage(gcIcon);
+			if (!qIcon.isNull())
+				icons.append(QPixmap::fromImage(qIcon));
 			else
 				icons.append(QPixmap());
 		} else {
@@ -973,6 +981,17 @@ QPixmap MemCardFile::banner(void) const
 {
 	Q_D(const MemCardFile);
 	return d->banner;
+}
+
+/**
+ * Get the banner image as a GcImage.
+ * Banner is owned by MemCardFile; do NOT delete it!
+ * @return Banner image, or nullptr on error.
+ */
+const GcImage *MemCardFile::gcBanner(void) const
+{
+	Q_D(const MemCardFile);
+	return d->gcBanner;
 }
 
 /**

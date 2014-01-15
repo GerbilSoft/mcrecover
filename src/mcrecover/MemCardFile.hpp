@@ -40,6 +40,9 @@ class QIODevice;
 // Checksum algorithm class.
 #include "Checksum.hpp"
 
+// GcImage
+class GcImage;
+
 // MemCard class.
 class MemCard;
 
@@ -163,6 +166,13 @@ class MemCardFile : public QObject
 		 * @return Banner image, or null QPixmap on error.
 		 */
 		QPixmap banner(void) const;
+
+		/**
+		 * Get the banner image as a GcImage.
+		 * Caller must delete the GcImage after use.
+		 * @return Banner image, or nullptr on error.
+		 */
+		const GcImage *gcBanner(void) const;
 
 		/**
 		 * Get the number of icons in the file.
