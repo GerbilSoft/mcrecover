@@ -647,7 +647,7 @@ QTextCodec *MemCard::textCodec(char region) const
 			// Japanese.
 			// NOTE: 'S' appears in RELSAB, which is used for
 			// some prototypes, including Sonic Adventure DX
-			// and Metroid Prime 3. Assume Japanese fornow.
+			// and Metroid Prime 3. Assume Japanese for now.
 			// TODO: Implement a Shift-JIS heuristic for 'S'.
 			return d->TextCodecJP;
 
