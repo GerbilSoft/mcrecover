@@ -288,11 +288,28 @@ MemCardFilePrivate::~MemCardFilePrivate()
  */
 void MemCardFilePrivate::init(void)
 {
-	// TODO: Should filenames be converted from Shift-JIS, or always use Latin-1?
-	filename = QString::fromLatin1(dirEntry->filename, sizeof(dirEntry->filename));
-	int nullChr = filename.indexOf(QChar(L'\0'));
+	// Get the appropriate QTextCodec for this file.
+	// TODO: If 0, default to card codec?
+	const char region = (gamecode.size() >= 4
+				? gamecode.at(3).toLatin1()
+				: 0);
+	QTextCodec *textCodec = card->textCodec(region);
+
+	// Remove trailing NULL characters before converting to UTF-8.
+	QByteArray filenameData(dirEntry->filename, sizeof(dirEntry->filename));
+	int nullChr = filenameData.indexOf('\0');
 	if (nullChr >= 0)
-		filename.resize(nullChr);
+		filenameData.resize(nullChr);
+
+	// Convert the filename to UTF-8.
+	if (!textCodec) {
+		// No text codec was found.
+		// Default to Latin-1.
+		filename = QString::fromLatin1(filenameData.constData(), filenameData.size());
+	} else {
+		// Use the text codec.
+		filename = textCodec->toUnicode(filenameData.constData(), filenameData.size());
+	}
 
 	// Game Code and Company are always Latin-1.
 	gamecode = QString::fromLatin1(dirEntry->gamecode, sizeof(dirEntry->gamecode));
@@ -329,10 +346,6 @@ void MemCardFilePrivate::init(void)
 
 	// Convert the descriptions to UTF-8.
 	// Trim the descriptions while we're at it.
-	char region = (gamecode.size() >= 4
-			? gamecode.at(3).toLatin1()
-			: 0);
-	QTextCodec *textCodec = card->textCodec(region);
 	if (!textCodec) {
 		// No text codec was found.
 		// Default to Latin-1.
