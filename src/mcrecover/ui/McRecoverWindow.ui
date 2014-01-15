@@ -208,10 +208,10 @@
      <string>&amp;Options</string>
     </property>
     <addaction name="actionPreferredRegion"/>
-    <addaction name="actionRegionUS"/>
-    <addaction name="actionRegionEU"/>
-    <addaction name="actionRegionJP"/>
-    <addaction name="actionRegionKR"/>
+    <addaction name="actionRegionUSA"/>
+    <addaction name="actionRegionPAL"/>
+    <addaction name="actionRegionJPN"/>
+    <addaction name="actionRegionKOR"/>
     <addaction name="separator"/>
     <addaction name="actionSearchUsedBlocks"/>
    </widget>
@@ -257,10 +257,10 @@
    <addaction name="actionSave"/>
    <addaction name="actionSaveAll"/>
    <addaction name="separator"/>
-   <addaction name="actionRegionUS"/>
-   <addaction name="actionRegionEU"/>
-   <addaction name="actionRegionJP"/>
-   <addaction name="actionRegionKR"/>
+   <addaction name="actionRegionUSA"/>
+   <addaction name="actionRegionPAL"/>
+   <addaction name="actionRegionJPN"/>
+   <addaction name="actionRegionKOR"/>
    <addaction name="actionAbout"/>
   </widget>
   <action name="actionOpen">
@@ -356,7 +356,7 @@
     <string extracomment="Shortcut for closing the current GameCube Memory Card image.">Ctrl+W</string>
    </property>
   </action>
-  <action name="actionRegionUS">
+  <action name="actionRegionUSA">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -371,7 +371,7 @@
     <string>USA</string>
    </property>
   </action>
-  <action name="actionRegionEU">
+  <action name="actionRegionPAL">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -386,7 +386,7 @@
     <string>Europe</string>
    </property>
   </action>
-  <action name="actionRegionJP">
+  <action name="actionRegionJPN">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -401,7 +401,7 @@
     <string>Japan</string>
    </property>
   </action>
-  <action name="actionRegionKR">
+  <action name="actionRegionKOR">
    <property name="checkable">
     <bool>true</bool>
    </property>

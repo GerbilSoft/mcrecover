@@ -283,30 +283,30 @@ void McRecoverWindowPrivate::initToolbar(void)
 
 	// Add a label for the "Preferred region" buttons.
 	lblPreferredRegion = new QLabel();
-	q->toolBar->insertWidget(q->actionRegionUS, lblPreferredRegion);
+	q->toolBar->insertWidget(q->actionRegionUSA, lblPreferredRegion);
 
 	// Create a QActionGroup for the "Preferred region" buttons.
 	actgrpRegion = new QActionGroup(q);
-	actgrpRegion->addAction(q->actionRegionUS);
-	actgrpRegion->addAction(q->actionRegionEU);
-	actgrpRegion->addAction(q->actionRegionJP);
-	actgrpRegion->addAction(q->actionRegionKR);
+	actgrpRegion->addAction(q->actionRegionUSA);
+	actgrpRegion->addAction(q->actionRegionPAL);
+	actgrpRegion->addAction(q->actionRegionJPN);
+	actgrpRegion->addAction(q->actionRegionKOR);
 
 	// Connect QAction signals to the QSignalMapper.
-	QObject::connect(q->actionRegionUS, SIGNAL(triggered()),
+	QObject::connect(q->actionRegionUSA, SIGNAL(triggered()),
 			 mapperPreferredRegion, SLOT(map()));
-	QObject::connect(q->actionRegionEU, SIGNAL(triggered()),
+	QObject::connect(q->actionRegionPAL, SIGNAL(triggered()),
 			 mapperPreferredRegion, SLOT(map()));
-	QObject::connect(q->actionRegionJP, SIGNAL(triggered()),
+	QObject::connect(q->actionRegionJPN, SIGNAL(triggered()),
 			 mapperPreferredRegion, SLOT(map()));
-	QObject::connect(q->actionRegionKR, SIGNAL(triggered()),
+	QObject::connect(q->actionRegionKOR, SIGNAL(triggered()),
 			 mapperPreferredRegion, SLOT(map()));
 
 	// Set the mappings in the QSignalMapper.
-	mapperPreferredRegion->setMapping(q->actionRegionUS, 'E');
-	mapperPreferredRegion->setMapping(q->actionRegionEU, 'P');
-	mapperPreferredRegion->setMapping(q->actionRegionJP, 'J');
-	mapperPreferredRegion->setMapping(q->actionRegionKR, 'K');
+	mapperPreferredRegion->setMapping(q->actionRegionUSA, 'E');
+	mapperPreferredRegion->setMapping(q->actionRegionPAL, 'P');
+	mapperPreferredRegion->setMapping(q->actionRegionJPN, 'J');
+	mapperPreferredRegion->setMapping(q->actionRegionKOR, 'K');
 
 	// Set an initial "Preferred region".
 	// TODO: Determine default based on system locale.
@@ -314,7 +314,7 @@ void McRecoverWindowPrivate::initToolbar(void)
 	// NOTE: We're not calling trigger(), since we know
 	// which button is being checked. Hence, we need to
 	// set this->preferredRegion manually.
-	q->actionRegionUS->setChecked(true);
+	q->actionRegionUSA->setChecked(true);
 	this->preferredRegion = 'E';
 
 	// Make sure the "About" button is right-aligned.
