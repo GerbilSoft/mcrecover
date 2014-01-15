@@ -288,6 +288,10 @@ MemCardFilePrivate::~MemCardFilePrivate()
  */
 void MemCardFilePrivate::init(void)
 {
+	// Game Code and Company are always Latin-1.
+	gamecode = QString::fromLatin1(dirEntry->gamecode, sizeof(dirEntry->gamecode));
+	company = QString::fromLatin1(dirEntry->company, sizeof(dirEntry->company));
+
 	// Get the appropriate QTextCodec for this file.
 	// TODO: If 0, default to card codec?
 	const char region = (gamecode.size() >= 4
@@ -311,17 +315,13 @@ void MemCardFilePrivate::init(void)
 		filename = textCodec->toUnicode(filenameData.constData(), filenameData.size());
 	}
 
-	// Game Code and Company are always Latin-1.
-	gamecode = QString::fromLatin1(dirEntry->gamecode, sizeof(dirEntry->gamecode));
-	company = QString::fromLatin1(dirEntry->company, sizeof(dirEntry->company));
-
-	// Timestamp.Handle the timestamp as UTC.
+	// Timestamp.
 	lastModified.setGcnTimestamp(dirEntry->lastmodified);
 
 	// Get the block size.
 	const int blockSize = card->blockSize();
 
-	// Load the block with the comments.
+	// Load the block containing the comments.
 	const int commentBlock = (dirEntry->commentaddr / blockSize);
 	const int commentOffset = (dirEntry->commentaddr % blockSize);
 
