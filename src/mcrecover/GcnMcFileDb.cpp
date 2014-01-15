@@ -821,6 +821,7 @@ SearchData GcnMcFileDbPrivate::constructSearchData(
 	QString filename = VarReplace::Exec(matchFileDef->dirEntry.filename, vars);
 
 	// Filename.
+	// FIXME: Also for 'S' (used by SADX preview)?
 	if (dirEntry->gamecode[3] == 'J' && textCodecJP) {
 		// JP file. Convert to Shift-JIS.
 		ba = textCodecJP->fromUnicode(filename);
