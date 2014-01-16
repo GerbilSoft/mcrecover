@@ -35,9 +35,8 @@
 #include <QtCore/QCoreApplication>
 #include <QtGui/QScrollArea>
 
-#ifdef PCRE_STATIC
+// Third-party libraries.
 #include <pcre.h>
-#endif /* PCRE_STATIC */
 
 /** AboutDialogPrivate **/
 
@@ -67,8 +66,8 @@ class AboutDialogPrivate
 		// Credits.
 		static QString GetCredits(void);
 
-		// Included libraries.
-		static QString GetIncLibraries(void);
+		// Libraries.
+		static QString GetLibraries(void);
 
 		// Debug information.
 		static QString GetDebugInfo(void);
@@ -131,8 +130,8 @@ void AboutDialogPrivate::initAboutDialogText(void)
 	ui.lblCredits->setText(sCredits);
 
 	// Set the included libraries text.
-	ui.lblIncLibraries->setTextFormat(Qt::PlainText);
-	ui.lblIncLibraries->setText(GetIncLibraries());
+	ui.lblLibraries->setTextFormat(Qt::PlainText);
+	ui.lblLibraries->setText(GetLibraries());
 
 	// Set the debug information text.
 	ui.lblDebugInfo->setTextFormat(Qt::PlainText);
@@ -156,14 +155,14 @@ void AboutDialogPrivate::initAboutDialogText(void)
 		ui.vboxCredits->addWidget(scrlCredits);
 		scrlCredits->setAutoFillBackground(false);
 
-		QScrollArea *scrlIncLibraries = new QScrollArea();
-		scrlIncLibraries->setFrameShape(QFrame::NoFrame);
-		scrlIncLibraries->setFrameShadow(QFrame::Plain);
-		scrlIncLibraries->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-		scrlIncLibraries->setWidget(ui.lblIncLibraries);
-		scrlIncLibraries->setWidgetResizable(true);
-		ui.vboxIncLibraries->addWidget(scrlIncLibraries);
-		scrlIncLibraries->setAutoFillBackground(false);
+		QScrollArea *scrlLibraries = new QScrollArea();
+		scrlLibraries->setFrameShape(QFrame::NoFrame);
+		scrlLibraries->setFrameShadow(QFrame::Plain);
+		scrlLibraries->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+		scrlLibraries->setWidget(ui.lblLibraries);
+		scrlLibraries->setWidgetResizable(true);
+		ui.vboxLibraries->addWidget(scrlLibraries);
+		scrlLibraries->setAutoFillBackground(false);
 
 		QScrollArea *scrlDebugInfo = new QScrollArea();
 		scrlDebugInfo->setFrameShape(QFrame::NoFrame);
@@ -267,51 +266,62 @@ QString AboutDialogPrivate::GetCredits(void)
 }
 
 /**
- * Get included libraries.
- * @return Included libraries.
+ * Get libraries used by GCN MemCard Recover.
+ * @return Libraries used by GCN MemCard Recover.
  */
-QString AboutDialogPrivate::GetIncLibraries(void)
+QString AboutDialogPrivate::GetLibraries(void)
 {
-	// Common strings.
+	//: Using an internal copy of a library.
 	const QString sIntCopyOf = AboutDialog::tr("Internal copy of %1.");
+	//: Using an external library, e.g. libpcre.so
+	const QString sUsingDll = AboutDialog::tr("Using %1.");
 
 	// Included libraries string.
-	QString sIncLibraries;
-	sIncLibraries.reserve(4096);
+	QString sLibraries;
+	sLibraries.reserve(4096);
 
 	// Icon set.
-	sIncLibraries = QLatin1String("Icon set is based on KDE's Oxygen icons.") + QChar(L'\n') +
+	sLibraries = QLatin1String("Icon set is based on KDE's Oxygen icons.") + QChar(L'\n') +
 		QLatin1String("Copyright (C) 2005-2013 by David Vignoni.") + QChar(L'\n') +
 		QLatin1String("Licenses: CC BY-SA 3.0, GNU LGPL v2.1+");
 
-	// Statically-linked Qt.
+	// Qt
+	sLibraries += QChar(L'\n') + QChar(L'\n');
+	QString qtVersion = QLatin1String("Qt ") + QLatin1String(qVersion());
 #ifdef QT_IS_STATIC
-	sIncLibraries += QChar(L'\n');
-	sIncLibraries += QChar(L'\n') + sIntCopyOf.arg(QLatin1String("Qt " QT_VERSION_STR));
-	sIncLibraries += QChar(L'\n') +
-		QLatin1String("Copyright (C) 1995-2013 Digita Plc and/or its subsidiaries.");
-#if QT_VERSION >= 0x040500
-	sIncLibraries += QChar(L'\n') + QLatin1String("Licenses: GNU LGPL v2.1+, GNU GPL v2+");
+	sLibraries += sIntCopyOf.arg(qtVersion);
 #else
-	sIncLibraries += QChar(L'\n') + QLatin1String("License: GNU GPL v2+");
-#endif /* QT_VERSION */
+	sLibraries += sUsingDll.arg(qtVersion);
 #endif /* QT_IS_STATIC */
+	sLibraries += QChar(L'\n') +
+		QLatin1String("Copyright (C) 1995-2013 Digita Plc and/or its subsidiaries.");
+	// TODO: Check QT_VERSION at runtime?
+#if QT_VERSION >= 0x040500
+	sLibraries += QChar(L'\n') + QLatin1String("Licenses: GNU LGPL v2.1+, GNU GPL v2+");
+#else
+	sLibraries += QChar(L'\n') + QLatin1String("License: GNU GPL v2+");
+#endif /* QT_VERSION */
 
-	// Statically-linked PCRE.
+	// PCRE
+	sLibraries += QChar(L'\n') + QChar(L'\n');
+
+	QString pcreVersion = QLatin1String(pcre_version());
+	int pcre_space = pcreVersion.indexOf(QChar(L' '));
+	if (pcre_space > 0)
+		pcreVersion.resize(pcre_space);
+	pcreVersion.prepend(QLatin1String("PCRE "));
+
 #ifdef PCRE_STATIC
-	const QString pcreVersionStr = QLatin1String("PCRE %1.%2");
-
-	sIncLibraries += QChar(L'\n');
-	sIncLibraries += QChar(L'\n') + sIntCopyOf.arg(pcreVersionStr
-					.arg(PCRE_MAJOR)
-					.arg(PCRE_MINOR));
-	sIncLibraries += QChar(L'\n') +
-		QLatin1String("Copyright (C) 1997-2013 University of Cambridge.");
-	sIncLibraries += QChar(L'\n') + QLatin1String("License: BSD (3-clause)");
-#endif	
+	sLibraries += sIntCopyOf.arg(pcreVersion);
+#else
+	sLibraries += sUsingDll.arg(pcreVersion);
+#endif /* PCRE_STATIC */
+	sLibraries += QChar(L'\n') +
+		QLatin1String("Copyright (C) 1997-2014 University of Cambridge.");
+	sLibraries += QChar(L'\n') + QLatin1String("License: BSD (3-clause)");
 
 	// Return the included libraries string.
-	return sIncLibraries;
+	return sLibraries;
 }
 
 /**
@@ -520,8 +530,8 @@ AboutDialog::AboutDialog(QWidget *parent)
 	// Hide the frames.
 	d->ui.fraCopyrights->setFrameShape(QFrame::NoFrame);
 	d->ui.fraCopyrights->layout()->setContentsMargins(0, 0, 0, 0);
-	d->ui.fraIncLibraries->setFrameShape(QFrame::NoFrame);
-	d->ui.fraIncLibraries->layout()->setContentsMargins(0, 0, 0, 0);
+	d->ui.fraLibraries->setFrameShape(QFrame::NoFrame);
+	d->ui.fraLibraries->layout()->setContentsMargins(0, 0, 0, 0);
 	d->ui.fraDebugInfo->setFrameShape(QFrame::NoFrame);
 	d->ui.fraDebugInfo->layout()->setContentsMargins(0, 0, 0, 0);
 	d->ui.fraCredits->setFrameShape(QFrame::NoFrame);

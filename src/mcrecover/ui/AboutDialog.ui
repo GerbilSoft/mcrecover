@@ -90,25 +90,25 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabIncLibraries">
+     <widget class="QWidget" name="tabLibraries">
       <attribute name="title">
-       <string>Included &amp;Libraries</string>
+       <string>&amp;Libraries</string>
       </attribute>
-      <layout class="QVBoxLayout" name="vboxIncLibrariesTab">
+      <layout class="QVBoxLayout" name="vboxLibrariesTab">
        <item>
-        <widget class="QFrame" name="fraIncLibraries">
+        <widget class="QFrame" name="fraLibraries">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QVBoxLayout" name="vboxIncLibraries">
+         <layout class="QVBoxLayout" name="vboxLibraries">
           <property name="margin">
            <number>8</number>
           </property>
           <item>
-           <widget class="QLabel" name="lblIncLibraries">
+           <widget class="QLabel" name="lblLibraries">
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
             </property>
