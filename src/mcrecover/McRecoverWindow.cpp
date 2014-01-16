@@ -79,7 +79,6 @@ class McRecoverWindowPrivate
 		Q_DISABLE_COPY(McRecoverWindowPrivate)
 
 	public:
-		// UI
 		Ui::McRecoverWindow ui;
 
 		// Memory Card instance.

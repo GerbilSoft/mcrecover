@@ -45,7 +45,6 @@ class XmlTemplateDialogPrivate
 		Q_DISABLE_COPY(XmlTemplateDialogPrivate)
 
 	public:
-		// UI
 		Ui::XmlTemplateDialog ui;
 
 		const MemCardFile *file;

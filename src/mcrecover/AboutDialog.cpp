@@ -54,8 +54,6 @@ class AboutDialogPrivate
 
 	public:
 		static AboutDialog *ms_AboutDialog;
-
-		// UI
 		Ui::AboutDialog ui;
 
 		bool scrlAreaInit;
