@@ -62,7 +62,7 @@
 		<company>70</company>
 		<search>
 			<address>0x0000</address>
-			<gameDesc>^BEYBLADE S.T.B.$</gameDesc>
+			<gameDesc>^BEYBLADE S\.T\.B\.$</gameDesc>
 			<!-- Date format: MM/DD -->
 			<!-- TODO: Verify M/D vs. MM/DD -->
 			<fileDesc>^saved data on (\d{1,2})/(\d{1,2})$</fileDesc>
@@ -1831,7 +1831,7 @@
 		<company>01</company>
 		<search>
 			<address>0x0000</address>
-			<gameDesc>^Super Smash Bros. Melee$</gameDesc>
+			<gameDesc>^Super Smash Bros\. Melee$</gameDesc>
 			<!-- Date format: YYYY/MM/DD - Verify for PAL! -->
 			<fileDesc>^Game Data (\d{4})/(\d{2})/(\d{2})$</fileDesc>
 		</search>
@@ -1866,7 +1866,7 @@
 			<gameDesc>^TALES OF SYMPHONIA$</gameDesc>
 			<!-- TODO: Second line is H:MM (play time) - assuming at least 4 digits for hours maximum... -->
 			<!-- TODO: Is it M or MM? -->
-			<fileDesc>^No.(\d{3}) Lv ( \d|\d{1,2})    (\d{1,4}):(\d{2})$</fileDesc>
+			<fileDesc>^No\.(\d{3}) Lv ( \d|\d{1,2})    (\d{1,4}):(\d{2})$</fileDesc>
 		</search>
 		<variables>
 			<variable id="F1">

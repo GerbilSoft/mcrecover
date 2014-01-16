@@ -1311,7 +1311,7 @@
 		<company>01</company>
 		<search>
 			<address>0x0000</address>
-			<gameDesc>^Super Smash Bros. Melee$</gameDesc>
+			<gameDesc>^Super Smash Bros\. Melee$</gameDesc>
 			<!-- Date format: DD/MM/YYYY -->
 			<fileDesc>^(Game Data|Spielstand|Données|Datos|Dati Gioco) (\d{2})/(\d{2})/(\d{4})$</fileDesc>
 		</search>
