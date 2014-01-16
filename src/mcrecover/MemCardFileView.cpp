@@ -33,6 +33,7 @@
 
 /** MemCardFileViewPrivate **/
 
+#include "ui_MemCardFileView.h"
 class MemCardFileViewPrivate
 {
 	public:
@@ -46,6 +47,9 @@ class MemCardFileViewPrivate
 		Q_DISABLE_COPY(MemCardFileViewPrivate)
 
 	public:
+		// UI
+		Ui::MemCardFileView ui;
+
 		const MemCardFile *file;
 
 		// Icon animation helper.
@@ -89,18 +93,18 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 
 	if (!file) {
 		// Clear the widget display.
-		q->lblFileIcon->clear();
-		q->lblFileBanner->clear();
-		q->btnXML->setVisible(false);
-		q->lblFilename->clear();
-		q->lblModeTitle->setVisible(false);
-		q->lblMode->setVisible(false);
-		q->lblChecksumAlgorithmTitle->setVisible(false);
-		q->lblChecksumAlgorithm->setVisible(false);
-		q->lblChecksumActualTitle->setVisible(false);
-		q->lblChecksumActual->setVisible(false);
-		q->lblChecksumExpectedTitle->setVisible(false);
-		q->lblChecksumExpected->setVisible(false);
+		ui.lblFileIcon->clear();
+		ui.lblFileBanner->clear();
+		ui.btnXML->setVisible(false);
+		ui.lblFilename->clear();
+		ui.lblModeTitle->setVisible(false);
+		ui.lblMode->setVisible(false);
+		ui.lblChecksumAlgorithmTitle->setVisible(false);
+		ui.lblChecksumAlgorithm->setVisible(false);
+		ui.lblChecksumActualTitle->setVisible(false);
+		ui.lblChecksumActual->setVisible(false);
+		ui.lblChecksumExpectedTitle->setVisible(false);
+		ui.lblChecksumExpected->setVisible(false);
 		return;
 	}
 
@@ -109,9 +113,9 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 	// File icon.
 	QPixmap icon = file->icon(0);
 	if (!icon.isNull())
-		q->lblFileIcon->setPixmap(icon);
+		ui.lblFileIcon->setPixmap(icon);
 	else
-		q->lblFileIcon->clear();
+		ui.lblFileIcon->clear();
 
 	// Icon animation.
 	helper.setFile(file);
@@ -121,33 +125,33 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 	// File banner.
 	QPixmap banner = file->banner();
 	if (!banner.isNull())
-		q->lblFileBanner->setPixmap(banner);
+		ui.lblFileBanner->setPixmap(banner);
 	else
-		q->lblFileBanner->clear();
+		ui.lblFileBanner->clear();
 
 	// XML button.
-	q->btnXML->setVisible(true);
+	ui.btnXML->setVisible(true);
 
 	// Filename.
-	q->lblFilename->setText(file->filename());
+	ui.lblFilename->setText(file->filename());
 
 	// File permissions.
-	q->lblModeTitle->setVisible(true);
-	q->lblMode->setText(file->permissionAsString());
-	q->lblMode->setVisible(true);
+	ui.lblModeTitle->setVisible(true);
+	ui.lblMode->setText(file->permissionAsString());
+	ui.lblMode->setVisible(true);
 
 	// Checksum algorithm is always visible.
-	q->lblChecksumAlgorithmTitle->setVisible(true);
-	q->lblChecksumAlgorithm->setVisible(true);
+	ui.lblChecksumAlgorithmTitle->setVisible(true);
+	ui.lblChecksumAlgorithm->setVisible(true);
 
 	// Is the checksum known?
 	if (file->checksumStatus() == Checksum::CHKST_UNKNOWN) {
 		// Unknown checksum.
-		q->lblChecksumAlgorithm->setText(MemCardFileView::tr("Unknown", "checksum"));
-		q->lblChecksumActualTitle->setVisible(false);
-		q->lblChecksumActual->setVisible(false);
-		q->lblChecksumExpectedTitle->setVisible(false);
-		q->lblChecksumExpected->setVisible(false);
+		ui.lblChecksumAlgorithm->setText(MemCardFileView::tr("Unknown", "checksum"));
+		ui.lblChecksumActualTitle->setVisible(false);
+		ui.lblChecksumActual->setVisible(false);
+		ui.lblChecksumExpectedTitle->setVisible(false);
+		ui.lblChecksumExpected->setVisible(false);
 		return;
 	}
 
@@ -156,40 +160,40 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 	// Display the algorithm.
 	// TODO: Also the polynomial / parameter?
 	Checksum::ChkAlgorithm algorithm = file->checksumAlgorithm();
-	q->lblChecksumAlgorithm->setText(
+	ui.lblChecksumAlgorithm->setText(
 		QString::fromStdString(Checksum::ChkAlgorithmToStringFormatted(algorithm)));
 
 	// Show the actual checksum labels.
-	q->lblChecksumActualTitle->setVisible(true);
-	q->lblChecksumActual->setVisible(true);
+	ui.lblChecksumActualTitle->setVisible(true);
+	ui.lblChecksumActual->setVisible(true);
 
 	// Format the checksum values.
 	QVector<QString> checksumValuesFormatted = file->checksumValuesFormatted();
 	if (checksumValuesFormatted.size() < 1) {
 		// No checksum...
-		q->lblChecksumAlgorithm->setText(MemCardFileView::tr("Unknown", "checksum"));
-		q->lblChecksumActualTitle->setVisible(false);
-		q->lblChecksumActual->setVisible(false);
-		q->lblChecksumExpectedTitle->setVisible(false);
-		q->lblChecksumExpected->setVisible(false);
+		ui.lblChecksumAlgorithm->setText(MemCardFileView::tr("Unknown", "checksum"));
+		ui.lblChecksumActualTitle->setVisible(false);
+		ui.lblChecksumActual->setVisible(false);
+		ui.lblChecksumExpectedTitle->setVisible(false);
+		ui.lblChecksumExpected->setVisible(false);
 		return;
 	}
 
 	// Set the actual checksum text.
-	q->lblChecksumActual->setText(checksumValuesFormatted.at(0));
+	ui.lblChecksumActual->setText(checksumValuesFormatted.at(0));
 
 	if (checksumValuesFormatted.size() > 1) {
 		// At least one checksum is invalid.
 		// Show the expected checksum.
-		q->lblChecksumExpectedTitle->setVisible(true);
-		q->lblChecksumExpected->setVisible(true);
-		q->lblChecksumExpected->setText(checksumValuesFormatted.at(1));
+		ui.lblChecksumExpectedTitle->setVisible(true);
+		ui.lblChecksumExpected->setVisible(true);
+		ui.lblChecksumExpected->setText(checksumValuesFormatted.at(1));
 	} else {
 		// Checksums are all valid.
 		// Hide the expected checksum.
-		q->lblChecksumExpectedTitle->setVisible(false);
-		q->lblChecksumExpected->setVisible(false);
-		q->lblChecksumExpected->clear();
+		ui.lblChecksumExpectedTitle->setVisible(false);
+		ui.lblChecksumExpected->setVisible(false);
+		ui.lblChecksumExpected->clear();
 	}
 }
 
@@ -199,19 +203,19 @@ MemCardFileView::MemCardFileView(QWidget *parent)
 	: QWidget(parent)
 	, d_ptr(new MemCardFileViewPrivate(this))
 {
-	setupUi(this);
+	Q_D(MemCardFileView);
+	d->ui.setupUi(this);
 
 	// Set monospace fonts.
 	QFont fntMonospace;
 	fntMonospace.setFamily(QLatin1String("Monospace"));
 	fntMonospace.setStyleHint(QFont::TypeWriter);
-	lblMode->setFont(fntMonospace);
+	d->ui.lblMode->setFont(fntMonospace);
 
 	fntMonospace.setBold(true);
-	lblChecksumActual->setFont(fntMonospace);
-	lblChecksumExpected->setFont(fntMonospace);
+	d->ui.lblChecksumActual->setFont(fntMonospace);
+	d->ui.lblChecksumExpected->setFont(fntMonospace);
 
-	Q_D(MemCardFileView);
 	d->updateWidgetDisplay();
 }
 
@@ -267,7 +271,7 @@ void MemCardFileView::changeEvent(QEvent *event)
 	if (event->type() == QEvent::LanguageChange) {
 		// Retranslate the UI.
 		Q_D(MemCardFileView);
-		retranslateUi(this);
+		d->ui.retranslateUi(this);
 		d->updateWidgetDisplay();
 	}
 
@@ -313,7 +317,7 @@ void MemCardFileView::animTimer_slot(void)
 	bool iconUpdated = d->helper.tick();
 	if (iconUpdated) {
 		// Icon has been updated.
-		lblFileIcon->setPixmap(d->helper.icon());
+		d->ui.lblFileIcon->setPixmap(d->helper.icon());
 	}
 }
 

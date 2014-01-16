@@ -57,6 +57,7 @@
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDropEvent>
 #include <QtGui/QFileDialog>
+#include <QtGui/QLabel>
 #include <QtGui/QMessageBox>
 #include <QtGui/QToolBar>
 

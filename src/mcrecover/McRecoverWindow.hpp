@@ -26,7 +26,6 @@
 
 // Qt includes.
 #include <QtCore/QString>
-#include <QtCore/QVector>
 #include <QtCore/QModelIndex>
 
 // MemCard Recover classes.

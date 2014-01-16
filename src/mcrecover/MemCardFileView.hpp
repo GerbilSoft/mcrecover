@@ -23,14 +23,13 @@
 #define __MCRECOVER_MEMCARDFILEVIEW_HPP__
 
 #include <QtGui/QWidget>
-#include "ui_MemCardFileView.h"
 
 // MemCardFile class.
 class MemCardFile;
 
 class MemCardFileViewPrivate;
 
-class MemCardFileView : public QWidget, public Ui::MemCardFileView
+class MemCardFileView : public QWidget
 {
 	Q_OBJECT
 

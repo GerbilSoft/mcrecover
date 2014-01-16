@@ -36,6 +36,7 @@ using std::vector;
 
 /** MemCardViewPrivate **/
 
+#include "ui_MemCardView.h"
 class MemCardViewPrivate
 {
 	public:
@@ -49,6 +50,8 @@ class MemCardViewPrivate
 		Q_DISABLE_COPY(MemCardViewPrivate)
 
 	public:
+		Ui::MemCardView ui;
+
 		const MemCard *card;
 
 		/**
@@ -75,23 +78,23 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 	if (!card) {
 		// Hide the widget display.
 		// TODO: Better method?
-		q->lblBlockCount->setVisible(false);
-		q->lblStatusIcon->setVisible(false);
-		q->lblEncodingTitle->setVisible(false);
-		q->lblEncoding->setVisible(false);
-		q->lblChecksumActualTitle->setVisible(false);
-		q->lblChecksumActual->setVisible(false);
-		q->lblChecksumExpectedTitle->setVisible(false);
-		q->lblChecksumExpected->setVisible(false);
+		ui.lblBlockCount->setVisible(false);
+		ui.lblStatusIcon->setVisible(false);
+		ui.lblEncodingTitle->setVisible(false);
+		ui.lblEncoding->setVisible(false);
+		ui.lblChecksumActualTitle->setVisible(false);
+		ui.lblChecksumActual->setVisible(false);
+		ui.lblChecksumExpectedTitle->setVisible(false);
+		ui.lblChecksumExpected->setVisible(false);
 		return;
 	}
 
 	// Show the widget display.
-	q->lblBlockCount->setVisible(true);
-	q->lblEncodingTitle->setVisible(true);
-	q->lblEncoding->setVisible(true);
-	q->lblChecksumActualTitle->setVisible(true);
-	q->lblChecksumActual->setVisible(true);
+	ui.lblBlockCount->setVisible(true);
+	ui.lblEncodingTitle->setVisible(true);
+	ui.lblEncoding->setVisible(true);
+	ui.lblChecksumActualTitle->setVisible(true);
+	ui.lblChecksumActual->setVisible(true);
 
 	// Update the widget display.
 	bool isCardHeaderValid = true;
@@ -102,28 +105,28 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 	vector<string> checksumValuesFormatted = Checksum::ChecksumValuesFormatted(checksumValues);
 	if (checksumValuesFormatted.size() < 1) {
 		// No checksum...
-		q->lblChecksumActual->setText(MemCardView::tr("Unknown", "checksum"));
-		q->lblChecksumExpectedTitle->setVisible(false);
-		q->lblChecksumExpected->setVisible(false);
+		ui.lblChecksumActual->setText(MemCardView::tr("Unknown", "checksum"));
+		ui.lblChecksumExpectedTitle->setVisible(false);
+		ui.lblChecksumExpected->setVisible(false);
 	} else {
 		// Set the actual checksum text.
-		q->lblChecksumActual->setText(
+		ui.lblChecksumActual->setText(
 			QString::fromStdString(checksumValuesFormatted.at(0)));
 
 		if (checksumValuesFormatted.size() > 1) {
 			// At least one checksum is invalid.
 			isCardHeaderValid = false;
 			// Show the expected checksum.
-			q->lblChecksumExpectedTitle->setVisible(true);
-			q->lblChecksumExpected->setVisible(true);
-			q->lblChecksumExpected->setText(
+			ui.lblChecksumExpectedTitle->setVisible(true);
+			ui.lblChecksumExpected->setVisible(true);
+			ui.lblChecksumExpected->setText(
 				QString::fromStdString(checksumValuesFormatted.at(1)));
 		} else {
 			// Checksums are all valid.
 			// Hide the expected checksum.
-			q->lblChecksumExpectedTitle->setVisible(false);
-			q->lblChecksumExpected->setVisible(false);
-			q->lblChecksumExpected->clear();
+			ui.lblChecksumExpectedTitle->setVisible(false);
+			ui.lblChecksumExpected->setVisible(false);
+			ui.lblChecksumExpected->clear();
 		}
 	}
 
@@ -137,21 +140,21 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 	}
 
 	// Block count.
-	q->lblBlockCount->setText(MemCardView::tr("%L1 block(s) (%L2 free)")
+	ui.lblBlockCount->setText(MemCardView::tr("%L1 block(s) (%L2 free)")
 				.arg(card->sizeInBlocksNoSys())
 				.arg(card->freeBlocks()));
 
 	// Status icon.
 	if (isCardHeaderValid) {
 		// Card header is valid.
-		q->lblStatusIcon->setVisible(false);
+		ui.lblStatusIcon->setVisible(false);
 	} else {
 		// Card header is invalid.
 		QIcon icon = McRecoverQApplication::IconFromTheme(QLatin1String("dialog-error"));
 		// TODO: What size?
-		q->lblStatusIcon->setPixmap(icon.pixmap(16, 16));
-		q->lblStatusIcon->setToolTip(MemCardView::tr("Memory card header is corrupted."));
-		q->lblStatusIcon->setVisible(true);
+		ui.lblStatusIcon->setPixmap(icon.pixmap(16, 16));
+		ui.lblStatusIcon->setToolTip(MemCardView::tr("Memory card header is corrupted."));
+		ui.lblStatusIcon->setVisible(true);
 	}
 
 	// Encoding.
@@ -166,7 +169,7 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 			encoding = QLatin1String("cp1252");
 			break;
 	}
-	q->lblEncoding->setText(encoding);
+	ui.lblEncoding->setText(encoding);
 }
 
 /** McRecoverWindow **/
@@ -175,17 +178,17 @@ MemCardView::MemCardView(QWidget *parent)
 	: QWidget(parent)
 	, d_ptr(new MemCardViewPrivate(this))
 {
-	setupUi(this);
+	Q_D(MemCardView);
+	d->ui.setupUi(this);
 
 	// Set monospace fonts.
 	QFont fntMonospace;
 	fntMonospace.setFamily(QLatin1String("Monospace"));
 	fntMonospace.setStyleHint(QFont::TypeWriter);
 	fntMonospace.setBold(true);
-	lblChecksumActual->setFont(fntMonospace);
-	lblChecksumExpected->setFont(fntMonospace);
+	d->ui.lblChecksumActual->setFont(fntMonospace);
+	d->ui.lblChecksumExpected->setFont(fntMonospace);
 
-	Q_D(MemCardView);
 	d->updateWidgetDisplay();
 }
 
@@ -240,7 +243,7 @@ void MemCardView::changeEvent(QEvent *event)
 	if (event->type() == QEvent::LanguageChange) {
 		// Retranslate the UI.
 		Q_D(MemCardView);
-		retranslateUi(this);
+		d->ui.retranslateUi(this);
 		d->updateWidgetDisplay();
 	}
 

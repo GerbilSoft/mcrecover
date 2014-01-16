@@ -23,14 +23,13 @@
 #define __MCRECOVER_MEMCARDVIEW_HPP__
 
 #include <QtGui/QWidget>
-#include "ui_MemCardView.h"
 
 // MemCard class.
 class MemCard;
 
 class MemCardViewPrivate;
 
-class MemCardView : public QWidget, public Ui::MemCardView
+class MemCardView : public QWidget
 {
 	Q_OBJECT
 
