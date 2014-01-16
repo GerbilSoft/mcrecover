@@ -23,18 +23,18 @@
 #define __MCRECOVER_MCRECOVERWINDOW_HPP__
 
 #include <QtGui/QMainWindow>
-#include "ui_McRecoverWindow.h"
 
 // Qt includes.
 #include <QtCore/QString>
 #include <QtCore/QVector>
+#include <QtCore/QModelIndex>
 
 // MemCard Recover classes.
 class MemCardFile;
 
 class McRecoverWindowPrivate;
 
-class McRecoverWindow : public QMainWindow, public Ui::McRecoverWindow
+class McRecoverWindow : public QMainWindow
 {
 	Q_OBJECT
 	

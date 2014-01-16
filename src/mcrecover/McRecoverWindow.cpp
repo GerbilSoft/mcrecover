@@ -65,6 +65,7 @@
 
 /** McRecoverWindowPrivate **/
 
+#include "ui_McRecoverWindow.h"
 class McRecoverWindowPrivate
 {
 	public:
@@ -78,6 +79,9 @@ class McRecoverWindowPrivate
 		Q_DISABLE_COPY(McRecoverWindowPrivate)
 
 	public:
+		// UI
+		Ui::McRecoverWindow ui;
+
 		// Memory Card instance.
 		MemCard *card;
 
@@ -220,28 +224,10 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 
 McRecoverWindowPrivate::~McRecoverWindowPrivate()
 {
-	delete model;
 	delete card;
 
 	// TODO: Wait for searchThread to finish?
 	delete searchThread;
-
-	delete statusBarManager;
-
-	delete lblPreferredRegion;
-	delete actgrpRegion;
-	delete mapperPreferredRegion;
-
-	delete actgrpAnimIconFormat;
-	delete mapperAnimIconFormat;
-
-	// NOTE: These probably aren't needed, and might actually
-	// decrease performance due to menuLanguage receiving
-	// "destroyed" signals for all of these actions.
-	delete actTsSysDefault;
-	qDeleteAll(vActionsTS);
-	vActionsTS.clear();
-	delete actgrpTS;
 }
 
 /**
@@ -249,18 +235,16 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
  */
 void McRecoverWindowPrivate::updateLstFileList(void)
 {
-	Q_Q(McRecoverWindow);
-
 	if (!card) {
 		// Set the group box's title.
-		q->grpFileList->setTitle(McRecoverWindow::tr("No memory card loaded."));
+		ui.grpFileList->setTitle(McRecoverWindow::tr("No memory card loaded."));
 	} else {
 		// Show the filename.
-		q->grpFileList->setTitle(displayFilename);
+		ui.grpFileList->setTitle(displayFilename);
 	}
 
 	// Show the QTreeView headers if a memory card is loaded.
-	q->lstFileList->setHeaderHidden(!card);
+	ui.lstFileList->setHeaderHidden(!card);
 
 	// Update the action enable status.
 	updateActionEnableStatus();
@@ -268,8 +252,8 @@ void McRecoverWindowPrivate::updateLstFileList(void)
 	// Resize the columns to fit the contents.
 	int num_sections = model->columnCount();
 	for (int i = 0; i < num_sections; i++)
-		q->lstFileList->resizeColumnToContents(i);
-	q->lstFileList->resizeColumnToContents(num_sections);
+		ui.lstFileList->resizeColumnToContents(i);
+	ui.lstFileList->resizeColumnToContents(num_sections);
 }
 
 /**
@@ -277,53 +261,51 @@ void McRecoverWindowPrivate::updateLstFileList(void)
  */
 void McRecoverWindowPrivate::initToolbar(void)
 {
-	Q_Q(McRecoverWindow);
-
 	// Set action icons.
-	q->actionOpen->setIcon(
+	ui.actionOpen->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("document-open")));
-	q->actionClose->setIcon(
+	ui.actionClose->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("document-close")));
-	q->actionScan->setIcon(
+	ui.actionScan->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("edit-find")));
-	q->actionSave->setIcon(
+	ui.actionSave->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("document-save")));
-	q->actionSaveAll->setIcon(
+	ui.actionSaveAll->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("document-save-all")));
-	q->actionExit->setIcon(
+	ui.actionExit->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("application-exit")));
-	q->actionAbout->setIcon(
+	ui.actionAbout->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("help-about")));
 
 	// Disable save actions by default.
-	q->actionSave->setEnabled(false);
-	q->actionSaveAll->setEnabled(false);
+	ui.actionSave->setEnabled(false);
+	ui.actionSaveAll->setEnabled(false);
 
 	// Add a label for the "Preferred region" buttons.
 	lblPreferredRegion = new QLabel();
-	q->toolBar->insertWidget(q->actionRegionUSA, lblPreferredRegion);
+	ui.toolBar->insertWidget(ui.actionRegionUSA, lblPreferredRegion);
 
 	// Set up the QActionGroup for the "Preferred region" buttons.
-	actgrpRegion->addAction(q->actionRegionUSA);
-	actgrpRegion->addAction(q->actionRegionPAL);
-	actgrpRegion->addAction(q->actionRegionJPN);
-	actgrpRegion->addAction(q->actionRegionKOR);
+	actgrpRegion->addAction(ui.actionRegionUSA);
+	actgrpRegion->addAction(ui.actionRegionPAL);
+	actgrpRegion->addAction(ui.actionRegionJPN);
+	actgrpRegion->addAction(ui.actionRegionKOR);
 
 	// Connect QAction signals to the QSignalMapper.
-	QObject::connect(q->actionRegionUSA, SIGNAL(triggered()),
+	QObject::connect(ui.actionRegionUSA, SIGNAL(triggered()),
 			 mapperPreferredRegion, SLOT(map()));
-	QObject::connect(q->actionRegionPAL, SIGNAL(triggered()),
+	QObject::connect(ui.actionRegionPAL, SIGNAL(triggered()),
 			 mapperPreferredRegion, SLOT(map()));
-	QObject::connect(q->actionRegionJPN, SIGNAL(triggered()),
+	QObject::connect(ui.actionRegionJPN, SIGNAL(triggered()),
 			 mapperPreferredRegion, SLOT(map()));
-	QObject::connect(q->actionRegionKOR, SIGNAL(triggered()),
+	QObject::connect(ui.actionRegionKOR, SIGNAL(triggered()),
 			 mapperPreferredRegion, SLOT(map()));
 
 	// Set the mappings in the QSignalMapper.
-	mapperPreferredRegion->setMapping(q->actionRegionUSA, 'E');
-	mapperPreferredRegion->setMapping(q->actionRegionPAL, 'P');
-	mapperPreferredRegion->setMapping(q->actionRegionJPN, 'J');
-	mapperPreferredRegion->setMapping(q->actionRegionKOR, 'K');
+	mapperPreferredRegion->setMapping(ui.actionRegionUSA, 'E');
+	mapperPreferredRegion->setMapping(ui.actionRegionPAL, 'P');
+	mapperPreferredRegion->setMapping(ui.actionRegionJPN, 'J');
+	mapperPreferredRegion->setMapping(ui.actionRegionKOR, 'K');
 
 	// Set an initial "Preferred region".
 	// TODO: Determine default based on system locale.
@@ -331,26 +313,26 @@ void McRecoverWindowPrivate::initToolbar(void)
 	// NOTE: We're not calling trigger(), since we know
 	// which button is being checked. Hence, we need to
 	// set this->preferredRegion manually.
-	q->actionRegionUSA->setChecked(true);
+	ui.actionRegionUSA->setChecked(true);
 	this->preferredRegion = 'E';
 
 	// Set up the QActionGroup for the "Animated Icon Format" options.
-	actgrpAnimIconFormat->addAction(q->actionAnimAPNG);
-	actgrpAnimIconFormat->addAction(q->actionAnimGIF);
-	actgrpAnimIconFormat->addAction(q->actionAnimPNGfpf);
-	actgrpAnimIconFormat->addAction(q->actionAnimPNGvs);
-	actgrpAnimIconFormat->addAction(q->actionAnimPNGhs);
+	actgrpAnimIconFormat->addAction(ui.actionAnimAPNG);
+	actgrpAnimIconFormat->addAction(ui.actionAnimGIF);
+	actgrpAnimIconFormat->addAction(ui.actionAnimPNGfpf);
+	actgrpAnimIconFormat->addAction(ui.actionAnimPNGvs);
+	actgrpAnimIconFormat->addAction(ui.actionAnimPNGhs);
 
 	// Connect QAction signals to the QSignalMapper.
-	QObject::connect(q->actionAnimAPNG, SIGNAL(triggered()),
+	QObject::connect(ui.actionAnimAPNG, SIGNAL(triggered()),
 			 mapperAnimIconFormat, SLOT(map()));
-	QObject::connect(q->actionAnimGIF, SIGNAL(triggered()),
+	QObject::connect(ui.actionAnimGIF, SIGNAL(triggered()),
 			 mapperAnimIconFormat, SLOT(map()));
-	QObject::connect(q->actionAnimPNGfpf, SIGNAL(triggered()),
+	QObject::connect(ui.actionAnimPNGfpf, SIGNAL(triggered()),
 			 mapperAnimIconFormat, SLOT(map()));
-	QObject::connect(q->actionAnimPNGvs, SIGNAL(triggered()),
+	QObject::connect(ui.actionAnimPNGvs, SIGNAL(triggered()),
 			 mapperAnimIconFormat, SLOT(map()));
-	QObject::connect(q->actionAnimPNGhs, SIGNAL(triggered()),
+	QObject::connect(ui.actionAnimPNGhs, SIGNAL(triggered()),
 			 mapperAnimIconFormat, SLOT(map()));
 
 	// Set an initial animated icon format.
@@ -359,13 +341,14 @@ void McRecoverWindowPrivate::initToolbar(void)
 	// NOTE: We're not calling trigger(), since we know
 	// which button is being checked. Hence, we need to
 	// set this->preferredRegion manually.
-	q->actionAnimAPNG->setChecked(true);
+	ui.actionAnimAPNG->setChecked(true);
 	this->animIconFormat = 0;	// TODO: Enum value.
 
 	// Make sure the "About" button is right-aligned.
+	Q_Q(McRecoverWindow);
 	QWidget *spacer = new QWidget(q);
 	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	q->toolBar->insertWidget(q->actionAbout, spacer);
+	ui.toolBar->insertWidget(ui.actionAbout, spacer);
 
 	// Retranslate the toolbar.
 	retranslateToolbar();
@@ -386,25 +369,22 @@ void McRecoverWindowPrivate::retranslateToolbar(void)
  */
 void McRecoverWindowPrivate::updateActionEnableStatus(void)
 {
-	Q_Q(McRecoverWindow);
-
 	if (!card) {
 		// No memory card image is loaded.
-		q->actionClose->setEnabled(false);
-		q->actionScan->setEnabled(false);
-		q->actionSave->setEnabled(false);
-		q->actionSaveAll->setEnabled(false);
+		ui.actionClose->setEnabled(false);
+		ui.actionScan->setEnabled(false);
+		ui.actionSave->setEnabled(false);
+		ui.actionSaveAll->setEnabled(false);
 	} else {
 		// Memory card image is loaded.
 		// TODO: Disable open, scan, and save (all) if we're scanning.
-		q->actionClose->setEnabled(true);
-		q->actionScan->setEnabled(true);
-		q->actionSave->setEnabled(
-			q->lstFileList->selectionModel()->hasSelection());
-		q->actionSaveAll->setEnabled(card->numFiles() > 0);
+		ui.actionClose->setEnabled(true);
+		ui.actionScan->setEnabled(true);
+		ui.actionSave->setEnabled(
+			ui.lstFileList->selectionModel()->hasSelection());
+		ui.actionSaveAll->setEnabled(card->numFiles() > 0);
 	}
 }
-
 
 /**
  * Update the window title.
@@ -421,7 +401,6 @@ void McRecoverWindowPrivate::updateWindowTitle(void)
 	Q_Q(McRecoverWindow);
 	q->setWindowTitle(windowTitle);
 }
-
 
 /**
  * Save the specified file(s).
@@ -578,6 +557,7 @@ void McRecoverWindowPrivate::rets_actTsSysDefault(void)
 		QObject::connect(actTsSysDefault, SIGNAL(triggered()),
 				 mapperTS, SLOT(map()));
 	}
+
 	//: Translation: System Default (retrieved from system settings)
 	actTsSysDefault->setText(
 		McRecoverWindow::tr("System Default (%1)", "ts-language")
@@ -593,7 +573,7 @@ void McRecoverWindowPrivate::initTsMenu(void)
 	Q_Q(McRecoverWindow);
 
 	// Clear the Translations menu first.
-	q->menuLanguage->clear();
+	ui.menuLanguage->clear();
 	if (actgrpTS)
 		delete actgrpTS;
 	qDeleteAll(vActionsTS);
@@ -603,10 +583,10 @@ void McRecoverWindowPrivate::initTsMenu(void)
 	// Add the system default translation.
 	rets_actTsSysDefault();
 	actgrpTS->addAction(actTsSysDefault);
-	q->menuLanguage->addAction(actTsSysDefault);
+	ui.menuLanguage->addAction(actTsSysDefault);
 
 	// Add all other translations.
-	q->menuLanguage->addSeparator();
+	ui.menuLanguage->addSeparator();
 	QMap<QString, QString> tsMap = TranslationManager::instance()->enumerate();
 	vActionsTS.reserve(tsMap.size());
 	foreach (QString tsLocale, tsMap.keys()) {
@@ -618,7 +598,7 @@ void McRecoverWindowPrivate::initTsMenu(void)
 		QObject::connect(actTs, SIGNAL(triggered()),
 				 mapperTS, SLOT(map()));
 		mapperTS->setMapping(actTs, tsLocale);
-		q->menuLanguage->addAction(actTs);
+		ui.menuLanguage->addAction(actTs);
 	}
 
 	// Set the default language.
@@ -632,7 +612,8 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	: QMainWindow(parent)
 	, d_ptr(new McRecoverWindowPrivate(this))
 {
-	setupUi(this);
+	Q_D(McRecoverWindow);
+	d->ui.setupUi(this);
 
 	// Make sure the window is deleted on close.
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -653,8 +634,6 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 #endif
 #endif
 
-	Q_D(McRecoverWindow);
-
 	// Set up the QSplitter sizes.
 	// We want the card info panel to be 160px wide at startup.
 	// TODO: Save positioning settings somewhere?
@@ -662,48 +641,47 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	QList<int> sizes;
 	sizes.append(this->width() - MemCardInfoPanelWidth);
 	sizes.append(MemCardInfoPanelWidth);
-	splitter->setSizes(sizes);
+	d->ui.splitter->setSizes(sizes);
 
 	// Set the splitter stretch factors.
 	// We want the QTreeView to stretch, but not the card info panel.
-	splitter->setStretchFactor(0, 1);
-	splitter->setStretchFactor(1, 0);
+	d->ui.splitter->setStretchFactor(0, 1);
+	d->ui.splitter->setStretchFactor(1, 0);
 
 	// Initialize lstFileList's item delegate.
-	lstFileList->setItemDelegate(new MemCardItemDelegate(this));
+	d->ui.lstFileList->setItemDelegate(new MemCardItemDelegate(this));
 
 	// Set lstFileList's model.
-	lstFileList->setModel(d->model);
+	d->ui.lstFileList->setModel(d->model);
 
 	// Don't expand the last header column to fill the QTreeView.
-	lstFileList->header()->setStretchLastSection(false);
+	d->ui.lstFileList->header()->setStretchLastSection(false);
 
 	// Show icon, description, size, mtime, permission, and gamecode by default.
 	// TODO: Allow the user to customize the columns, and save the 
 	// customized columns somewhere.
-	lstFileList->setColumnHidden(MemCardModel::COL_ICON, false);
-	lstFileList->setColumnHidden(MemCardModel::COL_BANNER, true);
-	lstFileList->setColumnHidden(MemCardModel::COL_DESCRIPTION, false);
-	lstFileList->setColumnHidden(MemCardModel::COL_SIZE, false);
-	lstFileList->setColumnHidden(MemCardModel::COL_MTIME, false);
-	lstFileList->setColumnHidden(MemCardModel::COL_PERMISSION, false);
-	lstFileList->setColumnHidden(MemCardModel::COL_GAMECODE, false);
-	lstFileList->setColumnHidden(MemCardModel::COL_FILENAME, true);
+	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_ICON, false);
+	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_BANNER, true);
+	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_DESCRIPTION, false);
+	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_SIZE, false);
+	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_MTIME, false);
+	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_PERMISSION, false);
+	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_GAMECODE, false);
+	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_FILENAME, true);
 
 	// Connect the lstFileList slots.
-	connect(lstFileList->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
+	connect(d->ui.lstFileList->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
 		this, SLOT(lstFileList_selectionModel_currentRowChanged(QModelIndex,QModelIndex)));
 
 	// Initialize the UI.
 	d->updateLstFileList();
 	d->initToolbar();
 	d->initTsMenu();
-	d->statusBarManager = new StatusBarManager(
-		this->Ui_McRecoverWindow::statusBar, this);
+	d->statusBarManager = new StatusBarManager(d->ui.statusBar, this);
 	d->updateWindowTitle();
 
 	// Shh... it's a secret to everybody.
-	QObject::connect(lstFileList, SIGNAL(keyPress(QKeyEvent*)),
+	QObject::connect(d->ui.lstFileList, SIGNAL(keyPress(QKeyEvent*)),
 			 d->herpDerp, SLOT(widget_keyPress(QKeyEvent*)));
 }
 
@@ -711,7 +689,6 @@ McRecoverWindow::~McRecoverWindow()
 {
 	delete d_ptr;
 }
-
 
 /**
  * Open a GameCube Memory Card image.
@@ -723,8 +700,8 @@ void McRecoverWindow::openCard(QString filename)
 
 	if (d->card) {
 		d->model->setMemCard(nullptr);
-		mcCardView->setCard(nullptr);
-		mcfFileView->setFile(nullptr);
+		d->ui.mcCardView->setCard(nullptr);
+		d->ui.mcfFileView->setFile(nullptr);
 		delete d->card;
 	}
 
@@ -742,7 +719,7 @@ void McRecoverWindow::openCard(QString filename)
 
 	// Set the MemCardView's MemCard to the
 	// selected card in the QTreeView.
-	mcCardView->setCard(d->card);
+	d->ui.mcCardView->setCard(d->card);
 
 	// Update the UI.
 	d->updateLstFileList();
@@ -754,7 +731,6 @@ void McRecoverWindow::openCard(QString filename)
 	// (Signal is emitted, but nothing is highlighted.)
 }
 
-
 /**
  * Close the currently-opened GameCube Memory Card image.
  */
@@ -763,8 +739,8 @@ void McRecoverWindow::closeCard(void)
 	Q_D(McRecoverWindow);
 
 	d->model->setMemCard(nullptr);
-	mcCardView->setCard(nullptr);
-	mcfFileView->setFile(nullptr);
+	d->ui.mcCardView->setCard(nullptr);
+	d->ui.mcfFileView->setFile(nullptr);
 	delete d->card;
 	d->card = nullptr;
 
@@ -778,7 +754,6 @@ void McRecoverWindow::closeCard(void)
 	d->updateWindowTitle();
 }
 
-
 /**
  * Widget state has changed.
  * @param event State change event.
@@ -789,7 +764,7 @@ void McRecoverWindow::changeEvent(QEvent *event)
 
 	if (event->type() == QEvent::LanguageChange) {
 		// Retranslate the UI.
-		retranslateUi(this);
+		d->ui.retranslateUi(this);
 		d->updateLstFileList();
 		d->updateWindowTitle();
 		d->retranslateToolbar();
@@ -804,7 +779,6 @@ void McRecoverWindow::changeEvent(QEvent *event)
 	// Pass the event to the base class.
 	this->QMainWindow::changeEvent(event);
 }
-
 
 /**
  * An item is being dragged onto the window.
@@ -835,7 +809,6 @@ void McRecoverWindow::dragEnterEvent(QDragEnterEvent *event)
 	event->setDropAction(Qt::CopyAction);
 	event->accept();
 }
-
 
 /**
  * An item has been dropped onto the window.
@@ -877,7 +850,6 @@ void McRecoverWindow::dropEvent(QDropEvent *event)
 	openCard(filename);
 }
 
-
 /**
  * Mark the UI as busy.
  * Calls to this function stack, so if markUiBusy()
@@ -890,11 +862,10 @@ void McRecoverWindow::markUiBusy(void)
 	if (d->uiBusyCounter == 1) {
 		// UI is now busy.
 		this->setCursor(Qt::WaitCursor);
-		this->Ui_McRecoverWindow::menuBar->setEnabled(false);
+		d->ui.menuBar->setEnabled(false);
 		this->centralWidget()->setEnabled(false);
 	}
 }
-
 
 /**
  * Mark the UI as not busy.
@@ -913,15 +884,13 @@ void McRecoverWindow::markUiNotBusy(void)
 	d->uiBusyCounter--;
 	if (d->uiBusyCounter == 0) {
 		// UI is no longer busy.
-		this->Ui_McRecoverWindow::menuBar->setEnabled(true);
+		d->ui.menuBar->setEnabled(true);
 		this->centralWidget()->setEnabled(true);
 		this->unsetCursor();
 	}
 }
 
-
 /** UI widget slots. **/
-
 
 /**
  * Open a memory card image.
@@ -942,7 +911,6 @@ void McRecoverWindow::on_actionOpen_triggered(void)
 	openCard(filename);
 }
 
-
 /**
  * Close the currently-opened memory card image.
  */
@@ -954,7 +922,6 @@ void McRecoverWindow::on_actionClose_triggered(void)
 
 	closeCard();
 }
-
 
 /**
  * Scan for lost files.
@@ -1001,7 +968,7 @@ void McRecoverWindow::on_actionScan_triggered(void)
 	d->statusBarManager->setSearchThread(d->searchThread);
 
 	// Should we search used blocks?
-	const bool searchUsedBlocks = actionSearchUsedBlocks->isChecked();
+	const bool searchUsedBlocks = d->ui.actionSearchUsedBlocks->isChecked();
 	if (!searchUsedBlocks && d->card->freeBlocks() <= 0) {
 		// TODO: Print a message in the status bar.
 		// For now, the search thread will simply indicate
@@ -1020,7 +987,6 @@ void McRecoverWindow::on_actionScan_triggered(void)
 	}
 }
 
-
 /**
  * Exit the program.
  * TODO: Separate close/exit for Mac OS X?
@@ -1031,7 +997,6 @@ void McRecoverWindow::on_actionExit_triggered(void)
 	this->close();
 }
 
-
 /**
  * Show the About dialog.
  */
@@ -1040,20 +1005,17 @@ void McRecoverWindow::on_actionAbout_triggered(void)
 	AboutDialog::ShowSingle(this);
 }
 
-
 /** Save actions. **/
-
 
 /**
  * Save the selected file(s).
  */
 void McRecoverWindow::on_actionSave_triggered(void)
 {
-	QModelIndexList selList = lstFileList->selectionModel()->selectedRows();
+	Q_D(McRecoverWindow);
+	QModelIndexList selList = d->ui.lstFileList->selectionModel()->selectedRows();
 	if (selList.isEmpty())
 		return;
-
-	Q_D(McRecoverWindow);
 
 	QVector<MemCardFile*> files;
 	files.reserve(selList.size());
@@ -1071,7 +1033,6 @@ void McRecoverWindow::on_actionSave_triggered(void)
 	// Save the files.
 	d->saveFiles(files);
 }
-
 
 /**
  * Save all files.
@@ -1187,11 +1148,11 @@ void McRecoverWindow::lstFileList_selectionModel_currentRowChanged(
 	// FIXME: Selection model is empty due to the initial selection bug
 	// that happens if a file was specified on the command line.
 	//actionSave->setEnabled(lstFileList->selectionModel()->hasSelection());
-	actionSave->setEnabled(current.row() >= 0);
+	d->ui.actionSave->setEnabled(current.row() >= 0);
 
 	// Set the MemCardFileView's MemCardFile to the
 	// selected file in the QTreeView.
-	mcfFileView->setFile(d->card->getFile(current.row()));
+	d->ui.mcfFileView->setFile(d->card->getFile(current.row()));
 }
 
 /**

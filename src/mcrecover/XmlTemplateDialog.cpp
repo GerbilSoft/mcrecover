@@ -32,6 +32,7 @@
 
 /** XmlTemplateDialogPrivate **/
 
+#include "ui_XmlTemplateDialog.h"
 class XmlTemplateDialogPrivate
 {
 	public:
@@ -44,6 +45,9 @@ class XmlTemplateDialogPrivate
 		Q_DISABLE_COPY(XmlTemplateDialogPrivate)
 
 	public:
+		// UI
+		Ui::XmlTemplateDialog ui;
+
 		const MemCardFile *file;
 
 		// XML template.
@@ -96,8 +100,8 @@ void XmlTemplateDialogPrivate::updateWindowText(void)
 	}
 
 	q->setWindowTitle(winTitle);
-	q->lblTemplateDesc->setText(templateDesc);
-	q->txtTemplate->setPlainText(xmlTemplate);
+	ui.lblTemplateDesc->setText(templateDesc);
+	ui.txtTemplate->setPlainText(xmlTemplate);
 }
 
 /**
@@ -209,7 +213,8 @@ XmlTemplateDialog::XmlTemplateDialog(const MemCardFile *file, QWidget *parent)
  */
 void XmlTemplateDialog::init(void)
 {
-	setupUi(this);
+	Q_D(XmlTemplateDialog);
+	d->ui.setupUi(this);
 
 	// Make sure the window is deleted on close.
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -222,7 +227,6 @@ void XmlTemplateDialog::init(void)
 	// FIXME: QPlainTextEdit cursor doesn't show up when readOnly.
 
 	// Update the window text.
-	Q_D(XmlTemplateDialog);
 	d->generateXmlTemplate();
 	d->updateWindowText();
 }
@@ -243,10 +247,10 @@ void XmlTemplateDialog::changeEvent(QEvent *event)
 {
 	if (event->type() == QEvent::LanguageChange) {
 		// Retranslate the UI.
-		retranslateUi(this);
+		Q_D(XmlTemplateDialog);
+		d->ui.retranslateUi(this);
 
 		// Update the window text to retranslate descriptions.
-		Q_D(XmlTemplateDialog);
 		d->generateXmlTemplate();
 		d->updateWindowText();
 	}

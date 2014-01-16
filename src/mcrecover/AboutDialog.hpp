@@ -23,14 +23,13 @@
 #define __MCRECOVER_ABOUTDIALOG_HPP__
 
 #include <QtGui/QDialog>
-#include "ui_AboutDialog.h"
 
 // Qt classes.
 class QWidget;
 
 class AboutDialogPrivate;
 
-class AboutDialog : public QDialog, public Ui::AboutDialog
+class AboutDialog : public QDialog
 {
 	Q_OBJECT
 	

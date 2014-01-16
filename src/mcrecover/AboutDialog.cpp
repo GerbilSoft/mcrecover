@@ -39,7 +39,9 @@
 #include <pcre.h>
 #endif /* PCRE_STATIC */
 
+/** AboutDialogPrivate **/
 
+#include "ui_AboutDialog.h"
 class AboutDialogPrivate
 {
 	public:
@@ -53,6 +55,9 @@ class AboutDialogPrivate
 
 	public:
 		static AboutDialog *ms_AboutDialog;
+
+		// UI
+		Ui::AboutDialog ui;
 
 		bool scrlAreaInit;
 
@@ -83,7 +88,6 @@ AboutDialogPrivate::AboutDialogPrivate(AboutDialog* q)
 	: q_ptr(q)
 	, scrlAreaInit(false)
 { }
-
 
 /**
  * Initialize the About Dialog text.
@@ -116,29 +120,27 @@ void AboutDialogPrivate::initAboutDialogText(void)
 			0, QApplication::UnicodeUTF8);
 #endif
 
-	Q_Q(AboutDialog);
-
 	// Set the program title text.
-        q->lblPrgTitle->setText(sPrgTitle);
+        ui.lblPrgTitle->setText(sPrgTitle);
 
 	// Build the credits text.
 	QString sCredits = GetCredits();
 
 	// Set the credits text.
-	q->lblCredits->setTextFormat(Qt::RichText);
-	q->lblCredits->setText(sCredits);
+	ui.lblCredits->setTextFormat(Qt::RichText);
+	ui.lblCredits->setText(sCredits);
 
 	// Set the included libraries text.
-	q->lblIncLibraries->setTextFormat(Qt::PlainText);
-	q->lblIncLibraries->setText(GetIncLibraries());
+	ui.lblIncLibraries->setTextFormat(Qt::PlainText);
+	ui.lblIncLibraries->setText(GetIncLibraries());
 
 	// Set the debug information text.
-	q->lblDebugInfo->setTextFormat(Qt::PlainText);
-	q->lblDebugInfo->setText(GetDebugInfo());
+	ui.lblDebugInfo->setTextFormat(Qt::PlainText);
+	ui.lblDebugInfo->setText(GetDebugInfo());
 
 	// Set the support text.
-	q->lblSupport->setTextFormat(Qt::RichText);
-	q->lblSupport->setText(GetSupport());
+	ui.lblSupport->setTextFormat(Qt::RichText);
+	ui.lblSupport->setText(GetSupport());
 
 	if (!scrlAreaInit) {
 		// Create the scroll areas.
@@ -149,18 +151,18 @@ void AboutDialogPrivate::initAboutDialogText(void)
 		scrlCredits->setFrameShape(QFrame::NoFrame);
 		scrlCredits->setFrameShadow(QFrame::Plain);
 		scrlCredits->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-		scrlCredits->setWidget(q->lblCredits);
+		scrlCredits->setWidget(ui.lblCredits);
 		scrlCredits->setWidgetResizable(true);
-		q->vboxCredits->addWidget(scrlCredits);
+		ui.vboxCredits->addWidget(scrlCredits);
 		scrlCredits->setAutoFillBackground(false);
 
 		QScrollArea *scrlIncLibraries = new QScrollArea();
 		scrlIncLibraries->setFrameShape(QFrame::NoFrame);
 		scrlIncLibraries->setFrameShadow(QFrame::Plain);
 		scrlIncLibraries->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-		scrlIncLibraries->setWidget(q->lblIncLibraries);
+		scrlIncLibraries->setWidget(ui.lblIncLibraries);
 		scrlIncLibraries->setWidgetResizable(true);
-		q->vboxIncLibraries->addWidget(scrlIncLibraries);
+		ui.vboxIncLibraries->addWidget(scrlIncLibraries);
 		scrlIncLibraries->setAutoFillBackground(false);
 
 		QScrollArea *scrlDebugInfo = new QScrollArea();
@@ -169,18 +171,18 @@ void AboutDialogPrivate::initAboutDialogText(void)
 		// Don't turn off hscroll because the default db filename might be too long.
 		// TODO: Re-enable this once multiple db files are supported.
 		//scrlDebugInfo->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-		scrlDebugInfo->setWidget(q->lblDebugInfo);
+		scrlDebugInfo->setWidget(ui.lblDebugInfo);
 		scrlDebugInfo->setWidgetResizable(true);
-		q->vboxDebugInfo->addWidget(scrlDebugInfo);
+		ui.vboxDebugInfo->addWidget(scrlDebugInfo);
 		scrlDebugInfo->setAutoFillBackground(false);
 
 		QScrollArea *scrlSupport = new QScrollArea();
 		scrlSupport->setFrameShape(QFrame::NoFrame);
 		scrlSupport->setFrameShadow(QFrame::Plain);
 		scrlSupport->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-		scrlSupport->setWidget(q->lblSupport);
+		scrlSupport->setWidget(ui.lblSupport);
 		scrlSupport->setWidgetResizable(true);
-		q->vboxSupport->addWidget(scrlSupport);
+		ui.vboxSupport->addWidget(scrlSupport);
 		scrlSupport->setAutoFillBackground(false);
 
 		// Scroll areas initialized.
@@ -188,9 +190,8 @@ void AboutDialogPrivate::initAboutDialogText(void)
 	}
 
 	// Set initial focus to the tabWidget.
-	q->tabWidget->setFocus();
+	ui.tabWidget->setFocus();
 }
-
 
 /**
  * Credits.
@@ -265,7 +266,6 @@ QString AboutDialogPrivate::GetCredits(void)
 	return credits;
 }
 
-
 /**
  * Get included libraries.
  * @return Included libraries.
@@ -314,7 +314,6 @@ QString AboutDialogPrivate::GetIncLibraries(void)
 	return sIncLibraries;
 }
 
-
 /**
  * Get debug information.
  * @return Debug information.
@@ -356,7 +355,6 @@ QString AboutDialogPrivate::GetDebugInfo(void)
 
 	return sDebugInfo;
 }
-
 
 #ifdef Q_OS_WIN
 #define WIN32_LEAN_AND_MEAN
@@ -442,7 +440,6 @@ QString AboutDialogPrivate::GetCodePageInfo(void)
 }
 #endif /* Q_OS_WIN */
 
-
 /**
  * Support.
  */
@@ -510,7 +507,8 @@ AboutDialog::AboutDialog(QWidget *parent)
 		Qt::WindowCloseButtonHint)
 	, d_ptr(new AboutDialogPrivate(this))
 {
-	setupUi(this);
+	Q_D(AboutDialog);
+	d->ui.setupUi(this);
 
 	// Make sure the window is deleted on close.
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -520,21 +518,19 @@ AboutDialog::AboutDialog(QWidget *parent)
 	this->setWindowIcon(QIcon());
 
 	// Hide the frames.
-	fraCopyrights->setFrameShape(QFrame::NoFrame);
-	fraCopyrights->layout()->setContentsMargins(0, 0, 0, 0);
-	fraIncLibraries->setFrameShape(QFrame::NoFrame);
-	fraIncLibraries->layout()->setContentsMargins(0, 0, 0, 0);
-	fraDebugInfo->setFrameShape(QFrame::NoFrame);
-	fraDebugInfo->layout()->setContentsMargins(0, 0, 0, 0);
-	fraCredits->setFrameShape(QFrame::NoFrame);
-	fraCredits->layout()->setContentsMargins(0, 0, 0, 0);
+	d->ui.fraCopyrights->setFrameShape(QFrame::NoFrame);
+	d->ui.fraCopyrights->layout()->setContentsMargins(0, 0, 0, 0);
+	d->ui.fraIncLibraries->setFrameShape(QFrame::NoFrame);
+	d->ui.fraIncLibraries->layout()->setContentsMargins(0, 0, 0, 0);
+	d->ui.fraDebugInfo->setFrameShape(QFrame::NoFrame);
+	d->ui.fraDebugInfo->layout()->setContentsMargins(0, 0, 0, 0);
+	d->ui.fraCredits->setFrameShape(QFrame::NoFrame);
+	d->ui.fraCredits->layout()->setContentsMargins(0, 0, 0, 0);
 #endif
 
 	// Initialize the About Dialog text.
-	Q_D(AboutDialog);
 	d->initAboutDialogText();
 }
-
 
 /**
  * Shut down the About Dialog.
@@ -544,7 +540,6 @@ AboutDialog::~AboutDialog()
 	AboutDialogPrivate::ms_AboutDialog = nullptr;
 	delete d_ptr;
 }
-
 
 /**
  * Show a single instance of the About Dialog.
@@ -564,7 +559,6 @@ void AboutDialog::ShowSingle(QWidget *parent)
 	}
 }
 
-
 /**
  * Widget state has changed.
  * @param event State change event.
@@ -573,10 +567,10 @@ void AboutDialog::changeEvent(QEvent *event)
 {
 	if (event->type() == QEvent::LanguageChange) {
 		// Retranslate the UI.
-		retranslateUi(this);
+		Q_D(AboutDialog);
+		d->ui.retranslateUi(this);
 
 		// Reinitialize the About Dialog text.
-		Q_D(AboutDialog);
 		d->initAboutDialogText();
 	}
 

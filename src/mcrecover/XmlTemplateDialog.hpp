@@ -23,14 +23,13 @@
 #define __MCRECOVER_XMLTEMPLATEDIALOG_HPP__
 
 #include <QtGui/QDialog>
-#include "ui_XmlTemplateDialog.h"
 
 // MemCard classes.
 class MemCardFile;
 
 class XmlTemplateDialogPrivate;
 
-class XmlTemplateDialog : public QDialog, public Ui::XmlTemplateDialog
+class XmlTemplateDialog : public QDialog
 {
 	Q_OBJECT
 
