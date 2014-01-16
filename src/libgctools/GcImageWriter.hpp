@@ -54,6 +54,18 @@ class GcImageWriter
 		};
 
 		/**
+		 * Check if an image format is supported.
+		 * @return True if supported; false if not.
+		 */
+		static bool isImageFormatSupported(ImageFormat animImgf);
+
+		/**
+		 * Check if an animated image format is supported.
+		 * @return True if supported; false if not.
+		 */
+		static bool isAnimImageFormatSupported(AnimImageFormat imgf);
+
+		/**
 		 * Write a GcImage to an image file.
 		 * @param gcImage	[in] GcImage.
 		 * @param filename	[in] Output filename. (UTF-8)

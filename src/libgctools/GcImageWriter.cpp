@@ -19,6 +19,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
+#include "config.libgctools.h"
 #include "GcImageWriter.hpp"
 #include "GcImage.hpp"
 
@@ -29,7 +30,11 @@
 #include <stdlib.h>
 
 // libpng
+#ifdef HAVE_PNG
 #include <png.h>
+#endif
+
+/** GcImageWriterPrivate **/
 
 class GcImageWriterPrivate
 {
@@ -53,6 +58,7 @@ class GcImageWriterPrivate
  */
 int GcImageWriterPrivate::writePng(const GcImage *image, const char *filename)
 {
+#ifdef HAVE_PNG
 	if (!image || !filename)
 		return -EINVAL;
 
@@ -173,6 +179,41 @@ int GcImageWriterPrivate::writePng(const GcImage *image, const char *filename)
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 	fclose(fpng);
 	return 0;
+#else
+	// PNG support is not available.
+	((void)image);
+	((void)filename);
+	return -EINVAL;
+#endif
+}
+
+/** GcImageWriter **/
+
+/**
+ * Check if an image format is supported.
+ * @return True if supported; false if not.
+ */
+bool GcImageWriter::isImageFormatSupported(ImageFormat imgf)
+{
+	switch (imgf) {
+		case IMGF_PNG:	return true;
+		default:	break;
+	}
+
+	return false;
+}
+
+/**
+ * Check if an animated image format is supported.
+ * @return True if supported; false if not.
+ */
+bool GcImageWriter::isAnimImageFormatSupported(AnimImageFormat animImgf)
+{
+	switch (animImgf) {
+		default:	break;
+	}
+
+	return false;
 }
 
 /**
