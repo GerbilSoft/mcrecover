@@ -315,10 +315,18 @@ GcnMcFileDef *GcnMcFileDbPrivate::parseXml_file(QXmlStreamReader &xml)
 				gcnMcFileDef->gameName = parseXml_element(xml);
 			} else if (xml.name() == QLatin1String("gamecode")) {
 				// Game code.
-				gcnMcFileDef->gamecode = parseXml_element(xml);
+				QString gamecode = parseXml_element(xml);
+				gamecode.resize(sizeof(gcnMcFileDef->gamecode));
+				memcpy(gcnMcFileDef->gamecode,
+					gamecode.toLatin1().constData(),
+					sizeof(gcnMcFileDef->gamecode));
 			} else if (xml.name() == QLatin1String("company")) {
 				// Company code.
-				gcnMcFileDef->company = parseXml_element(xml);
+				QString company = parseXml_element(xml);
+				company.resize(sizeof(gcnMcFileDef->company));
+				memcpy(gcnMcFileDef->company,
+					company.toLatin1().constData(),
+					sizeof(gcnMcFileDef->company));
 			} else if (xml.name() == QLatin1String("regions")) {
 				// Additional region codes.
 				regionStr += parseXml_element(xml);
@@ -345,17 +353,8 @@ GcnMcFileDef *GcnMcFileDbPrivate::parseXml_file(QXmlStreamReader &xml)
 	}
 
 	// Determine the main region code from the game code.
-	if (gcnMcFileDef->gamecode.length() == 4) {
-		// Last character of the game code is the region code.
-		QChar regionChr = gcnMcFileDef->gamecode.at(3);
-		gcnMcFileDef->regions = RegionCharToBitfield(regionChr);
-	} else {
-		// TODO: Set an error flag and append a message.
-		fprintf(stderr, "WARNING: Game code \"%s\" is invalid.\n",
-			gcnMcFileDef->gamecode.toUtf8().constData());
-		// Default to USA... (TODO: Maybe "all regions"?)
-		gcnMcFileDef->regions = GcnMcFileDef::REGION_USA;
-	}
+	QChar regionChr((ushort)gcnMcFileDef->gamecode[3]);
+	gcnMcFileDef->regions = RegionCharToBitfield(regionChr);
 
 	// Parse additional region codes.
 	for (int i = (regionStr.length() - 1); i >= 0; i--) {
@@ -804,18 +803,12 @@ SearchData GcnMcFileDbPrivate::constructSearchData(
 	card_direntry *const dirEntry = &searchData.dirEntry;
 	memset(dirEntry, 0x00, sizeof(*dirEntry));
 	
+	// Game and company codes.
+	memcpy(dirEntry->gamecode, matchFileDef->gamecode, sizeof(dirEntry->gamecode));
+	memcpy(dirEntry->company,  matchFileDef->company,  sizeof(dirEntry->company));
+
+	// Convert the filename to the correct encoding.
 	QByteArray ba;
-
-	// Game code.
-	ba = matchFileDef->gamecode.toLatin1();
-	strncpy(dirEntry->gamecode, ba.constData(), sizeof(dirEntry->gamecode));
-
-	// Company code.
-	ba = matchFileDef->company.toLatin1();
-	strncpy(dirEntry->company, ba.constData(), sizeof(dirEntry->company));
-
-	// Clear the byte array before converting the filename.
-	ba = QByteArray();
 
 	// Substitute variables in the filename.
 	QString filename = VarReplace::Exec(matchFileDef->dirEntry.filename, vars);

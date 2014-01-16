@@ -24,6 +24,7 @@
 
 // C includes.
 #include <stdint.h>
+#include <string.h>
 
 // Qt includes.
 #include <QtCore/QString>
@@ -54,8 +55,10 @@ class GcnMcFileDef {
 		// of files saved by a single game.
 		QString fileInfo;
 
-		QString gamecode;
-		QString company;
+		// Gamecode.
+		char gamecode[4];
+		// Company ID.
+		char company[2];
 
 		// Regions this file definition applies to.
 		uint8_t regions;
@@ -102,8 +105,11 @@ class GcnMcFileDef {
 		QHash<QString, VarModifierDef> varModifiers;
 
 		// Make sure all fields are initialized.
-		GcnMcFileDef() {
+		GcnMcFileDef()
+		{
 			this->regions = 0;
+			memset(gamecode, 0x00, sizeof(gamecode));
+			memset(company, 0x00, sizeof(company));
 
 			search.address = 0;
 
