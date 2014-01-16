@@ -61,6 +61,9 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QToolBar>
 
+// GcImageWriter.
+#include "GcImageWriter.hpp"
+
 // Shh... it's a secret to everybody.
 #include "sekrit/HerpDerpEggListener.hpp"
 
@@ -161,9 +164,8 @@ class McRecoverWindowPrivate
 
 		/**
 		 * "Animated Icon Format" selection.
-		 * TODO: Use an enum from the icon exporting class.
 		 */
-		int animIconFormat;
+		GcImageWriter::AnimImageFormat animIconFormat;
 		QActionGroup *actgrpAnimIconFormat;
 		QSignalMapper *mapperAnimIconFormat;
 
@@ -317,32 +319,38 @@ void McRecoverWindowPrivate::initToolbar(void)
 	this->preferredRegion = 'E';
 
 	// Set up the QActionGroup for the "Animated Icon Format" options.
-	actgrpAnimIconFormat->addAction(ui.actionAnimAPNG);
-	actgrpAnimIconFormat->addAction(ui.actionAnimGIF);
-	actgrpAnimIconFormat->addAction(ui.actionAnimPNGfpf);
-	actgrpAnimIconFormat->addAction(ui.actionAnimPNGvs);
-	actgrpAnimIconFormat->addAction(ui.actionAnimPNGhs);
+	// Indexes correspond to GcImageWriter::AnimImageFormat enum values.
+	QAction *const animImgfActions[] = {
+		ui.actionAnimAPNG,
+		ui.actionAnimGIF,
+		ui.actionAnimPNGfpf,
+		ui.actionAnimPNGvs,
+		ui.actionAnimPNGhs,
+	};
 
-	// Connect QAction signals to the QSignalMapper.
-	QObject::connect(ui.actionAnimAPNG, SIGNAL(triggered()),
-			 mapperAnimIconFormat, SLOT(map()));
-	QObject::connect(ui.actionAnimGIF, SIGNAL(triggered()),
-			 mapperAnimIconFormat, SLOT(map()));
-	QObject::connect(ui.actionAnimPNGfpf, SIGNAL(triggered()),
-			 mapperAnimIconFormat, SLOT(map()));
-	QObject::connect(ui.actionAnimPNGvs, SIGNAL(triggered()),
-			 mapperAnimIconFormat, SLOT(map()));
-	QObject::connect(ui.actionAnimPNGhs, SIGNAL(triggered()),
-			 mapperAnimIconFormat, SLOT(map()));
+	bool isInitSet = false;
+	for (int i = 0; i < (int)(sizeof(animImgfActions)/sizeof(animImgfActions[0])); i++) {
+		actgrpAnimIconFormat->addAction(animImgfActions[i]);
 
-	// Set an initial animated icon format.
-	// TODO: Determine default based on available codecs.
-	// TODO: Save last selected format somewhere.
-	// NOTE: We're not calling trigger(), since we know
-	// which button is being checked. Hence, we need to
-	// set this->preferredRegion manually.
-	ui.actionAnimAPNG->setChecked(true);
-	this->animIconFormat = 0;	// TODO: Enum value.
+		// Is this animated image format available?
+		if (GcImageWriter::isAnimImageFormatSupported((GcImageWriter::AnimImageFormat)i)) {
+			// Image format is available.
+			QObject::connect(animImgfActions[i], SIGNAL(triggered()),
+					 mapperAnimIconFormat, SLOT(map()));
+			mapperAnimIconFormat->setMapping(animImgfActions[i], i);
+			if (!isInitSet) {
+				// Set this format as the initial value.
+				// TODO: Save last selected format somewhere.
+				animImgfActions[i]->setChecked(true);
+				this->animIconFormat = (GcImageWriter::AnimImageFormat)i;
+				isInitSet = true;
+			}
+		} else {
+			// Image format is not available.
+			// Disable the action.
+			animImgfActions[i]->setEnabled(false);
+		}
+	}
 
 	// Make sure the "About" button is right-aligned.
 	Q_Q(McRecoverWindow);
@@ -1086,7 +1094,8 @@ void McRecoverWindow::setAnimIconFormat_slot(int animIconFormat)
 {
 	// TODO: Enum.
 	Q_D(McRecoverWindow);
-	d->animIconFormat = animIconFormat;
+	if (animIconFormat >= 0 && animIconFormat < GcImageWriter::ANIMGF_MAX)
+		d->animIconFormat = (GcImageWriter::AnimImageFormat)animIconFormat;
 }
 
 void McRecoverWindow::memCardModel_layoutChanged(void)
