@@ -40,6 +40,8 @@ class GcImageWriter
 		 */
 		enum ImageFormat {
 			IMGF_PNG	= 0,	// PNG
+
+			IMGF_MAX
 		};
 
 		/**
@@ -51,6 +53,8 @@ class GcImageWriter
 			ANIMGF_PNG_FPF	= 2,	// File per frame
 			ANIMGF_PNG_VS	= 3,	// PNG (vertical strip)
 			ANIMGF_PNG_HS	= 4,	// PNG (horizontal strip)
+
+			ANIMGF_MAX
 		};
 
 		/**
