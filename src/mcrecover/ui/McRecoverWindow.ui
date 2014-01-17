@@ -207,6 +207,16 @@
     <property name="title">
      <string>&amp;Options</string>
     </property>
+    <widget class="QMenu" name="menuAnimIconFormat">
+     <property name="title">
+      <string>Animated Icon Format</string>
+     </property>
+     <addaction name="actionAnimAPNG"/>
+     <addaction name="actionAnimGIF"/>
+     <addaction name="actionAnimPNGfpf"/>
+     <addaction name="actionAnimPNGvs"/>
+     <addaction name="actionAnimPNGhs"/>
+    </widget>
     <addaction name="actionPreferredRegion"/>
     <addaction name="actionRegionUSA"/>
     <addaction name="actionRegionPAL"/>
@@ -215,12 +225,9 @@
     <addaction name="separator"/>
     <addaction name="actionSearchUsedBlocks"/>
     <addaction name="separator"/>
-    <addaction name="actionAnimatedIconFormat"/>
-    <addaction name="actionAnimAPNG"/>
-    <addaction name="actionAnimGIF"/>
-    <addaction name="actionAnimPNGfpf"/>
-    <addaction name="actionAnimPNGvs"/>
-    <addaction name="actionAnimPNGhs"/>
+    <addaction name="actionExtractBanners"/>
+    <addaction name="actionExtractIcons"/>
+    <addaction name="menuAnimIconFormat"/>
    </widget>
    <widget class="QMenu" name="menuLanguage">
     <property name="title">
@@ -439,14 +446,6 @@
     <string>Search U&amp;sed Blocks</string>
    </property>
   </action>
-  <action name="actionAnimatedIconFormat">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Animated Icon Format:</string>
-   </property>
-  </action>
   <action name="actionAnimAPNG">
    <property name="checkable">
     <bool>true</bool>
@@ -485,6 +484,22 @@
    </property>
    <property name="text">
     <string>PNG (horizontal strip)</string>
+   </property>
+  </action>
+  <action name="actionExtractIcons">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Extract &amp;Icons</string>
+   </property>
+  </action>
+  <action name="actionExtractBanners">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Extract &amp;Banners</string>
    </property>
   </action>
  </widget>
