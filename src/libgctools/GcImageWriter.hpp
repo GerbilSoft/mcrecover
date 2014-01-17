@@ -22,14 +22,25 @@
 #ifndef __LIBGCTOOLS_GCIMAGEWRITER_HPP__
 #define __LIBGCTOOLS_GCIMAGEWRITER_HPP__
 
+// C includes.
+#include <stdint.h>
+
+// C++ includes.
+#include <vector>
+
 class GcImage;
+
+class GcImageWriterPrivate;
 
 class GcImageWriter
 {
-	private:
-		// Static class.
+	public:
 		GcImageWriter();
 		~GcImageWriter();
+
+	private:
+		friend class GcImageWriterPrivate;
+		GcImageWriterPrivate *const d;
 		// TODO: Copy Qt's Q_DISABLE_COPY() macro.
 		GcImageWriter(const GcImageWriter &);
 		GcImageWriter &operator=(const GcImageWriter &);
@@ -70,13 +81,18 @@ class GcImageWriter
 		static bool isAnimImageFormatSupported(AnimImageFormat imgf);
 
 		/**
-		 * Write a GcImage to an image file.
+		 * Write a GcImage to the internal memory buffer.
 		 * @param gcImage	[in] GcImage.
-		 * @param filename	[in] Output filename. (UTF-8)
 		 * @param imgf		[in] Image format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		static int write(const GcImage *image, const char *filename, ImageFormat imgf);
+		int write(const GcImage *image, ImageFormat imgf);
+
+		/**
+		 * Get the internal memory buffer.
+		 * @return Internal memory buffer.
+		 */
+		const std::vector<uint8_t> *memBuffer(void) const;
 };
 
 #endif /* __LIBGCTOOLS_CHECKSUM_HPP__ */

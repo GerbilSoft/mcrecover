@@ -29,6 +29,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+// C++ includes.
+#include <vector>
+using std::vector;
+
 // libpng
 #ifdef HAVE_PNG
 #include <png.h>
@@ -38,34 +42,95 @@
 
 class GcImageWriterPrivate
 {
-	private:
-		// Static class.
-		GcImageWriterPrivate();
+	public:
+		GcImageWriterPrivate(GcImageWriter *const q);
 		~GcImageWriterPrivate();
+
+	private:
+		GcImageWriter *const q;
 		// TODO: Copy Qt's Q_DISABLE_COPY() macro.
 		GcImageWriterPrivate(const GcImageWriterPrivate &);
 		GcImageWriterPrivate &operator=(const GcImageWriterPrivate &);
 
 	public:
-		static int writePng(const GcImage *image, const char *filename);
+		// Internal memory buffer.
+		vector<uint8_t> memBuffer;
+
+		/**
+		 * PNG write function.
+		 * @param png_ptr PNG pointer.
+		 * @param buf Data to write.
+		 * @param len Size of buf.
+		 */
+		static void png_io_write(png_structp png_ptr, png_bytep buf, png_size_t len);
+
+		/**
+		 * PNG flush function.
+		 * Required when writing PNG images.
+		 * This implementation is a no-op.
+		 * @param png_ptr PNG pointer.
+		 */
+		static void png_io_flush(png_structp png_ptr);
+
+		/**
+		 * Write a GcImage to the internal memory buffer in PNG format.
+		 * @param gcImage	[in] GcImage.
+		 * @return 0 on success; non-zero on error.
+		 */
+		int writePng(const GcImage *image);
 };
 
+GcImageWriterPrivate::GcImageWriterPrivate(GcImageWriter *const q)
+	: q(q)
+{ }
+
+GcImageWriterPrivate::~GcImageWriterPrivate()
+{ }
+
 /**
- * Write a GcImage to an image file.
+ * PNG write function.
+ * @param png_ptr PNG pointer.
+ * @param buf Data to write.
+ * @param len Size of buf.
+ */
+void GcImageWriterPrivate::png_io_write(png_structp png_ptr, png_bytep buf, png_size_t len)
+{
+	void *io_ptr = png_get_io_ptr(png_ptr);
+	if (!io_ptr)
+		return;
+
+	// Assuming the io_ptr is a GcImageWriterPrivate.
+	GcImageWriterPrivate *d = (GcImageWriterPrivate*)io_ptr;
+	size_t pos = d->memBuffer.size();
+	d->memBuffer.resize(pos + len);
+	memcpy(&d->memBuffer.data()[pos], buf,len);
+}
+
+/**
+ * PNG flush function.
+ * Required when writing PNG images.
+ * This implementation is a no-op.
+ * @param png_ptr PNG pointer.
+ */
+void GcImageWriterPrivate::png_io_flush(png_structp png_ptr)
+{
+	// Do nothing!
+	((void)png_ptr);
+}
+
+/**
+ * Write a GcImage to the internal memory buffer in PNG format.
  * @param gcImage	[in] GcImage.
- * @param filename	[in] Output filename. (UTF-8)
  * @return 0 on success; non-zero on error.
  */
-int GcImageWriterPrivate::writePng(const GcImage *image, const char *filename)
+int GcImageWriterPrivate::writePng(const GcImage *image)
 {
-#ifdef HAVE_PNG
-	if (!image || !filename)
-		return -EINVAL;
+	// Clear the internal memory buffer.
+	   memBuffer.clear();
 
-	// TODO: fopen() wrapper to convert UTF-8 filename on Windows.
-	FILE *fpng = fopen(filename, "wb");
-	if (!fpng)
-		return -errno;
+#ifdef HAVE_PNG
+	if (!image)
+		return -EINVAL;
 
 	png_structp png_ptr;
 	png_infop info_ptr;
@@ -74,26 +139,26 @@ int GcImageWriterPrivate::writePng(const GcImage *image, const char *filename)
 	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!png_ptr) {
 		// Could not create PNG write struct.
-		fclose(fpng);
 		return -0x101;
 	}
 	info_ptr = png_create_info_struct(png_ptr);
 	if (!info_ptr) {
 		// Could not create PNG info struct.
 		png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
-		fclose(fpng);
 		return -0x102;
 	}
 
 	if (setjmp(png_jmpbuf(png_ptr))) {
 		// PNG write failed.
 		png_destroy_write_struct(&png_ptr, &info_ptr);
-		fclose(fpng);
 		return -0x103;
 	}
 
-	// libpng initialization.
-	png_init_io(png_ptr, fpng);
+	// Initialize the internal buffer and memory write function.
+	   memBuffer.reserve(32768);	// 32 KB should cover most of the use cases.
+	png_set_write_fn(png_ptr, this, png_io_write, png_io_flush);
+
+	// Initialize compression parameters.
 	png_set_filter(png_ptr, 0, PNG_FILTER_NONE);
 	png_set_compression_level(png_ptr, 5);	// TODO: Customizable?
 
@@ -134,7 +199,7 @@ int GcImageWriterPrivate::writePng(const GcImage *image, const char *filename)
 		default:
 			// Unsupported pixel format.
 			png_destroy_write_struct(&png_ptr, (png_infopp)nullptr);
-			fclose(fpng);
+			     memBuffer.clear();
 			return -EINVAL;
 	}
 
@@ -158,7 +223,7 @@ int GcImageWriterPrivate::writePng(const GcImage *image, const char *filename)
 		default:
 			// Unsupported pixel format.
 			png_destroy_write_struct(&png_ptr, (png_infopp)nullptr);
-			fclose(fpng);
+			     memBuffer.clear();
 			return -EINVAL;
 	}
 
@@ -177,17 +242,22 @@ int GcImageWriterPrivate::writePng(const GcImage *image, const char *filename)
 	// Finished writing.
 	png_write_end(png_ptr, info_ptr);
 	png_destroy_write_struct(&png_ptr, &info_ptr);
-	fclose(fpng);
 	return 0;
 #else
 	// PNG support is not available.
 	((void)image);
-	((void)filename);
 	return -EINVAL;
 #endif
 }
 
 /** GcImageWriter **/
+
+GcImageWriter::GcImageWriter()
+	: d(new GcImageWriterPrivate(this))
+{ }
+
+GcImageWriter::~GcImageWriter()
+	{ delete d; }
 
 /**
  * Check if an image format is supported.
@@ -217,17 +287,16 @@ bool GcImageWriter::isAnimImageFormatSupported(AnimImageFormat animImgf)
 }
 
 /**
- * Write a GcImage to an image file.
+ * Write a GcImage to the internal memory buffer.
  * @param gcImage	[in] GcImage.
- * @param filename	[in] Output filename. (UTF-8)
  * @param imgf		[in] Image format.
  * @return 0 on success; non-zero on error.
  */
-int GcImageWriter::write(const GcImage *image, const char *filename, ImageFormat imgf)
+int GcImageWriter::write(const GcImage *image, ImageFormat imgf)
 {
 	switch (imgf) {
 		case IMGF_PNG:
-			return GcImageWriterPrivate::writePng(image, filename);
+			return d->writePng(image);
 
 		default:
 			break;
@@ -235,4 +304,13 @@ int GcImageWriter::write(const GcImage *image, const char *filename, ImageFormat
 
 	// Invalid image format.
 	return -EINVAL;
+}
+
+/**
+ * Get the internal memory buffer.
+ * @return Internal memory buffer.
+ */
+const std::vector<uint8_t> *GcImageWriter::memBuffer(void) const
+{
+	return &d->memBuffer;
 }
