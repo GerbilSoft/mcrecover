@@ -143,7 +143,7 @@ class McRecoverWindowPrivate
 		 * @param files List of file(s) to save.
 		 * @param path If specified, save file(s) to path using default GCI filenames.
 		 */
-		void saveFiles(QVector<MemCardFile*> files, QString path = QString());
+		void saveFiles(const QVector<MemCardFile*> &files, QString path = QString());
 
 		// UI busy counter.
 		int uiBusyCounter;
@@ -449,7 +449,7 @@ QString McRecoverWindowPrivate::changeFileExtension(const QString &filename, con
  * @param files List of file(s) to save.
  * @param path If specified, save file(s) to path using default GCI filenames.
  */
-void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QString path)
+void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QString path)
 {
 	Q_Q(McRecoverWindow);
 
@@ -463,72 +463,8 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 			? new GcImageWriter()
 			: nullptr);
 
-	if (files.size() == 1 && path.isEmpty()) {
-		// Single file, path not specified.
-		MemCardFile *file = files.at(0);
-
-		// Prompt the user for a save location.
-		QString filename = QFileDialog::getSaveFileName(q,
-				McRecoverWindow::tr("Save GCN Save File %1")
-					.arg(file->filename()),	// Dialog title
-				file->defaultGciFilename(),	// Default filename
-				McRecoverWindow::tr("GameCube Save Files") + QLatin1String(" (*.gci);;") +
-				McRecoverWindow::tr("All Files") + QLatin1String(" (*)"));
-		if (filename.isEmpty())
-			return;
-
-		int filesSaved = 0;
-
-		// Save the file.
-		int ret = file->saveGci(filename);
-		if (ret == 0) {
-			// File saved successfully.
-			filesSaved++;
-		} else {
-			// An error occurred while saving the file.
-			// TODO: Error details.
-		}
-
-		// Extract the banner.
-		if (extractBanners) {
-			// TODO: Always .png?
-			// TODO: Error handling and details.
-			QString bannerFilename = changeFileExtension(filename, QLatin1String(".banner.png"));
-			const GcImage *gcBanner = file->gcBanner();
-			int ret = gcImageWriter->write(gcBanner, GcImageWriter::IMGF_PNG);
-			if (!ret) {
-				const vector<uint8_t> *pngData = gcImageWriter->memBuffer();
-				QFile pngFile(bannerFilename);
-				pngFile.open(QIODevice::WriteOnly);
-				pngFile.write(reinterpret_cast<const char*>(pngData->data()), pngData->size());
-				pngFile.close();
-			}
-		}
-
-		// TODO: Icon.
-
-		// Update the status bar.
-		const QFileInfo fileInfo(filename);
-		const QDir dir = fileInfo.dir();
-		QString absolutePath = dir.absolutePath();
-
-		// Make sure tha path has a trailing slash.
-		if (!absolutePath.isEmpty() &&
-		    absolutePath.at(absolutePath.size() - 1) != QChar(L'/'))
-		{
-			absolutePath += QChar(L'/');
-		}
-
-		statusBarManager->filesSaved(filesSaved, absolutePath);
-		return;
-	} else if (files.size() > 1 && path.isEmpty()) {
-		// Multiple files, path not specified.
-		// Prompt the user for a save location.
-		path = QFileDialog::getExistingDirectory(q,
-				McRecoverWindow::tr("Save %Ln GCN Save File(s)", "", files.size()));
-		if (path.isEmpty())
-			return;
-	}
+	bool singleFile = false;
+	QString filename;
 
 	// Save files using default filenames to the specified path.
 	enum OverwriteAllStatus {
@@ -539,9 +475,34 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 
 	int filesSaved = 0;
 	OverwriteAllStatus overwriteAll = OVERWRITEALL_UNKNOWN;
+
+	if (files.size() == 1 && path.isEmpty()) {
+		// Single file, path not specified.
+		singleFile = true;
+		overwriteAll = OVERWRITEALL_YESTOALL;
+		MemCardFile *file = files.at(0);
+
+		// Prompt the user for a save location.
+		filename = QFileDialog::getSaveFileName(q,
+				McRecoverWindow::tr("Save GCN Save File %1")
+					.arg(file->filename()),	// Dialog title
+				file->defaultGciFilename(),	// Default filename
+				McRecoverWindow::tr("GameCube Save Files") + QLatin1String(" (*.gci);;") +
+				McRecoverWindow::tr("All Files") + QLatin1String(" (*)"));
+		if (filename.isEmpty())
+			return;
+	} else if (files.size() > 1 && path.isEmpty()) {
+		// Multiple files, path not specified.
+		// Prompt the user for a save location.
+		path = QFileDialog::getExistingDirectory(q,
+				McRecoverWindow::tr("Save %Ln GCN Save File(s)", "", files.size()));
+		if (path.isEmpty())
+			return;
+	}
+
 	foreach (MemCardFile *file, files) {
-		const QString defaultGciFilename = file->defaultGciFilename();
-		QString filename = path + QChar(L'/') + defaultGciFilename;
+		if (!singleFile)
+			filename = path + QChar(L'/') + file->defaultGciFilename();
 		QFile qfile(filename);
 
 		// Check if the file exists.
@@ -597,10 +558,34 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 			// An error occurred while saving the file.
 			// TODO: Error details.
 		}
+
+		// Extract the banner.
+		if (extractBanners) {
+			// TODO: Always .png?
+			// TODO: Error handling and details.
+			QString bannerFilename = changeFileExtension(filename, QLatin1String(".banner.png"));
+			const GcImage *gcBanner = file->gcBanner();
+			int ret = gcImageWriter->write(gcBanner, GcImageWriter::IMGF_PNG);
+			if (!ret) {
+				const vector<uint8_t> *pngData = gcImageWriter->memBuffer();
+				QFile pngFile(bannerFilename);
+				pngFile.open(QIODevice::WriteOnly);
+				pngFile.write(reinterpret_cast<const char*>(pngData->data()), pngData->size());
+				pngFile.close();
+			}
+		}
+
+		// TODO: Icon.
 	}
 
 	// Update the status bar.
-	const QDir dir(path);
+	QDir dir;
+	if (singleFile) {
+		QFileInfo fileInfo(filename);
+		dir = fileInfo.dir();
+	} else {
+		dir = QDir(path);
+	}
 	QString absolutePath = dir.absolutePath();
 
 	// Make sure tha path has a trailing slash.
