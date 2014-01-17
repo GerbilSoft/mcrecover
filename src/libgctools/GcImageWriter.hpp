@@ -70,15 +70,31 @@ class GcImageWriter
 
 		/**
 		 * Check if an image format is supported.
+		 * @param imgf Image format.
 		 * @return True if supported; false if not.
 		 */
-		static bool isImageFormatSupported(ImageFormat animImgf);
+		static bool isImageFormatSupported(ImageFormat imgf);
+
+		/**
+		 * Get the file extension for the specified image format.
+		 * @param imgf Image format.
+		 * @return File extension (ASCII), without the dot, or nullptr if imgf is invalid.
+		 */
+		static const char *extForImageFormat(ImageFormat imgf);
 
 		/**
 		 * Check if an animated image format is supported.
+		 * @param animImgf Animated image format.
 		 * @return True if supported; false if not.
 		 */
-		static bool isAnimImageFormatSupported(AnimImageFormat imgf);
+		static bool isAnimImageFormatSupported(AnimImageFormat animImgf);
+
+		/**
+		 * Get the file extension for the specified animated image format.
+		 * @param animImgf Animated image format.
+		 * @return File extension (ASCII), without the dot, or nullptr if animImgf is invalid.
+		 */
+		static const char *extForAnimImageFormat(AnimImageFormat animImgf);
 
 		/**
 		 * Write a GcImage to the internal memory buffer.

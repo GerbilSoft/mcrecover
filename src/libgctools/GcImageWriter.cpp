@@ -261,6 +261,7 @@ GcImageWriter::~GcImageWriter()
 
 /**
  * Check if an image format is supported.
+ * @param imgf Image format.
  * @return True if supported; false if not.
  */
 bool GcImageWriter::isImageFormatSupported(ImageFormat imgf)
@@ -274,7 +275,23 @@ bool GcImageWriter::isImageFormatSupported(ImageFormat imgf)
 }
 
 /**
+ * Get the file extension for the specified image format.
+ * @param imgf Image format.
+ * @return File extension (ASCII), without the dot, or nullptr if imgf is invalid.
+ */
+const char *GcImageWriter::extForImageFormat(ImageFormat imgf)
+{
+	switch (imgf) {
+		case IMGF_PNG:	return "png";
+		default:	break;
+	}
+
+	return nullptr;
+}
+
+/**
  * Check if an animated image format is supported.
+ * @param animImgf Animated image format.
  * @return True if supported; false if not.
  */
 bool GcImageWriter::isAnimImageFormatSupported(AnimImageFormat animImgf)
@@ -284,6 +301,25 @@ bool GcImageWriter::isAnimImageFormatSupported(AnimImageFormat animImgf)
 	}
 
 	return false;
+}
+
+/**
+ * Get the file extension for the specified animated image format.
+ * @param animImgf Animated image format.
+ * @return File extension (ASCII), without the dot, or nullptr if animImgf is invalid.
+ */
+const char *GcImageWriter::extForAnimImageFormat(AnimImageFormat animImgf)
+{
+	switch (animImgf) {
+		case ANIMGF_APNG:
+		case ANIMGF_PNG_FPF:
+		case ANIMGF_PNG_VS:
+		case ANIMGF_PNG_HS:	return "png";
+		case ANIMGF_GIF:	return "gif";
+		default:		break;
+	}
+
+	return nullptr;
 }
 
 /**
