@@ -188,6 +188,14 @@ class MemCardFile : public QObject
 		QPixmap icon(int idx) const;
 
 		/**
+		 * Get an icon as a GcImage.
+		 * Icon is owned by MemCardFile; do NOT delete it!
+		 * @param idx Icon number.
+		 * @return Icon, or nullptr on error.
+		 */
+		const GcImage *gcIcon(int idx) const;
+
+		/**
 		 * Get the delay for a given icon.
 		 * @param idx Icon number.
 		 * @return Icon delay.

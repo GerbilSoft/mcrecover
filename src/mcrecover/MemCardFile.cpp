@@ -647,6 +647,17 @@ QVector<GcImage*> MemCardFilePrivate::loadIconImages(void)
 		}
 	}
 
+	// Shrink the QVector.
+	int iconCount = gcImages.size();
+	for (; iconCount > 0; iconCount--) {
+		if (gcImages.at(iconCount-1))
+			break;
+	}
+	if (iconCount > 0)
+		gcImages.resize(iconCount);
+	else
+		gcImages.clear();
+
 	return gcImages;
 }
 
@@ -1015,6 +1026,20 @@ QPixmap MemCardFile::icon(int idx) const
 	if (idx < 0 || idx >= d->icons.size())
 		return QPixmap();
 	return d->icons.at(idx);
+}
+
+/**
+ * Get an icon as a GcImage.
+ * Icon is owned by MemCardFile; do NOT delete it!
+ * @param idx Icon number.
+ * @return Icon, or nullptr on error.
+ */
+const GcImage *MemCardFile::gcIcon(int idx) const
+{
+	Q_D(const MemCardFile);
+	if (idx < 0 || idx >= d->icons.size())
+		return nullptr;
+	return d->gcIcons.at(idx);;
 }
 
 /**
