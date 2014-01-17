@@ -41,9 +41,13 @@
 // Translation Manager.
 #include "TranslationManager.hpp"
 
-// C includes.
+// C includes. (C++ namespace)
 #include <cstdio>
 #include <cassert>
+
+// C++ includes.
+#include <vector>
+using std::vector;
 
 // Qt includes.
 #include <QtCore/QUrl>
@@ -125,6 +129,14 @@ class McRecoverWindowPrivate
 		 * Update the window title.
 		 */
 		void updateWindowTitle(void);
+
+		/**
+		 * Change the file extension of the specified file.
+		 * @param filename Filename.
+		 * @param newExt New extension, including leading dot.
+		 * @return Filename with new extension.
+		 */
+		static QString changeFileExtension(const QString &filename, const QString &newExt);
 
 		/**
 		 * Save the specified file(s).
@@ -411,6 +423,28 @@ void McRecoverWindowPrivate::updateWindowTitle(void)
 }
 
 /**
+ * Change the file extension of the specified file.
+ * @param filename Filename.
+ * @param newExt New extension, including leading dot.
+ * @return Filename with new extension.
+ */
+QString McRecoverWindowPrivate::changeFileExtension(const QString &filename, const QString &newExt)
+{
+	int dotPos = filename.lastIndexOf(QChar(L'.'));
+	int slashPos = filename.lastIndexOf(QChar(L'/'));
+	if (dotPos > 0 && dotPos > slashPos) {
+		// Found a file extension dot.
+		QString newFilename = filename.left(dotPos);
+		newFilename += newExt;
+		return newFilename;
+	}
+
+	// No extension found.
+	// Append the new extension instead.
+	return (filename + newExt);
+}
+
+/**
  * Save the specified file(s).
  * @param files List of file(s) to save.
  * @param path If specified, save file(s) to path using default GCI filenames.
@@ -419,9 +453,17 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 {
 	Q_Q(McRecoverWindow);
 
-	if (files.isEmpty()) {
+	if (files.isEmpty())
 		return;
-	} else if (files.size() == 1 && path.isEmpty()) {
+
+	const bool extractBanners = ui.actionExtractBanners->isChecked();
+	const bool extractIcons = ui.actionExtractIcons->isChecked();
+	QScopedPointer<GcImageWriter> gcImageWriter(
+		(extractBanners || extractIcons)
+			? new GcImageWriter()
+			: nullptr);
+
+	if (files.size() == 1 && path.isEmpty()) {
 		// Single file, path not specified.
 		MemCardFile *file = files.at(0);
 
@@ -446,6 +488,24 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> files, QStrin
 			// An error occurred while saving the file.
 			// TODO: Error details.
 		}
+
+		// Extract the banner.
+		if (extractBanners) {
+			// TODO: Always .png?
+			// TODO: Error handling and details.
+			QString bannerFilename = changeFileExtension(filename, QLatin1String(".banner.png"));
+			const GcImage *gcBanner = file->gcBanner();
+			int ret = gcImageWriter->write(gcBanner, GcImageWriter::IMGF_PNG);
+			if (!ret) {
+				const vector<uint8_t> *pngData = gcImageWriter->memBuffer();
+				QFile pngFile(bannerFilename);
+				pngFile.open(QIODevice::WriteOnly);
+				pngFile.write(reinterpret_cast<const char*>(pngData->data()), pngData->size());
+				pngFile.close();
+			}
+		}
+
+		// TODO: Icon.
 
 		// Update the status bar.
 		const QFileInfo fileInfo(filename);
