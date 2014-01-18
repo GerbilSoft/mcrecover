@@ -141,10 +141,6 @@ void StatusBarManagerPrivate::updateStatusBar(void)
 		QString filesFoundText = StatusBarManager::tr("%n lost file(s) found.", nullptr, lostFilesFound);
 		q->lblFilesFound->setText(filesFoundText);
 		*/
-
-		// Update the progress bar.
-		if (progressBar)
-			progressBar->setVisible(true);
 	}
 
 	// Set the status bar message.
@@ -160,8 +156,11 @@ void StatusBarManagerPrivate::updateStatusBar(void)
 		lblMessage->resize(w, lblMessage->height());
 	}
 
+	// Make sure the progress bar is visible when scanning.
+	if (scanning && progressBar)
+		progressBar->setVisible(true);
+
 	// Set the progress bar values.
-	// TODO: Hide the progress bar ~5 seconds after scan is complete?
 	if (progressBar && progressBar->isVisible()) {
 		progressBar->setMaximum(totalSearchBlocks);
 		progressBar->setValue(currentSearchBlock);
