@@ -42,6 +42,7 @@ class QIODevice;
 
 // GcImage
 class GcImage;
+#include "GcImageWriter.hpp"
 
 // MemCard class.
 class MemCard;
@@ -168,13 +169,6 @@ class MemCardFile : public QObject
 		QPixmap banner(void) const;
 
 		/**
-		 * Get the banner image as a GcImage.
-		 * Caller must delete the GcImage after use.
-		 * @return Banner image, or nullptr on error.
-		 */
-		const GcImage *gcBanner(void) const;
-
-		/**
 		 * Get the number of icons in the file.
 		 * @return Number of icons.
 		 */
@@ -186,14 +180,6 @@ class MemCardFile : public QObject
 		 * @return Icon, or null QPixmap on error.
 		 */
 		QPixmap icon(int idx) const;
-
-		/**
-		 * Get an icon as a GcImage.
-		 * Icon is owned by MemCardFile; do NOT delete it!
-		 * @param idx Icon number.
-		 * @return Icon, or nullptr on error.
-		 */
-		const GcImage *gcIcon(int idx) const;
 
 		/**
 		 * Get the delay for a given icon.
@@ -286,6 +272,42 @@ class MemCardFile : public QObject
 		 * @return Directory entry.
 		 */
 		const card_direntry *dirEntry(void) const;
+
+		/**
+		 * Save the banner image.
+		 * @param filenameNoExt Filename for the banner image, sans extension.
+		 * @return 0 on success; non-zero on error.
+		 * TODO: Error code constants.
+		 */
+		int saveBanner(const QString &filenameNoExt) const;
+
+		/**
+		 * Save the banner image.
+		 * @param qioDevice QIODevice to write the banner image to.
+		 * @return 0 on success; non-zero on error.
+		 * TODO: Error code constants.
+		 */
+		int saveBanner(QIODevice *qioDevice) const;
+
+		/**
+		 * Save the icon.
+		 * @param filenameNoExt Filename for the icon, sans extension.
+		 * @param animImgf Animated image format for animated icons.
+		 * @return 0 on success; non-zero on error.
+		 * TODO: Error code constants.
+		 */
+		int saveIcon(const QString &filenameNoExt,
+			     GcImageWriter::AnimImageFormat animImgf) const;
+
+		/**
+		 * Save the banner image.
+		 * @param qioDevice QIODevice to write the banner image to.
+		 * @param animImgf Animated image format for animated icons.
+		 * @return 0 on success; non-zero on error.
+		 * TODO: Error code constants.
+		 */
+		int saveIcon(QIODevice *qioDevice,
+			     GcImageWriter::AnimImageFormat animImgf) const;
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */

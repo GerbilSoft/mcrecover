@@ -458,20 +458,14 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QStri
 
 	const bool extractBanners = ui.actionExtractBanners->isChecked();
 	const bool extractIcons = ui.actionExtractIcons->isChecked();
-	static const GcImageWriter::ImageFormat imgfBanner = GcImageWriter::IMGF_PNG;
-	static const GcImageWriter::ImageFormat imgfIconStatic = GcImageWriter::IMGF_PNG;
-	QString extBanner, extIconStatic;
-	QScopedPointer<GcImageWriter> gcImageWriter;
 
 	bool singleFile = false;
 	QString filename;
 
+	QString extBanner, extIconStatic;
 	if (extractBanners || extractIcons) {
-		gcImageWriter.reset(new GcImageWriter());
-		extBanner = QLatin1String(".banner.") +
-			    QLatin1String(GcImageWriter::extForImageFormat(imgfBanner));
-		extIconStatic = QLatin1String(".icon.") +
-				QLatin1String(GcImageWriter::extForImageFormat(imgfIconStatic));
+		extBanner = QLatin1String(".banner");
+		extIconStatic = QLatin1String(".icon");
 	}
 
 	// Save files using default filenames to the specified path.
@@ -570,18 +564,8 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QStri
 		// Extract the banner.
 		if (extractBanners) {
 			// TODO: Error handling and details.
-			const GcImage *gcBanner = file->gcBanner();
-			if (gcBanner) {
-				QString bannerFilename = changeFileExtension(filename, extBanner);
-				int ret = gcImageWriter->write(gcBanner, imgfBanner);
-				if (!ret) {
-					const vector<uint8_t> *pngData = gcImageWriter->memBuffer();
-					QFile pngFile(bannerFilename);
-					pngFile.open(QIODevice::WriteOnly);
-					pngFile.write(reinterpret_cast<const char*>(pngData->data()), pngData->size());
-					pngFile.close();
-				}
-			}
+			QString bannerFilename = changeFileExtension(filename, extBanner);
+			file->saveBanner(bannerFilename);
 		}
 
 		// Extract the icon.
@@ -589,18 +573,8 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QStri
 			// TODO: Error handling and details.
 			// TODO: Animated icon support.
 			if (file->numIcons() == 1) {
-				const GcImage *gcIcon = file->gcIcon(0);
-				if (gcIcon) {
-					QString iconFilename = changeFileExtension(filename, extIconStatic);
-					int ret = gcImageWriter->write(gcIcon, imgfIconStatic);
-					if (!ret) {
-						const vector<uint8_t> *pngData = gcImageWriter->memBuffer();
-						QFile pngFile(iconFilename);
-						pngFile.open(QIODevice::WriteOnly);
-						pngFile.write(reinterpret_cast<const char*>(pngData->data()), pngData->size());
-						pngFile.close();
-					}
-				}
+				QString iconFilename = changeFileExtension(filename, extIconStatic);
+				file->saveIcon(iconFilename, animIconFormat);
 			}
 		}
 	}
