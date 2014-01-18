@@ -14,6 +14,7 @@ ENDMACRO(UNSET)
 list (APPEND CMAKE_MODULE_PATH
 	"${mcrecover_base_SOURCE_DIR}/cmake/modules"
 	"${mcrecover_base_SOURCE_DIR}/cmake/macros"
+	"${mcrecover_base_SOURCE_DIR}/cmake/libs"
 	)
 
 # Set default build options.

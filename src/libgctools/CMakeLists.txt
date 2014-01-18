@@ -19,13 +19,7 @@ UNSET(IS_BIG_ENDIAN)
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/util/byteorder.h.in" "${CMAKE_CURRENT_BINARY_DIR}/util/byteorder.h")
 
 # libpng
-# TODO: Internal libpng with APNG patch.
-# TODO: If shared library, define shared library version in config file
-# to make it possible to dlopen() APNG symbols later.
-FIND_PACKAGE(PNG)
-IF(PNG_FOUND)
-	SET(HAVE_PNG 1)
-ENDIF(PNG_FOUND)
+INCLUDE(CheckPNGWithAPNG)
 
 # Write the config.h file.
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.libgctools.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.libgctools.h")
