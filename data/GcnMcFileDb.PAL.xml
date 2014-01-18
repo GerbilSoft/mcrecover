@@ -324,6 +324,40 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Mario Kart: Double Dash!!</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GM4P</gamecode>
+		<company>01</company>
+		<search>
+			<!-- Second block. FIXME: Implement block offsets. -->
+			<!-- NOTE: This is also present at 0x4000... -->
+			<address>0x20000</address>
+			<gameDesc>^Mario Kart: Double Dash!!$</gameDesc>
+			<!-- Date format: DD/MM/YY -->
+			<fileDesc>^(Game Data|Spielstand|Données|Datos|Dati Gioco) (\d{2})/(\d{2})/(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>MarioKart Double Dash!!</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x15</iconFormat>
+			<iconSpeed>0x2A</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
 		<!-- NOTE: Update with an actual PAL save! -->
 		<gameName>Mario Party 4</gameName>
 		<fileInfo>Save File</fileInfo>
@@ -855,8 +889,8 @@
 		<company>8P</company>
 		<search>
 			<address>0x0000</address>
-			<gameDesc>^SEGA Network Information$</gameDesc>
-			<fileDesc>^ISP,Network setting$</fileDesc>
+			<gameDesc>^(SEGA Network Information|Informations réseau SEGA)$</gameDesc>
+			<fileDesc>^(ISP,Network setting|FAI,Paramétrages du réseau)$</fileDesc>
 		</search>
 		<dirEntry>
 			<filename>sega_network_information</filename>
@@ -1334,6 +1368,38 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>11</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Tales of Symphonia</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GQSP</gamecode>
+		<company>AF</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^TALES OF SYMPHONIA$</gameDesc>
+			<!-- NOTE: H:MM is play time. Assuming 4 digits maximum. -->
+			<!-- TODO: Is it M or MM? -->
+			<fileDesc>^No\.(\d{3}) Lv ( \d|\d{1,2}) (   \d|  \d{2}| \d{3}|\d{4}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>filename</useAs>
+				<type>number</type>
+				<minWidth>3</minWidth>
+				<fillChar>0</fillChar>
+				<align>right</align>
+				<add>-1</add>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>TOS_${F1}</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
 		</dirEntry>
 	</file>
 	<file>
