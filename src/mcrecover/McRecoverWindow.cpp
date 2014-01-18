@@ -774,7 +774,7 @@ McRecoverWindow::~McRecoverWindow()
  * Open a GameCube Memory Card image.
  * @param filename Filename.
  */
-void McRecoverWindow::openCard(QString filename)
+void McRecoverWindow::openCard(const QString &filename)
 {
 	Q_D(McRecoverWindow);
 

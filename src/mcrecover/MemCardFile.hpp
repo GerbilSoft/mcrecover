@@ -96,7 +96,7 @@ class MemCardFile : public QObject
 		 */
 		MemCardFile(MemCard *card,
 				const card_direntry *dirEntry,
-				QVector<uint16_t> fatEntries);
+				const QVector<uint16_t> &fatEntries);
 
 		~MemCardFile();
 	
@@ -230,7 +230,7 @@ class MemCardFile : public QObject
 		 * Set the checksum definitions.
 		 * @param checksumDefs Checksum definitions.
 		 */
-		void setChecksumDefs(QVector<Checksum::ChecksumDef> checksumDefs);
+		void setChecksumDefs(const QVector<Checksum::ChecksumDef> &checksumDefs);
 
 		/**
 		 * Get the checksum values.
@@ -271,7 +271,7 @@ class MemCardFile : public QObject
 		 * @return 0 on success; non-zero on error.
 		 * TODO: Error code constants.
 		 */
-		int saveGci(QString filename);
+		int saveGci(const QString &filename);
 
 		/**
 		 * Save the file in GCI format.

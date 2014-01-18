@@ -83,7 +83,7 @@ class StatusBarManager : public QObject
 		 * A GameCube Memory Card image was opened.
 		 * @param filename Filename.
 		 */
-		void opened(QString filename);
+		void opened(const QString &filename);
 
 		/**
 		 * The current GameCube Memory Card image was closed.
@@ -95,7 +95,7 @@ class StatusBarManager : public QObject
 		 * @param n Number of files saved.
 		 * @param path Path files were saved to.
 		 */
-		void filesSaved(int n, QString path);
+		void filesSaved(int n, const QString &path);
 
 	private slots:
 		/**

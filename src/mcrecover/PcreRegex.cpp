@@ -104,7 +104,7 @@ int PcreRegex::setRegex(const QString &regex, int *errOffset)
  * @param outVector	[out, opt] Output vector for substring matches.
  * @return Number of substring matches on success, or PCRE_ERROR_* value (negative number) on error.
  */
-int PcreRegex::exec(QByteArray subjectUtf8, QVector<QString> *outVector) const
+int PcreRegex::exec(const QByteArray &subjectUtf8, QVector<QString> *outVector) const
 {
 	if (!m_regex)
 		return PCRE_ERROR_NOMATCH;

@@ -45,7 +45,7 @@
 class MemCardPrivate
 {
 	public:
-		MemCardPrivate(MemCard *q, QString filename);
+		MemCardPrivate(MemCard *q, const QString &filename);
 		~MemCardPrivate();
 		void init(void);
 
@@ -138,8 +138,9 @@ class MemCardPrivate
 QTextCodec *MemCardPrivate::TextCodecUS = nullptr;	// cp1252
 QTextCodec *MemCardPrivate::TextCodecJP = nullptr;	// Shift-JIS
 
-MemCardPrivate::MemCardPrivate(MemCard *q, QString filename)
+MemCardPrivate::MemCardPrivate(MemCard *q, const QString &filename)
 	: q_ptr(q)
+	, filename(filename)
 	, file(nullptr)
 	, mc_dat(nullptr)
 	, mc_bat(nullptr)
@@ -149,11 +150,8 @@ MemCardPrivate::MemCardPrivate(MemCard *q, QString filename)
 
 	// TODO: Set an error code somewhere.
 
-	// Save the filename.
-	this->filename = filename;
 	if (filename.isEmpty()) {
 		// No filename specified.
-		file = nullptr;
 		return;
 	}
 
@@ -772,7 +770,7 @@ MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry)
  * @param fatEntries FAT entries.
  * @return MemCardFile added to the MemCard, or nullptr on error.
  */
-MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry, QVector<uint16_t> fatEntries)
+MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry, const QVector<uint16_t> &fatEntries)
 {
 	if (!isOpen())
 		return nullptr;

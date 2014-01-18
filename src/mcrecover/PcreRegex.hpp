@@ -63,7 +63,7 @@ class PcreRegex
 		 * @param outVector	[out, opt] Output vector for substring matches.
 		 * @return Number of substring matches on success, or PCRE_ERROR_* value (negative number) on error.
 		 */
-		int exec(QByteArray subjectUtf8, QVector<QString> *outVector = nullptr) const;
+		int exec(const QByteArray &subjectUtf8, QVector<QString> *outVector = nullptr) const;
 
 	protected:
 		// Compiled PCRE regular expression.

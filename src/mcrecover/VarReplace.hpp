@@ -53,7 +53,7 @@ class VarReplace
 		 *
 		 * @return str with replaced variables.
 		 */
-		static QString Exec(QString str, const QHash<QString, QString> &vars);
+		static QString Exec(const QString &str, const QHash<QString, QString> &vars);
 
 		/**
 		 * Combine vectors of GameDesc variables and FileDesc variables into a QHash.

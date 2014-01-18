@@ -71,7 +71,7 @@ class MemCardFilePrivate
 		MemCardFilePrivate(MemCardFile *q,
 				MemCard *card,
 				const card_direntry *dirEntry,
-				QVector<uint16_t> fatEntries);
+				const QVector<uint16_t> &fatEntries);
 
 		~MemCardFilePrivate();
 
@@ -258,7 +258,7 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
  */
 MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 		MemCard *card, const card_direntry *dirEntry,
-		QVector<uint16_t> fatEntries)
+		const QVector<uint16_t> &fatEntries)
 	: q_ptr(q)
 	, card(card)
 	, fileIdx(-1)
@@ -875,7 +875,7 @@ MemCardFile::MemCardFile(MemCard *card, const int fileIdx,
  */
 MemCardFile::MemCardFile(MemCard *card,
 		const card_direntry *dirEntry,
-		QVector<uint16_t> fatEntries)
+		const QVector<uint16_t> &fatEntries)
 	: QObject(card)
 	, d_ptr(new MemCardFilePrivate(this, card, dirEntry, fatEntries))
 { }
@@ -1099,7 +1099,7 @@ QVector<Checksum::ChecksumDef> MemCardFile::checksumDefs(void) const
  * Set the checksum definitions.
  * @param checksumDefs Checksum definitions.
  */
-void MemCardFile::setChecksumDefs(QVector<Checksum::ChecksumDef> checksumDefs)
+void MemCardFile::setChecksumDefs(const QVector<Checksum::ChecksumDef> &checksumDefs)
 {
 	Q_D(MemCardFile);
 	d->checksumDefs = checksumDefs;
@@ -1195,7 +1195,7 @@ QString MemCardFile::defaultGciFilename(void) const
  * @return 0 on success; non-zero on error.
  * TODO: Error code constants.
  */
-int MemCardFile::saveGci(QString filename)
+int MemCardFile::saveGci(const QString &filename)
 {
 	QFile file(filename);
 	if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {

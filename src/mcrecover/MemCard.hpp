@@ -204,7 +204,7 @@ class MemCard : public QObject
 		 * @param fatEntries FAT entries.
 		 * @return MemCardFile added to the MemCard, or nullptr on error.
 		 */
-		MemCardFile *addLostFile(const card_direntry *dirEntry, QVector<uint16_t> fatEntries);
+		MemCardFile *addLostFile(const card_direntry *dirEntry, const QVector<uint16_t> &fatEntries);
 
 		/**
 		 * Get the header checksum value.

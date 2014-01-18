@@ -57,7 +57,7 @@ class VarReplacePrivate
  *
  * @return str with replaced variables.
  */
-QString VarReplace::Exec(const QString str, const QHash<QString, QString> &vars)
+QString VarReplace::Exec(const QString &str, const QHash<QString, QString> &vars)
 {
 	// Variable format: $VAR, ${VAR}, $(VAR)
 	QString workStr;
