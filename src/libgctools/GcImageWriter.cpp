@@ -267,7 +267,13 @@ GcImageWriter::~GcImageWriter()
 bool GcImageWriter::isImageFormatSupported(ImageFormat imgf)
 {
 	switch (imgf) {
-		case IMGF_PNG:	return true;
+		case IMGF_PNG:
+#ifdef HAVE_PNG
+			return true;
+#else
+			return false;
+#endif
+
 		default:	break;
 	}
 
@@ -297,6 +303,26 @@ const char *GcImageWriter::extForImageFormat(ImageFormat imgf)
 bool GcImageWriter::isAnimImageFormatSupported(AnimImageFormat animImgf)
 {
 	switch (animImgf) {
+		case ANIMGF_APNG:
+#if defined(HAVE_PNG) && defined(HAVE_PNG_APNG)
+			return true;
+#else
+			return false;
+#endif
+
+		case ANIMGF_GIF:
+#ifdef HAVE_GIF
+			return true;
+#else
+			return false;
+#endif
+
+		case ANIMGF_PNG_FPF:
+		case ANIMGF_PNG_VS:
+		case ANIMGF_PNG_HS:
+			// TODO
+			return false;
+
 		default:	break;
 	}
 
