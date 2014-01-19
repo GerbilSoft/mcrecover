@@ -308,42 +308,10 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	memBuffer.clear();
 
 #if defined(HAVE_PNG) && defined(HAVE_PNG_APNG)
-	if (!gcImages || gcImages->empty() || !gcImages->at(0))
-		return -EINVAL;
-
-	// Adjust icon delays for NULL images.
-	// NOTE: Assuming image 0 is always valid.
-	int totalImages = 1; // Total number of non-NULL images.
-	// Icon delays with NULL adjustments.
-	vector<int> adjIconDelays = *gcIconDelays;
-
-	// Verify that all icons have the correct parameters.
 	const GcImage *gcImage0 = gcImages->at(0);
 	const int w = gcImage0->width();
 	const int h = gcImage0->height();
 	const GcImage::PxFmt pxFmt = gcImage0->pxFmt();
-	for (int i = 1, lastNonNullIdx = 0; i < (int)gcImages->size(); i++) {
-		const GcImage *gcImageN = gcImages->at(i);
-		if (!gcImageN) {
-			// NULL image.
-			// Assume it's the same as the previous image.
-			adjIconDelays[lastNonNullIdx] += gcIconDelays->at(i);
-			continue;
-		}
-
-		// This icon is not NULL.
-		lastNonNullIdx = i;
-		totalImages++;
-
-		if (gcImageN->width() != w ||
-		    gcImageN->height() != h ||
-		    gcImageN->pxFmt() != pxFmt)
-		{
-			// Animated icon is invalid.
-			// TODO: Use a better error code.
-			return -EINVAL;
-		}
-	}
 
 	// NOTE: APNG only supports a single palette.
 	// If the icon is CI8_UNIQUE, it will need to be
@@ -352,16 +320,15 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	vector<const GcImage*> gcImagesARGB32;
 	bool is_CI8_UNIQUE = false;
 	if (pxFmt == GcImage::PXFMT_CI8) {
+		// Check if all the palettes are identical.
 		const uint32_t *palette0 = gcImage0->palette();
 		for (int i = 1; i < (int)gcImages->size(); i++) {
 			const GcImage *gcImageN = gcImages->at(i);
-			if (gcImageN) {
-				const uint32_t *paletteN = gcImageN->palette();
-				if (memcmp(palette0, paletteN, (256*sizeof(*paletteN))) != 0) {
-					// CI8_UNIQUE.
-					is_CI8_UNIQUE = true;
-					break;
-				}
+			const uint32_t *paletteN = gcImageN->palette();
+			if (memcmp(palette0, paletteN, (256*sizeof(*paletteN))) != 0) {
+				// CI8_UNIQUE.
+				is_CI8_UNIQUE = true;
+				break;
 			}
 		}
 	}
@@ -440,8 +407,7 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	}
 
 	// Write an acTL to indicate that this is an APNG.
-	// NOTE: totalImages excludes NULL images.
-	png_set_acTL(png_ptr, info_ptr, totalImages, 0);
+	png_set_acTL(png_ptr, info_ptr, gcImages->size(), 0);
 
 	// Write the PNG information to the file.
 	png_write_info(png_ptr, info_ptr);
@@ -461,7 +427,7 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 			continue;
 
 		// NOTE: Icon delay is in units of 8 NTSC frames.
-		const int iconDelay = (adjIconDelays[i] * 8);
+		const int iconDelay = (gcIconDelays->at(i) * 8);
 		static const int iconDelayDenom = 60;
 
 		// Calculate the row pointers.
@@ -660,9 +626,54 @@ int GcImageWriter::write(const vector<const GcImage*> *gcImages,
 			 const vector<int> *gcIconDelays,
 			 AnimImageFormat animImgf)
 {
+	if (!gcImages || gcImages->empty() || !gcImages->at(0))
+		return -EINVAL;
+
+	// Adjust icon delays for NULL images.
+	// NOTE: Assuming image 0 is always valid.
+
+	// GcImages with NULL adjustments.
+	vector<const GcImage*> adjGcImages;
+	adjGcImages.reserve(gcImages->size());
+	adjGcImages.push_back(gcImages->at(0));
+
+	// Icon delays with NULL adjustments.
+	vector<int> adjGcIconDelays;
+	adjGcIconDelays.reserve(gcIconDelays->size());
+	adjGcIconDelays.push_back(gcIconDelays->at(0));
+
+	// Verify that all icons have the correct parameters.
+	const GcImage *gcImage0 = gcImages->at(0);
+	const int w = gcImage0->width();
+	const int h = gcImage0->height();
+	const GcImage::PxFmt pxFmt = gcImage0->pxFmt();
+	for (int i = 1, lastNonNullAdjIdx = 0; i < (int)gcImages->size(); i++) {
+		const GcImage *gcImageN = gcImages->at(i);
+		if (!gcImageN) {
+			// NULL image.
+			// Assume it's the same as the previous image.
+			adjGcIconDelays[lastNonNullAdjIdx] += gcIconDelays->at(i);
+			continue;
+		}
+
+		// This icon is not NULL.
+		lastNonNullAdjIdx = (int)adjGcIconDelays.size();
+		adjGcImages.push_back(gcImages->at(i));
+		adjGcIconDelays.push_back(gcIconDelays->at(i));
+
+		if (gcImageN->width() != w ||
+		    gcImageN->height() != h ||
+		    gcImageN->pxFmt() != pxFmt)
+		{
+			// Animated icon is invalid.
+			// TODO: Use a better error code.
+			return -EINVAL;
+		}
+	}
+
 	switch (animImgf) {
 		case ANIMGF_APNG:
-			return d->writeAPng(gcImages, gcIconDelays);
+			return d->writeAPng(&adjGcImages, &adjGcIconDelays);
 
 		default:
 			break;
