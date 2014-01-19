@@ -1376,17 +1376,26 @@ int MemCardFile::saveIcon(QIODevice *qioDevice,
 		for (int i = 0; i < d->gcIcons.size(); i++)
 			gcImages[i] = d->gcIcons[i];
 
+		// Icon speed.
+		vector<int> gcIconDelays;
+		gcIconDelays.reserve(maxIcons);
+		gcIconDelays.resize(d->gcIcons.size());
+		for (int i = 0; i < d->gcIcons.size(); i++)
+			gcIconDelays[i] = iconDelay(i);
+
 		if (iconAnimMode() == CARD_ANIM_BOUNCE) {
 			// BOUNCE animation.
 			int src = (gcImages.size() - 2);
 			int dest = gcImages.size();
 			gcImages.resize(maxIcons);
 			gcIconDelays.resize(maxIcons);
-			for (; src >= 1; src--, dest++)
+			for (; src >= 1; src--, dest++) {
 				gcImages[dest] = gcImages[src];
+				gcIconDelays[dest] = gcIconDelays[src];
+			}
 		}
 
-		ret = gcImageWriter.write(&gcImages, animImgf);
+		ret = gcImageWriter.write(&gcImages, &gcIconDelays, animImgf);
 	} else {
 		// Static icon.
 		ret = gcImageWriter.write(d->gcIcons.at(0), GcImageWriter::IMGF_PNG);

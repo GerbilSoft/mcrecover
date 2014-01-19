@@ -81,11 +81,11 @@ class GcImageWriterPrivate
 
 		/**
 		 * Write an animated GcImage to the internal memory buffer in APNG format.
-		 * @param gcImage	[in] Vector of GcImage.
-		 * TODO: Add icon speeds.
+		 * @param gcImages	[in] Vector of GcImage.
+		 * @param gcIconDelays	[in] Icon delays.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int writeApng(const vector<const GcImage*> *gcImages);
+		int writeApng(const vector<const GcImage*> *gcImages, const vector<int> *gcIconDelays);
 };
 
 GcImageWriterPrivate::GcImageWriterPrivate(GcImageWriter *const q)
@@ -259,12 +259,16 @@ int GcImageWriterPrivate::writePng(const GcImage *gcImage)
 
 /**
  * Write an animated GcImage to the internal memory buffer in APNG format.
- * @param gcImage	[in] Vector of GcImage.
+ * @param gcImages	[in] Vector of GcImage.
+ * @param gcIconDelays	[in] Icon delays.
  * TODO: Add icon speeds.
  * @return 0 on success; non-zero on error.
  */
-int GcImageWriterPrivate::writeApng(const vector<const GcImage*> *gcImages)
+int GcImageWriterPrivate::writeApng(const vector<const GcImage*> *gcImages, const vector<int> *gcIconDelays)
 {
+	// TODO
+	((void)gcIconDelays);
+
 	// Clear the internal memory buffer.
 	memBuffer.clear();
 
@@ -381,6 +385,9 @@ int GcImageWriterPrivate::writeApng(const vector<const GcImage*> *gcImages)
 	// TODO: Implement "bounce" animation support.
 	for (int i = 0; i < (int)gcImages->size(); i++) {
 		const GcImage *gcImage = gcImages->at(i);
+		// NOTE: Icon delay is in units of 4 NTSC frames.
+		const int iconDelay = (gcIconDelays->at(i) * 4);
+		static const int iconDelayDenom = 60;
 
 		if (gcImage) {
 			// Calculate the row pointers.
@@ -408,8 +415,8 @@ int GcImageWriterPrivate::writeApng(const vector<const GcImage*> *gcImages)
 
 			// Frame header.
 			png_write_frame_head(png_ptr, info_ptr, (png_bytepp)row_pointers.data(),
-					w, h, 0, 0,	// width, height, x offset, y offset
-					1, 4,		// delay numerator and denominator (TODO)
+					w, h, 0, 0,			// width, height, x offset, y offset
+					iconDelay, iconDelayDenom,	// delay numerator and denominator
 					PNG_DISPOSE_OP_NONE,
 					PNG_BLEND_OP_SOURCE);
 
@@ -566,16 +573,18 @@ int GcImageWriter::write(const GcImage *gcImage, ImageFormat imgf)
 
 /**
  * Write an animated GcImage to the internal memory buffer.
- * @param gcImage	[in] Vector of GcImage.
- * TODO: Add icon speeds.
+ * @param gcImages	[in] Vector of GcImage.
+ * @param gcIconDelays	[in] Icon delays.
  * @param animImgf	[in] Animated image format.
  * @return 0 on success; non-zero on error.
  */
-int GcImageWriter::write(const vector<const GcImage*> *gcImages, AnimImageFormat animImgf)
+int GcImageWriter::write(const vector<const GcImage*> *gcImages,
+			 const vector<int> *gcIconDelays,
+			 AnimImageFormat animImgf)
 {
 	switch (animImgf) {
 		case ANIMGF_APNG:
-			return d->writeApng(gcImages);
+			return d->writeApng(gcImages, gcIconDelays);
 
 		default:
 			break;

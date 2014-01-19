@@ -112,12 +112,14 @@ class GcImageWriter
 
 		/**
 		 * Write an animated GcImage to the internal memory buffer.
-		 * @param gcImage	[in] Vector of GcImage.
-		 * TODO: Add icon speeds.
+		 * @param gcImages	[in] Vector of GcImage.
+		 * @param gcIconDelays	[in] Icon delays.
 		 * @param animImgf	[in] Animated image format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int write(const std::vector<const GcImage*> *gcImages, AnimImageFormat animImgf);
+		int write(const std::vector<const GcImage*> *gcImages,
+			  const std::vector<int> *gcIconDelays,
+			  AnimImageFormat animImgf);
 };
 
 #endif /* __LIBGCTOOLS_CHECKSUM_HPP__ */
