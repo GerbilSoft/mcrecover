@@ -289,7 +289,6 @@ int GcImageWriterPrivate::writePng(const GcImage *gcImage)
  * Write an animated GcImage to the internal memory buffer in APNG format.
  * @param gcImages	[in] Vector of GcImage.
  * @param gcIconDelays	[in] Icon delays.
- * TODO: Add icon speeds.
  * @return 0 on success; non-zero on error.
  */
 int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, const vector<int> *gcIconDelays)
@@ -465,7 +464,6 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 /**
  * Write an animated GcImage to the internal memory buffer in PNG VS format.
  * @param gcImages	[in] Vector of GcImage.
- * TODO: Add icon speeds.
  * @return 0 on success; non-zero on error.
  */
 int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
