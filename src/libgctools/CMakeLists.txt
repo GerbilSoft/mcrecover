@@ -32,8 +32,20 @@ SET(libgctools_SRCS
 	GcImageWriter.cpp
 	)
 
+# PNG-specific sources.
+IF(HAVE_PNG)
+	SET(libgctools_PNG_SRCS
+		APNG_dlopen.c
+		)
+ENDIF(HAVE_PNG)
+
+# If we're using an external libpng, link in libdl.
+IF(NOT USE_INTERNAL_PNG)
+	SET(gctools_DL_LIBS ${CMAKE_DL_LIBS})
+ENDIF(NOT USE_INTERNAL_PNG)
+
 # Build the library.
-ADD_LIBRARY(gctools STATIC ${libgctools_SRCS})
-TARGET_LINK_LIBRARIES(gctools ${PNG_LIBRARY})
+ADD_LIBRARY(gctools STATIC ${libgctools_SRCS} ${libgctools_PNG_SRCS})
+TARGET_LINK_LIBRARIES(gctools ${PNG_LIBRARY} ${gctools_DL_LIBS})
 SET_TARGET_PROPERTIES(gctools PROPERTIES
 	COMPILE_DEFINITIONS "${PNG_DEFINITIONS}")

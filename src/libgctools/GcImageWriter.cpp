@@ -36,6 +36,7 @@ using std::vector;
 // libpng
 #ifdef HAVE_PNG
 #include <png.h>
+#include "APNG_dlopen.h"
 #endif
 
 /** GcImageWriterPrivate **/
@@ -372,7 +373,10 @@ vector<const GcImage*> *GcImageWriterPrivate::gcImages_from_CI8_UNIQUE(const vec
  */
 int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, const vector<int> *gcIconDelays)
 {
-#if defined(HAVE_PNG) && defined(HAVE_PNG_APNG)
+#if defined(HAVE_PNG)
+	if (!APNG_is_supported())
+		return -ENOSYS;
+
 	// NOTE: APNG only supports a single palette.
 	// If the icon is CI8_UNIQUE, it will need to be
 	// converted to ARGB32.
@@ -450,7 +454,7 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	}
 
 	// Write an acTL to indicate that this is an APNG.
-	png_set_acTL(png_ptr, info_ptr, gcImages->size(), 0);
+	APNG_png_set_acTL(png_ptr, info_ptr, gcImages->size(), 0);
 
 	// Write the PNG information to the file.
 	png_write_info(png_ptr, info_ptr);
@@ -478,7 +482,7 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 			row_pointers[y] = imageData;
 
 		// Frame header.
-		png_write_frame_head(png_ptr, info_ptr, (png_bytepp)row_pointers.data(),
+		APNG_png_write_frame_head(png_ptr, info_ptr, (png_bytepp)row_pointers.data(),
 				w, h, 0, 0,			// width, height, x offset, y offset
 				iconDelay, iconDelayDenom,	// delay numerator and denominator
 				PNG_DISPOSE_OP_NONE,
@@ -488,7 +492,7 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 		png_write_image(png_ptr, (png_bytepp)row_pointers.data());
 
 		// Frame tail.
-		png_write_frame_tail(png_ptr, info_ptr);
+		APNG_png_write_frame_tail(png_ptr, info_ptr);
 	}
 
 	// Finished writing.
@@ -877,9 +881,8 @@ bool GcImageWriter::isAnimImageFormatSupported(AnimImageFormat animImgf)
 {
 	switch (animImgf) {
 		case ANIMGF_APNG:
-			// TODO: Make APNG dlopen()able.
-#if defined(HAVE_PNG) && defined(HAVE_PNG_APNG)
-			return true;
+#if defined(HAVE_PNG)
+			return APNG_is_supported();
 #else
 			return false;
 #endif
