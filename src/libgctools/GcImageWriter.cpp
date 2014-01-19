@@ -525,7 +525,7 @@ int GcImageWriterPrivate::writePng_FPF(const vector<const GcImage*> *gcImages)
 	// in its own PNG file.
 
 #if defined(HAVE_PNG)
-	for (int i = 0; i < gcImages->size(); i++) {
+	for (int i = 0; i < (int)gcImages->size(); i++) {
 		int ret = writePng(gcImages->at(i));
 		if (ret != 0)
 			return ret;
