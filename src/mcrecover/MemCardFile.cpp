@@ -1394,7 +1394,7 @@ int MemCardFile::saveIcon(const QString &filenameNoExt,
 			return -EIO;
 		}
 
-		const vector<uint8_t> *pngData = gcImageWriter.memBuffer();
+		const vector<uint8_t> *pngData = gcImageWriter.memBuffer(i);
 		ret = file.write(reinterpret_cast<const char*>(pngData->data()), pngData->size());
 		file.close();
 
