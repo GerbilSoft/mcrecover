@@ -53,6 +53,7 @@ class HackDetectionPrivate
 		QFont fntHack;
 		int hMargin;
 		QChar chrStar;
+		QPoint drpTranslate;
 		void initFont(void);
 
 		// "Hack Detection" message.
@@ -117,11 +118,17 @@ void HackDetectionPrivate::initFont(void)
 
 	/**
 	 * With 640x480, the original "Hack Detection"
-	 * used a 16px font. Calculate the font size
-	 * relative to 16/480.
+	 * used an 18px font. Calculate the font size
+	 * relative to 18/480.
 	 */
 	int fntPx = (size.height() * 18 / 480);
 	fntHack.setPixelSize(fntPx);
+
+	/**
+	 * Drop shadow should be 2px for 18px font.
+	 */
+	int drpSz = (fntPx / 9);
+	drpTranslate = QPoint(drpSz, drpSz);
 
 	/**
 	 * Horizontal margin was around 40px on 640x480.
@@ -289,10 +296,22 @@ void HackDetection::paintEvent(QPaintEvent *event)
 
 	// Draw the title.
 	painter.setFont(d->fntHack);
+	// (drop shadow)
+	QRect drpRect = rectTitle;
+	drpRect.translate(d->drpTranslate);
+	painter.setPen(colorDropShadow);
+	painter.drawText(drpRect, 0, drawTitle);
+	// (regular text)
 	painter.setPen(colorTxtTitle);
 	painter.drawText(rectTitle, 0, drawTitle);
 
 	// Draw the message.
+	// (drop shadow)
+	drpRect = rectMessage;
+	drpRect.translate(d->drpTranslate);
+	painter.setPen(colorDropShadow);
+	painter.drawText(drpRect, 0, d->hdMessage);
+	// (regular text)
 	painter.setPen(colorTxtMessage);
 	painter.drawText(rectMessage, 0, d->hdMessage);
 }
