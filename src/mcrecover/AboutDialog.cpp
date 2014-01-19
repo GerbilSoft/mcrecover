@@ -273,15 +273,23 @@ QString AboutDialogPrivate::GetCredits(void)
  */
 QString AboutDialogPrivate::GetLibraries(void)
 {
-	//: Using an internal copy of a library.
-	static const QString sIntCopyOf = AboutDialog::tr("Internal copy of %1.");
-	//: Compiled with a specific version of an external library.
-	static const QString sCompiledWith = AboutDialog::tr("Compiled with %1.");
-	//: Using an external library, e.g. libpcre.so
-	static const QString sUsingDll = AboutDialog::tr("Using %1.");
-
 	// Double linebreak.
 	static const QString sDLineBreak = QChar(L'\n') + QChar(L'\n');
+
+	// NOTE: These strings can NOT be static.
+	// Otherwise, they won't be retranslated if the UI language
+	// is changed at runtime.
+
+	//: Using an internal copy of a library.
+	const QString sIntCopyOf = AboutDialog::tr("Internal copy of %1.");
+	//: Compiled with a specific version of an external library.
+	const QString sCompiledWith = AboutDialog::tr("Compiled with %1.");
+	//: Using an external library, e.g. libpcre.so
+	const QString sUsingDll = AboutDialog::tr("Using %1.");
+	//: License: (libraries with only a single license)
+	const QString sLicense = AboutDialog::tr("License: %1");
+	//: Licenses: (libraries with multiple licenses)
+	const QString sLicenses = AboutDialog::tr("Licenses: %1");
 
 	// Included libraries string.
 	QString sLibraries;
@@ -290,8 +298,8 @@ QString AboutDialogPrivate::GetLibraries(void)
 	// Icon set.
 	sLibraries = QLatin1String(
 		"Icon set is based on KDE's Oxygen icons.\n"
-		"Copyright (C) 2005-2013 by David Vignoni.\n"
-		"Licenses: CC BY-SA 3.0, GNU LGPL v2.1+");
+		"Copyright (C) 2005-2013 by David Vignoni.\n");
+	sLibraries += sLicenses.arg(QLatin1String("CC BY-SA 3.0, GNU LGPL v2.1+"));
 
 	// TODO: Don't show compiled-with version if the same as in-use version?
 
@@ -309,9 +317,9 @@ QString AboutDialogPrivate::GetLibraries(void)
 		QLatin1String("Copyright (C) 1995-2013 Digita Plc and/or its subsidiaries.");
 	// TODO: Check QT_VERSION at runtime?
 #if QT_VERSION >= 0x040500
-	sLibraries += QChar(L'\n') + QLatin1String("Licenses: GNU LGPL v2.1+, GNU GPL v2+");
+	sLibraries += QChar(L'\n') + sLicenses.arg(QLatin1String("GNU LGPL v2.1+, GNU GPL v2+"));
 #else
-	sLibraries += QChar(L'\n') + QLatin1String("License: GNU GPL v2+");
+	sLibraries += QChar(L'\n') + sLicense.arg(QLatin1String("GNU GPL v2+"));
 #endif /* QT_VERSION */
 
 	/** PCRE **/
@@ -335,7 +343,7 @@ QString AboutDialogPrivate::GetLibraries(void)
 #endif /* PCRE_STATIC */
 	sLibraries += QChar(L'\n') +
 		QLatin1String("Copyright (C) 1997-2014 University of Cambridge.");
-	sLibraries += QChar(L'\n') + QLatin1String("License: BSD (3-clause)");
+	sLibraries += QChar(L'\n') + sLicense.arg(QLatin1String("BSD (3-clause)"));
 
 	/** libpng **/
 #ifdef HAVE_PNG
@@ -363,10 +371,10 @@ QString AboutDialogPrivate::GetLibraries(void)
 	QString pngVersionCompiled = QLatin1String("libpng " PNG_LIBPNG_VER_STRING);
 	pngVersionCompiled += pngAPngSuffix;
 	sLibraries += sCompiledWith.arg(pngVersionCompiled) + QChar(L'\n');
-	sLibraries += sUsingDll.arg(pngVersion) + QChar(L'\n');
+	sLibraries += sUsingDll.arg(pngVersion);
 #endif /* PNG_IS_STATIC */
 	sLibraries += QLatin1String(png_get_copyright(nullptr));
-	sLibraries += QLatin1String("License: libpng license");
+	sLibraries += sLicense.arg(QLatin1String("libpng license"));
 #endif /* HAVE_PNG */
 
 	// Return the included libraries string.
