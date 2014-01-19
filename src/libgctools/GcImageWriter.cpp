@@ -73,6 +73,17 @@ class GcImageWriterPrivate
 		static void png_io_flush(png_structp png_ptr);
 
 		/**
+		 * Write a PLTE chunk to a PNG image.
+		 * @param png_ptr PNG pointer.
+		 * @param info_ptr PNG info pointer.
+		 * @param palette Palette. (ARGB32 format)
+		 * @param num_entries Number of palette entries.
+		 * @return 0 on success; non-zero on error.
+		 */
+		int writePng_PLTE(png_structp png_ptr, png_infop info_ptr,
+				  const uint32_t *palette, int num_entries);
+
+		/**
 		 * Write a GcImage to the internal memory buffer in PNG format.
 		 * @param gcImage	[in] GcImage.
 		 * @return 0 on success; non-zero on error.
@@ -124,6 +135,39 @@ void GcImageWriterPrivate::png_io_flush(png_structp png_ptr)
 {
 	// Do nothing!
 	((void)png_ptr);
+}
+
+/**
+ * Write a PLTE chunk to a PNG image.
+ * @param png_ptr PNG pointer.
+ * @param info_ptr PNG info pointer.
+ * @param palette Palette. (ARGB32 format)
+ * @param num_entries Number of palette entries.
+ * @return 0 on success; non-zero on error.
+ */
+int GcImageWriterPrivate::writePng_PLTE(
+		png_structp png_ptr, png_infop info_ptr,
+		const uint32_t *palette, int num_entries)
+{
+	if (num_entries < 0 || num_entries > 256)
+		return -1;
+
+	// Maximum size.
+	png_color png_pal[256];
+	uint8_t png_tRNS[256];
+
+	// Convert the palette.
+	for (int i = 0; i < num_entries; i++) {
+		png_pal[i].red   = ((palette[i] >> 16) & 0xFF);
+		png_pal[i].green = ((palette[i] >> 8) & 0xFF);
+		png_pal[i].blue  = (palette[i] & 0xFF);
+		png_tRNS[i]      = ((palette[i] >> 24) & 0xFF);
+	}
+
+	// Write the PLTE and tRNS chunks.
+	png_set_PLTE(png_ptr, info_ptr, png_pal, num_entries);
+	png_set_tRNS(png_ptr, info_ptr, png_tRNS, num_entries, nullptr);
+	return 0;
 }
 
 /**
@@ -190,17 +234,7 @@ int GcImageWriterPrivate::writePng(const GcImage *gcImage)
 					PNG_FILTER_TYPE_DEFAULT);
 
 			// Set the palette and tRNS values.
-			png_color png_pal[256];
-			uint8_t png_tRNS[256];
-			const uint32_t *palette = gcImage->palette();
-			for (int i = 0; i < 256; i++) {
-				png_pal[i].red   = ((palette[i] >> 16) & 0xFF);
-				png_pal[i].green = ((palette[i] >> 8) & 0xFF);
-				png_pal[i].blue  = (palette[i] & 0xFF);
-				png_tRNS[i]      = ((palette[i] >> 24) & 0xFF);
-			}
-			png_set_PLTE(png_ptr, info_ptr, png_pal, sizeof(png_pal)/sizeof(png_pal[0]));
-			png_set_tRNS(png_ptr, info_ptr, png_tRNS, sizeof(png_tRNS)/sizeof(png_tRNS[0]), nullptr);
+			writePng_PLTE(png_ptr, info_ptr, gcImage->palette(), 256);
 			break;
 		}
 
@@ -346,17 +380,7 @@ int GcImageWriterPrivate::writeApng(const vector<const GcImage*> *gcImages, cons
 					PNG_FILTER_TYPE_DEFAULT);
 
 			// Set the palette and tRNS values.
-			png_color png_pal[256];
-			uint8_t png_tRNS[256];
-			const uint32_t *palette = gcImage0->palette();
-			for (int i = 0; i < 256; i++) {
-				png_pal[i].red   = ((palette[i] >> 16) & 0xFF);
-				png_pal[i].green = ((palette[i] >> 8) & 0xFF);
-				png_pal[i].blue  = (palette[i] & 0xFF);
-				png_tRNS[i]      = ((palette[i] >> 24) & 0xFF);
-			}
-			png_set_PLTE(png_ptr, info_ptr, png_pal, sizeof(png_pal)/sizeof(png_pal[0]));
-			png_set_tRNS(png_ptr, info_ptr, png_tRNS, sizeof(png_tRNS)/sizeof(png_tRNS[0]), nullptr);
+			writePng_PLTE(png_ptr, info_ptr, gcImage0->palette(), 256);
 			break;
 		}
 
