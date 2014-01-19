@@ -455,8 +455,9 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 
 	return 0;
 #else
-	// PNG support is not available.
+	// PNG and/or APNG support is not available.
 	((void)gcImage);
+	((void)gcIconDelays);
 	return -EINVAL;
 #endif
 }
@@ -475,7 +476,7 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 	// Clear the internal memory buffer.
 	memBuffer.clear();
 
-#if defined(HAVE_PNG) && defined(HAVE_PNG_APNG)
+#if defined(HAVE_PNG)
 	const GcImage *gcImage0 = gcImages->at(0);
 	const int w = gcImage0->width();
 	const int h = gcImage0->height();
