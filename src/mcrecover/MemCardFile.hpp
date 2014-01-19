@@ -298,16 +298,6 @@ class MemCardFile : public QObject
 		 */
 		int saveIcon(const QString &filenameNoExt,
 			     GcImageWriter::AnimImageFormat animImgf) const;
-
-		/**
-		 * Save the banner image.
-		 * @param qioDevice QIODevice to write the banner image to.
-		 * @param animImgf Animated image format for animated icons.
-		 * @return 0 on success; non-zero on error.
-		 * TODO: Error code constants.
-		 */
-		int saveIcon(QIODevice *qioDevice,
-			     GcImageWriter::AnimImageFormat animImgf) const;
 };
 
 #endif /* __MCRECOVER_MEMCARDFILE_HPP__ */

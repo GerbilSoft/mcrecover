@@ -1318,7 +1318,6 @@ int MemCardFile::saveIcon(const QString &filenameNoExt,
 		return -EINVAL;
 
 	// Append the correct extension.
-	QString filename = filenameNoExt;
 	const char *ext;
 	if (d->gcIcons.size() > 1) {
 		// Animated icon.
@@ -1328,43 +1327,8 @@ int MemCardFile::saveIcon(const QString &filenameNoExt,
 		ext = GcImageWriter::extForImageFormat(GcImageWriter::IMGF_PNG);
 	}
 
-	if (ext)
-		filename += QChar(L'.') + QLatin1String(ext);
-
-	QFile file(filename);
-	if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-		// Error opening the file.
-		// TODO: Convert QFileError to a POSIX error code.
-		return -EIO;
-	}
-
-	// Write the icon.
-	int ret = saveIcon(&file, animImgf);
-	file.close();
-
-	if (ret != 0) {
-		// Error saving the banner image.
-		file.remove();
-	}
-
-	return ret;
-}
-
-/**
- * Save the icon.
- * @param qioDevice QIODevice to write the banner image to.
- * @param animImgf Animated image format to use for animated icons.
- * @return 0 on success; non-zero on error.
- * TODO: Error code constants.
- */
-int MemCardFile::saveIcon(QIODevice *qioDevice,
-	GcImageWriter::AnimImageFormat animImgf) const
-{
-	Q_D(const MemCardFile);
-	if (d->gcIcons.isEmpty())
-		return -EINVAL;
-
-	// TODO: Animated icon support.
+	// NOTE: Due to PNG_FPF saving multiple files, we can't simply
+	// call a version of saveIcon() that takes a QIODevice.
 	GcImageWriter gcImageWriter;
 	int ret;
 	if (d->gcIcons.size() > 1) {
@@ -1401,14 +1365,47 @@ int MemCardFile::saveIcon(QIODevice *qioDevice,
 		ret = gcImageWriter.write(d->gcIcons.at(0), GcImageWriter::IMGF_PNG);
 	}
 
-	if (!ret) {
-		const vector<uint8_t> *pngData = gcImageWriter.memBuffer();
-		ret = qioDevice->write(reinterpret_cast<const char*>(pngData->data()), pngData->size());
-		if (ret != (qint64)pngData->size())
+	if (ret != 0) {
+		// Error writing the icon.
+		return ret;
+	}
+
+	// Icon written successfully.
+	// Save it to a file.
+	for (int i = 0; i < gcImageWriter.numFiles(); i++) {
+		QString filename = filenameNoExt;
+		if (gcImageWriter.numFiles() > 1) {
+			// Multiple files.
+			// Append the file number.
+			char tmp[8];
+			snprintf(tmp, sizeof(tmp), "%02d", i+1);
+			filename += QChar(L'.') + QLatin1String(tmp);
+		}
+
+		// Append the file extension.
+		if (ext)
+			filename += QChar(L'.') + QLatin1String(ext);
+
+		QFile file(filename);
+		if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+			// Error opening the file.
+			// TODO: Convert QFileError to a POSIX error code.
+			// TODO: Delete previous files?
 			return -EIO;
+		}
+
+		const vector<uint8_t> *pngData = gcImageWriter.memBuffer();
+		ret = file.write(reinterpret_cast<const char*>(pngData->data()), pngData->size());
+		file.close();
+
+		if (ret != (qint64)pngData->size()) {
+			// Error saving the icon.
+			file.remove();
+			return -EIO;
+		}
+
 		ret = 0;
 	}
 
-	// Saved the icon.
 	return ret;
 }
