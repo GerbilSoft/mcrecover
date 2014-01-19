@@ -232,6 +232,7 @@ QString AboutDialogPrivate::GetCredits(void)
 		{CT_CONTINUE,		"McLaglen"},		// PAL (aka Mainman)
 		{CT_CONTINUE,		"einstein95"},		// Multiple regions
 		{CT_CONTINUE,		"Hendricks266"},	// NTSC-U
+		{CT_CONTINUE,		"Typpex"},		// NTSC-U, PAL
 
 		{CT_MAX, nullptr}
 	};
