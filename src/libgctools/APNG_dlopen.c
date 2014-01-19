@@ -19,6 +19,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
+#include "config.libgctools.h"
+#include <png.h>
+
+#ifdef USE_INTERNAL_PNG
+// Check if the internal libpng supports APNG.
+#ifdef PNG_APNG_SUPPORTED
+#define INT_PNG_APNG_SUPPORTED
+#endif /* PNG_APNG_SUPPORTED */
+#endif /* USE_INTERNAL_PNG */
+
 #include "APNG_dlopen.h"
 
 // C includes.
@@ -88,7 +98,7 @@ static inline int init_apng(void)
 {
 #ifdef USE_INTERNAL_PNG
 	// Internal PNG library.
-#ifdef HAVE_PNG_APNG
+#ifdef INT_PNG_APNG_SUPPORTED
 	// APNG is supported in the internal PNG library.
 	APNG_png_get_acTL = png_get_acTL;
 	APNG_png_set_acTL = png_set_acTL;
@@ -114,7 +124,7 @@ static inline int init_apng(void)
 #else
 	// APNG is not supported in the internal PNG library.
 	return 0;
-#endif /* HAVE_PNG_APNG */
+#endif /* INT_PNG_APNG_SUPPORTED */
 #else
 	// External PNG library.
 	char png_dll_filename[32];
