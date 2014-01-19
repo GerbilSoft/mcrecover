@@ -36,14 +36,13 @@ using std::vector;
 class GcImagePrivate
 {
 	public:
-		GcImagePrivate(GcImage *const q);
+		GcImagePrivate();
 		~GcImagePrivate();
-
+		// Copy constructor.
+		GcImagePrivate(const GcImagePrivate &other);
 	private:
-		GcImage *const q;
-		// TODO: Copy Qt's Q_DISABLE_COPY() macro.
-		GcImagePrivate(const GcImagePrivate &);
-		GcImagePrivate &operator=(const GcImagePrivate &);
+		// Assign constructor. (TODO)
+		GcImagePrivate &operator=(const GcImagePrivate &other);
 
 	public:
 		/**
@@ -62,9 +61,8 @@ class GcImagePrivate
 		int height;
 };
 
-GcImagePrivate::GcImagePrivate(GcImage *const q)
-	: q(q)
-	, imageData(nullptr)
+GcImagePrivate::GcImagePrivate()
+	: imageData(nullptr)
 	, imageData_len(0)
 	, pxFmt(GcImage::PXFMT_NONE)
 	, width(0)
@@ -73,6 +71,22 @@ GcImagePrivate::GcImagePrivate(GcImage *const q)
 
 GcImagePrivate::~GcImagePrivate()
 	{ free(imageData); }
+
+GcImagePrivate::GcImagePrivate(const GcImagePrivate &other)
+	: imageData_len(other.imageData_len)
+	, palette(other.palette)
+	, pxFmt(other.pxFmt)
+	, width(other.width)
+	, height(other.height)
+{
+	// Copy the image data.
+	if (imageData_len == 0) {
+		imageData = nullptr;
+	} else {
+		imageData = malloc(imageData_len);
+		memcpy(imageData, other.imageData, imageData_len);
+	}
+}
 
 /**
  * Initialize the GcImage.
@@ -120,11 +134,15 @@ void GcImagePrivate::init(int w, int h, GcImage::PxFmt pxFmt)
 /** GcImage **/
 
 GcImage::GcImage()
-	: d(new GcImagePrivate(this))
+	: d(new GcImagePrivate())
 { }
 
 GcImage::~GcImage()
 	{ delete d; }
+
+GcImage::GcImage(const GcImage &other)
+	: d(other.d)
+{ }
 
 /**
  * Convert an RGB5A3 pixel to ARGB32.
@@ -290,6 +308,53 @@ GcImage *GcImage::fromRGB5A3(int w, int h, const uint16_t *img_buf, int img_siz)
 
 	// Image has been converted.
 	return gcImage;
+}
+
+/**
+ * Convert this GcImage to RGB5A3.
+ * Caller must delete the returned GcImage.
+ * @return New GcImage in RGB5A3.
+ */
+#include <stdio.h>
+GcImage *GcImage::toRGB5A3(void) const
+{
+	switch (d->pxFmt) {
+		case PXFMT_ARGB32:
+			// Image is already ARGB32.
+			return new GcImage(*this);
+
+		case PXFMT_CI8: {
+			// CI8. Convert to ARGB32.
+			GcImage *gcImage = new GcImage();
+			GcImagePrivate *const d_new = gcImage->d;
+			d_new->init(d->width, d->height, PXFMT_ARGB32);
+
+			const uint8_t *ci8 = reinterpret_cast<const uint8_t*>(d->imageData);
+			uint32_t *rgb5A3 = reinterpret_cast<uint32_t*>(d_new->imageData);
+			size_t len = d->imageData_len;
+			for (; len >= 4; len -= 4, ci8 += 4, rgb5A3 += 4) {
+				*(rgb5A3 + 0) = d->palette[*(ci8 + 0)];
+				*(rgb5A3 + 1) = d->palette[*(ci8 + 1)];
+				*(rgb5A3 + 2) = d->palette[*(ci8 + 2)];
+				*(rgb5A3 + 3) = d->palette[*(ci8 + 3)];
+			}
+			// Just in case the image size isn't divisible by 4...
+			for (; len > 0; len--, ci8++, rgb5A3++) {
+				*rgb5A3 = d->palette[*ci8];
+			}
+
+			// Image is converted.
+			return gcImage;
+		}
+
+		case PXFMT_NONE:
+		default:
+			// Invalid image format.
+			break;
+	}
+
+	// Invalid image format.
+	return nullptr;
 }
 
 GcImage::PxFmt GcImage::pxFmt(void) const

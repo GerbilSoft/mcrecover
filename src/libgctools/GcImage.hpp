@@ -37,13 +37,14 @@ class GcImage
 		GcImage();
 	public:
 		~GcImage();
+		// Copy/ constructor.
+		GcImage(const GcImage &other);
 
 	private:
 		friend class GcImagePrivate;
 		GcImagePrivate *const d;
-		// TODO: Copy Qt's Q_DISABLE_COPY() macro.
-		GcImage(const GcImage &);
-		GcImage &operator=(const GcImage &);
+		// Assign constructor. (TODO)
+		GcImage &operator=(const GcImage &other);
 
 	public:
 		/**
@@ -69,6 +70,13 @@ class GcImage
 		 * @return GcImage, or nullptr on error.
 		 */
 		static GcImage *fromRGB5A3(int w, int h, const uint16_t *img_buf, int img_siz);
+
+		/**
+		 * Convert this GcImage to RGB5A3.
+		 * Caller must delete the returned GcImage.
+		 * @return New GcImage in RGB5A3.
+		 */
+		GcImage *toRGB5A3(void) const;
 
 		/**
 		 * Internal pixel formats.
