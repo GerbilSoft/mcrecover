@@ -308,21 +308,32 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	memBuffer.clear();
 
 #if defined(HAVE_PNG) && defined(HAVE_PNG_APNG)
-	if (!gcImages || gcImages->empty())
+	if (!gcImages || gcImages->empty() || !gcImages->at(0))
 		return -EINVAL;
+
+	// Adjust icon delays for NULL images.
+	// NOTE: Assuming image 0 is always valid.
+	int totalImages = 1; // Total number of non-NULL images.
+	// Icon delays with NULL adjustments.
+	vector<int> adjIconDelays = *gcIconDelays;
 
 	// Verify that all icons have the correct parameters.
 	const GcImage *gcImage0 = gcImages->at(0);
 	const int w = gcImage0->width();
 	const int h = gcImage0->height();
 	const GcImage::PxFmt pxFmt = gcImage0->pxFmt();
-	for (int i = 1; i < (int)gcImages->size(); i++) {
+	for (int i = 1, lastNonNullIdx = 0; i < (int)gcImages->size(); i++) {
 		const GcImage *gcImageN = gcImages->at(i);
 		if (!gcImageN) {
-			// Some images are blank.
-			// Assume they're the same as the previous image.
+			// NULL image.
+			// Assume it's the same as the previous image.
+			adjIconDelays[lastNonNullIdx] += gcIconDelays->at(i);
 			continue;
 		}
+
+		// This icon is not NULL.
+		lastNonNullIdx = i;
+		totalImages++;
 
 		if (gcImageN->width() != w ||
 		    gcImageN->height() != h ||
@@ -429,7 +440,8 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	}
 
 	// Write an acTL to indicate that this is an APNG.
-	png_set_acTL(png_ptr, info_ptr, gcImages->size(), 0);
+	// NOTE: totalImages excludes NULL images.
+	png_set_acTL(png_ptr, info_ptr, totalImages, 0);
 
 	// Write the PNG information to the file.
 	png_write_info(png_ptr, info_ptr);
@@ -445,51 +457,48 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 
 	for (int i = 0; i < (int)gcImages->size(); i++) {
 		const GcImage *gcImage = gcImages->at(i);
+		if (!gcImage)
+			continue;
+
 		// NOTE: Icon delay is in units of 8 NTSC frames.
-		const int iconDelay = (gcIconDelays->at(i) * 8);
+		const int iconDelay = (adjIconDelays[i] * 8);
 		static const int iconDelayDenom = 60;
 
-		if (gcImage) {
-			// Calculate the row pointers.
-			int pitch;
-			switch (pxFmt) {
-				case GcImage::PXFMT_ARGB32:
-					pitch = (w * 4);
-					break;
+		// Calculate the row pointers.
+		int pitch;
+		switch (pxFmt) {
+			case GcImage::PXFMT_ARGB32:
+				pitch = (w * 4);
+				break;
 
-				case GcImage::PXFMT_CI8: {
-					pitch = w;
-					break;
-				}
-
-				default:
-					// Unsupported pixel format.
-					png_destroy_write_struct(&png_ptr, (png_infopp)nullptr);
-					memBuffer.clear();
-					return -EINVAL;
+			case GcImage::PXFMT_CI8: {
+				pitch = w;
+				break;
 			}
 
-			const uint8_t *imageData = (const uint8_t*)gcImage->imageData();
-			for (int y = 0; y < h; y++, imageData += pitch)
-				row_pointers[y] = imageData;
-
-			// Frame header.
-			png_write_frame_head(png_ptr, info_ptr, (png_bytepp)row_pointers.data(),
-					w, h, 0, 0,			// width, height, x offset, y offset
-					iconDelay, iconDelayDenom,	// delay numerator and denominator
-					PNG_DISPOSE_OP_NONE,
-					PNG_BLEND_OP_SOURCE);
-
-			// Write the image data.
-			png_write_image(png_ptr, (png_bytepp)row_pointers.data());
-
-			// Frame tail.
-			png_write_frame_tail(png_ptr, info_ptr);
-		} else {
-			// Empty image.
-			// TODO: Insert an empty frame.
-			// Alternatively, adjust the previous frame?
+			default:
+				// Unsupported pixel format.
+				png_destroy_write_struct(&png_ptr, (png_infopp)nullptr);
+				memBuffer.clear();
+				return -EINVAL;
 		}
+
+		const uint8_t *imageData = (const uint8_t*)gcImage->imageData();
+		for (int y = 0; y < h; y++, imageData += pitch)
+			row_pointers[y] = imageData;
+
+		// Frame header.
+		png_write_frame_head(png_ptr, info_ptr, (png_bytepp)row_pointers.data(),
+				w, h, 0, 0,			// width, height, x offset, y offset
+				iconDelay, iconDelayDenom,	// delay numerator and denominator
+				PNG_DISPOSE_OP_NONE,
+				PNG_BLEND_OP_SOURCE);
+
+		// Write the image data.
+		png_write_image(png_ptr, (png_bytepp)row_pointers.data());
+
+		// Frame tail.
+		png_write_frame_tail(png_ptr, info_ptr);
 	}
 
 	// Finished writing.
