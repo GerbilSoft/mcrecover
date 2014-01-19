@@ -96,7 +96,7 @@ class GcImageWriterPrivate
 		 * @param gcIconDelays	[in] Icon delays.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int writeApng(const vector<const GcImage*> *gcImages, const vector<int> *gcIconDelays);
+		int writeAPng(const vector<const GcImage*> *gcImages, const vector<int> *gcIconDelays);
 };
 
 GcImageWriterPrivate::GcImageWriterPrivate(GcImageWriter *const q)
@@ -298,7 +298,7 @@ int GcImageWriterPrivate::writePng(const GcImage *gcImage)
  * TODO: Add icon speeds.
  * @return 0 on success; non-zero on error.
  */
-int GcImageWriterPrivate::writeApng(const vector<const GcImage*> *gcImages, const vector<int> *gcIconDelays)
+int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, const vector<int> *gcIconDelays)
 {
 	// TODO
 	((void)gcIconDelays);
@@ -608,7 +608,7 @@ int GcImageWriter::write(const vector<const GcImage*> *gcImages,
 {
 	switch (animImgf) {
 		case ANIMGF_APNG:
-			return d->writeApng(gcImages, gcIconDelays);
+			return d->writeAPng(gcImages, gcIconDelays);
 
 		default:
 			break;
