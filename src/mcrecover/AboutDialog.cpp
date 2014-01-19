@@ -339,7 +339,7 @@ QString AboutDialogPrivate::GetLibraries(void)
 	QString pcreVersionCompiled = QLatin1String("PCRE %1.%2");
 	pcreVersionCompiled = pcreVersionCompiled
 				.arg(PCRE_MAJOR).arg(PCRE_MINOR);
-	sLibraries += sCompiledWith.arg(qtVersionCompiled) + QChar(L'\n');
+	sLibraries += sCompiledWith.arg(pcreVersionCompiled) + QChar(L'\n');
 	sLibraries += sUsingDll.arg(pcreVersion);
 #endif /* PCRE_STATIC */
 	sLibraries += QChar(L'\n') +
