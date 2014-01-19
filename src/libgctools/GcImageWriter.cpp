@@ -92,6 +92,14 @@ class GcImageWriterPrivate
 		int writePng(const GcImage *gcImage);
 
 		/**
+		 * Check if a vector of gcImages is CI8_UNIQUE.
+		 * If they are, convert them to ARGB32 and return the new vector.
+		 * @param gcImages	[in] Vector of GcImage.
+		 * @return Vector of ARGB32 GcImage if CI8_UNIQUE, or nullptr otherwise.
+		 */
+		vector<const GcImage*> *gcImages_from_CI8_UNIQUE(const vector<const GcImage*> *gcImages);
+
+		/**
 		 * Write an animated GcImage to the internal memory buffer in APNG format.
 		 * @param gcImages	[in] Vector of GcImage.
 		 * @param gcIconDelays	[in] Icon delays.
@@ -301,24 +309,20 @@ int GcImageWriterPrivate::writePng(const GcImage *gcImage)
 }
 
 /**
- * Write an animated GcImage to the internal memory buffer in APNG format.
+ * Check if a vector of gcImages is CI8_UNIQUE.
+ * If they are, convert them to ARGB32 and return the new vector.
  * @param gcImages	[in] Vector of GcImage.
- * @param gcIconDelays	[in] Icon delays.
- * @return 0 on success; non-zero on error.
+ * @return Vector of ARGB32 GcImage if CI8_UNIQUE, or nullptr otherwise.
  */
-int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, const vector<int> *gcIconDelays)
+vector<const GcImage*> *GcImageWriterPrivate::gcImages_from_CI8_UNIQUE(const vector<const GcImage*> *gcImages)
 {
-#if defined(HAVE_PNG) && defined(HAVE_PNG_APNG)
-	const GcImage *gcImage0 = gcImages->at(0);
-	const int w = gcImage0->width();
-	const int h = gcImage0->height();
-	const GcImage::PxFmt pxFmt = gcImage0->pxFmt();
-
 	// NOTE: APNG only supports a single palette.
 	// If the icon is CI8_UNIQUE, it will need to be
 	// converted to ARGB32.
 	// TODO: Test this; I don't have any files with CI8_UNIQUE...
-	vector<const GcImage*> gcImagesARGB32;
+	const GcImage *gcImage0 = gcImages->at(0);
+	const GcImage::PxFmt pxFmt = gcImage0->pxFmt();
+
 	bool is_CI8_UNIQUE = false;
 	if (pxFmt == GcImage::PXFMT_CI8) {
 		// Check if all the palettes are identical.
@@ -334,19 +338,37 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 		}
 	}
 
+	vector<const GcImage*> *gcImagesARGB32 = nullptr;
 	if (is_CI8_UNIQUE) {
 		// CI8_UNIQUE. Convert to ARGB32.
-		gcImagesARGB32.resize(gcImages->size());
+		gcImagesARGB32->resize(gcImages->size());
 		for (int i = 0; i < (int)gcImages->size(); i++) {
 			const GcImage *gcImageN = gcImages->at(i);
 			if (gcImageN)
 				gcImageN = gcImageN->toRGB5A3();
-			gcImagesARGB32[i] = gcImageN;
+			gcImagesARGB32->at(i) = gcImageN;
 		}
-
-		// Use the converted images.
-		gcImages = &gcImagesARGB32;
 	}
+
+	return gcImagesARGB32;
+}
+
+/**
+ * Write an animated GcImage to the internal memory buffer in APNG format.
+ * @param gcImages	[in] Vector of GcImage.
+ * @param gcIconDelays	[in] Icon delays.
+ * @return 0 on success; non-zero on error.
+ */
+int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, const vector<int> *gcIconDelays)
+{
+#if defined(HAVE_PNG) && defined(HAVE_PNG_APNG)
+	// NOTE: APNG only supports a single palette.
+	// If the icon is CI8_UNIQUE, it will need to be
+	// converted to ARGB32.
+	// TODO: Test this; I don't have any files with CI8_UNIQUE...
+	vector<const GcImage*> *gcImagesARGB32 = gcImages_from_CI8_UNIQUE(gcImages);
+	if (gcImagesARGB32)
+		gcImages = gcImagesARGB32;
 
 	png_structp png_ptr;
 	png_infop info_ptr;
@@ -378,6 +400,11 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	// Initialize compression parameters.
 	png_set_filter(png_ptr, 0, PNG_FILTER_NONE);
 	png_set_compression_level(png_ptr, 5);	// TODO: Customizable?
+
+	const GcImage *gcImage0 = gcImages->at(0);
+	const int w = gcImage0->width();
+	const int h = gcImage0->height();
+	const GcImage::PxFmt pxFmt = gcImage0->pxFmt();
 
 	// Write the PNG header.
 	int pitch;
@@ -458,11 +485,11 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 
 	// Check if we had to convert any icons to ARGB32.
-	if (!gcImagesARGB32.empty()) {
-		for (int i = 0; i < (int)gcImagesARGB32.size(); i++) {
-			delete const_cast<GcImage*>(gcImagesARGB32[i]);
+	if (gcImagesARGB32) {
+		for (int i = 0; i < (int)gcImagesARGB32->size(); i++) {
+			delete const_cast<GcImage*>(gcImagesARGB32->at(i));
 		}
-		gcImagesARGB32.clear();
+		delete gcImagesARGB32;
 	}
 
 	// Add the pngBuffer to the memBuffer.
@@ -487,44 +514,13 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 	// stored as a vertical strip.
 
 #if defined(HAVE_PNG)
-	const GcImage *gcImage0 = gcImages->at(0);
-	const int w = gcImage0->width();
-	const int h = gcImage0->height();
-	const GcImage::PxFmt pxFmt = gcImage0->pxFmt();
-
-	// NOTE: PNG only supports a single palette.
+	// NOTE: APNG only supports a single palette.
 	// If the icon is CI8_UNIQUE, it will need to be
 	// converted to ARGB32.
 	// TODO: Test this; I don't have any files with CI8_UNIQUE...
-	vector<const GcImage*> gcImagesARGB32;
-	bool is_CI8_UNIQUE = false;
-	if (pxFmt == GcImage::PXFMT_CI8) {
-		// Check if all the palettes are identical.
-		const uint32_t *palette0 = gcImage0->palette();
-		for (int i = 1; i < (int)gcImages->size(); i++) {
-			const GcImage *gcImageN = gcImages->at(i);
-			const uint32_t *paletteN = gcImageN->palette();
-			if (memcmp(palette0, paletteN, (256*sizeof(*paletteN))) != 0) {
-				// CI8_UNIQUE.
-				is_CI8_UNIQUE = true;
-				break;
-			}
-		}
-	}
-
-	if (is_CI8_UNIQUE) {
-		// CI8_UNIQUE. Convert to ARGB32.
-		gcImagesARGB32.resize(gcImages->size());
-		for (int i = 0; i < (int)gcImages->size(); i++) {
-			const GcImage *gcImageN = gcImages->at(i);
-			if (gcImageN)
-				gcImageN = gcImageN->toRGB5A3();
-			gcImagesARGB32[i] = gcImageN;
-		}
-
-		// Use the converted images.
-		gcImages = &gcImagesARGB32;
-	}
+	vector<const GcImage*> *gcImagesARGB32 = gcImages_from_CI8_UNIQUE(gcImages);
+	if (gcImagesARGB32)
+		gcImages = gcImagesARGB32;
 
 	png_structp png_ptr;
 	png_infop info_ptr;
@@ -556,6 +552,11 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 	// Initialize compression parameters.
 	png_set_filter(png_ptr, 0, PNG_FILTER_NONE);
 	png_set_compression_level(png_ptr, 5);	// TODO: Customizable?
+
+	const GcImage *gcImage0 = gcImages->at(0);
+	const int w = gcImage0->width();
+	const int h = gcImage0->height();
+	const GcImage::PxFmt pxFmt = gcImage0->pxFmt();
 
 	// Calculate vertical strip height.
 	const int vs_h = (h * gcImages->size());
@@ -623,11 +624,11 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 
 	// Check if we had to convert any icons to ARGB32.
-	if (!gcImagesARGB32.empty()) {
-		for (int i = 0; i < (int)gcImagesARGB32.size(); i++) {
-			delete const_cast<GcImage*>(gcImagesARGB32[i]);
+	if (gcImagesARGB32) {
+		for (int i = 0; i < (int)gcImagesARGB32->size(); i++) {
+			delete const_cast<GcImage*>(gcImagesARGB32->at(i));
 		}
-		gcImagesARGB32.clear();
+		delete gcImagesARGB32;
 	}
 
 	// Add the pngBuffer to the memBuffer.
@@ -651,44 +652,13 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 	// stored as a horizontal strip.
 
 #if defined(HAVE_PNG)
-	const GcImage *gcImage0 = gcImages->at(0);
-	const int w = gcImage0->width();
-	const int h = gcImage0->height();
-	const GcImage::PxFmt pxFmt = gcImage0->pxFmt();
-
-	// NOTE: PNG only supports a single palette.
+	// NOTE: APNG only supports a single palette.
 	// If the icon is CI8_UNIQUE, it will need to be
 	// converted to ARGB32.
 	// TODO: Test this; I don't have any files with CI8_UNIQUE...
-	vector<const GcImage*> gcImagesARGB32;
-	bool is_CI8_UNIQUE = false;
-	if (pxFmt == GcImage::PXFMT_CI8) {
-		// Check if all the palettes are identical.
-		const uint32_t *palette0 = gcImage0->palette();
-		for (int i = 1; i < (int)gcImages->size(); i++) {
-			const GcImage *gcImageN = gcImages->at(i);
-			const uint32_t *paletteN = gcImageN->palette();
-			if (memcmp(palette0, paletteN, (256*sizeof(*paletteN))) != 0) {
-				// CI8_UNIQUE.
-				is_CI8_UNIQUE = true;
-				break;
-			}
-		}
-	}
-
-	if (is_CI8_UNIQUE) {
-		// CI8_UNIQUE. Convert to ARGB32.
-		gcImagesARGB32.resize(gcImages->size());
-		for (int i = 0; i < (int)gcImages->size(); i++) {
-			const GcImage *gcImageN = gcImages->at(i);
-			if (gcImageN)
-				gcImageN = gcImageN->toRGB5A3();
-			gcImagesARGB32[i] = gcImageN;
-		}
-
-		// Use the converted images.
-		gcImages = &gcImagesARGB32;
-	}
+	vector<const GcImage*> *gcImagesARGB32 = gcImages_from_CI8_UNIQUE(gcImages);
+	if (gcImagesARGB32)
+		gcImages = gcImagesARGB32;
 
 	png_structp png_ptr;
 	png_infop info_ptr;
@@ -720,6 +690,11 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 	// Initialize compression parameters.
 	png_set_filter(png_ptr, 0, PNG_FILTER_NONE);
 	png_set_compression_level(png_ptr, 5);	// TODO: Customizable?
+
+	const GcImage *gcImage0 = gcImages->at(0);
+	const int w = gcImage0->width();
+	const int h = gcImage0->height();
+	const GcImage::PxFmt pxFmt = gcImage0->pxFmt();
 
 	// Calculate vertical strip width.
 	const int vs_w = (w * gcImages->size());
@@ -796,11 +771,11 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 
 	// Check if we had to convert any icons to ARGB32.
-	if (!gcImagesARGB32.empty()) {
-		for (int i = 0; i < (int)gcImagesARGB32.size(); i++) {
-			delete const_cast<GcImage*>(gcImagesARGB32[i]);
+	if (gcImagesARGB32) {
+		for (int i = 0; i < (int)gcImagesARGB32->size(); i++) {
+			delete const_cast<GcImage*>(gcImagesARGB32->at(i));
 		}
-		gcImagesARGB32.clear();
+		delete gcImagesARGB32;
 	}
 
 	// Add the pngBuffer to the memBuffer.
