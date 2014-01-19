@@ -110,6 +110,13 @@ class GcImageWriterPrivate
 		int writeAPng(const vector<const GcImage*> *gcImages, const vector<int> *gcIconDelays);
 
 		/**
+		 * Write an animated GcImage to the internal memory buffer in PNG FPF format.
+		 * @param gcImages	[in] Vector of GcImage.
+		 * @return 0 on success; non-zero on error.
+		 */
+		int writePng_FPF(const vector<const GcImage*> *gcImages);
+
+		/**
 		 * Write an animated GcImage to the internal memory buffer in PNG VS format.
 		 * @param gcImages	[in] Vector of GcImage.
 		 * @return 0 on success; non-zero on error.
@@ -508,6 +515,29 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 }
 
 /**
+ * Write an animated GcImage to the internal memory buffer in PNG FPF format.
+ * @param gcImages	[in] Vector of GcImage.
+ * @return 0 on success; non-zero on error.
+ */
+int GcImageWriterPrivate::writePng_FPF(const vector<const GcImage*> *gcImages)
+{
+	// PNG FPF (file per frame) stores each frame
+	// in its own PNG file.
+
+#if defined(HAVE_PNG)
+	for (int i = 0; i < gcImages->size(); i++) {
+		int ret = writePng(gcImages->at(i));
+		if (ret != 0)
+			return ret;
+	}
+#else
+	// PNG support is not available.
+	((void)gcImages);
+	return -EINVAL;
+#endif
+}
+
+/**
  * Write an animated GcImage to the internal memory buffer in PNG VS format.
  * @param gcImages	[in] Vector of GcImage.
  * @return 0 on success; non-zero on error.
@@ -861,16 +891,13 @@ bool GcImageWriter::isAnimImageFormatSupported(AnimImageFormat animImgf)
 #endif
 
 #ifdef HAVE_PNG
+		case ANIMGF_PNG_FPF:
 		case ANIMGF_PNG_VS:
 		case ANIMGF_PNG_HS:
 			return true;
 #else
 			return false;
 #endif
-
-		case ANIMGF_PNG_FPF:
-			// TODO
-			return false;
 
 		default:	break;
 	}
@@ -1019,6 +1046,8 @@ int GcImageWriter::write(const vector<const GcImage*> *gcImages,
 	switch (animImgf) {
 		case ANIMGF_APNG:
 			return d->writeAPng(&adjGcImages, &adjGcIconDelays);
+		case ANIMGF_PNG_FPF:
+			return d->writePng_FPF(&adjGcImages);
 		case ANIMGF_PNG_VS:
 			return d->writePng_VS(&adjGcImages);
 		case ANIMGF_PNG_HS:
