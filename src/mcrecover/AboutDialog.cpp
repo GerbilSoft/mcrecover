@@ -38,6 +38,10 @@
 // Third-party libraries.
 #include <pcre.h>
 
+#ifdef HAVE_PNG
+#include <png.h>
+#endif /* HAVE_PNG */
+
 /** AboutDialogPrivate **/
 
 #include "ui_AboutDialog.h"
@@ -270,25 +274,35 @@ QString AboutDialogPrivate::GetCredits(void)
 QString AboutDialogPrivate::GetLibraries(void)
 {
 	//: Using an internal copy of a library.
-	const QString sIntCopyOf = AboutDialog::tr("Internal copy of %1.");
+	static const QString sIntCopyOf = AboutDialog::tr("Internal copy of %1.");
+	//: Compiled with a specific version of an external library.
+	static const QString sCompiledWith = AboutDialog::tr("Compiled with %1.");
 	//: Using an external library, e.g. libpcre.so
-	const QString sUsingDll = AboutDialog::tr("Using %1.");
+	static const QString sUsingDll = AboutDialog::tr("Using %1.");
+
+	// Double linebreak.
+	static const QString sDLineBreak = QChar(L'\n') + QChar(L'\n');
 
 	// Included libraries string.
 	QString sLibraries;
 	sLibraries.reserve(4096);
 
 	// Icon set.
-	sLibraries = QLatin1String("Icon set is based on KDE's Oxygen icons.") + QChar(L'\n') +
-		QLatin1String("Copyright (C) 2005-2013 by David Vignoni.") + QChar(L'\n') +
-		QLatin1String("Licenses: CC BY-SA 3.0, GNU LGPL v2.1+");
+	sLibraries = QLatin1String(
+		"Icon set is based on KDE's Oxygen icons.\n"
+		"Copyright (C) 2005-2013 by David Vignoni.\n"
+		"Licenses: CC BY-SA 3.0, GNU LGPL v2.1+");
+
+	// TODO: Don't show compiled-with version if the same as in-use version?
 
 	// Qt
-	sLibraries += QChar(L'\n') + QChar(L'\n');
+	sLibraries += sDLineBreak;
 	QString qtVersion = QLatin1String("Qt ") + QLatin1String(qVersion());
 #ifdef QT_IS_STATIC
 	sLibraries += sIntCopyOf.arg(qtVersion);
 #else
+	QString qtVersionCompiled = QLatin1String("Qt " QT_VERSION_STR);
+	sLibraries += sCompiledWith.arg(qtVersionCompiled) + QChar(L'\n');
 	sLibraries += sUsingDll.arg(qtVersion);
 #endif /* QT_IS_STATIC */
 	sLibraries += QChar(L'\n') +
@@ -301,7 +315,7 @@ QString AboutDialogPrivate::GetLibraries(void)
 #endif /* QT_VERSION */
 
 	// PCRE
-	sLibraries += QChar(L'\n') + QChar(L'\n');
+	sLibraries += sDLineBreak;
 
 	QString pcreVersion = QLatin1String(pcre_version());
 	int pcre_space = pcreVersion.indexOf(QChar(L' '));
@@ -312,11 +326,34 @@ QString AboutDialogPrivate::GetLibraries(void)
 #ifdef PCRE_STATIC
 	sLibraries += sIntCopyOf.arg(pcreVersion);
 #else
+	// TODO: Handle PCRE_PRERELEASE. (It's defined, but empty!)
+	QString pcreVersionCompiled = QLatin1String("PCRE %1.%2");
+	pcreVersionCompiled = pcreVersionCompiled
+				.arg(PCRE_MAJOR).arg(PCRE_MINOR);
+	sLibraries += sCompiledWith.arg(qtVersionCompiled) + QChar(L'\n');
 	sLibraries += sUsingDll.arg(pcreVersion);
 #endif /* PCRE_STATIC */
 	sLibraries += QChar(L'\n') +
 		QLatin1String("Copyright (C) 1997-2014 University of Cambridge.");
 	sLibraries += QChar(L'\n') + QLatin1String("License: BSD (3-clause)");
+
+	// libpng
+	sLibraries += QChar(L'\n') + QChar(L'\n');
+	QString pngVersion = QLatin1String("libpng %1.%2.%3");
+	const uint32_t png_version_number = png_access_version_number();
+	pngVersion = pngVersion
+			.arg(png_version_number / 10000)
+			.arg((png_version_number / 100) % 100)
+			.arg(png_version_number % 100);
+#ifdef QT_IS_STATIC
+	sLibraries += sIntCopyOf.arg(pngVersion);
+#else
+	QString pngVersionCompiled = QLatin1String("libpng " PNG_LIBPNG_VER_STRING);
+	sLibraries += sCompiledWith.arg(pngVersionCompiled) + QChar(L'\n');
+	sLibraries += sUsingDll.arg(pngVersion);
+#endif /* QT_IS_STATIC */
+	sLibraries += QLatin1String(png_get_copyright(nullptr));
+	sLibraries += QLatin1String("License: libpng license");
 
 	// Return the included libraries string.
 	return sLibraries;

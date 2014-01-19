@@ -35,11 +35,20 @@
 #endif
 #define MCRECOVER_VERSION_STRING "@VERSION_STRING@"
 
-/* Define to 1 if Qt is built as a static library. */
+/* Define to 1 if Qt is statically linked. */
 #cmakedefine QT_IS_STATIC 1
 
 /* Define to 1 if QtDBus was found. */
 #cmakedefine QT_QTDBUS_FOUND 1
+
+/* Define to 1 if libpng was found. */
+#cmakedefine HAVE_PNG 1
+
+/* Define to 1 if libpng is statically linked. */
+#cmakedefine PNG_IS_STATIC 1
+
+/* Define to 1 if libpng supports APNG. */
+#cmakedefine HAVE_PNG_APNG 1
 
 /* Data directory. */
 #define MCRECOVER_DATA_DIRECTORY "@MCRECOVER_DATA_DIRECTORY@"

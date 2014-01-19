@@ -78,6 +78,9 @@ ENDIF(APPLE)
 # Main binary directory. Needed for git_version.h
 INCLUDE_DIRECTORIES("${mcrecover_base_BINARY_DIR}")
 
+# libpng
+INCLUDE(CheckPNGWithAPNG)
+
 # Write the config.h file.
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.mcrecover.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.mcrecover.h")
 
