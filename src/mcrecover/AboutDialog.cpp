@@ -295,7 +295,7 @@ QString AboutDialogPrivate::GetLibraries(void)
 
 	// TODO: Don't show compiled-with version if the same as in-use version?
 
-	// Qt
+	/** Qt **/
 	sLibraries += sDLineBreak;
 	QString qtVersion = QLatin1String("Qt ") + QLatin1String(qVersion());
 #ifdef QT_IS_STATIC
@@ -314,7 +314,7 @@ QString AboutDialogPrivate::GetLibraries(void)
 	sLibraries += QChar(L'\n') + QLatin1String("License: GNU GPL v2+");
 #endif /* QT_VERSION */
 
-	// PCRE
+	/** PCRE **/
 	sLibraries += sDLineBreak;
 
 	QString pcreVersion = QLatin1String(pcre_version());
@@ -337,23 +337,37 @@ QString AboutDialogPrivate::GetLibraries(void)
 		QLatin1String("Copyright (C) 1997-2014 University of Cambridge.");
 	sLibraries += QChar(L'\n') + QLatin1String("License: BSD (3-clause)");
 
-	// libpng
-	sLibraries += QChar(L'\n') + QChar(L'\n');
+	/** libpng **/
+#ifdef HAVE_PNG
+
+	// APNG suffix.
+	QString pngAPngSuffix;
+#ifdef HAVE_PNG_APNG
+	pngAPngSuffix = QLatin1String(" + APNG");
+#else
+	pngAPngSuffix = AboutDialog::tr(" (No APNG support)");
+#endif /* HAVE_PNG_APNG */
+
+	sLibraries += sDLineBreak;
 	QString pngVersion = QLatin1String("libpng %1.%2.%3");
 	const uint32_t png_version_number = png_access_version_number();
 	pngVersion = pngVersion
 			.arg(png_version_number / 10000)
 			.arg((png_version_number / 100) % 100)
 			.arg(png_version_number % 100);
-#ifdef QT_IS_STATIC
+	pngVersion += pngAPngSuffix;
+
+#ifdef PNG_IS_STATIC
 	sLibraries += sIntCopyOf.arg(pngVersion);
 #else
 	QString pngVersionCompiled = QLatin1String("libpng " PNG_LIBPNG_VER_STRING);
+	pngVersionCompiled += pngAPngSuffix;
 	sLibraries += sCompiledWith.arg(pngVersionCompiled) + QChar(L'\n');
-	sLibraries += sUsingDll.arg(pngVersion);
-#endif /* QT_IS_STATIC */
+	sLibraries += sUsingDll.arg(pngVersion) + QChar(L'\n');
+#endif /* PNG_IS_STATIC */
 	sLibraries += QLatin1String(png_get_copyright(nullptr));
 	sLibraries += QLatin1String("License: libpng license");
+#endif /* HAVE_PNG */
 
 	// Return the included libraries string.
 	return sLibraries;
