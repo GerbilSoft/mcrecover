@@ -344,11 +344,13 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 		const uint32_t *palette0 = gcImage0->palette();
 		for (int i = 1; i < (int)gcImages->size(); i++) {
 			const GcImage *gcImageN = gcImages->at(i);
-			const uint32_t *paletteN = gcImageN->palette();
-			if (memcmp(palette0, paletteN, (256*sizeof(*paletteN))) != 0) {
-				// CI8_UNIQUE.
-				is_CI8_UNIQUE = true;
-				break;
+			if (gcImageN) {
+				const uint32_t *paletteN = gcImageN->palette();
+				if (memcmp(palette0, paletteN, (256*sizeof(*paletteN))) != 0) {
+					// CI8_UNIQUE.
+					is_CI8_UNIQUE = true;
+					break;
+				}
 			}
 		}
 	}
