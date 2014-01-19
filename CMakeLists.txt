@@ -59,7 +59,14 @@ ENDIF()
 # Check for platform-specific functionality.
 INCLUDE(cmake/platform.cmake)
 
+# Check for required libraries.
+# NOTE: This has to be done here in addition to
+# the project subdirectories; otherwise, the
+# results may be lost.
+INCLUDE(cmake/libs/CheckPNGWithAPNG.cmake)
+
 # Project subdirectories.
+ADD_SUBDIRECTORY(extlib)
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(data)
 ADD_SUBDIRECTORY(doc)

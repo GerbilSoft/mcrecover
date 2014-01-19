@@ -1,0 +1,10 @@
+This copy of libpng-1.6.8 is a modified version of the original.
+
+The following changes have been made to the original:
+
+- autoconf build infratsructure has been removed.
+
+- Files not necessary for building libpng have been removed.
+
+To obtain the original libpng-1.6.8, visit:
+http://www.libpng.org/pub/png/libpng.html

@@ -80,6 +80,7 @@ INCLUDE_DIRECTORIES("${mcrecover_base_BINARY_DIR}")
 
 # libpng
 INCLUDE(CheckPNGWithAPNG)
+INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
 
 # Write the config.h file.
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.mcrecover.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.mcrecover.h")
@@ -239,6 +240,7 @@ TARGET_LINK_LIBRARIES(mcrecover
 	${QT_QTGUI_LIBRARY}
 	${QT_QTCORE_LIBRARY}
 	${PCRE_PCRE_LIBRARY}
+	${PNG_LIBRARY}	# Required for libpng info in the About dialog.
 	${WIN32_LIBS}
 	${APPLE_LIBS}
 	)

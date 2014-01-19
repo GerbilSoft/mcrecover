@@ -18,3 +18,13 @@ OPTION(ENABLE_DBUS	"Enable DBUS support for DockManager / Unity API."	1)
 ELSE(UNIX AND NOT APPLE)
 SET(ENABLE_DBUS 0)
 ENDIF(UNIX AND NOT APPLE)
+
+# libpng.
+# NOTE: Also controls internal zlib usage.
+# TODO: Separate it so int libpng / ext zlib can be used?
+IF(NOT WIN32)
+	OPTION(USE_INTERNAL_PNG	"Always use the internal copy of libpng." 	0)
+ELSE(NOT WIN32)
+	# TODO: Allow use of external libpng on Win32?
+	SET(USE_INTERNAL_PNG 1)
+ENDIF(NOT WIN32)

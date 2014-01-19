@@ -20,6 +20,7 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/util/byteorder.h.in" "${CMAKE_CURREN
 
 # libpng
 INCLUDE(CheckPNGWithAPNG)
+INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
 
 # Write the config.h file.
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.libgctools.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.libgctools.h")

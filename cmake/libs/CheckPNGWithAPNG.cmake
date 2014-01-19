@@ -1,16 +1,15 @@
 # Check for libpng.
 # If libpng isn't found, extlib/libpng/ will be used instead.
-# TODO: Check for zlib too.
 IF(NOT HAVE_PNG)
 
 IF(WIN32)
-	MESSAGE(STATUS "Win32: using internal PNG")
-ELSE(WIN32)
-	# Only search for libpng on non-Win32 platforms.
-	# Use the built-in libpng on Win32.
-	# TODO: Remove REQUIRED after internal PNG is added.
+	MESSAGE(STATUS "Win32: using internal libpng")
+ELSEIF(USE_INTERNAL_PNG)
+	MESSAGE(STATUS "Using internal libpng")
+ELSE()
+	# TODO: Make libpng support optional?
 	FIND_PACKAGE(PNG REQUIRED)
-ENDIF(WIN32)
+ENDIF()
 SET(HAVE_PNG ${PNG_FOUND})
 
 IF(HAVE_PNG)
@@ -44,18 +43,16 @@ ENDIF(HAVE_PNG)
 
 IF(NOT PNG_FOUND OR NOT HAVE_PNG_APNG)
 	# libpng wasn't found, or libpng doesn't support APNG.
-	# TODO: Internal libpng.
-	#SET(PNG_LIBRARY libpngstatic)
-	#SET(PNG_FOUND 1)
-	#SET(HAVE_PNG 1)
-	#SET(PNG_INCLUDE_DIR
-	#	"${CMAKE_CURRENT_SOURCE_DIR}/extlib/libpng/"
-	#	"${CMAKE_CURRENT_BINARY_DIR}/extlib/libpng/"
-	#	)
-	#SET(USE_INTERNAL_PNG 1)
-	#IF(NOT WIN32)
-	#	MESSAGE(STATUS "PNG library not found; using internal PNG.")
-	#ENDIF(NOT WIN32)
+	# NOTE: PNG_LIBRARY will need to be updated if upgrading past libpng-1.6.
+	SET(USE_INTERNAL_PNG 1)
+	SET(PNG_LIBRARY png16_static)
+	SET(PNG_FOUND 1)
+	SET(HAVE_PNG 1)
+	INCLUDE(CheckZLIBInternal)
+	SET(PNG_INCLUDE_DIR
+		"${CMAKE_CURRENT_SOURCE_DIR}/extlib/libpng/"
+		"${CMAKE_CURRENT_BINARY_DIR}/extlib/libpng/"
+		)
 ENDIF(NOT PNG_FOUND OR NOT HAVE_PNG_APNG)
 
 ENDIF(NOT HAVE_PNG)
