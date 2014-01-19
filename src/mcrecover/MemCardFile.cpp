@@ -1370,11 +1370,22 @@ int MemCardFile::saveIcon(QIODevice *qioDevice,
 	if (d->gcIcons.size() > 1) {
 		// Animated icon.
 		vector<const GcImage*> gcImages;
+		const int maxIcons = (d->gcIcons.size() * 2 - 2);
+		gcImages.reserve(maxIcons);
 		gcImages.resize(d->gcIcons.size());
 		for (int i = 0; i < d->gcIcons.size(); i++)
 			gcImages[i] = d->gcIcons[i];
 
-		// TODO: Icon speed.
+		if (iconAnimMode() == CARD_ANIM_BOUNCE) {
+			// BOUNCE animation.
+			int src = (gcImages.size() - 2);
+			int dest = gcImages.size();
+			gcImages.resize(maxIcons);
+			gcIconDelays.resize(maxIcons);
+			for (; src >= 1; src--, dest++)
+				gcImages[dest] = gcImages[src];
+		}
+
 		ret = gcImageWriter.write(&gcImages, animImgf);
 	} else {
 		// Static icon.
