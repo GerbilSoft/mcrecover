@@ -44,8 +44,8 @@
 /* Define to 1 if libpng was found. */
 #cmakedefine HAVE_PNG 1
 
-/* Define to 1 if libpng is statically linked. */
-#cmakedefine PNG_IS_STATIC 1
+/* Define to 1 if we're using our own libpng. */
+#cmakedefine USE_INTERNAL_PNG 1
 
 /* Define to 1 if libpng supports APNG. */
 #cmakedefine HAVE_PNG_APNG 1

@@ -366,14 +366,14 @@ QString AboutDialogPrivate::GetLibraries(void)
 			.arg(png_version_number % 100);
 	pngVersion += pngAPngSuffix;
 
-#ifdef PNG_IS_STATIC
+#ifdef USE_INTERNAL_PNG
 	sLibraries += sIntCopyOf.arg(pngVersion);
 #else
 	QString pngVersionCompiled = QLatin1String("libpng " PNG_LIBPNG_VER_STRING);
 	pngVersionCompiled += pngAPngSuffix;
 	sLibraries += sCompiledWith.arg(pngVersionCompiled) + QChar(L'\n');
 	sLibraries += sUsingDll.arg(pngVersion);
-#endif /* PNG_IS_STATIC */
+#endif /* USE_INTERNAL_PNG */
 	sLibraries += QLatin1String(png_get_copyright(nullptr));
 	sLibraries += sLicense.arg(QLatin1String("libpng license"));
 #endif /* HAVE_PNG */
@@ -391,23 +391,18 @@ QString AboutDialogPrivate::GetDebugInfo(void)
 	static const QChar chrBullet(0x2022);  // U+2022: BULLET
 
 	// Debug information.
-	QString sDebugInfo =
-		AboutDialog::tr("Compiled using Qt %1.").arg(QLatin1String(QT_VERSION_STR)) + QChar(L'\n') +
-		AboutDialog::tr("Using Qt %1.").arg(QLatin1String(qVersion()));
+	QString sDebugInfo;
 	sDebugInfo.reserve(4096);
 
 #ifdef Q_OS_WIN
 	// Win32 code page information.
-	sDebugInfo += QChar(L'\n');
-	sDebugInfo += QChar(L'\n') + GetCodePageInfo();
+	sDebugInfo += GetCodePageInfo() + QChar(L'\n') + QChar(L'\n');
 #endif /* Q_OS_WIN */
 
 	// Database filenames.
 	// TODO: List loaded databases.
 	QVector<QString> dbFilenames = GcnMcFileDb::GetDbFilenames();
-	sDebugInfo += QChar(L'\n');
-	sDebugInfo += QChar(L'\n') +
-		AboutDialog::tr("Available databases:") + QChar(L'\n');
+	sDebugInfo += AboutDialog::tr("Available databases:") + QChar(L'\n');
 	if (dbFilenames.isEmpty()) {
 		sDebugInfo += chrBullet + QChar(L' ') + AboutDialog::tr("(none found)");
 	} else {
