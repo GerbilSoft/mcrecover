@@ -38,6 +38,10 @@
 // Third-party libraries.
 #include <pcre.h>
 
+#ifdef HAVE_ZLIB
+#include <zlib.h>
+#endif /* HAVE_ZLIB */
+
 #ifdef HAVE_PNG
 #include <png.h>
 #endif /* HAVE_PNG */
@@ -346,9 +350,28 @@ QString AboutDialogPrivate::GetLibraries(void)
 		QLatin1String("Copyright (C) 1997-2014 University of Cambridge.");
 	sLibraries += QChar(L'\n') + sLicense.arg(QLatin1String("BSD (3-clause)"));
 
+	/** zlib **/
+#ifdef HAVE_ZLIB
+	sLibraries += sDLineBreak;
+	QString sZlibVersion = QLatin1String("zlib %1");
+	sZlibVersion = sZlibVersion.arg(QLatin1String(zlibVersion()));
+
+#ifdef USE_INTERNAL_ZLIB
+	sLibraries += sIntCopyOf.arg(sZlibVersion) + QChar(L'\n');
+#else
+	QString sZlibVersionCompiled = QLatin1String("zlib " ZLIB_VERSION);
+	sLibraries += sCompiledWith.arg(sZlibVersionCompiled) + QChar(L'\n');
+	sLibraries += sUsingDll.arg(sZlibVersion) + QChar(L'\n');
+#endif /* USE_INTERNAL_PNG */
+	// TODO: Use richtext instead of plaintext?
+	sLibraries += QLatin1String(
+			"Copyright (C) 1995-2013 Jean-loup Gailly and Mark Adler.\n"
+			"http://www.zlib.net/\n");
+	sLibraries += sLicense.arg(QLatin1String("zlib license"));
+#endif /* HAVE_ZLIB */
+
 	/** libpng **/
 #ifdef HAVE_PNG
-
 	// APNG suffix.
 	QString pngAPngSuffix;
 #ifdef HAVE_PNG_APNG
