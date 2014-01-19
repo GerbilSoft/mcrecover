@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * AboutDialog.hpp: About dialog.                                          *
+ * AboutDialog.hpp: About Dialog.                                          *
  *                                                                         *
  * Copyright (c) 2013-2014 by David Korth.                                 *
  *                                                                         *
