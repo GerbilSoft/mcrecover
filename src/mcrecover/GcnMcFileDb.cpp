@@ -1020,8 +1020,8 @@ QVector<QString> GcnMcFileDb::GetDbFilenames(void)
 
 	// Search the user's .config directory.
 	// TODO: Get default save directory using QSettings?
-	pathList.append(homeDir.absoluteFilePath(QLatin1String("/.config/mcrecover/data")));
-	pathList.append(homeDir.absoluteFilePath(QLatin1String("/.config/mcrecover")));
+	pathList.append(homeDir.absoluteFilePath(QLatin1String(".config/mcrecover/data")));
+	pathList.append(homeDir.absoluteFilePath(QLatin1String(".config/mcrecover")));
 #endif /* Q_OS_WIN */
 
 	// Name filters.
