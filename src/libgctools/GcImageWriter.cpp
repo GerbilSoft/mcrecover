@@ -385,8 +385,8 @@ int GcImageWriterPrivate::writeApng(const vector<const GcImage*> *gcImages, cons
 	// TODO: Implement "bounce" animation support.
 	for (int i = 0; i < (int)gcImages->size(); i++) {
 		const GcImage *gcImage = gcImages->at(i);
-		// NOTE: Icon delay is in units of 4 NTSC frames.
-		const int iconDelay = (gcIconDelays->at(i) * 4);
+		// NOTE: Icon delay is in units of 8 NTSC frames.
+		const int iconDelay = (gcIconDelays->at(i) * 8);
 		static const int iconDelayDenom = 60;
 
 		if (gcImage) {
