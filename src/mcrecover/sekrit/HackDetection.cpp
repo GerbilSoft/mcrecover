@@ -44,10 +44,11 @@ class HackDetectionPrivate
 		Q_DISABLE_COPY(HackDetectionPrivate)
 
 	public:
-		QSize size;
+		QRect winRect;
 
 		// Screen index.
-		int screen;
+		int screenIdx;
+		void setScreen(int screenIdx);
 
 		// Font.
 		QFont fntHack;
@@ -64,11 +65,30 @@ class HackDetectionPrivate
 
 HackDetectionPrivate::HackDetectionPrivate(HackDetection* q)
 	: q_ptr(q)
-	, screen(0)
+	, screenIdx(0)
 	, hMargin(0)
 {
 	// Assume 640x480 for now.
-	size = QSize(640, 480);
+	winRect = QRect(0, 0, 640, 480);
+}
+
+/**
+ * Set the screen.
+ * @param screenIdx Screen index.
+ */
+void HackDetectionPrivate::setScreen(int screenIdx)
+{
+	QDesktopWidget *desktop = QApplication::desktop();
+	if (screenIdx < 0 || screenIdx >= desktop->numScreens()) {
+		// Invalid. Assume the default screen.
+		screenIdx = desktop->primaryScreen();
+	}
+
+	this->screenIdx = screenIdx;
+
+	// Get the screen dimensions.
+	QWidget *screen = QApplication::desktop()->screen(screenIdx);
+	winRect = screen->rect();
 }
 
 /**
@@ -121,7 +141,7 @@ void HackDetectionPrivate::initFont(void)
 	 * used an 18px font. Calculate the font size
 	 * relative to 18/480.
 	 */
-	int fntPx = (size.height() * 18 / 480);
+	int fntPx = (winRect.height() * 18 / 480);
 	fntHack.setPixelSize(fntPx);
 
 	/**
@@ -134,7 +154,7 @@ void HackDetectionPrivate::initFont(void)
 	 * Horizontal margin was around 40px on 640x480.
 	 * Calculate the margin relative to 40/640.
 	 */
-	hMargin = (size.width() * 40 / 640);
+	hMargin = (winRect.width() * 40 / 640);
 }
 
 /**
@@ -166,6 +186,7 @@ void HackDetectionPrivate::initMessage(void)
 HackDetection::HackDetection(QWidget *parent)
 	: QWidget(parent,
 		Qt::Window |
+		Qt::WindowStaysOnTopHint |
 		Qt::FramelessWindowHint |
 		Qt::CustomizeWindowHint)
 	, d_ptr(new HackDetectionPrivate(this))
@@ -204,17 +225,27 @@ void HackDetection::init(int screen)
 	// We're painting the entire window.
 	this->setAttribute(Qt::WA_OpaquePaintEvent, true);
 
-	// TODO: Initialize the window size.
-	// TODO: Set as fullscreen, always on top.
 	Q_D(HackDetection);
-	d->screen = screen;
-	this->setMinimumSize(d->size);
-	this->setMaximumSize(d->size);
+	d->setScreen(screen);
+
+	// Initialize the window size.
+	this->setMinimumSize(d->winRect.size());
+	this->setMaximumSize(d->winRect.size());
+	this->setFixedSize(d->winRect.size());
+	this->setBaseSize(d->winRect.size());
+
+	// Initialize the window position.
+	this->move(d->winRect.topLeft());
+
+	// TODO: Set always on top.
 
 	// Initialize the font.
 	d->initFont();
 	// Initialize the message.
 	d->initMessage();
+
+	// Set fullscreen.
+	this->showFullScreen();
 }
 
 /**
@@ -272,8 +303,8 @@ void HackDetection::paintEvent(QPaintEvent *event)
 
 	Q_D(HackDetection);
 	QRect margins(d->hMargin, d->hMargin,
-		      (d->size.width() - (d->hMargin * 2)),
-		      (d->size.height() - (d->hMargin * 2)));
+		      (d->winRect.width() - (d->hMargin * 2)),
+		      (d->winRect.height() - (d->hMargin * 2)));
 
 	// Initialize the font metrics.
 	QFontMetrics mtrHack(d->fntHack);
@@ -288,7 +319,7 @@ void HackDetection::paintEvent(QPaintEvent *event)
 
 	// Total height of the two messages.
 	int height = (rectTitle.height() * 2) + rectMessage.height();
-	int x = ((d->size.height() - height) / 2);
+	int x = ((d->winRect.height() - height) / 2);
 
 	// Center the messages on the screen.
 	rectTitle.moveTop(x);
@@ -323,7 +354,7 @@ void HackDetection::paintEvent(QPaintEvent *event)
 QSize HackDetection::minimumSizeHint(void) const
 {
 	Q_D(const HackDetection);
-	return d->size;
+	return d->winRect.size();
 }
 
 /**
@@ -333,5 +364,5 @@ QSize HackDetection::minimumSizeHint(void) const
 QSize HackDetection::sizeHint(void) const
 {
 	Q_D(const HackDetection);
-	return d->size;
+	return d->winRect.size();
 }
