@@ -97,18 +97,27 @@ class GcImageWriter
 		static const char *extForAnimImageFormat(AnimImageFormat animImgf);
 
 		/**
+		 * Get the internal memory buffer.
+		 * @return Internal memory buffer.
+		 */
+		const std::vector<uint8_t> *memBuffer(void) const;
+
+		/**
 		 * Write a GcImage to the internal memory buffer.
 		 * @param gcImage	[in] GcImage.
 		 * @param imgf		[in] Image format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int write(const GcImage *image, ImageFormat imgf);
+		int write(const GcImage *gcImage, ImageFormat imgf);
 
 		/**
-		 * Get the internal memory buffer.
-		 * @return Internal memory buffer.
+		 * Write an animated GcImage to the internal memory buffer.
+		 * @param gcImage	[in] Vector of GcImage.
+		 * TODO: Add icon speeds.
+		 * @param animImgf	[in] Animated image format.
+		 * @return 0 on success; non-zero on error.
 		 */
-		const std::vector<uint8_t> *memBuffer(void) const;
+		int write(const std::vector<const GcImage*> *gcImages, AnimImageFormat animImgf);
 };
 
 #endif /* __LIBGCTOOLS_CHECKSUM_HPP__ */

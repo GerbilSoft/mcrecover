@@ -462,10 +462,10 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QStri
 	bool singleFile = false;
 	QString filename;
 
-	QString extBanner, extIconStatic;
+	QString extBanner, extIcon;
 	if (extractBanners || extractIcons) {
 		extBanner = QLatin1String(".banner");
-		extIconStatic = QLatin1String(".icon");
+		extIcon = QLatin1String(".icon");
 	}
 
 	// Save files using default filenames to the specified path.
@@ -571,9 +571,9 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QStri
 		// Extract the icon.
 		if (extractIcons) {
 			// TODO: Error handling and details.
-			// TODO: Animated icon support.
-			if (file->numIcons() == 1) {
-				QString iconFilename = changeFileExtension(filename, extIconStatic);
+			if (file->numIcons() >= 1) {
+				// File has an icon.
+				QString iconFilename = changeFileExtension(filename, extIcon);
 				file->saveIcon(iconFilename, animIconFormat);
 			}
 		}

@@ -1317,13 +1317,17 @@ int MemCardFile::saveIcon(const QString &filenameNoExt,
 	if (d->gcIcons.isEmpty())
 		return -EINVAL;
 
-	// TODO: Animated icon support.
-	if (d->gcIcons.size() > 1)
-		return -EINVAL;
-
 	// Append the correct extension.
 	QString filename = filenameNoExt;
-	const char *ext = GcImageWriter::extForImageFormat(GcImageWriter::IMGF_PNG);
+	const char *ext;
+	if (d->gcIcons.size() > 1) {
+		// Animated icon.
+		ext = GcImageWriter::extForAnimImageFormat(animImgf);
+	} else {
+		// Static icon.
+		ext = GcImageWriter::extForImageFormat(GcImageWriter::IMGF_PNG);
+	}
+
 	if (ext)
 		filename += QChar(L'.') + QLatin1String(ext);
 
@@ -1361,12 +1365,22 @@ int MemCardFile::saveIcon(QIODevice *qioDevice,
 		return -EINVAL;
 
 	// TODO: Animated icon support.
-	Q_UNUSED(animImgf)
-	if (d->gcIcons.size() > 1)
-		return -EINVAL;
-
 	GcImageWriter gcImageWriter;
-	int ret = gcImageWriter.write(d->gcIcons.at(0), GcImageWriter::IMGF_PNG);
+	int ret;
+	if (d->gcIcons.size() > 1) {
+		// Animated icon.
+		vector<const GcImage*> gcImages;
+		gcImages.resize(d->gcIcons.size());
+		for (int i = 0; i < d->gcIcons.size(); i++)
+			gcImages[i] = d->gcIcons[i];
+
+		// TODO: Icon speed.
+		ret = gcImageWriter.write(&gcImages, animImgf);
+	} else {
+		// Static icon.
+		ret = gcImageWriter.write(d->gcIcons.at(0), GcImageWriter::IMGF_PNG);
+	}
+
 	if (!ret) {
 		const vector<uint8_t> *pngData = gcImageWriter.memBuffer();
 		ret = qioDevice->write(reinterpret_cast<const char*>(pngData->data()), pngData->size());
