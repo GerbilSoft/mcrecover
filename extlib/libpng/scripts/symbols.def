@@ -249,3 +249,23 @@ EXPORTS
  png_set_check_for_invalid_index @242
  png_get_palette_max @243
  png_set_option @244
+ png_get_acTL @245
+ png_set_acTL @246
+ png_get_num_frames @247
+ png_get_num_plays @248
+ png_get_next_frame_fcTL @249
+ png_set_next_frame_fcTL @250
+ png_get_next_frame_width @251
+ png_get_next_frame_height @252
+ png_get_next_frame_x_offset @253
+ png_get_next_frame_y_offset @254
+ png_get_next_frame_delay_num @255
+ png_get_next_frame_delay_den @256
+ png_get_next_frame_dispose_op @257
+ png_get_next_frame_blend_op @258
+ png_get_first_frame_is_hidden @259
+ png_set_first_frame_is_hidden @260
+ png_read_frame_head @261
+ png_set_progressive_frame_fn @262
+ png_write_frame_head @263
+ png_write_frame_tail @264
