@@ -53,8 +53,9 @@ class GcImageWriterPrivate
 		GcImageWriterPrivate &operator=(const GcImageWriterPrivate &);
 
 	public:
-		// Internal memory buffer.
-		vector<uint8_t> memBuffer;
+		// Internal memory buffers.
+		// Each call to write() creates a new buffer.
+		vector<vector<uint8_t>* > memBuffer;
 
 		/**
 		 * PNG write function.
@@ -118,7 +119,13 @@ GcImageWriterPrivate::GcImageWriterPrivate(GcImageWriter *const q)
 { }
 
 GcImageWriterPrivate::~GcImageWriterPrivate()
-{ }
+{
+	// Delete all files.
+	// WARNING: Not thread-safe!
+	for (int i = 0; i < (int)memBuffer.size(); i++)
+		delete memBuffer[i];
+	memBuffer.clear();
+}
 
 /**
  * PNG write function.
@@ -132,11 +139,11 @@ void GcImageWriterPrivate::png_io_write(png_structp png_ptr, png_bytep buf, png_
 	if (!io_ptr)
 		return;
 
-	// Assuming the io_ptr is a GcImageWriterPrivate.
-	GcImageWriterPrivate *d = (GcImageWriterPrivate*)io_ptr;
-	size_t pos = d->memBuffer.size();
-	d->memBuffer.resize(pos + len);
-	memcpy(&d->memBuffer.data()[pos], buf,len);
+	// Assuming the io_ptr is a vector<uint8_t>*.
+	vector<uint8_t> *pngBuffer = reinterpret_cast<vector<uint8_t>*>(io_ptr);
+	size_t pos = pngBuffer->size();
+	pngBuffer->resize(pos + len);
+	memcpy(&pngBuffer->data()[pos], buf, len);
 }
 
 /**
@@ -191,9 +198,6 @@ int GcImageWriterPrivate::writePng_PLTE(
  */
 int GcImageWriterPrivate::writePng(const GcImage *gcImage)
 {
-	// Clear the internal memory buffer.
-	memBuffer.clear();
-
 #ifdef HAVE_PNG
 	if (!gcImage)
 		return -EINVAL;
@@ -221,8 +225,9 @@ int GcImageWriterPrivate::writePng(const GcImage *gcImage)
 	}
 
 	// Initialize the internal buffer and memory write function.
-	   memBuffer.reserve(32768);	// 32 KB should cover most of the use cases.
-	png_set_write_fn(png_ptr, this, png_io_write, png_io_flush);
+	vector<uint8_t> *pngBuffer = new vector<uint8_t>();
+	pngBuffer->reserve(32768);	// 32 KB should cover most of the use cases.
+	png_set_write_fn(png_ptr, pngBuffer, png_io_write, png_io_flush);
 
 	// Initialize compression parameters.
 	png_set_filter(png_ptr, 0, PNG_FILTER_NONE);
@@ -259,7 +264,7 @@ int GcImageWriterPrivate::writePng(const GcImage *gcImage)
 		default:
 			// Unsupported pixel format.
 			png_destroy_write_struct(&png_ptr, (png_infopp)nullptr);
-			     memBuffer.clear();
+			delete pngBuffer;
 			return -EINVAL;
 	}
 
@@ -284,6 +289,9 @@ int GcImageWriterPrivate::writePng(const GcImage *gcImage)
 	// Finished writing.
 	png_write_end(png_ptr, info_ptr);
 	png_destroy_write_struct(&png_ptr, &info_ptr);
+
+	// Add the pngBuffer to the memBuffer.
+	memBuffer.push_back(pngBuffer);
 	return 0;
 #else
 	// PNG support is not available.
@@ -300,9 +308,6 @@ int GcImageWriterPrivate::writePng(const GcImage *gcImage)
  */
 int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, const vector<int> *gcIconDelays)
 {
-	// Clear the internal memory buffer.
-	memBuffer.clear();
-
 #if defined(HAVE_PNG) && defined(HAVE_PNG_APNG)
 	const GcImage *gcImage0 = gcImages->at(0);
 	const int w = gcImage0->width();
@@ -366,8 +371,9 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	}
 
 	// Initialize the internal buffer and memory write function.
-	   memBuffer.reserve(32768);	// 32 KB should cover most of the use cases.
-	png_set_write_fn(png_ptr, this, png_io_write, png_io_flush);
+	vector<uint8_t> *pngBuffer = new vector<uint8_t>();
+	pngBuffer->reserve(32768);	// 32 KB should cover most of the use cases.
+	png_set_write_fn(png_ptr, pngBuffer, png_io_write, png_io_flush);
 
 	// Initialize compression parameters.
 	png_set_filter(png_ptr, 0, PNG_FILTER_NONE);
@@ -401,7 +407,7 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 		default:
 			// Unsupported pixel format.
 			png_destroy_write_struct(&png_ptr, (png_infopp)nullptr);
-			     memBuffer.clear();
+			delete pngBuffer;
 			return -EINVAL;
 	}
 
@@ -459,6 +465,8 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 		gcImagesARGB32.clear();
 	}
 
+	// Add the pngBuffer to the memBuffer.
+	memBuffer.push_back(pngBuffer);
 	return 0;
 #else
 	// PNG and/or APNG support is not available.
@@ -477,9 +485,6 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 {
 	// PNG VS is a regular PNG with all frames
 	// stored as a vertical strip.
-
-	// Clear the internal memory buffer.
-	memBuffer.clear();
 
 #if defined(HAVE_PNG)
 	const GcImage *gcImage0 = gcImages->at(0);
@@ -544,8 +549,9 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 	}
 
 	// Initialize the internal buffer and memory write function.
-	   memBuffer.reserve(32768);	// 32 KB should cover most of the use cases.
-	png_set_write_fn(png_ptr, this, png_io_write, png_io_flush);
+	vector<uint8_t> *pngBuffer = new vector<uint8_t>();
+	pngBuffer->reserve(32768);	// 32 KB should cover most of the use cases.
+	png_set_write_fn(png_ptr, pngBuffer, png_io_write, png_io_flush);
 
 	// Initialize compression parameters.
 	png_set_filter(png_ptr, 0, PNG_FILTER_NONE);
@@ -582,7 +588,7 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 		default:
 			// Unsupported pixel format.
 			png_destroy_write_struct(&png_ptr, (png_infopp)nullptr);
-			memBuffer.clear();
+			delete pngBuffer;
 			return -EINVAL;
 	}
 
@@ -624,6 +630,8 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 		gcImagesARGB32.clear();
 	}
 
+	// Add the pngBuffer to the memBuffer.
+	memBuffer.push_back(pngBuffer);
 	return 0;
 #else
 	// PNG support is not available.
@@ -641,9 +649,6 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 {
 	// PNG VS is a regular PNG with all frames
 	// stored as a horizontal strip.
-
-	// Clear the internal memory buffer.
-	memBuffer.clear();
 
 #if defined(HAVE_PNG)
 	const GcImage *gcImage0 = gcImages->at(0);
@@ -708,8 +713,9 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 	}
 
 	// Initialize the internal buffer and memory write function.
-	   memBuffer.reserve(32768);	// 32 KB should cover most of the use cases.
-	png_set_write_fn(png_ptr, this, png_io_write, png_io_flush);
+	vector<uint8_t> *pngBuffer = new vector<uint8_t>();
+	pngBuffer->reserve(32768);	// 32 KB should cover most of the use cases.
+	png_set_write_fn(png_ptr, pngBuffer, png_io_write, png_io_flush);
 
 	// Initialize compression parameters.
 	png_set_filter(png_ptr, 0, PNG_FILTER_NONE);
@@ -746,7 +752,7 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 		default:
 			// Unsupported pixel format.
 			png_destroy_write_struct(&png_ptr, (png_infopp)nullptr);
-			memBuffer.clear();
+			delete pngBuffer;
 			return -EINVAL;
 	}
 
@@ -797,6 +803,8 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 		gcImagesARGB32.clear();
 	}
 
+	// Add the pngBuffer to the memBuffer.
+	memBuffer.push_back(pngBuffer);
 	return 0;
 #else
 	// PNG support is not available.
@@ -911,12 +919,46 @@ const char *GcImageWriter::extForAnimImageFormat(AnimImageFormat animImgf)
 }
 
 /**
- * Get the internal memory buffer.
- * @return Internal memory buffer.
+ * Get the internal memory buffer. (first file only)
+ * @return Internal memory buffer, or nullptr if no files are in memory.
  */
 const vector<uint8_t> *GcImageWriter::memBuffer(void) const
 {
-	return &d->memBuffer;
+	if (d->memBuffer.empty())
+		return nullptr;
+	return d->memBuffer[0];
+}
+
+/**
+ * Get the internal memory buffer for the specified file.
+ * @param idx File number.
+ * @return Internal memory buffer, or nullptr if the file index is invalid.
+ */
+const std::vector<uint8_t> *GcImageWriter::memBuffer(int idx) const
+{
+	if (idx < 0 || idx > (int)d->memBuffer.size())
+		return nullptr;
+	return d->memBuffer[idx];
+}
+
+/**
+ * Get the number of files currently in memory.
+ * @return Number of files.
+ */
+int GcImageWriter::numFiles(void) const
+{
+	return (int)d->memBuffer.size();
+}
+
+/**
+ * Clear the internal memory buffer.
+ */
+void GcImageWriter::clearMemBuffer(void)
+{
+	// WARNING: Not thread-safe!
+	for (int i = 0; i < (int)d->memBuffer.size(); i++)
+		delete d->memBuffer[i];
+	d->memBuffer.clear();
 }
 
 /**

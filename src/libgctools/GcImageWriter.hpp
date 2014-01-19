@@ -97,10 +97,28 @@ class GcImageWriter
 		static const char *extForAnimImageFormat(AnimImageFormat animImgf);
 
 		/**
-		 * Get the internal memory buffer.
-		 * @return Internal memory buffer.
+		 * Get the internal memory buffer. (first file only)
+		 * @return Internal memory buffer, or nullptr if no files are in memory.
 		 */
 		const std::vector<uint8_t> *memBuffer(void) const;
+
+		/**
+		 * Get the internal memory buffer for the specified file.
+		 * @param idx File number.
+		 * @return Internal memory buffer, or nullptr if the file index is invalid.
+		 */
+		const std::vector<uint8_t> *memBuffer(int idx) const;
+
+		/**
+		 * Get the number of files currently in memory.
+		 * @return Number of files.
+		 */
+		int numFiles(void) const;
+
+		/**
+		 * Clear the internal memory buffer.
+		 */
+		void clearMemBuffer(void);
 
 		/**
 		 * Write a GcImage to the internal memory buffer.
