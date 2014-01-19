@@ -371,8 +371,8 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 		gcImagesARGB32.resize(gcImages->size());
 		for (int i = 0; i < (int)gcImages->size(); i++) {
 			const GcImage *gcImageN = gcImages->at(i);
-			if (gcImageN) {
-			}
+			if (gcImageN)
+				gcImageN = gcImageN->toRGB5A3();
 			gcImagesARGB32[i] = gcImageN;
 		}
 
