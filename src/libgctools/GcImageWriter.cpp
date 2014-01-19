@@ -57,6 +57,7 @@ class GcImageWriterPrivate
 		// Each call to write() creates a new buffer.
 		vector<vector<uint8_t>* > memBuffer;
 
+#ifdef HAVE_PNG
 		/**
 		 * PNG write function.
 		 * @param png_ptr PNG pointer.
@@ -83,6 +84,7 @@ class GcImageWriterPrivate
 		 */
 		int writePng_PLTE(png_structp png_ptr, png_infop info_ptr,
 				  const uint32_t *palette, int num_entries);
+#endif /* HAVE_PNG */
 
 		/**
 		 * Write a GcImage to the internal memory buffer in PNG format.
@@ -135,6 +137,7 @@ GcImageWriterPrivate::~GcImageWriterPrivate()
 	memBuffer.clear();
 }
 
+#ifdef HAVE_PNG
 /**
  * PNG write function.
  * @param png_ptr PNG pointer.
@@ -198,6 +201,7 @@ int GcImageWriterPrivate::writePng_PLTE(
 	png_set_tRNS(png_ptr, info_ptr, png_tRNS, num_entries, nullptr);
 	return 0;
 }
+#endif /* HAVE_PNG */
 
 /**
  * Write a GcImage to the internal memory buffer in PNG format.
@@ -497,7 +501,7 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	return 0;
 #else
 	// PNG and/or APNG support is not available.
-	((void)gcImage);
+	((void)gcImages);
 	((void)gcIconDelays);
 	return -EINVAL;
 #endif
@@ -636,7 +640,7 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 	return 0;
 #else
 	// PNG support is not available.
-	((void)gcImage);
+	((void)gcImages);
 	return -EINVAL;
 #endif
 }
@@ -783,7 +787,7 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 	return 0;
 #else
 	// PNG support is not available.
-	((void)gcImage);
+	((void)gcImages);
 	return -EINVAL;
 #endif
 }
