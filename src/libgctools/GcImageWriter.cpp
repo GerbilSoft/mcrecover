@@ -217,6 +217,7 @@ int GcImageWriterPrivate::writePng(const GcImage *gcImage)
 	const int w = gcImage->width();
 	const int h = gcImage->height();
 
+	// Write the PNG header.
 	switch (gcImage->pxFmt()) {
 		case GcImage::PXFMT_ARGB32:
 			png_set_IHDR(png_ptr, info_ptr, w, h,
@@ -333,6 +334,39 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 		}
 	}
 
+	// NOTE: APNG only supports a single palette.
+	// If the icon is CI8_UNIQUE, it will need to be
+	// converted to ARGB32.
+	// TODO: Test this; I don't have any files with CI8_UNIQUE...
+	vector<const GcImage*> gcImagesARGB32;
+	bool is_CI8_UNIQUE = false;
+	if (pxFmt == GcImage::PXFMT_CI8) {
+		const uint32_t *palette0 = gcImage0->palette();
+		for (int i = 1; i < (int)gcImages->size(); i++) {
+			const GcImage *gcImageN = gcImages->at(i);
+			const uint32_t *paletteN = gcImageN->palette();
+			if (memcmp(palette0, paletteN, (256*sizeof(*paletteN))) != 0) {
+				// CI8_UNIQUE.
+				is_CI8_UNIQUE = true;
+				break;
+			}
+		}
+	}
+
+	if (is_CI8_UNIQUE) {
+		// CI8_UNIQUE. Convert to ARGB32.
+		gcImagesARGB32.resize(gcImages->size());
+		for (int i = 0; i < (int)gcImages->size(); i++) {
+			const GcImage *gcImageN = gcImages->at(i);
+			if (gcImageN) {
+			}
+			gcImagesARGB32[i] = gcImageN;
+		}
+
+		// Use the converted images.
+		gcImages = &gcImagesARGB32;
+	}
+
 	png_structp png_ptr;
 	png_infop info_ptr;
 
@@ -363,6 +397,7 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	png_set_filter(png_ptr, 0, PNG_FILTER_NONE);
 	png_set_compression_level(png_ptr, 5);	// TODO: Customizable?
 
+	// Write the PNG header.
 	switch (pxFmt) {
 		case GcImage::PXFMT_ARGB32:
 			png_set_IHDR(png_ptr, info_ptr, w, h,
@@ -406,7 +441,6 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	vector<const uint8_t*> row_pointers;
 	row_pointers.resize(h);
 
-	// TODO: Implement "bounce" animation support.
 	for (int i = 0; i < (int)gcImages->size(); i++) {
 		const GcImage *gcImage = gcImages->at(i);
 		// NOTE: Icon delay is in units of 8 NTSC frames.
@@ -421,10 +455,10 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 					pitch = (w * 4);
 					break;
 
-				case GcImage::PXFMT_CI8:
+				case GcImage::PXFMT_CI8: {
 					pitch = w;
-					// TODO: For images >0, write the palette.
-				break;
+					break;
+				}
 
 				default:
 					// Unsupported pixel format.
@@ -459,6 +493,15 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	// Finished writing.
 	png_write_end(png_ptr, info_ptr);
 	png_destroy_write_struct(&png_ptr, &info_ptr);
+
+	// Check if we had to convert any icons to ARGB32.
+	if (!gcImagesARGB32.empty()) {
+		for (int i = 0; i < (int)gcImagesARGB32.size(); i++) {
+			delete const_cast<GcImage*>(gcImagesARGB32[i]);
+		}
+		gcImagesARGB32.clear();
+	}
+
 	return 0;
 #else
 	// PNG support is not available.
