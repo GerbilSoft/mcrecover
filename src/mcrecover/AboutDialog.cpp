@@ -44,6 +44,7 @@
 
 #ifdef HAVE_PNG
 #include <png.h>
+#include "APNG_dlopen.h"
 #endif /* HAVE_PNG */
 
 /** AboutDialogPrivate **/
@@ -373,12 +374,9 @@ QString AboutDialogPrivate::GetLibraries(void)
 	/** libpng **/
 #ifdef HAVE_PNG
 	// APNG suffix.
-	QString pngAPngSuffix;
-#ifdef HAVE_PNG_APNG
-	pngAPngSuffix = QLatin1String(" + APNG");
-#else
-	pngAPngSuffix = AboutDialog::tr(" (No APNG support)");
-#endif /* HAVE_PNG_APNG */
+	const QString pngAPngSuffix = (APNG_is_supported()
+			? QLatin1String(" + APNG")
+			: AboutDialog::tr(" (No APNG support)"));
 
 	sLibraries += sDLineBreak;
 	QString pngVersion = QLatin1String("libpng %1.%2.%3");
