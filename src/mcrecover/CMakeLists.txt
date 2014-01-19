@@ -120,6 +120,7 @@ SET(mcrecover_SRCS
 # Shh... it's a secret to everybody.
 SET(mcrecover_SEKRIT_SRCS
 	sekrit/HerpDerpEggListener.cpp
+	sekrit/HackDetection.cpp
 	)
 
 # Win32-specific sources.
@@ -155,6 +156,7 @@ SET(mcrecover_MOC_H
 
 SET(mcrecover_SEKRIT_MOC_H
 	sekrit/HerpDerpEggListener.hpp
+	sekrit/HackDetection.hpp
 	)
 
 # UI files.
