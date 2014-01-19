@@ -530,6 +530,7 @@ int GcImageWriterPrivate::writePng_FPF(const vector<const GcImage*> *gcImages)
 		if (ret != 0)
 			return ret;
 	}
+	return 0;
 #else
 	// PNG support is not available.
 	((void)gcImages);
