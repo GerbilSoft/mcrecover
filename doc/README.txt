@@ -1,7 +1,7 @@
 GCN MemCard Recover
 Version 0.1+
 
-Copyright (c) 2012-2013 by David Korth.
+Copyright (c) 2012-2014 by David Korth.
 Email: gerbilsoft@gerbilsoft.com
 
 This program is licensed under the GNU General Public License v2.
@@ -16,7 +16,8 @@ Table of Contents
 3. How to compile GCN MemCard Recover
 4. How to use GCN MemCard Recover
 5. File Search Limitations
-6. External Resources
+6. UI Language Translations
+7. External Resources
 X. License
 Y. Trademarks
 
@@ -81,6 +82,9 @@ in a future version.
 ================================================================
 
 3. How to compile GCN MemCard Recover
+
+FIXME: Update for zlib and libpng dependencies.
+Also add internal libpcre.
 
 GCN MemCard Recover requires the following libraries:
 - Qt 4.6.0 or later. (4.8.5+ recommended)
@@ -158,15 +162,28 @@ files that were normally visible on the GameCube (e.g. the card was
 reformatted and reused), they will appear in the list.
 
 To search for files deleted and/or lost due to reformatting or file
-system corruption, click the "Scan" button in the Memory Card Details
-toolbar. GCN MemCard Recover will scan each block of the memory card
-image to see if it can find matches for known files. Once it's finished
-scanning, any files it found will appear in the list highlighted in
-yellow.
+system corruption, click the "Scan" button on the toolbar. GCN MemCard
+Recover will scan each block of the memory card image to see if it can
+find matches for known files. Once it's finished scanning, any files
+it found will appear in the list highlighted in yellow.
 
 Highlight the file(s) you want to extract, then click the "Save" button.
 The file(s) will be saved in GCI format, which you can then restore onto
 the memory card using GCMM.
+
+In addition to extracting the save files, you can also extract the
+banners and icons. To do this, click the Options menu, then check off
+"Extract Banners" and/or "Extract Icons". The banners and icons will
+be saved with the same name as the files, but with a different extension.
+
+Banners and non-animated icons will always be saved in PNG format.
+
+Animated icons can be extracted in one of five formats:
+- APNG
+- GIF (FIXME: Not implemented in v0.2?)
+- PNG (file per frame): Each frame is saved in its own file.
+- PNG (vertical strip): Each frame is stored one above another.
+- PNG (horizontal strip): Each frame is stored next to each other.
 
 ================================================================
 
@@ -207,15 +224,24 @@ that file recovery has a few limitations:
    restored from the memory card, they will all have the same name, so you
    can't restore them to the same card. This will be fixed in a future version.
 
-4. The included database currently only has entries for NTSC-U titles.
-   If you have save files for PAL, Japanese, or Korean GameCube games,
-   or other USA games that aren't supported by GCN MemCard Recover yet,
-   please send me copies of the GCI files so I can add support for these
-   games to the database.
+4. The included databases are far from complete. If you have save files for
+   any games not currently supported by GCN MemCard Recover, please send me
+   copies of the GCI files so I can add support for these games to the
+   databases.
 
 ================================================================
 
-6. External Resources
+6. UI Language Translations
+
+GCN MemCard Recover has a fully-localizable user interface.
+Currently, the only translations included with GCN MemCard Recover
+are English (US) and "1337 5p34k". If you are a fluent speaker of
+English and another language and would like to contribute a
+translation, please let me know.
+
+================================================================
+
+7. External Resources
 
 A basic tutorial for setting up MinGW-w64 on Windows is available at:
 http://kemovitra.blogspot.com/2012/11/installing-mingw-w64-on-windows.html
