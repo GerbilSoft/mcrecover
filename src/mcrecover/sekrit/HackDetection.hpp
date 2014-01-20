@@ -60,6 +60,7 @@ class HackDetection : public QWidget
 			DT_NONE,
 			DT_H,
 			DT_Q,
+			DT_S,
 		};
 		DetectType detectType(void) const;
 		void setDetectType(DetectType detectType);

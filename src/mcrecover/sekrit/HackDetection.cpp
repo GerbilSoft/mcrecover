@@ -178,17 +178,42 @@ void HackDetectionPrivate::initMessage(void)
 			//: "Quack Detection" title.
 			hdTitle = HackDetection::tr("Quack Detection").toUpper();
 			break;
+
+		case HackDetection::DT_S:
+			//: "'Snack Detection" title.
+			hdTitle = HackDetection::tr("Snack Detection").toUpper();
+			break;
 	}
 
-	//: "Hack Detection" message. Preserve the linebreaks!
-	hdMessage = HackDetection::tr(
-		"One or more game resources were manipulated by an\n"
-		"outside source. This is not allowed as specified in\n"
-		"the game license.\n"
-		"You must reinstall the game and accept the game\n"
-		"license again, to continue to play the game.\n"
-		"\n"
-		"Game halted.").toUpper();
+	// "Hack Detection" message. Preserve the linebreaks!
+	switch (detectType) {
+		case HackDetection::DT_NONE:
+		case HackDetection::DT_H:
+		case HackDetection::DT_Q:
+		default:
+			//: "Hack Detection" message. Preserve the linebreaks!
+			hdMessage = HackDetection::tr(
+				"One or more game resources were manipulated by an\n"
+				"outside source. This is not allowed as specified in\n"
+				"the game license.\n"
+				"You must reinstall the game and accept the game\n"
+				"license again, to continue to play the game.\n"
+				"\n"
+				"Game halted.").toUpper();
+			break;
+
+		case HackDetection::DT_S:
+			//: "Snack Detection" message. Preserve the linebreaks!
+			hdMessage = HackDetection::tr(
+				"One or more snack ingredients were manipulated by an\n"
+				"outside sauce. This is not allowed as specified in\n"
+				"the snack recipe.\n"
+				"You must rebake the snack and accept the snack\n"
+				"recipe again, to continue to eat the snack.\n"
+				"\n"
+				"Snack salted.").toUpper();
+			break;
+	}
 }
 
 /** HackDetection **/
