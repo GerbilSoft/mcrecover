@@ -69,6 +69,15 @@ class VarReplace
 		static QHash<QString, QString> VecsToHash(
 					const QVector<QString> &gameDescVars,
 					const QVector<QString> &fileDescVars);
+
+		/**
+		 * Parse a string as an integer.
+		 * This function handles fullwidth numbers.
+		 * @param str String.
+		 * @return Integer.
+		 */
+		static int strToInt(const QString &str);
+
 		/**
 		* Apply variable modifiers to a QHash containing variables.
 		* @param varModifierDefs	[in] Variable modifier definitions.

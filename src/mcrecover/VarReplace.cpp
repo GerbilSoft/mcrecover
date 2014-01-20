@@ -236,6 +236,67 @@ QHash<QString, QString> VarReplace::VecsToHash(
 }
 
 /**
+ * Parse a string as an integer.
+ * This function handles fullwidth numbers.
+ * @param str String.
+ * @return Integer.
+ */
+int VarReplace::strToInt(const QString &str)
+{
+	// TODO: Qt should have a way to do this itself...
+
+	// Fullwidth/Halfwidth to Standard table.
+	// Index is FW; value is standard.
+	// NOTE: Characters with '0' are not supported here.
+	static const uint16_t fwhwToStd[256] = {
+		   0, L'!', L'"', L'#', L'$', L'%', L'&', L'\'',
+		L'(', L')', L'*', L'+', L',', L'-', L'.', L'/',
+		L'0', L'1', L'2', L'3', L'4', L'5', L'6', L'7',
+		L'8', L'9', L':', L';', L'<', L'=', L'>', L'?',
+		L'@', L'A', L'B', L'C', L'D', L'E', L'F', L'G',
+		L'H', L'I', L'J', L'K', L'L', L'M', L'N', L'O',
+		L'P', L'Q', L'R', L'S', L'T', L'U', L'V', L'W',
+		L'X', L'Y', L'Z', L'[', L'\\', L']', L'^', L'_',
+		L'`', L'a', L'b', L'c', L'd', L'e', L'f', L'g',
+		L'h', L'i', L'j', L'k', L'l', L'm', L'n', L'o',
+		L'p', L'q', L'r', L's', L't', L'u', L'v', L'w',
+		L'x', L'y', L'z', L'{', L'|', L'}', L'~', 0x2985,
+		0x2986, 0x3002, 0x300C, 0x300D, 0x3001, 0x30FB, 0x30F2, 0x30A1,
+		0x30A3, 0x30A5, 0x30A7, 0x30A9, 0x30E3, 0x30E5, 0x30E7, 0x30C3,
+		0x30FC, 0x30A2, 0x30A4, 0x30A6, 0x30A8, 0x30AA, 0x30AB, 0x30AD,
+		0x30AF, 0x30B1, 0x30B3, 0x30B5, 0x30B7, 0x30B9, 0x30BB, 0x30BD,
+		0x30BF, 0x30C1, 0x30C4, 0x30C6, 0x30C8, 0x30CA, 0x30CB, 0x30CC,
+		0x30CD, 0x30CE, 0x30CF, 0x30D2, 0x30D5, 0x30D8, 0x30DB, 0x30DE,
+		0x30DF, 0x30E0, 0x30E1, 0x30E2, 0x30E4, 0x30E6, 0x30E8, 0x30E9,
+		0x30EA, 0x30EB, 0x30EC, 0x30ED, 0x30EF, 0x30F3, 0x3099, 0x309A,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0x00A2, 0x00A3, 0x00AC, 0x00AF, 0x00A6, 0x00A5, 0x20A9, 0,
+		0x2502, 0x2190, 0x2191, 0x2192, 0x2193, 0x25A0, 0x25CB, 0,
+
+		// U+FFF0-U+FFFF - not assigned
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	};
+
+	// Convert the string from fullwidth first.
+	QString std_str(str);
+	for (int i = 0; i < std_str.size(); i++) {
+		uint16_t chr = std_str[i].unicode();
+		printf("chr == %d\n", chr);
+		if ((chr & 0xFF00) == 0xFF00) {
+			// Fullwidth/halfwidth.
+			chr = fwhwToStd[chr & 0xFF];
+			std_str[i] = QChar(chr);
+		}
+	}
+
+	// Convert to integer.
+	return std_str.toInt(nullptr, 10);
+}
+
+/**
  * Apply variable modifiers to a QHash containing variables.
  * @param varModifierDefs	[in] Variable modifier definitions.
  * @param vars			[in, out] Variables to modify.
@@ -273,7 +334,7 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifier
 			case VarModifierDef::VARTYPE_NUMBER: {
 				// Parse as a number. (Base 10)
 				// TODO: Add support for other bases?
-				int num = var.toInt(nullptr, 10);
+				int num = strToInt(var);
 				num += varModifierDef.addValue;
 				var = QString::number(num, 10);
 				break;
