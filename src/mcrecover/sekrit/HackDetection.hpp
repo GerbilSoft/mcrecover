@@ -55,6 +55,15 @@ class HackDetection : public QWidget
 		 */
 		void init(int screen);
 
+	public:
+		enum DetectType {
+			DT_NONE,
+			DT_H,
+			DT_Q,
+		};
+		DetectType detectType(void) const;
+		void setDetectType(DetectType detectType);
+
 	protected:
 		HackDetectionPrivate *const d_ptr;
 		Q_DECLARE_PRIVATE(HackDetection)

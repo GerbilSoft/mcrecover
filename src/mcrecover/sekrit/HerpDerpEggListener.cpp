@@ -36,12 +36,12 @@ class HerpDerpEggListenerPrivate
 		Q_DISABLE_COPY(HerpDerpEggListenerPrivate)
 
 	public:
-		HerpDerpEggListener::DetectType detectType;
+		HackDetection::DetectType detectType;
 };
 
 HerpDerpEggListenerPrivate::HerpDerpEggListenerPrivate(HerpDerpEggListener *q)
 	: q_ptr(q)
-	, detectType(HerpDerpEggListener::DT_NONE)
+	, detectType(HackDetection::DT_NONE)
 { }	
 
 HerpDerpEggListenerPrivate::~HerpDerpEggListenerPrivate()
@@ -60,13 +60,13 @@ HerpDerpEggListener::~HerpDerpEggListener()
 	delete d;
 }
 
-HerpDerpEggListener::DetectType HerpDerpEggListener::detectType(void) const
+HackDetection::DetectType HerpDerpEggListener::detectType(void) const
 {
 	Q_D(const HerpDerpEggListener);
 	return d->detectType;
 }
 
-void HerpDerpEggListener::setDetectType(DetectType detectType)
+void HerpDerpEggListener::setDetectType(HackDetection::DetectType detectType)
 {
 	Q_D(HerpDerpEggListener);
 	d->detectType = detectType;

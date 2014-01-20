@@ -59,6 +59,7 @@ class HackDetectionPrivate
 		void initFont(void);
 
 		// "Hack Detection" message.
+		HackDetection::DetectType detectType;
 		QString hdTitle;
 		QString hdMessage;
 		void initMessage(void);
@@ -164,8 +165,21 @@ void HackDetectionPrivate::initFont(void)
  */
 void HackDetectionPrivate::initMessage(void)
 {
-	//: "Hack Detection" title.
-	hdTitle = HackDetection::tr("Hack Detection").toUpper();
+	// "Hack Detection" title.
+	switch (detectType) {
+		case HackDetection::DT_NONE:
+		case HackDetection::DT_H:
+		default:
+			//: "Hack Detection" title.
+			hdTitle = HackDetection::tr("Hack Detection").toUpper();
+			break;
+
+		case HackDetection::DT_Q:
+			//: "Quack Detection" title.
+			hdTitle = HackDetection::tr("Quack Detection").toUpper();
+			break;
+	}
+
 	//: "Hack Detection" message. Preserve the linebreaks!
 	hdMessage = HackDetection::tr(
 		"One or more game resources were manipulated by an\n"
@@ -254,6 +268,23 @@ HackDetection::~HackDetection()
 	delete d_ptr;
 }
 
+HackDetection::DetectType HackDetection::detectType(void) const
+{
+	Q_D(const HackDetection);
+	return d->detectType;
+}
+
+void HackDetection::setDetectType(DetectType detectType)
+{
+	Q_D(HackDetection);
+	d->detectType = detectType;
+
+	// Update the message.
+	d->initMessage();
+	if (this->isVisible())
+		this->update();
+}
+
 /** Events. **/
 
 /**
@@ -266,7 +297,8 @@ void HackDetection::changeEvent(QEvent *event)
 		// Retranslate the UI.
 		Q_D(HackDetection);
 		d->initMessage();
-		update();
+		if (this->isVisible())
+			this->update();
 	}
 
 	// Pass the event to the base class.

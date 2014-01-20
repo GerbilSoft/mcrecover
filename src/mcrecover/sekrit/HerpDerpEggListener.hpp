@@ -26,6 +26,8 @@
 #include <QtCore/QObject>
 class QKeyEvent;
 
+#include "HackDetection.hpp"
+
 // HerpDerpEggListener private class.
 class HerpDerpEggListenerPrivate;
 
@@ -44,13 +46,8 @@ class HerpDerpEggListener : public QObject
 		Q_DISABLE_COPY(HerpDerpEggListener)
 
 	public:
-		enum DetectType {
-			DT_NONE,
-			DT_H,
-			DT_Q,
-		};
-		DetectType detectType(void) const;
-		void setDetectType(DetectType detectType);
+		HackDetection::DetectType detectType(void) const;
+		void setDetectType(HackDetection::DetectType detectType);
 
 	public slots:
 		void widget_keyPress(QKeyEvent *event);
