@@ -267,7 +267,8 @@ void HackDetection::changeEvent(QEvent *event)
 	if (event->type() == QEvent::LanguageChange) {
 		// Retranslate the UI.
 		Q_D(HackDetection);
-		// TODO
+		d->initMessage();
+		update();
 	}
 
 	// Pass the event to the base class.
