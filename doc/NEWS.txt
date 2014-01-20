@@ -1,13 +1,76 @@
 GCN MemCard Recover
-Version 0.1
+Version 0.1+
 
 Copyright (c) 2012-2013 by David Korth.
 Email: gerbilsoft@gerbilsoft.com
 
 ================================================================
 
+GCN MemCard Recover v0.2
+[released 2014/??/??]
+
+Database statistics in this release:
+- USA: 79 files
+- PAL: 59 files
+- JPN: 3 files
+- KOR: 0 files :(
+- Unlicensed: 1 file
+- Homebrew: 1 file
+
+- Stability has been improved. In particular, the custom model for
+  the QTreeView now handles all required signals correctly.
+
+- Some parts of the program now utilize C++ 2011 functionality.
+  A compatibility header has been included for older compilers.
+
+- The toolbar that was formerly located in the "Memory Card" view is
+  now a window toolbar, and contains additional items, such as the
+  "Preferred Region" selection.
+
+- GcImage and Checksum functions have been split out into their own
+  library, libgctools. This library depends on libpng but does not
+  depend on Qt.
+
+- Added support for the Qt translation system. Currently, the only
+  translation included aside from the default en_US is a "1337"
+  translation.
+  (FIXME: Add translations included with v0.2)
+
+- Fixed some corner cases with full memory card images and certain
+  save files.
+
+- Support for Japanese save files is improved.
+
+- Added preliminary support for compiling with Microsoft Visual C++.
+  The primary distributions will still be compiled with gcc/MinGW.
+
+- Banners and icons can now be exported as image files. Banners and
+  non-animated icons are always exported as PNG. Icons can be exported
+  as APNG, GIF (FIXME: not implemented in v0.2?), PNG (file per frame),
+  PNG (vertical strip), and PNG (horizontal strip).
+
+- Added "Preferred Region" support. Some games don't have any way to
+  determine the region by simply looking at the description, and in
+  some cases, might be identical in every way other than the region
+  code in the game ID. "Preferred Region" allows you to specify which
+  region you want to prefer in the case that multiple save files in
+  different regions are detected.
+
+- Added support for multiple database files. The included databases
+  are now split by region, e.g. USA, JPN, etc. Homebrew and Unlicensed
+  titles are also contained in their own databases.
+
+- Added a "top-secret" easter egg. :)
+
+================================================================
+
 GCN MemCard Recover v0.1
 [released 2013/07/21]
+
+Database statistics in this release:
+- USA: 59 files
+- Unlicensed: 1 file
+- Homebrew: 1 file
 
 - Initial release.
 
