@@ -24,109 +24,126 @@
         <translation>&amp;d3bu6 1nf0</translation>
     </message>
     <message>
-        <location filename="../ui/AboutDialog.ui" line="168"/>
+        <location filename="../ui/AboutDialog.ui" line="165"/>
         <source>&amp;Support</source>
         <translation>&amp;5upp0r7</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="107"/>
+        <location filename="../AboutDialog.cpp" line="112"/>
         <source>Version %1</source>
         <translation>v3r510n %1</translation>
     </message>
     <message utf8="true">
-        <location filename="../AboutDialog.cpp" line="119"/>
+        <location filename="../AboutDialog.cpp" line="124"/>
         <source>Powered by the&lt;br/&gt;
 &lt;b&gt;MegaCard Engine&lt;/b&gt;™</source>
         <translation>p0w3r3d by 7h3&lt;br/&gt;
 &lt;b&gt;m364c4rd 3n61n3&lt;/b&gt;™</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="252"/>
+        <location filename="../AboutDialog.cpp" line="258"/>
         <source>Memory Card File Contributors:</source>
         <translation>m3m0ry c4rd f1l3 c0n7r1bu70r5:</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="284"/>
+        <location filename="../AboutDialog.cpp" line="290"/>
         <source>Internal copy of %1.</source>
         <extracomment>Using an internal copy of a library.</extracomment>
         <translation>1n73rn4l c0py 0f %1.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="286"/>
+        <location filename="../AboutDialog.cpp" line="292"/>
         <source>Compiled with %1.</source>
         <extracomment>Compiled with a specific version of an external library.</extracomment>
         <translation>c0mp1l3d w17h %1.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="288"/>
+        <location filename="../AboutDialog.cpp" line="294"/>
         <source>Using %1.</source>
         <extracomment>Using an external library, e.g. libpcre.so</extracomment>
         <translation>u51n6 %1.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="290"/>
+        <location filename="../AboutDialog.cpp" line="296"/>
         <source>License: %1</source>
         <extracomment>License: (libraries with only a single license)</extracomment>
         <translation>l1c3n53: %1</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="292"/>
+        <location filename="../AboutDialog.cpp" line="298"/>
         <source>Licenses: %1</source>
         <extracomment>Licenses: (libraries with multiple licenses)</extracomment>
         <translation>l1c3n535: %1</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="356"/>
+        <location filename="../AboutDialog.cpp" line="379"/>
         <source> (No APNG support)</source>
         <translation>(n0 4pn6 5upp0r7)</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="395"/>
-        <source>Compiled using Qt %1.</source>
-        <translation>c0mp1l3d u51n6 q7 %1.</translation>
-    </message>
-    <message>
-        <location filename="../AboutDialog.cpp" line="396"/>
-        <source>Using Qt %1.</source>
-        <translation>u51n6 q7 %1.</translation>
-    </message>
-    <message>
-        <location filename="../AboutDialog.cpp" line="410"/>
+        <location filename="../AboutDialog.cpp" line="426"/>
         <source>Available databases:</source>
         <translation>4v41l4bl3 d474b4535:</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="412"/>
+        <location filename="../AboutDialog.cpp" line="428"/>
         <source>(none found)</source>
         <translation>(n0n3 f0und)</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="462"/>
+        <location filename="../AboutDialog.cpp" line="511"/>
         <source>Unknown [GetCPInfoExA() failed]</source>
         <extracomment>GetCPInfoExA() call failed.</extracomment>
         <translation>unkn0wn [637cp1nf03x4() f41l3d]</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="500"/>
+        <location filename="../AboutDialog.cpp" line="549"/>
         <source>Using Unicode strings for Win32 API.</source>
         <extracomment>Win32: Unicode strings are being used. (WinNT)</extracomment>
         <translation>u51n6 un1c0d3 57r1n65 f0r w1n32 4p1.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="503"/>
+        <location filename="../AboutDialog.cpp" line="552"/>
         <source>Using ANSI strings for Win32 API.</source>
         <extracomment>Win32: ANSI strings are being used. (Win9x)</extracomment>
         <translation>u51n6 4n51 57r1n65 f0r w1n32 4p1.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="520"/>
+        <location filename="../AboutDialog.cpp" line="569"/>
         <source>For technical support, you can visit the following websites:</source>
         <translation>f0r 73chn1c4l 5upp0r7, y0u c4n v1517 7h3 f0ll0w1n6 w3b51735:</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="552"/>
+        <location filename="../AboutDialog.cpp" line="601"/>
         <source>You can also email the developer directly:</source>
         <translation>y0u c4n 4l50 3m41l 7h3 d3v3l0p3r d1r3c7ly:</translation>
+    </message>
+</context>
+<context>
+    <name>HackDetection</name>
+    <message>
+        <location filename="../sekrit/HackDetection.cpp" line="167"/>
+        <source>Hack Detection</source>
+        <extracomment>&quot;Hack Detection&quot; title.</extracomment>
+        <translation>h4ck d373c710n</translation>
+    </message>
+    <message>
+        <location filename="../sekrit/HackDetection.cpp" line="169"/>
+        <source>One or more game resources were manipulated by an
+outside source. This is not allowed as specified in
+the game license.
+You must reinstall the game and accept the game
+license again, to continue to play the game.
+
+Game halted.</source>
+        <extracomment>&quot;Hack Detection&quot; message. Preserve the linebreaks!</extracomment>
+        <translation>0n3 0r m0r3 64m3 r350urc35 w3r3 m4n1pul473d by 4n
+0u751d3 50urc3. 7h15 15 n07 4ll0w3d 45 5p3c1f13d 1n
+7h3 64m3 l1c3n53.
+y0u mu57 r31n574ll 7h3 64m3 4nd 4cc3p7 7h3 64m3
+l1c3n53 4641n, 70 c0n71nu3 70 pl4y 7h3 64m3.
+
+64m3 h4l73d.</translation>
     </message>
 </context>
 <context>

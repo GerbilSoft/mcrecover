@@ -24,107 +24,118 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/AboutDialog.ui" line="168"/>
+        <location filename="../ui/AboutDialog.ui" line="165"/>
         <source>&amp;Support</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="107"/>
+        <location filename="../AboutDialog.cpp" line="112"/>
         <source>Version %1</source>
         <translation></translation>
     </message>
     <message utf8="true">
-        <location filename="../AboutDialog.cpp" line="119"/>
+        <location filename="../AboutDialog.cpp" line="124"/>
         <source>Powered by the&lt;br/&gt;
 &lt;b&gt;MegaCard Engine&lt;/b&gt;™</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="252"/>
+        <location filename="../AboutDialog.cpp" line="258"/>
         <source>Memory Card File Contributors:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="284"/>
+        <location filename="../AboutDialog.cpp" line="290"/>
         <source>Internal copy of %1.</source>
         <extracomment>Using an internal copy of a library.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="286"/>
+        <location filename="../AboutDialog.cpp" line="292"/>
         <source>Compiled with %1.</source>
         <extracomment>Compiled with a specific version of an external library.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="288"/>
+        <location filename="../AboutDialog.cpp" line="294"/>
         <source>Using %1.</source>
         <extracomment>Using an external library, e.g. libpcre.so</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="290"/>
+        <location filename="../AboutDialog.cpp" line="296"/>
         <source>License: %1</source>
         <extracomment>License: (libraries with only a single license)</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="292"/>
+        <location filename="../AboutDialog.cpp" line="298"/>
         <source>Licenses: %1</source>
         <extracomment>Licenses: (libraries with multiple licenses)</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="356"/>
+        <location filename="../AboutDialog.cpp" line="379"/>
         <source> (No APNG support)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="395"/>
-        <source>Compiled using Qt %1.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../AboutDialog.cpp" line="396"/>
-        <source>Using Qt %1.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../AboutDialog.cpp" line="410"/>
+        <location filename="../AboutDialog.cpp" line="426"/>
         <source>Available databases:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="412"/>
+        <location filename="../AboutDialog.cpp" line="428"/>
         <source>(none found)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="462"/>
+        <location filename="../AboutDialog.cpp" line="511"/>
         <source>Unknown [GetCPInfoExA() failed]</source>
         <extracomment>GetCPInfoExA() call failed.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="500"/>
+        <location filename="../AboutDialog.cpp" line="549"/>
         <source>Using Unicode strings for Win32 API.</source>
         <extracomment>Win32: Unicode strings are being used. (WinNT)</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="503"/>
+        <location filename="../AboutDialog.cpp" line="552"/>
         <source>Using ANSI strings for Win32 API.</source>
         <extracomment>Win32: ANSI strings are being used. (Win9x)</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="520"/>
+        <location filename="../AboutDialog.cpp" line="569"/>
         <source>For technical support, you can visit the following websites:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="552"/>
+        <location filename="../AboutDialog.cpp" line="601"/>
         <source>You can also email the developer directly:</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>HackDetection</name>
+    <message>
+        <location filename="../sekrit/HackDetection.cpp" line="167"/>
+        <source>Hack Detection</source>
+        <extracomment>&quot;Hack Detection&quot; title.</extracomment>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../sekrit/HackDetection.cpp" line="169"/>
+        <source>One or more game resources were manipulated by an
+outside source. This is not allowed as specified in
+the game license.
+You must reinstall the game and accept the game
+license again, to continue to play the game.
+
+Game halted.</source>
+        <extracomment>&quot;Hack Detection&quot; message. Preserve the linebreaks!</extracomment>
         <translation></translation>
     </message>
 </context>
