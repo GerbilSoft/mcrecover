@@ -26,6 +26,7 @@
 #include <QtGui/QApplication>
 #include <QtGui/QDesktopWidget>
 #include <QtGui/QPainter>
+#include <QtGui/QPaintEvent>
 #include <QtGui/QFont>
 #include <QtGui/QFontMetrics>
 #include <QtGui/QRawFont>
@@ -243,9 +244,6 @@ void HackDetection::init(int screen)
 	d->initFont();
 	// Initialize the message.
 	d->initMessage();
-
-	// Set fullscreen.
-	this->showFullScreen();
 }
 
 /**
@@ -276,10 +274,20 @@ void HackDetection::changeEvent(QEvent *event)
 }
 
 /**
+ * Show event.
+ * @param event QShowEvent.
+ */
+void HackDetection::showEvent(QShowEvent *event)
+{
+	Q_UNUSED(event);
+	// Make sure we're fullscreen.
+	this->showFullScreen();
+}
+
+/**
  * Paint event.
  * @param event QPaintEvent.
  */
-#include <QtGui/QPaintEvent>
 void HackDetection::paintEvent(QPaintEvent *event)
 {
 	// TODO: Use clipping region?

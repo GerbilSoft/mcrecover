@@ -66,6 +66,12 @@ class HackDetection : public QWidget
 		void changeEvent(QEvent *event);
 
 		/**
+		 * Show event.
+		 * @param event QShowEvent.
+		 */
+		void showEvent(QShowEvent *event);
+
+		/**
 		 * Paint event.
 		 * @param event QPaintEvent.
 		 */
