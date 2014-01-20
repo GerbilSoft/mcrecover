@@ -95,4 +95,34 @@
 			<length>6</length>
 		</dirEntry>
 	</file>
+	<file>
+		<gameName>Sonic Heroes</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>G9SJ</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^ソニックヒーローズ　：　(\p{Nd}{2})$</gameDesc>
+			<fileDesc>^エンブレム枚数　：　(\p{Nd}{3})枚$</fileDesc>
+		</search>
+		<variables>
+			<variable id="G1">
+				<useAs>filename</useAs>
+				<type>number</type>
+				<minWidth>2</minWidth>
+				<fillChar>0</fillChar>
+				<align>right</align>
+				<add>-1</add>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>SONICHEROES_$G1</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
 </GcnMcFileDb>
