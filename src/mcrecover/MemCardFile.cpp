@@ -548,7 +548,11 @@ QVector<GcImage*> MemCardFilePrivate::loadIconImages(void)
 	int iconLenTotal = 0;
 	bool isShared = false;
 	uint16_t iconfmt = dirEntry->iconfmt;
-	for (int i = 0; i < CARD_MAXICONS; i++, iconfmt >>= 2) {
+	uint16_t iconspeed = dirEntry->iconspeed;
+	for (int i = 0; i < CARD_MAXICONS; i++, iconfmt >>= 2, iconspeed >>= 2) {
+		if ((iconspeed & CARD_SPEED_MASK) == CARD_SPEED_END)
+			break;
+
 		switch (iconfmt & CARD_ICON_MASK) {
 			case CARD_ICON_CI_SHARED:
 				iconSizes[i] = (CARD_ICON_W * CARD_ICON_H * 1);
@@ -587,7 +591,11 @@ QVector<GcImage*> MemCardFilePrivate::loadIconImages(void)
 	QVector<GcImage*> gcImages;
 
 	iconfmt = dirEntry->iconfmt;
-	for (int i = 0; i < CARD_MAXICONS; i++, iconfmt >>= 2) {
+	iconspeed = dirEntry->iconspeed;
+	for (int i = 0; i < CARD_MAXICONS; i++, iconfmt >>= 2, iconspeed >>= 2) {
+		if ((iconspeed & CARD_SPEED_MASK) == CARD_SPEED_END)
+			break;
+
 		switch (iconfmt & CARD_ICON_MASK) {
 			case CARD_ICON_CI_SHARED: {
 				// CI8 palette is after *all* the icons.
