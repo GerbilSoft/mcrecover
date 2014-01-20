@@ -29,92 +29,102 @@
         <translation>&amp;5upp0r7</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="112"/>
+        <location filename="../AboutDialog.cpp" line="131"/>
         <source>Version %1</source>
         <translation>v3r510n %1</translation>
     </message>
     <message utf8="true">
-        <location filename="../AboutDialog.cpp" line="124"/>
+        <location filename="../AboutDialog.cpp" line="143"/>
         <source>Powered by the&lt;br/&gt;
 &lt;b&gt;MegaCard Engine&lt;/b&gt;™</source>
         <translation>p0w3r3d by 7h3&lt;br/&gt;
 &lt;b&gt;m364c4rd 3n61n3&lt;/b&gt;™</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="258"/>
+        <location filename="../AboutDialog.cpp" line="277"/>
         <source>Memory Card File Contributors:</source>
         <translation>m3m0ry c4rd f1l3 c0n7r1bu70r5:</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="290"/>
+        <location filename="../AboutDialog.cpp" line="309"/>
         <source>Internal copy of %1.</source>
         <extracomment>Using an internal copy of a library.</extracomment>
         <translation>1n73rn4l c0py 0f %1.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="292"/>
+        <location filename="../AboutDialog.cpp" line="311"/>
         <source>Compiled with %1.</source>
         <extracomment>Compiled with a specific version of an external library.</extracomment>
         <translation>c0mp1l3d w17h %1.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="294"/>
+        <location filename="../AboutDialog.cpp" line="313"/>
         <source>Using %1.</source>
         <extracomment>Using an external library, e.g. libpcre.so</extracomment>
         <translation>u51n6 %1.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="296"/>
+        <location filename="../AboutDialog.cpp" line="315"/>
         <source>License: %1</source>
         <extracomment>License: (libraries with only a single license)</extracomment>
         <translation>l1c3n53: %1</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="298"/>
+        <location filename="../AboutDialog.cpp" line="317"/>
         <source>Licenses: %1</source>
         <extracomment>Licenses: (libraries with multiple licenses)</extracomment>
         <translation>l1c3n535: %1</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="379"/>
+        <location filename="../AboutDialog.cpp" line="374"/>
+        <source>WARNING: PCRE does not have UTF-8 support.</source>
+        <translation>w4rn1n6: pcr3 d035 n07 h4v3 u7f-8 5upp0r7.</translation>
+    </message>
+    <message>
+        <location filename="../AboutDialog.cpp" line="377"/>
+        <source>WARNING: PCRE does not have Unicode character properties support.</source>
+        <translation>w4rn1n6: pcr3 d035 n07 h4v3 un1c0d3 ch4r4c73r pr0p3r7135 5upp0r7.</translation>
+    </message>
+    <message>
+        <location filename="../AboutDialog.cpp" line="407"/>
         <source> (No APNG support)</source>
         <translation>(n0 4pn6 5upp0r7)</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="426"/>
+        <location filename="../AboutDialog.cpp" line="454"/>
         <source>Available databases:</source>
         <translation>4v41l4bl3 d474b4535:</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="428"/>
+        <location filename="../AboutDialog.cpp" line="456"/>
         <source>(none found)</source>
         <translation>(n0n3 f0und)</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="511"/>
+        <location filename="../AboutDialog.cpp" line="539"/>
         <source>Unknown [GetCPInfoExA() failed]</source>
         <extracomment>GetCPInfoExA() call failed.</extracomment>
         <translation>unkn0wn [637cp1nf03x4() f41l3d]</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="549"/>
+        <location filename="../AboutDialog.cpp" line="577"/>
         <source>Using Unicode strings for Win32 API.</source>
         <extracomment>Win32: Unicode strings are being used. (WinNT)</extracomment>
         <translation>u51n6 un1c0d3 57r1n65 f0r w1n32 4p1.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="552"/>
+        <location filename="../AboutDialog.cpp" line="580"/>
         <source>Using ANSI strings for Win32 API.</source>
         <extracomment>Win32: ANSI strings are being used. (Win9x)</extracomment>
         <translation>u51n6 4n51 57r1n65 f0r w1n32 4p1.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="569"/>
+        <location filename="../AboutDialog.cpp" line="597"/>
         <source>For technical support, you can visit the following websites:</source>
         <translation>f0r 73chn1c4l 5upp0r7, y0u c4n v1517 7h3 f0ll0w1n6 w3b51735:</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="601"/>
+        <location filename="../AboutDialog.cpp" line="629"/>
         <source>You can also email the developer directly:</source>
         <translation>y0u c4n 4l50 3m41l 7h3 d3v3l0p3r d1r3c7ly:</translation>
     </message>
@@ -122,13 +132,19 @@
 <context>
     <name>HackDetection</name>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="167"/>
+        <location filename="../sekrit/HackDetection.cpp" line="174"/>
         <source>Hack Detection</source>
         <extracomment>&quot;Hack Detection&quot; title.</extracomment>
         <translation>h4ck d373c710n</translation>
     </message>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="169"/>
+        <location filename="../sekrit/HackDetection.cpp" line="179"/>
+        <source>Quack Detection</source>
+        <extracomment>&quot;Quack Detection&quot; title.</extracomment>
+        <translation>qu4ck d373c710n</translation>
+    </message>
+    <message>
+        <location filename="../sekrit/HackDetection.cpp" line="184"/>
         <source>One or more game resources were manipulated by an
 outside source. This is not allowed as specified in
 the game license.
@@ -406,7 +422,7 @@ l1c3n53 4641n, 70 c0n71nu3 70 pl4y 7h3 64m3.
     </message>
     <message>
         <location filename="../McRecoverWindow.cpp" line="493"/>
-        <location filename="../McRecoverWindow.cpp" line="959"/>
+        <location filename="../McRecoverWindow.cpp" line="961"/>
         <source>All Files</source>
         <translation>4ll f1l35</translation>
     </message>
@@ -440,36 +456,36 @@ d0 y0u w4n7 70 0v3rwr173 17?</translation>
         <translation>5y573m d3f4ul7 (%1)</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="956"/>
+        <location filename="../McRecoverWindow.cpp" line="958"/>
         <source>Open GameCube Memory Card Image</source>
         <translation>0p3n 64m3cub3 m3m0ry c4rd 1m463</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="958"/>
+        <location filename="../McRecoverWindow.cpp" line="960"/>
         <source>GameCube Memory Card Image</source>
         <translation>64m3cub3 m3m0ry c4rd 1m463</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="993"/>
+        <location filename="../McRecoverWindow.cpp" line="995"/>
         <source>The database files should be located in the data subdirectory in
 mcrecover.exe&apos;s program directory.</source>
         <translation>7h3 d474b453 f1l35 5h0uld b3 l0c473d 1n 7h3 d474 5ubd1r3c70ry 1n
 mcr3c0v3r.3x3&apos;5 pr06r4m d1r3c70ry.</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="997"/>
+        <location filename="../McRecoverWindow.cpp" line="999"/>
         <source>The database files should be located in %1.
 Alternatively, you can place your own version in ~/.config/mcrecover/data/</source>
         <translation>7h3 d474b453 f1l35 5h0uld b3 l0c473d 1n %1.
 4l73rn471v3ly, y0u c4n pl4c3 y0ur 0wn v3r510n 1n ~/.c0nf16/mcr3c0v3r/d474/</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1004"/>
+        <location filename="../McRecoverWindow.cpp" line="1006"/>
         <source>Database Load Error</source>
         <translation>d474b453 l04d 3rr0r</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1005"/>
+        <location filename="../McRecoverWindow.cpp" line="1007"/>
         <source>No GCN MemCard file databases were found.</source>
         <translation>n0 6cn m3mc4rd f1l3 d474b4535 w3r3 f0und.</translation>
     </message>

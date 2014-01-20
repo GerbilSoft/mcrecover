@@ -29,91 +29,101 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="112"/>
+        <location filename="../AboutDialog.cpp" line="131"/>
         <source>Version %1</source>
         <translation></translation>
     </message>
     <message utf8="true">
-        <location filename="../AboutDialog.cpp" line="124"/>
+        <location filename="../AboutDialog.cpp" line="143"/>
         <source>Powered by the&lt;br/&gt;
 &lt;b&gt;MegaCard Engine&lt;/b&gt;™</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="258"/>
+        <location filename="../AboutDialog.cpp" line="277"/>
         <source>Memory Card File Contributors:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="290"/>
+        <location filename="../AboutDialog.cpp" line="309"/>
         <source>Internal copy of %1.</source>
         <extracomment>Using an internal copy of a library.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="292"/>
+        <location filename="../AboutDialog.cpp" line="311"/>
         <source>Compiled with %1.</source>
         <extracomment>Compiled with a specific version of an external library.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="294"/>
+        <location filename="../AboutDialog.cpp" line="313"/>
         <source>Using %1.</source>
         <extracomment>Using an external library, e.g. libpcre.so</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="296"/>
+        <location filename="../AboutDialog.cpp" line="315"/>
         <source>License: %1</source>
         <extracomment>License: (libraries with only a single license)</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="298"/>
+        <location filename="../AboutDialog.cpp" line="317"/>
         <source>Licenses: %1</source>
         <extracomment>Licenses: (libraries with multiple licenses)</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="379"/>
+        <location filename="../AboutDialog.cpp" line="374"/>
+        <source>WARNING: PCRE does not have UTF-8 support.</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../AboutDialog.cpp" line="377"/>
+        <source>WARNING: PCRE does not have Unicode character properties support.</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../AboutDialog.cpp" line="407"/>
         <source> (No APNG support)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="426"/>
+        <location filename="../AboutDialog.cpp" line="454"/>
         <source>Available databases:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="428"/>
+        <location filename="../AboutDialog.cpp" line="456"/>
         <source>(none found)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="511"/>
+        <location filename="../AboutDialog.cpp" line="539"/>
         <source>Unknown [GetCPInfoExA() failed]</source>
         <extracomment>GetCPInfoExA() call failed.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="549"/>
+        <location filename="../AboutDialog.cpp" line="577"/>
         <source>Using Unicode strings for Win32 API.</source>
         <extracomment>Win32: Unicode strings are being used. (WinNT)</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="552"/>
+        <location filename="../AboutDialog.cpp" line="580"/>
         <source>Using ANSI strings for Win32 API.</source>
         <extracomment>Win32: ANSI strings are being used. (Win9x)</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="569"/>
+        <location filename="../AboutDialog.cpp" line="597"/>
         <source>For technical support, you can visit the following websites:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="601"/>
+        <location filename="../AboutDialog.cpp" line="629"/>
         <source>You can also email the developer directly:</source>
         <translation></translation>
     </message>
@@ -121,13 +131,19 @@
 <context>
     <name>HackDetection</name>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="167"/>
+        <location filename="../sekrit/HackDetection.cpp" line="174"/>
         <source>Hack Detection</source>
         <extracomment>&quot;Hack Detection&quot; title.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="169"/>
+        <location filename="../sekrit/HackDetection.cpp" line="179"/>
+        <source>Quack Detection</source>
+        <extracomment>&quot;Quack Detection&quot; title.</extracomment>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../sekrit/HackDetection.cpp" line="184"/>
         <source>One or more game resources were manipulated by an
 outside source. This is not allowed as specified in
 the game license.
@@ -398,7 +414,7 @@ Game halted.</source>
     </message>
     <message>
         <location filename="../McRecoverWindow.cpp" line="493"/>
-        <location filename="../McRecoverWindow.cpp" line="959"/>
+        <location filename="../McRecoverWindow.cpp" line="961"/>
         <source>All Files</source>
         <translation></translation>
     </message>
@@ -430,34 +446,34 @@ Do you want to overwrite it?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="956"/>
+        <location filename="../McRecoverWindow.cpp" line="958"/>
         <source>Open GameCube Memory Card Image</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="958"/>
+        <location filename="../McRecoverWindow.cpp" line="960"/>
         <source>GameCube Memory Card Image</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="993"/>
+        <location filename="../McRecoverWindow.cpp" line="995"/>
         <source>The database files should be located in the data subdirectory in
 mcrecover.exe&apos;s program directory.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="997"/>
+        <location filename="../McRecoverWindow.cpp" line="999"/>
         <source>The database files should be located in %1.
 Alternatively, you can place your own version in ~/.config/mcrecover/data/</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1004"/>
+        <location filename="../McRecoverWindow.cpp" line="1006"/>
         <source>Database Load Error</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1005"/>
+        <location filename="../McRecoverWindow.cpp" line="1007"/>
         <source>No GCN MemCard file databases were found.</source>
         <translation></translation>
     </message>
