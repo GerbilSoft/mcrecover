@@ -203,10 +203,10 @@ typedef struct PACKED _card_bat
 #define CARD_ANIM_MASK		0x04
 
 // Icon animation speed.
-#define CARD_SPEED_END		0x00	// No icon.
-#define CARD_SPEED_FAST		0x01	// Icon lasts for 4 frames.
-#define CARD_SPEED_MIDDLE	0x02	// Icon lasts for 8 frames.
-#define CARD_SPEED_SLOW		0x03	// Icon lasts for 12 frames.
+#define CARD_SPEED_END		0x00	/* No icon. (End of animation) */
+#define CARD_SPEED_FAST		0x01	/* Icon lasts for 4 frames. */
+#define CARD_SPEED_MIDDLE	0x02	/* Icon lasts for 8 frames. */
+#define CARD_SPEED_SLOW		0x03	/* Icon lasts for 12 frames. */
 #define CARD_SPEED_MASK		0x03
 
 // System font encoding.
