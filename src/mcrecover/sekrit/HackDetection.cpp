@@ -238,7 +238,7 @@ void HackDetection::init(int screen)
 #endif
 
 	// We're painting the entire window.
-	this->setAttribute(Qt::WA_OpaquePaintEvent, true);
+	this->setAttribute(Qt::WA_NoSystemBackground, true);
 
 	Q_D(HackDetection);
 	d->setScreen(screen);
