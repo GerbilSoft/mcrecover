@@ -917,6 +917,7 @@ void McRecoverWindow::markUiBusy(void)
 		// UI is now busy.
 		this->setCursor(Qt::WaitCursor);
 		d->ui.menuBar->setEnabled(false);
+		d->ui.toolBar->setEnabled(false);
 		this->centralWidget()->setEnabled(false);
 	}
 }
@@ -939,6 +940,7 @@ void McRecoverWindow::markUiNotBusy(void)
 	if (d->uiBusyCounter == 0) {
 		// UI is no longer busy.
 		d->ui.menuBar->setEnabled(true);
+		d->ui.toolBar->setEnabled(true);
 		this->centralWidget()->setEnabled(true);
 		this->unsetCursor();
 	}
