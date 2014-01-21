@@ -16,4 +16,6 @@ The following changes have been made to the original:
 - The OF() and ON() macros have been renamed to _Z_OF() and _Z_ON().
   Based on Gentoo's zlib-1.2.8 patches.
 
+- contrib/ has been stripped of everything but asm-optimized functions.
+
 To obtain the original zlib-1.2.8, visit http://www.zlib.net

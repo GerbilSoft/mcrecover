@@ -3,6 +3,19 @@ cmake_minimum_required(VERSION 2.6.0)
 
 # External libraries.
 
+# Assembly optimizations.
+# TODO: Test on all archs and fix Z_PREFIX issues.
+# TODO: If MASM, only enable on cmake-2.6.3+
+# TODO: If nasm/yasm, only enable on cmake-2.8.4+
+# TODO: Symbol redefinitions.
+IF(0)
+IF(CMAKE_SYSTEM_PROCESSOR MATCHES "^(i.|x)86\$")
+	SET(ASM686 "ON")
+ELSEIF(CMAKE_SYSTEM_PROCESSOR MATCHES "^x86_64\$")
+	SET(AMD64 "ON")
+ENDIF()
+ENDIF(0)
+
 # Don't install any of these libraries.
 SET(OLD_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 SET(OLD_SKIP_INSTALL_LIBRARIES ${SKIP_INSTALL_LIBRARIES})
