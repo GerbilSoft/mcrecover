@@ -63,7 +63,7 @@ INCLUDE(cmake/platform.cmake)
 # NOTE: This has to be done here in addition to
 # the project subdirectories; otherwise, the
 # results may be lost.
-INCLUDE(cmake/libs/CheckPNGWithAPNG.cmake)
+INCLUDE(CheckPNG)
 
 # Project subdirectories.
 ADD_SUBDIRECTORY(extlib)

@@ -19,7 +19,7 @@ UNSET(IS_BIG_ENDIAN)
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/util/byteorder.h.in" "${CMAKE_CURRENT_BINARY_DIR}/util/byteorder.h")
 
 # libpng
-INCLUDE(CheckPNGWithAPNG)
+INCLUDE(CheckPNG)
 INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
 
 # Write the config.h file.

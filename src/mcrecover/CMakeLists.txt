@@ -79,7 +79,7 @@ ENDIF(APPLE)
 INCLUDE_DIRECTORIES("${mcrecover_base_BINARY_DIR}")
 
 # libpng (AboutDialog only; indirectly through libgctools)
-INCLUDE(CheckPNGWithAPNG)
+INCLUDE(CheckPNG)
 INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
 
 # zlib (AboutDialog only!)
