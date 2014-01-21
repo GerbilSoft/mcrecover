@@ -94,7 +94,7 @@ static int is_apng_supported_ret = 0;
  * Check if the PNG library supports APNG.
  * @return Non-zero if supported; 0 if not supported.
  */
-static inline int init_apng(void)
+static int init_apng(void)
 {
 #ifdef USE_INTERNAL_PNG
 	// Internal PNG library.
