@@ -356,8 +356,9 @@ QString AboutDialogPrivate::GetLibraries(void)
 		pcreVersion.resize(pcre_space);
 	pcreVersion.prepend(QLatin1String("PCRE "));
 
+	// TODO: USE_INTERNAL_PCRE?
 #ifdef PCRE_STATIC
-	sLibraries += sIntCopyOf.arg(pcreVersion);
+	sLibraries += sIntCopyOf.arg(pcreVersion) + QChar(L'\n');
 #else
 	// TODO: Handle PCRE_PRERELEASE. (It's defined, but empty!)
 	QString pcreVersionCompiled = QLatin1String("PCRE %1.%2");
@@ -423,7 +424,23 @@ QString AboutDialogPrivate::GetLibraries(void)
 	sLibraries += sCompiledWith.arg(pngVersionCompiled) + QChar(L'\n');
 	sLibraries += sUsingDll.arg(pngVersion);
 #endif /* USE_INTERNAL_PNG */
-	sLibraries += QLatin1String(png_get_copyright(nullptr));
+	/**
+	 * NOTE: MSVC does not define __STDC__ by default.
+	 * If __STDC__ is not defined, the libpng copyright
+	 * will not have a leading newline, and all newlines
+	 * will be replaced with groups of 6 spaces.
+	 */
+	QString png_copyright = QLatin1String(png_get_copyright(nullptr));
+	if (png_copyright.indexOf(QChar(L'\n')) < 0) {
+		// Convert spaces to newlines.
+		// TODO: QString::simplified() to remove other patterns,
+		// or just assume all versions of libpng have the same
+		// number of spaces?
+		png_copyright.replace(QLatin1String("      "), QLatin1String("\n"));
+		png_copyright.prepend(QChar(L'\n'));
+		png_copyright.append(QChar(L'\n'));
+	}
+	sLibraries += png_copyright;
 	sLibraries += sLicense.arg(QLatin1String("libpng license"));
 #endif /* HAVE_PNG */
 
