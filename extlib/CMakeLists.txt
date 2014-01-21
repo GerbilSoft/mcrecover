@@ -18,7 +18,7 @@ SET(SKIP_INSTALL_ALL ON)
 IF(USE_INTERNAL_ZLIB)
 	# Use the internal copy of zlib. (statically-linked)
 	# Use Z_PREFIX to prevent conflicts with libQtCore's internal zlib on Win32.
-	SET(Z_PREFIX ON)
+	SET(Z_PREFIX 1)
 	ADD_SUBDIRECTORY(zlib)
 ENDIF(USE_INTERNAL_ZLIB)
 
