@@ -238,15 +238,20 @@ int GcImageWriterPrivate::writePng(const GcImage *gcImage)
 		return -0x102;
 	}
 
+	// Initialize the internal buffer.
+	vector<uint8_t> *pngBuffer = new vector<uint8_t>();
+	pngBuffer->reserve(32768);	// 32 KB should cover most of the use cases.
+	vector<const uint8_t*> row_pointers;
+
+	// WARNING: Do NOT initialize any C++ objects past this point!
 	if (setjmp(png_jmpbuf(png_ptr))) {
 		// PNG write failed.
 		png_destroy_write_struct(&png_ptr, &info_ptr);
+		delete pngBuffer;
 		return -0x103;
 	}
 
-	// Initialize the internal buffer and memory write function.
-	vector<uint8_t> *pngBuffer = new vector<uint8_t>();
-	pngBuffer->reserve(32768);	// 32 KB should cover most of the use cases.
+	// Initialize the memory write function.
 	png_set_write_fn(png_ptr, pngBuffer, png_io_write, png_io_flush);
 
 	// Initialize compression parameters.
@@ -298,7 +303,6 @@ int GcImageWriterPrivate::writePng(const GcImage *gcImage)
 
 	// Calculate the row pointers.
 	const uint8_t *imageData = (const uint8_t*)gcImage->imageData();
-	vector<const uint8_t*> row_pointers;
 	row_pointers.resize(h);
 	for (int y = 0; y < h; y++, imageData += pitch)
 		row_pointers[y] = imageData;
@@ -401,15 +405,20 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 		return -0x102;
 	}
 
+	// Initialize the internal buffer.
+	vector<uint8_t> *pngBuffer = new vector<uint8_t>();
+	pngBuffer->reserve(32768);	// 32 KB should cover most of the use cases.
+	vector<const uint8_t*> row_pointers;
+
+	// WARNING: Do NOT initialize any C++ objects past this point!
 	if (setjmp(png_jmpbuf(png_ptr))) {
 		// PNG write failed.
 		png_destroy_write_struct(&png_ptr, &info_ptr);
+		delete pngBuffer;
 		return -0x103;
 	}
 
-	// Initialize the internal buffer and memory write function.
-	vector<uint8_t> *pngBuffer = new vector<uint8_t>();
-	pngBuffer->reserve(32768);	// 32 KB should cover most of the use cases.
+	// Initialize the memory write function.
 	png_set_write_fn(png_ptr, pngBuffer, png_io_write, png_io_flush);
 
 	// Initialize compression parameters.
@@ -465,9 +474,7 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	png_set_bgr(png_ptr);
 
 	// Initialize the row pointers.
-	vector<const uint8_t*> row_pointers;
 	row_pointers.resize(h);
-
 	for (int i = 0; i < (int)gcImages->size(); i++) {
 		// NOTE: NULL images should be removed by write().
 		const GcImage *gcImage = gcImages->at(i);
@@ -577,15 +584,20 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 		return -0x102;
 	}
 
+	// Initialize the internal buffer.
+	vector<uint8_t> *pngBuffer = new vector<uint8_t>();
+	pngBuffer->reserve(32768);	// 32 KB should cover most of the use cases.
+	vector<const uint8_t*> row_pointers;
+
+	// WARNING: Do NOT initialize any C++ objects past this point!
 	if (setjmp(png_jmpbuf(png_ptr))) {
 		// PNG write failed.
 		png_destroy_write_struct(&png_ptr, &info_ptr);
+		delete pngBuffer;
 		return -0x103;
 	}
 
-	// Initialize the internal buffer and memory write function.
-	vector<uint8_t> *pngBuffer = new vector<uint8_t>();
-	pngBuffer->reserve(32768);	// 32 KB should cover most of the use cases.
+	// Initialize the memory write function.
 	png_set_write_fn(png_ptr, pngBuffer, png_io_write, png_io_flush);
 
 	// Initialize compression parameters.
@@ -641,9 +653,7 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 	png_set_bgr(png_ptr);
 
 	// Initialize the row pointers.
-	vector<const uint8_t*> row_pointers;
 	row_pointers.resize(vs_h);
-
 	// Append each image to the PNG row pointer data, vertically.
 	for (int i = 0, vs_y = 0; i < (int)gcImages->size(); i++, vs_y += h) {
 		// NOTE: NULL images should be removed by write().
@@ -715,15 +725,21 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 		return -0x102;
 	}
 
+	// Initialize the internal buffer.
+	vector<uint8_t> *pngBuffer = new vector<uint8_t>();
+	pngBuffer->reserve(32768);	// 32 KB should cover most of the use cases.
+	vector<uint8_t> imgBuf;		// Temporary image buffer.
+	vector<const uint8_t*> row_pointers;
+
+	// WARNING: Do NOT initialize any C++ objects past this point!
 	if (setjmp(png_jmpbuf(png_ptr))) {
 		// PNG write failed.
 		png_destroy_write_struct(&png_ptr, &info_ptr);
+		delete pngBuffer;
 		return -0x103;
 	}
 
-	// Initialize the internal buffer and memory write function.
-	vector<uint8_t> *pngBuffer = new vector<uint8_t>();
-	pngBuffer->reserve(32768);	// 32 KB should cover most of the use cases.
+	// Initialize the memory write function.
 	png_set_write_fn(png_ptr, pngBuffer, png_io_write, png_io_flush);
 
 	// Initialize compression parameters.
@@ -779,12 +795,10 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 	png_set_bgr(png_ptr);
 
 	// Create a temporary buffer for the horizontal image.
-	vector<uint8_t> imgBuf;
 	const int vs_pitch = (pitch * gcImages->size());
 	imgBuf.resize(vs_pitch * h);
 
 	// Initialize the row pointers.
-	vector<const uint8_t*> row_pointers;
 	row_pointers.resize(h);
 	for (int y = 0, pos = 0; y < h; y++, pos += vs_pitch) {
 		row_pointers[y] = (imgBuf.data() + pos);
