@@ -480,8 +480,8 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 		const GcImage *gcImage = gcImages->at(i);
 
 		// NOTE: Icon delay is in units of 8 NTSC frames.
-		const int iconDelay = (gcIconDelays->at(i) * 8);
-		static const int iconDelayDenom = 60;
+		const uint16_t iconDelay = (uint16_t)(gcIconDelays->at(i) * 8);
+		static const uint16_t iconDelayDenom = 60;
 
 		// Calculate the row pointers.
 		const uint8_t *imageData = (const uint8_t*)gcImage->imageData();
@@ -896,7 +896,7 @@ bool GcImageWriter::isAnimImageFormatSupported(AnimImageFormat animImgf)
 	switch (animImgf) {
 		case ANIMGF_APNG:
 #if defined(HAVE_PNG)
-			return APNG_is_supported();
+			return !!APNG_is_supported();
 #else
 			return false;
 #endif
