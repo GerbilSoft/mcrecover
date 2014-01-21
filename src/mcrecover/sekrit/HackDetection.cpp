@@ -89,8 +89,10 @@ void HackDetectionPrivate::setScreen(int screenIdx)
 	this->screenIdx = screenIdx;
 
 	// Get the screen dimensions.
-	QWidget *screen = QApplication::desktop()->screen(screenIdx);
-	winRect = screen->rect();
+	// NOTE: Don't get the desktop->screen(), since this may
+	// be the rectangle for all monitors combined (at least
+	// this is the case on Windows).
+	winRect = desktop->screenGeometry(screenIdx);
 }
 
 /**
@@ -389,7 +391,9 @@ void HackDetection::paintEvent(QPaintEvent *event)
 
 	// Center the messages on the screen.
 	rectTitle.moveTop(x);
+	rectTitle.moveLeft((d->winRect.width() - rectTitle.width()) / 2);
 	rectMessage.moveTop(x + (rectTitle.height() * 2));
+	rectMessage.moveLeft((d->winRect.width() - rectMessage.width()) / 2);
 
 	// Draw the title.
 	painter.setFont(d->fntHack);
