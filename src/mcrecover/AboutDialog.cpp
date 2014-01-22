@@ -658,9 +658,9 @@ QString AboutDialogPrivate::GetSupport(void)
 AboutDialog::AboutDialog(QWidget *parent)
 	: QDialog(parent,
 		Qt::Dialog |
+		Qt::CustomizeWindowHint |
 		Qt::WindowTitleHint |
 		Qt::WindowSystemMenuHint |
-		Qt::WindowMinimizeButtonHint |
 		Qt::WindowCloseButtonHint)
 	, d_ptr(new AboutDialogPrivate(this))
 {

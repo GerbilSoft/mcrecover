@@ -181,9 +181,9 @@ void XmlTemplateDialogPrivate::generateXmlTemplate(void)
 XmlTemplateDialog::XmlTemplateDialog(QWidget *parent)
 	: QDialog(parent,
 		Qt::Dialog |
+		Qt::CustomizeWindowHint |
 		Qt::WindowTitleHint |
 		Qt::WindowSystemMenuHint |
-		Qt::WindowMinimizeButtonHint |
 		Qt::WindowCloseButtonHint)
 	, d_ptr(new XmlTemplateDialogPrivate(this, nullptr))
 {
