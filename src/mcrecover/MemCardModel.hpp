@@ -52,7 +52,7 @@ class MemCardModel : public QAbstractListModel
 			COL_SIZE,		// Size (in blocks)
 			COL_MTIME,		// Last modified time.
 			COL_PERMISSION,		// Permission string.
-			COL_GAMECODE,		// Game code. (including company)
+			COL_GAMEID,		// Game ID.
 			COL_FILENAME,		// Filename.
 			COL_ISVALID,		// Is the file valid? (Checksum status)
 			

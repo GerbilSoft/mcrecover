@@ -720,7 +720,7 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_SIZE, false);
 	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_MTIME, false);
 	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_PERMISSION, false);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_GAMECODE, false);
+	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_GAMEID, false);
 	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_FILENAME, true);
 
 	// Connect the lstFileList slots.

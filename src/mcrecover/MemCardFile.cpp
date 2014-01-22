@@ -915,6 +915,16 @@ QString MemCardFile::company(void) const
 }
 
 /**
+ * Get the game ID. (gamecode+company)
+ * @return Game ID.
+ */
+QString MemCardFile::gameID(void) const
+{
+	Q_D(const MemCardFile);
+	return (d->gamecode + d->company);
+}
+
+/**
  * Get the GCN filename.
  * @return GCN filename.
  */
