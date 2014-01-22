@@ -341,16 +341,14 @@ void StatusBarManager::setSearchThread(SearchThread *searchThread)
 void StatusBarManager::opened(const QString &filename)
 {
 	// Extract the filename from the path.
-	int lastSlash = filename.lastIndexOf(QChar(L'/'));
-	QStringRef filenameRef = (lastSlash >= 0
-			? QStringRef(&filename, 0, lastSlash+1)
-			: QStringRef(&filename));
+	QFileInfo fileInfo(filename);
+	QString filename_noPath = fileInfo.fileName();
 
 	Q_D(StatusBarManager);
 	d->scanning = false;
 	d->progressBar->setVisible(false);
 	d->lastStatusMessage = tr("Loaded GameCube Memory Card image %1")
-				.arg(filenameRef.toString());
+				.arg(filename_noPath);
 	d->updateStatusBar();
 
 	// Stop the Hide Progress Bar timer.
