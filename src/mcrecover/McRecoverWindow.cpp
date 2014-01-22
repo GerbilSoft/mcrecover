@@ -21,6 +21,7 @@
 
 #include "config.mcrecover.h"
 #include "McRecoverWindow.hpp"
+#include "util/array_size.h"
 
 #include "McRecoverQApplication.hpp"
 #include "AboutDialog.hpp"
@@ -341,7 +342,7 @@ void McRecoverWindowPrivate::initToolbar(void)
 	};
 
 	bool isInitSet = false;
-	for (int i = 0; i < (int)(sizeof(animImgfActions)/sizeof(animImgfActions[0])); i++) {
+	for (int i = 0; i < ARRAY_SIZE(animImgfActions); i++) {
 		actgrpAnimIconFormat->addAction(animImgfActions[i]);
 
 		// Is this animated image format available?

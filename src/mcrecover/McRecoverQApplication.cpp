@@ -21,6 +21,7 @@
 
 #include "config.mcrecover.h"
 #include "McRecoverQApplication.hpp"
+#include "util/array_size.h"
 
 // Qt includes.
 #include <QtCore/QTranslator>
@@ -145,7 +146,7 @@ QIcon McRecoverQApplication::IconFromTheme(const QString &name)
 	static const QString pngExt = QLatin1String(".png");
 
 	QIcon icon;
-	for (int i = 0; i < (int)(sizeof(iconSz)/sizeof(iconSz[0])); i++) {
+	for (int i = 0; i < ARRAY_SIZE(iconSz); i++) {
 		QPixmap pxm(iconSz[i].path + name + pngExt);
 		if (!pxm.isNull())
 			icon.addPixmap(pxm);
@@ -186,7 +187,7 @@ QIcon McRecoverQApplication::IconFromProgram(const QString &name)
 	static const QString pngExt = QLatin1String(".png");
 
 	QIcon icon;
-	for (int i = 0; i < (int)(sizeof(iconSz)/sizeof(iconSz[0])); i++) {
+	for (int i = 0; i < ARRAY_SIZE(iconSz); i++) {
 		QPixmap pxm(iconSz[i].path + name + pngExt);
 		if (!pxm.isNull())
 			icon.addPixmap(pxm);

@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 #include "HackDetection.hpp"
+#include "util/array_size.h"
 
 // Qt includes.
 #include <QtCore/QEvent>
@@ -112,10 +113,9 @@ void HackDetectionPrivate::initFont(void)
 		"DejaVu Sans Mono",
 		"Fixedsys",
 		"Courier New",
-		nullptr
 	};
 
-	for (int i = 0; i < (int)(sizeof(FontNames)/sizeof(FontNames[0])-1); i++) {
+	for (int i = 0; i < ARRAY_SIZE(FontNames); i++) {
 		fntHack = QFont(QLatin1String(FontNames[i]));
 		fntHack.setStyleHint(QFont::TypeWriter);
 		if (fntHack.exactMatch())
