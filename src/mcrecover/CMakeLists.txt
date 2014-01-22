@@ -48,10 +48,6 @@ ENDIF()
 
 INCLUDE(${QT_USE_FILE})
 
-# PCRE
-FIND_PACKAGE(PCRE REQUIRED)
-INCLUDE_DIRECTORIES("${PCRE_INCLUDE_DIR}")
-
 IF(WIN32 AND QT_IS_STATIC)
 	# Win32: Qt Static requires some extra libraries.
 	SET(WIN32_LIBS ws2_32 winmm imm32)
@@ -77,6 +73,10 @@ ENDIF(APPLE)
 
 # Main binary directory. Needed for git_version.h
 INCLUDE_DIRECTORIES("${mcrecover_base_BINARY_DIR}")
+
+# PCRE
+INCLUDE(CheckPCRE)
+INCLUDE_DIRECTORIES(${PCRE_INCLUDE_DIR})
 
 # libpng (AboutDialog only; indirectly through libgctools)
 INCLUDE(CheckPNG)

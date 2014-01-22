@@ -1,0 +1,12 @@
+This copy of pcre-8.34 is a modified version of the original.
+
+The following changes have been made to the original:
+
+- autoconf build infratsructure has been removed.
+  (configure.ac is still present since it's used by CMakeLists.txt
+   to provide the version numbers and release date.)
+
+- Files not necessary for building pcre have been removed.
+
+To obtain the original pcre-8.34, visit:
+http://www.pcre.org/
