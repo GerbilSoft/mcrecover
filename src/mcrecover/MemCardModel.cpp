@@ -110,6 +110,14 @@ class MemCardModelPrivate
 		};
 		style_t style;
 
+		/**
+		 * Cached copy of card->numFiles().
+		 * This value is needed after the card is destroyed,
+		 * so we need to cache it here, since the destroyed()
+		 * slot might be run *after* the MemCard is deleted.
+		 */
+		int numFiles;
+
 		// Row insert start/end indexes.
 		int insertStart;
 		int insertEnd;
@@ -119,6 +127,7 @@ MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	: q_ptr(q)
 	, card(nullptr)
 	, animTimer(new QTimer(q))
+	, numFiles(0)
 	, insertStart(-1)
 	, insertEnd(-1)
 {
@@ -194,7 +203,7 @@ void MemCardModelPrivate::initAnimState(void)
 		return;
 
 	// Initialize the animation state.
-	for (int i = 0; i < card->numFiles(); i++) {
+	for (int i = 0; i < numFiles; i++) {
 		const MemCardFile *file = card->getFile(i);
 		initAnimState(file);
 	}
@@ -244,7 +253,7 @@ void MemCardModelPrivate::animTimerSlot(void)
 
 	// Check for icon animations.
 	Q_Q(MemCardModel);
-	for (int i = 0; i < card->numFiles(); i++) {
+	for (int i = 0; i < numFiles; i++) {
 		const MemCardFile *file = card->getFile(i);
 		IconAnimHelper *helper = animState.value(file);
 		if (!helper)
@@ -280,7 +289,7 @@ int MemCardModel::rowCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
 	Q_D(const MemCardModel);
-	return (d->card != nullptr ? d->card->numFiles() : 0);
+	return (d->numFiles);
 }
 
 int MemCardModel::columnCount(const QModelIndex& parent) const
@@ -482,9 +491,9 @@ void MemCardModel::setMemCard(MemCard *card)
 	// Disconnect the MemCard's changed() signal if a MemCard is already set.
 	if (d->card) {
 		// Notify the view that we're about to remove all rows.
-		int numFiles = d->card->numFiles();
-		if (numFiles > 0)
-			beginRemoveRows(QModelIndex(), 0, (numFiles - 1));
+		d->numFiles = d->card->numFiles();
+		if (d->numFiles > 0)
+			beginRemoveRows(QModelIndex(), 0, (d->numFiles - 1));
 
 		// Disconnect the MemCard's signals.
 		disconnect(d->card, SIGNAL(destroyed(QObject*)),
@@ -501,15 +510,15 @@ void MemCardModel::setMemCard(MemCard *card)
 		d->card = nullptr;
 
 		// Done removing rows.
-		if (numFiles > 0)
+		if (d->numFiles > 0)
 			endRemoveRows();
 	}
 
 	if (card) {
 		// Notify the view that we're about to add rows.
-		int numFiles = card->numFiles();
-		if (numFiles > 0)
-			beginInsertRows(QModelIndex(), 0, (numFiles - 1));
+		d->numFiles = card->numFiles();
+		if (d->numFiles > 0)
+			beginInsertRows(QModelIndex(), 0, (d->numFiles - 1));
 
 		// Set the card.
 		d->card = card;
@@ -530,7 +539,7 @@ void MemCardModel::setMemCard(MemCard *card)
 			this, SLOT(memCard_filesRemoved_slot()));
 
 		// Done adding rows.
-		if (numFiles > 0)
+		if (d->numFiles > 0)
 			endInsertRows();
 	}
 }
@@ -555,11 +564,12 @@ void MemCardModel::memCard_destroyed_slot(QObject *obj)
 
 	if (obj == d->card) {
 		// Our MemCard was destroyed.
-		int numFiles = d->card->numFiles();
-		if (numFiles > 0)
-			beginRemoveRows(QModelIndex(), 0, (numFiles - 1));
+		int old_numFiles = d->numFiles;
+		if (old_numFiles > 0)
+			beginRemoveRows(QModelIndex(), 0, (old_numFiles - 1));
+		d->numFiles = 0;
 		d->card = nullptr;
-		if (numFiles > 0)
+		if (old_numFiles > 0)
 			endRemoveRows();
 	}
 }
