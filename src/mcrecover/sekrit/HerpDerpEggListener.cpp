@@ -25,6 +25,11 @@
 // C includes.
 #include <string.h>
 
+// Qt includes.
+#include <QtGui/QKeyEvent>
+#include <QtGui/QApplication>
+#include <QtGui/QDesktopWidget>
+
 /** HerpDerpEggListenerPrivate **/
 
 class HerpDerpEggListenerPrivate
@@ -41,15 +46,35 @@ class HerpDerpEggListenerPrivate
 
 	public:
 		HackDetection::DetectType detectType;
+		int seq_pos;
+
+		/**
+		 * Do "Hack Detection" on all monitors.
+		 */
+		void doHackDetection(void);
 };
 
 HerpDerpEggListenerPrivate::HerpDerpEggListenerPrivate(HerpDerpEggListener *q)
 	: q_ptr(q)
 	, detectType(HackDetection::DT_NONE)
+	, seq_pos(0)
 { }	
 
 HerpDerpEggListenerPrivate::~HerpDerpEggListenerPrivate()
 { }
+
+/**
+ * Do "Hack Detection" on all monitors.
+ */
+void HerpDerpEggListenerPrivate::doHackDetection(void)
+{
+	seq_pos = 0;
+	QDesktopWidget *desktop = QApplication::desktop();
+	for (int i = 0; i < desktop->numScreens(); i++) {
+		HackDetection *hd = new HackDetection(i);
+		hd->show();
+	}
+}
 
 /** HerpDerpEggListener **/
 
@@ -72,6 +97,7 @@ void HerpDerpEggListener::setSelGameID(const QString &gameID)
 {
 	Q_D(HerpDerpEggListener);
 	d->detectType = HackDetection::DT_NONE;
+	d->seq_pos = 0;
 	if (gameID.size() != 6) {
 		// Invalid game ID.
 		return;
@@ -129,6 +155,32 @@ void HerpDerpEggListener::setSelGameID(const QString &gameID)
  */
 void HerpDerpEggListener::widget_keyPress(QKeyEvent *event)
 {
-	// TODO
-	Q_UNUSED(event)
+	// Key sequence.
+	static const uint8_t hack_seq[] = {
+		Qt::Key_1, Qt::Key_9,
+		Qt::Key_6, Qt::Key_5,
+		Qt::Key_0, Qt::Key_9,
+		Qt::Key_1, Qt::Key_7
+	};
+
+	Q_D(HerpDerpEggListener);
+	if (d->detectType <= HackDetection::DT_NONE ||
+	    d->detectType >= HackDetection::DT_MAX) {
+		// Invalid detection.
+		d->seq_pos = 0;
+		return;
+	}
+
+	if (d->seq_pos < 0 || d->seq_pos >= ARRAY_SIZE(hack_seq))
+		d->seq_pos = 0;
+
+	if (event->key() == hack_seq[d->seq_pos]) {
+		d->seq_pos++;
+		if (d->seq_pos == ARRAY_SIZE(hack_seq)) {
+			d->seq_pos = 0;
+			d->doHackDetection();
+		}
+	} else {
+		d->seq_pos = 0;
+	}
 }
