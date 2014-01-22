@@ -20,19 +20,7 @@
  ***************************************************************************/
 
 #include "PcreRegex.hpp"
-
-/**
- * Number of elements in an array.
- *
- * Includes a static check for pointers to make sure
- * a dynamically-allocated array wasn't specified.
- * Reference: http://stackoverflow.com/questions/8018843/macro-definition-array-size
- */
-// TODO: Move this to a common header file?
-#define ARRAY_SIZE(x) \
-	((int)(((sizeof(x) / sizeof(x[0]))) / \
-	       (size_t)(!(sizeof(x) % sizeof(x[0])))))
-
+#include "util/array_size.h"
 
 PcreRegex::PcreRegex()
 	: m_regex(nullptr)
@@ -50,7 +38,6 @@ PcreRegex::~PcreRegex()
 	if (m_regex)
 		pcre_free(m_regex);
 }
-
 
 /**
  * Set the regular expression.
@@ -96,7 +83,6 @@ int PcreRegex::setRegex(const QString &regex, int *errOffset)
 	// Regex compiled successfully.
 	return 0;
 }
-
 
 /**
  * Execute a regular expression.
@@ -157,4 +143,3 @@ int PcreRegex::exec(const QByteArray &subjectUtf8, QVector<QString> *outVector) 
 
 	return rc;
 }
-
