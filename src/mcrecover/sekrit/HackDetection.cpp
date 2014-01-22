@@ -243,7 +243,11 @@ HackDetection::HackDetection(QWidget *parent)
  * @param screen Screen index.
  */
 HackDetection::HackDetection(int screen, QWidget *parent)
-	: QWidget(parent, Qt::Window)
+	: QWidget(parent,
+		Qt::Window |
+		Qt::WindowStaysOnTopHint |
+		Qt::FramelessWindowHint |
+		Qt::CustomizeWindowHint)
 	, d_ptr(new HackDetectionPrivate(this))
 {
 	init(screen);

@@ -68,10 +68,13 @@ HerpDerpEggListenerPrivate::~HerpDerpEggListenerPrivate()
  */
 void HerpDerpEggListenerPrivate::doHackDetection(void)
 {
+	Q_Q(HerpDerpEggListener);
+	QWidget *parent = qobject_cast<QWidget*>(q->parent());
+
 	seq_pos = 0;
 	QDesktopWidget *desktop = QApplication::desktop();
 	for (int i = 0; i < desktop->numScreens(); i++) {
-		HackDetection *hd = new HackDetection(i);
+		HackDetection *hd = new HackDetection(i, parent);
 		hd->show();
 	}
 }
