@@ -1210,7 +1210,11 @@ void McRecoverWindow::lstFileList_selectionModel_currentRowChanged(
 
 	// Set the MemCardFileView's MemCardFile to the
 	// selected file in the QTreeView.
-	d->ui.mcfFileView->setFile(d->card->getFile(current.row()));
+	const MemCardFile *file = d->card->getFile(current.row());
+	d->ui.mcfFileView->setFile(file);
+
+	// Shh... it's a secret to everybody.
+	d->herpDerp->setSelGameID(file ? file->gameID() : QString());
 }
 
 /**

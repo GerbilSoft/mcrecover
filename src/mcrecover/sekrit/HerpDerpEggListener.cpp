@@ -20,6 +20,10 @@
  ***************************************************************************/
 
 #include "HerpDerpEggListener.hpp"
+#include "util/array_size.h"
+
+// C includes.
+#include <string.h>
 
 /** HerpDerpEggListenerPrivate **/
 
@@ -60,17 +64,63 @@ HerpDerpEggListener::~HerpDerpEggListener()
 	delete d;
 }
 
-HackDetection::DetectType HerpDerpEggListener::detectType(void) const
-{
-	Q_D(const HerpDerpEggListener);
-	return d->detectType;
-}
-
-void HerpDerpEggListener::setDetectType(HackDetection::DetectType detectType)
+/**
+ * Set the selected game ID.
+ * @param gameID Game ID. (gamecode+company)
+ */
+void HerpDerpEggListener::setSelGameID(const QString &gameID)
 {
 	Q_D(HerpDerpEggListener);
-	d->detectType = detectType;
-	// TODO: Update detect status.
+	d->detectType = HackDetection::DT_NONE;
+	if (gameID.size() != 6) {
+		// Invalid game ID.
+		return;
+	}
+
+	const QByteArray str_data = gameID.toLatin1();
+	const char *str = str_data.constData();
+
+	struct hurrMatch_t {
+		char gameID[7];
+		uint8_t dt;
+	};
+
+	static const hurrMatch_t hurrMatch[] {
+		/** HACK DETECTION **/
+		{"G2XE8P", HackDetection::DT_H},
+		{"G2XP8P", HackDetection::DT_H},
+		{"G9SE8P", HackDetection::DT_H},
+		{"G9SJ8P", HackDetection::DT_H},
+		{"G9SP8P", HackDetection::DT_H},
+		{"GSBJ8P", HackDetection::DT_H},
+		{"GSNE8P", HackDetection::DT_H},
+		{"GSNP8P", HackDetection::DT_H},
+		{"GSOE8P", HackDetection::DT_H},
+		{"GSOJ8P", HackDetection::DT_H},
+		{"GSOP8P", HackDetection::DT_H},
+		{"GXEE8P", HackDetection::DT_H},
+		{"GXEJ8P", HackDetection::DT_H},
+		{"GXEP8P", HackDetection::DT_H},
+		{"GXSE8P", HackDetection::DT_H},
+		{"GXSP6W", HackDetection::DT_H},
+		{"GXSP8P", HackDetection::DT_H},
+		{"RELSAB", HackDetection::DT_H},
+		/** QUACK DETECTION **/
+		{"GDDE41", HackDetection::DT_Q},
+		{"GDDP41", HackDetection::DT_Q},
+		{"GDOP41", HackDetection::DT_Q},
+		/** SNACK DETECTION **/
+		{"GKYE01", HackDetection::DT_S},
+		{"GKYJ01", HackDetection::DT_S},
+		{"GKYP01", HackDetection::DT_S},
+	};
+
+	for (int i = (ARRAY_SIZE(hurrMatch)-1); i >= 0; i--) {
+		if (!strcmp(str, hurrMatch[i].gameID)) {
+			d->detectType = (HackDetection::DetectType)hurrMatch[i].dt;
+			break;
+		}
+	}
 }
 
 /**

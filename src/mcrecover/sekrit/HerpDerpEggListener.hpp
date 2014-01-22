@@ -46,8 +46,11 @@ class HerpDerpEggListener : public QObject
 		Q_DISABLE_COPY(HerpDerpEggListener)
 
 	public:
-		HackDetection::DetectType detectType(void) const;
-		void setDetectType(HackDetection::DetectType detectType);
+		/**
+		 * Set the selected game ID.
+		 * @param gameID Game ID. (gamecode+company)
+		 */
+		void setSelGameID(const QString &gameID);
 
 	public slots:
 		void widget_keyPress(QKeyEvent *event);
