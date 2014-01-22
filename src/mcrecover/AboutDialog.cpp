@@ -179,7 +179,6 @@ void AboutDialogPrivate::initAboutDialogText(void)
 		scrlCredits->setWidget(ui.lblCredits);
 		scrlCredits->setWidgetResizable(true);
 		ui.vboxCredits->addWidget(scrlCredits);
-		scrlCredits->setAutoFillBackground(false);
 
 		QScrollArea *scrlLibraries = new QScrollArea();
 		scrlLibraries->setFrameShape(QFrame::NoFrame);
@@ -188,7 +187,6 @@ void AboutDialogPrivate::initAboutDialogText(void)
 		scrlLibraries->setWidget(ui.lblLibraries);
 		scrlLibraries->setWidgetResizable(true);
 		ui.vboxLibraries->addWidget(scrlLibraries);
-		scrlLibraries->setAutoFillBackground(false);
 
 		QScrollArea *scrlDebugInfo = new QScrollArea();
 		scrlDebugInfo->setFrameShape(QFrame::NoFrame);
@@ -199,7 +197,6 @@ void AboutDialogPrivate::initAboutDialogText(void)
 		scrlDebugInfo->setWidget(ui.lblDebugInfo);
 		scrlDebugInfo->setWidgetResizable(true);
 		ui.vboxDebugInfo->addWidget(scrlDebugInfo);
-		scrlDebugInfo->setAutoFillBackground(false);
 
 		QScrollArea *scrlSupport = new QScrollArea();
 		scrlSupport->setFrameShape(QFrame::NoFrame);
@@ -208,7 +205,6 @@ void AboutDialogPrivate::initAboutDialogText(void)
 		scrlSupport->setWidget(ui.lblSupport);
 		scrlSupport->setWidgetResizable(true);
 		ui.vboxSupport->addWidget(scrlSupport);
-		scrlSupport->setAutoFillBackground(false);
 
 		// Scroll areas initialized.
 		scrlAreaInit = true;
