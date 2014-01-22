@@ -271,6 +271,9 @@ void HackDetection::init(int screen)
 	// We're painting the entire window.
 	this->setAttribute(Qt::WA_NoSystemBackground, true);
 
+	// Hide the mouse cursor.
+	this->setCursor(QCursor(Qt::BlankCursor));
+
 	Q_D(HackDetection);
 	d->setScreen(screen);
 
