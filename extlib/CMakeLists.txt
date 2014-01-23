@@ -28,7 +28,7 @@ SET(SKIP_INSTALL_HEADERS ON)
 SET(SKIP_INSTALL_FILES ON)
 SET(SKIP_INSTALL_ALL ON)
 
-# FIXME: If static Qt, check if it has internal zlib/libpng,
+# TODO: If we're using static Qt, check if it has internal zlib/libpng,
 # and see if we can use that.
 
 IF(USE_INTERNAL_ZLIB)
