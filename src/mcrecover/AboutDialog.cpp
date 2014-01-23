@@ -172,10 +172,15 @@ void AboutDialogPrivate::initAboutDialogText(void)
 		// Qt Designer's QScrollArea implementation is horribly broken.
 		// Also, this has to be done after the labels are set, because
 		// QScrollArea is kinda dumb.
+		const QString css = QLatin1String(
+			"QScrollArea, QLabel { background-color: transparent; }");
+
 		QScrollArea *scrlCredits = new QScrollArea();
 		scrlCredits->setFrameShape(QFrame::NoFrame);
 		scrlCredits->setFrameShadow(QFrame::Plain);
 		scrlCredits->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+		scrlCredits->setStyleSheet(css);
+		ui.lblCredits->setStyleSheet(css);
 		scrlCredits->setWidget(ui.lblCredits);
 		scrlCredits->setWidgetResizable(true);
 		ui.vboxCredits->addWidget(scrlCredits);
@@ -184,6 +189,8 @@ void AboutDialogPrivate::initAboutDialogText(void)
 		scrlLibraries->setFrameShape(QFrame::NoFrame);
 		scrlLibraries->setFrameShadow(QFrame::Plain);
 		scrlLibraries->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+		scrlLibraries->setStyleSheet(css);
+		ui.lblLibraries->setStyleSheet(css);
 		scrlLibraries->setWidget(ui.lblLibraries);
 		scrlLibraries->setWidgetResizable(true);
 		ui.vboxLibraries->addWidget(scrlLibraries);
@@ -191,6 +198,8 @@ void AboutDialogPrivate::initAboutDialogText(void)
 		QScrollArea *scrlDebugInfo = new QScrollArea();
 		scrlDebugInfo->setFrameShape(QFrame::NoFrame);
 		scrlDebugInfo->setFrameShadow(QFrame::Plain);
+		scrlDebugInfo->setStyleSheet(css);
+		ui.lblDebugInfo->setStyleSheet(css);
 		// Don't turn off hscroll because the default db filename might be too long.
 		// TODO: Re-enable this once multiple db files are supported.
 		//scrlDebugInfo->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -202,6 +211,8 @@ void AboutDialogPrivate::initAboutDialogText(void)
 		scrlSupport->setFrameShape(QFrame::NoFrame);
 		scrlSupport->setFrameShadow(QFrame::Plain);
 		scrlSupport->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+		scrlSupport->setStyleSheet(css);
+		ui.lblSupport->setStyleSheet(css);
 		scrlSupport->setWidget(ui.lblSupport);
 		scrlSupport->setWidgetResizable(true);
 		ui.vboxSupport->addWidget(scrlSupport);
