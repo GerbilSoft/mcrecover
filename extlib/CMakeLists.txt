@@ -28,10 +28,11 @@ SET(SKIP_INSTALL_HEADERS ON)
 SET(SKIP_INSTALL_FILES ON)
 SET(SKIP_INSTALL_ALL ON)
 
+# FIXME: If static Qt, check if it has internal zlib/libpng,
+# and see if we can use that.
+
 IF(USE_INTERNAL_ZLIB)
 	# Use the internal copy of zlib. (statically-linked)
-	# Use Z_PREFIX to prevent conflicts with libQtCore's internal zlib on Win32.
-	SET(Z_PREFIX 1)
 	ADD_SUBDIRECTORY(zlib)
 ENDIF(USE_INTERNAL_ZLIB)
 

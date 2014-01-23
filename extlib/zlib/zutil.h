@@ -44,10 +44,6 @@ typedef unsigned short ush;
 typedef ush FAR ushf;
 typedef unsigned long  ulg;
 
-// GCN MemCard Recover: Prefix z_errmsg[].
-#ifdef Z_PREFIX
-#define z_errmsg mcr_z_errmsg
-#endif
 extern z_const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
 /* (size given to avoid silly warnings with Visual C++) */
 
