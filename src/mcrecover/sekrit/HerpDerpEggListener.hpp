@@ -54,6 +54,7 @@ class HerpDerpEggListener : public QObject
 
 	public slots:
 		void widget_keyPress(QKeyEvent *event);
+		void hd_destroyed(QObject *object);
 };
 
 #endif /* __MCRECOVER_SEARCHTHREAD_HPP__ */

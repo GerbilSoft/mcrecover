@@ -48,6 +48,11 @@ class HerpDerpEggListenerPrivate
 		HackDetection::DetectType detectType;
 		int seq_pos;
 
+		// Set of HackDetection objects.
+		// NOTE: Must be QObject, since we can't use
+		// qobject_cast<> in the destroyed() slot.
+		QSet<QObject*> hdSet;
+
 		/**
 		 * Do "Hack Detection" on all monitors.
 		 */
@@ -61,7 +66,11 @@ HerpDerpEggListenerPrivate::HerpDerpEggListenerPrivate(HerpDerpEggListener *q)
 { }	
 
 HerpDerpEggListenerPrivate::~HerpDerpEggListenerPrivate()
-{ }
+{
+	QSet<QObject*> hdSet_del;
+	hdSet_del.swap(hdSet);
+	qDeleteAll(hdSet_del);
+}
 
 /**
  * Do "Hack Detection" on all monitors.
@@ -75,6 +84,9 @@ void HerpDerpEggListenerPrivate::doHackDetection(void)
 	QDesktopWidget *desktop = QApplication::desktop();
 	for (int i = 0; i < desktop->numScreens(); i++) {
 		HackDetection *hd = new HackDetection(i, parent);
+		QObject::connect(hd, SIGNAL(destroyed(QObject*)),
+				 q, SLOT(hd_destroyed(QObject*)));
+		hdSet.insert(hd);
 		hd->show();
 	}
 }
@@ -185,5 +197,21 @@ void HerpDerpEggListener::widget_keyPress(QKeyEvent *event)
 		}
 	} else {
 		d->seq_pos = 0;
+	}
+}
+
+/**
+ * HackDetection destroyed slot.
+ * @param object HackDetection.
+ */
+void HerpDerpEggListener::hd_destroyed(QObject *object)
+{
+	Q_D(HerpDerpEggListener);
+	if (d->hdSet.contains(object)) {
+		// Delete all HackDetections.
+		QSet<QObject*> hdSet_del;
+		hdSet_del.swap(d->hdSet);
+		hdSet_del.remove(object);
+		qDeleteAll(hdSet_del);
 	}
 }
