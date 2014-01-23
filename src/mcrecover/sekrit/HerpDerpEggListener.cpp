@@ -114,7 +114,7 @@ void HerpDerpEggListener::setSelGameID(const QString &gameID)
 		uint8_t dt;
 	};
 
-	static const hurrMatch_t hurrMatch[] {
+	static const hurrMatch_t hurrMatch[] = {
 		/** HACK DETECTION **/
 		{"G2XE8P", HackDetection::DT_H},
 		{"G2XP8P", HackDetection::DT_H},
