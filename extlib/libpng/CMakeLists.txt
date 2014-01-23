@@ -22,7 +22,10 @@ set(PNGLIB_NAME libpng${PNGLIB_MAJOR}${PNGLIB_MINOR})
 set(PNGLIB_VERSION ${PNGLIB_MAJOR}.${PNGLIB_MINOR}.${PNGLIB_RELEASE})
 
 # needed packages
+# mcrecover: Disable FIND_PACKAGE(); this is handled in CheckPNG.
+IF(0)
 find_package(ZLIB REQUIRED)
+ENDIF(0)
 include_directories(${ZLIB_INCLUDE_DIR})
 
 if(NOT WIN32)
