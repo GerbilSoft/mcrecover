@@ -258,8 +258,8 @@ ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 
 # extlib
 TARGET_LINK_LIBRARIES(mcrecover
-	${ZLIB_LIBRARY}	# Required for zlib info in AboutDialog.
 	${PNG_LIBRARY}	# Required for libpng info in AboutDialog.
+	${ZLIB_LIBRARY}	# Required for zlib info in AboutDialog.
 	${PCRE_PCRE_LIBRARY}
 	)
 
