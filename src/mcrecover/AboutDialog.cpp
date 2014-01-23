@@ -148,12 +148,9 @@ void AboutDialogPrivate::initAboutDialogText(void)
 	// Set the program title text.
         ui.lblPrgTitle->setText(sPrgTitle);
 
-	// Build the credits text.
-	QString sCredits = GetCredits();
-
 	// Set the credits text.
 	ui.lblCredits->setTextFormat(Qt::RichText);
-	ui.lblCredits->setText(sCredits);
+	ui.lblCredits->setText(GetCredits());
 
 	// Set the included libraries text.
 	ui.lblLibraries->setTextFormat(Qt::PlainText);
