@@ -206,7 +206,7 @@ void MemCardPrivate::StaticInit(void)
 
 		// Text codecs.
 		TextCodecUS = QTextCodec::codecForName("cp1252");
-		TextCodecJP = QTextCodec::codecForName("Shift-JIS");
+		TextCodecJP = QTextCodec::codecForName("Shift_JIS");
 
 		// If Shift-JIS isn't available, use cp1252.
 		if (!TextCodecJP)
