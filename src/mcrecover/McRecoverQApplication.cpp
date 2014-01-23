@@ -38,6 +38,12 @@
 // Translation Manager.
 #include "TranslationManager.hpp"
 
+// Import Qt plugins in static builds.
+#ifdef QT_IS_STATIC
+#include <QtCore/QtPlugin>
+Q_IMPORT_PLUGIN(qjpcodecs)
+#endif /* QT_IS_STATIC */
+
 /** McRecoverQApplicationPrivate **/
 
 class McRecoverQApplicationPrivate

@@ -48,6 +48,21 @@ ENDIF()
 
 INCLUDE(${QT_USE_FILE})
 
+####################################
+# Qt plugins. (Static build only!) #
+####################################
+IF(QT_IS_STATIC)
+	IF(QT_QTCORE_LIBRARY_DEBUG)
+		SET(QT_PLUGINS_SUFFIX "d")
+	ENDIF(QT_QTCORE_LIBRARY_DEBUG)
+	FIND_LIBRARY(QT_PLUGINS_CODECS_QJPCODECS
+		qjpcodecs${QT_PLUGINS_SUFFIX}
+		PATHS ${QT_PLUGINS_DIR}/codecs)
+	IF(NOT QT_PLUGINS_CODECS_QJPCODECS)
+		MESSAGE(WARNING "qjpcodecs not found; Japanese text will not be decoded properly.")
+	ENDIF()
+ENDIF(QT_IS_STATIC)
+
 IF(WIN32 AND QT_IS_STATIC)
 	# Win32: Qt Static requires some extra libraries.
 	SET(WIN32_LIBS ws2_32 winmm imm32)
@@ -240,6 +255,13 @@ ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_DBUS_SRCS}
 	${mcrecover_DBUS_MOC_SRCS}
 	)
+# NOTE: Libraries have to be linked in reverse order.
+IF(QT_PLUGINS_CODECS_QJPCODECS)
+	TARGET_LINK_LIBRARIES(mcrecover ${QT_PLUGINS_CODECS_QJPCODECS})
+ENDIF(QT_PLUGINS_CODECS_QJPCODECS)
+IF(QT_QTDBUS_FOUND)
+	TARGET_LINK_LIBRARIES(mcrecover ${QT_QTDBUS_LIBRARY})
+ENDIF(QT_QTDBUS_FOUND)
 TARGET_LINK_LIBRARIES(mcrecover
 	gctools
 	${QT_QTGUI_LIBRARY}
@@ -250,9 +272,6 @@ TARGET_LINK_LIBRARIES(mcrecover
 	${WIN32_LIBS}
 	${APPLE_LIBS}
 	)
-IF(QT_QTDBUS_FOUND)
-	TARGET_LINK_LIBRARIES(mcrecover ${QT_QTDBUS_LIBRARY})
-ENDIF(QT_QTDBUS_FOUND)
 
 # Translations.
 ADD_DEPENDENCIES(mcrecover translations_target)
