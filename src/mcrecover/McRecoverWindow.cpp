@@ -239,6 +239,8 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 
 McRecoverWindowPrivate::~McRecoverWindowPrivate()
 {
+	// NOTE: Delete the MemCardModel first to prevent issues later.
+	delete model;
 	delete card;
 
 	// TODO: Wait for searchThread to finish?
