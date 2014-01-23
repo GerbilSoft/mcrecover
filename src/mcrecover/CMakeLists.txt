@@ -255,6 +255,22 @@ ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_DBUS_SRCS}
 	${mcrecover_DBUS_MOC_SRCS}
 	)
+
+# extlib
+TARGET_LINK_LIBRARIES(mcrecover
+	${ZLIB_LIBRARY}	# Required for zlib info in AboutDialog.
+	${PNG_LIBRARY}	# Required for libpng info in AboutDialog.
+	${PCRE_PCRE_LIBRARY}
+	)
+
+# libgctools and OS-specific libraries
+TARGET_LINK_LIBRARIES(mcrecover
+	gctools
+	${WIN32_LIBS}
+	${APPLE_LIBS}
+	)
+
+# Qt libraries
 # NOTE: Libraries have to be linked in reverse order.
 IF(QT_PLUGINS_CODECS_QJPCODECS)
 	TARGET_LINK_LIBRARIES(mcrecover ${QT_PLUGINS_CODECS_QJPCODECS})
@@ -263,14 +279,8 @@ IF(QT_QTDBUS_FOUND)
 	TARGET_LINK_LIBRARIES(mcrecover ${QT_QTDBUS_LIBRARY})
 ENDIF(QT_QTDBUS_FOUND)
 TARGET_LINK_LIBRARIES(mcrecover
-	gctools
 	${QT_QTGUI_LIBRARY}
 	${QT_QTCORE_LIBRARY}
-	${PCRE_PCRE_LIBRARY}
-	${ZLIB_LIBRARY}	# Required for zlib info in AboutDialog.
-	${PNG_LIBRARY}	# Required for libpng info in AboutDialog.
-	${WIN32_LIBS}
-	${APPLE_LIBS}
 	)
 
 # Translations.
