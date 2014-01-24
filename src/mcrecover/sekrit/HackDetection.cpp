@@ -391,6 +391,16 @@ void HackDetection::showEvent(QShowEvent *event)
 	this->showFullScreen();
 
 	Q_D(HackDetection);
+	if (d->screenIdx == 0) {
+		// Grab the keyboard and mouse.
+		// NOTE: Keyboard grab isn't system-wide...
+		grabKeyboard();
+		grabMouse();
+	}
+
+	// Start the timer.
+	d->allowEscape = false;
+	d->escapeBlink = false;
 	d->tmrEscapeBlink->setInterval(HackDetectionPrivate::ESCAPE_TIMER);
 	d->tmrEscapeBlink->setSingleShot(true);
 	d->tmrEscapeBlink->start();
@@ -500,6 +510,11 @@ void HackDetection::keyPressEvent(QKeyEvent *event)
 	Q_D(HackDetection);
 	if (d->allowEscape && event->key() == Qt::Key_Escape) {
 		event->accept();
+		if (d->screenIdx == 0) {
+			// Release the keyboard and mouse.
+			releaseKeyboard();
+			releaseMouse();
+		}
 		delete this;
 		return;
 	}
