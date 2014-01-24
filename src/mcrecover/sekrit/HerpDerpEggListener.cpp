@@ -195,6 +195,8 @@ void HerpDerpEggListener::widget_keyPress(QKeyEvent *event)
 			d->seq_pos = 0;
 			d->doHackDetection();
 		}
+	} else if (event->key() == (int)hack_seq[0]) {
+		d->seq_pos = 1;
 	} else {
 		d->seq_pos = 0;
 	}
