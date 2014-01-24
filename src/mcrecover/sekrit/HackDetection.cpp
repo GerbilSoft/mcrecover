@@ -129,28 +129,48 @@ void HackDetectionPrivate::initFont(void)
 	 * 2. Fixedsys
 	 * 3. Courier New
 	 */
-	static const char *FontNames[] = {
-		"DejaVu Sans Mono",
-		"Fixedsys",
-		"Courier New",
+	struct FontNameInfo {
+		const char *name;
+		uint8_t num;	// Size multiplier: Numerator
+		uint8_t denom;	// Size multiplier: Denominator
+		bool bold;	// Use bold?
+		bool isFixedSys; // Fixedsys hack (Non-TTF only!)
+	};
+	static const FontNameInfo FontNames[] = {
+		{"DejaVu Sans Mono", 1, 1, true, false},
+		{"Consolas", 1, 1, true, false},
+		{"Lucida Console", 1, 1, true, false},
+		{"Fixedsys Excelsior 3.01", 7, 6, false, false},
+		{"Fixedsys Excelsior 3.00", 7, 6, false, false},
+		{"Fixedsys Excelsior 3.0", 7, 6, false, false},
+		{"Fixedsys Excelsior 2.00", 7, 6, false, false},
+		{"Fixedsys Excelsior 2.0", 7, 6, false, false},
+		{"Fixedsys Excelsior 1.00", 7, 6, false, false},
+		{"Fixedsys Excelsior 1.0", 7, 6, false, false},
+		{"Fixedsys", 2, 3, false, true},
+		{"Courier New", 1, 1, true, false},
 	};
 
+	int fontIdx = -1;
 	for (int i = 0; i < ARRAY_SIZE(FontNames); i++) {
-		fntHack = QFont(QLatin1String(FontNames[i]));
+		fntHack = QFont(QLatin1String(FontNames[i].name));
 		fntHack.setStyleHint(QFont::TypeWriter);
-		if (fntHack.exactMatch())
+		if (fntHack.exactMatch()) {
+			fontIdx = i;
 			break;
+		}
 	}
 
-	if (!fntHack.exactMatch()) {
+	if (!fntHack.exactMatch() || fontIdx == -1) {
 		// Cannot find an exact match.
 		// Use the system default Monospace font.
+		fontIdx = -1;
 		fntHack = QFont(QLatin1String("Monospace"));
 		fntHack.setStyleHint(QFont::TypeWriter);
 	}
 
 	// Make the font bold.
-	fntHack.setBold(true);
+	fntHack.setBold(fontIdx >= 0 ? FontNames[fontIdx].bold : true);
 
 	/**
 	 * With 640x480, the original "Hack Detection"
@@ -158,6 +178,13 @@ void HackDetectionPrivate::initFont(void)
 	 * relative to 18/480.
 	 */
 	int fntPx = (winRect.height() * 18 / 480);
+	if (fontIdx >= 0) {
+		fntPx = (fntPx * FontNames[fontIdx].num / FontNames[fontIdx].denom);
+		if (FontNames[fontIdx].isFixedSys) {
+			int mod = (fntPx % 9);
+			fntPx += (9 - mod);
+		}
+	}
 	fntHack.setPixelSize(fntPx);
 
 	/**
