@@ -56,6 +56,8 @@ class HackDetectionPrivate
 
 		// Font.
 		QFont fntHack;
+		QFont fntHackText;
+		QFont fntHackStar;
 		int hMargin;
 		QChar chrStar;
 		QPoint drpTranslate;
@@ -147,16 +149,8 @@ void HackDetectionPrivate::initFont(void)
 		fntHack.setStyleHint(QFont::TypeWriter);
 	}
 
-	// Make the font bold and italic.
+	// Make the font bold.
 	fntHack.setBold(true);
-	fntHack.setItalic(true);
-
-	// Check if the font has "BLACK STAR" (U+2605).
-	QRawFont rawFont = QRawFont::fromFont(fntHack);
-	if (rawFont.supportsCharacter(0x2605))
-		chrStar = QChar(0x2605);
-	else
-		chrStar = QChar(L'*');
 
 	/**
 	 * With 640x480, the original "Hack Detection"
@@ -177,6 +171,27 @@ void HackDetectionPrivate::initFont(void)
 	 * Calculate the margin relative to 40/640.
 	 */
 	hMargin = (winRect.width() * 40 / 640);
+
+	// Make the font italic for the text.
+	fntHackText = fntHack;
+	fntHackText.setItalic(true);
+
+	// Check if either the italic or normal font has "BLACK STAR" (U+2605).
+	QRawFont rawFont = QRawFont::fromFont(fntHackText);
+	if (rawFont.supportsCharacter(0x2605)) {
+		chrStar = QChar(0x2605);
+		fntHackStar = fntHackText;
+	} else {
+		rawFont = QRawFont::fromFont(fntHack);
+		if (rawFont.supportsCharacter(0x2605)) {
+			chrStar = QChar(0x2605);
+			fntHackStar = fntHack;
+		} else {
+			// Star not supported.
+			chrStar = QChar(L'*');
+			fntHackStar = fntHackText;
+		}
+	}
 }
 
 /**
@@ -435,15 +450,15 @@ void HackDetection::paintEvent(QPaintEvent *event)
 	Q_D(HackDetection);
 
 	// Initialize the font metrics.
-	QFontMetrics mtrHack(d->fntHack);
+	QFontMetrics mtrHackStar(d->fntHackStar);
+	QFontMetrics mtrHackText(d->fntHackText);
 
 	// Add stars to the title.
-	// TODO: Draw the stars separately.
-	QString drawTitle = (d->chrStar + d->hdTitle + d->chrStar);
-	// Calculate the rectangles.
-	QRect rectTitle = mtrHack.boundingRect(d->winRect, Qt::AlignHCenter, drawTitle);
-	QRect rectMessage = mtrHack.boundingRect(d->winRect, 0, d->hdMessage);
-	QRect rectCloser = mtrHack.boundingRect(d->winRect, 0, d->hdCloser);
+	const QString sStar(d->chrStar);
+	QRect rectStar = mtrHackStar.boundingRect(d->winRect, 0, sStar);
+	QRect rectTitle = mtrHackText.boundingRect(d->winRect, Qt::AlignHCenter, d->hdTitle);
+	QRect rectMessage = mtrHackText.boundingRect(d->winRect, 0, d->hdMessage);
+	QRect rectCloser = mtrHackText.boundingRect(d->winRect, 0, d->hdCloser);
 
 	// Total height of the three messages.
 	int height = (rectTitle.height() * 4) + rectMessage.height();
@@ -457,16 +472,38 @@ void HackDetection::paintEvent(QPaintEvent *event)
 	rectCloser.moveTop(rectMessage.top() + rectMessage.height() + rectTitle.height());
 	rectCloser.moveLeft(rectMessage.left());
 
+	// Drop shadow rectangle.
+	QRect drpRect;
+
+	// Draw the stars.
+	int star_xpos[2];
+	star_xpos[0] = (rectTitle.left() - (rectStar.width() * 3 / 2));
+	star_xpos[1] = (rectTitle.left() + rectTitle.width() + (rectStar.width() / 2));
+	rectStar.moveTop(rectTitle.top());
+	painter.setFont(d->fntHackStar);
+
+	for (int i = 0; i < 2; i++) {
+		rectStar.moveLeft(star_xpos[i]);
+		// (drop shadow)
+		drpRect = rectStar;
+		drpRect.translate(d->drpTranslate);
+		painter.setPen(colorDropShadow);
+		painter.drawText(drpRect, 0, sStar);
+		// (regular text)
+		painter.setPen(colorTxtMessage);
+		painter.drawText(rectStar, 0, sStar);
+	}
+
 	// Draw the title.
-	painter.setFont(d->fntHack);
+	painter.setFont(d->fntHackText);
 	// (drop shadow)
-	QRect drpRect = rectTitle;
+	drpRect = rectTitle;
 	drpRect.translate(d->drpTranslate);
 	painter.setPen(colorDropShadow);
-	painter.drawText(drpRect, 0, drawTitle);
+	painter.drawText(drpRect, 0, d->hdTitle);
 	// (regular text)
 	painter.setPen(colorTxtTitle);
-	painter.drawText(rectTitle, 0, drawTitle);
+	painter.drawText(rectTitle, 0, d->hdTitle);
 
 	// Draw the message.
 	// (drop shadow)
