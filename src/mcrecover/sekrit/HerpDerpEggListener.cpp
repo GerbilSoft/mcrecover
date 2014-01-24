@@ -189,7 +189,7 @@ void HerpDerpEggListener::widget_keyPress(QKeyEvent *event)
 	if (d->seq_pos < 0 || d->seq_pos >= ARRAY_SIZE(hack_seq))
 		d->seq_pos = 0;
 
-	if (event->key() == hack_seq[d->seq_pos]) {
+	if (event->key() == (int)hack_seq[d->seq_pos]) {
 		d->seq_pos++;
 		if (d->seq_pos == ARRAY_SIZE(hack_seq)) {
 			d->seq_pos = 0;
