@@ -24,7 +24,9 @@
 
 // Qt includes.
 #include <QtCore/QEvent>
+#include <QtCore/QTimer>
 #include <QtGui/QApplication>
+#include <QtGui/QCloseEvent>
 #include <QtGui/QDesktopWidget>
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>
@@ -63,16 +65,32 @@ class HackDetectionPrivate
 		HackDetection::DetectType detectType;
 		QString hdTitle;
 		QString hdMessage;
+		QString hdCloser;
 		void initMessage(void);
+
+		// There is no escape. Muahahahaha.
+		bool allowEscape;
+		bool escapeBlink;
+		QTimer *tmrEscapeBlink;
+
+		static const int ESCAPE_TIMER = 10000;
+		static const int BLINK_TIMER = 500;
 };
 
 HackDetectionPrivate::HackDetectionPrivate(HackDetection* q)
 	: q_ptr(q)
 	, screenIdx(0)
 	, hMargin(0)
+	, allowEscape(false)
+	, escapeBlink(false)
+	, tmrEscapeBlink(new QTimer(q))
 {
 	// Assume 640x480 for now.
 	winRect = QRect(0, 0, 640, 480);
+
+	// Connect the timer signal.
+	QObject::connect(tmrEscapeBlink, SIGNAL(timeout()),
+			 q, SLOT(tmrEscapeBlink_timeout()));
 }
 
 /**
@@ -173,17 +191,17 @@ void HackDetectionPrivate::initMessage(void)
 		case HackDetection::DT_H:
 		default:
 			//: "Hack Detection" title.
-			hdTitle = HackDetection::tr("Hack Detection").toUpper();
+			hdTitle = HackDetection::tr("Hack Detection", "DT_H").toUpper();
 			break;
 
 		case HackDetection::DT_Q:
 			//: "Quack Detection" title.
-			hdTitle = HackDetection::tr("Quack Detection").toUpper();
+			hdTitle = HackDetection::tr("Quack Detection", "DT_Q").toUpper();
 			break;
 
 		case HackDetection::DT_S:
 			//: "'Snack Detection" title.
-			hdTitle = HackDetection::tr("Snack Detection").toUpper();
+			hdTitle = HackDetection::tr("Snack Detection", "DT_S").toUpper();
 			break;
 	}
 
@@ -199,9 +217,8 @@ void HackDetectionPrivate::initMessage(void)
 				"outside source. This is not allowed as specified in\n"
 				"the game license.\n"
 				"You must reinstall the game and accept the game\n"
-				"license again, to continue to play the game.\n"
-				"\n"
-				"Game halted.").toUpper();
+				"license again, to continue to play the game.", "DT_H").toUpper();
+			hdCloser = HackDetection::tr("Game halted.", "DT_H").toUpper();
 			break;
 
 		case HackDetection::DT_S:
@@ -211,11 +228,13 @@ void HackDetectionPrivate::initMessage(void)
 				"outside sauce. This is not allowed as specified in\n"
 				"the snack recipe.\n"
 				"You must rebake the snack and accept the snack\n"
-				"recipe again, to continue to eat the snack.\n"
-				"\n"
-				"Snack salted.").toUpper();
+				"recipe again, to continue to eat the snack.", "DT_S").toUpper();
+			hdCloser = HackDetection::tr("Snack salted.", "DT_S").toUpper();
 			break;
 	}
+
+	if (allowEscape)
+		hdCloser = HackDetection::tr("Press Escape to go back.").toUpper();
 }
 
 /** HackDetection **/
@@ -319,6 +338,28 @@ void HackDetection::setDetectType(DetectType detectType)
 		this->update();
 }
 
+/** Properties. **/
+
+/**
+ * Minimum size hint.
+ * @return Minimum size hint.
+ */
+QSize HackDetection::minimumSizeHint(void) const
+{
+	Q_D(const HackDetection);
+	return d->winRect.size();
+}
+
+/**
+ * Size hint.
+ * @return Size hint.
+ */
+QSize HackDetection::sizeHint(void) const
+{
+	Q_D(const HackDetection);
+	return d->winRect.size();
+}
+
 /** Events. **/
 
 /**
@@ -348,6 +389,11 @@ void HackDetection::showEvent(QShowEvent *event)
 	Q_UNUSED(event);
 	// Make sure we're fullscreen.
 	this->showFullScreen();
+
+	Q_D(HackDetection);
+	d->tmrEscapeBlink->setInterval(HackDetectionPrivate::ESCAPE_TIMER);
+	d->tmrEscapeBlink->setSingleShot(true);
+	d->tmrEscapeBlink->start();
 }
 
 /**
@@ -377,30 +423,29 @@ void HackDetection::paintEvent(QPaintEvent *event)
 	painter.fillRect(this->rect(), brushBg);
 
 	Q_D(HackDetection);
-	QRect margins(d->hMargin, d->hMargin,
-		      (d->winRect.width() - (d->hMargin * 2)),
-		      (d->winRect.height() - (d->hMargin * 2)));
 
 	// Initialize the font metrics.
 	QFontMetrics mtrHack(d->fntHack);
 
 	// Add stars to the title.
+	// TODO: Draw the stars separately.
 	QString drawTitle = (d->chrStar + d->hdTitle + d->chrStar);
-	// Calculate the title margins.
-	QRect rectTitle = mtrHack.boundingRect(margins, Qt::AlignHCenter, drawTitle);
+	// Calculate the rectangles.
+	QRect rectTitle = mtrHack.boundingRect(d->winRect, Qt::AlignHCenter, drawTitle);
+	QRect rectMessage = mtrHack.boundingRect(d->winRect, 0, d->hdMessage);
+	QRect rectCloser = mtrHack.boundingRect(d->winRect, 0, d->hdCloser);
 
-	// Calculate the message margins.
-	QRect rectMessage = mtrHack.boundingRect(margins, 0, d->hdMessage);
-
-	// Total height of the two messages.
-	int height = (rectTitle.height() * 2) + rectMessage.height();
-	int x = ((d->winRect.height() - height) / 2);
+	// Total height of the three messages.
+	int height = (rectTitle.height() * 4) + rectMessage.height();
+	int y = ((d->winRect.height() - height) / 2);
 
 	// Center the messages on the screen.
-	rectTitle.moveTop(x);
+	rectTitle.moveTop(y);
 	rectTitle.moveLeft((d->winRect.width() - rectTitle.width()) / 2);
-	rectMessage.moveTop(x + (rectTitle.height() * 2));
+	rectMessage.moveTop(y + (rectTitle.height() * 2));
 	rectMessage.moveLeft((d->winRect.width() - rectMessage.width()) / 2);
+	rectCloser.moveTop(rectMessage.top() + rectMessage.height() + rectTitle.height());
+	rectCloser.moveLeft(rectMessage.left());
 
 	// Draw the title.
 	painter.setFont(d->fntHack);
@@ -422,24 +467,64 @@ void HackDetection::paintEvent(QPaintEvent *event)
 	// (regular text)
 	painter.setPen(colorTxtMessage);
 	painter.drawText(rectMessage, 0, d->hdMessage);
+
+	// Draw the closer.
+	// (drop shadow)
+	if (!d->allowEscape || d->escapeBlink) {
+		drpRect = rectCloser;
+		drpRect.translate(d->drpTranslate);
+		painter.setPen(colorDropShadow);
+		painter.drawText(drpRect, 0, d->hdCloser);
+		// (regular text)
+		painter.setPen(colorTxtMessage);
+		painter.drawText(rectCloser, 0, d->hdCloser);
+	}
 }
 
 /**
- * Minimum size hint.
- * @return Minimum size hint.
+ * Close event.
+ * @param event QCloseEvent.
  */
-QSize HackDetection::minimumSizeHint(void) const
+void HackDetection::closeEvent(QCloseEvent *event)
 {
-	Q_D(const HackDetection);
-	return d->winRect.size();
+	// Not going to make it *that* easy to get away...
+	event->ignore();
 }
 
 /**
- * Size hint.
- * @return Size hint.
+ * Key press event.
+ * @param event QKeyEvent.
  */
-QSize HackDetection::sizeHint(void) const
+void HackDetection::keyPressEvent(QKeyEvent *event)
 {
-	Q_D(const HackDetection);
-	return d->winRect.size();
+	Q_D(HackDetection);
+	if (d->allowEscape && event->key() == Qt::Key_Escape) {
+		event->accept();
+		delete this;
+		return;
+	}
+
+	event->ignore();
+}
+
+/** Slots. **/
+
+/**
+ * "Allow Escape" / Blink timer has expired.
+ */
+void HackDetection::tmrEscapeBlink_timeout(void)
+{
+	Q_D(HackDetection);
+	if (!d->allowEscape) {
+		d->allowEscape = true;
+		d->escapeBlink = false;
+		d->initMessage(); // Update the closer.
+		d->tmrEscapeBlink->setInterval(HackDetectionPrivate::BLINK_TIMER);
+		d->tmrEscapeBlink->setSingleShot(false);
+		d->tmrEscapeBlink->start();
+	} else {
+		d->escapeBlink = !d->escapeBlink;
+		// TODO: Only update() the closer.
+	}
+	update();
 }

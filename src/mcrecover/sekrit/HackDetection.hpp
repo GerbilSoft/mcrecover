@@ -73,25 +73,44 @@ class HackDetection : public QWidget
 	private:
 		Q_DISABLE_COPY(HackDetection)
 
+	public:
+		// Size hints
+		QSize minimumSizeHint(void) const final;
+		QSize sizeHint(void) const final;
+
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
-		void changeEvent(QEvent *event);
+		void changeEvent(QEvent *event) final;
 
 		/**
 		 * Show event.
 		 * @param event QShowEvent.
 		 */
-		void showEvent(QShowEvent *event);
+		void showEvent(QShowEvent *event) final;
 
 		/**
 		 * Paint event.
 		 * @param event QPaintEvent.
 		 */
-		void paintEvent(QPaintEvent *event);
+		void paintEvent(QPaintEvent *event) final;
 
-		// Size hints
-		QSize minimumSizeHint(void) const;
-		QSize sizeHint(void) const;
+		/**
+		 * Close event.
+		 * @param event QCloseEvent.
+		 */
+		void closeEvent(QCloseEvent *event) final;
+
+		/**
+		 * Key press event.
+		 * @param event QKeyEvent.
+		 */
+		void keyPressEvent(QKeyEvent *event) final;
+
+	protected slots:
+		/**
+		 * "Allow Escape" / Blink timer has expired.
+		 */
+		void tmrEscapeBlink_timeout(void);
 };
 
 #endif /* __MCRECOVER_HACKDETECTION_HPP__ */
