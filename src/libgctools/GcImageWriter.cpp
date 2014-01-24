@@ -25,7 +25,6 @@
 
 // C includes.
 #include <errno.h>
-#include <setjmp.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -244,12 +243,14 @@ int GcImageWriterPrivate::writePng(const GcImage *gcImage)
 	vector<const uint8_t*> row_pointers;
 
 	// WARNING: Do NOT initialize any C++ objects past this point!
+#ifdef PNG_SETJMP_SUPPORTED
 	if (setjmp(png_jmpbuf(png_ptr))) {
 		// PNG write failed.
 		png_destroy_write_struct(&png_ptr, &info_ptr);
 		delete pngBuffer;
 		return -0x103;
 	}
+#endif /* PNG_SETJMP_SUPPORTED */
 
 	// Initialize the memory write function.
 	png_set_write_fn(png_ptr, pngBuffer, png_io_write, png_io_flush);
@@ -411,12 +412,14 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	vector<const uint8_t*> row_pointers;
 
 	// WARNING: Do NOT initialize any C++ objects past this point!
+#ifdef PNG_SETJMP_SUPPORTED
 	if (setjmp(png_jmpbuf(png_ptr))) {
 		// PNG write failed.
 		png_destroy_write_struct(&png_ptr, &info_ptr);
 		delete pngBuffer;
 		return -0x103;
 	}
+#endif /* PNG_SETJMP_SUPPORTED */
 
 	// Initialize the memory write function.
 	png_set_write_fn(png_ptr, pngBuffer, png_io_write, png_io_flush);
@@ -590,12 +593,14 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 	vector<const uint8_t*> row_pointers;
 
 	// WARNING: Do NOT initialize any C++ objects past this point!
+#ifdef PNG_SETJMP_SUPPORTED
 	if (setjmp(png_jmpbuf(png_ptr))) {
 		// PNG write failed.
 		png_destroy_write_struct(&png_ptr, &info_ptr);
 		delete pngBuffer;
 		return -0x103;
 	}
+#endif /* PNG_SETJMP_SUPPORTED */
 
 	// Initialize the memory write function.
 	png_set_write_fn(png_ptr, pngBuffer, png_io_write, png_io_flush);
@@ -732,12 +737,14 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 	vector<const uint8_t*> row_pointers;
 
 	// WARNING: Do NOT initialize any C++ objects past this point!
+#ifdef PNG_SETJMP_SUPPORTED
 	if (setjmp(png_jmpbuf(png_ptr))) {
 		// PNG write failed.
 		png_destroy_write_struct(&png_ptr, &info_ptr);
 		delete pngBuffer;
 		return -0x103;
 	}
+#endif /* PNG_SETJMP_SUPPORTED */
 
 	// Initialize the memory write function.
 	png_set_write_fn(png_ptr, pngBuffer, png_io_write, png_io_flush);
