@@ -35,6 +35,20 @@ extern "C" {
  */
 extern int APNG_is_supported(void);
 
+/** PNG_CALLBACK was added in libpng-1.5.0beta14. [2010/03/14] **/
+#ifndef PNGCAPI
+#  define PNGCAPI
+#endif
+#ifndef PNGCBAPI
+#  define PNGCBAPI PNGCAPI
+#endif
+#ifndef PNGAPI
+#  define PNGAPI PNGCAPI
+#endif
+#ifndef PNG_CALLBACK
+#  define PNG_CALLBACK(type, name, args) type (PNGCBAPI name) PNGARG(args)
+#endif
+
 /* APNG constants that might not be present if APNG isn't supported. */
 
 #ifndef PNG_APNG_SUPPORTED
