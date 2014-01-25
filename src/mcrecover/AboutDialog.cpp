@@ -550,7 +550,7 @@ QString AboutDialogPrivate::GetCodePageInfo(void)
 	};
 
 	for (int i = 0; i < 2; i++) {
-		sCodePageInfo += AboutDialog::tr(m_cpInfo[i].cpStr);
+		sCodePageInfo += AboutDialog::tr(m_cpInfo[i].cpStr) + QChar(L' ');
 
 		// Get the code page information.
 		CPINFOEX cpix;
