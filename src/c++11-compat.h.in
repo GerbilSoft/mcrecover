@@ -25,6 +25,7 @@
 #cmakedefine HAVE_CXX_2011 1
 
 #if !defined(HAVE_CXX_2011) || !defined(__cplusplus)
+
 /**
  * Either C++ 2011 is not supported, or we're compiling C code.
  * Provide replacements for C++ 2011 functionality.
@@ -60,7 +61,37 @@
 #define CXX11_COMPAT_STATIC_ASSERT
 #endif
 
-#endif /* defined(__GNUC__) */
+#elif defined(_MSC_VER)
+
+/**
+ * MSVC doesn't provide snprintf().
+ * Instead, it has _snprintf().
+ */
+#define snprintf(str, size, format, ...) _snprintf(str, size, format, __VA_ARGS__)
+
+/* No versions of MSVC support char16_t/char32_t yet. */
+#define CXX11_COMPAT_CHARTYPES
+
+#if (_MSC_VER < 1700)
+/**
+ * MSVC 2010 (10.0) does support override, but not final.
+ * However, it has a "sealed" keyword that works almost
+ * the same way as final.
+ */
+#define final sealed
+#endif
+
+#if (_MSC_VER < 1600)
+/**
+ * MSVC 2008 (9.0) and older: No C++ 2011 support at all.
+ * Probably won't compile at all due to lack of stdint.h.
+ */
+#define CXX11_COMPAT_NULLPTR
+#define CXX11_COMPAT_OVERRIDE
+#define CXX11_COMPAT_STATIC_ASSERT
+#endif
+
+#endif /* compiler-specific */
 
 #endif
 
@@ -83,8 +114,7 @@ typedef uint32_t char32_t;
 #ifdef __cplusplus
 
 #include <string>
-namespace std
-{
+namespace std {
 	typedef basic_string<char16_t> u16string;
 	typedef basic_string<char32_t> u32string;
 }
@@ -96,10 +126,5 @@ namespace std
 #define override
 #define final
 #endif
-
-#ifdef _MSC_VER
-// MSVC doesn't provide snprintf() - instead, it has _snprintf().
-#define snprintf(str, size, format, ...) _snprintf(str, size, format, __VA_ARGS__)
-#endif /* _MSC_VER */
 
 #endif /* __CXX11_COMPAT_H__ */
