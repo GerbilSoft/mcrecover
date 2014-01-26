@@ -58,6 +58,13 @@ class XmlTemplateDialogPrivate
 		void updateWindowText(void);
 
 		/**
+		 * Escape a string for use as a PCRE regular expression.
+		 * This also adds ^ and $ to the beginning and end of the string.
+		 * @return Escaped string.
+		 */
+		static QString escapeString(const QString &str);
+
+		/**
 		 * Generate the XML template.
 		 */
 		void generateXmlTemplate(void);
@@ -102,6 +109,38 @@ void XmlTemplateDialogPrivate::updateWindowText(void)
 }
 
 /**
+ * Escape a string for use as a PCRE regular expression.
+ * This also adds ^ and $ to the beginning and end of the string.
+ * @return Escaped string.
+ */
+QString XmlTemplateDialogPrivate::escapeString(const QString &str)
+{
+	QString esc_str;
+	esc_str.reserve(str.size() + 8);
+
+	esc_str.append(QChar(L'^'));
+	for (int i = 0; i < str.size(); i++) {
+		QChar chr = str.at(i);
+		switch (chr.unicode()) {
+			case L'.': case L'^':
+			case L'$': case L'*':
+			case L'+': case L'?':
+			case L'(': case L')':
+			case L'[': case L'{':
+			case L'\\': case L'|':
+				// Escape this character.
+				esc_str += QChar(L'\\');
+				// fall-through
+			default:
+				esc_str += chr;
+		}
+	}
+	esc_str.append(QChar(L'$'));
+
+	return esc_str;
+}
+
+/**
  * Generate the XML template.
  */
 void XmlTemplateDialogPrivate::generateXmlTemplate(void)
@@ -133,9 +172,8 @@ void XmlTemplateDialogPrivate::generateXmlTemplate(void)
 	xml.writeStartElement(QLatin1String("search"));
 	snprintf(tmp, sizeof(tmp), "0x%04X", dirEntry->commentaddr);
 	xml.writeTextElement(QLatin1String("address"), QLatin1String(tmp));
-	// FIXME: gameDesc and fileDesc need to be escaped for PCRE.
-	xml.writeTextElement(QLatin1String("gameDesc"), file->gameDesc());
-	xml.writeTextElement(QLatin1String("fileDesc"), file->fileDesc());
+	xml.writeTextElement(QLatin1String("gameDesc"), escapeString(file->gameDesc()));
+	xml.writeTextElement(QLatin1String("fileDesc"), escapeString(file->fileDesc()));
 	xml.writeEndElement();
 
 	// <variables> block.
