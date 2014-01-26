@@ -23,7 +23,8 @@
 #define __MCRECOVER_PCREREGEX_HPP__
 
 // libpcre
-#include <pcre.h>
+struct real_pcre;
+typedef struct real_pcre pcre;
 
 // Qt includes.
 #include <QtCore/QByteArray>
@@ -68,6 +69,39 @@ class PcreRegex
 	protected:
 		// Compiled PCRE regular expression.
 		pcre *m_regex;
+
+	public:
+		/** PCRE feature queries. **/
+
+		/**
+		 * Does PCRE support UTF-8?
+		 * @return True if UTF is supported; false if not.
+		 */
+		static bool PCRE_has_UTF8(void);
+
+		/**
+		 * Does PCRE support Unicode character properties?
+		 * @return True if UCP is supported; false if not.
+		 */
+		static bool PCRE_has_UCP(void);
+
+		/**
+		 * Does PCRE support just-in-time compilation?
+		 * @return True if JIT is supported; false if not.
+		 */
+		static bool PCRE_has_JIT(void);
+
+		/**
+		 * Does PCRE support UTF-16?
+		 * @return True if UTF-16 is supported; false if not.
+		 */
+		static bool PCRE_has_UTF16(void);
+
+		/**
+		 * Does PCRE support UTF-32?
+		 * @return True if UTF-32 is supported; false if not.
+		 */
+		static bool PCRE_has_UTF32(void);
 };
 
 #endif /* __MCRECOVER_PCREREGEX_HPP__ */

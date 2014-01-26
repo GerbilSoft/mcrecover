@@ -22,6 +22,28 @@
 #include "PcreRegex.hpp"
 #include "util/array_size.h"
 
+// libpcre
+#include <pcre.h>
+// PCRE feature flags.
+#ifndef PCRE_CONFIG_UTF8
+#define PCRE_CONFIG_UTF8 0
+#endif
+#ifndef PCRE_CONFIG_UNICODE_PROPERTIES
+#define PCRE_CONFIG_UNICODE_PROPERTIES 6
+#endif
+#ifndef PCRE_CONFIG_JIT
+#define PCRE_CONFIG_JIT 9
+#endif
+#ifndef PCRE_CONFIG_UTF16
+#define PCRE_CONFIG_UTF16 10
+#endif
+#ifndef PCRE_CONFIG_JITTARGET
+#define PCRE_CONFIG_JITTARGET 11
+#endif
+#ifndef PCRE_CONFIG_UTF32
+#define PCRE_CONFIG_UTF32 12
+#endif
+
 PcreRegex::PcreRegex()
 	: m_regex(nullptr)
 { }
@@ -142,4 +164,61 @@ int PcreRegex::exec(const QByteArray &subjectUtf8, QVector<QString> *outVector) 
 	}
 
 	return rc;
+}
+
+/** PCRE feature queries. **/
+
+/**
+ * Does PCRE support UTF-8?
+ * @return True if UTF-8 is supported; false if not.
+ */
+bool PcreRegex::PCRE_has_UTF8(void)
+{
+	int ret, val;
+	ret = pcre_config(PCRE_CONFIG_UTF8, &val);
+	return (ret == 0 && val == 1);
+}
+
+/**
+ * Does PCRE support Unicode character properties?
+ * @return True if UCP is supported; false if not.
+ */
+bool PcreRegex::PCRE_has_UCP(void)
+{
+	int ret, val;
+	ret = pcre_config(PCRE_CONFIG_UNICODE_PROPERTIES, &val);
+	return (ret == 0 && val == 1);
+}
+
+/**
+ * Does PCRE support just-in-time compilation?
+ * @return True if JIT is supported; false if not.
+ */
+bool PcreRegex::PCRE_has_JIT(void)
+{
+	int ret, val;
+	ret = pcre_config(PCRE_CONFIG_JIT, &val);
+	return (ret == 0 && val == 1);
+}
+
+/**
+ * Does PCRE support UTF-16?
+ * @return True if UTF-16 is supported; false if not.
+ */
+bool PcreRegex::PCRE_has_UTF16(void)
+{
+	int ret, val;
+	ret = pcre_config(PCRE_CONFIG_UTF16, &val);
+	return (ret == 0 && val == 1);
+}
+
+/**
+ * Does PCRE support UTF-32?
+ * @return True if UTF-32 is supported; false if not.
+ */
+bool PcreRegex::PCRE_has_UTF32(void)
+{
+	int ret, val;
+	ret = pcre_config(PCRE_CONFIG_UTF32, &val);
+	return (ret == 0 && val == 1);
 }
