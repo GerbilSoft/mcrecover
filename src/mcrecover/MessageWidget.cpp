@@ -57,6 +57,7 @@ class MessageWidgetPrivate
 		QTimer *tmrTimeout;
 
 		// Colors.
+		// TODO: Use system colors on KDE?
 		static const QRgb colorCritical = 0xEE4444;
 		static const QRgb colorQuestion = 0x66EE66;
 		static const QRgb colorWarning = 0xEECC66;
