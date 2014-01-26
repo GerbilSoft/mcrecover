@@ -26,6 +26,9 @@
 #include "McRecoverQApplication.hpp"
 #include "AboutDialog.hpp"
 
+// PcreRegex is needed to access pcre configuration.
+#include "PcreRegex.hpp"
+
 // MemCard classes.
 #include "MemCard.hpp"
 #include "MemCardFile.hpp"
@@ -90,10 +93,15 @@ class McRecoverWindowPrivate
 	public:
 		Ui::McRecoverWindow ui;
 
-		// Memory Card instance.
-		MemCard *card;
+		// Has the initial show been done yet?
+		bool initialShowDone;
 
-		// Memory Card model for lstFileList.
+		// Is scanning disabled?
+		// (Usually due to PCRE not supporting UTF-8.)
+		bool scanningDisabled;
+
+		// Memory Card.
+		MemCard *card;
 		MemCardModel *model;
 
 		// Filename.
@@ -188,6 +196,8 @@ class McRecoverWindowPrivate
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	: q_ptr(q)
+	, initialShowDone(false)
+	, scanningDisabled(false)
 	, card(nullptr)
 	, model(new MemCardModel(q))
 	, searchThread(new SearchThread(q))
@@ -402,7 +412,8 @@ void McRecoverWindowPrivate::updateActionEnableStatus(void)
 		// Memory card image is loaded.
 		// TODO: Disable open, scan, and save (all) if we're scanning.
 		ui.actionClose->setEnabled(true);
-		ui.actionScan->setEnabled(true);
+		if (!scanningDisabled)
+			ui.actionScan->setEnabled(true);
 		ui.actionSave->setEnabled(
 			ui.lstFileList->selectionModel()->hasSelection());
 		ui.actionSaveAll->setEnabled(card->numFiles() > 0);
@@ -913,6 +924,38 @@ void McRecoverWindow::dropEvent(QDropEvent *event)
 }
 
 /**
+ * Show event.
+ * @param event QShowEvent.
+ */
+void McRecoverWindow::showEvent(QShowEvent *event)
+{
+	Q_UNUSED(event);
+	Q_D(McRecoverWindow);
+	if (!d->initialShowDone) {
+		d->initialShowDone = true;
+
+		// Check if PCRE supports UTF-8.
+		if (!PcreRegex::PCRE_has_UTF8()) {
+			// UTF-8 is not supported. Disable scanning.
+			d->scanningDisabled = true;
+
+			// FIXME: MessageWidget text cannot be
+			// retranslated while it's still visible.
+			// FIXME: Mac OS X will use a dylib in the application framework.
+#ifdef PCRE_STATIC
+			//: Statically-linked PCRE is missing UTF-8 support.
+			QString msg = tr("The internal PCRE library was not compiled with UTF-8 support.\n"
+					"Scanning for lost files will not work.");
+#else /* !PCRE_STATIC */
+			QString msg = tr("The system PCRE library was not compiled with UTF-8 support.\n"
+					"Scanning for lost files will not work.");
+#endif /* PCRE_STATIC */
+			d->ui.msgWidget->showMessage(msg, MessageWidget::ICON_CRITICAL, 0);
+		}
+	}
+}
+
+/**
  * Mark the UI as busy.
  * Calls to this function stack, so if markUiBusy()
  * was called 3 times, markUiNotBusy() must be called 3 times.
@@ -993,7 +1036,7 @@ void McRecoverWindow::on_actionClose_triggered(void)
 void McRecoverWindow::on_actionScan_triggered(void)
 {
 	Q_D(McRecoverWindow);
-	if (!d->card)
+	if (!d->card || d->scanningDisabled)
 		return;
 
 	// Get the database filenames.
