@@ -203,6 +203,17 @@ void HerpDerpEggListener::widget_keyPress(QKeyEvent *event)
 }
 
 /**
+ * Focus out listener.
+ * @param event Focus out event.
+ */
+void HerpDerpEggListener::widget_focusOut(QFocusEvent *event)
+{
+	Q_D(HerpDerpEggListener);
+	if (event->lostFocus())
+		d->seq_pos = 0;
+}
+
+/**
  * HackDetection destroyed slot.
  * @param object HackDetection.
  */

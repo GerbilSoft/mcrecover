@@ -26,6 +26,7 @@
 // Qt includes and classes.
 #include <QtGui/QTreeView>
 class QKeyEvent;
+class QFocusEvent;
 
 class QTreeViewOpt : public QTreeView
 {
@@ -46,9 +47,11 @@ class QTreeViewOpt : public QTreeView
 
 	/** Shh... it's a secret to everybody. **/
 	protected:
-		virtual void keyPressEvent(QKeyEvent *event);
+		virtual void keyPressEvent(QKeyEvent *event) override;
+		virtual void focusOutEvent(QFocusEvent *event) override;
 	signals:
 		void keyPress(QKeyEvent *event);
+		void focusOut(QFocusEvent *event);
 };
 
 #endif /* __MCRECOVER_QTREEVIEWOPT_HPP__ */

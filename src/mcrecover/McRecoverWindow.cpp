@@ -740,6 +740,8 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	// Shh... it's a secret to everybody.
 	QObject::connect(d->ui.lstFileList, SIGNAL(keyPress(QKeyEvent*)),
 			 d->herpDerp, SLOT(widget_keyPress(QKeyEvent*)));
+	QObject::connect(d->ui.lstFileList, SIGNAL(focusOut(QFocusEvent*)),
+			 d->herpDerp, SLOT(widget_focusOut(QFocusEvent*)));
 }
 
 McRecoverWindow::~McRecoverWindow()

@@ -135,3 +135,9 @@ void QTreeViewOpt::keyPressEvent(QKeyEvent *event)
 	QTreeView::keyPressEvent(event);
 	emit keyPress(event);
 }
+
+void QTreeViewOpt::focusOutEvent(QFocusEvent *event)
+{
+	QTreeView::focusOutEvent(event);
+	emit focusOut(event);
+}

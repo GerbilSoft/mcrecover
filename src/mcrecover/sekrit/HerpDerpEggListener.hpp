@@ -25,6 +25,7 @@
 // Qt includes and classes.
 #include <QtCore/QObject>
 class QKeyEvent;
+class QFocusEvent;
 
 #include "HackDetection.hpp"
 
@@ -54,6 +55,7 @@ class HerpDerpEggListener : public QObject
 
 	public slots:
 		void widget_keyPress(QKeyEvent *event);
+		void widget_focusOut(QFocusEvent *event);
 		void hd_destroyed(QObject *object);
 };
 
