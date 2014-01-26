@@ -30,6 +30,13 @@
     <file>48x48/dialog-question.png</file>
     <file>256x256/dialog-question.png</file>
 
+    <file>16x16/dialog-warning.png</file>
+    <file>22x22/dialog-warning.png</file>
+    <file>32x32/dialog-warning.png</file>
+    <file>48x48/dialog-warning.png</file>
+    <file>64x64/dialog-warning.png</file>
+    <file>128x128/dialog-warning.png</file>
+
     <file>16x16/document-open.png</file>
     <file>22x22/document-open.png</file>
     <file>32x32/document-open.png</file>
