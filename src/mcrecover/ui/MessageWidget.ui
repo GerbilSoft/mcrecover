@@ -7,45 +7,72 @@
     <x>0</x>
     <y>0</y>
     <width>552</width>
-    <height>25</height>
+    <height>33</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="hboxWidget">
+  <layout class="QHBoxLayout" name="hboxMain">
    <property name="margin">
     <number>2</number>
    </property>
    <item>
-    <widget class="QLabel" name="lblIcon">
+    <widget class="QFrame" name="content">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="pixmap">
-      <pixmap resource="resources/oxygen/oxygen.qrc">:/oxygen/22x22/dialog-warning.png</pixmap>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="lblMessage">
-     <property name="text">
-      <string notr="true">Message placeholder.</string>
+     <property name="lineWidth">
+      <number>0</number>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QToolButton" name="btnDismiss">
-     <property name="focusPolicy">
-      <enum>Qt::NoFocus</enum>
-     </property>
-     <property name="icon">
-      <iconset resource="resources/oxygen/oxygen.qrc">
-       <normaloff>:/oxygen/16x16/dialog-close.png</normaloff>:/oxygen/16x16/dialog-close.png</iconset>
-     </property>
+     <layout class="QHBoxLayout" name="hboxFrame">
+      <property name="margin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="lblIcon">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="resources/oxygen/oxygen.qrc">:/oxygen/22x22/dialog-warning.png</pixmap>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="lblMessage">
+        <property name="text">
+         <string notr="true">Message placeholder.</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="btnDismiss">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/oxygen/oxygen.qrc">
+          <normaloff>:/oxygen/16x16/dialog-close.png</normaloff>:/oxygen/16x16/dialog-close.png</iconset>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>

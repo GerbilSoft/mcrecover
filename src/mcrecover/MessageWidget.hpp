@@ -59,13 +59,19 @@ class MessageWidget : public QWidget
 		 * Paint event.
 		 * @param event QPaintEvent.
 		 */
-		void paintEvent(QPaintEvent *event);
+		virtual void paintEvent(QPaintEvent *event) override;
 
 		/**
 		 * Hide event.
 		 * @param event QHideEvent.
 		 */
-		void hideEvent(QHideEvent *event);
+		virtual void showEvent(QShowEvent *event) override;
+
+		/**
+		 * Hide event.
+		 * @param event QHideEvent.
+		 */
+		virtual void hideEvent(QHideEvent *event) override;
 
 	public slots:
 		/**
@@ -76,11 +82,38 @@ class MessageWidget : public QWidget
 		 */
 		void showMessage(const QString &msg, MsgIcon icon, int timeout);
 
+		/**
+		 * Show the MessageWidget using animation.
+		 * NOTE: You should probably use showMessage()!
+		 */
+		void showAnimated(void);
+
+		/**
+		 * Hide the MessageWidget using animation.
+		 */
+		void hideAnimated(void);
+
 	protected slots:
 		/**
 		 * Message timer has expired.
 		 */
 		void tmrTimeout_timeout(void);
+
+		/**
+		 * Animation timeline has changed.
+		 * @param value Timeline value.
+		 */
+		void timeLineChanged_slot(qreal value);
+
+		/**
+		 * Animation timeline has finished.
+		 */
+		void timeLineFinished_slot(void);
+
+		/**
+		 * "Dismiss" button has been clicked.
+		 */
+		void on_btnDismiss_clicked(void);
 };
 
 #endif /* __MCRECOVER_MEMCARDVIEW_HPP__ */

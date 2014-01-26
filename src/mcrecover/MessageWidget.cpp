@@ -27,6 +27,9 @@
 #include <QtGui/QPaintEvent>
 #include <QtGui/QPainter>
 
+// Qt animation includes.
+#include <QtCore/QTimeLine>
+
 /** MessageWidgetPrivate **/
 
 #include "ui_MessageWidget.h"
@@ -58,12 +61,19 @@ class MessageWidgetPrivate
 		static const QRgb colorQuestion = 0x66EE66;
 		static const QRgb colorWarning = 0xEECC66;
 		static const QRgb colorInformation = 0x66CCEE;
+
+		// Animation.
+		QTimeLine *timeLine;
+		int calcBestHeight(void) const;
+		bool animateOnShow;
 };
 
 MessageWidgetPrivate::MessageWidgetPrivate(MessageWidget *q)
 	: q_ptr(q)
 	, icon(MessageWidget::ICON_NONE)
 	, tmrTimeout(new QTimer(q))
+	, timeLine(new QTimeLine(500, q))
+	, animateOnShow(false)
 { }
 
 MessageWidgetPrivate::~MessageWidgetPrivate()
@@ -115,6 +125,20 @@ void MessageWidgetPrivate::setIcon(MessageWidget::MsgIcon icon)
 		q->update();
 }
 
+/**
+ * Calculate the best height for the widget.
+ * @return Best height.
+ */
+int MessageWidgetPrivate::calcBestHeight(void) const
+{
+	int height = ui.content->sizeHint().height();
+	height += ui.hboxMain->contentsMargins().top();
+	height += ui.hboxMain->contentsMargins().bottom();
+	height += ui.hboxFrame->contentsMargins().top();
+	height += ui.hboxFrame->contentsMargins().bottom();
+	return height;
+}
+
 /** MessageWidget **/
 
 MessageWidget::MessageWidget(QWidget *parent)
@@ -123,11 +147,21 @@ MessageWidget::MessageWidget(QWidget *parent)
 {
 	Q_D(MessageWidget);
 	d->ui.setupUi(this);
+	d->ui.hboxMain->setAlignment(Qt::AlignTop);
+	d->ui.hboxFrame->setAlignment(d->ui.lblIcon, Qt::AlignTop);
+	d->ui.hboxFrame->setAlignment(d->ui.lblMessage, Qt::AlignTop);
+	d->ui.hboxFrame->setAlignment(d->ui.btnDismiss, Qt::AlignTop);
 	d->setIcon(d->icon);
 
 	// Connect the timer signal.
 	QObject::connect(d->tmrTimeout, SIGNAL(timeout()),
 			 this, SLOT(tmrTimeout_timeout()));
+
+	// Connect the timeline signals.
+	QObject::connect(d->timeLine, SIGNAL(valueChanged(qreal)),
+			 this, SLOT(timeLineChanged_slot(qreal)));
+	QObject::connect(d->timeLine, SIGNAL(finished()),
+			 this, SLOT(timeLineFinished_slot()));
 }
 
 MessageWidget::~MessageWidget()
@@ -185,6 +219,26 @@ void MessageWidget::paintEvent(QPaintEvent *event)
 }
 
 /**
+ * Show event.
+ * @param event QShowEent.
+ */
+void MessageWidget::showEvent(QShowEvent *event)
+{
+	// Call the superclass showEvent.
+	QWidget::showEvent(event);
+
+	Q_D(MessageWidget);
+	if (d->animateOnShow) {
+		// Start the animation.
+		d->animateOnShow = false;
+		d->timeLine->setDirection(QTimeLine::Forward);
+		if (d->timeLine->state() == QTimeLine::NotRunning) {
+			d->timeLine->start();
+		}
+	}
+}
+
+/**
  * Hide event.
  * @param event QHideEvent.
  */
@@ -214,11 +268,45 @@ void MessageWidget::showMessage(const QString &msg, MsgIcon icon, int timeout)
 
 	// Set up the timer.
 	d->tmrTimeout->stop();
-	if (timeout > 0)
-		d->tmrTimeout->start(timeout);
+	d->tmrTimeout->setInterval(timeout);
 
-	// Show the message widget.
+	// If the widget is already visible, just update it.
+	if (this->isVisible()) {
+		update();
+		return;
+	}
+
+	// Do an animated show.
+	this->showAnimated();
+}
+
+/**
+ * Show the MessageWidget using animation.
+ */
+void MessageWidget::showAnimated(void)
+{
+	Q_D(MessageWidget);
+	setFixedHeight(0);
+	d->ui.content->setGeometry(0, 0, width(), d->calcBestHeight());
+	d->animateOnShow = true;
+	d->tmrTimeout->stop();
 	this->show();
+}
+
+/**
+ * Hide the MessageWidget using animation.
+ */
+void MessageWidget::hideAnimated(void)
+{
+	Q_D(MessageWidget);
+
+	// Start the animation.
+	d->animateOnShow = false;
+	d->tmrTimeout->stop();
+	d->timeLine->setDirection(QTimeLine::Backward);
+	if (d->timeLine->state() == QTimeLine::NotRunning) {
+		d->timeLine->start();
+	}
 }
 
 /**
@@ -228,4 +316,45 @@ void MessageWidget::tmrTimeout_timeout(void)
 {
 	// Hide the message.
 	this->hide();
+}
+
+
+/**
+ * Animation timeline has changed.
+ * @param value Timeline value.
+ */
+void MessageWidget::timeLineChanged_slot(qreal value)
+{
+	Q_D(MessageWidget);
+	this->setFixedHeight(qMin(value, qreal(1.0)) * d->calcBestHeight());
+}
+
+/**
+ * Animation timeline has finished.
+ */
+void MessageWidget::timeLineFinished_slot(void)
+{
+	Q_D(MessageWidget);
+	if (d->timeLine->direction() == QTimeLine::Forward) {
+		// Make sure the widget is full-size.
+		this->setFixedHeight(d->calcBestHeight());
+
+		// Start the timeout timer, if specified.
+		if (d->tmrTimeout->interval() > 0)
+			d->tmrTimeout->start();
+	} else {
+		// Hide the widget.
+		this->hide();
+	}
+}
+
+/**
+ * "Dismiss" button has been clicked.
+ */
+void MessageWidget::on_btnDismiss_clicked(void)
+{
+	// Hide the message using animation.
+	Q_D(MessageWidget);
+	if (d->timeLine->state() == QTimeLine::NotRunning)
+		this->hideAnimated();
 }
