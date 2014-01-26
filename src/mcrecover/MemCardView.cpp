@@ -172,7 +172,7 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 	ui.lblEncoding->setText(encoding);
 }
 
-/** McRecoverWindow **/
+/** MemCardFileView **/
 
 MemCardView::MemCardView(QWidget *parent)
 	: QWidget(parent)

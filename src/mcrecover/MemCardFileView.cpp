@@ -197,7 +197,7 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 	}
 }
 
-/** McRecoverWindow **/
+/** MemCardFileView **/
 
 MemCardFileView::MemCardFileView(QWidget *parent)
 	: QWidget(parent)
