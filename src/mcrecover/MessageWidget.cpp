@@ -315,8 +315,8 @@ void MessageWidget::hideAnimated(void)
  */
 void MessageWidget::tmrTimeout_timeout(void)
 {
-	// Hide the message.
-	this->hide();
+	// Hide the message using animation.
+	this->hideAnimated();
 }
 
 
