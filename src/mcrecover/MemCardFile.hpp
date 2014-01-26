@@ -259,6 +259,12 @@ class MemCardFile : public QObject
 		QString defaultGciFilename(void) const;
 
 		/**
+		 * Get the text encoding ID for this file.
+		 * @return Text encoding ID.
+		 */
+		int encoding(void) const;
+
+		/**
 		 * Save the file in GCI format.
 		 * @param filename Filename for the GCI file.
 		 * @return 0 on success; non-zero on error.

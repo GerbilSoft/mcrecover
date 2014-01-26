@@ -293,7 +293,6 @@ void MemCardFilePrivate::init(void)
 	company = QString::fromLatin1(dirEntry->company, sizeof(dirEntry->company));
 
 	// Get the appropriate QTextCodec for this file.
-	// TODO: If 0, default to card codec?
 	const char region = (gamecode.size() >= 4
 				? gamecode.at(3).toLatin1()
 				: 0);
@@ -1155,6 +1154,19 @@ QString MemCardFile::defaultGciFilename(void) const
 
 	// Make sure no invalid DOS characters are present in the filename.
 	return d->StripInvalidDosChars(filename);
+}
+
+/**
+ * Get the text encoding ID for this file.
+ * @return Text encoding ID.
+ */
+int MemCardFile::encoding(void) const
+{
+	Q_D(const MemCardFile);
+	const char region = (d->gamecode.size() >= 4
+				? d->gamecode.at(3).toLatin1()
+				: 0);
+	return d->card->encodingForRegion(region);
 }
 
 /**

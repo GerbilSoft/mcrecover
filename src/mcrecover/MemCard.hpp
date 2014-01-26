@@ -51,7 +51,6 @@ class MemCard : public QObject
 	Q_PROPERTY(int blockSize READ blockSize)
 	Q_PROPERTY(QString serialNumber READ serialNumber)
 	Q_PROPERTY(int encoding READ encoding)
-	Q_PROPERTY(QTextCodec* textCodec READ textCodec)
 	Q_PROPERTY(int numFiles READ numFiles)
 	Q_PROPERTY(bool Empty READ isEmpty)
 	// TODO: Register Checksum::ChecksumValue metatype?
@@ -147,10 +146,17 @@ class MemCard : public QObject
 		QString serialNumber(void) const;
 
 		/**
-		 * Get the memory card encoding.
+		 * Get the memory card text encoding ID.
 		 * @return 0 for ANSI (ISO-8859-1); 1 for SJIS; negative on error.
 		 */
 		int encoding(void) const;
+
+		/**
+		 * Get the text encoding ID for a given region.
+		 * @param region Region code. (If 0, use the memory card's encoding.)
+		 * @return Text encoding ID.
+		 */
+		int encodingForRegion(char region) const;
 
 		/**
 		 * Get the QTextCodec for a given region.

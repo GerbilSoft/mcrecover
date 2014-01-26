@@ -104,6 +104,12 @@ class McRecoverWindowPrivate
 		MemCard *card;
 		MemCardModel *model;
 
+		/**
+		 * Show a warning if the card (or files on the card) are Japanese,
+		 * but PCRE doesn't have Unicode character properties support.
+		 */
+		void showJpWarning(void);
+
 		// Filename.
 		QString filename;
 		QString displayFilename;	// filename without subdirectories
@@ -255,6 +261,31 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 
 	// TODO: Wait for searchThread to finish?
 	delete searchThread;
+}
+
+/**
+ * Show a warning if the card (or files on the card) are Japanese,
+ * but PCRE doesn't have Unicode character properties support.
+ */
+void McRecoverWindowPrivate::showJpWarning(void)
+{
+	if (!PcreRegex::PCRE_has_UCP()) {
+		// FIXME: MessageWidget text cannot be
+		// retranslated while it's still visible.
+		// FIXME: Mac OS X will use a dylib in the application framework.
+#ifdef PCRE_STATIC
+		//: Statically-linked PCRE is missing Unicode character properties support.
+		QString msg = McRecoverWindow::tr(
+				"The internal PCRE library was not compiled with Unicode character properties support.\n"
+				"Some files with Japanese descriptions might not be found when scanning.");
+#else /* !PCRE_STATIC */
+		//: Dynamically-linked PCRE is missing Unicode character properties support.
+		QString msg = McRecoverWindow::tr(
+				"The system PCRE library was not compiled with Unicode character properties support.\n"
+				"Some files with Japanese descriptions might not be found when scanning.");
+#endif /* PCRE_STATIC */
+		ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING, 0);
+	}
 }
 
 /**
@@ -794,6 +825,25 @@ void McRecoverWindow::openCard(const QString &filename)
 	// selected card in the QTreeView.
 	d->ui.mcCardView->setCard(d->card);
 
+	// Check if any of the files are Japanese.
+	bool isJapanese = false;
+	if (d->card->encoding() == SYS_FONT_ENCODING_SJIS) {
+		isJapanese = true;
+	} else {
+		for (int i = 0; i < d->card->numFiles(); i++) {
+			const MemCardFile *file = d->card->getFile(i);
+			if (file->encoding() == SYS_FONT_ENCODING_SJIS) {
+				isJapanese = true;
+				break;
+			}
+		}
+	}
+
+	// If the card encoding or any files are Japanese,
+	// show a warning if PCRE doesn't support UCP.
+	if (isJapanese)
+		d->showJpWarning();
+
 	// Update the UI.
 	d->updateLstFileList();
 	d->statusBarManager->opened(filename);
@@ -947,6 +997,7 @@ void McRecoverWindow::showEvent(QShowEvent *event)
 			QString msg = tr("The internal PCRE library was not compiled with UTF-8 support.\n"
 					"Scanning for lost files will not work.");
 #else /* !PCRE_STATIC */
+			//: Dynamically-linked PCRE is missing UTF-8 support.
 			QString msg = tr("The system PCRE library was not compiled with UTF-8 support.\n"
 					"Scanning for lost files will not work.");
 #endif /* PCRE_STATIC */
@@ -1231,14 +1282,22 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 	QLinkedList<SearchData> filesFoundList = d->searchThread->filesFoundList();
 
 	// Add the directory entries.
+	bool isJapanese = false;
 	foreach (const SearchData &searchData, filesFoundList) {
 		MemCardFile *file = d->card->addLostFile(&(searchData.dirEntry), searchData.fatEntries);
+		if (file->encoding() == SYS_FONT_ENCODING_SJIS)
+			isJapanese = true;
 
 		// TODO: Add ChecksumData parameter to addLostFile.
 		// Alternatively, add SearchData overload?
 		if (file)
 			file->setChecksumDefs(searchData.checksumDefs);
 	}
+
+	// If the card encoding or any files are Japanese,
+	// show a warning if PCRE doesn't support UCP.
+	if (isJapanese || d->card->encoding() == SYS_FONT_ENCODING_SJIS)
+		d->showJpWarning();
 }
 
 /**

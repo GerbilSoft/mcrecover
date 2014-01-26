@@ -584,7 +584,6 @@ int MemCard::readBlock(void *buf, int siz, uint16_t blockIdx)
 	return (int)d->file->read((char*)buf, blockSize());
 }
 
-
 /**
  * Get the memory card's serial number.
  * @return Memory card's serial number.
@@ -608,9 +607,8 @@ QString MemCard::serialNumber(void) const
 	return serial_text;
 }
 
-
 /**
- * Get the memory card encoding.
+ * Get the memory card text encoding ID.
  * @return 0 for ANSI (ISO-8859-1); 1 for SJIS; negative on error.
  */
 int MemCard::encoding(void) const
@@ -621,6 +619,37 @@ int MemCard::encoding(void) const
 	return (d->mc_header.encoding & SYS_FONT_ENCODING_MASK);
 }
 
+/**
+ * Get the text encoding ID for a given region.
+ * @param region Region code. (If 0, use the memory card's encoding.)
+ * @return Text encoding ID.
+ */
+int MemCard::encodingForRegion(char region) const
+{
+	if (!isOpen())
+		return SYS_FONT_ENCODING_ANSI;
+
+	Q_D(const MemCard);
+	switch (region) {
+		case 0:
+			// Use the memory card's encoding.
+			return (d->mc_header.encoding & SYS_FONT_ENCODING_MASK);
+
+		case 'J':
+		case 'S':
+			// Japanese.
+			// NOTE: 'S' appears in RELSAB, which is used for
+			// some prototypes, including Sonic Adventure DX
+			// and Metroid Prime 3. Assume Japanese for now.
+			// TODO: Implement a Shift-JIS heuristic for 'S'.
+			return SYS_FONT_ENCODING_SJIS;
+
+		default:
+			// US, Europe, Australia.
+			// TODO: Korea?
+			return SYS_FONT_ENCODING_ANSI;
+	}
+}
 
 /**
  * Get the QTextCodec for a given region.
@@ -633,29 +662,10 @@ QTextCodec *MemCard::textCodec(char region) const
 		return nullptr;
 
 	Q_D(const MemCard);
-	switch (region) {
-		case 0:
-			// Use the memory card's encoding.
-			return ((d->mc_header.encoding & SYS_FONT_ENCODING_MASK)
-				? d->TextCodecJP
-				: d->TextCodecUS);
-
-		case 'J':
-		case 'S':
-			// Japanese.
-			// NOTE: 'S' appears in RELSAB, which is used for
-			// some prototypes, including Sonic Adventure DX
-			// and Metroid Prime 3. Assume Japanese for now.
-			// TODO: Implement a Shift-JIS heuristic for 'S'.
-			return d->TextCodecJP;
-
-		default:
-			// US, Europe, Australia.
-			// TODO: Korea?
-			return d->TextCodecUS;
-	}
+	return (encodingForRegion(region)
+		? d->TextCodecJP
+		: d->TextCodecUS);
 }
-
 
 /**
  * Get the number of files in the file table.
