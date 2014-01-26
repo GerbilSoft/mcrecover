@@ -1032,13 +1032,12 @@ int GcImageWriter::write(const GcImage *gcImage, ImageFormat imgf)
 	switch (imgf) {
 		case IMGF_PNG:
 			return d->writePng(gcImage);
-
 		default:
 			break;
 	}
 
 	// Invalid image format.
-	return -EINVAL;
+	return -ENOSYS;
 }
 
 /**
@@ -1054,6 +1053,8 @@ int GcImageWriter::write(const vector<const GcImage*> *gcImages,
 {
 	if (!gcImages || gcImages->empty() || !gcImages->at(0))
 		return -EINVAL;
+	if (!isAnimImageFormatSupported(animImgf))
+		return -ENOSYS;
 
 	// Adjust icon delays for NULL images.
 	// NOTE: Assuming image 0 is always valid.
