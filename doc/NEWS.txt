@@ -30,6 +30,10 @@ Database statistics in this release:
   now a window toolbar, and contains additional items, such as the
   "Preferred Region" selection.
 
+- Added preliminary support for displaying scanning progress in the
+  taskbar. Currently, only the D-Bus DockManager protocol is supported.
+  Support for Ubuntu's Unity and Windows 7 will be added later.
+
 - GcImage and Checksum functions have been split out into their own
   library, libgctools. This library depends on libpng but does not
   depend on Qt.
