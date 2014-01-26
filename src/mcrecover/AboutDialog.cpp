@@ -37,25 +37,7 @@
 
 // Third-party libraries.
 #include <pcre.h>
-// PCRE feature flags.
-#ifndef PCRE_CONFIG_UTF8
-#define PCRE_CONFIG_UTF8 0
-#endif
-#ifndef PCRE_CONFIG_UNICODE_PROPERTIES
-#define PCRE_CONFIG_UNICODE_PROPERTIES 6
-#endif
-#ifndef PCRE_CONFIG_JIT
-#define PCRE_CONFIG_JIT 9
-#endif
-#ifndef PCRE_CONFIG_UTF16
-#define PCRE_CONFIG_UTF16 10
-#endif
-#ifndef PCRE_CONFIG_JITTARGET
-#define PCRE_CONFIG_JITTARGET 11
-#endif
-#ifndef PCRE_CONFIG_UTF32
-#define PCRE_CONFIG_UTF32 12
-#endif
+#include "PcreRegex.hpp"
 
 #ifdef HAVE_ZLIB
 #include <zlib.h>
@@ -373,12 +355,9 @@ QString AboutDialogPrivate::GetLibraries(void)
 #endif /* PCRE_STATIC */
 	// Check PCRE properties.
 	// TODO: Show all PCRE properties as "flags".
-	int ret, val;
-	ret = pcre_config(PCRE_CONFIG_UTF8, &val);
-	if (ret != 0 || val != 1)
+	if (!PcreRegex::PCRE_has_UTF8())
 		sLibraries += AboutDialog::tr("WARNING: PCRE does not have UTF-8 support.") + QChar(L'\n');
-	ret = pcre_config(PCRE_CONFIG_UNICODE_PROPERTIES, &val);
-	if (ret != 0 || val != 1)
+	if (!PcreRegex::PCRE_has_UCP())
 		sLibraries += AboutDialog::tr("WARNING: PCRE does not have Unicode character properties support.") + QChar(L'\n');
 	// PCRE copyright and license.
 	sLibraries += QLatin1String("Copyright (C) 1997-2014 University of Cambridge.");
