@@ -29,102 +29,102 @@
         <translation>&amp;5upp0r7</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="131"/>
+        <location filename="../AboutDialog.cpp" line="113"/>
         <source>Version %1</source>
         <translation>v3r510n %1</translation>
     </message>
     <message utf8="true">
-        <location filename="../AboutDialog.cpp" line="143"/>
+        <location filename="../AboutDialog.cpp" line="125"/>
         <source>Powered by the&lt;br/&gt;
 &lt;b&gt;MegaCard Engine&lt;/b&gt;™</source>
         <translation>p0w3r3d by 7h3&lt;br/&gt;
 &lt;b&gt;m364c4rd 3n61n3&lt;/b&gt;™</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="281"/>
+        <location filename="../AboutDialog.cpp" line="263"/>
         <source>Memory Card File Contributors:</source>
         <translation>m3m0ry c4rd f1l3 c0n7r1bu70r5:</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="313"/>
+        <location filename="../AboutDialog.cpp" line="295"/>
         <source>Internal copy of %1.</source>
         <extracomment>Using an internal copy of a library.</extracomment>
         <translation>1n73rn4l c0py 0f %1.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="315"/>
+        <location filename="../AboutDialog.cpp" line="297"/>
         <source>Compiled with %1.</source>
         <extracomment>Compiled with a specific version of an external library.</extracomment>
         <translation>c0mp1l3d w17h %1.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="317"/>
+        <location filename="../AboutDialog.cpp" line="299"/>
         <source>Using %1.</source>
         <extracomment>Using an external library, e.g. libpcre.so</extracomment>
         <translation>u51n6 %1.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="319"/>
+        <location filename="../AboutDialog.cpp" line="301"/>
         <source>License: %1</source>
         <extracomment>License: (libraries with only a single license)</extracomment>
         <translation>l1c3n53: %1</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="321"/>
+        <location filename="../AboutDialog.cpp" line="303"/>
         <source>Licenses: %1</source>
         <extracomment>Licenses: (libraries with multiple licenses)</extracomment>
         <translation>l1c3n535: %1</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="379"/>
+        <location filename="../AboutDialog.cpp" line="359"/>
         <source>WARNING: PCRE does not have UTF-8 support.</source>
         <translation>w4rn1n6: pcr3 d035 n07 h4v3 u7f-8 5upp0r7.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="382"/>
+        <location filename="../AboutDialog.cpp" line="361"/>
         <source>WARNING: PCRE does not have Unicode character properties support.</source>
         <translation>w4rn1n6: pcr3 d035 n07 h4v3 un1c0d3 ch4r4c73r pr0p3r7135 5upp0r7.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="412"/>
+        <location filename="../AboutDialog.cpp" line="391"/>
         <source> (No APNG support)</source>
         <translation>(n0 4pn6 5upp0r7)</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="475"/>
+        <location filename="../AboutDialog.cpp" line="454"/>
         <source>Available databases:</source>
         <translation>4v41l4bl3 d474b4535:</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="477"/>
+        <location filename="../AboutDialog.cpp" line="456"/>
         <source>(none found)</source>
         <translation>(n0n3 f0und)</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="560"/>
+        <location filename="../AboutDialog.cpp" line="539"/>
         <source>Unknown [GetCPInfoExA() failed]</source>
         <extracomment>GetCPInfoExA() call failed.</extracomment>
         <translation>unkn0wn [637cp1nf03x4() f41l3d]</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="598"/>
+        <location filename="../AboutDialog.cpp" line="577"/>
         <source>Using Unicode strings for Win32 API.</source>
         <extracomment>Win32: Unicode strings are being used. (WinNT)</extracomment>
         <translation>u51n6 un1c0d3 57r1n65 f0r w1n32 4p1.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="601"/>
+        <location filename="../AboutDialog.cpp" line="580"/>
         <source>Using ANSI strings for Win32 API.</source>
         <extracomment>Win32: ANSI strings are being used. (Win9x)</extracomment>
         <translation>u51n6 4n51 57r1n65 f0r w1n32 4p1.</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="618"/>
+        <location filename="../AboutDialog.cpp" line="597"/>
         <source>For technical support, you can visit the following websites:</source>
         <translation>f0r 73chn1c4l 5upp0r7, y0u c4n v1517 7h3 f0ll0w1n6 w3b51735:</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.cpp" line="650"/>
+        <location filename="../AboutDialog.cpp" line="629"/>
         <source>You can also email the developer directly:</source>
         <translation>y0u c4n 4l50 3m41l 7h3 d3v3l0p3r d1r3c7ly:</translation>
     </message>
@@ -132,28 +132,28 @@
 <context>
     <name>HackDetection</name>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="236"/>
+        <location filename="../sekrit/HackDetection.cpp" line="237"/>
         <source>Hack Detection</source>
         <comment>DT_H</comment>
         <extracomment>&quot;Hack Detection&quot; title.</extracomment>
         <translation>h4ck d373c710n</translation>
     </message>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="241"/>
+        <location filename="../sekrit/HackDetection.cpp" line="242"/>
         <source>Quack Detection</source>
         <comment>DT_Q</comment>
         <extracomment>&quot;Quack Detection&quot; title.</extracomment>
         <translation>qu4ck d373c710n</translation>
     </message>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="246"/>
+        <location filename="../sekrit/HackDetection.cpp" line="247"/>
         <source>Snack Detection</source>
         <comment>DT_S</comment>
         <extracomment>&quot;&apos;Snack Detection&quot; title.</extracomment>
         <translation>5n4ck d373c710n</translation>
     </message>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="257"/>
+        <location filename="../sekrit/HackDetection.cpp" line="258"/>
         <source>One or more game resources were manipulated by an
 outside source. This is not allowed as specified in
 the game license.
@@ -168,13 +168,13 @@ y0u mu57 r31n574ll 7h3 64m3 4nd 4cc3p7 7h3 64m3
 l1c3n53 4641n, 70 c0n71nu3 70 pl4y 7h3 64m3.</translation>
     </message>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="263"/>
+        <location filename="../sekrit/HackDetection.cpp" line="264"/>
         <source>Game halted.</source>
         <comment>DT_H</comment>
         <translation>64m3 h4l73d.</translation>
     </message>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="268"/>
+        <location filename="../sekrit/HackDetection.cpp" line="269"/>
         <source>One or more snack ingredients were manipulated by an
 outside sauce. This is not allowed as specified in
 the snack recipe.
@@ -189,13 +189,13 @@ y0u mu57 r3b4k3 7h3 5n4ck 4nd 4cc3p7 7h3 5n4ck
 r3c1p3 4641n, 70 c0n71nu3 70 347 7h3 5n4ck.</translation>
     </message>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="274"/>
+        <location filename="../sekrit/HackDetection.cpp" line="275"/>
         <source>Snack salted.</source>
         <comment>DT_S</comment>
         <translation>5n4ck 54l73d.</translation>
     </message>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="279"/>
+        <location filename="../sekrit/HackDetection.cpp" line="280"/>
         <source>Press Escape to go back.</source>
         <translation>pr355 35c4p3 70 60 b4ck.</translation>
     </message>
@@ -230,242 +230,258 @@ r3c1p3 4641n, 70 c0n71nu3 70 347 7h3 5n4ck.</translation>
 <context>
     <name>McRecoverWindow</name>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="75"/>
+        <location filename="../ui/McRecoverWindow.ui" line="78"/>
         <source>Memory Card Details</source>
         <translation>m3m0ry c4rd d3741l5</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="125"/>
+        <location filename="../ui/McRecoverWindow.ui" line="128"/>
         <source>File Information</source>
         <translation>f1l3 1nf0rm4710n</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="189"/>
+        <location filename="../ui/McRecoverWindow.ui" line="192"/>
         <source>&amp;File</source>
         <translation>&amp;f1l3</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="202"/>
+        <location filename="../ui/McRecoverWindow.ui" line="205"/>
         <source>&amp;Help</source>
         <translation>&amp;h3lp</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="208"/>
+        <location filename="../ui/McRecoverWindow.ui" line="211"/>
         <source>&amp;Options</source>
         <translation>&amp;0p710n5</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="212"/>
+        <location filename="../ui/McRecoverWindow.ui" line="215"/>
         <source>Animated Icon Format</source>
         <translation>4n1m473d 1c0n f0rm47</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="234"/>
+        <location filename="../ui/McRecoverWindow.ui" line="237"/>
         <source>&amp;Language</source>
         <translation>&amp;l4n6u463</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="252"/>
+        <location filename="../ui/McRecoverWindow.ui" line="255"/>
         <source>Main Toolbar</source>
         <translation>m41n 700lb4r</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="286"/>
+        <location filename="../ui/McRecoverWindow.ui" line="289"/>
         <source>&amp;Open</source>
         <translation>&amp;0p3n</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="289"/>
+        <location filename="../ui/McRecoverWindow.ui" line="292"/>
         <source>Open a GameCube Memory Card image</source>
         <translation>0p3n 4 64m3cub3 m3m0ry c4rd 1m463</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="292"/>
+        <location filename="../ui/McRecoverWindow.ui" line="295"/>
         <source>Ctrl+O</source>
         <extracomment>Shortcut for opening a GameCube Memory Card image.</extracomment>
         <translation>Ctrl+0</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="301"/>
+        <location filename="../ui/McRecoverWindow.ui" line="304"/>
         <source>&amp;Save</source>
         <translation>&amp;54v3</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="304"/>
+        <location filename="../ui/McRecoverWindow.ui" line="307"/>
         <source>Save the selected file(s)</source>
         <translation>54v3 7h3 53l3c73d f1l3(5)</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="307"/>
+        <location filename="../ui/McRecoverWindow.ui" line="310"/>
         <source>Ctrl+S</source>
         <extracomment>Shortcut for saving the currently selected file.</extracomment>
         <translation>Ctrl+5</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="316"/>
+        <location filename="../ui/McRecoverWindow.ui" line="319"/>
         <source>Save &amp;All</source>
         <translation>54v3 &amp;4ll</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="319"/>
+        <location filename="../ui/McRecoverWindow.ui" line="322"/>
         <source>Save all files</source>
         <translation>54v3 4ll f1l35</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="328"/>
+        <location filename="../ui/McRecoverWindow.ui" line="331"/>
         <source>E&amp;xit</source>
         <translation>3&amp;x17</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="331"/>
+        <location filename="../ui/McRecoverWindow.ui" line="334"/>
         <source>Exit the program</source>
         <translation>3x17 7h3 pr06r4m</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="340"/>
+        <location filename="../ui/McRecoverWindow.ui" line="343"/>
         <source>&amp;About</source>
         <translation>&amp;4b0u7</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="343"/>
+        <location filename="../ui/McRecoverWindow.ui" line="346"/>
         <source>About this program</source>
         <translation>4b0u7 7h15 pr06r4m</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="352"/>
+        <location filename="../ui/McRecoverWindow.ui" line="355"/>
         <source>S&amp;can for Lost Files</source>
         <translation>5&amp;c4n f0r l057 f1l35</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="355"/>
+        <location filename="../ui/McRecoverWindow.ui" line="358"/>
         <source>Scan the memory card image for lost files</source>
         <translation>5c4n 7h3 m3m0ry c4rd 1m463 f0r l057 f1l35</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="364"/>
+        <location filename="../ui/McRecoverWindow.ui" line="367"/>
         <source>&amp;Close</source>
         <translation>&amp;cl053</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="367"/>
+        <location filename="../ui/McRecoverWindow.ui" line="370"/>
         <source>Close the GameCube Memory Card image</source>
         <translation>cl053 7h3 64m3cub3 m3m0ry c4rd 1m463</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="370"/>
+        <location filename="../ui/McRecoverWindow.ui" line="373"/>
         <source>Ctrl+W</source>
         <extracomment>Shortcut for closing the current GameCube Memory Card image.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="382"/>
+        <location filename="../ui/McRecoverWindow.ui" line="385"/>
         <source>&amp;USA</source>
         <translation>&amp;u54</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="385"/>
+        <location filename="../ui/McRecoverWindow.ui" line="388"/>
         <source>USA</source>
         <translation>u54</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="397"/>
+        <location filename="../ui/McRecoverWindow.ui" line="400"/>
         <source>&amp;Europe</source>
         <translation>&amp;3ur0p3</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="400"/>
+        <location filename="../ui/McRecoverWindow.ui" line="403"/>
         <source>Europe</source>
         <translation>3ur0p3</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="412"/>
+        <location filename="../ui/McRecoverWindow.ui" line="415"/>
         <source>&amp;Japan</source>
         <translation>&amp;j4p4n</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="415"/>
+        <location filename="../ui/McRecoverWindow.ui" line="418"/>
         <source>Japan</source>
         <translation>j4p4n</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="427"/>
+        <location filename="../ui/McRecoverWindow.ui" line="430"/>
         <source>South &amp;Korea</source>
         <translation>50u7h &amp;k0r34</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="430"/>
+        <location filename="../ui/McRecoverWindow.ui" line="433"/>
         <source>South Korea</source>
         <translation>50u7h k0r34</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="438"/>
-        <location filename="../McRecoverWindow.cpp" line="387"/>
+        <location filename="../ui/McRecoverWindow.ui" line="441"/>
+        <location filename="../McRecoverWindow.cpp" line="428"/>
         <source>Preferred Region:</source>
         <translation>pr3f3rr3d r3610n:</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="446"/>
+        <location filename="../ui/McRecoverWindow.ui" line="449"/>
         <source>Search U&amp;sed Blocks</source>
         <translation>534rch u&amp;53d bl0ck5</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="454"/>
+        <location filename="../ui/McRecoverWindow.ui" line="457"/>
         <source>APNG</source>
         <translation>4pn6</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="462"/>
+        <location filename="../ui/McRecoverWindow.ui" line="465"/>
         <source>GIF</source>
         <translation>61f</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="470"/>
+        <location filename="../ui/McRecoverWindow.ui" line="473"/>
         <source>PNG (file per frame)</source>
         <translation>pn6 (f1l3 p3r fr4m3)</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="478"/>
+        <location filename="../ui/McRecoverWindow.ui" line="481"/>
         <source>PNG (vertical strip)</source>
         <translation>pn6 (v3r71c4l 57r1p)</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="486"/>
+        <location filename="../ui/McRecoverWindow.ui" line="489"/>
         <source>PNG (horizontal strip)</source>
         <translation>pn6 (h0r1z0n74l 57r1p)</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="494"/>
+        <location filename="../ui/McRecoverWindow.ui" line="497"/>
         <source>Extract &amp;Icons</source>
         <translation>3x7r4c7 &amp;1c0n5</translation>
     </message>
     <message>
-        <location filename="../ui/McRecoverWindow.ui" line="502"/>
+        <location filename="../ui/McRecoverWindow.ui" line="505"/>
         <source>Extract &amp;Banners</source>
         <translation>3x7r4c7 &amp;b4nn3r5</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="257"/>
+        <location filename="../McRecoverWindow.cpp" line="278"/>
+        <source>The internal PCRE library was not compiled with Unicode character properties support.
+Some files with Japanese descriptions might not be found when scanning.</source>
+        <extracomment>Statically-linked PCRE is missing Unicode character properties support.</extracomment>
+        <translation>7h3 1n73rn4l pcr3 l1br4ry w45 n07 c0mp1l3d w17h un1c0d3 ch4r4c73r pr0p3r7135 5upp0r7.
+50m3 f1l35 w17h j4p4n353 d35cr1p710n5 m16h7 n07 b3 f0und wh3n 5c4nn1n6.</translation>
+    </message>
+    <message>
+        <location filename="../McRecoverWindow.cpp" line="283"/>
+        <source>The system PCRE library was not compiled with Unicode character properties support.
+Some files with Japanese descriptions might not be found when scanning.</source>
+        <extracomment>Dynamically-linked PCRE is missing Unicode character properties support.</extracomment>
+        <translation>7h3 5y573m pcr3 l1br4ry w45 n07 c0mp1l3d w17h un1c0d3 ch4r4c73r pr0p3r7135 5upp0r7.
+50m3 f1l35 w17h j4p4n353 d35cr1p710n5 m16h7 n07 b3 f0und wh3n 5c4nn1n6.</translation>
+    </message>
+    <message>
+        <location filename="../McRecoverWindow.cpp" line="298"/>
         <source>No memory card loaded.</source>
         <translation>n0 m3m0ry c4rd l04d3d.</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="492"/>
+        <location filename="../McRecoverWindow.cpp" line="534"/>
         <source>Save GCN Save File %1</source>
         <translation>54v3 6cn 54v3 f1l3 %1</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="495"/>
+        <location filename="../McRecoverWindow.cpp" line="537"/>
         <source>GameCube Save Files</source>
         <translation>64m3cub3 54v3 f1l35</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="496"/>
-        <location filename="../McRecoverWindow.cpp" line="964"/>
+        <location filename="../McRecoverWindow.cpp" line="538"/>
+        <location filename="../McRecoverWindow.cpp" line="1063"/>
         <source>All Files</source>
         <translation>4ll f1l35</translation>
     </message>
     <message numerus="yes">
-        <location filename="../McRecoverWindow.cpp" line="503"/>
+        <location filename="../McRecoverWindow.cpp" line="545"/>
         <source>Save %Ln GCN Save File(s)</source>
         <translation>
             <numerusform>54v3 %Ln 6cn 54v3 f1l3</numerusform>
@@ -473,12 +489,12 @@ r3c1p3 4641n, 70 c0n71nu3 70 347 7h3 5n4ck.</translation>
         </translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="518"/>
+        <location filename="../McRecoverWindow.cpp" line="560"/>
         <source>File Already Exists</source>
         <translation>f1l3 4lr34dy 3x1575</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="519"/>
+        <location filename="../McRecoverWindow.cpp" line="561"/>
         <source>A file named &quot;%1&quot; already exists in the specified directory.
 
 Do you want to overwrite it?</source>
@@ -487,43 +503,59 @@ Do you want to overwrite it?</source>
 d0 y0u w4n7 70 0v3rwr173 17?</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="620"/>
+        <location filename="../McRecoverWindow.cpp" line="662"/>
         <source>System Default (%1)</source>
         <comment>ts-language</comment>
         <extracomment>Translation: System Default (retrieved from system settings)</extracomment>
         <translation>5y573m d3f4ul7 (%1)</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="961"/>
+        <location filename="../McRecoverWindow.cpp" line="997"/>
+        <source>The internal PCRE library was not compiled with UTF-8 support.
+Scanning for lost files will not work.</source>
+        <extracomment>Statically-linked PCRE is missing UTF-8 support.</extracomment>
+        <translation>7h3 1n73rn4l pcr3 l1br4ry w45 n07 c0mp1l3d w17h u7f-8 5upp0r7.
+5c4nn1n6 f0r l057 f1l35 w1ll n07 w0rk.</translation>
+    </message>
+    <message>
+        <location filename="../McRecoverWindow.cpp" line="1001"/>
+        <source>The system PCRE library was not compiled with UTF-8 support.
+Scanning for lost files will not work.</source>
+        <extracomment>Dynamically-linked PCRE is missing UTF-8 support.</extracomment>
+        <translation>7h3 5y573m pcr3 l1br4ry w45 n07 c0mp1l3d w17h u7f-8 5upp0r7.
+5c4nn1n6 f0r l057 f1l35 w1ll n07 w0rk.</translation>
+    </message>
+    <message>
+        <location filename="../McRecoverWindow.cpp" line="1060"/>
         <source>Open GameCube Memory Card Image</source>
         <translation>0p3n 64m3cub3 m3m0ry c4rd 1m463</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="963"/>
+        <location filename="../McRecoverWindow.cpp" line="1062"/>
         <source>GameCube Memory Card Image</source>
         <translation>64m3cub3 m3m0ry c4rd 1m463</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="998"/>
+        <location filename="../McRecoverWindow.cpp" line="1097"/>
         <source>The database files should be located in the data subdirectory in
 mcrecover.exe&apos;s program directory.</source>
         <translation>7h3 d474b453 f1l35 5h0uld b3 l0c473d 1n 7h3 d474 5ubd1r3c70ry 1n
 mcr3c0v3r.3x3&apos;5 pr06r4m d1r3c70ry.</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1002"/>
+        <location filename="../McRecoverWindow.cpp" line="1101"/>
         <source>The database files should be located in %1.
 Alternatively, you can place your own version in ~/.config/mcrecover/data/</source>
         <translation>7h3 d474b453 f1l35 5h0uld b3 l0c473d 1n %1.
 4l73rn471v3ly, y0u c4n pl4c3 y0ur 0wn v3r510n 1n ~/.c0nf16/mcr3c0v3r/d474/</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1009"/>
+        <location filename="../McRecoverWindow.cpp" line="1108"/>
         <source>Database Load Error</source>
         <translation>d474b453 l04d 3rr0r</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1010"/>
+        <location filename="../McRecoverWindow.cpp" line="1109"/>
         <source>No GCN MemCard file databases were found.</source>
         <translation>n0 6cn m3mc4rd f1l3 d474b4535 w3r3 f0und.</translation>
     </message>
@@ -660,19 +692,6 @@ ch3ck5um:</translation>
     </message>
 </context>
 <context>
-    <name>SearchThread</name>
-    <message>
-        <location filename="../SearchThread.cpp" line="144"/>
-        <source>Database Load Error</source>
-        <translation>d474b453 l04d 3rr0r</translation>
-    </message>
-    <message>
-        <location filename="../SearchThread.cpp" line="145"/>
-        <source>Error loading the GCN Memory Card File database:</source>
-        <translation>3rr0r l04d1n6 7h3 6cn m3m0ry c4rd f1l3 d474b453:</translation>
-    </message>
-</context>
-<context>
     <name>StatusBarManager</name>
     <message>
         <location filename="../StatusBarManager.cpp" line="111"/>
@@ -724,13 +743,13 @@ ch3ck5um:</translation>
 <context>
     <name>XmlTemplateDialog</name>
     <message>
-        <location filename="../XmlTemplateDialog.cpp" line="81"/>
+        <location filename="../XmlTemplateDialog.cpp" line="88"/>
         <source>Generated XML Template: %1/%2</source>
         <extracomment>Window title: %1 == game ID; %2 == internal filename.</extracomment>
         <translation>63n3r473d xml 73mpl473: %1/%2</translation>
     </message>
     <message>
-        <location filename="../XmlTemplateDialog.cpp" line="86"/>
+        <location filename="../XmlTemplateDialog.cpp" line="93"/>
         <source>Generated XML template for: %1/%2
 You will need to edit gameName and fileInfo,
 and may also need to add variable modifiers.</source>
@@ -740,19 +759,19 @@ y0u w1ll n33d 70 3d17 64m3n4m3 4nd f1l31nf0,
 4nd m4y 4l50 n33d 70 4dd v4r14bl3 m0d1f13r5.</translation>
     </message>
     <message>
-        <location filename="../XmlTemplateDialog.cpp" line="94"/>
+        <location filename="../XmlTemplateDialog.cpp" line="101"/>
         <source>Generated XML Template: No file loaded</source>
         <extracomment>Window title: No file loaded.</extracomment>
         <translation>63n3r473d xml 73mpl473: n0 f1l3 l04d3d</translation>
     </message>
     <message>
-        <location filename="../XmlTemplateDialog.cpp" line="96"/>
+        <location filename="../XmlTemplateDialog.cpp" line="103"/>
         <source>No file loaded.</source>
         <extracomment>Template description: No file loaded.</extracomment>
         <translation>n0 f1l3 l04d3d.</translation>
     </message>
     <message>
-        <location filename="../XmlTemplateDialog.cpp" line="128"/>
+        <location filename="../XmlTemplateDialog.cpp" line="167"/>
         <source>Save File</source>
         <translation></translation>
     </message>
