@@ -70,8 +70,8 @@ static GcImage *read_banner_BNR1(FILE *f, long banner_start)
 	fseek(f, banner_start, SEEK_SET);
 	size_t ret_sz = fread(&banner, 1, sizeof(banner), f);
 	if (ret_sz != sizeof(banner)) {
-		fprintf(stderr, "*** ERROR: read %lu bytes from banner; expected %lu bytes\n",
-			ret_sz, sizeof(banner));
+		fprintf(stderr, "*** ERROR: read %u bytes from banner; expected %u bytes\n",
+			(unsigned int)ret_sz, (unsigned int)sizeof(banner));
 		return nullptr;
 	}
 
@@ -117,8 +117,8 @@ static GcImage *read_banner_WIBN(FILE *f, long banner_start)
 	}
 
 	if (numIcons < 0) {
-		fprintf(stderr, "*** ERROR: read %lu bytes from banner; expected %u + (%u * n) bytes\n",
-			ret_sz, BANNER_WIBN_STRUCT_SIZE, BANNER_WIBN_ICON_SIZE);
+		fprintf(stderr, "*** ERROR: read %u bytes from banner; expected %u + (%u * n) bytes\n",
+			(unsigned int)ret_sz, BANNER_WIBN_STRUCT_SIZE, BANNER_WIBN_ICON_SIZE);
 		return nullptr;
 	}
 
@@ -353,8 +353,8 @@ int main(int argc, char *argv[])
 	// Write the PNG image data.
 	ret_sz = fwrite(pngImageData->data(), 1, pngImageData->size(), f_image_png);
 	if (ret_sz != pngImageData->size()) {
-		fprintf(stderr, "*** ERROR: wrote %lu bytes to image; expected %lu bytes\n",
-			ret_sz, pngImageData->size());
+		fprintf(stderr, "*** ERROR: wrote %u bytes to image; expected %u bytes\n",
+			(unsigned int)ret_sz, (unsigned int)pngImageData->size());
 		fclose(f_opening_bnr);
 		fclose(f_image_png);
 		return EXIT_FAILURE;
