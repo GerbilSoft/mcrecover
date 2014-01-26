@@ -157,15 +157,6 @@ class MemCardFilePrivate
 		};
 
 		/**
-		 * Determine if an address + length is within fileSize.
-		 * @param address Address.
-		 * @param length Length.
-		 * @param fileSize File size.
-		 * @return True if the address + length is within fileSize; false if not.
-		 */
-		static bool IsInFile(uint32_t address, uint32_t length, uint32_t fileSize);
-
-		/**
 		 * Load the banner image.
 		 * @return GcImage containing the banner image, or nullptr on error.
 		 */
@@ -451,22 +442,6 @@ QByteArray MemCardFilePrivate::readBlocks(uint16_t blockStart, int len)
 		card->readBlock(blockDataPtr, blockSize, physBlockAddr);
 	}
 	return blockData;
-}
-
-/**
- * Determine if an address + length is within fileSize.
- * @param address Address.
- * @param length Length.
- * @param fileSize File size.
- * @return True if the address + length is within fileSize; false if not.
- */
-inline bool MemCardFilePrivate::IsInFile(uint32_t address, uint32_t length, uint32_t fileSize)
-{
-	if (address > fileSize || length > fileSize)
-		return false;
-
-	uint64_t addrPlusLen = ((uint64_t)address + (uint64_t)length);
-	return !(addrPlusLen > (uint64_t)fileSize);
 }
 
 /**
