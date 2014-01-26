@@ -128,16 +128,6 @@ int main(int argc, char *argv[])
 	long opening_bnr_sz = ftell(f_opening_bnr);
 	fseek(f_opening_bnr, 0, SEEK_SET);
 
-	if (opening_bnr_sz != sizeof(banner_bnr1_t) &&
-	    opening_bnr_sz != sizeof(banner_bnr2_t)) {
-		// Not a valid size.
-		fprintf(stderr, "*** ERROR: %s has invalid size %ld; should be %lu or %lu\n",
-			opening_bnr_filename, opening_bnr_sz,
-			sizeof(banner_bnr1_t), sizeof(banner_bnr2_t));
-		fclose(f_opening_bnr);
-		return EXIT_FAILURE;
-	}
-
 	// Check the magic number.
 	uint32_t magic_num;
 	size_t ret_sz = fread(&magic_num, 1, sizeof(magic_num), f_opening_bnr);
