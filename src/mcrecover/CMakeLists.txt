@@ -298,25 +298,9 @@ ADD_DEPENDENCIES(mcrecover translations_target)
 GET_PROPERTY(MCRECOVER_EXE_LOCATION TARGET mcrecover PROPERTY LOCATION)
 
 # Split debug information.
-# References:
-# - http://cmake.3232098.n2.nabble.com/Save-stripped-debugging-information-td6819195.html
-# - http://sourceware.org/bugzilla/show_bug.cgi?id=14527
-#   - If debug symbols are stripped before .gnu_debuglink is added,
-#     the section will be truncated to .gnu_deb, and hence won't
-#     be recognized by gdb.
-# - FIXME: If the above .gnu_debuglink workaround is used, Windows XP
-#   and Windows 7 will claim that the executable isn't a valid Win32
-#   executable. (Wine ignores it and works fine!)
+INCLUDE(SplitDebugInformation)
 IF(SPLIT_DEBUG)
-	FIND_PROGRAM(OBJCOPY objcopy)
-	ADD_CUSTOM_COMMAND(TARGET mcrecover POST_BUILD
-		COMMAND ${OBJCOPY} --only-keep-debug
-			${MCRECOVER_EXE_LOCATION} ${CMAKE_CURRENT_BINARY_DIR}/mcrecover.debug
-		COMMAND ${OBJCOPY} --strip-debug
-			${MCRECOVER_EXE_LOCATION}
-		COMMAND ${OBJCOPY} --add-gnu-debuglink=mcrecover.debug
-			${MCRECOVER_EXE_LOCATION}
-		)
+	SPLIT_DEBUG_INFORMATION(mcrecover)
 ENDIF(SPLIT_DEBUG)
 
 IF(COMPRESS_EXE)
