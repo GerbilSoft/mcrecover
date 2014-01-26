@@ -93,6 +93,7 @@ class GcImageWriterPrivate
 		 */
 		int writePng(const GcImage *gcImage);
 
+	private:
 		/**
 		 * Check if a vector of gcImages is CI8_UNIQUE.
 		 * If they are, convert them to ARGB32 and return the new vector.
@@ -129,6 +130,18 @@ class GcImageWriterPrivate
 		 * @return 0 on success; non-zero on error.
 		 */
 		int writePng_HS(const vector<const GcImage*> *gcImages);
+
+	public:
+		/**
+		 * Write an animated GcImage to the internal memory buffer in some PNG format.
+		 * @param gcImages	[in] Vector of GcImage.
+		 * @param gcIconDelays	[in] Icon delays.
+		 * @param animImgf	[in] Animated image format.
+		 * @return 0 on success; non-zero on error.
+		 */
+		int writePng_anim(const vector<const GcImage*> *gcImages,
+				  const vector<int> *gcIconDelays,
+				  GcImageWriter::AnimImageFormat animImgf);
 };
 
 GcImageWriterPrivate::GcImageWriterPrivate(GcImageWriter *const q)
@@ -382,14 +395,6 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	if (!APNG_is_supported())
 		return -ENOSYS;
 
-	// NOTE: APNG only supports a single palette.
-	// If the icon is CI8_UNIQUE, it will need to be
-	// converted to ARGB32.
-	// TODO: Test this; I don't have any files with CI8_UNIQUE...
-	vector<const GcImage*> *gcImagesARGB32 = gcImages_from_CI8_UNIQUE(gcImages);
-	if (gcImagesARGB32)
-		gcImages = gcImagesARGB32;
-
 	png_structp png_ptr;
 	png_infop info_ptr;
 
@@ -509,14 +514,6 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	png_write_end(png_ptr, info_ptr);
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 
-	// Check if we had to convert any icons to ARGB32.
-	if (gcImagesARGB32) {
-		for (int i = 0; i < (int)gcImagesARGB32->size(); i++) {
-			delete const_cast<GcImage*>(gcImagesARGB32->at(i));
-		}
-		delete gcImagesARGB32;
-	}
-
 	// Add the pngBuffer to the memBuffer.
 	memBuffer.push_back(pngBuffer);
 	return 0;
@@ -563,14 +560,6 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 	// stored as a vertical strip.
 
 #if defined(HAVE_PNG)
-	// NOTE: APNG only supports a single palette.
-	// If the icon is CI8_UNIQUE, it will need to be
-	// converted to ARGB32.
-	// TODO: Test this; I don't have any files with CI8_UNIQUE...
-	vector<const GcImage*> *gcImagesARGB32 = gcImages_from_CI8_UNIQUE(gcImages);
-	if (gcImagesARGB32)
-		gcImages = gcImagesARGB32;
-
 	png_structp png_ptr;
 	png_infop info_ptr;
 
@@ -677,14 +666,6 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 	png_write_end(png_ptr, info_ptr);
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 
-	// Check if we had to convert any icons to ARGB32.
-	if (gcImagesARGB32) {
-		for (int i = 0; i < (int)gcImagesARGB32->size(); i++) {
-			delete const_cast<GcImage*>(gcImagesARGB32->at(i));
-		}
-		delete gcImagesARGB32;
-	}
-
 	// Add the pngBuffer to the memBuffer.
 	memBuffer.push_back(pngBuffer);
 	return 0;
@@ -706,14 +687,6 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 	// stored as a horizontal strip.
 
 #if defined(HAVE_PNG)
-	// NOTE: APNG only supports a single palette.
-	// If the icon is CI8_UNIQUE, it will need to be
-	// converted to ARGB32.
-	// TODO: Test this; I don't have any files with CI8_UNIQUE...
-	vector<const GcImage*> *gcImagesARGB32 = gcImages_from_CI8_UNIQUE(gcImages);
-	if (gcImagesARGB32)
-		gcImages = gcImagesARGB32;
-
 	png_structp png_ptr;
 	png_infop info_ptr;
 
@@ -830,14 +803,6 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 	png_write_end(png_ptr, info_ptr);
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 
-	// Check if we had to convert any icons to ARGB32.
-	if (gcImagesARGB32) {
-		for (int i = 0; i < (int)gcImagesARGB32->size(); i++) {
-			delete const_cast<GcImage*>(gcImagesARGB32->at(i));
-		}
-		delete gcImagesARGB32;
-	}
-
 	// Add the pngBuffer to the memBuffer.
 	memBuffer.push_back(pngBuffer);
 	return 0;
@@ -846,6 +811,70 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 	((void)gcImages);
 	return -EINVAL;
 #endif
+}
+
+/**
+ * Write an animated GcImage to the internal memory buffer in some PNG format.
+ * @param gcImages	[in] Vector of GcImage.
+ * @param gcIconDelays	[in] Icon delays.
+ * @param animImgf	[in] Animated image format.
+ * @return 0 on success; non-zero on error.
+ */
+int GcImageWriterPrivate::writePng_anim(const vector<const GcImage*> *gcImages,
+					const vector<int> *gcIconDelays,
+					GcImageWriter::AnimImageFormat animImgf)
+{
+	// NOTE: This has to be a separate function because
+	// setjmp() in the writePng functions might clobber
+	// the allocated vector for CI8_UNIQUE conversion.
+
+	switch (animImgf) {
+		case GcImageWriter::ANIMGF_PNG_FPF:
+			// No image conversion necessary.
+			return writePng_FPF(gcImages);
+		case GcImageWriter::ANIMGF_APNG:
+		case GcImageWriter::ANIMGF_PNG_HS:
+		case GcImageWriter::ANIMGF_PNG_VS:
+			// Image conversion is necessary.
+			break;
+		default:
+			// Invalid image format.
+			return -EINVAL;
+	}
+
+	// NOTE: APNG only supports a single palette.
+	// If the icon is CI8_UNIQUE, it will need to be
+	// converted to ARGB32.
+	// TODO: Test this; I don't have any files with CI8_UNIQUE...
+	vector<const GcImage*> *gcImagesARGB32 = gcImages_from_CI8_UNIQUE(gcImages);
+	if (gcImagesARGB32)
+		gcImages = gcImagesARGB32;
+
+	int ret;
+	switch (animImgf) {
+		case GcImageWriter::ANIMGF_APNG:
+			ret = writeAPng(gcImages, gcIconDelays);
+			break;
+		case GcImageWriter::ANIMGF_PNG_HS:
+			ret = writePng_HS(gcImages);
+			break;
+		case GcImageWriter::ANIMGF_PNG_VS:
+			ret = writePng_VS(gcImages);
+			break;
+		default:
+			ret = -EINVAL;
+			break;
+	}
+
+	// Check if we had to convert any icons to ARGB32.
+	if (gcImagesARGB32) {
+		for (int i = 0; i < (int)gcImagesARGB32->size(); i++) {
+			delete const_cast<GcImage*>(gcImagesARGB32->at(i));
+		}
+		delete gcImagesARGB32;
+	}
+
+	return ret;
 }
 
 /** GcImageWriter **/
@@ -1070,13 +1099,10 @@ int GcImageWriter::write(const vector<const GcImage*> *gcImages,
 
 	switch (animImgf) {
 		case ANIMGF_APNG:
-			return d->writeAPng(&adjGcImages, &adjGcIconDelays);
 		case ANIMGF_PNG_FPF:
-			return d->writePng_FPF(&adjGcImages);
 		case ANIMGF_PNG_VS:
-			return d->writePng_VS(&adjGcImages);
 		case ANIMGF_PNG_HS:
-			return d->writePng_HS(&adjGcImages);
+			return d->writePng_anim(&adjGcImages, &adjGcIconDelays, animImgf);
 		default:
 			break;
 	}
