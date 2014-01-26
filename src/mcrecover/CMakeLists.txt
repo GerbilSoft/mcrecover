@@ -130,6 +130,7 @@ SET(mcrecover_SRCS
 	TranslationManager.cpp
 	XmlTemplateDialog.cpp
 	XmlTemplateDialogManager.cpp
+	MessageWidget.cpp
 	)
 
 # Shh... it's a secret to everybody.
@@ -167,6 +168,7 @@ SET(mcrecover_MOC_H
 	TaskbarButtonManager/TaskbarButtonManager.hpp
 	XmlTemplateDialog.hpp
 	XmlTemplateDialogManager.hpp
+	MessageWidget.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H
@@ -181,6 +183,7 @@ SET(mcrecover_UIS
 	ui/MemCardView.ui
 	ui/AboutDialog.ui
 	ui/XmlTemplateDialog.ui
+	ui/MessageWidget.ui
 	)
 
 # Generate the header files from the UI files.

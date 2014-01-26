@@ -691,6 +691,9 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 #endif
 #endif
 
+	// Hide the MessageWidget initially.
+	d->ui.msgWidget->hide();
+
 	// Set up the QSplitter sizes.
 	// We want the card info panel to be 160px wide at startup.
 	// TODO: Save positioning settings somewhere?

@@ -23,7 +23,10 @@
    <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="hboxMainLayout">
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
+    <item>
+     <widget class="MessageWidget" name="msgWidget" native="true"/>
+    </item>
     <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
@@ -92,7 +95,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>373</width>
-                <height>187</height>
+                <height>180</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="vboxScrlMemCardInfo">
@@ -142,7 +145,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>373</width>
-                <height>186</height>
+                <height>179</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="vboxScrlFileInfo">
@@ -520,6 +523,12 @@
    <class>QTreeViewOpt</class>
    <extends>QTreeView</extends>
    <header>QTreeViewOpt.hpp</header>
+  </customwidget>
+  <customwidget>
+   <class>MessageWidget</class>
+   <extends>QWidget</extends>
+   <header>MessageWidget.hpp</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
