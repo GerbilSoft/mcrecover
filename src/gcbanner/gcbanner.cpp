@@ -37,7 +37,9 @@
 
 // C++ includes.
 #include <vector>
+#include <string>
 using std::vector;
+using std::string;
 
 /**
  * Main entry point.
@@ -149,10 +151,40 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
+	// Determine the destination filename.
+	const char *image_png_filename;
+	if (argc >= 3) {
+		// image.png was specified.
+		image_png_filename = argv[2];
+	} else {
+		// image.png was not specified.
+		// Remove the extension from the current file (if any),
+		// and replace it with .png.
+		string png_filename(opening_bnr_filename);
+		int dot_pos = png_filename.find_last_of('.');
+		int slash_pos = png_filename.find_last_of('/');
+#ifdef _WIN32
+		int bslash_pos = png_filename.find_last_of('\\');
+		if (bslash_pos > slash_pos)
+			slash_pos = bslash_pos;
+#endif /* _WIN32 */
+		if (dot_pos > slash_pos) {
+			// File extension. Remove it.
+			png_filename.erase(dot_pos);
+		}
+
+		// Append the new extension.
+		png_filename.append(".png");
+
+		// strdup() it to image_png_filename.
+		// NOTE: This results in a "memory leak", but since
+		// the program is short-lived, we don't care.
+		image_png_filename = strdup(png_filename.c_str());
+	}
+
 	// Open the destination file.
 	// TODO: Delete on failure?
-	const char *image_png_filename = argv[2];
-	FILE *f_image_png = fopen(argv[2], "wb");
+	FILE *f_image_png = fopen(image_png_filename, "wb");
 	if (!f_image_png) {
 		fprintf(stderr, "*** ERROR opening file %s: %s\n",
 			image_png_filename, strerror(errno));
