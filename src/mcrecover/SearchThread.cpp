@@ -125,36 +125,6 @@ SearchThread::~SearchThread()
 }
 
 /**
- * Load a GCN Memory Card File database.
- * @param filename Filename of GCN Memory Card File database.
- * @return 0 on success; non-zero on error. (Check error string!)
- */
-int SearchThread::loadGcnMcFileDb(const QString &dbFilename)
-{
-	Q_D(SearchThread);
-	qDeleteAll(d->dbs);
-	d->dbs.clear();
-
-	GcnMcFileDb *db = new GcnMcFileDb(this);
-	int ret = db->load(dbFilename);
-	if (ret != 0) {
-		// TODO: Set the error string.
-		// For now, just show a message box.
-		QMessageBox::critical(nullptr,
-			tr("Database Load Error"),
-			tr("Error loading the GCN Memory Card File database:") +
-			QLatin1String("\n\n") + db->errorString());
-
-		delete db;
-		db = nullptr;
-	}
-
-	if (db != nullptr)
-		d->dbs.append(db);
-	return ret;
-}
-
-/**
  * Load multiple GCN Memory Card File databases.
  * @param dbFilenames Filenames of GCN Memory Card File database.
  * @return 0 on success; non-zero on error. (Check error string!)
