@@ -361,6 +361,8 @@ int main(int argc, char *argv[])
 	}
 
 	// Success!
+	fclose(f_opening_bnr);
+	fclose(f_image_png);
 	printf("%s (%s) -> %s [OK]\n", opening_bnr_filename,
 	       actualMagic, image_png_filename);
 	return EXIT_SUCCESS;
