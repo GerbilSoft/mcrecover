@@ -56,14 +56,15 @@ static inline string magic_num_str(uint32_t magic_num)
 /**
  * Read the banner image from a BNR1/BNR2 banner.
  * @param f File containing the banner.
+ * @param banner_start Banner start address.
  * @return GcImage containing the banner image, or nullptr on error.
  */
-static GcImage *read_banner_BNR1(FILE *f)
+static GcImage *read_banner_BNR1(FILE *f, long banner_start)
 {
 	// Read the banner.
 	banner_bnr1_t banner;
 	memset(&banner, 0x00, sizeof(banner));
-	fseek(f, 0, SEEK_SET);
+	fseek(f, banner_start, SEEK_SET);
 	size_t ret_sz = fread(&banner, 1, sizeof(banner), f);
 	if (ret_sz != sizeof(banner)) {
 		fprintf(stderr, "*** ERROR: read %lu bytes from banner; expected %lu bytes\n",
@@ -74,7 +75,54 @@ static GcImage *read_banner_BNR1(FILE *f)
 	// Convert the image data.
 	GcImage *gcBanner = GcImage::fromRGB5A3(
 				BANNER_IMAGE_W, BANNER_IMAGE_H,
-				banner.image, sizeof(banner.image));
+				banner.banner, sizeof(banner.banner));
+	if (!gcBanner) {
+		fprintf(stderr, "*** ERROR: Could not convert %s banner image from RGB5A3.\n",
+			magic_num_str(banner.magic).c_str());
+		return nullptr;
+	}
+
+	return gcBanner;
+}
+
+/**
+ * Read the banner image from a WIBN banner.
+ * @param f File containing the banner.
+ * @param banner_start Banner start address.
+ * @return GcImage containing the banner image, or nullptr on error.
+ */
+static GcImage *read_banner_WIBN(FILE *f, long banner_start)
+{
+	// Read the banner.
+	banner_wibn_t banner;
+	memset(&banner, 0x00, sizeof(banner));
+	fseek(f, banner_start, SEEK_SET);
+	size_t ret_sz = fread(&banner, 1, sizeof(banner), f);
+
+	// Banner size varies depending on number of icons.
+	int numIcons = -1;
+	if (ret_sz >= BANNER_WIBN_STRUCT_SIZE) {
+		int sz = (int)(ret_sz - BANNER_WIBN_STRUCT_SIZE);
+		if (sz % BANNER_WIBN_ICON_SIZE == 0) {
+			numIcons = sz / BANNER_WIBN_ICON_SIZE;
+			if (numIcons > 8) {
+				// Too many icons.
+				// This shouldn't happen...
+				numIcons = -1;
+			}
+		}
+	}
+
+	if (numIcons < 0) {
+		fprintf(stderr, "*** ERROR: read %lu bytes from banner; expected %u + (%u * n) bytes\n",
+			ret_sz, BANNER_WIBN_STRUCT_SIZE, BANNER_WIBN_ICON_SIZE);
+		return nullptr;
+	}
+
+	// Convert the image data.
+	GcImage *gcBanner = GcImage::fromRGB5A3(
+				BANNER_WIBN_IMAGE_W, BANNER_WIBN_IMAGE_H,
+				banner.banner, sizeof(banner.banner));
 	if (!gcBanner) {
 		fprintf(stderr, "*** ERROR: Could not convert %s banner image from RGB5A3.\n",
 			magic_num_str(banner.magic).c_str());
@@ -126,12 +174,17 @@ int main(int argc, char *argv[])
 	// Make sure this is a valid banner file.
 	fseek(f_opening_bnr, 0, SEEK_END);
 	long opening_bnr_sz = ftell(f_opening_bnr);
-	fseek(f_opening_bnr, 0, SEEK_SET);
 
 	// Check the magic number.
 	uint32_t magic_num;
+	long banner_start = 0;
+	fseek(f_opening_bnr, banner_start, SEEK_SET);
 	size_t ret_sz = fread(&magic_num, 1, sizeof(magic_num), f_opening_bnr);
 	if (ret_sz != sizeof(magic_num)) {
+		// Check the encrypted address.
+		// This is used on encrypted Wii saves.
+		// TODO: Test this!
+		fseek(f_opening_bnr, BANNER_WIBN_ADDRESS_ENCRYPTED, SEEK_SET);
 		fprintf(stderr, "*** ERROR: could not read magic number from banner\n");
 		fclose(f_opening_bnr);
 		return EXIT_FAILURE;
@@ -139,45 +192,79 @@ int main(int argc, char *argv[])
 
 	// Convert the magic number into a printable string.
 	const char *expectedMagic;
-	char magic[5];
-	memcpy(magic, &magic_num, 4);
-	magic[4] = 0;
+	char actualMagic[5];
+	memcpy(actualMagic, &magic_num, 4);
+	actualMagic[4] = 0;
 	magic_num = be32_to_cpu(magic_num);
 
 	// Check the magic number.
 	bool isMagicValid = true;
-	if (opening_bnr_sz == sizeof(banner_bnr1_t)) {
-		if (magic_num != BANNER_MAGIC_BNR1) {
+	switch (opening_bnr_sz) {
+		case sizeof(banner_bnr1_t):
+			if (magic_num != BANNER_MAGIC_BNR1) {
+				isMagicValid = false;
+				expectedMagic = "BNR1";
+			}
+			break;
+
+		case sizeof(banner_bnr2_t):
+			if (magic_num != BANNER_MAGIC_BNR2) {
+				isMagicValid = false;
+				expectedMagic = "BNR2";
+			}
+			break;
+
+		default:
+			// This might be a Wii banner.
+			if (magic_num == BANNER_WIBN_MAGIC) {
+				// Wii banner.
+				break;
+			}
+
+			// Check the encrypted Wii save file address.
+			banner_start = BANNER_WIBN_ADDRESS_ENCRYPTED;
+			fseek(f_opening_bnr, banner_start, SEEK_SET);
+			ret_sz = fread(&magic_num, 1, sizeof(magic_num), f_opening_bnr);
+			if (ret_sz == sizeof(magic_num)) {
+				magic_num = be32_to_cpu(magic_num);
+				if (magic_num == BANNER_WIBN_MAGIC) {
+					// Wii banner.
+					break;
+				}
+			}
+
+			// Unknown banner.
 			isMagicValid = false;
-			expectedMagic = "BNR1";
-		}
-	} else if (opening_bnr_sz == sizeof(banner_bnr2_t)) {
-		if (magic_num != BANNER_MAGIC_BNR2) {
-			isMagicValid = false;
-			expectedMagic = "BNR2";
-		}		
-	} else {
-		// Should not get here...
-		isMagicValid = false;
-		expectedMagic = "????";
+			expectedMagic = nullptr;
+			break;
 	}
 
 	if (!isMagicValid) {
-		fprintf(stderr, "*** ERROR: read magic number %s, expected %s\n",
-			magic, expectedMagic);
+		if (!expectedMagic) {
+			fprintf(stderr, "*** ERROR: read magic number %s; filesize %ld is not recognized\n",
+				actualMagic, opening_bnr_sz);
+		} else {
+			fprintf(stderr, "*** ERROR: read magic number %s, expected %s\n",
+				actualMagic, expectedMagic);
+		}
 		fclose(f_opening_bnr);
 		return EXIT_FAILURE;
 	}
 
 	// Get the banner image.
-	fseek(f_opening_bnr, 0, SEEK_SET);
+	fseek(f_opening_bnr, banner_start, SEEK_SET);
 	std::auto_ptr<GcImage> gcBanner(nullptr);
 	switch (magic_num) {
 		case BANNER_MAGIC_BNR1:
 		case BANNER_MAGIC_BNR2:
 			// BNR1 and BNR2 use the same structure
 			// for the image data.
-			gcBanner.reset(read_banner_BNR1(f_opening_bnr));
+			gcBanner.reset(read_banner_BNR1(f_opening_bnr, banner_start));
+			break;
+
+		case BANNER_WIBN_MAGIC:
+			// Wii banner image.
+			gcBanner.reset(read_banner_WIBN(f_opening_bnr, banner_start));
 			break;
 
 		default:
@@ -262,6 +349,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Success!
-	printf("%s -> %s [OK]\n", opening_bnr_filename, image_png_filename);
+	printf("%s (%s) -> %s [OK]\n", opening_bnr_filename,
+	       actualMagic, image_png_filename);
 	return EXIT_SUCCESS;
 }

@@ -44,8 +44,8 @@ extern "C" {
 #endif
 
 // Magic numbers.
-#define BANNER_MAGIC_BNR1 0x424E5231
-#define BANNER_MAGIC_BNR2 0x424E5232
+#define BANNER_MAGIC_BNR1 0x424E5231	/* 'BNR1' */
+#define BANNER_MAGIC_BNR2 0x424E5232	/* 'BNR2' */
 
 // Banner size.
 #define BANNER_IMAGE_W 96
@@ -71,7 +71,7 @@ typedef struct PACKED _banner_bnr1_t
 {
 	uint32_t magic;			// BANNER_MAGIC_BNR1
 	uint8_t reserved[0x1C];
-	uint16_t image[0x1800>>1];	// RGB5A3
+	uint16_t banner[0x1800>>1];	// Banner image. (96x32, RGB5A3)
 	banner_comment_t comment;
 } banner_bnr1_t;
 #pragma pack()
@@ -82,9 +82,54 @@ typedef struct PACKED _banner_bnr2_t
 {
 	uint32_t magic;			// BANNER_MAGIC_BNR2
 	uint8_t reserved[0x1C];
-	uint16_t image[0x1800>>1];	// RGB5A3
+	uint16_t banner[0x1800>>1];	// Banner image. (96x32, RGB5A3)
 	banner_comment_t comments[6];
 } banner_bnr2_t;
+#pragma pack()
+
+/**
+ * WIBN (Wii Banner)
+ * Reference: http://wiibrew.org/wiki/Savegame_Files
+ * NOTE: This may be located at one of two places:
+ * - 0x0000: banner.bin extracted via SaveGame Manager GX
+ * - 0x0020: Savegame extracted via Wii System Menu
+ */
+
+// Magic numbers.
+#define BANNER_WIBN_MAGIC		0x5749424E	/* 'WIBN' */
+#define BANNER_WIBN_ADDRESS_RAW		0x0000		/* banner.bin from SaveGame Manager GX */
+#define BANNER_WIBN_ADDRESS_ENCRYPTED	0x0020		/* extracted from Wii System Menu */
+
+// Flags.
+#define BANNER_WIBN_FLAGS_NOCOPY	0x01
+#define BANNER_WIBN_FLAGS_ICON_BOUNCE	0x10
+
+// Banner size.
+#define BANNER_WIBN_IMAGE_W 192
+#define BANNER_WIBN_IMAGE_H 64
+
+// Icon size.
+#define BANNER_WIBN_ICON_W 48
+#define BANNER_WIBN_ICON_H 48
+
+// Struct size.
+#define BANNER_WIBN_ICON_SIZE 0x1200
+#define BANNER_WIBN_STRUCT_SIZE 24736
+#define BANNER_WIBN_STRUCT_SIZE_ICONS(icons) \
+	(BANNER_WIBN_STRUCT_SIZE + ((icons)*BANNER_WIBN_ICON_SIZE))
+
+#pragma pack(1)
+typedef struct PACKED _banner_wibn_t
+{
+	uint32_t magic;			// BANNER_MAGIC_WIBN
+	uint32_t flags;
+	uint16_t iconDelay;		// Similar to GCN.
+	uint8_t reserved[22];
+	uint16_t gameTitle[32];		// Game title. (UTF-16 BE)
+	uint16_t gameSubTitle[32];	// Game subtitle. (UTF-16 BE)
+	uint16_t banner[0x6000>>1];	// Banner image. (192x64, RGB5A3)
+	uint16_t icon[8][0x1200>>1];	// Icons. (48x48, RGB5A3) [optional]
+} banner_wibn_t;
 #pragma pack()
 
 #ifdef __cplusplus
