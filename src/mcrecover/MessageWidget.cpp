@@ -23,6 +23,7 @@
 #include "McRecoverQApplication.hpp"
 
 // Qt includes.
+#include <QtCore/QTimer>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QPainter>
 
@@ -50,7 +51,7 @@ class MessageWidgetPrivate
 		void setIcon(MessageWidget::MsgIcon icon);
 
 		// Message timeout. (TODO)
-		int timeout;
+		QTimer *tmrTimeout;
 
 		// Colors.
 		static const QRgb colorCritical = 0xEE4444;
@@ -62,7 +63,7 @@ class MessageWidgetPrivate
 MessageWidgetPrivate::MessageWidgetPrivate(MessageWidget *q)
 	: q_ptr(q)
 	, icon(MessageWidget::ICON_NONE)
-	, timeout(0)
+	, tmrTimeout(new QTimer(q))
 { }
 
 MessageWidgetPrivate::~MessageWidgetPrivate()
@@ -76,6 +77,9 @@ void MessageWidgetPrivate::setIcon(MessageWidget::MsgIcon icon)
 {
 	if (icon < MessageWidget::ICON_NONE || icon >= MessageWidget::ICON_MAX)
 		icon = MessageWidget::ICON_NONE;
+	if (this->icon == icon)
+		return;
+	this->icon = icon;
 
 	// TODO: Use system icons if available?
 	const char *iconName = nullptr;
@@ -103,7 +107,12 @@ void MessageWidgetPrivate::setIcon(MessageWidget::MsgIcon icon)
 	} else {
 		QIcon icon = McRecoverQApplication::IconFromTheme(QLatin1String(iconName));
 		ui.lblIcon->setPixmap(icon.pixmap(iconSz, iconSz));
+		ui.lblIcon->setVisible(true);
 	}
+
+	Q_Q(MessageWidget);
+	if (q->isVisible())
+		q->update();
 }
 
 /** MessageWidget **/
@@ -115,6 +124,10 @@ MessageWidget::MessageWidget(QWidget *parent)
 	Q_D(MessageWidget);
 	d->ui.setupUi(this);
 	d->setIcon(d->icon);
+
+	// Connect the timer signal.
+	QObject::connect(d->tmrTimeout, SIGNAL(timeout()),
+			 this, SLOT(tmrTimeout_timeout()));
 }
 
 MessageWidget::~MessageWidget()
@@ -131,6 +144,9 @@ MessageWidget::~MessageWidget()
  */
 void MessageWidget::paintEvent(QPaintEvent *event)
 {
+	// Call the superclass paintEvent first.
+	QWidget::paintEvent(event);
+
 	QPainter painter(this);
 
 	// Drawing rectangle should be this->rect(),
@@ -168,6 +184,20 @@ void MessageWidget::paintEvent(QPaintEvent *event)
 	}
 }
 
+/**
+ * Hide event.
+ * @param event QHideEvent.
+ */
+void MessageWidget::hideEvent(QHideEvent *event)
+{
+	// Stop the timer.
+	Q_D(MessageWidget);
+	d->tmrTimeout->stop();
+
+	// Call the superclass hideEvent.
+	QWidget::hideEvent(event);
+}
+
 /** Slots. **/
 
 /**
@@ -181,8 +211,21 @@ void MessageWidget::showMessage(const QString &msg, MsgIcon icon, int timeout)
 	Q_D(MessageWidget);
 	d->ui.lblMessage->setText(msg);
 	d->setIcon(icon);
-	d->timeout = timeout; // TODO
+
+	// Set up the timer.
+	d->tmrTimeout->stop();
+	if (timeout > 0)
+		d->tmrTimeout->start(timeout);
 
 	// Show the message widget.
 	this->show();
+}
+
+/**
+ * Message timer has expired.
+ */
+void MessageWidget::tmrTimeout_timeout(void)
+{
+	// Hide the message.
+	this->hide();
 }

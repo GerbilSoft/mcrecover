@@ -59,7 +59,13 @@ class MessageWidget : public QWidget
 		 * Paint event.
 		 * @param event QPaintEvent.
 		 */
-		void paintEvent(QPaintEvent *event) final;
+		void paintEvent(QPaintEvent *event);
+
+		/**
+		 * Hide event.
+		 * @param event QHideEvent.
+		 */
+		void hideEvent(QHideEvent *event);
 
 	public slots:
 		/**
@@ -69,6 +75,12 @@ class MessageWidget : public QWidget
 		 * @param timeout Timeout, in milliseconds. (0 for no timeout)
 		 */
 		void showMessage(const QString &msg, MsgIcon icon, int timeout);
+
+	protected slots:
+		/**
+		 * Message timer has expired.
+		 */
+		void tmrTimeout_timeout(void);
 };
 
 #endif /* __MCRECOVER_MEMCARDVIEW_HPP__ */
