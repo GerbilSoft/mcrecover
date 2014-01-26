@@ -38,8 +38,51 @@
 // C++ includes.
 #include <vector>
 #include <string>
+#include <memory>
 using std::vector;
 using std::string;
+using std::auto_ptr;
+
+/**
+ * Convert a magic number to a string.
+ * @param magic_num Magic number. (DO NOT be32_to_cpu() this value!)
+ * @return String.
+ */
+static inline string magic_num_str(uint32_t magic_num)
+{
+	return string((const char*)&magic_num, sizeof(magic_num));
+}
+
+/**
+ * Read the banner image from a BNR1/BNR2 banner.
+ * @param f File containing the banner.
+ * @return GcImage containing the banner image, or nullptr on error.
+ */
+static GcImage *read_banner_BNR1(FILE *f)
+{
+	// Read the banner.
+	banner_bnr1_t banner;
+	memset(&banner, 0x00, sizeof(banner));
+	fseek(f, 0, SEEK_SET);
+	size_t ret_sz = fread(&banner, 1, sizeof(banner), f);
+	if (ret_sz != sizeof(banner)) {
+		fprintf(stderr, "*** ERROR: read %lu bytes from banner; expected %lu bytes\n",
+			ret_sz, sizeof(banner));
+		return nullptr;
+	}
+
+	// Convert the image data.
+	GcImage *gcBanner = GcImage::fromRGB5A3(
+				BANNER_IMAGE_W, BANNER_IMAGE_H,
+				banner.image, sizeof(banner.image));
+	if (!gcBanner) {
+		fprintf(stderr, "*** ERROR: Could not convert %s banner image from RGB5A3.\n",
+			magic_num_str(banner.magic).c_str());
+		return nullptr;
+	}
+
+	return gcBanner;
+}
 
 /**
  * Main entry point.
@@ -95,13 +138,11 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	// Read the banner.
-	banner_bnr2_t banner;
-	memset(&banner, 0x00, sizeof(banner));
-	size_t ret_sz = fread(&banner, 1, opening_bnr_sz, f_opening_bnr);
-	if ((long)ret_sz != opening_bnr_sz) {
-		fprintf(stderr, "*** ERROR: read %lu bytes from banner; expected %lu bytes\n",
-			ret_sz, opening_bnr_sz);
+	// Check the magic number.
+	uint32_t magic_num;
+	size_t ret_sz = fread(&magic_num, 1, sizeof(magic_num), f_opening_bnr);
+	if (ret_sz != sizeof(magic_num)) {
+		fprintf(stderr, "*** ERROR: could not read magic number from banner\n");
 		fclose(f_opening_bnr);
 		return EXIT_FAILURE;
 	}
@@ -109,19 +150,19 @@ int main(int argc, char *argv[])
 	// Convert the magic number into a printable string.
 	const char *expectedMagic;
 	char magic[5];
-	memcpy(magic, &banner.magic, 4);
+	memcpy(magic, &magic_num, 4);
 	magic[4] = 0;
+	magic_num = be32_to_cpu(magic_num);
 
 	// Check the magic number.
-	banner.magic = be32_to_cpu(banner.magic);
 	bool isMagicValid = true;
 	if (opening_bnr_sz == sizeof(banner_bnr1_t)) {
-		if (banner.magic != BANNER_MAGIC_BNR1) {
+		if (magic_num != BANNER_MAGIC_BNR1) {
 			isMagicValid = false;
 			expectedMagic = "BNR1";
 		}
 	} else if (opening_bnr_sz == sizeof(banner_bnr2_t)) {
-		if (banner.magic != BANNER_MAGIC_BNR2) {
+		if (magic_num != BANNER_MAGIC_BNR2) {
 			isMagicValid = false;
 			expectedMagic = "BNR2";
 		}		
@@ -138,15 +179,24 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	// TODO: Print text from the banner.
-	// May require Shift-JIS conversion.
+	// Get the banner image.
+	fseek(f_opening_bnr, 0, SEEK_SET);
+	std::auto_ptr<GcImage> gcBanner(nullptr);
+	switch (magic_num) {
+		case BANNER_MAGIC_BNR1:
+		case BANNER_MAGIC_BNR2:
+			// BNR1 and BNR2 use the same structure
+			// for the image data.
+			gcBanner.reset(read_banner_BNR1(f_opening_bnr));
+			break;
 
-	// Convert the image data.
-	GcImage *gcBanner = GcImage::fromRGB5A3(
-				BANNER_IMAGE_W, BANNER_IMAGE_H,
-				banner.image, sizeof(banner.image));
-	if (!gcBanner) {
-		fprintf(stderr, "*** ERROR: Could not convert banner image from RGB5A3.\n");
+		default:
+			gcBanner.reset(nullptr);
+			break;
+	}
+
+	if (!gcBanner.get()) {
+		fprintf(stderr, "*** ERROR: could not read banner image.\n");
 		fclose(f_opening_bnr);
 		return EXIT_FAILURE;
 	}
@@ -194,7 +244,7 @@ int main(int argc, char *argv[])
 
 	// Write to PNG.
 	GcImageWriter gcImageWriter;
-	int ret = gcImageWriter.write(gcBanner, GcImageWriter::IMGF_PNG);
+	int ret = gcImageWriter.write(gcBanner.get(), GcImageWriter::IMGF_PNG);
 	if (ret != 0) {
 		fprintf(stderr, "*** ERROR: GcImageWriter::write() failed: %d\n", ret);
 		fclose(f_opening_bnr);
@@ -222,7 +272,6 @@ int main(int argc, char *argv[])
 	}
 
 	// Success!
-	gcImageWriter.clearMemBuffer();
 	printf("%s -> %s [OK]\n", opening_bnr_filename, image_png_filename);
 	return EXIT_SUCCESS;
 }
