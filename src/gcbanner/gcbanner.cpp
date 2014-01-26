@@ -19,6 +19,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
+#include "config.gcbanner.h"
+#include "util/git.h"
+
 // Banner struct.
 #include "banner.h"
 #include "util/byteswap.h"
@@ -150,7 +153,16 @@ int main(int argc, char *argv[])
 	if (argc == 1 || argc > 4) {
 		fprintf(stderr,
 			"GameCube Banner Extraction Utility\n"
-			"Copyright (c) 2014 by David Korth.\n"
+			"Part of GCN MemCard Recover.\n"
+			"Copyright (c) 2012-2014 by David Korth.\n"
+			"\n"
+			"mcrecover version: " MCRECOVER_VERSION_STRING "\n"
+#ifdef MCRECOVER_GIT_VERSION
+			MCRECOVER_GIT_VERSION "\n"
+#ifdef MCRECOVER_GIT_DESCRIBE
+			MCRECOVER_GIT_DESCRIBE "\n"
+#endif /* MCRECOVER_GIT_DESCRIBE */
+#endif /* MCRECOVER_GIT_DESCRIBE */
 			"\n"
 			"This program is licensed under the GNU GPL v2.\n"
 			"See http://www.gnu.org/licenses/gpl-2.0.html for more information.\n"

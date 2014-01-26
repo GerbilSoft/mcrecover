@@ -18,6 +18,9 @@ INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}/../libgctools")
 # Main binary directory. Needed for git_version.h
 INCLUDE_DIRECTORIES("${mcrecover_base_BINARY_DIR}")
 
+# Write the config.h file.
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.gcbanner.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.gcbanner.h")
+
 # Sources.
 SET(gcbanner_SRCS gcbanner.cpp)
 
