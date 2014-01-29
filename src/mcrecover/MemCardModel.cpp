@@ -612,6 +612,10 @@ void MemCardModel::memCard_filesInserted_slot(void)
 	// Update the animation timer state.
 	d->updateAnimTimerState();
 
+	// Update the file count.
+	if (d->card)
+		d->numFiles = d->card->numFiles();
+
 	// Done adding rows.
 	endInsertRows();
 }
@@ -639,6 +643,11 @@ void MemCardModel::memCard_filesAboutToBeRemoved_slot(int start, int end)
  */
 void MemCardModel::memCard_filesRemoved_slot(void)
 {
+	// Update the file count.
+	Q_D(MemCardModel);
+	if (d->card)
+		d->numFiles = d->card->numFiles();
+
 	// Done removing rows.
 	endRemoveRows();
 }
