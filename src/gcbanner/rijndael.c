@@ -12,10 +12,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define u8 unsigned char	   /* 8 bits  */
-#define u32 unsigned long	   /* 32 bits */
-#define u64 unsigned long long
-
 /* rotates x one bit to the left */
 
 #define ROTL(x) (((x)>>7)|((x)<<1))
@@ -28,38 +24,38 @@
 
 /* Fixed Data */
 
-static u8 InCo[4] = { 0xB, 0xD, 0x9, 0xE }; /* Inverse Coefficients */
+static uint8_t InCo[4] = { 0xB, 0xD, 0x9, 0xE }; /* Inverse Coefficients */
 
-static u8 fbsub[256];
-static u8 rbsub[256];
-static u8 ptab[256], ltab[256];
-static u32 ftable[256];
-static u32 rtable[256];
-static u32 rco[30];
+static uint8_t fbsub[256];
+static uint8_t rbsub[256];
+static uint8_t ptab[256], ltab[256];
+static uint32_t ftable[256];
+static uint32_t rtable[256];
+static uint32_t rco[30];
 
 /* Parameter-dependent data */
 
 int Nk, Nb, Nr;
-u8 fi[24], ri[24];
-u32 fkey[120];
-u32 rkey[120];
+uint8_t fi[24], ri[24];
+uint32_t fkey[120];
+uint32_t rkey[120];
 
-static inline u32 pack(u8 *b)
+static inline uint32_t pack(uint8_t *b)
 { /* pack bytes into a 32-bit Word */
-	return ((u32 ) b[3] << 24) | ((u32 ) b[2] << 16) | ((u32 ) b[1] << 8) | (u32 ) b[0];
+	return ((uint32_t) b[3] << 24) | ((uint32_t) b[2] << 16) | ((uint32_t) b[1] << 8) | (uint32_t) b[0];
 }
 
-static inline void unpack(u32 a, u8 *b)
+static inline void unpack(uint32_t a, uint8_t *b)
 { /* unpack bytes from a word */
-	b[0] = (u8 ) a;
-	b[1] = (u8 ) (a >> 8);
-	b[2] = (u8 ) (a >> 16);
-	b[3] = (u8 ) (a >> 24);
+	b[0] = (uint8_t) a;
+	b[1] = (uint8_t) (a >> 8);
+	b[2] = (uint8_t) (a >> 16);
+	b[3] = (uint8_t) (a >> 24);
 }
 
-static inline u8 xtime(u8 a)
+static inline uint8_t xtime(uint8_t a)
 {
-	u8 b;
+	uint8_t b;
 	if (a & 0x80)
 		b = 0x1B;
 	else b = 0;
@@ -68,16 +64,16 @@ static inline u8 xtime(u8 a)
 	return a;
 }
 
-static inline u8 bmul(u8 x, u8 y)
+static inline uint8_t bmul(uint8_t x, uint8_t y)
 { /* x.y= AntiLog(Log(x) + Log(y)) */
 	if (x && y)
 		return ptab[(ltab[x] + ltab[y]) % 255];
 	else return 0;
 }
 
-static inline u32 SubByte(u32 a)
+static inline uint32_t SubByte(uint32_t a)
 {
-	u8 b[4];
+	uint8_t b[4];
 	unpack(a, b);
 	b[0] = fbsub[b[0]];
 	b[1] = fbsub[b[1]];
@@ -86,18 +82,18 @@ static inline u32 SubByte(u32 a)
 	return pack(b);
 }
 
-static inline u8 product(u32 x, u32 y)
+static inline uint8_t product(uint32_t x, uint32_t y)
 { /* dot product of two 4-byte arrays */
-	u8 xb[4], yb[4];
+	uint8_t xb[4], yb[4];
 	unpack(x, xb);
 	unpack(y, yb);
 	return bmul(xb[0], yb[0]) ^ bmul(xb[1], yb[1]) ^ bmul(xb[2], yb[2]) ^ bmul(xb[3], yb[3]);
 }
 
-static inline u32 InvMixCol(u32 x)
+static inline uint32_t InvMixCol(uint32_t x)
 { /* matrix Multiplication */
-	u32 y, m;
-	u8 b[4];
+	uint32_t y, m;
+	uint8_t b[4];
 
 	m = pack(InCo);
 	b[3] = product(m, x);
@@ -111,9 +107,9 @@ static inline u32 InvMixCol(u32 x)
 	return y;
 }
 
-static inline u8 ByteSub(u8 x)
+static inline uint8_t ByteSub(uint8_t x)
 {
-	u8 y = ptab[255 - ltab[x]]; /* multiplicative inverse */
+	uint8_t y = ptab[255 - ltab[x]]; /* multiplicative inverse */
 	x = y;
 	x = ROTL( x );
 	y ^= x;
@@ -130,7 +126,7 @@ static inline u8 ByteSub(u8 x)
 static inline void gentables(void)
 { /* generate tables */
 	int i;
-	u8 y, b[4];
+	uint8_t y, b[4];
 
 	/* use 3 as primitive root to generate power and log tables */
 
@@ -151,7 +147,7 @@ static inline void gentables(void)
 	rbsub[0x63] = 0;
 	for (i = 1; i < 256; i++)
 	{
-		y = ByteSub((u8 ) i);
+		y = ByteSub((uint8_t) i);
 		fbsub[i] = y;
 		rbsub[y] = i;
 	}
@@ -188,7 +184,7 @@ static inline void gkey(int nb, int nk, char *key)
 	/* Key Scheduler. Create expanded encryption key */
 	int i, j, k, m, N;
 	int C1, C2, C3;
-	u32 CipherKey[8];
+	uint32_t CipherKey[8];
 
 	Nb = nb;
 	Nk = nk;
@@ -225,7 +221,7 @@ static inline void gkey(int nb, int nk, char *key)
 
 	for (i = j = 0; i < Nk; i++, j += 4)
 	{
-		CipherKey[i] = pack((u8 *) &key[j]);
+		CipherKey[i] = pack((uint8_t *) &key[j]);
 	}
 	for (i = 0; i < Nk; i++)
 		fkey[i] = CipherKey[i];
@@ -269,11 +265,11 @@ static inline void gkey(int nb, int nk, char *key)
 static inline void encrypt(char *buff)
 {
 	int i, j, k, m;
-	u32 a[8], b[8], *x, *y, *t;
+	uint32_t a[8], b[8], *x, *y, *t;
 
 	for (i = j = 0; i < Nb; i++, j += 4)
 	{
-		a[i] = pack((u8 *) &buff[j]);
+		a[i] = pack((uint8_t *) &buff[j]);
 		a[i] ^= fkey[i];
 	}
 	k = Nb;
@@ -290,8 +286,8 @@ static inline void encrypt(char *buff)
 		for (m = j = 0; j < Nb; j++, m += 3)
 		{ /* deal with each 32-bit element of the State */
 			/* This is the time-critical bit */
-			y[j] = fkey[k++] ^ ftable[(u8 ) x[j]] ^ ROTL8( ftable[( u8 )( x[fi[m]] >> 8 )] )
-					^ ROTL16( ftable[( u8 )( x[fi[m+1]] >> 16 )] ) ^ ROTL24( ftable[x[fi[m+2]] >> 24] );
+			y[j] = fkey[k++] ^ ftable[(uint8_t) x[j]] ^ ROTL8( ftable[( uint8_t )( x[fi[m]] >> 8 )] )
+					^ ROTL16( ftable[( uint8_t )( x[fi[m+1]] >> 16 )] ) ^ ROTL24( ftable[x[fi[m+2]] >> 24] );
 		}
 		t = x;
 		x = y;
@@ -301,12 +297,12 @@ static inline void encrypt(char *buff)
 	/* Last Round - unroll if possible */
 	for (m = j = 0; j < Nb; j++, m += 3)
 	{
-		y[j] = fkey[k++] ^ (u32 ) fbsub[(u8 ) x[j]] ^ ROTL8( ( u32 )fbsub[( u8 )( x[fi[m]] >> 8 )] )
-				^ ROTL16( ( u32 )fbsub[( u8 )( x[fi[m+1]] >> 16 )] ) ^ ROTL24( ( u32 )fbsub[x[fi[m+2]] >> 24] );
+		y[j] = fkey[k++] ^ (uint32_t) fbsub[(uint8_t) x[j]] ^ ROTL8( ( uint32_t )fbsub[( uint8_t )( x[fi[m]] >> 8 )] )
+				^ ROTL16( ( uint32_t )fbsub[( uint8_t )( x[fi[m+1]] >> 16 )] ) ^ ROTL24( ( uint32_t )fbsub[x[fi[m+2]] >> 24] );
 	}
 	for (i = j = 0; i < Nb; i++, j += 4)
 	{
-		unpack(y[i], (u8 *) &buff[j]);
+		unpack(y[i], (uint8_t *) &buff[j]);
 		x[i] = y[i] = 0; /* clean up stack */
 	}
 	return;
@@ -315,11 +311,11 @@ static inline void encrypt(char *buff)
 static inline void decrypt(char *buff)
 {
 	int i, j, k, m;
-	u32 a[8], b[8], *x, *y, *t;
+	uint32_t a[8], b[8], *x, *y, *t;
 
 	for (i = j = 0; i < Nb; i++, j += 4)
 	{
-		a[i] = pack((u8 *) &buff[j]);
+		a[i] = pack((uint8_t *) &buff[j]);
 		a[i] ^= rkey[i];
 	}
 	k = Nb;
@@ -335,8 +331,8 @@ static inline void decrypt(char *buff)
 
 		for (m = j = 0; j < Nb; j++, m += 3)
 		{ /* This is the time-critical bit */
-			y[j] = rkey[k++] ^ rtable[(u8 ) x[j]] ^ ROTL8( rtable[( u8 )( x[ri[m]] >> 8 )] )
-					^ ROTL16( rtable[( u8 )( x[ri[m+1]] >> 16 )] ) ^ ROTL24( rtable[x[ri[m+2]] >> 24] );
+			y[j] = rkey[k++] ^ rtable[(uint8_t) x[j]] ^ ROTL8( rtable[( uint8_t )( x[ri[m]] >> 8 )] )
+					^ ROTL16( rtable[( uint8_t )( x[ri[m+1]] >> 16 )] ) ^ ROTL24( rtable[x[ri[m+2]] >> 24] );
 		}
 		t = x;
 		x = y;
@@ -346,27 +342,27 @@ static inline void decrypt(char *buff)
 	/* Last Round - unroll if possible */
 	for (m = j = 0; j < Nb; j++, m += 3)
 	{
-		y[j] = rkey[k++] ^ (u32 ) rbsub[(u8 ) x[j]] ^ ROTL8( ( u32 )rbsub[( u8 )( x[ri[m]] >> 8 )] )
-				^ ROTL16( ( u32 )rbsub[( u8 )( x[ri[m+1]] >> 16 )] ) ^ ROTL24( ( u32 )rbsub[x[ri[m+2]] >> 24] );
+		y[j] = rkey[k++] ^ (uint32_t) rbsub[(uint8_t) x[j]] ^ ROTL8( ( uint32_t )rbsub[( uint8_t )( x[ri[m]] >> 8 )] )
+				^ ROTL16( ( uint32_t )rbsub[( uint8_t )( x[ri[m+1]] >> 16 )] ) ^ ROTL24( ( uint32_t )rbsub[x[ri[m+2]] >> 24] );
 	}
 	for (i = j = 0; i < Nb; i++, j += 4)
 	{
-		unpack(y[i], (u8 *) &buff[j]);
+		unpack(y[i], (uint8_t *) &buff[j]);
 		x[i] = y[i] = 0; /* clean up stack */
 	}
 	return;
 }
 
-void aes_set_key(u8 *key)
+void aes_set_key(uint8_t *key)
 {
 	gentables();
 	gkey(4, 4, (char*) key);
 }
 
 // CBC mode decryption
-void aes_decrypt(u8 *iv, u8 *inbuf, u8 *outbuf, unsigned long long len)
+void aes_decrypt(uint8_t *iv, uint8_t *inbuf, uint8_t *outbuf, unsigned long long len)
 {
-	u8 block[16];
+	uint8_t block[16];
 	unsigned int blockno = 0, i;
 
 	//printf("aes_decrypt(%p, %p, %p, %lld)\n", iv, inbuf, outbuf, len);
@@ -385,7 +381,7 @@ void aes_decrypt(u8 *iv, u8 *inbuf, u8 *outbuf, unsigned long long len)
 		//	debug_printf("block %d: fraction = %d\n", blockno, fraction);
 		memcpy(block, inbuf + blockno * sizeof(block), fraction);
 		decrypt((char*) block);
-		u8 *ctext_ptr;
+		uint8_t *ctext_ptr;
 		if (blockno == 0)
 			ctext_ptr = iv;
 		else ctext_ptr = inbuf + (blockno - 1) * sizeof(block);
@@ -398,9 +394,9 @@ void aes_decrypt(u8 *iv, u8 *inbuf, u8 *outbuf, unsigned long long len)
 }
 
 // CBC mode encryption
-void aes_encrypt(u8 *iv, u8 *inbuf, u8 *outbuf, unsigned long long len)
+void aes_encrypt(uint8_t *iv, uint8_t *inbuf, uint8_t *outbuf, unsigned long long len)
 {
-	u8 block[16];
+	uint8_t block[16];
 	unsigned int blockno = 0, i;
 
 	//  debug_printf("aes_decrypt(%p, %p, %p, %lld)\n", iv, inbuf, outbuf, len);
