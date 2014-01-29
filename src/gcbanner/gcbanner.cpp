@@ -46,6 +46,15 @@ using std::vector;
 using std::string;
 using std::auto_ptr;
 
+// Wii encryption keys.
+#include "rijndael.h"
+static const uint8_t Wii_SDKey[16] =
+	{0xAB, 0x01, 0xB9, 0xD8, 0xE1, 0x62, 0x2B, 0x08,
+         0xAF, 0xBA, 0xD8, 0x4D, 0xBF, 0xC2, 0xA5, 0x5D};
+static const uint8_t Wii_SDIV[16] =
+	{0x21, 0x67, 0x12, 0xE6, 0xAA, 0x1F, 0x68, 0x9F,
+	 0x95, 0xC5, 0xA2, 0x23, 0x24, 0xDC, 0x6A, 0x98};
+
 /**
  * File type enum.
  */
@@ -101,9 +110,8 @@ static filetype_t identify_file(FILE *f)
 	fseek(f, 0, SEEK_SET);
 	uint32_t magic_num;
 	size_t ret_sz = fread(&magic_num, 1, sizeof(magic_num), f);
-	if (ret_sz != sizeof(magic_num)) {
+	if (ret_sz != sizeof(magic_num))
 		return FT_UNKNOWN;
-	}
 
 	// Check the magic number.
 	magic_num = be32_to_cpu(magic_num);
@@ -119,7 +127,28 @@ static filetype_t identify_file(FILE *f)
 	}
 
 	// Check for a Wii encrypted save file.
-	// TODO
+	uint8_t header_encrypted[64];
+	uint8_t header_decrypted[64];
+	fseek(f, 0, SEEK_SET);
+	ret_sz = fread(header_encrypted, 1, sizeof(header_encrypted), f);
+	if (ret_sz != sizeof(header_encrypted))
+		return FT_UNKNOWN;
+
+	// Decrypt the header.
+	aes_set_key(Wii_SDKey);
+	uint8_t iv[sizeof(Wii_SDIV)];
+	memcpy(iv, Wii_SDIV, sizeof(iv));
+	aes_decrypt(iv, header_encrypted, header_decrypted, sizeof(header_encrypted));
+
+	// Check the magic number.
+	memcpy(&magic_num, &header_decrypted[0x20], sizeof(magic_num));
+	magic_num = be32_to_cpu(magic_num);
+	if (magic_num == BANNER_WIBN_MAGIC) {
+		// Encrypted WIBN.
+		return FT_WIBN_ENC;
+	}
+
+	// Unknown file format.
 	return FT_UNKNOWN;
 }
 
@@ -216,10 +245,33 @@ static GcImage *read_banner_BNR1(FILE *f)
 
 /**
  * Read the banner image from a WIBN banner.
+ * Internal function; requires loaded, decrypted data.
+ * @param banner Pointer to WIBN banner.
+ * @param ft Filetype.
+ * @return GcImage containing the banner image, or nullptr on error.
+ */
+static GcImage *read_banner_WIBN_internal(const banner_wibn_t *banner, filetype_t ft)
+{
+	// Convert the image data.
+	GcImage *gcBanner = GcImage::fromRGB5A3(
+				BANNER_WIBN_IMAGE_W, BANNER_WIBN_IMAGE_H,
+				banner->banner, sizeof(banner->banner));
+	if (!gcBanner) {
+		fprintf(stderr, "*** ERROR: Could not convert %s banner image from RGB5A3.\n",
+			filetype_str(ft).c_str());
+		return nullptr;
+	}
+
+	return gcBanner;
+}
+
+/**
+ * Read the banner image from a WIBN banner.
+ * Raw version; for extracted banner.bin files.
  * @param f File containing the banner.
  * @return GcImage containing the banner image, or nullptr on error.
  */
-static GcImage *read_banner_WIBN(FILE *f)
+static GcImage *read_banner_WIBN_raw(FILE *f)
 {
 	// Read the banner.
 	banner_wibn_t banner;
@@ -248,16 +300,38 @@ static GcImage *read_banner_WIBN(FILE *f)
 	}
 
 	// Convert the image data.
-	GcImage *gcBanner = GcImage::fromRGB5A3(
-				BANNER_WIBN_IMAGE_W, BANNER_WIBN_IMAGE_H,
-				banner.banner, sizeof(banner.banner));
-	if (!gcBanner) {
-		fprintf(stderr, "*** ERROR: Could not convert %s banner image from RGB5A3.\n",
-			magic_num_str(banner.magic).c_str());
+	return read_banner_WIBN_internal(&banner, FT_WIBN_RAW);
+}
+
+/**
+ * Read the banner image from a WIBN banner.
+ * Encrypted version; for Wii encrypted save iles.
+ * @param f File containing the banner.
+ * @return GcImage containing the banner image, or nullptr on error.
+ */
+static GcImage *read_banner_WIBN_enc(FILE *f)
+{
+	// Read the encrypted banner data.
+	banner_wibn_t banner;
+	uint8_t banner_encrypted[sizeof(banner)];
+
+	// Read the banner.
+	fseek(f, 0, SEEK_SET);
+	size_t ret_sz = fread(banner_encrypted, 1, sizeof(banner_encrypted), f);
+	if (ret_sz != sizeof(banner_encrypted)) {
+		fprintf(stderr, "*** ERROR: read %u bytes from banner; expected %u bytes\n",
+			(unsigned int)ret_sz, (unsigned int)sizeof(banner_encrypted));
 		return nullptr;
 	}
 
-	return gcBanner;
+	// Decrypt the banner.
+	aes_set_key(Wii_SDKey);
+	uint8_t iv[sizeof(Wii_SDIV)];
+	memcpy(iv, Wii_SDIV, sizeof(iv));
+	aes_decrypt(iv, banner_encrypted, (uint8_t*)&banner, sizeof(banner_encrypted));
+
+	// Convert the image data.
+	return read_banner_WIBN_internal(&banner, FT_WIBN_ENC);
 }
 
 /**
@@ -336,12 +410,14 @@ int main(int argc, char *argv[])
 			break;
 
 		case FT_WIBN_RAW:
-			// Wii banner image.
-			gcBanner.reset(read_banner_WIBN(f_opening_bnr));
+			// Wii banner image. (banner.bin)
+			gcBanner.reset(read_banner_WIBN_raw(f_opening_bnr));
 			break;
 
 		case FT_WIBN_ENC:
-			// TODO
+			// Wii banner image. (Wii encrypted save file)
+			gcBanner.reset(read_banner_WIBN_enc(f_opening_bnr));
+			break;
 
 		default:
 			gcBanner.reset(nullptr);
