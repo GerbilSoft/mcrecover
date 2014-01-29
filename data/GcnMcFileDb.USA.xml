@@ -17,7 +17,7 @@
 			<address>0x0000</address>
 			<gameDesc>^Animal Crossing$</gameDesc>
 			<!-- TODO: What characters are valid for the town name? -->
-			<fileDesc>^(.*) Town Data$</fileDesc>
+			<fileDesc>^(?:.*) Town Data$</fileDesc>
 		</search>
 		<dirEntry>
 			<!-- TODO: Verify that the "A" in "MURA" is a slot ID,
@@ -65,13 +65,13 @@
 			<gameDesc>^Baten Kaitos$</gameDesc>
 			<!-- Date format: MM/DD -->
 			<!-- TODO: Verify M/D vs. MM/DD -->
-			<fileDesc>^(\d{3}) .* (\d{2})/(\d{2})</fileDesc>
+			<fileDesc>^(?:\d{3}) .* (\d{2})/(\d{2})</fileDesc>
 		</search>
 		<variables>
-			<variable id="F2">
+			<variable id="F1">
 				<useAs>month</useAs>
 			</variable>
-			<variable id="F3">
+			<variable id="F2">
 				<useAs>day</useAs>
 			</variable>
 		</variables>
@@ -162,7 +162,7 @@
 			<address>0x0000</address>
 			<gameDesc>^Chibi-Robo!$</gameDesc>
 			<!-- TODO: Verify number of slots. -->
-			<fileDesc>^\((\d{1,2})\) Time Played: ( \d|\d{2}):(\d{2}):(\d{2})$</fileDesc>
+			<fileDesc>^\((\d{1,2})\) Time Played: (?: \d|\d{2}):(?:\d{2}):(?:\d{2})$</fileDesc>
 		</search>
 		<variables>
 			<variable id="F1">
@@ -615,7 +615,7 @@
 			<address>0x0000</address>
 			<gameDesc>^LOTR, TTA$</gameDesc>
 			<!-- TODO: Is the "time played" H:MM or HH:MM? -->
-			<fileDesc>^\[(\d{1,3})\] \d{1,2}:\d{2}$</fileDesc>
+			<fileDesc>^\[(\d{1,3})\] (?:\d{1,2}):(?:\d{2})$</fileDesc>
 		</search>
 		<variables>
 			<variable id="F1">
@@ -1386,7 +1386,7 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Sonic Adventure DX  File (\d)$</gameDesc>
-			<fileDesc>^Emblem collected :(  \d| \d{2}|\d{3})$</fileDesc>
+			<fileDesc>^Emblem collected :(?:  \d| \d{2}|\d{3})$</fileDesc>
 		</search>
 		<checksum>
 			<algorithm>CRC-16</algorithm>
@@ -1442,7 +1442,7 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^SONIC ADVENTURE 2 BATTLE$</gameDesc>
-			<fileDesc>^FILE(\d{2}):(  \d| \d{2}|\d{3}) Emblems?$</fileDesc>
+			<fileDesc>^FILE(\d{2}):(?:  \d| \d{2}|\d{3}) Emblems?$</fileDesc>
 		</search>
 		<checksum>
 			<algorithm>AddBytes32</algorithm>
@@ -1566,7 +1566,7 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^SONIC HEROES : (\d{2})$</gameDesc>
-			<fileDesc>^EMBLEM : (\d{3})$</fileDesc>
+			<fileDesc>^EMBLEM : (?:\d{3})$</fileDesc>
 		</search>
 		<variables>
 			<variable id="G1">
@@ -1896,7 +1896,7 @@
 			<gameDesc>^TALES OF SYMPHONIA$</gameDesc>
 			<!-- NOTE: H:MM is play time. Assuming 4 digits maximum. -->
 			<!-- TODO: Is it M or MM? -->
-			<fileDesc>^No\.(\d{3}) Lv ( \d|\d{1,2}) (   \d|  \d{2}| \d{3}|\d{4}):(\d{2})$</fileDesc>
+			<fileDesc>^No\.(\d{3}) Lv (?: \d|\d{1,2}) (?:   \d|  \d{2}| \d{3}|\d{4}):(?:\d{2})$</fileDesc>
 		</search>
 		<variables>
 			<variable id="F1">

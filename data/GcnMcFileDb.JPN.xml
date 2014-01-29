@@ -17,7 +17,7 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^どうぶつの森ｅ＋$</gameDesc>
-			<fileDesc>^｢(.*)｣村の記録$</fileDesc>
+			<fileDesc>^｢(?:.*)｣村の記録$</fileDesc>
 		</search>
 		<dirEntry>
 			<!-- TODO: Verify that the "A" in "MURA" is a slot ID,
@@ -103,7 +103,7 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^ソニックヒーローズ　：　(\p{Nd}{2})$</gameDesc>
-			<fileDesc>^エンブレム枚数　：　(\p{Nd}{3})枚$</fileDesc>
+			<fileDesc>^エンブレム枚数　：　(?:\p{Nd}{3})枚$</fileDesc>
 		</search>
 		<variables>
 			<variable id="G1">

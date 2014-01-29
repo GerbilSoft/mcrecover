@@ -60,7 +60,7 @@
 			<address>0x0000</address>
 			<gameDesc>^Animal Crossing$</gameDesc>
 			<!-- TODO: What characters are valid for the town name? -->
-			<fileDesc>^(.*) Town Data$</fileDesc>
+			<fileDesc>^(?:.*) Town Data$</fileDesc>
 		</search>
 		<dirEntry>
 			<!-- TODO: Verify that the "A" in "MURA" is a slot ID,
@@ -148,7 +148,7 @@
 			<gameDesc>^Chibi-Robo!$</gameDesc>
 			<!-- TODO: Add more language variations. -->
 			<!-- TODO: Verify number of slots. -->
-			<fileDesc>^\((\d{1,2})\) (Time Played|Tempo): ( \d|\d{2}):(\d{2}):(\d{2})$</fileDesc>
+			<fileDesc>^\((\d{1,2})\) (Time Played|Tempo): (?: \d|\d{2}):(?:\d{2}):(?:\d{2})$</fileDesc>
 		</search>
 		<variables>
 			<variable id="F1">
@@ -334,16 +334,16 @@
 			<address>0x20000</address>
 			<gameDesc>^Mario Kart: Double Dash!!$</gameDesc>
 			<!-- Date format: DD/MM/YY -->
-			<fileDesc>^(Game Data|Spielstand|Données|Datos|Dati Gioco) (\d{2})/(\d{2})/(\d{2})$</fileDesc>
+			<fileDesc>^(?:Game Data|Spielstand|Données|Datos|Dati Gioco) (\d{2})/(\d{2})/(\d{2})$</fileDesc>
 		</search>
 		<variables>
-			<variable id="F2">
+			<variable id="F1">
 				<useAs>day</useAs>
 			</variable>
-			<variable id="F3">
+			<variable id="F2">
 				<useAs>month</useAs>
 			</variable>
-			<variable id="F4">
+			<variable id="F3">
 				<useAs>year</useAs>
 			</variable>
 		</variables>
@@ -522,7 +522,7 @@
 			     g[NV](\d{2})YYYYMMDDHHHHmmss(\d{7}).F
 			     Figure out what all this crap means later.
 			     For now, just use known values from a few save files. -->
-			<filename>gV38$F1$F2$F3$F4$F5$F63501245QF</filename>
+			<filename>gV38${F1}${F2}${F3}${F4}${F5}${F6}3501245QF</filename>
 			<bannerFormat>0x02</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x01</iconFormat>
@@ -863,7 +863,7 @@
 			<address>0x0000</address>
 			<gameDesc>^Resident Evil   .*</gameDesc>
 			<!-- TODO: Verify maximum length of $F3. -->
-			<fileDesc>^(\d)\.(.*)/(\d{2})/(.*)$</fileDesc>
+			<fileDesc>^(\d)\.(?:.*)/(?:\d{2})/(?:.*)$</fileDesc>
 		</search>
 		<variables>
 			<variable id="F1">
@@ -889,8 +889,8 @@
 		<company>8P</company>
 		<search>
 			<address>0x0000</address>
-			<gameDesc>^(SEGA Network Information|Informations réseau SEGA)$</gameDesc>
-			<fileDesc>^(ISP,Network setting|FAI,Paramétrages du réseau)$</fileDesc>
+			<gameDesc>^(?:SEGA Network Information|Informations réseau SEGA)$</gameDesc>
+			<fileDesc>^(?:ISP,Network setting|FAI,Paramétrages du réseau)$</fileDesc>
 		</search>
 		<dirEntry>
 			<filename>sega_network_information</filename>
@@ -960,7 +960,7 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Sonic Adventure DX  File (\d)$</gameDesc>
-			<fileDesc>^Emblem collected :(  \d| \d{2}|\d{3})$</fileDesc>
+			<fileDesc>^Emblem collected :(?:  \d| \d{2}|\d{3})$</fileDesc>
 		</search>
 		<checksum>
 			<algorithm>CRC-16</algorithm>
@@ -1016,7 +1016,7 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^SONIC ADVENTURE 2 BATTLE$</gameDesc>
-			<fileDesc>^FILE(\d{2}):(  \d| \d{2}|\d{3}) Emblems?$</fileDesc>
+			<fileDesc>^FILE(\d{2}):(?:  \d| \d{2}|\d{3}) Emblems?$</fileDesc>
 		</search>
 		<checksum>
 			<algorithm>AddBytes32</algorithm>
@@ -1140,7 +1140,7 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^SONIC HEROES : (\d{2})$</gameDesc>
-			<fileDesc>^EMBLEM : (\d{3})$</fileDesc>
+			<fileDesc>^EMBLEM : (?:\d{3})$</fileDesc>
 		</search>
 		<variables>
 			<variable id="G1">
@@ -1347,16 +1347,16 @@
 			<address>0x0000</address>
 			<gameDesc>^Super Smash Bros\. Melee$</gameDesc>
 			<!-- Date format: DD/MM/YYYY -->
-			<fileDesc>^(Game Data|Spielstand|Données|Datos|Dati Gioco) (\d{2})/(\d{2})/(\d{4})$</fileDesc>
+			<fileDesc>^(?:Game Data|Spielstand|Données|Datos|Dati Gioco) (\d{2})/(\d{2})/(\d{4})$</fileDesc>
 		</search>
 		<variables>
-			<variable id="F2">
+			<variable id="F1">
 				<useAs>day</useAs>
 			</variable>
-			<variable id="F3">
+			<variable id="F2">
 				<useAs>month</useAs>
 			</variable>
-			<variable id="F4">
+			<variable id="F3">
 				<useAs>year</useAs>
 			</variable>
 		</variables>
@@ -1380,7 +1380,7 @@
 			<gameDesc>^TALES OF SYMPHONIA$</gameDesc>
 			<!-- NOTE: H:MM is play time. Assuming 4 digits maximum. -->
 			<!-- TODO: Is it M or MM? -->
-			<fileDesc>^No\.(\d{3}) Lv ( \d|\d{1,2}) (   \d|  \d{2}| \d{3}|\d{4}):(\d{2})$</fileDesc>
+			<fileDesc>^No\.(\d{3}) Lv (?: \d|\d{1,2}) (?:   \d|  \d{2}| \d{3}|\d{4}):(?:\d{2})$</fileDesc>
 		</search>
 		<variables>
 			<variable id="F1">
