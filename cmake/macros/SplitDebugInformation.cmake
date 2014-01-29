@@ -12,6 +12,7 @@
 #   executable. (Wine ignores it and works fine!)
 #
 MACRO(SPLIT_DEBUG_INFORMATION EXE_TARGET)
+IF(NOT MSVC)
 	# NOTE: $<TARGET_FILE:gcbanner> is preferred,
 	# but this doesn't seem to work on Ubuntu 10.04.
 	# (cmake_2.8.0-5ubuntu1_i386)
@@ -27,4 +28,5 @@ MACRO(SPLIT_DEBUG_INFORMATION EXE_TARGET)
 			${SPLITDEBUG_EXE_LOCATION}
 		)
 	UNSET(SPLITDEBUG_EXE_LOCATION)
+ENDIF(NOT MSVC)
 ENDMACRO(SPLIT_DEBUG_INFORMATION)
