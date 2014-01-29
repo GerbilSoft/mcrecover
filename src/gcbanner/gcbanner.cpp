@@ -82,9 +82,9 @@ static inline string filetype_str(filetype_t filetype)
 		case FT_BNR2:
 			return "BNR2";
 		case FT_WIBN_RAW:
-			return "WIBN";
+			return "WIBN_raw";
 		case FT_WIBN_ENC:
-			return "WIBNcrypt";
+			return "WIBN_crypt";
 		default:
 			return "????";
 	}
