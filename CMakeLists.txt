@@ -38,12 +38,22 @@ ENDIF(VERSION_DEVEL)
 SET(VERSION_STRING_WIN32 "${VERSION_MAJOR},${VERSION_MINOR},${VERSION_PATCH},${VERSION_DEVEL}")
 
 # Git version information.
-ADD_CUSTOM_TARGET(git_version ALL
-	${mcrecover_base_SOURCE_DIR}/git_version.sh
-	-s "${mcrecover_base_SOURCE_DIR}"
-	-o "${mcrecover_base_BINARY_DIR}/git_version.h"
-	VERBATIM
-	)
+FIND_PROGRAM(POSIX_SH sh)
+IF(POSIX_SH)
+	# sh is available.
+	# Run the git version script.
+	ADD_CUSTOM_TARGET(git_version ALL
+		${POSIX_SH} ${mcrecover_base_SOURCE_DIR}/git_version.sh
+		-s "${mcrecover_base_SOURCE_DIR}"
+		-o "${mcrecover_base_BINARY_DIR}/git_version.h"
+		VERBATIM
+		)
+ELSE(POSIX_SH)
+	# sh isn't available.
+	# Create a blank git_version.h.
+	FILE(WRITE "${mcrecover_base_BINARY_DIR}/git_version.h"
+		"/* dummy file; POSIX sh is not available */\n")
+ENDIF(POSIX_SH)
 
 # If no build type is set, default to "debug".
 IF(CMAKE_BUILD_TYPE MATCHES ^$)
