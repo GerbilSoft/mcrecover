@@ -57,7 +57,7 @@ enum filetype_t {
 	FT_BNR1,
 	FT_BNR2,
 	FT_WIBN_RAW,	// Dolphin banner.bin
-	FT_WIBN_CRYPT,	// Wii encrypted save file
+	FT_WIBN_CRYPT,	// Encrypted Wii save file
 
 	FT_MAX
 };
@@ -120,7 +120,7 @@ static filetype_t identify_file(FILE *f)
 			break;
 	}
 
-	// Check for a Wii encrypted save file.
+	// Check for an encrypted Wii save file.
 	if (!identify_WIBN_crypt(f)) {
 		// Encrypted WIBN.
 		return FT_WIBN_CRYPT;
@@ -302,7 +302,7 @@ int main(int argc, char *argv[])
 			break;
 
 		case FT_WIBN_CRYPT:
-			// Wii banner image. (Wii encrypted save file)
+			// Wii banner image. (Encrypted Wii save file)
 			gcBanner.reset(read_banner_WIBN_crypt(f_opening_bnr));
 			break;
 

@@ -137,7 +137,7 @@ GcImage *read_banner_WIBN_raw(FILE *f)
 
 /**
  * Read the banner image from a WIBN banner.
- * Encrypted version; for Wii encrypted save iles.
+ * Encrypted version; for encrypted Wii save files.
  * @param f File containing the banner.
  * @return GcImage containing the banner image, or nullptr on error.
  */
