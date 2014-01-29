@@ -42,6 +42,9 @@ FIND_PROGRAM(POSIX_SH sh)
 IF(POSIX_SH)
 	# sh is available.
 	# Run the git version script.
+	IF(WIN32)
+		SET(ENV{SHELLOPTS} igncr)
+	ENDIF(WIN32)
 	ADD_CUSTOM_TARGET(git_version ALL
 		${POSIX_SH} ${mcrecover_base_SOURCE_DIR}/git_version.sh
 		-s "${mcrecover_base_SOURCE_DIR}"
