@@ -47,6 +47,19 @@ using std::string;
 using std::auto_ptr;
 
 /**
+ * File type enum.
+ */
+enum filetype_t {
+	FT_UNKNOWN = 0,
+	FT_BNR1,
+	FT_BNR2,
+	FT_WIBN_RAW,	// Dolphin banner.bin
+	FT_WIBN_ENC,	// Wii encrypted save file
+
+	FT_MAX
+};
+
+/**
  * Convert a magic number to a string.
  * @param magic_num Magic number. (DO NOT be32_to_cpu() this value!)
  * @return String.
@@ -57,17 +70,130 @@ static inline string magic_num_str(uint32_t magic_num)
 }
 
 /**
+ * Convert a filetype to a string.
+ * @param filetype File type.
+ * @return String.
+ */
+static inline string filetype_str(filetype_t filetype)
+{
+	switch (filetype) {
+		case FT_BNR1:
+			return "BNR1";
+		case FT_BNR2:
+			return "BNR2";
+		case FT_WIBN_RAW:
+			return "WIBN";
+		case FT_WIBN_ENC:
+			return "WIBNcrypt";
+		default:
+			return "????";
+	}
+}
+
+/**
+ * Identify a given file.
+ * @param f File to check.
+ * @return File type.
+ */
+static filetype_t identify_file(FILE *f)
+{
+	// Check the beginning of the file for a magic number.
+	fseek(f, 0, SEEK_SET);
+	uint32_t magic_num;
+	size_t ret_sz = fread(&magic_num, 1, sizeof(magic_num), f);
+	if (ret_sz != sizeof(magic_num)) {
+		return FT_UNKNOWN;
+	}
+
+	// Check the magic number.
+	magic_num = be32_to_cpu(magic_num);
+	switch (magic_num) {
+		case BANNER_MAGIC_BNR1:
+			return FT_BNR1;
+		case BANNER_MAGIC_BNR2:
+			return FT_BNR2;
+		case BANNER_WIBN_MAGIC:
+			return FT_WIBN_RAW;
+		default:
+			break;
+	}
+
+	// Check for a Wii encrypted save file.
+	// TODO
+	return FT_UNKNOWN;
+}
+
+/**
+ * Verify the filesize of a banner.
+ * NOTE: This function prints a message on error.
+ * @param f File to check.
+ * @param ft Expected filetype.
+ * @return 0 on success; non-zero on error.
+ */
+static int verify_filesize(FILE *f, filetype_t ft)
+{
+	fseek(f, 0, SEEK_END);
+	int sz = (int)ftell(f);
+	fseek(f, 0, SEEK_SET);
+
+	string ft_str = filetype_str(ft);
+	switch (ft) {
+		case FT_BNR1:
+			if (sz != (int)sizeof(banner_bnr1_t)) {
+				fprintf(stderr, "*** ERROR: Banner is type %s, but filesize is %d bytes; expected %d bytes\n",
+					ft_str.c_str(), sz, (int)sizeof(banner_bnr1_t));
+				return EXIT_FAILURE;
+			}
+			break;
+
+		case FT_BNR2:
+			if (sz != (int)sizeof(banner_bnr2_t)) {
+				fprintf(stderr, "*** ERROR: Banner is type %s, but filesize is %d bytes; expected %d bytes\n",
+					ft_str.c_str(), sz, (int)sizeof(banner_bnr2_t));
+				return EXIT_FAILURE;
+			}
+			break;
+
+		case FT_WIBN_RAW: {
+			int testSz = (sz - BANNER_WIBN_STRUCT_SIZE);
+			if (testSz < 0 || testSz % BANNER_WIBN_ICON_SIZE != 0) {
+				fprintf(stderr, "*** ERROR: Banner is type %s, but filesize is %d bytes; expected (%d + n*%d) bytes\n",
+					ft_str.c_str(), sz,
+					BANNER_WIBN_STRUCT_SIZE,
+					BANNER_WIBN_ICON_SIZE);
+				return EXIT_FAILURE;
+			}
+			break;
+		}
+
+		case FT_WIBN_ENC:
+			if (sz < 0xF0C0) {
+				fprintf(stderr, "*** ERROR: Banner is type %s, but filesize is %d bytes; expected at least %d bytes\n",
+					ft_str.c_str(), sz, 0xF0C0);
+				return EXIT_FAILURE;
+			}
+			break;
+
+		default:
+			fprintf(stderr, "*** ERROR: Unknown filetype.\n");
+			return EXIT_FAILURE;
+	}
+
+	// Filesize is valid.
+	return EXIT_SUCCESS;
+}
+
+/**
  * Read the banner image from a BNR1/BNR2 banner.
  * @param f File containing the banner.
- * @param banner_start Banner start address.
  * @return GcImage containing the banner image, or nullptr on error.
  */
-static GcImage *read_banner_BNR1(FILE *f, long banner_start)
+static GcImage *read_banner_BNR1(FILE *f)
 {
 	// Read the banner.
 	banner_bnr1_t banner;
 	memset(&banner, 0x00, sizeof(banner));
-	fseek(f, banner_start, SEEK_SET);
+	fseek(f, 0, SEEK_SET);
 	size_t ret_sz = fread(&banner, 1, sizeof(banner), f);
 	if (ret_sz != sizeof(banner)) {
 		fprintf(stderr, "*** ERROR: read %u bytes from banner; expected %u bytes\n",
@@ -91,15 +217,14 @@ static GcImage *read_banner_BNR1(FILE *f, long banner_start)
 /**
  * Read the banner image from a WIBN banner.
  * @param f File containing the banner.
- * @param banner_start Banner start address.
  * @return GcImage containing the banner image, or nullptr on error.
  */
-static GcImage *read_banner_WIBN(FILE *f, long banner_start)
+static GcImage *read_banner_WIBN(FILE *f)
 {
 	// Read the banner.
 	banner_wibn_t banner;
 	memset(&banner, 0x00, sizeof(banner));
-	fseek(f, banner_start, SEEK_SET);
+	fseek(f, 0, SEEK_SET);
 	size_t ret_sz = fread(&banner, 1, sizeof(banner), f);
 
 	// Banner size varies depending on number of icons.
@@ -183,101 +308,40 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	// Make sure this is a valid banner file.
-	fseek(f_opening_bnr, 0, SEEK_END);
-	long opening_bnr_sz = ftell(f_opening_bnr);
-
-	// Check the magic number.
-	uint32_t magic_num;
-	long banner_start = 0;
-	fseek(f_opening_bnr, banner_start, SEEK_SET);
-	size_t ret_sz = fread(&magic_num, 1, sizeof(magic_num), f_opening_bnr);
-	if (ret_sz != sizeof(magic_num)) {
-		// Check the encrypted address.
-		// This is used on encrypted Wii saves.
-		// TODO: Test this!
-		fseek(f_opening_bnr, BANNER_WIBN_ADDRESS_ENCRYPTED, SEEK_SET);
-		fprintf(stderr, "*** ERROR: could not read magic number from banner\n");
+	// Check the file type.
+	filetype_t ft = identify_file(f_opening_bnr);
+	if (ft <= FT_UNKNOWN || ft >= FT_MAX) {
+		fprintf(stderr, "*** ERROR: unable to identify filetype\n");
 		fclose(f_opening_bnr);
 		return EXIT_FAILURE;
 	}
 
-	// Convert the magic number into a printable string.
-	const char *expectedMagic;
-	char actualMagic[5];
-	memcpy(actualMagic, &magic_num, 4);
-	actualMagic[4] = 0;
-	magic_num = be32_to_cpu(magic_num);
-
-	// Check the magic number.
-	bool isMagicValid = true;
-	switch (opening_bnr_sz) {
-		case sizeof(banner_bnr1_t):
-			if (magic_num != BANNER_MAGIC_BNR1) {
-				isMagicValid = false;
-				expectedMagic = "BNR1";
-			}
-			break;
-
-		case sizeof(banner_bnr2_t):
-			if (magic_num != BANNER_MAGIC_BNR2) {
-				isMagicValid = false;
-				expectedMagic = "BNR2";
-			}
-			break;
-
-		default:
-			// This might be a Wii banner.
-			if (magic_num == BANNER_WIBN_MAGIC) {
-				// Wii banner.
-				break;
-			}
-
-			// Check the encrypted Wii save file address.
-			banner_start = BANNER_WIBN_ADDRESS_ENCRYPTED;
-			fseek(f_opening_bnr, banner_start, SEEK_SET);
-			ret_sz = fread(&magic_num, 1, sizeof(magic_num), f_opening_bnr);
-			if (ret_sz == sizeof(magic_num)) {
-				magic_num = be32_to_cpu(magic_num);
-				if (magic_num == BANNER_WIBN_MAGIC) {
-					// Wii banner.
-					break;
-				}
-			}
-
-			// Unknown banner.
-			isMagicValid = false;
-			expectedMagic = nullptr;
-			break;
-	}
-
-	if (!isMagicValid) {
-		if (!expectedMagic) {
-			fprintf(stderr, "*** ERROR: read magic number %s; filesize %ld is not recognized\n",
-				actualMagic, opening_bnr_sz);
-		} else {
-			fprintf(stderr, "*** ERROR: read magic number %s, expected %s\n",
-				actualMagic, expectedMagic);
-		}
+	// Check the file size.
+	int ret = verify_filesize(f_opening_bnr, ft);
+	if (ret != 0) {
+		fprintf(stderr, "*** ERROR: file is invalid\n");
 		fclose(f_opening_bnr);
 		return EXIT_FAILURE;
 	}
 
 	// Get the banner image.
-	fseek(f_opening_bnr, banner_start, SEEK_SET);
+	fseek(f_opening_bnr, 0, SEEK_SET);
 	std::auto_ptr<GcImage> gcBanner(nullptr);
-	switch (magic_num) {
-		case BANNER_MAGIC_BNR1:
-		case BANNER_MAGIC_BNR2:
+	switch (ft) {
+		case FT_BNR1:
+		case FT_BNR2:
 			// BNR1 and BNR2 use the same structure
 			// for the image data.
-			gcBanner.reset(read_banner_BNR1(f_opening_bnr, banner_start));
+			gcBanner.reset(read_banner_BNR1(f_opening_bnr));
 			break;
 
-		case BANNER_WIBN_MAGIC:
+		case FT_WIBN_RAW:
 			// Wii banner image.
-			gcBanner.reset(read_banner_WIBN(f_opening_bnr, banner_start));
+			gcBanner.reset(read_banner_WIBN(f_opening_bnr));
 			break;
+
+		case FT_WIBN_ENC:
+			// TODO
 
 		default:
 			gcBanner.reset(nullptr);
@@ -333,7 +397,7 @@ int main(int argc, char *argv[])
 
 	// Write to PNG.
 	GcImageWriter gcImageWriter;
-	int ret = gcImageWriter.write(gcBanner.get(), GcImageWriter::IMGF_PNG);
+	ret = gcImageWriter.write(gcBanner.get(), GcImageWriter::IMGF_PNG);
 	if (ret != 0) {
 		fprintf(stderr, "*** ERROR: GcImageWriter::write() failed: %d\n", ret);
 		fclose(f_opening_bnr);
@@ -351,7 +415,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Write the PNG image data.
-	ret_sz = fwrite(pngImageData->data(), 1, pngImageData->size(), f_image_png);
+	size_t ret_sz = fwrite(pngImageData->data(), 1, pngImageData->size(), f_image_png);
 	if (ret_sz != pngImageData->size()) {
 		fprintf(stderr, "*** ERROR: wrote %u bytes to image; expected %u bytes\n",
 			(unsigned int)ret_sz, (unsigned int)pngImageData->size());
@@ -364,6 +428,6 @@ int main(int argc, char *argv[])
 	fclose(f_opening_bnr);
 	fclose(f_image_png);
 	printf("%s (%s) -> %s [OK]\n", opening_bnr_filename,
-	       actualMagic, image_png_filename);
+	       filetype_str(ft).c_str(), image_png_filename);
 	return EXIT_SUCCESS;
 }
