@@ -40,7 +40,7 @@ uint8_t fi[24], ri[24];
 uint32_t fkey[120];
 uint32_t rkey[120];
 
-static inline uint32_t pack(uint8_t *b)
+static inline uint32_t pack(const uint8_t *b)
 { /* pack bytes into a 32-bit Word */
 	return ((uint32_t) b[3] << 24) | ((uint32_t) b[2] << 16) | ((uint32_t) b[1] << 8) | (uint32_t) b[0];
 }
@@ -177,7 +177,7 @@ static inline void gentables(void)
 	}
 }
 
-static inline void gkey(int nb, int nk, char *key)
+static inline void gkey(int nb, int nk, const char *key)
 { /* blocksize=32*nb bits. Key=32*nk bits */
 	/* currently nb,bk = 4, 6 or 8		  */
 	/* key comes as 4*Nk bytes			  */
@@ -221,7 +221,7 @@ static inline void gkey(int nb, int nk, char *key)
 
 	for (i = j = 0; i < Nk; i++, j += 4)
 	{
-		CipherKey[i] = pack((uint8_t *) &key[j]);
+		CipherKey[i] = pack((const uint8_t *) &key[j]);
 	}
 	for (i = 0; i < Nk; i++)
 		fkey[i] = CipherKey[i];
@@ -353,10 +353,10 @@ static inline void decrypt(char *buff)
 	return;
 }
 
-void aes_set_key(uint8_t *key)
+void aes_set_key(const uint8_t *key)
 {
 	gentables();
-	gkey(4, 4, (char*) key);
+	gkey(4, 4, (const char*) key);
 }
 
 // CBC mode decryption
