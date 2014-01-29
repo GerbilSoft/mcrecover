@@ -25,6 +25,7 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.gcbanner.h.in" "${CMAKE_CURRE
 SET(gcbanner_SRCS
 	gcbanner.cpp
 	rijndael.c
+	wibn.cpp
 	)
 
 #########################
