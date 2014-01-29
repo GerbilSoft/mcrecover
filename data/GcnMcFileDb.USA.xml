@@ -65,18 +65,26 @@
 			<gameDesc>^Baten Kaitos$</gameDesc>
 			<!-- Date format: MM/DD -->
 			<!-- TODO: Verify M/D vs. MM/DD -->
-			<fileDesc>^(?:\d{3}) .* (\d{2})/(\d{2})</fileDesc>
+			<fileDesc>^(\d{3}) .* (\d{2})/(\d{2})</fileDesc>
 		</search>
 		<variables>
 			<variable id="F1">
-				<useAs>month</useAs>
+				<useAs>filename</useAs>
+				<type>number</type>
+				<minWidth>3</minWidth>
+				<fillChar>0</fillChar>
+				<align>right</align>
+				<add>-1</add>
 			</variable>
 			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
 				<useAs>day</useAs>
 			</variable>
 		</variables>
 		<dirEntry>
-			<filename>BKData-000</filename>
+			<filename>BKData-${F1}</filename>
 			<bannerFormat>0x65</bannerFormat>
 			<iconAddress>0x01C0</iconAddress>
 			<iconFormat>0x0855</iconFormat>
