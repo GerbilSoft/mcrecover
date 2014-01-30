@@ -504,7 +504,6 @@ int main(int argc, char *argv[])
 	 * - opening.bnr: GameCube banner to convert.
 	 * - image.png: Output image. (If omitted, defaults to renamed banner.)
 	 */
-
 	static struct option long_options[] = {
 		{"banner",	no_argument,		nullptr, 'b'},
 		{"banner-as",	required_argument,	nullptr, 'B'},
