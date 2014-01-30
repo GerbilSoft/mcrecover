@@ -48,8 +48,8 @@ static vlc_getopt_t vlc_getopt_state;
 #define getopt_long(argc, argv, optstring, longopts, longindex) \
 	vlc_getopt_long(argc, argv, optstring, longopts, longindex, &vlc_getopt_state)
 #define option vlc_option
-#define optarg vlc_getopt_state->arg
-#define optind vlc_getopt_state->ind
+#define optarg vlc_getopt_state.arg
+#define optind vlc_getopt_state.ind
 #ifndef no_argument
 #define no_argument 0
 #endif
