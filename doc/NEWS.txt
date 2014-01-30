@@ -67,6 +67,13 @@ Database statistics in this release:
   are now split by region, e.g. USA, JPN, etc. Homebrew and Unlicensed
   titles are also contained in their own databases.
 
+- Added a new utility "gcbanner". This utility can extract banner
+  images and icons from GameCube BNR1 and BNR2 opening.bnr files
+  as well as Wii save files (both raw banner.bin and encrypted save
+  files). Animated icons can be extracted to the same formats
+  supported by GCN MemCard Recover's icon extraction function.
+  Banners and static icons are always extracted in PNG format.
+
 - Added a "top-secret" easter egg. :)
 
 ================================================================
