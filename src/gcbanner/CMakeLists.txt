@@ -18,6 +18,22 @@ INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}/../libgctools")
 # Main binary directory. Needed for git_version.h
 INCLUDE_DIRECTORIES("${mcrecover_base_BINARY_DIR}")
 
+# Check for getopt_long().
+INCLUDE(CheckIncludeFiles)
+INCLUDE(CheckSymbolExists)
+CHECK_INCLUDE_FILES(getopt.h HAVE_GETOPT_H)
+CHECK_SYMBOL_EXISTS(getopt_long "getopt.h" HAVE_GETOPT_LONG)
+IF(HAVE_GETOPT_H AND HAVE_GETOPT_LONG)
+	# System has getopt_long().
+	UNSET(getopt_SRCS)
+ELSE()
+	# System is missing getopt_long().
+	# Use vlc's getopt_long().
+	SET(getopt_SRCS
+		vlc_getopt/getopt.c
+		)
+ENDIF()
+
 # Write the config.h file.
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.gcbanner.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.gcbanner.h")
 
@@ -32,7 +48,10 @@ SET(gcbanner_SRCS
 # Build the executable. #
 #########################
 
-ADD_EXECUTABLE(gcbanner ${gcbanner_SRCS})
+ADD_EXECUTABLE(gcbanner
+	${gcbanner_SRCS}
+	${getopt_SRCS}
+	)
 
 # libgctools
 TARGET_LINK_LIBRARIES(gcbanner gctools)
