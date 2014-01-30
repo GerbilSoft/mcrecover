@@ -225,6 +225,9 @@ static int read_icon_WIBN_internal(const banner_wibn_t *banner, GcImageWriter *g
 		gcIconDelays.push_back(animSpeed & CARD_SPEED_MASK);
 	}
 
+	// Save the number of allocated icons for later.
+	const int alloc_icons = gcImages.size();
+
 	if (failed) {
 		// Icon conversion failed.
 		for (int i = 0; i < (int)gcImages.size(); i++)
@@ -232,7 +235,19 @@ static int read_icon_WIBN_internal(const banner_wibn_t *banner, GcImageWriter *g
 		return -EINVAL;
 	}
 
-	// TODO: Add "bounce" support.
+	const uint32_t flags = be32_to_cpu(banner->flags);
+	if (flags & BANNER_WIBN_FLAGS_ICON_BOUNCE) {
+		// BOUNCE animation.
+		const int maxIcons = (gcImages.size() * 2 - 2);
+		int src = (gcImages.size() - 2);
+		int dest = gcImages.size();
+		gcImages.resize(maxIcons);
+		gcIconDelays.resize(maxIcons);
+		for (; src >= 1; src--, dest++) {
+			gcImages[dest] = gcImages[src];
+			gcIconDelays[dest] = gcIconDelays[src];
+		}
+	}
 
 	// Check for no icon or static icon.
 	int ret;
@@ -248,8 +263,8 @@ static int read_icon_WIBN_internal(const banner_wibn_t *banner, GcImageWriter *g
 		ret = gcImageWriter->write(&gcImages, &gcIconDelays, GcImageWriter::ANIMGF_APNG);
 	}
 
-	// Delete the GcImages.
-	for (int i = 0; i < (int)gcImages.size(); i++)
+	// Delete the allocated GcImages.
+	for (int i = 0; i < alloc_icons; i++)
 		delete gcImages[i];
 	return ret;
 }
