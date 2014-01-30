@@ -245,45 +245,6 @@ static GcImage *read_banner_BNR1(FILE *f)
 }
 
 /**
- * Show program usage information.
- * @param argv0 argv[0]
- */
-static void show_usage(const char *argv0)
-{
-	printf("GameCube Banner Extraction Utility\n"
-		"Part of GCN MemCard Recover.\n"
-		"Copyright (c) 2012-2014 by David Korth.\n"
-		"\n"
-		"mcrecover version: " MCRECOVER_VERSION_STRING "\n"
-#ifdef MCRECOVER_GIT_VERSION
-		MCRECOVER_GIT_VERSION "\n"
-#ifdef MCRECOVER_GIT_DESCRIBE
-		MCRECOVER_GIT_DESCRIBE "\n"
-#endif /* MCRECOVER_GIT_DESCRIBE */
-#endif /* MCRECOVER_GIT_DESCRIBE */
-		"\n"
-		"This program is licensed under the GNU GPL v2.\n"
-		"See http://www.gnu.org/licenses/gpl-2.0.html for more information.\n"
-		"\n"
-		"Usage: %s opening.bnr [OPTION]... [banner.png] [icon.png]\n"
-		"Extract a banner, icon, or both from a GameCube or Wii banner file.\n"
-		"Supported formats: BNR1, BNR2, WIBN_raw, WIBN_crypt\n"
-		"\n"
-		"Options:\n"
-		"  -b, --banner\t\t\tExtract the banner.\n"
-		"  -B, --banner-as[=FILENAME]\tExtract the banner to FILENAME.\n"
-		"  -i, --icon\t\t\tExtract the icon.\n"
-		"  -I, --icon-as[=FILENAME]\tExtract the icon to FILENAME.\n"
-		"  -h, --help\t\t\tDisplay this help and exit.\n"
-		"\n"
-		"If banner.png and icon.png are specified, they override -B and -I.\n"
-		"If -b or -i are specified and filenames are not specified, a filename\n"
-		"will be generated based on the filename of opening.bnr.\n"
-		"If only opening.bnr is specified, only the banner will be extracted.\n"
-		, argv0);
-}
-
-/**
  * Create a new filename based on a given filename.
  * @param filename Original filename.
  * @param suffix New suffix.
@@ -491,6 +452,54 @@ static int extract_icon(FILE *f, filetype_t ft,
 }
 
 /**
+ * Show program version information.
+ */
+static void show_version(void)
+{
+	printf("GameCube Banner Extraction Utility\n"
+		"Part of GCN MemCard Recover.\n"
+		"Copyright (c) 2012-2014 by David Korth.\n"
+		"\n"
+		"mcrecover version: " MCRECOVER_VERSION_STRING "\n"
+#ifdef MCRECOVER_GIT_VERSION
+		MCRECOVER_GIT_VERSION "\n"
+#ifdef MCRECOVER_GIT_DESCRIBE
+		MCRECOVER_GIT_DESCRIBE "\n"
+#endif /* MCRECOVER_GIT_DESCRIBE */
+#endif /* MCRECOVER_GIT_DESCRIBE */
+		"\n"
+		"This program is licensed under the GNU GPL v2.\n"
+		"See http://www.gnu.org/licenses/gpl-2.0.html for more information.\n");
+}
+
+/**
+ * Show program usage information.
+ * @param argv0 argv[0]
+ */
+static void show_usage(const char *argv0)
+{
+	show_version();
+	printf("\n"
+		"Usage: %s opening.bnr [OPTION]... [banner.png] [icon.png]\n"
+		"Extract a banner, icon, or both from a GameCube or Wii banner file.\n"
+		"Supported formats: BNR1, BNR2, WIBN_raw, WIBN_crypt\n"
+		"\n"
+		"Options:\n"
+		"  -b, --banner\t\t\tExtract the banner.\n"
+		"  -B, --banner-as[=FILENAME]\tExtract the banner to FILENAME.\n"
+		"  -i, --icon\t\t\tExtract the icon.\n"
+		"  -I, --icon-as[=FILENAME]\tExtract the icon to FILENAME.\n"
+		"  -h, --help\t\t\tDisplay this help and exit.\n"
+		"      --version\t\t\tOutput version information and exit.\n"
+		"\n"
+		"If banner.png and icon.png are specified, they override -B and -I.\n"
+		"If -b or -i are specified and filenames are not specified, a filename\n"
+		"will be generated based on the filename of opening.bnr.\n"
+		"If only opening.bnr is specified, only the banner will be extracted.\n"
+		, argv0);
+}
+
+/**
  * Main entry point.
  * @param argc Number of arguments.
  * @param argv Array of arguments.
@@ -510,6 +519,8 @@ int main(int argc, char *argv[])
 		{"icon",	no_argument,		nullptr, 'i'},
 		{"icon-as",	required_argument,	nullptr, 'I'},
 		{"help",    	no_argument,		nullptr, 'h'},
+		// NOTE: -V is not valid.
+		{"version",	no_argument,		nullptr, 'V'},
 		{nullptr, 0, nullptr, 0}
 	};
 
@@ -539,6 +550,10 @@ int main(int argc, char *argv[])
 			case 'h':
 				show_usage(argv[0]);
 				return EXIT_SUCCESS;
+			case 'V':
+				show_version();
+				return EXIT_SUCCESS;
+			case '?':
 			default:
 				// Invalid option.
 				fprintf(stderr, "Try '%s --help' for more information.\n", argv[0]);
