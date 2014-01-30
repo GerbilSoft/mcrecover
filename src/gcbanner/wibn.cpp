@@ -144,10 +144,17 @@ GcImage *read_banner_WIBN_raw(FILE *f)
 GcImage *read_banner_WIBN_crypt(FILE *f)
 {
 	// Read the encrypted banner data.
-	banner_wibn_t banner;
-	uint8_t banner_encrypted[sizeof(banner)];
+	uint8_t banner_encrypted[0x20 + sizeof(banner_wibn_t)];
+	union {
+		uint8_t data[0x20 + sizeof(banner_wibn_t)];
+		struct {
+			uint8_t header[0x20];
+			banner_wibn_t banner;
+		};
+	} banner_decrypted;
 
 	// Read the banner.
+	// NOTE: Must start at 0x00 due to encryption.
 	fseek(f, 0, SEEK_SET);
 	size_t ret_sz = fread(banner_encrypted, 1, sizeof(banner_encrypted), f);
 	if (ret_sz != sizeof(banner_encrypted)) {
@@ -160,8 +167,8 @@ GcImage *read_banner_WIBN_crypt(FILE *f)
 	aes_set_key(Wii_SDKey);
 	uint8_t iv[sizeof(Wii_SDIV)];
 	memcpy(iv, Wii_SDIV, sizeof(iv));
-	aes_decrypt(iv, banner_encrypted, (uint8_t*)&banner, sizeof(banner_encrypted));
+	aes_decrypt(iv, banner_encrypted, (uint8_t*)&banner_decrypted, sizeof(banner_encrypted));
 
 	// Convert the image data.
-	return read_banner_WIBN_internal(&banner, true);
+	return read_banner_WIBN_internal(&banner_decrypted.banner, true);
 }
