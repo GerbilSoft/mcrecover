@@ -1352,7 +1352,7 @@ int MemCardFile::saveIcon(const QString &filenameNoExt,
 		for (int i = 0; i < d->gcIcons.size(); i++)
 			gcIconDelays[i] = iconDelay(i);
 
-		if (iconAnimMode() == CARD_ANIM_BOUNCE) {
+		if (gcImages.size() > 1 && iconAnimMode() == CARD_ANIM_BOUNCE) {
 			// BOUNCE animation.
 			int src = (gcImages.size() - 2);
 			int dest = gcImages.size();
