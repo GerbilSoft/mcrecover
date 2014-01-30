@@ -365,7 +365,7 @@ static int extract_banner(FILE *f, filetype_t ft,
 	if (!f_banner_png) {
 		fprintf(stderr, "*** ERROR opening file %s: %s\n",
 			s_banner_png_filename.c_str(), strerror(errno));
-		return -1;
+		return -2;
 	}
 
 	// Write to PNG.
@@ -374,15 +374,15 @@ static int extract_banner(FILE *f, filetype_t ft,
 	if (ret != 0) {
 		fprintf(stderr, "*** ERROR: GcImageWriter::write() failed: %d\n", ret);
 		fclose(f_banner_png);
-		return -2;
+		return -3;
 	}
 
 	// Get the PNG image data.
 	const vector<uint8_t> *pngImageData = gcImageWriter.memBuffer();
 	if (!pngImageData || pngImageData->empty()) {
-		fprintf(stderr, "*** ERROR: GcImageWriter has no PNG image data.\n");
+		fprintf(stderr, "*** ERROR: GcImageWriter has no image data.\n");
 		fclose(f_banner_png);
-		return -3;
+		return -4;
 	}
 
 	// Write the PNG image data.
@@ -391,31 +391,102 @@ static int extract_banner(FILE *f, filetype_t ft,
 		fprintf(stderr, "*** ERROR: wrote %u bytes to image; expected %u bytes\n",
 			(unsigned int)ret_sz, (unsigned int)pngImageData->size());
 		fclose(f_banner_png);
-		return EXIT_FAILURE;
+		return -5;
 	}
-
-#if 0
-	// TESTING CODE; add better icon extraction code later.
-	if (ft == FT_WIBN_RAW || ft == FT_WIBN_CRYPT) {
-		string apng_filename(image_png_filename);
-		apng_filename += ".icon.png";
-		GcImageWriter gcImageWriter;
-		if (ft == FT_WIBN_RAW)
-			read_icon_WIBN_raw(f_opening_bnr, &gcImageWriter);
-		else
-			read_icon_WIBN_crypt(f_opening_bnr, &gcImageWriter);
-		const std::vector<uint8_t> *memBuffer = gcImageWriter.memBuffer();
-
-		FILE *f_icon_png = fopen(apng_filename.c_str(), "wb");
-		fwrite(memBuffer->data(), 1, memBuffer->size(), f_icon_png);
-		fclose(f_icon_png);
-	}
-#endif
 
 	// Success!
 	fclose(f_banner_png);
 	printf("%s (%s) banner -> %s [OK]\n", opening_bnr_filename,
 	       filetype_str(ft).c_str(), s_banner_png_filename.c_str());
+	return 0;
+}
+
+/**
+ * Extract the icon from the specified GCN/Wii banner.
+ * @param f opening.bnr file.
+ * @param ft Filetype.
+ * @param animgf Animated image format.
+ * @param opening_bnr_filename opening.bnr filename.
+ * @param icon_png_filename Filename for icon.png.
+ */
+static int extract_icon(FILE *f, filetype_t ft,
+		GcImageWriter::AnimImageFormat animgf,
+		const char *opening_bnr_filename,
+		const char *icon_png_filename)
+{
+	fseek(f, 0, SEEK_SET);
+	GcImageWriter gcImageWriter;
+	switch (ft) {
+		case FT_BNR1:
+		case FT_BNR2:
+			// BNR1 and BNR2 don't have icons.
+			printf("%s (%s) icon -> no icons\n", opening_bnr_filename,
+				filetype_str(ft).c_str());
+			return 0;
+
+		case FT_WIBN_RAW:
+			// Wii banner image. (banner.bin)
+			read_icon_WIBN_raw(f, &gcImageWriter);
+			break;
+
+		case FT_WIBN_CRYPT:
+			// Wii banner image. (Encrypted Wii save file)
+			read_icon_WIBN_crypt(f, &gcImageWriter);
+			break;
+
+		default:
+			break;
+	}
+
+	if (gcImageWriter.numFiles() <= 0) {
+		fprintf(stderr, "*** ERROR: could not read icon.\n");
+		return -1;
+	}
+
+	// Determine the destination filename.
+	string s_icon_png_filename;
+	if (icon_png_filename) {
+		s_icon_png_filename = string(icon_png_filename);
+	} else {
+		const char *ext = GcImageWriter::extForAnimImageFormat(animgf);
+		// TODO: PNG FPF support.
+		string suffix(".icon.");
+		suffix.append(ext);
+		s_icon_png_filename = create_filename(opening_bnr_filename, suffix.c_str());
+	}
+
+	// Open the destination file.
+	// TODO: PNG FPF support.
+	// TODO: Delete on failure?
+	FILE *f_icon_png = fopen(s_icon_png_filename.c_str(), "wb");
+	if (!f_icon_png) {
+		fprintf(stderr, "*** ERROR opening file %s: %s\n",
+			s_icon_png_filename.c_str(), strerror(errno));
+		return -2;
+	}
+
+	// Get the PNG image data.
+	// TODO: PNG FPF support.
+	const vector<uint8_t> *pngImageData = gcImageWriter.memBuffer();
+	if (!pngImageData || pngImageData->empty()) {
+		fprintf(stderr, "*** ERROR: GcImageWriter has no image data.\n");
+		fclose(f_icon_png);
+		return -3;
+	}
+
+	// Write the PNG image data.
+	size_t ret_sz = fwrite(pngImageData->data(), 1, pngImageData->size(), f_icon_png);
+	if (ret_sz != pngImageData->size()) {
+		fprintf(stderr, "*** ERROR: wrote %u bytes to image; expected %u bytes\n",
+			(unsigned int)ret_sz, (unsigned int)pngImageData->size());
+		fclose(f_icon_png);
+		return -4;
+	}
+
+	// Success!
+	fclose(f_icon_png);
+	printf("%s (%s) icon -> %s [OK]\n", opening_bnr_filename,
+	       filetype_str(ft).c_str(), s_icon_png_filename.c_str());
 	return 0;
 }
 
@@ -495,10 +566,12 @@ int main(int argc, char *argv[])
 	}
 	if (optind+2 <= argc) {
 		// banner.png
+		doBanner = true;
 		banner_png_filename = argv[optind+1];
 	}
 	if (optind+3 <= argc) {
 		// icon.png
+		doIcon = true;
 		icon_png_filename = argv[optind+2];
 	}
 	if (optind+4 <= argc) {
@@ -537,6 +610,17 @@ int main(int argc, char *argv[])
 		ret = extract_banner(f_opening_bnr, ft,
 				opening_bnr_filename,
 				banner_png_filename);
+		if (ret != 0)
+			goto end;
+	}
+
+	// Extract the icon.
+	if (doIcon) {
+		// TODO: Allow the user to select animgf.
+		ret = extract_icon(f_opening_bnr, ft,
+				GcImageWriter::ANIMGF_APNG,
+				opening_bnr_filename,
+				icon_png_filename);
 		if (ret != 0)
 			goto end;
 	}
