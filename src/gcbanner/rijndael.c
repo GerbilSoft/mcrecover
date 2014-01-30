@@ -9,8 +9,17 @@
 
  */
 
+#include "rijndael.h"
+
+// C includes.
 #include <stdio.h>
 #include <string.h>
+
+// 
+/** MSVC compatibility macros. **/
+#ifdef _MSC_VER
+#define inline __inline
+#endif /* _MSC_VER */
 
 /* rotates x one bit to the left */
 
@@ -370,6 +379,7 @@ void aes_decrypt(uint8_t *iv, uint8_t *inbuf, uint8_t *outbuf, unsigned long lon
 	for (blockno = 0; blockno <= (len / sizeof(block)); blockno++)
 	{
 		unsigned int fraction;
+		uint8_t *ctext_ptr; // Moved here for MSVC compatibility.
 		if (blockno == (len / sizeof(block))) // last block
 		{
 			fraction = len % sizeof(block);
@@ -381,7 +391,7 @@ void aes_decrypt(uint8_t *iv, uint8_t *inbuf, uint8_t *outbuf, unsigned long lon
 		//	debug_printf("block %d: fraction = %d\n", blockno, fraction);
 		memcpy(block, inbuf + blockno * sizeof(block), fraction);
 		decrypt((char*) block);
-		uint8_t *ctext_ptr;
+		//uint8_t *ctext_ptr; // Moved up for MSVC compatibility.
 		if (blockno == 0)
 			ctext_ptr = iv;
 		else ctext_ptr = inbuf + (blockno - 1) * sizeof(block);
