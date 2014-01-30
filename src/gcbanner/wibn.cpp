@@ -236,7 +236,7 @@ static int read_icon_WIBN_internal(const banner_wibn_t *banner, GcImageWriter *g
 	}
 
 	const uint32_t flags = be32_to_cpu(banner->flags);
-	if (flags & BANNER_WIBN_FLAGS_ICON_BOUNCE) {
+	if (alloc_icons > 1 && (flags & BANNER_WIBN_FLAGS_ICON_BOUNCE)) {
 		// BOUNCE animation.
 		const int maxIcons = (gcImages.size() * 2 - 2);
 		int src = (gcImages.size() - 2);
