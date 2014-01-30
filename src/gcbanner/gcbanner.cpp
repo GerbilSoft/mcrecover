@@ -38,6 +38,29 @@
 // C includes.
 #include <stdlib.h>
 
+// getopt_long()
+#ifdef HAVE_GETOPT_H
+#include <getopt.h>
+#endif /* HAVE_GETOPT_H */
+#ifndef HAVE_GETOPT_LONG
+#include "vlc_getopt/vlc_getopt.h"
+static vlc_getopt_t vlc_getopt_state;
+#define getopt_long(argc, argv, optstring, longopts, longindex) \
+	vlc_getopt_long(argc, argv, optstring, longopts, longindex, &vlc_getopt_state)
+#define option vlc_option
+#define optarg vlc_getopt_state->arg
+#define optind vlc_getopt_state->ind
+#ifndef no_argument
+#define no_argument 0
+#endif
+#ifndef required_argument
+#define required_argument 1
+#endif
+#ifndef optional_argument
+#define optional_argument 2
+#endif
+#endif /* HAVE_GETOPT_LONG */
+
 // C++ includes.
 #include <vector>
 #include <string>
@@ -222,6 +245,181 @@ static GcImage *read_banner_BNR1(FILE *f)
 }
 
 /**
+ * Show program usage information.
+ * @param argv0 argv[0]
+ */
+static void show_usage(const char *argv0)
+{
+	printf("GameCube Banner Extraction Utility\n"
+		"Part of GCN MemCard Recover.\n"
+		"Copyright (c) 2012-2014 by David Korth.\n"
+		"\n"
+		"mcrecover version: " MCRECOVER_VERSION_STRING "\n"
+#ifdef MCRECOVER_GIT_VERSION
+		MCRECOVER_GIT_VERSION "\n"
+#ifdef MCRECOVER_GIT_DESCRIBE
+		MCRECOVER_GIT_DESCRIBE "\n"
+#endif /* MCRECOVER_GIT_DESCRIBE */
+#endif /* MCRECOVER_GIT_DESCRIBE */
+		"\n"
+		"This program is licensed under the GNU GPL v2.\n"
+		"See http://www.gnu.org/licenses/gpl-2.0.html for more information.\n"
+		"\n"
+		"Usage: %s opening.bnr [OPTION]... [banner.png] [icon.png]\n"
+		"Extract a banner, icon, or both from a GameCube or Wii banner file.\n"
+		"Supported formats: BNR1, BNR2, WIBN_raw, WIBN_crypt\n"
+		"\n"
+		"Options:\n"
+		"  -b, --banner\t\t\tExtract the banner.\n"
+		"  -B, --banner-as[=FILENAME]\tExtract the banner to FILENAME.\n"
+		"  -i, --icon\t\t\tExtract the icon.\n"
+		"  -I, --icon-as[=FILENAME]\tExtract the icon to FILENAME.\n"
+		"  -h, --help\t\t\tDisplay this help and exit.\n"
+		"\n"
+		"If banner.png and icon.png are specified, they override -B and -I.\n"
+		"If -b or -i are specified and filenames are not specified, a filename\n"
+		"will be generated based on the filename of opening.bnr.\n"
+		"If only opening.bnr is specified, only the banner will be extracted.\n"
+		, argv0);
+}
+
+/**
+ * Create a new filename based on a given filename.
+ * @param filename Original filename.
+ * @param suffix New suffix.
+ * @return New filename.
+ */
+string create_filename(const char *filename, const char *suffix)
+{
+	// image.png was not specified.
+	// Remove the extension from the current file (if any),
+	// and replace it with .png.
+	string tmp_filename(filename);
+	int dot_pos = tmp_filename.find_last_of('.');
+	int slash_pos = tmp_filename.find_last_of('/');
+#ifdef _WIN32
+	int bslash_pos = tmp_filename.find_last_of('\\');
+	if (bslash_pos > slash_pos)
+		slash_pos = bslash_pos;
+#endif /* _WIN32 */
+	if (dot_pos > slash_pos) {
+		// File extension. Remove it.
+		tmp_filename.erase(dot_pos);
+	}
+
+	// Append the new extension.
+	tmp_filename.append(suffix);
+	return tmp_filename;
+}
+
+/**
+ * Extract the banner image from the specified GCN/Wii banner.
+ * @param f opening.bnr file.
+ * @param ft Filetype.
+ * @param opening_bnr_filename opening.bnr filename.
+ * @param banner_png_filename Filename for banner.png.
+ */
+static int extract_banner(FILE *f, filetype_t ft,
+		const char *opening_bnr_filename,
+		const char *banner_png_filename)
+{
+	fseek(f, 0, SEEK_SET);
+	std::auto_ptr<GcImage> gcBanner(nullptr);
+	switch (ft) {
+		case FT_BNR1:
+		case FT_BNR2:
+			// BNR1 and BNR2 use the same structure
+			// for the image data.
+			gcBanner.reset(read_banner_BNR1(f));
+			break;
+
+		case FT_WIBN_RAW:
+			// Wii banner image. (banner.bin)
+			gcBanner.reset(read_banner_WIBN_raw(f));
+			break;
+
+		case FT_WIBN_CRYPT:
+			// Wii banner image. (Encrypted Wii save file)
+			gcBanner.reset(read_banner_WIBN_crypt(f));
+			break;
+
+		default:
+			gcBanner.reset(nullptr);
+			break;
+	}
+
+	if (!gcBanner.get()) {
+		fprintf(stderr, "*** ERROR: could not read banner image.\n");
+		return -1;
+	}
+
+	// Determine the destination filename.
+	string s_banner_png_filename =
+			(banner_png_filename
+				? string(banner_png_filename)
+				: create_filename(opening_bnr_filename, ".banner.png"));
+		
+	// Open the destination file.
+	// TODO: Delete on failure?
+	FILE *f_banner_png = fopen(s_banner_png_filename.c_str(), "wb");
+	if (!f_banner_png) {
+		fprintf(stderr, "*** ERROR opening file %s: %s\n",
+			s_banner_png_filename.c_str(), strerror(errno));
+		return -1;
+	}
+
+	// Write to PNG.
+	GcImageWriter gcImageWriter;
+	int ret = gcImageWriter.write(gcBanner.get(), GcImageWriter::IMGF_PNG);
+	if (ret != 0) {
+		fprintf(stderr, "*** ERROR: GcImageWriter::write() failed: %d\n", ret);
+		fclose(f_banner_png);
+		return -2;
+	}
+
+	// Get the PNG image data.
+	const vector<uint8_t> *pngImageData = gcImageWriter.memBuffer();
+	if (!pngImageData || pngImageData->empty()) {
+		fprintf(stderr, "*** ERROR: GcImageWriter has no PNG image data.\n");
+		fclose(f_banner_png);
+		return -3;
+	}
+
+	// Write the PNG image data.
+	size_t ret_sz = fwrite(pngImageData->data(), 1, pngImageData->size(), f_banner_png);
+	if (ret_sz != pngImageData->size()) {
+		fprintf(stderr, "*** ERROR: wrote %u bytes to image; expected %u bytes\n",
+			(unsigned int)ret_sz, (unsigned int)pngImageData->size());
+		fclose(f_banner_png);
+		return EXIT_FAILURE;
+	}
+
+#if 0
+	// TESTING CODE; add better icon extraction code later.
+	if (ft == FT_WIBN_RAW || ft == FT_WIBN_CRYPT) {
+		string apng_filename(image_png_filename);
+		apng_filename += ".icon.png";
+		GcImageWriter gcImageWriter;
+		if (ft == FT_WIBN_RAW)
+			read_icon_WIBN_raw(f_opening_bnr, &gcImageWriter);
+		else
+			read_icon_WIBN_crypt(f_opening_bnr, &gcImageWriter);
+		const std::vector<uint8_t> *memBuffer = gcImageWriter.memBuffer();
+
+		FILE *f_icon_png = fopen(apng_filename.c_str(), "wb");
+		fwrite(memBuffer->data(), 1, memBuffer->size(), f_icon_png);
+		fclose(f_icon_png);
+	}
+#endif
+
+	// Success!
+	fclose(f_banner_png);
+	printf("%s (%s) banner -> %s [OK]\n", opening_bnr_filename,
+	       filetype_str(ft).c_str(), s_banner_png_filename.c_str());
+	return 0;
+}
+
+/**
  * Main entry point.
  * @param argc Number of arguments.
  * @param argv Array of arguments.
@@ -236,33 +434,82 @@ int main(int argc, char *argv[])
 	 * - image.png: Output image. (If omitted, defaults to renamed banner.)
 	 */
 
-	if (argc == 1 || argc > 4) {
-		fprintf(stderr,
-			"GameCube Banner Extraction Utility\n"
-			"Part of GCN MemCard Recover.\n"
-			"Copyright (c) 2012-2014 by David Korth.\n"
-			"\n"
-			"mcrecover version: " MCRECOVER_VERSION_STRING "\n"
-#ifdef MCRECOVER_GIT_VERSION
-			MCRECOVER_GIT_VERSION "\n"
-#ifdef MCRECOVER_GIT_DESCRIBE
-			MCRECOVER_GIT_DESCRIBE "\n"
-#endif /* MCRECOVER_GIT_DESCRIBE */
-#endif /* MCRECOVER_GIT_DESCRIBE */
-			"\n"
-			"This program is licensed under the GNU GPL v2.\n"
-			"See http://www.gnu.org/licenses/gpl-2.0.html for more information.\n"
-			"\n"
-			"Syntax: %s opening.bnr [image.png]\n"
-			"- opening.bnr: GameCube banner to convert.\n"
-			"- image.png: Output image. (If omitted, defaults to renamed banner.)\n"
-			, argv[0]);
+	static struct option long_options[] = {
+		{"banner",	no_argument,		nullptr, 'b'},
+		{"banner-as",	required_argument,	nullptr, 'B'},
+		{"icon",	no_argument,		nullptr, 'i'},
+		{"icon-as",	required_argument,	nullptr, 'I'},
+		{"help",    	no_argument,		nullptr, 'h'},
+		{nullptr, 0, nullptr, 0}
+	};
+
+	// NOTE: If both are false after parsing all arguments,
+	// default to doBanner = true.
+	bool doBanner = false, doIcon = false;
+	const char *banner_png_filename = nullptr;
+	const char *icon_png_filename = nullptr;
+
+	int c, option_index;
+	while ((c = getopt_long(argc, argv, "bB:iI:h", long_options, &option_index)) != -1) {
+		switch (c) {
+			case 'b':
+				doBanner = true;
+				break;
+			case 'B':
+				doBanner = true;
+				banner_png_filename = optarg;
+				break;
+			case 'i':
+				doIcon = true;
+				break;
+			case 'I':
+				doIcon = true;
+				icon_png_filename = optarg;
+				break;
+			case 'h':
+				show_usage(argv[0]);
+				return EXIT_SUCCESS;
+			default:
+				// Invalid option.
+				fprintf(stderr, "Try '%s --help' for more information.\n", argv[0]);
+				return EXIT_FAILURE;
+		}
+	}
+
+	// If neither -b/-B nor -i/-I were specified,
+	// default to -b.
+	if (!doBanner && !doIcon)
+		doBanner = true;
+
+	// Check if any filenames were specified.
+	if (optind == argc) {
+		fprintf(stderr, "%s: missing opening.bnr operand\n"
+			"Try '%s --help' for more information.\n", argv[0], argv[0]);
+		return EXIT_FAILURE;
+	}
+
+	const char *opening_bnr_filename = nullptr;
+	if (optind+1 <= argc) {
+		// opening.bnr
+		opening_bnr_filename = argv[optind];
+	}
+	if (optind+2 <= argc) {
+		// banner.png
+		banner_png_filename = argv[optind+1];
+	}
+	if (optind+3 <= argc) {
+		// icon.png
+		icon_png_filename = argv[optind+2];
+	}
+	if (optind+4 <= argc) {
+		// Too many parameters.
+		fprintf(stderr, "%s: too many parameters specified\n"
+			"Try '%s --help' for more information.\n", argv[0], argv[0]);
 		return EXIT_FAILURE;
 	}
 
 	// Open the GameCube banner file.
-	const char *opening_bnr_filename = argv[1];
-	FILE *f_opening_bnr = fopen(argv[1], "rb");
+	FILE *f_opening_bnr = fopen(opening_bnr_filename, "rb");
 	if (!f_opening_bnr) {
 		fprintf(stderr, "*** ERROR opening file %s: %s\n",
 			opening_bnr_filename, strerror(errno));
@@ -285,128 +532,16 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	// Get the banner image.
-	fseek(f_opening_bnr, 0, SEEK_SET);
-	std::auto_ptr<GcImage> gcBanner(nullptr);
-	switch (ft) {
-		case FT_BNR1:
-		case FT_BNR2:
-			// BNR1 and BNR2 use the same structure
-			// for the image data.
-			gcBanner.reset(read_banner_BNR1(f_opening_bnr));
-			break;
-
-		case FT_WIBN_RAW:
-			// Wii banner image. (banner.bin)
-			gcBanner.reset(read_banner_WIBN_raw(f_opening_bnr));
-			break;
-
-		case FT_WIBN_CRYPT:
-			// Wii banner image. (Encrypted Wii save file)
-			gcBanner.reset(read_banner_WIBN_crypt(f_opening_bnr));
-			break;
-
-		default:
-			gcBanner.reset(nullptr);
-			break;
+	// Extract the banner image.
+	if (doBanner) {
+		ret = extract_banner(f_opening_bnr, ft,
+				opening_bnr_filename,
+				banner_png_filename);
+		if (ret != 0)
+			goto end;
 	}
 
-	if (!gcBanner.get()) {
-		fprintf(stderr, "*** ERROR: could not read banner image.\n");
-		fclose(f_opening_bnr);
-		return EXIT_FAILURE;
-	}
-
-	// Determine the destination filename.
-	const char *image_png_filename;
-	if (argc >= 3) {
-		// image.png was specified.
-		image_png_filename = argv[2];
-	} else {
-		// image.png was not specified.
-		// Remove the extension from the current file (if any),
-		// and replace it with .png.
-		string png_filename(opening_bnr_filename);
-		int dot_pos = png_filename.find_last_of('.');
-		int slash_pos = png_filename.find_last_of('/');
-#ifdef _WIN32
-		int bslash_pos = png_filename.find_last_of('\\');
-		if (bslash_pos > slash_pos)
-			slash_pos = bslash_pos;
-#endif /* _WIN32 */
-		if (dot_pos > slash_pos) {
-			// File extension. Remove it.
-			png_filename.erase(dot_pos);
-		}
-
-		// Append the new extension.
-		png_filename.append(".png");
-
-		// strdup() it to image_png_filename.
-		// NOTE: This results in a "memory leak", but since
-		// the program is short-lived, we don't care.
-		image_png_filename = strdup(png_filename.c_str());
-	}
-
-	// Open the destination file.
-	// TODO: Delete on failure?
-	FILE *f_image_png = fopen(image_png_filename, "wb");
-	if (!f_image_png) {
-		fprintf(stderr, "*** ERROR opening file %s: %s\n",
-			image_png_filename, strerror(errno));
-		fclose(f_opening_bnr);
-		return EXIT_FAILURE;
-	}
-
-	// Write to PNG.
-	GcImageWriter gcImageWriter;
-	ret = gcImageWriter.write(gcBanner.get(), GcImageWriter::IMGF_PNG);
-	if (ret != 0) {
-		fprintf(stderr, "*** ERROR: GcImageWriter::write() failed: %d\n", ret);
-		fclose(f_opening_bnr);
-		fclose(f_image_png);
-		return EXIT_FAILURE;
-	}
-
-	// Get the PNG image data.
-	const vector<uint8_t> *pngImageData = gcImageWriter.memBuffer();
-	if (!pngImageData || pngImageData->empty()) {
-		fprintf(stderr, "*** ERROR: GcImageWriter has no PNG image data.\n");
-		fclose(f_opening_bnr);
-		fclose(f_image_png);
-		return EXIT_FAILURE;
-	}
-
-	// Write the PNG image data.
-	size_t ret_sz = fwrite(pngImageData->data(), 1, pngImageData->size(), f_image_png);
-	if (ret_sz != pngImageData->size()) {
-		fprintf(stderr, "*** ERROR: wrote %u bytes to image; expected %u bytes\n",
-			(unsigned int)ret_sz, (unsigned int)pngImageData->size());
-		fclose(f_opening_bnr);
-		fclose(f_image_png);
-		return EXIT_FAILURE;
-	}
-
-	// TESTING CODE; add better icon extraction code later.
-	if (ft == FT_WIBN_RAW || ft == FT_WIBN_CRYPT) {
-		string apng_filename(image_png_filename);
-		apng_filename += ".icon.png";
-		GcImageWriter gcImageWriter;
-		if (ft == FT_WIBN_RAW)
-			read_icon_WIBN_raw(f_opening_bnr, &gcImageWriter);
-		else
-			read_icon_WIBN_crypt(f_opening_bnr, &gcImageWriter);
-		const std::vector<uint8_t> *memBuffer = gcImageWriter.memBuffer();
-
-		FILE *f_icon_png = fopen(apng_filename.c_str(), "wb");
-		fwrite(memBuffer->data(), 1, memBuffer->size(), f_icon_png);
-		fclose(f_icon_png);
-	}
-
-	// Success!
+end:
 	fclose(f_opening_bnr);
-	fclose(f_image_png);
-	printf("%s (%s) -> %s [OK]\n", opening_bnr_filename,
-	       filetype_str(ft).c_str(), image_png_filename);
-	return EXIT_SUCCESS;
+	return (ret == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }
