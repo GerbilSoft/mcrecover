@@ -387,6 +387,22 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
+	// TESTING CODE; add better icon extraction code later.
+	if (ft == FT_WIBN_RAW || ft == FT_WIBN_CRYPT) {
+		string apng_filename(image_png_filename);
+		apng_filename += ".icon.png";
+		GcImageWriter gcImageWriter;
+		if (ft == FT_WIBN_RAW)
+			read_icon_WIBN_raw(f_opening_bnr, &gcImageWriter);
+		else
+			read_icon_WIBN_crypt(f_opening_bnr, &gcImageWriter);
+		const std::vector<uint8_t> *memBuffer = gcImageWriter.memBuffer();
+
+		FILE *f_icon_png = fopen(apng_filename.c_str(), "wb");
+		fwrite(memBuffer->data(), 1, memBuffer->size(), f_icon_png);
+		fclose(f_icon_png);
+	}
+
 	// Success!
 	fclose(f_opening_bnr);
 	fclose(f_image_png);

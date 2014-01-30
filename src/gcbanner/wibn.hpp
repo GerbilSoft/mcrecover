@@ -26,6 +26,7 @@
 #include <cstdio>
 
 class GcImage;
+class GcImageWriter;
 
 /**
  * Check if the specified file is WIBN_crypt.
@@ -35,5 +36,8 @@ int identify_WIBN_crypt(FILE *f);
 
 GcImage *read_banner_WIBN_raw(FILE *f);
 GcImage *read_banner_WIBN_crypt(FILE *f);
+
+int read_icon_WIBN_raw(FILE *f, GcImageWriter *gcImageWriter);
+int read_icon_WIBN_crypt(FILE *f, GcImageWriter *gcImageWriter);
 
 #endif /* __GCBANNER_WIBN_HPP__ */
