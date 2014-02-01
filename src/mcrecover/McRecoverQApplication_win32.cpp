@@ -250,7 +250,7 @@ QIcon McRecoverQApplication::Win32Icon(Win32Icon_t iconId, const QSize &size)
 		case W32ICON_DEFRAG: {
 			/**
 			 * Check the following icons:
-			 * - Win7: SYSTEM32/dfrgui.exe;130
+			 * - Win7:  SYSTEM32/dfrgui.exe;130
 			 * - WinXP: SYSTEM32/dfrgres.dll;106
 			 */
 			QString dfFile = qsys32dir + QLatin1String("\\dfrgui.exe");
