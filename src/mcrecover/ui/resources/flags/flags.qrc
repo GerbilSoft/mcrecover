@@ -1,8 +1,26 @@
 <RCC>
   <qresource prefix="flags">
-    <file>flag-us.png</file>
+    <file>flag-ar.png</file>
+    <file>flag-au.png</file>
+    <file>flag-br.png</file>
+    <file>flag-ca.png</file>
+    <file>flag-cl.png</file>
+    <file>flag-C.png</file>
+    <file>flag-de.png</file>
+    <file>flag-ee.png</file>
+    <file>flag-es.png</file>
+    <file>flag-eu.png</file>
+    <file>flag-fr.png</file>
     <file>flag-gb.png</file>
+    <file>flag-ie.png</file>
+    <file>flag-il.png</file>
+    <file>flag-it.png</file>
     <file>flag-jp.png</file>
     <file>flag-kr.png</file>
+    <file>flag-mx.png</file>
+    <file>flag-tw.png</file>
+    <file>flag-us.png</file>
+    <file>flag-uy.png</file>
+    <file>flag-za.png</file>
   </qresource>
 </RCC>
