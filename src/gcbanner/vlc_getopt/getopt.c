@@ -307,6 +307,9 @@ int vlc_getopt_long(int argc, char *const *argv,
                     state->arg = argv[state->ind++];
                 else
                 {
+                    /* Option requires an argument, but it wasn't found. */
+                    fprintf(stderr, "%s: option '--%s' requires an argument\n",
+                            argv[0], pfound->name);
                     state->nextchar += strlen(state->nextchar);
                     state->opt = pfound->val;
                     return optstring[0] == ':' ? ':' : '?';
@@ -323,6 +326,9 @@ int vlc_getopt_long(int argc, char *const *argv,
             return pfound->val;
         }
 
+        /* Option is invalid. */
+        fprintf(stderr, "%s: unrecognized option '%s'\n",
+                argv[0], argv[state->ind]);
         state->nextchar = (char *) "";
         state->ind++;
         state->opt = 0;
@@ -341,6 +347,9 @@ int vlc_getopt_long(int argc, char *const *argv,
 
         if (temp == NULL || c == ':')
         {
+            /* Option is invalid. */
+            fprintf(stderr, "%s: invalid option -- '%c'\n",
+                    argv[0], c);
             state->opt = c;
             return '?';
         }
@@ -365,6 +374,8 @@ int vlc_getopt_long(int argc, char *const *argv,
             }
             else if (state->ind == argc)
             {
+                fprintf(stderr, "%s: option requires an argument -- '%c'\n",
+                        argv[0], c);
                 state->opt = c;
                 if (optstring[0] == ':')
                     c = ':';
@@ -411,6 +422,7 @@ int vlc_getopt_long(int argc, char *const *argv,
             {
                 state->nextchar += strlen(state->nextchar);
                 state->ind++;
+                /* TODO: Does this need an error message? */
                 return '?';
             }
             if (pfound != NULL)
@@ -422,6 +434,7 @@ int vlc_getopt_long(int argc, char *const *argv,
                         state->arg = nameend + 1;
                     else
                     {
+                        /* TODO: Does this need an error message? */
                         state->nextchar += strlen(state->nextchar);
                         return '?';
                     }
@@ -432,6 +445,9 @@ int vlc_getopt_long(int argc, char *const *argv,
                         state->arg = argv[state->ind++];
                     else
                     {
+                        /* Option requires an argument, but it wasn't found. */
+                        fprintf(stderr, "%s: option '-W --%s' requires an argument\n",
+                                argv[0], pfound->name);
                         state->nextchar += strlen(state->nextchar);
                         return optstring[0] == ':' ? ':' : '?';
                     }
@@ -461,6 +477,9 @@ int vlc_getopt_long(int argc, char *const *argv,
             }
             else if (state->ind == argc)
             {
+                /* Option requires an argument, but it wasn't found. */
+                fprintf(stderr, "%s: option requires an argument -- '%c'\n",
+                        argv[0], c);
                 state->opt = c;
                 if (optstring[0] == ':')
                     c = ':';
