@@ -9,6 +9,26 @@
 		<email>gerbilsoft@gerbilsoft.com</email>
 	</dbInfo>
 	<file>
+		<gameName>Alien Hominid</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GAHE</gamecode>
+		<company>GG</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Alien Hominid$</gameDesc>
+			<fileDesc>^\(c\)2004 The Behemoth$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>alienhominid</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>8</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Animal Crossing</gameName>
 		<fileInfo>Town File</fileInfo>
 		<gamecode>GAFE</gamecode>
@@ -1367,6 +1387,26 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Second Sight</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GISE</gamecode>
+		<company>36</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Second Sight$</gameDesc>
+			<fileDesc>^Saved Profiles$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Second Sight</filename>
+			<bannerFormat>0xFB</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Shadow the Hedgehog</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GUPE</gamecode>
@@ -2124,6 +2164,26 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>The Sims™ 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>G4ZE</gamecode>
+		<company>69</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^The Sims™ 2$</gameDesc>
+			<fileDesc>^Save Data and Settings$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Sims 2 Save</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>147</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Viewtiful Joe</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GVJE</gamecode>
@@ -2183,6 +2243,26 @@
 			<iconSpeed>0x01</iconSpeed>
 			<permission>0x04</permission>
 			<length>10</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>WarioWare, Inc.</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GZWE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^WarioWare, Inc\.$</gameDesc>
+			<fileDesc>^Mega Party Games$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>madeinwario</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0x3F</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
 		</dirEntry>
 	</file>
 </GcnMcFileDb>
