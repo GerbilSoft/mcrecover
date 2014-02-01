@@ -116,21 +116,25 @@ SET(mcrecover_SRCS
 	SearchThreadWorker.cpp
 	PcreRegex.cpp
 	GcnDateTime.cpp
-	MemCardFileView.cpp
-	MemCardView.cpp
 	IconAnimHelper.cpp
 	McRecoverQApplication.cpp
 	AboutDialog.cpp
 	VarReplace.cpp
 	MemCardItemDelegate.cpp
 	FileComments.cpp
-	QTreeViewOpt.cpp
 	TaskbarButtonManager/TaskbarButtonManager.cpp
 	GcToolsQt.cpp
 	TranslationManager.cpp
 	XmlTemplateDialog.cpp
 	XmlTemplateDialogManager.cpp
+	)
+
+SET(mcrecover_WIDGET_SRCS
+	MemCardFileView.cpp
+	MemCardView.cpp
+	QTreeViewOpt.cpp
 	MessageWidget.cpp
+	TableSelect.cpp
 	)
 
 # Shh... it's a secret to everybody.
@@ -158,17 +162,21 @@ SET(mcrecover_MOC_H
 	SearchThread.hpp
 	StatusBarManager.hpp
 	SearchThreadWorker.hpp
-	MemCardFileView.hpp
-	MemCardView.hpp
 	IconAnimHelper.hpp
 	McRecoverQApplication.hpp
 	AboutDialog.hpp
 	MemCardItemDelegate.hpp
-	QTreeViewOpt.hpp
 	TaskbarButtonManager/TaskbarButtonManager.hpp
 	XmlTemplateDialog.hpp
 	XmlTemplateDialogManager.hpp
+	)
+
+SET(mcrecover_WIDGET_MOC_H
+	MemCardFileView.hpp
+	MemCardView.hpp
+	QTreeViewOpt.hpp
 	MessageWidget.hpp
+	TableSelect.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H
@@ -179,18 +187,29 @@ SET(mcrecover_SEKRIT_MOC_H
 # UI files.
 SET(mcrecover_UIS
 	ui/McRecoverWindow.ui
-	ui/MemCardFileView.ui
-	ui/MemCardView.ui
 	ui/AboutDialog.ui
 	ui/XmlTemplateDialog.ui
+	)
+
+SET(mcrecover_WIDGET_UIS
+	ui/MemCardFileView.ui
+	ui/MemCardView.ui
 	ui/MessageWidget.ui
+	ui/TableSelect.ui
 	)
 
 # Generate the header files from the UI files.
-QT4_WRAP_UI(mcrecover_UIS_H ${mcrecover_UIS})
+QT4_WRAP_UI(mcrecover_UIS_H
+	${mcrecover_UIS}
+	${mcrecover_WIDGET_UIS}
+	)
 
 # Create MOC source files for classes that need them.
-QT4_WRAP_CPP(mcrecover_MOC_SRCS ${mcrecover_MOC_H} ${mcrecover_SEKRIT_MOC_H})
+QT4_WRAP_CPP(mcrecover_MOC_SRCS
+	${mcrecover_MOC_H}
+	${mcrecover_WIDGET_MOC_H}
+	${mcrecover_SEKRIT_MOC_H}
+	)
 
 IF(QT_QTDBUS_FOUND)
 	# QtDBus found.
@@ -251,6 +270,7 @@ QT4_ADD_RESOURCES(
 # to disable the command prompt window.
 ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_SRCS}
+	${mcrecover_WIDGET_SRCS}
 	${mcrecover_SEKRIT_SRCS}
 	${mcrecover_MOC_SRCS}
 	${mcrecover_UIS_H}

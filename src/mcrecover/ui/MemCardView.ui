@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>202</width>
-    <height>122</height>
+    <height>144</height>
    </rect>
   </property>
   <layout class="QFormLayout" name="formLayout">
@@ -18,7 +18,7 @@
     <number>0</number>
    </property>
    <item row="0" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="hboxBlockCount">
      <item>
       <spacer name="hspcBlockCount1">
        <property name="orientation">
@@ -209,8 +209,41 @@ Checksum:</string>
      </property>
     </widget>
    </item>
+   <item row="5" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="hboxTableSelect">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="TableSelect" name="tableSelect" native="true"/>
+     </item>
+     <item>
+      <spacer name="hspcTableSelect">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
   </layout>
  </widget>
- <resources/>
+ <customwidgets>
+  <customwidget>
+   <class>TableSelect</class>
+   <extends>QWidget</extends>
+   <header>TableSelect.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resources/oxygen/oxygen.qrc"/>
+ </resources>
  <connections/>
 </ui>

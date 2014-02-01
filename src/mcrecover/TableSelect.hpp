@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * MemCardView.hpp: MemCard view widget.                                   *
+ * TableSelect.hpp: Directory/Block Table select widget.                   *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2014 by David Korth.                                      *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,31 +19,30 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MEMCARDVIEW_HPP__
-#define __MCRECOVER_MEMCARDVIEW_HPP__
+#ifndef __MCRECOVER_TABLESELECT_HPP__
+#define __MCRECOVER_TABLESELECT_HPP__
 
 #include <QtGui/QWidget>
 
-// MemCard class.
 class MemCard;
 
-class MemCardViewPrivate;
+class TableSelectPrivate;
 
-class MemCardView : public QWidget
+class TableSelect : public QWidget
 {
 	Q_OBJECT
 
 	Q_PROPERTY(MemCard* card READ card WRITE setCard)
 
 	public:
-		MemCardView(QWidget *parent = 0);
-		~MemCardView();
+		TableSelect(QWidget *parent = 0);
+		~TableSelect();
 
 	protected:
-		MemCardViewPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(MemCardView)
+		TableSelectPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(TableSelect)
 	private:
-		Q_DISABLE_COPY(MemCardView)
+		Q_DISABLE_COPY(TableSelect)
 
 	public:
 		/**
@@ -57,17 +56,6 @@ class MemCardView : public QWidget
 		 * @param file MemCard.
 		 */
 		void setCard(MemCard *card);
-
-	protected:
-		// State change event. (Used for switching the UI language at runtime.)
-		void changeEvent(QEvent *event);
-
-	protected slots:
-		/**
-		 * MemCard object was destroyed.
-		 * @param obj QObject that was destroyed.
-		 */
-		void memCard_destroyed_slot(QObject *obj = 0);
 };
 
-#endif /* __MCRECOVER_MEMCARDVIEW_HPP__ */
+#endif /* __MCRECOVER_TABLESELECT_HPP__ */

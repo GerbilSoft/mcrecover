@@ -52,7 +52,7 @@ class MemCardViewPrivate
 	public:
 		Ui::MemCardView ui;
 
-		const MemCard *card;
+		MemCard *card;
 
 		/**
 		 * Update the widget display.
@@ -73,8 +73,6 @@ MemCardViewPrivate::~MemCardViewPrivate()
  */
 void MemCardViewPrivate::updateWidgetDisplay(void)
 {
-	Q_Q(MemCardView);
-
 	if (!card) {
 		// Hide the widget display.
 		// TODO: Better method?
@@ -86,6 +84,8 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 		ui.lblChecksumActual->setVisible(false);
 		ui.lblChecksumExpectedTitle->setVisible(false);
 		ui.lblChecksumExpected->setVisible(false);
+		ui.tableSelect->setCard(nullptr);
+		ui.tableSelect->setVisible(false);
 		return;
 	}
 
@@ -170,6 +170,10 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 			break;
 	}
 	ui.lblEncoding->setText(encoding);
+
+	// Show the dir/block table select widget.
+	ui.tableSelect->setCard(card);
+	ui.tableSelect->setVisible(true);
 }
 
 /** MemCardFileView **/
@@ -202,7 +206,7 @@ MemCardView::~MemCardView()
  * Get the MemCard being displayed.
  * @return MemCard.
  */
-const MemCard *MemCardView::card(void) const
+MemCard *MemCardView::card(void) const
 {
 	Q_D(const MemCardView);
 	return d->card;
@@ -212,7 +216,7 @@ const MemCard *MemCardView::card(void) const
  * Set the MemCard being displayed.
  * @param card MemCard.
  */
-void MemCardView::setCard(const MemCard *card)
+void MemCardView::setCard(MemCard *card)
 {
 	Q_D(MemCardView);
 
