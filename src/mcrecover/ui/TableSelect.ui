@@ -10,9 +10,6 @@
     <height>46</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <layout class="QHBoxLayout" name="hboxMain">
    <property name="spacing">
     <number>12</number>
