@@ -413,11 +413,18 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 
 		case Qt::SizeHintRole:
 			// Increase row height by 4px.
+			// HACK: Increase icon/banner width on Windows.
+			// Figure out a better method later.
+		#ifdef Q_OS_WIN
+			static const int iconWadj = 8;
+		#else
+			static const int iconWadj = 0;
+		#endif
 			switch (index.column()) {
 				case COL_ICON:
-					return QSize(CARD_ICON_W, (CARD_ICON_H + 4));
+					return QSize(CARD_ICON_W + iconWadj, (CARD_ICON_H + 4));
 				case COL_BANNER:
-					return QSize(CARD_BANNER_W, (CARD_BANNER_H + 4));
+					return QSize(CARD_BANNER_W + iconWadj, (CARD_BANNER_H + 4));
 				case COL_ISVALID:
 					return QSize(d->style.pxmIsValid_width,
 						     (d->style.pxmIsValid_height + 4));
