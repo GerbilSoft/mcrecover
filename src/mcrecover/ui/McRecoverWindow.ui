@@ -394,7 +394,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources/flags/flags.qrc">
-     <normaloff>:/flags/flag-gb.png</normaloff>:/flags/flag-gb.png</iconset>
+     <normaloff>:/flags/flag-eu.png</normaloff>:/flags/flag-eu.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Europe</string>
