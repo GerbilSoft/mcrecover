@@ -95,8 +95,15 @@ TableSelect::TableSelect(QWidget *parent)
 	d->ui.lblDirImage->setPixmap(iconDirTable.pixmap(iconSz));
 
 	// TODO: Windows: Get icon from defrag.exe.
-	QIcon iconBlockTable = McRecoverQApplication::IconFromTheme(
-		QLatin1String("partitionmanager"));
+	QIcon iconBlockTable;
+#ifdef Q_OS_WIN
+	iconBlockTable = McRecoverQApplication::Win32Icon(
+		McRecoverQApplication::W32ICON_DEFRAG, iconSz);
+#endif /* Q_OS_WIN */
+	if (iconBlockTable.isNull()) {
+		iconBlockTable = McRecoverQApplication::IconFromTheme(
+			QLatin1String("partitionmanager"));
+	}
 	d->ui.lblBlockImage->setPixmap(iconBlockTable.pixmap(iconSz));
 }
 

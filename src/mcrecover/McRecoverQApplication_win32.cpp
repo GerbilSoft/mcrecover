@@ -41,6 +41,7 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
+#include <shlobj.h>
 
 // DEP policy. (requires _WIN32_WINNT >= 0x0600)
 #ifndef PROCESS_DEP_ENABLE
@@ -163,6 +164,80 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
 	// Call the real main function.
 	return mcrecover_main(argc, argv.data());
+}
+
+/**
+ * Get an icon from a Win32 module.
+ * TODO: Make this a private/protected class function?
+ * @param module Filename of the Win32 module.
+ * @param resId Resource identifier.
+ * @param size Icon size.
+ * @return Icon, as a QPixmap.
+ */
+static QPixmap getIconFromModule(const QString &module, uint16_t resId, const QSize &size)
+{
+	QPixmap pixmap;
+	HMODULE hDll = LoadLibraryW((LPCWSTR)module.utf16());
+	if (!hDll)
+		return pixmap;
+
+	HICON hIcon = (HICON)LoadImageW(hDll, MAKEINTRESOURCEW(resId),
+	IMAGE_ICON, size.width(), size.height(), 0);
+	if (hIcon) {
+		pixmap = QPixmap::fromWinHICON(hIcon);
+		DestroyIcon(hIcon);
+	}
+
+	FreeLibrary(hDll);
+	return pixmap;
+}
+
+/**
+ * Get a Win32 icon.
+ * @param iconId Win32 icon ID.
+ * @param size Desired size.
+ * @return QIcon.
+ */
+QIcon McRecoverQApplication::Win32Icon(Win32Icon_t iconId, const QSize &size)
+{
+	if (iconId <= W32ICON_NONE || iconId >= W32ICON_MAX)
+		return QIcon();
+
+	// Get the SYSTEM32 directory.
+	// TODO: Win9x support, maybe...
+	WCHAR sys32dir[MAX_PATH];
+	HRESULT hr = SHGetFolderPathW(nullptr, CSIDL_SYSTEM, nullptr, 0, sys32dir);
+	if (FAILED(hr))
+		return QIcon();
+	// NOTE: QChar* is functionally equivalent to char16_t,
+	// which is the same as WCHAR on Windows.
+	QString qsys32dir(reinterpret_cast<const QChar*>(sys32dir));
+
+	// TODO: How does Windows handle icon sizes
+	// that don't exist in the icon?
+	QPixmap pixmap;
+	switch (iconId) {
+		case W32ICON_DEFRAG: {
+			/**
+			 * Check the following icons:
+			 * - Win7: SYSTEM32/dfrgui.exe;130
+			 * - WinXP: SYSTEM32/dfrgres.dll;106
+			 */
+			QString dfFile = qsys32dir + QLatin1String("\\dfrgui.exe");
+			pixmap = getIconFromModule(dfFile, 130, size);
+			if (pixmap.isNull()) {
+				dfFile = qsys32dir + QLatin1String("\\dfrgres.dll");
+				pixmap = getIconFromModule(dfFile, 106, size);
+			}
+
+			break;
+		}
+
+		default:
+			break;
+	}
+
+	return pixmap;
 }
 
 // QtGui includes.

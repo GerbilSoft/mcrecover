@@ -68,6 +68,23 @@ class McRecoverQApplication : public QApplication
 				const QWidget *widget = 0);
 
 #ifdef Q_OS_WIN
+		enum Win32Icon_t {
+			W32ICON_NONE = 0,
+			W32ICON_DEFRAG,
+
+			W32ICON_MAX
+		};
+
+		/**
+		 * Get a Win32 icon.
+		 * @param icon Win32 icon.
+		 * @param size Desired size.
+		 * @return QIcon.
+		 */
+		static QIcon Win32Icon(Win32Icon_t icon, const QSize &size);
+#endif /* Q_OS_WIN */
+
+#ifdef Q_OS_WIN
 		// Win32 event filter.
 		bool winEventFilter(MSG *msg, long *result);
 #endif /* Q_OS_WIN */
