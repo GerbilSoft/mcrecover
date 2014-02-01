@@ -194,7 +194,7 @@
          <string>Block Table</string>
         </property>
         <property name="pixmap">
-         <pixmap resource="resources/oxygen/oxygen.qrc">:/oxygen/16x16/document-save-all.png</pixmap>
+         <pixmap resource="resources/oxygen/oxygen.qrc">:/oxygen/16x16/partitionmanager.png</pixmap>
         </property>
        </widget>
       </item>

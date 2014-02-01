@@ -64,5 +64,13 @@
     <file>22x22/help-about.png</file>
     <file>32x32/help-about.png</file>
     <file>48x48/help-about.png</file>
+
+    <file>16x16/partitionmanager.png</file>
+    <file>22x22/partitionmanager.png</file>
+    <file>32x32/partitionmanager.png</file>
+    <file>48x48/partitionmanager.png</file>
+    <file>64x64/partitionmanager.png</file>
+    <file>128x128/partitionmanager.png</file>
+    <file>256x256/partitionmanager.png</file>
   </qresource>
 </RCC>
