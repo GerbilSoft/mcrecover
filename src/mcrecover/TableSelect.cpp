@@ -167,3 +167,22 @@ void TableSelect::changeEvent(QEvent *event)
 	// Pass the event to the base class.
 	this->QWidget::changeEvent(event);
 }
+
+/** Slots. **/
+
+/**
+ * MemCard object was destroyed.
+ * @param obj QObject that was destroyed.
+ */
+void TableSelect::memCard_destroyed_slot(QObject *obj)
+{
+	Q_D(TableSelect);
+
+	if (obj == d->card) {
+		// Our MemCard was destroyed.
+		d->card = nullptr;
+
+		// Update the widget display.
+		d->updateWidgetDisplay();
+	}
+}

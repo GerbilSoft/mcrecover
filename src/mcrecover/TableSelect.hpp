@@ -62,6 +62,15 @@ class TableSelect : public QWidget
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
 		void changeEvent(QEvent *event);
+
+		/** Slots. **/
+
+	protected slots:
+		/**
+		 * MemCard object was destroyed.
+		 * @param obj QObject that was destroyed.
+		 */
+		void memCard_destroyed_slot(QObject *obj = 0);
 };
 
 #endif /* __MCRECOVER_TABLESELECT_HPP__ */
