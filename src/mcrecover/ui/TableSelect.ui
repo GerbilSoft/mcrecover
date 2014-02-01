@@ -129,7 +129,7 @@
       <item row="1" column="2">
        <widget class="QLabel" name="lblDirBStatus">
         <property name="pixmap">
-         <pixmap resource="resources/oxygen/oxygen.qrc">:/oxygen/16x16/dialog-error.png</pixmap>
+         <pixmap resource="resources/oxygen/oxygen.qrc">:/oxygen/16x16/dialog-close.png</pixmap>
         </property>
        </widget>
       </item>
@@ -245,7 +245,7 @@
       <item row="1" column="2">
        <widget class="QLabel" name="lblBlockBStatus">
         <property name="pixmap">
-         <pixmap resource="resources/oxygen/oxygen.qrc">:/oxygen/16x16/dialog-error.png</pixmap>
+         <pixmap resource="resources/oxygen/oxygen.qrc">:/oxygen/16x16/dialog-close.png</pixmap>
         </property>
        </widget>
       </item>

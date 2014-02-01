@@ -41,7 +41,7 @@
          </sizepolicy>
         </property>
         <property name="pixmap">
-         <pixmap resource="resources/oxygen/oxygen.qrc">:/oxygen/22x22/dialog-warning.png</pixmap>
+         <pixmap resource="resources/oxygen/oxygen.qrc">:/oxygen/22x22/dialog-close.png</pixmap>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
