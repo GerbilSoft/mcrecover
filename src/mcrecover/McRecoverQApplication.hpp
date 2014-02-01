@@ -24,6 +24,7 @@
 
 #include <QtGui/QApplication>
 #include <QtGui/QIcon>
+#include <QtGui/QStyle>
 
 class McRecoverQApplicationPrivate;
 
@@ -54,6 +55,17 @@ class McRecoverQApplication : public QApplication
 		 * @return QIcon.
 		 */
 		static QIcon IconFromProgram(const QString &name);
+
+		/**
+		 * Get a standard icon.
+		 * @param standardIcon Standard pixmap.
+		 * @param option QStyleOption.
+		 * @param widget QWidget.
+		 * @return QIcon.
+		 */
+		static QIcon StandardIcon(QStyle::StandardPixmap standardIcon,
+				const QStyleOption *option = 0,
+				const QWidget *widget = 0);
 
 #ifdef Q_OS_WIN
 		// Win32 event filter.

@@ -201,3 +201,49 @@ QIcon McRecoverQApplication::IconFromProgram(const QString &name)
 
 	return icon;
 }
+
+/**
+ * Get a standard icon.
+ * @param standardIcon Standard pixmap.
+ * @param option QStyleOption.
+ * @param widget QWidget.
+ * @return QIcon.
+ */
+QIcon McRecoverQApplication::StandardIcon(QStyle::StandardPixmap standardIcon,
+				const QStyleOption *option,
+				const QWidget *widget)
+{
+	QStyle *style = QApplication::style();
+
+	// TODO: Check icons on Mac.
+	switch (standardIcon) {
+		// Available on all systems.
+		case QStyle::SP_MessageBoxInformation:
+		case QStyle::SP_MessageBoxWarning:
+		case QStyle::SP_MessageBoxCritical:
+			return style->standardIcon(standardIcon, option, widget);
+
+		// Windows only.
+		case QStyle::SP_MessageBoxQuestion:
+#if defined(Q_OS_WIN)
+			return style->standardIcon(standardIcon, option, widget);
+#else /* !Q_OS_WIN */
+			return IconFromTheme(QLatin1String("dialog-question"));
+#endif /* Q_OS_WIN */
+
+		// Linux only.
+		case QStyle::SP_DialogApplyButton:
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+			return style->standardIcon(standardIcon, option, widget);
+#else
+			return IconFromTheme(QLatin1String("dialog-ok-apply"));
+#endif
+
+		default:
+			// TODO: Add more icons.
+			break;
+	}
+
+	// We don't hae a cusotm icon for this one.
+	return style->standardIcon(standardIcon, option, widget);
+}

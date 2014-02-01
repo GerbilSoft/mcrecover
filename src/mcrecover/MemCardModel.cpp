@@ -171,26 +171,12 @@ void MemCardModelPrivate::style_t::init(void)
 	brush_lostFile_alt = QBrush(bgColor_lostFile_alt);
 
 	// Initialize the COL_ISVALID pixmaps.
-	// NOTE: SP_MessageBoxQuestion is Windows only.
-	// NOTE: SP_DialogApplyButton is Linux only.
-	// TODO: Update the icons if the system style changes?
-	QStyle *style = QApplication::style();
-
-#if defined(Q_OS_WIN)
-	QIcon iconUnknown = style->standardIcon(QStyle::SP_MessageBoxQuestion);
-#else
-	QIcon iconUnknown = McRecoverQApplication::IconFromTheme(QLatin1String("dialog-question"));
-#endif
-	QIcon iconInvalid = style->standardIcon(QStyle::SP_MessageBoxCritical);
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
-	QIcon iconGood = style->standardIcon(QStyle::SP_DialogApplyButton);
-#else
-	QIcon iconGood = McRecoverQApplication::IconFromTheme(QLatin1String("dialog-ok-apply"));
-#endif
-
-	pxmIsValid_unknown = iconUnknown.pixmap(pxmIsValid_width, pxmIsValid_height);
-	pxmIsValid_invalid = iconInvalid.pixmap(pxmIsValid_width, pxmIsValid_height);
-	pxmIsValid_good    = iconGood.pixmap(pxmIsValid_width, pxmIsValid_height);
+	pxmIsValid_unknown = McRecoverQApplication::StandardIcon(QStyle::SP_MessageBoxQuestion)
+				.pixmap(pxmIsValid_width, pxmIsValid_height);
+	pxmIsValid_invalid = McRecoverQApplication::StandardIcon(QStyle::SP_MessageBoxCritical)
+				.pixmap(pxmIsValid_width, pxmIsValid_height);
+	pxmIsValid_good    = McRecoverQApplication::StandardIcon(QStyle::SP_DialogApplyButton)
+				.pixmap(pxmIsValid_width, pxmIsValid_height);
 }
 
 MemCardModelPrivate::~MemCardModelPrivate()
