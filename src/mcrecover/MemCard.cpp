@@ -89,7 +89,18 @@ class MemCardPrivate
 		card_dat mc_dat_int[2];		// Directory tables.
 		card_bat mc_bat_int[2];		// Block allocation tables.
 
-		// Memory card data being used.
+		// Table checksums.
+		uint32_t mc_dat_chk_actual[2];
+		uint32_t mc_dat_chk_expected[2];
+		uint32_t mc_bat_chk_actual[2];
+		uint32_t mc_bat_chk_expected[2];
+
+		// Active tables according to the card headers.
+		// 0, 1 == valid
+		//   -1 == both tables are invalid, default to 0
+		int8_t mc_dat_idx, mc_bat_idx;
+
+		// Active tables.
 		card_dat *mc_dat;
 		card_bat *mc_bat;
 
@@ -129,6 +140,14 @@ class MemCardPrivate
 		void loadBlockTable(card_bat *bat, uint32_t address, uint32_t *checksum);
 
 		/**
+		 * Determine which tables are active.
+		 * Sets mc_dat_idx and mc_bat_idx.
+		 * NOTE: All tables must be loaded first!
+		 * @return 0 on success; non-zero on error.
+		 */
+		int checkTables(void);
+
+		/**
 		 * Load the MemCardFile list.
 		 */
 		void loadMemCardFileList(void);
@@ -142,6 +161,8 @@ MemCardPrivate::MemCardPrivate(MemCard *q, const QString &filename)
 	: q_ptr(q)
 	, filename(filename)
 	, file(nullptr)
+	, mc_dat_idx(-1)
+	, mc_bat_idx(-1)
 	, mc_dat(nullptr)
 	, mc_bat(nullptr)
 {
@@ -276,78 +297,27 @@ int MemCardPrivate::loadSysInfo(void)
 	// TODO: Store the actual and expected DAT/BAT checksums?
 
 	// Directory tables.
-	uint32_t checksum_actual[2];
-	loadDirTable(&mc_dat_int[0], CARD_SYSDIR, &checksum_actual[0]);
-	loadDirTable(&mc_dat_int[1], CARD_SYSDIR_BACK, &checksum_actual[1]);
+	loadDirTable(&mc_dat_int[0], CARD_SYSDIR, &mc_dat_chk_actual[0]);
+	loadDirTable(&mc_dat_int[1], CARD_SYSDIR_BACK, &mc_dat_chk_actual[1]);
 
 	// Get the expected checksums.
-	uint32_t checksum_expected[2];
-	checksum_expected[0] = (mc_dat_int[0].dircntrl.chksum1 << 16) |
-			       (mc_dat_int[0].dircntrl.chksum2);
-	checksum_expected[1] = (mc_dat_int[1].dircntrl.chksum1 << 16) |
-			       (mc_dat_int[1].dircntrl.chksum2);
-
-	// Determine which directory table to use.
-	// - 1. Check for higher "updated" value.
-	// - 2. Validate checksums.
-	// - 3. If invalid checksum, use other one.
-	// - 4. If both are invalid, error!
-	// TODO: If both checksums are invalid, report an error. Using main for now.
-	// TODO: Allow user to select?
-	int dirTable = (mc_dat_int[1].dircntrl.updated > mc_dat_int[0].dircntrl.updated ? 1 : 0);
-
-	// Verify the checksums of the selected directory table.
-	if (checksum_expected[0] != checksum_actual[0]) {
-		// Invalid checksum. Check the other directory table.
-		dirTable = !dirTable;
-		if (checksum_expected[1] != checksum_actual[1]) {
-			// Both directory tables are invalid.
-			// TODO: Report an error.
-			// For now, default to main.
-			fprintf(stderr, "WARNING: Both DATs are invalid. Using MAIN.\n");
-			dirTable = 0;
-		}
-	}
-
-	// Select the directory table.
-	mc_dat = &mc_dat_int[dirTable];
-	fprintf(stderr, "Dir Table == %d\n", dirTable);
+	mc_dat_chk_expected[0] = (mc_dat_int[0].dircntrl.chksum1 << 16) |
+				 (mc_dat_int[0].dircntrl.chksum2);
+	mc_dat_chk_expected[1] = (mc_dat_int[1].dircntrl.chksum1 << 16) |
+				 (mc_dat_int[1].dircntrl.chksum2);
 
 	// Block allocation tables.
-	loadBlockTable(&mc_bat_int[0], CARD_SYSBAT, &checksum_actual[0]);
-	loadBlockTable(&mc_bat_int[1], CARD_SYSBAT_BACK, &checksum_actual[1]);
+	loadBlockTable(&mc_bat_int[0], CARD_SYSBAT, &mc_bat_chk_actual[0]);
+	loadBlockTable(&mc_bat_int[1], CARD_SYSBAT_BACK, &mc_bat_chk_actual[1]);
 
 	// Get the expected checksums.
-	checksum_expected[0] = (mc_bat_int[0].chksum1 << 16) |
-			       (mc_bat_int[0].chksum2);
-	checksum_expected[1] = (mc_bat_int[1].chksum1 << 16) |
-			       (mc_bat_int[1].chksum2);
+	mc_bat_chk_expected[0] = (mc_bat_int[0].chksum1 << 16) |
+				 (mc_bat_int[0].chksum2);
+	mc_bat_chk_expected[1] = (mc_bat_int[1].chksum1 << 16) |
+				 (mc_bat_int[1].chksum2);
 
-	// Determine which block allocation table to use.
-	// - 1. Check for higher "updated" value.
-	// - 2. Validate checksums.
-	// - 3. If invalid checksum, use other one.
-	// - 4. If both are invalid, error!
-	// TODO: If both checksums are invalid, report an error. Using main for now.
-	// TODO: Allow user to select?
-	int blockTable = (mc_bat_int[1].updated > mc_bat_int[0].updated ? 1 : 0);
-
-	// Verify the checksums of the selected block allocation table.
-	if (checksum_expected[0] != checksum_actual[0]) {
-		// Invalid checksum. Check the other block allocation table.
-		blockTable = !blockTable;
-		if (checksum_expected[1] != checksum_actual[1]) {
-			// Both block allocation tables are invalid.
-			// TODO: Report an error.
-			// For now, default to main.
-			fprintf(stderr,"WARNING: Both BATs are invalid. Using MAIN.\n");
-			blockTable = 0;
-		}
-	}
-
-	// Select the directory table.
-	mc_bat = &mc_bat_int[blockTable];
-	fprintf(stderr, "Block Table == %d\n", blockTable);
+	// Determine which table is active.
+	checkTables();
 	return 0;
 }
 
@@ -416,6 +386,77 @@ void MemCardPrivate::loadBlockTable(card_bat *bat, uint32_t address, uint32_t *c
 
 	for (int i = 0; i < NUM_ELEMENTS(bat->fat); i++)
 		bat->fat[i] = be16_to_cpu(bat->fat[i]);
+}
+
+/**
+ * Determine which tables are active.
+ * Sets mc_dat_idx and mc_bat_idx.
+ * NOTE: All tables must be loaded first!
+ * @return 0 on success; non-zero on error.
+ */
+int MemCardPrivate::checkTables(void)
+{
+	/**
+	 * Determine which directory table to use.
+	 * - 1. Check for higher "updated" value.
+	 * - 2. Validate checksums.
+	 * - 3. If invalid checksum, use other one.
+	 * - 4. If both are invalid, error!
+	 * TODO: If both checksums are invalid, report an error. Defaulting to table 0 for now.
+	 * TODO: Allow user to select?
+	 */
+	int idx = (mc_dat_int[1].dircntrl.updated > mc_dat_int[0].dircntrl.updated ? 1 : 0);
+
+	// Verify the checksums of the selected directory table.
+	if (mc_dat_chk_expected[0] != mc_dat_chk_actual[0]) {
+		// Invalid checksum. Check the other directory table.
+		idx = !idx;
+		if (mc_dat_chk_expected[1] != mc_dat_chk_actual[1]) {
+			// Both directory tables are invalid.
+			// TODO: Report an error.
+			// For now, default to main.
+			fprintf(stderr, "WARNING: Both DATs are invalid. Defaulting to table 0.\n");
+			idx = -1;
+		}
+	}
+
+	// Select the directory table.
+	int tmp_idx = (idx >= 0 ? idx : 0);
+	this->mc_dat = &mc_dat_int[tmp_idx];
+	fprintf(stderr, "Dir Table == %d\n", tmp_idx);
+	this->mc_dat_idx = idx;
+
+	/**
+	 * Determine which block allocation table to use.
+	 * - 1. Check for higher "updated" value.
+	 * - 2. Validate checksums.
+	 * - 3. If invalid checksum, use other one.
+	 * - 4. If both are invalid, error!
+	 * TODO: If both checksums are invalid, report an error. Defaulting to table 0 for now.
+	 * TODO: Allow user to select?
+	 */
+	idx = (mc_bat_int[1].updated > mc_bat_int[0].updated ? 1 : 0);
+
+	// Verify the checksums of the selected block allocation table.
+	if (mc_bat_chk_expected[0] != mc_bat_chk_actual[0]) {
+		// Invalid checksum. Check the other block allocation table.
+		idx = !idx;
+		if (mc_bat_chk_expected[1] != mc_bat_chk_actual[1]) {
+			// Both block allocation tables are invalid.
+			// TODO: Report an error.
+			// For now, default to main.
+			fprintf(stderr,"WARNING: Both BATs are invalid. Defaulting to table 0.\n");
+			idx = -1;
+		}
+	}
+
+	// Select the directory table.
+	tmp_idx = (idx >= 0 ? idx : 0);
+	this->mc_bat = &mc_bat_int[tmp_idx];
+	fprintf(stderr, "Block Table == %d\n", tmp_idx);
+	this->mc_bat_idx = idx;
+
+	return 0;
 }
 
 /**
