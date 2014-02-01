@@ -411,7 +411,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 			}
 			break;
 
-		case Qt::SizeHintRole:
+		case Qt::SizeHintRole: {
 			// Increase row height by 4px.
 			// HACK: Increase icon/banner width on Windows.
 			// Figure out a better method later.
@@ -432,6 +432,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 					break;
 			}
 			break;
+		}
 
 		default:
 			break;
