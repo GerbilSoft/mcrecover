@@ -60,6 +60,14 @@
     <file>32x32/edit-undo.png</file>
     <file>48x48/edit-undo.png</file>
 
+    <file>16x16/folder.png</file>
+    <file>22x22/folder.png</file>
+    <file>32x32/folder.png</file>
+    <file>48x48/folder.png</file>
+    <file>64x64/folder.png</file>
+    <file>128x128/folder.png</file>
+    <file>256x256/folder.png</file>
+
     <file>16x16/help-about.png</file>
     <file>22x22/help-about.png</file>
     <file>32x32/help-about.png</file>

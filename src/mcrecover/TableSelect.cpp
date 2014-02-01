@@ -22,6 +22,7 @@
 #include "TableSelect.hpp"
 
 #include "MemCard.hpp"
+#include "McRecoverQApplication.hpp"
 
 /** TableSelectPrivate **/
 
@@ -84,6 +85,19 @@ TableSelect::TableSelect(QWidget *parent)
 {
 	Q_D(TableSelect);
 	d->ui.setupUi(this);
+
+	// Set the icons.
+	// TODO: Where to determine icon size?
+	static const QSize iconSz(16, 16);
+
+	QIcon iconDirTable = McRecoverQApplication::StandardIcon(
+		QStyle::SP_DirClosedIcon, nullptr, d->ui.lblDirImage);
+	d->ui.lblDirImage->setPixmap(iconDirTable.pixmap(iconSz));
+
+	// TODO: Windows: Get icon from defrag.exe.
+	QIcon iconBlockTable = McRecoverQApplication::IconFromTheme(
+		QLatin1String("partitionmanager"));
+	d->ui.lblBlockImage->setPixmap(iconBlockTable.pixmap(iconSz));
 }
 
 TableSelect::~TableSelect()

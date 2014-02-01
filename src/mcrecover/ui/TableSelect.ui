@@ -41,7 +41,7 @@
          <string>Directory Table</string>
         </property>
         <property name="pixmap">
-         <pixmap resource="resources/oxygen/oxygen.qrc">:/oxygen/16x16/document-open.png</pixmap>
+         <pixmap resource="resources/oxygen/oxygen.qrc">:/oxygen/16x16/folder.png</pixmap>
         </property>
        </widget>
       </item>
