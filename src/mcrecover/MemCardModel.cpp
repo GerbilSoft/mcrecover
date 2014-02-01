@@ -173,6 +173,7 @@ void MemCardModelPrivate::style_t::init(void)
 	// Initialize the COL_ISVALID pixmaps.
 	// NOTE: SP_MessageBoxQuestion is Windows only.
 	// NOTE: SP_DialogApplyButton is Linux only.
+	// TODO: Update the icons if the system style changes?
 	QStyle *style = QApplication::style();
 
 #if defined(Q_OS_WIN)
