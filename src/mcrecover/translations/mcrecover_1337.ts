@@ -476,7 +476,7 @@ Some files with Japanese descriptions might not be found when scanning.</source>
     </message>
     <message>
         <location filename="../McRecoverWindow.cpp" line="538"/>
-        <location filename="../McRecoverWindow.cpp" line="1063"/>
+        <location filename="../McRecoverWindow.cpp" line="1064"/>
         <source>All Files</source>
         <translation>4ll f1l35</translation>
     </message>
@@ -510,7 +510,7 @@ d0 y0u w4n7 70 0v3rwr173 17?</translation>
         <translation>5y573m d3f4ul7 (%1)</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="997"/>
+        <location filename="../McRecoverWindow.cpp" line="998"/>
         <source>The internal PCRE library was not compiled with UTF-8 support.
 Scanning for lost files will not work.</source>
         <extracomment>Statically-linked PCRE is missing UTF-8 support.</extracomment>
@@ -518,7 +518,7 @@ Scanning for lost files will not work.</source>
 5c4nn1n6 f0r l057 f1l35 w1ll n07 w0rk.</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1001"/>
+        <location filename="../McRecoverWindow.cpp" line="1002"/>
         <source>The system PCRE library was not compiled with UTF-8 support.
 Scanning for lost files will not work.</source>
         <extracomment>Dynamically-linked PCRE is missing UTF-8 support.</extracomment>
@@ -526,36 +526,36 @@ Scanning for lost files will not work.</source>
 5c4nn1n6 f0r l057 f1l35 w1ll n07 w0rk.</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1060"/>
+        <location filename="../McRecoverWindow.cpp" line="1061"/>
         <source>Open GameCube Memory Card Image</source>
         <translation>0p3n 64m3cub3 m3m0ry c4rd 1m463</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1062"/>
+        <location filename="../McRecoverWindow.cpp" line="1063"/>
         <source>GameCube Memory Card Image</source>
         <translation>64m3cub3 m3m0ry c4rd 1m463</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1097"/>
+        <location filename="../McRecoverWindow.cpp" line="1098"/>
         <source>The database files should be located in the data subdirectory in
 mcrecover.exe&apos;s program directory.</source>
         <translation>7h3 d474b453 f1l35 5h0uld b3 l0c473d 1n 7h3 d474 5ubd1r3c70ry 1n
 mcr3c0v3r.3x3&apos;5 pr06r4m d1r3c70ry.</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1101"/>
+        <location filename="../McRecoverWindow.cpp" line="1102"/>
         <source>The database files should be located in %1.
 Alternatively, you can place your own version in ~/.config/mcrecover/data/</source>
         <translation>7h3 d474b453 f1l35 5h0uld b3 l0c473d 1n %1.
 4l73rn471v3ly, y0u c4n pl4c3 y0ur 0wn v3r510n 1n ~/.c0nf16/mcr3c0v3r/d474/</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1108"/>
+        <location filename="../McRecoverWindow.cpp" line="1109"/>
         <source>Database Load Error</source>
         <translation>d474b453 l04d 3rr0r</translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1109"/>
+        <location filename="../McRecoverWindow.cpp" line="1110"/>
         <source>No GCN MemCard file databases were found.</source>
         <translation>n0 6cn m3mc4rd f1l3 d474b4535 w3r3 f0und.</translation>
     </message>
@@ -600,42 +600,42 @@ ch3ck5um:</translation>
 <context>
     <name>MemCardModel</name>
     <message>
-        <location filename="../MemCardModel.cpp" line="444"/>
+        <location filename="../MemCardModel.cpp" line="452"/>
         <source>Icon</source>
         <translation>1c0n</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="445"/>
+        <location filename="../MemCardModel.cpp" line="453"/>
         <source>Banner</source>
         <translation>b4nn3r</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="446"/>
+        <location filename="../MemCardModel.cpp" line="454"/>
         <source>Description</source>
         <translation>d35cr1p710n</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="447"/>
+        <location filename="../MemCardModel.cpp" line="455"/>
         <source>Size</source>
         <translation>51z3</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="448"/>
+        <location filename="../MemCardModel.cpp" line="456"/>
         <source>Last Modified</source>
         <translation>l457 m0d1f13d</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="449"/>
+        <location filename="../MemCardModel.cpp" line="457"/>
         <source>Mode</source>
         <translation>m0d3</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="450"/>
+        <location filename="../MemCardModel.cpp" line="458"/>
         <source>Game ID</source>
         <translation>64m3 1d</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="451"/>
+        <location filename="../MemCardModel.cpp" line="459"/>
         <source>Filename</source>
         <translation>f1l3n4m3</translation>
     </message>
@@ -738,6 +738,19 @@ ch3ck5um:</translation>
         <location filename="../StatusBarManager.cpp" line="501"/>
         <source>An error occurred while scanning: %1</source>
         <translation>4n 3rr0r 0ccurr3d wh1l3 5c4nn1n6: %1</translation>
+    </message>
+</context>
+<context>
+    <name>TableSelect</name>
+    <message>
+        <location filename="../ui/TableSelect.ui" line="38"/>
+        <source>Directory Table</source>
+        <translation>d1r3c70ry 74bl3</translation>
+    </message>
+    <message>
+        <location filename="../ui/TableSelect.ui" line="191"/>
+        <source>Block Table</source>
+        <translation>bl0ck 74bl3</translation>
     </message>
 </context>
 <context>

@@ -464,7 +464,7 @@ Some files with Japanese descriptions might not be found when scanning.</source>
     </message>
     <message>
         <location filename="../McRecoverWindow.cpp" line="538"/>
-        <location filename="../McRecoverWindow.cpp" line="1063"/>
+        <location filename="../McRecoverWindow.cpp" line="1064"/>
         <source>All Files</source>
         <translation></translation>
     </message>
@@ -496,48 +496,48 @@ Do you want to overwrite it?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="997"/>
+        <location filename="../McRecoverWindow.cpp" line="998"/>
         <source>The internal PCRE library was not compiled with UTF-8 support.
 Scanning for lost files will not work.</source>
         <extracomment>Statically-linked PCRE is missing UTF-8 support.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1001"/>
+        <location filename="../McRecoverWindow.cpp" line="1002"/>
         <source>The system PCRE library was not compiled with UTF-8 support.
 Scanning for lost files will not work.</source>
         <extracomment>Dynamically-linked PCRE is missing UTF-8 support.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1060"/>
+        <location filename="../McRecoverWindow.cpp" line="1061"/>
         <source>Open GameCube Memory Card Image</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1062"/>
+        <location filename="../McRecoverWindow.cpp" line="1063"/>
         <source>GameCube Memory Card Image</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1097"/>
+        <location filename="../McRecoverWindow.cpp" line="1098"/>
         <source>The database files should be located in the data subdirectory in
 mcrecover.exe&apos;s program directory.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1101"/>
+        <location filename="../McRecoverWindow.cpp" line="1102"/>
         <source>The database files should be located in %1.
 Alternatively, you can place your own version in ~/.config/mcrecover/data/</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1108"/>
+        <location filename="../McRecoverWindow.cpp" line="1109"/>
         <source>Database Load Error</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1109"/>
+        <location filename="../McRecoverWindow.cpp" line="1110"/>
         <source>No GCN MemCard file databases were found.</source>
         <translation></translation>
     </message>
@@ -579,42 +579,42 @@ Checksum:</source>
 <context>
     <name>MemCardModel</name>
     <message>
-        <location filename="../MemCardModel.cpp" line="444"/>
+        <location filename="../MemCardModel.cpp" line="452"/>
         <source>Icon</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="445"/>
+        <location filename="../MemCardModel.cpp" line="453"/>
         <source>Banner</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="446"/>
+        <location filename="../MemCardModel.cpp" line="454"/>
         <source>Description</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="447"/>
+        <location filename="../MemCardModel.cpp" line="455"/>
         <source>Size</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="448"/>
+        <location filename="../MemCardModel.cpp" line="456"/>
         <source>Last Modified</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="449"/>
+        <location filename="../MemCardModel.cpp" line="457"/>
         <source>Mode</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="450"/>
+        <location filename="../MemCardModel.cpp" line="458"/>
         <source>Game ID</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="451"/>
+        <location filename="../MemCardModel.cpp" line="459"/>
         <source>Filename</source>
         <translation></translation>
     </message>
@@ -714,6 +714,19 @@ Checksum:</source>
     <message>
         <location filename="../StatusBarManager.cpp" line="501"/>
         <source>An error occurred while scanning: %1</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>TableSelect</name>
+    <message>
+        <location filename="../ui/TableSelect.ui" line="38"/>
+        <source>Directory Table</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../ui/TableSelect.ui" line="191"/>
+        <source>Block Table</source>
         <translation></translation>
     </message>
 </context>
