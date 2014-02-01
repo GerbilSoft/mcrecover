@@ -44,21 +44,13 @@
 #endif /* HAVE_GETOPT_H */
 #ifndef HAVE_GETOPT_LONG
 #include "vlc_getopt/vlc_getopt.h"
+// Wrappers to make vlc_getopt_long() act like GNU getopt_long().
 static vlc_getopt_t vlc_getopt_state;
 #define getopt_long(argc, argv, optstring, longopts, longindex) \
 	vlc_getopt_long(argc, argv, optstring, longopts, longindex, &vlc_getopt_state)
 #define option vlc_option
 #define optarg vlc_getopt_state.arg
 #define optind vlc_getopt_state.ind
-#ifndef no_argument
-#define no_argument 0
-#endif
-#ifndef required_argument
-#define required_argument 1
-#endif
-#ifndef optional_argument
-#define optional_argument 2
-#endif
 #endif /* HAVE_GETOPT_LONG */
 
 // C++ includes.

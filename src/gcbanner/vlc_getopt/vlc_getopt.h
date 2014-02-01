@@ -100,6 +100,15 @@ struct vlc_option
     int val;
 };
 
+// has_arg options.
+// NOTE: vlc_getopt_long() doesn't support optional_argument.
+#ifndef no_argument
+#define no_argument 0
+#endif
+#ifndef required_argument
+#define required_argument 1
+#endif
+
 #ifdef _MSC_VER
 // MSVC 2010 SP1 doesn't support restrict in C mode.
 #define restrict __restrict
