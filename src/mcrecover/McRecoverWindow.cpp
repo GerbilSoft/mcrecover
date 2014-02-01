@@ -988,6 +988,7 @@ void McRecoverWindow::showEvent(QShowEvent *event)
 		if (!PcreRegex::PCRE_has_UTF8()) {
 			// UTF-8 is not supported. Disable scanning.
 			d->scanningDisabled = true;
+			d->ui.actionScan->setEnabled(false);
 
 			// FIXME: MessageWidget text cannot be
 			// retranslated while it's still visible.
