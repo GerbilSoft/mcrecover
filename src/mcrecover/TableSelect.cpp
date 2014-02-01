@@ -24,6 +24,9 @@
 #include "MemCard.hpp"
 #include "McRecoverQApplication.hpp"
 
+// Qt includes.
+#include <QtCore/QSignalMapper>
+
 /** TableSelectPrivate **/
 
 #include "ui_TableSelect.h"
@@ -49,12 +52,24 @@ class TableSelectPrivate
 		 * Update the widget display.
 		 */
 		void updateWidgetDisplay(void);
+
+		// Signal mappers.
+		QSignalMapper *mapperDirTable;
+		QSignalMapper *mapperBlockTable;
 };
 
 TableSelectPrivate::TableSelectPrivate(TableSelect *q)
 	: q_ptr(q)
 	, card(nullptr)
-{ }
+	, mapperDirTable(new QSignalMapper(q))
+	, mapperBlockTable(new QSignalMapper(q))
+{
+	// Connect the QSignalMapper slots.
+	QObject::connect(mapperDirTable, SIGNAL(mapped(int)),
+			 q, SLOT(setActiveDatIdx_slot(int)));
+	QObject::connect(mapperBlockTable, SIGNAL(mapped(int)),
+			 q, SLOT(setActiveBatIdx_slot(int)));
+}
 
 TableSelectPrivate::~TableSelectPrivate()
 { }
@@ -72,7 +87,22 @@ void TableSelectPrivate::updateWidgetDisplay(void)
 		return;
 	}
 
-	// TODO: Get information from the MemCard.
+	// Update the widget state.
+	// TODO: DAT/BAT validity status.
+
+	// Directory table.
+	if (card->activeDatIdx() == 0)
+		ui.btnDirA->setChecked(true);
+	else
+		ui.btnDirB->setChecked(true);
+
+	// Block table.
+	if (card->activeBatIdx() == 0)
+		ui.btnBlockA->setChecked(true);
+	else
+		ui.btnBlockB->setChecked(true);
+
+	// Show the widgets.
 	ui.fraDirTable->setVisible(true);
 	ui.fraBlockTable->setVisible(true);
 }
@@ -105,6 +135,22 @@ TableSelect::TableSelect(QWidget *parent)
 			QLatin1String("partitionmanager"));
 	}
 	d->ui.lblBlockImage->setPixmap(iconBlockTable.pixmap(iconSz));
+
+	// Connect QAction signals to the QSignalMappers.
+	QObject::connect(d->ui.btnDirA, SIGNAL(clicked()),
+			 d->mapperDirTable, SLOT(map()));
+	QObject::connect(d->ui.btnDirB, SIGNAL(clicked()),
+			 d->mapperDirTable, SLOT(map()));
+	QObject::connect(d->ui.btnBlockA, SIGNAL(clicked()),
+			 d->mapperBlockTable, SLOT(map()));
+	QObject::connect(d->ui.btnBlockB, SIGNAL(clicked()),
+			 d->mapperBlockTable, SLOT(map()));
+
+	// Set the mappings in the QSignalMappers.
+	d->mapperDirTable->setMapping(d->ui.btnDirA, 0);
+	d->mapperDirTable->setMapping(d->ui.btnDirB, 1);
+	d->mapperBlockTable->setMapping(d->ui.btnBlockA, 0);
+	d->mapperBlockTable->setMapping(d->ui.btnBlockB, 1);
 }
 
 TableSelect::~TableSelect()
@@ -185,4 +231,30 @@ void TableSelect::memCard_destroyed_slot(QObject *obj)
 		// Update the widget display.
 		d->updateWidgetDisplay();
 	}
+}
+
+/**
+ * Set the active Directory Table index.
+ * NOTE: This function reloads the file list, without lost files.
+ * @param idx Active Directory Table index. (0 or 1)
+ */
+void TableSelect::setActiveDatIdx_slot(int idx)
+{
+	if (idx < 0 || idx >= 2)
+		return;
+	Q_D(TableSelect);
+	d->card->setActiveDatIdx(idx);
+}
+
+/**
+ * Set the active Block Table index.
+ * NOTE: This function reloads the file list, without lost files.
+ * @param idx Active Block Table index. (0 or 1)
+ */
+void TableSelect::setActiveBatIdx_slot(int idx)
+{
+	if (idx < 0 || idx >= 2)
+		return;
+	Q_D(TableSelect);
+	d->card->setActiveBatIdx(idx);
 }

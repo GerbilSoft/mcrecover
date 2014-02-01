@@ -98,7 +98,7 @@ class MemCardPrivate
 		// Active tables according to the card headers.
 		// 0, 1 == valid
 		//   -1 == both tables are invalid, default to 0
-		int8_t mc_dat_idx, mc_bat_idx;
+		int8_t mc_dat_hdr_idx, mc_bat_hdr_idx;
 
 		// Active tables.
 		card_dat *mc_dat;
@@ -141,7 +141,7 @@ class MemCardPrivate
 
 		/**
 		 * Determine which tables are active.
-		 * Sets mc_dat_idx and mc_bat_idx.
+		 * Sets mc_dat_hdr_idx and mc_bat_hdr_idx.
 		 * NOTE: All tables must be loaded first!
 		 * @return 0 on success; non-zero on error.
 		 */
@@ -161,8 +161,8 @@ MemCardPrivate::MemCardPrivate(MemCard *q, const QString &filename)
 	: q_ptr(q)
 	, filename(filename)
 	, file(nullptr)
-	, mc_dat_idx(-1)
-	, mc_bat_idx(-1)
+	, mc_dat_hdr_idx(-1)
+	, mc_bat_hdr_idx(-1)
 	, mc_dat(nullptr)
 	, mc_bat(nullptr)
 {
@@ -390,7 +390,7 @@ void MemCardPrivate::loadBlockTable(card_bat *bat, uint32_t address, uint32_t *c
 
 /**
  * Determine which tables are active.
- * Sets mc_dat_idx and mc_bat_idx.
+ * Sets mc_dat_hdr_idx and mc_bat_hdr_idx.
  * NOTE: All tables must be loaded first!
  * @return 0 on success; non-zero on error.
  */
@@ -424,7 +424,7 @@ int MemCardPrivate::checkTables(void)
 	int tmp_idx = (idx >= 0 ? idx : 0);
 	this->mc_dat = &mc_dat_int[tmp_idx];
 	fprintf(stderr, "Dir Table == %d\n", tmp_idx);
-	this->mc_dat_idx = idx;
+	this->mc_dat_hdr_idx = idx;
 
 	/**
 	 * Determine which block allocation table to use.
@@ -454,7 +454,7 @@ int MemCardPrivate::checkTables(void)
 	tmp_idx = (idx >= 0 ? idx : 0);
 	this->mc_bat = &mc_bat_int[tmp_idx];
 	fprintf(stderr, "Block Table == %d\n", tmp_idx);
-	this->mc_bat_idx = idx;
+	this->mc_bat_hdr_idx = idx;
 
 	return 0;
 }
@@ -747,7 +747,6 @@ MemCardFile *MemCard::getFile(int idx)
 	return d->lstMemCardFile.at(idx);
 }
 
-
 /**
  * Get the used block map.
  * NOTE: This is only valid for regular files, not "lost" files.
@@ -760,7 +759,6 @@ QVector<uint8_t> MemCard::usedBlockMap(void)
 	Q_D(MemCard);
 	return d->usedBlockMap;
 }
-
 
 /**
  * Remove all "lost" files.
@@ -778,7 +776,6 @@ void MemCard::removeLostFiles(void)
 		}
 	}
 }
-
 
 /**
  * Add a "lost" file.
@@ -814,7 +811,6 @@ MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry)
 	return addLostFile(dirEntry, fatEntries);
 }
 
-
 /**
  * Add a "lost" file.
  * @param dirEntry Directory entry.
@@ -845,4 +841,52 @@ Checksum::ChecksumValue MemCard::headerChecksumValue(void) const
 {
 	Q_D(const MemCard);
 	return d->headerChecksumValue;
+}
+
+/**
+ * Get the active Directory Table index.
+ * @return Active Directory Table index. (0 or 1)
+ */
+int MemCard::activeDatIdx(void) const
+{
+	Q_D(const MemCard);
+	return (d->mc_dat == &d->mc_dat_int[1]);
+}
+
+/**
+ * Set the active Directory Table index.
+ * NOTE: This function reloads the file list, without lost files.
+ * @param idx Active Directory Table index. (0 or 1)
+ */
+void MemCard::setActiveDatIdx(int idx)
+{
+	Q_D(MemCard);
+	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_dat_int))
+		return;
+	d->mc_dat = &d->mc_dat_int[idx];
+	d->loadMemCardFileList();
+}
+
+/**
+ * Get the active Block Table index.
+ * @return Active Block Table index. (0 or 1)
+ */
+int MemCard::activeBatIdx(void) const
+{
+	Q_D(const MemCard);
+	return (d->mc_bat == &d->mc_bat_int[1]);
+}
+
+/**
+ * Set the active Block Table index.
+ * NOTE: This function reloads the file list, without lost files.
+ * @param idx Active Block Table index. (0 or 1)
+ */
+void MemCard::setActiveBatIdx(int idx)
+{
+	Q_D(MemCard);
+	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_bat_int))
+		return;
+	d->mc_bat = &d->mc_bat_int[idx];
+	d->loadMemCardFileList();
 }

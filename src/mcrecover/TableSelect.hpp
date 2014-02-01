@@ -71,6 +71,20 @@ class TableSelect : public QWidget
 		 * @param obj QObject that was destroyed.
 		 */
 		void memCard_destroyed_slot(QObject *obj = 0);
+
+		/**
+		 * Set the active Directory Table index.
+		 * NOTE: This function reloads the file list, without lost files.
+		 * @param idx Active Directory Table index. (0 or 1)
+		 */
+		void setActiveDatIdx_slot(int idx);
+
+		/**
+		 * Set the active Block Table index.
+		 * NOTE: This function reloads the file list, without lost files.
+		 * @param idx Active Block Table index. (0 or 1)
+		 */
+		void setActiveBatIdx_slot(int idx);
 };
 
 #endif /* __MCRECOVER_TABLESELECT_HPP__ */

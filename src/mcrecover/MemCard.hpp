@@ -52,9 +52,11 @@ class MemCard : public QObject
 	Q_PROPERTY(QString serialNumber READ serialNumber)
 	Q_PROPERTY(int encoding READ encoding)
 	Q_PROPERTY(int numFiles READ numFiles)
-	Q_PROPERTY(bool Empty READ isEmpty)
+	Q_PROPERTY(bool empty READ isEmpty)
 	// TODO: Register Checksum::ChecksumValue metatype?
 	//Q_PROPERTY(Checksum::ChecksumValue headerChecksumValue READ headerChecksumValue)
+	Q_PROPERTY(int activeDatIdx READ activeDatIdx WRITE setActiveDatIdx)
+	Q_PROPERTY(int activeBatIdx READ activeBatIdx WRITE setActiveBatIdx)
 
 	public:
 		MemCard(const QString& filename, QObject *parent = 0);
@@ -90,6 +92,8 @@ class MemCard : public QObject
 		 * Files have been removed from the MemCard.
 		 */
 		void filesRemoved(void);
+
+		// TODO: Add signals for DAT or BAT changes.
 
 	public:
 		/**
@@ -218,6 +222,32 @@ class MemCard : public QObject
 		 * @return Header checksum value.
 		 */
 		Checksum::ChecksumValue headerChecksumValue(void) const;
+
+		/**
+		 * Get the active Directory Table index.
+		 * @return Active Directory Table index. (0 or 1)
+		 */
+		int activeDatIdx(void) const;
+
+		/**
+		 * Set the active Directory Table index.
+		 * NOTE: This function reloads the file list, without lost files.
+		 * @param idx Active Directory Table index. (0 or 1)
+		 */
+		void setActiveDatIdx(int idx);
+
+		/**
+		 * Get the active Block Table index.
+		 * @return Active Block Table index. (0 or 1)
+		 */
+		int activeBatIdx(void) const;
+
+		/**
+		 * Set the active Block Table index.
+		 * NOTE: This function reloads the file list, without lost files.
+		 * @param idx Active Block Table index. (0 or 1)
+		 */
+		void setActiveBatIdx(int idx);
 };
 
 #endif /* __MCRECOVER_MEMCARD_HPP__ */
