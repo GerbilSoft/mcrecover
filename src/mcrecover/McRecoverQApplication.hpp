@@ -24,6 +24,7 @@
 
 #include <QtGui/QApplication>
 #include <QtGui/QIcon>
+#include <QtGui/QPixmap>
 #include <QtGui/QStyle>
 
 class McRecoverQApplicationPrivate;
@@ -74,6 +75,16 @@ class McRecoverQApplication : public QApplication
 
 			W32ICON_MAX
 		};
+
+		/**
+		 * Get an icon from a Win32 module.
+		 * @param module Filename of the Win32 module.
+		 * @param resId Resource identifier.
+		 * @param size Icon size.
+		 * @return Icon, as a QPixmap.
+		 */
+		static QPixmap getIconFromModule(const QString &module,
+					uint16_t resId, const QSize &size);
 
 		/**
 		 * Get a Win32 icon.

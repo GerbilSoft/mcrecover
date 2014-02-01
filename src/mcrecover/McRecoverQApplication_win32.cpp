@@ -63,12 +63,40 @@
 // qWinMain declaration.
 extern void qWinMain(HINSTANCE, HINSTANCE, LPSTR, int, int &, QVector<char *> &);
 
+/** McRecoverQApplicationWin32Private **/
+
+class McRecoverQApplicationWin32Private
+{
+	private:
+		McRecoverQApplicationWin32Private() { }
+		~McRecoverQApplicationWin32Private() { }
+		Q_DISABLE_COPY(McRecoverQApplicationWin32Private)
+
+	public:
+		/**
+		 * Enable extra security options.
+		 * Reference: http://msdn.microsoft.com/en-us/library/bb430720.aspx
+		 * @return 0 on success; non-zero on error.
+		 */
+		static int SetSecurityOptions(void);
+
+		/**
+		 * Get an icon from a Win32 module.
+		 * @param module Filename of the Win32 module.
+		 * @param resId Resource identifier.
+		 * @param size Icon size.
+		 * @return Icon, as a QPixmap.
+		 */
+		static QPixmap GetIconFromModule(const QString &module, 
+					uint16_t resId, const QSize &size);
+};
+
 /**
  * Enable extra security options.
  * Reference: http://msdn.microsoft.com/en-us/library/bb430720.aspx
  * @return 0 on success; non-zero on error.
  */
-static int SetSecurityOptions(void)
+int McRecoverQApplicationWin32Private::SetSecurityOptions(void)
 {
 	HMODULE hKernel32 = LoadLibraryA("kernel32.dll");
 	if (!hKernel32)
@@ -109,6 +137,34 @@ static int SetSecurityOptions(void)
 }
 
 /**
+ * Get an icon from a Win32 module.
+ * @param module Filename of the Win32 module.
+ * @param resId Resource identifier.
+ * @param size Icon size.
+ * @return Icon, as a QPixmap.
+ */
+QPixmap McRecoverQApplicationWin32Private::GetIconFromModule(
+		const QString &module, uint16_t resId, const QSize &size)
+{
+	QPixmap pixmap;
+	HMODULE hDll = LoadLibraryW((LPCWSTR)module.utf16());
+	if (!hDll)
+		return pixmap;
+
+	HICON hIcon = (HICON)LoadImageW(hDll, MAKEINTRESOURCEW(resId),
+	IMAGE_ICON, size.width(), size.height(), 0);
+	if (hIcon) {
+		pixmap = QPixmap::fromWinHICON(hIcon);
+		DestroyIcon(hIcon);
+	}
+
+	FreeLibrary(hDll);
+	return pixmap;
+}
+
+/** McRecoverQApplication (Win32) **/
+
+/**
  * Main entry point on Win32.
  * Code based on libqtmain-4.7.1.
  * Windows CE-specific parts have been removed.
@@ -122,7 +178,7 @@ extern "C"
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow)
 {
 	// Enable extra security options.
-	SetSecurityOptions();
+	McRecoverQApplicationWin32Private::SetSecurityOptions();
 
 	// Show a warning if an app-based operating system is in use.
 	OSVERSIONINFOA osVersionInfo;
@@ -167,32 +223,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 }
 
 /**
- * Get an icon from a Win32 module.
- * TODO: Make this a private/protected class function?
- * @param module Filename of the Win32 module.
- * @param resId Resource identifier.
- * @param size Icon size.
- * @return Icon, as a QPixmap.
- */
-static QPixmap getIconFromModule(const QString &module, uint16_t resId, const QSize &size)
-{
-	QPixmap pixmap;
-	HMODULE hDll = LoadLibraryW((LPCWSTR)module.utf16());
-	if (!hDll)
-		return pixmap;
-
-	HICON hIcon = (HICON)LoadImageW(hDll, MAKEINTRESOURCEW(resId),
-	IMAGE_ICON, size.width(), size.height(), 0);
-	if (hIcon) {
-		pixmap = QPixmap::fromWinHICON(hIcon);
-		DestroyIcon(hIcon);
-	}
-
-	FreeLibrary(hDll);
-	return pixmap;
-}
-
-/**
  * Get a Win32 icon.
  * @param iconId Win32 icon ID.
  * @param size Desired size.
@@ -224,10 +254,10 @@ QIcon McRecoverQApplication::Win32Icon(Win32Icon_t iconId, const QSize &size)
 			 * - WinXP: SYSTEM32/dfrgres.dll;106
 			 */
 			QString dfFile = qsys32dir + QLatin1String("\\dfrgui.exe");
-			pixmap = getIconFromModule(dfFile, 130, size);
+			pixmap = McRecoverQApplicationWin32Private::GetIconFromModule(dfFile, 130, size);
 			if (pixmap.isNull()) {
 				dfFile = qsys32dir + QLatin1String("\\dfrgres.dll");
-				pixmap = getIconFromModule(dfFile, 106, size);
+				pixmap = McRecoverQApplicationWin32Private::GetIconFromModule(dfFile, 106, size);
 			}
 
 			break;
@@ -239,9 +269,6 @@ QIcon McRecoverQApplication::Win32Icon(Win32Icon_t iconId, const QSize &size)
 
 	return pixmap;
 }
-
-// QtGui includes.
-#include <QtGui/QFont>
 
 /**
  * Win32 event filter.
@@ -267,6 +294,9 @@ bool McRecoverQApplication::winEventFilter(MSG *msg, long *result)
 	// Allow QApplication to handle this message anyway.
 	return false;
 }
+
+// QtGui includes.
+#include <QtGui/QFont>
 
 /**
  * Set the Qt font to match the system font.
