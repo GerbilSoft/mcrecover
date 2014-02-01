@@ -214,17 +214,24 @@ QIcon McRecoverQApplication::StandardIcon(QStyle::StandardPixmap standardIcon,
 				const QWidget *widget)
 {
 	QStyle *style = QApplication::style();
+	QIcon icon;
+	const char *xdg_icon = nullptr;
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
 	// Always use StandardPixmap.
 	// Qt will use the xdg icon if the StandardPixmap isn't found.
 	// TODO: Verify this behavior on old systems.
-	return style->standardIcon(standardIcon, option, widget);
+	switch (standardIcon) {
+		case QStyle::SP_MessageBoxQuestion:
+			xdg_icon = "dialog-question";
+			break;
+		default:
+			xdg_icon = nullptr;
+			break;
+	}
 #else
 	// Other systems.
 	// TODO: Check icons on Mac.
-	QIcon icon;
-	const char *xdg_icon = nullptr;
 	switch (standardIcon) {
 		// Windows only.
 		case QStyle::SP_MessageBoxQuestion:
@@ -252,6 +259,7 @@ QIcon McRecoverQApplication::StandardIcon(QStyle::StandardPixmap standardIcon,
 			icon = style->standardIcon(standardIcon, option, widget);
 			break;
 	}
+#endif /* defined(Q_OS_UNIX) && !defined(Q_OS_MAC) */
 
 	if (icon.isNull()) {
 		if (xdg_icon)
@@ -263,5 +271,4 @@ QIcon McRecoverQApplication::StandardIcon(QStyle::StandardPixmap standardIcon,
 	}
 
 	return icon;
-#endif /* defined(Q_OS_UNIX) && !defined(Q_OS_MAC) */
 }
