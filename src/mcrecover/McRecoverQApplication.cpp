@@ -215,35 +215,53 @@ QIcon McRecoverQApplication::StandardIcon(QStyle::StandardPixmap standardIcon,
 {
 	QStyle *style = QApplication::style();
 
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+	// Always use StandardPixmap.
+	// Qt will use the xdg icon if the StandardPixmap isn't found.
+	// TODO: Verify this behavior on old systems.
+	return style->standardIcon(standardIcon, option, widget);
+#else
+	// Other systems.
 	// TODO: Check icons on Mac.
+	QIcon icon;
+	const char *xdg_icon = nullptr;
 	switch (standardIcon) {
+		// Windows only.
+		case QStyle::SP_MessageBoxQuestion:
+#if defined(Q_OS_WIN)
+			icon = style->standardIcon(standardIcon, option, widget);
+#else /* !Q_OS_WIN */
+			xdg_icon = "dialog-question";
+#endif /* Q_OS_WIN */
+			break;
+
+		// Neither Windows nor Mac OS X.
+		case QStyle::SP_DialogApplyButton:
+			xdg_icon = "dialog-ok-apply";
+			break;
+		case QStyle::SP_DialogCloseButton:
+			xdg_icon = "dialog-close";
+			break;
+
 		// Available on all systems.
 		case QStyle::SP_MessageBoxInformation:
 		case QStyle::SP_MessageBoxWarning:
 		case QStyle::SP_MessageBoxCritical:
-			return style->standardIcon(standardIcon, option, widget);
-
-		// Windows only.
-		case QStyle::SP_MessageBoxQuestion:
-#if defined(Q_OS_WIN)
-			return style->standardIcon(standardIcon, option, widget);
-#else /* !Q_OS_WIN */
-			return IconFromTheme(QLatin1String("dialog-question"));
-#endif /* Q_OS_WIN */
-
-		// Linux only.
-		case QStyle::SP_DialogApplyButton:
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
-			return style->standardIcon(standardIcon, option, widget);
-#else
-			return IconFromTheme(QLatin1String("dialog-ok-apply"));
-#endif
-
 		default:
 			// TODO: Add more icons.
+			icon = style->standardIcon(standardIcon, option, widget);
 			break;
 	}
 
-	// We don't hae a cusotm icon for this one.
-	return style->standardIcon(standardIcon, option, widget);
+	if (icon.isNull()) {
+		if (xdg_icon)
+			icon = IconFromTheme(QLatin1String(xdg_icon));
+		if (icon.isNull()) {
+			// We don't have a custom icon for this one.
+			return style->standardIcon(standardIcon, option, widget);
+		}
+	}
+
+	return icon;
+#endif /* defined(Q_OS_UNIX) && !defined(Q_OS_MAC) */
 }

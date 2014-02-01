@@ -92,31 +92,35 @@ void MessageWidgetPrivate::setIcon(MessageWidget::MsgIcon icon)
 		return;
 	this->icon = icon;
 
-	// TODO: Use system icons if available?
-	const char *iconName = nullptr;
+	QStyle::StandardPixmap standardPixmap;
+	bool hasStandardPixmap = false;
 	switch (icon) {
 		case MessageWidget::ICON_NONE:
 		default:
-			iconName = nullptr;
+			hasStandardPixmap = false;
 			break;
 		case MessageWidget::ICON_CRITICAL:
-			iconName = "dialog-error";
+			standardPixmap = QStyle::SP_MessageBoxCritical;
+			hasStandardPixmap = true;
 			break;
 		case MessageWidget::ICON_QUESTION:
-			iconName = "dialog-question";
+			standardPixmap = QStyle::SP_MessageBoxQuestion;
+			hasStandardPixmap = true;
 			break;
 		case MessageWidget::ICON_WARNING:
-			iconName = "dialog-warning";
+			standardPixmap = QStyle::SP_MessageBoxWarning;
+			hasStandardPixmap = true;
 			break;
 		case MessageWidget::ICON_INFORMATION:
-			iconName = "dialog-information";
+			standardPixmap = QStyle::SP_MessageBoxInformation;
+			hasStandardPixmap = true;
 			break;
 	}
 
-	if (!iconName) {
+	if (!hasStandardPixmap) {
 		ui.lblIcon->setVisible(false);
 	} else {
-		QIcon icon = McRecoverQApplication::IconFromTheme(QLatin1String(iconName));
+		QIcon icon = McRecoverQApplication::StandardIcon(standardPixmap, nullptr);
 		ui.lblIcon->setPixmap(icon.pixmap(iconSz, iconSz));
 		ui.lblIcon->setVisible(true);
 	}
@@ -148,6 +152,7 @@ MessageWidget::MessageWidget(QWidget *parent)
 {
 	Q_D(MessageWidget);
 	d->ui.setupUi(this);
+	d->ui.btnDismiss->setIcon(McRecoverQApplication::StandardIcon(QStyle::SP_DialogCloseButton));
 	d->ui.hboxMain->setAlignment(Qt::AlignTop);
 	d->ui.hboxFrame->setAlignment(d->ui.lblIcon, Qt::AlignTop);
 	d->ui.hboxFrame->setAlignment(d->ui.lblMessage, Qt::AlignTop);
