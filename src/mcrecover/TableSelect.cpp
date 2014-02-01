@@ -148,3 +148,22 @@ void TableSelect::setCard(MemCard *card)
 	// Update the widget display.
 	d->updateWidgetDisplay();
 }
+
+/** Events. **/
+
+/**
+ * Widget state has changed.
+ * @param event State change event.
+ */
+void TableSelect::changeEvent(QEvent *event)
+{
+	if (event->type() == QEvent::LanguageChange) {
+		// Retranslate the UI.
+		Q_D(TableSelect);
+		d->ui.retranslateUi(this);
+		d->updateWidgetDisplay();
+	}
+
+	// Pass the event to the base class.
+	this->QWidget::changeEvent(event);
+}

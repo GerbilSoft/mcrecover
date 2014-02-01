@@ -56,6 +56,12 @@ class TableSelect : public QWidget
 		 * @param file MemCard.
 		 */
 		void setCard(MemCard *card);
+
+		/** Events. **/
+
+	protected:
+		// State change event. (Used for switching the UI language at runtime.)
+		void changeEvent(QEvent *event);
 };
 
 #endif /* __MCRECOVER_TABLESELECT_HPP__ */
