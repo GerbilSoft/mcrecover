@@ -811,9 +811,15 @@ void McRecoverWindow::openCard(const QString &filename)
 
 	// Open the specified memory card image.
 	d->card = new MemCard(filename);
-	// TODO: Make sure the card is open.
-	d->model->setMemCard(d->card);
+	if (!d->card->isOpen()) {
+		// Could not open the card.
+		// TODO: Show an error mesage.
+		closeCard(true);
+		return;
+	}
+
 	d->filename = filename;
+	d->model->setMemCard(d->card);
 
 	// Extract the filename from the path.
 	d->displayFilename = filename;
@@ -856,8 +862,9 @@ void McRecoverWindow::openCard(const QString &filename)
 
 /**
  * Close the currently-opened GameCube Memory Card image.
+ * @param noMsg If true, don't show a message in the status bar.
  */
-void McRecoverWindow::closeCard(void)
+void McRecoverWindow::closeCard(bool noMsg)
 {
 	Q_D(McRecoverWindow);
 
@@ -873,7 +880,8 @@ void McRecoverWindow::closeCard(void)
 
 	// Update the UI.
 	d->updateLstFileList();
-	d->statusBarManager->closed();
+	if (!noMsg)
+		d->statusBarManager->closed();
 	d->updateWindowTitle();
 }
 

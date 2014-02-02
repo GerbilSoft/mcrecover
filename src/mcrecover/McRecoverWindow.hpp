@@ -56,8 +56,9 @@ class McRecoverWindow : public QMainWindow
 
 		/**
 		 * Close the currently-opened GameCube Memory Card image.
+		 * @param noMsg If true, don't show a message in the status bar.
 		 */
-		void closeCard(void);
+		void closeCard(bool noMsg = false);
 
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
