@@ -245,6 +245,13 @@ class MemCard : public QObject
 		int activeDatHdrIdx(void) const;
 
 		/**
+		 * Is a Directory Table valid?
+		 * @param idx Directory Table index. (0 or 1)
+		 * @return True if valid; false if not valid or idx is invalid.
+		 */
+		bool isDatValid(int idx) const;
+
+		/**
 		 * Get the active Block Table index.
 		 * @return Active Block Table index. (0 or 1)
 		 */
@@ -262,6 +269,13 @@ class MemCard : public QObject
 		 * @return Active Block Table index (0 or 1), or -1 if both are invalid.
 		 */
 		int activeBatHdrIdx(void) const;
+
+		/**
+		 * Is a Block Table valid?
+		 * @param idx Block Table index. (0 or 1)
+		 * @return True if valid; false if not valid or idx is invalid.
+		 */
+		bool isBatValid(int idx) const;
 };
 
 #endif /* __MCRECOVER_MEMCARD_HPP__ */

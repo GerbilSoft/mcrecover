@@ -94,6 +94,8 @@ class MemCardPrivate
 		uint32_t mc_dat_chk_expected[2];
 		uint32_t mc_bat_chk_actual[2];
 		uint32_t mc_bat_chk_expected[2];
+		bool mc_dat_valid[2];
+		bool mc_bat_valid[2];
 
 		// Active tables according to the card headers.
 		// 0, 1 == valid
@@ -306,6 +308,10 @@ int MemCardPrivate::loadSysInfo(void)
 	mc_dat_chk_expected[1] = (mc_dat_int[1].dircntrl.chksum1 << 16) |
 				 (mc_dat_int[1].dircntrl.chksum2);
 
+	// Check which tables are valid.
+	mc_dat_valid[0] = (mc_dat_chk_expected[0] == mc_dat_chk_actual[0]);
+	mc_dat_valid[1] = (mc_dat_chk_expected[1] == mc_dat_chk_actual[1]);
+
 	// Block allocation tables.
 	loadBlockTable(&mc_bat_int[0], CARD_SYSBAT, &mc_bat_chk_actual[0]);
 	loadBlockTable(&mc_bat_int[1], CARD_SYSBAT_BACK, &mc_bat_chk_actual[1]);
@@ -315,6 +321,10 @@ int MemCardPrivate::loadSysInfo(void)
 				 (mc_bat_int[0].chksum2);
 	mc_bat_chk_expected[1] = (mc_bat_int[1].chksum1 << 16) |
 				 (mc_bat_int[1].chksum2);
+
+	// Check which tables are valid.
+	mc_bat_valid[0] = (mc_bat_chk_expected[0] == mc_bat_chk_actual[0]);
+	mc_bat_valid[1] = (mc_bat_chk_expected[1] == mc_bat_chk_actual[1]);
 
 	// Determine which table is active.
 	checkTables();
@@ -405,13 +415,13 @@ int MemCardPrivate::checkTables(void)
 	 * TODO: If both checksums are invalid, report an error. Defaulting to table 0 for now.
 	 * TODO: Allow user to select?
 	 */
-	int idx = (mc_dat_int[1].dircntrl.updated > mc_dat_int[0].dircntrl.updated ? 1 : 0);
+	int idx = (mc_dat_int[1].dircntrl.updated > mc_dat_int[0].dircntrl.updated);
 
 	// Verify the checksums of the selected directory table.
-	if (mc_dat_chk_expected[0] != mc_dat_chk_actual[0]) {
+	if (!mc_dat_valid[idx]) {
 		// Invalid checksum. Check the other directory table.
 		idx = !idx;
-		if (mc_dat_chk_expected[1] != mc_dat_chk_actual[1]) {
+		if (!mc_dat_valid[idx]) {
 			// Both directory tables are invalid.
 			// TODO: Report an error.
 			// For now, default to main.
@@ -435,13 +445,13 @@ int MemCardPrivate::checkTables(void)
 	 * TODO: If both checksums are invalid, report an error. Defaulting to table 0 for now.
 	 * TODO: Allow user to select?
 	 */
-	idx = (mc_bat_int[1].updated > mc_bat_int[0].updated ? 1 : 0);
+	idx = (mc_bat_int[1].updated > mc_bat_int[0].updated);
 
 	// Verify the checksums of the selected block allocation table.
-	if (mc_bat_chk_expected[0] != mc_bat_chk_actual[0]) {
+	if (!mc_bat_valid[idx]) {
 		// Invalid checksum. Check the other block allocation table.
 		idx = !idx;
-		if (mc_bat_chk_expected[1] != mc_bat_chk_actual[1]) {
+		if (!mc_bat_valid[idx]) {
 			// Both block allocation tables are invalid.
 			// TODO: Report an error.
 			// For now, default to main.
@@ -884,6 +894,21 @@ int MemCard::activeDatHdrIdx(void) const
 }
 
 /**
+ * Is a Directory Table valid?
+ * @param idx Directory Table index. (0 or 1)
+ * @return True if valid; false if not valid or idx is invalid.
+ */
+bool MemCard::isDatValid(int idx) const
+{
+	if (!isOpen())
+		return -1;
+	Q_D(const MemCard);
+	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_dat_valid))
+		return -1;
+	return d->mc_dat_valid[idx];
+}
+
+/**
  * Get the active Block Table index.
  * @return Active Block Table index. (0 or 1)
  */
@@ -921,4 +946,19 @@ int MemCard::activeBatHdrIdx(void) const
 		return -1;
 	Q_D(const MemCard);
 	return d->mc_bat_hdr_idx;
+}
+
+/**
+ * Is a Block Table valid?
+ * @param idx Block Table index. (0 or 1)
+ * @return True if valid; false if not valid or idx is invalid.
+ */
+bool MemCard::isBatValid(int idx) const
+{
+	if (!isOpen())
+		return -1;
+	Q_D(const MemCard);
+	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_bat_valid))
+		return -1;
+	return d->mc_bat_valid[idx];
 }
