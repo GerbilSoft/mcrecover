@@ -443,7 +443,6 @@ int MemCardPrivate::checkTables(void)
 			// Both directory tables are invalid.
 			// TODO: Report an error.
 			// For now, default to main.
-			fprintf(stderr, "WARNING: Both DATs are invalid. Defaulting to table 0.\n");
 			idx = -1;
 		}
 	}
@@ -451,7 +450,6 @@ int MemCardPrivate::checkTables(void)
 	// Select the directory table.
 	int tmp_idx = (idx >= 0 ? idx : 0);
 	this->mc_dat = &mc_dat_int[tmp_idx];
-	fprintf(stderr, "Dir Table == %d\n", tmp_idx);
 	this->mc_dat_hdr_idx = idx;
 
 	/**
@@ -473,7 +471,6 @@ int MemCardPrivate::checkTables(void)
 			// Both block allocation tables are invalid.
 			// TODO: Report an error.
 			// For now, default to main.
-			fprintf(stderr,"WARNING: Both BATs are invalid. Defaulting to table 0.\n");
 			idx = -1;
 		}
 	}
@@ -481,7 +478,6 @@ int MemCardPrivate::checkTables(void)
 	// Select the directory table.
 	tmp_idx = (idx >= 0 ? idx : 0);
 	this->mc_bat = &mc_bat_int[tmp_idx];
-	fprintf(stderr, "Block Table == %d\n", tmp_idx);
 	this->mc_bat_hdr_idx = idx;
 
 	return 0;
