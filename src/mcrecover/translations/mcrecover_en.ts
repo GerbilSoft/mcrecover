@@ -464,7 +464,7 @@ Some files with Japanese descriptions might not be found when scanning.</source>
     </message>
     <message>
         <location filename="../McRecoverWindow.cpp" line="538"/>
-        <location filename="../McRecoverWindow.cpp" line="1064"/>
+        <location filename="../McRecoverWindow.cpp" line="1072"/>
         <source>All Files</source>
         <translation></translation>
     </message>
@@ -496,48 +496,48 @@ Do you want to overwrite it?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="998"/>
+        <location filename="../McRecoverWindow.cpp" line="1006"/>
         <source>The internal PCRE library was not compiled with UTF-8 support.
 Scanning for lost files will not work.</source>
         <extracomment>Statically-linked PCRE is missing UTF-8 support.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1002"/>
+        <location filename="../McRecoverWindow.cpp" line="1010"/>
         <source>The system PCRE library was not compiled with UTF-8 support.
 Scanning for lost files will not work.</source>
         <extracomment>Dynamically-linked PCRE is missing UTF-8 support.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1061"/>
+        <location filename="../McRecoverWindow.cpp" line="1069"/>
         <source>Open GameCube Memory Card Image</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1063"/>
+        <location filename="../McRecoverWindow.cpp" line="1071"/>
         <source>GameCube Memory Card Image</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1098"/>
+        <location filename="../McRecoverWindow.cpp" line="1106"/>
         <source>The database files should be located in the data subdirectory in
 mcrecover.exe&apos;s program directory.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1102"/>
+        <location filename="../McRecoverWindow.cpp" line="1110"/>
         <source>The database files should be located in %1.
 Alternatively, you can place your own version in ~/.config/mcrecover/data/</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1109"/>
+        <location filename="../McRecoverWindow.cpp" line="1117"/>
         <source>Database Load Error</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1110"/>
+        <location filename="../McRecoverWindow.cpp" line="1118"/>
         <source>No GCN MemCard file databases were found.</source>
         <translation></translation>
     </message>
@@ -721,12 +721,41 @@ Checksum:</source>
     <name>TableSelect</name>
     <message>
         <location filename="../ui/TableSelect.ui" line="38"/>
+        <location filename="../TableSelect.cpp" line="225"/>
         <source>Directory Table</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../ui/TableSelect.ui" line="191"/>
+        <location filename="../TableSelect.cpp" line="232"/>
         <source>Block Table</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../TableSelect.cpp" line="179"/>
+        <location filename="../TableSelect.cpp" line="191"/>
+        <source>%1 %2 is valid, and is the active table on the card.</source>
+        <extracomment>%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == &apos;A&apos; or &apos;B&apos;.
+----------
+%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == &apos;A&apos; or &apos;B&apos;.</extracomment>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../TableSelect.cpp" line="182"/>
+        <location filename="../TableSelect.cpp" line="194"/>
+        <source>%1 %2 is valid.</source>
+        <extracomment>%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == &apos;A&apos; or &apos;B&apos;.
+----------
+%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == &apos;A&apos; or &apos;B&apos;.</extracomment>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../TableSelect.cpp" line="186"/>
+        <location filename="../TableSelect.cpp" line="198"/>
+        <source>%1 %2 is invalid.</source>
+        <extracomment>%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == &apos;A&apos; or &apos;B&apos;.
+----------
+%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == &apos;A&apos; or &apos;B&apos;.</extracomment>
         <translation></translation>
     </message>
 </context>
