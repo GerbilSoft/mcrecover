@@ -120,6 +120,13 @@ class MemCardPrivate
 
 	private:
 		/**
+		 * Reset the used block map.
+		 * This function should be called on initial load
+		 * and on directory/block table reload.
+		 */
+		void resetUsedBlockMap(void);
+
+		/**
 		 * Load the memory card system information.
 		 * @return 0 on success; non-zero on error.
 		 */
@@ -196,11 +203,8 @@ MemCardPrivate::MemCardPrivate(MemCard *q, const QString &filename)
 	// Calculate the number of blocks.
 	numBlocks = (filesize / blockSize);
 
-	// Initialize the used block map.
-	// (The first 5 blocks are always used.)
-	usedBlockMap = QVector<uint8_t>(numBlocks, 0);
-	for (int i = 0; i < 5 && i < numBlocks; i++)
-		usedBlockMap[i] = 1;
+	// Reset the used block map.
+	resetUsedBlockMap();
 
 	// NOTE: Initialization must be done *after* MemCard is initialized!
 }
@@ -252,6 +256,20 @@ void MemCardPrivate::init(void)
 
 	// Load the MemCardFile list.
 	loadMemCardFileList();
+}
+
+/**
+ * Reset the used block map.
+ * This function should be called on initial load
+ * and on directory/block table reload.
+ */
+void MemCardPrivate::resetUsedBlockMap(void)
+{
+	// Initialize the used block map.
+	// (The first 5 blocks are always used.)
+	usedBlockMap = QVector<uint8_t>(numBlocks, 0);
+	for (int i = 0; i < 5 && i < numBlocks; i++)
+		usedBlockMap[i] = 1;
 }
 
 /**
@@ -487,6 +505,9 @@ void MemCardPrivate::loadMemCardFileList(void)
 	lstMemCardFile.clear();
 	if (init_size > 0)
 		emit q->filesRemoved();
+
+	// Reset the used block map.
+	resetUsedBlockMap();
 
 	QVector<MemCardFile*> lstMemCardFile_new;
 	lstMemCardFile_new.reserve(NUM_ELEMENTS(mc_dat->entries));
