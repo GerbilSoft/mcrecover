@@ -88,7 +88,7 @@ void TableSelectPrivate::updateWidgetDisplay(void)
 	}
 
 	// Update the widget state.
-	// TODO: DAT/BAT validity status.
+	// TODO: Consolidate this code.
 
 	// Active table CSS.
 	// Used to indicate which table is active according to the card header.
@@ -97,6 +97,9 @@ void TableSelectPrivate::updateWidgetDisplay(void)
 		QLatin1String("QFrame { border: 2px solid rgb(0,255,0); }");
 	static const QString cssInactiveHdr =
 		QLatin1String("QFrame { margin: 2px; }");
+
+	// Icon size.
+	static const QSize iconSz(16, 16);
 
 	// Check which Directory Table is currently active.
 	switch (card->activeDatIdx()) {
@@ -130,6 +133,18 @@ void TableSelectPrivate::updateWidgetDisplay(void)
 			break;
 	}
 
+	// Check which Directory Tables are valid.
+	QStyle::StandardPixmap spDirA = (card->isDatValid(0)
+					? QStyle::SP_DialogApplyButton
+					: QStyle::SP_MessageBoxCritical);
+	QStyle::StandardPixmap spDirB = (card->isDatValid(1)
+					? QStyle::SP_DialogApplyButton
+					: QStyle::SP_MessageBoxCritical);
+	QIcon iconDirA = McRecoverQApplication::StandardIcon(spDirA, nullptr, ui.lblDirAStatus);
+	QIcon iconDirB = McRecoverQApplication::StandardIcon(spDirB, nullptr, ui.lblDirBStatus);
+	ui.lblDirAStatus->setPixmap(iconDirA.pixmap(iconSz));
+	ui.lblDirBStatus->setPixmap(iconDirB.pixmap(iconSz));
+
 	// Block table.
 	switch (card->activeBatIdx()) {
 		case 0:
@@ -161,6 +176,18 @@ void TableSelectPrivate::updateWidgetDisplay(void)
 			ui.lblBlockBStatus->setStyleSheet(cssInactiveHdr);
 			break;
 	}
+
+	// Check which Directory Tables are valid.
+	QStyle::StandardPixmap spBlockA = (card->isBatValid(0)
+					   ? QStyle::SP_DialogApplyButton
+					   : QStyle::SP_MessageBoxCritical);
+	QStyle::StandardPixmap spBlockB = (card->isBatValid(1)
+					   ? QStyle::SP_DialogApplyButton
+					   : QStyle::SP_MessageBoxCritical);
+	QIcon iconBlockA = McRecoverQApplication::StandardIcon(spBlockA, nullptr, ui.lblBlockAStatus);
+	QIcon iconBlockB = McRecoverQApplication::StandardIcon(spBlockB, nullptr, ui.lblBlockBStatus);
+	ui.lblBlockAStatus->setPixmap(iconBlockA.pixmap(iconSz));
+	ui.lblBlockBStatus->setPixmap(iconBlockB.pixmap(iconSz));
 
 	// TODO: Set tooltips.
 
