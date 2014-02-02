@@ -62,12 +62,14 @@ class TableSelectPrivate
 		 * @param activeHdrIdx Active index, according to the card header.
 		 * @param isValidA Is table A valid?
 		 * @param isValidB Is table B valid?
+		 * @param description Table description for the tooltips.
 		 */
 		void updateSetDisplay(
 				QAbstractButton *btnA, QAbstractButton *btnB,
 				QLabel *lblStatusA, QLabel *lblStatusB,
 				int activeIdx, int activeHdrIdx,
-				bool isValidA, bool isValidB);
+				bool isValidA, bool isValidB,
+				const QString &description);
 
 	public:
 		/**
@@ -106,12 +108,14 @@ TableSelectPrivate::~TableSelectPrivate()
  * @param activeHdrIdx Active index, according to the card header.
  * @param isValidA Is table A valid?
  * @param isValidB Is table B valid?
+ * @param description Table description for the tooltips.
  */
 void TableSelectPrivate::updateSetDisplay(
 		QAbstractButton *btnA, QAbstractButton *btnB,
 		QLabel *lblA, QLabel *lblB,
 		int activeIdx, int activeHdrIdx,
-		bool isValidA, bool isValidB)
+		bool isValidA, bool isValidB,
+		const QString &description)
 {
 	// Active table CSS.
 	// Used to indicate which table is active according to the card header.
@@ -166,6 +170,36 @@ void TableSelectPrivate::updateSetDisplay(
 	QIcon iconB = McRecoverQApplication::StandardIcon(spB, nullptr, lblB);
 	lblA->setPixmap(iconA.pixmap(iconSz, iconSz));
 	lblB->setPixmap(iconB.pixmap(iconSz, iconSz));
+
+	// Set the status tooltips.
+	QString tipA, tipB;
+	if (isValidA) {
+		if (activeHdrIdx == 0) {
+			//: %1 == "Block Table" or "Directory Table"; %2 == 'A' or 'B'.
+			tipA = TableSelect::tr("%1 %2 is valid, and is the active table on the card.");
+		} else {
+			//: %1 == "Block Table" or "Directory Table"; %2 == 'A' or 'B'.
+			tipA = TableSelect::tr("%1 %2 is valid.");
+		}
+	} else {
+		//: %1 == "Block Table" or "Directory Table"; %2 == 'A' or 'B'.
+		tipA = TableSelect::tr("%1 %2 is invalid.");
+	}
+	if (isValidB) {
+		if (activeHdrIdx == 1) {
+			//: %1 == "Block Table" or "Directory Table"; %2 == 'A' or 'B'.
+			tipB = TableSelect::tr("%1 %2 is valid, and is the active table on the card.");
+		} else {
+			//: %1 == "Block Table" or "Directory Table"; %2 == 'A' or 'B'.
+			tipB = TableSelect::tr("%1 %2 is valid.");
+		}
+	} else {
+		//: %1 == "Block Table" or "Directory Table"; %2 == 'A' or 'B'.
+		tipB = TableSelect::tr("%1 %2 is invalid.");
+	}
+
+	lblA->setToolTip(tipA.arg(description).arg('A'));
+	lblB->setToolTip(tipB.arg(description).arg('B'));
 }
 
 /**
@@ -187,15 +221,15 @@ void TableSelectPrivate::updateWidgetDisplay(void)
 	updateSetDisplay(ui.btnDirA, ui.btnDirB,
 			ui.lblDirAStatus, ui.lblDirBStatus,
 			card->activeDatIdx(), card->activeDatHdrIdx(),
-			card->isDatValid(0), card->isDatValid(1));
+			card->isDatValid(0), card->isDatValid(1),
+			TableSelect::tr("Directory Table"));
 
 	// Block Table.
 	updateSetDisplay(ui.btnBlockA, ui.btnBlockB,
 			ui.lblBlockAStatus, ui.lblBlockBStatus,
 			card->activeBatIdx(), card->activeBatHdrIdx(),
-			card->isBatValid(0), card->isBatValid(1));
-
-	// TODO: Set tooltips.
+			card->isBatValid(0), card->isBatValid(1),
+			TableSelect::tr("Block Table"));
 
 	// Show the widgets.
 	ui.fraDirTable->setVisible(true);
@@ -219,9 +253,9 @@ TableSelect::TableSelect(QWidget *parent)
 		QStyle::SP_DirClosedIcon, nullptr, d->ui.lblDirImage);
 	d->ui.lblDirImage->setPixmap(iconDirTable.pixmap(qIconSz));
 
-	// TODO: Windows: Get icon from defrag.exe.
 	QIcon iconBlockTable;
 #ifdef Q_OS_WIN
+	// Win32: Get the icon from Windows Defragmenter.
 	iconBlockTable = McRecoverQApplication::Win32Icon(
 		McRecoverQApplication::W32ICON_DEFRAG, qIconSz);
 #endif /* Q_OS_WIN */
