@@ -90,17 +90,79 @@ void TableSelectPrivate::updateWidgetDisplay(void)
 	// Update the widget state.
 	// TODO: DAT/BAT validity status.
 
-	// Directory table.
-	if (card->activeDatIdx() == 0)
-		ui.btnDirA->setChecked(true);
-	else
-		ui.btnDirB->setChecked(true);
+	// Active table CSS.
+	// Used to indicate which table is active according to the card header.
+	// TODO: Use a better indicator.
+	static const QString cssActiveHdr =
+		QLatin1String("QFrame { border: 2px solid rgb(0,255,0); }");
+	static const QString cssInactiveHdr =
+		QLatin1String("QFrame { margin: 2px; }");
+
+	// Check which Directory Table is currently active.
+	switch (card->activeDatIdx()) {
+		case 0:
+			ui.btnDirA->setChecked(true);
+			break;
+		case 1:
+			ui.btnDirB->setChecked(true);
+			break;
+		default:
+			// No active directory table?
+			ui.btnDirA->setChecked(false);
+			ui.btnDirB->setChecked(false);
+			break;
+	}
+
+	// Check which Directory Table is active according to the card header.
+	switch (card->activeDatHdrIdx()) {
+		case 0:
+			ui.lblDirAStatus->setStyleSheet(cssActiveHdr);
+			ui.lblDirBStatus->setStyleSheet(cssInactiveHdr);
+			break;
+		case 1:
+			ui.lblDirAStatus->setStyleSheet(cssInactiveHdr);
+			ui.lblDirBStatus->setStyleSheet(cssActiveHdr);
+			break;
+		default:
+			// No active directory table?
+			ui.lblDirAStatus->setStyleSheet(cssInactiveHdr);
+			ui.lblDirBStatus->setStyleSheet(cssInactiveHdr);
+			break;
+	}
 
 	// Block table.
-	if (card->activeBatIdx() == 0)
-		ui.btnBlockA->setChecked(true);
-	else
-		ui.btnBlockB->setChecked(true);
+	switch (card->activeBatIdx()) {
+		case 0:
+			ui.btnBlockA->setChecked(true);
+			break;
+		case 1:
+			ui.btnBlockB->setChecked(true);
+			break;
+		default:
+			// No active block table?
+			ui.btnBlockA->setChecked(false);
+			ui.btnBlockB->setChecked(false);
+			break;
+	}
+
+	// Check which Block Table is active according to the card header.
+	switch (card->activeBatHdrIdx()) {
+		case 0:
+			ui.lblBlockAStatus->setStyleSheet(cssActiveHdr);
+			ui.lblBlockBStatus->setStyleSheet(cssInactiveHdr);
+			break;
+		case 1:
+			ui.lblBlockAStatus->setStyleSheet(cssInactiveHdr);
+			ui.lblBlockBStatus->setStyleSheet(cssActiveHdr);
+			break;
+		default:
+			// No active block table?
+			ui.lblBlockAStatus->setStyleSheet(cssInactiveHdr);
+			ui.lblBlockBStatus->setStyleSheet(cssInactiveHdr);
+			break;
+	}
+
+	// TODO: Set tooltips.
 
 	// Show the widgets.
 	ui.fraDirTable->setVisible(true);

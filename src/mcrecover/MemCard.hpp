@@ -56,7 +56,9 @@ class MemCard : public QObject
 	// TODO: Register Checksum::ChecksumValue metatype?
 	//Q_PROPERTY(Checksum::ChecksumValue headerChecksumValue READ headerChecksumValue)
 	Q_PROPERTY(int activeDatIdx READ activeDatIdx WRITE setActiveDatIdx)
+	Q_PROPERTY(int activeDatHdrIdx READ activeDatHdrIdx)
 	Q_PROPERTY(int activeBatIdx READ activeBatIdx WRITE setActiveBatIdx)
+	Q_PROPERTY(int activeBatHdrIdx READ activeBatHdrIdx)
 
 	public:
 		MemCard(const QString& filename, QObject *parent = 0);
@@ -237,6 +239,12 @@ class MemCard : public QObject
 		void setActiveDatIdx(int idx);
 
 		/**
+		 * Get the active Directory Table index according to the card header.
+		 * @return Active Directory Table index (0 or 1), or -1 if both are invalid.
+		 */
+		int activeDatHdrIdx(void) const;
+
+		/**
 		 * Get the active Block Table index.
 		 * @return Active Block Table index. (0 or 1)
 		 */
@@ -248,6 +256,12 @@ class MemCard : public QObject
 		 * @param idx Active Block Table index. (0 or 1)
 		 */
 		void setActiveBatIdx(int idx);
+
+		/**
+		 * Get the active Block Table index according to the card header.
+		 * @return Active Block Table index (0 or 1), or -1 if both are invalid.
+		 */
+		int activeBatHdrIdx(void) const;
 };
 
 #endif /* __MCRECOVER_MEMCARD_HPP__ */

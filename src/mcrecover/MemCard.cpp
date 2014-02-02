@@ -849,6 +849,8 @@ Checksum::ChecksumValue MemCard::headerChecksumValue(void) const
  */
 int MemCard::activeDatIdx(void) const
 {
+	if (!isOpen())
+		return -1;
 	Q_D(const MemCard);
 	return (d->mc_dat == &d->mc_dat_int[1]);
 }
@@ -860,6 +862,8 @@ int MemCard::activeDatIdx(void) const
  */
 void MemCard::setActiveDatIdx(int idx)
 {
+	if (!isOpen())
+		return;
 	Q_D(MemCard);
 	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_dat_int))
 		return;
@@ -868,11 +872,25 @@ void MemCard::setActiveDatIdx(int idx)
 }
 
 /**
+ * Get the active Directory Table index according to the card header.
+ * @return Active Directory Table index (0 or 1), or -1 if both are invalid.
+ */
+int MemCard::activeDatHdrIdx(void) const
+{
+	if (!isOpen())
+		return -1;
+	Q_D(const MemCard);
+	return d->mc_dat_hdr_idx;
+}
+
+/**
  * Get the active Block Table index.
  * @return Active Block Table index. (0 or 1)
  */
 int MemCard::activeBatIdx(void) const
 {
+	if (!isOpen())
+		return -1;
 	Q_D(const MemCard);
 	return (d->mc_bat == &d->mc_bat_int[1]);
 }
@@ -884,9 +902,23 @@ int MemCard::activeBatIdx(void) const
  */
 void MemCard::setActiveBatIdx(int idx)
 {
+	if (!isOpen())
+		return;
 	Q_D(MemCard);
 	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_bat_int))
 		return;
 	d->mc_bat = &d->mc_bat_int[idx];
 	d->loadMemCardFileList();
+}
+
+/**
+ * Get the active Block Table index according to the card header.
+ * @return Active Block Table index (0 or 1), or -1 if both are invalid.
+ */
+int MemCard::activeBatHdrIdx(void) const
+{
+	if (!isOpen())
+		return -1;
+	Q_D(const MemCard);
+	return d->mc_bat_hdr_idx;
 }
