@@ -48,6 +48,25 @@ class TableSelectPrivate
 
 		MemCard *card;
 
+	protected:
+		/**
+		 * Update the display for a set of items.
+		 * @param btnA Button for table A.
+		 * @param btnB Button for table B.
+		 * @param lblA Label for table A status.
+		 * @param lblB Label for table B status.
+		 * @param activeIdx Active index, selected by the user.
+		 * @param activeHdrIdx Active index, according to the card header.
+		 * @param isValidA Is table A valid?
+		 * @param isValidB Is table B valid?
+		 */
+		void updateSetDisplay(
+				QAbstractButton *btnA, QAbstractButton *btnB,
+				QLabel *lblStatusA, QLabel *lblStatusB,
+				int activeIdx, int activeHdrIdx,
+				bool isValidA, bool isValidB);
+
+	public:
 		/**
 		 * Update the widget display.
 		 */
@@ -75,6 +94,81 @@ TableSelectPrivate::~TableSelectPrivate()
 { }
 
 /**
+ * Update the display for a set of items.
+ * @param btnA Button for table A.
+ * @param btnB Button for table B.
+ * @param lblA Label for table A status.
+ * @param lblB Label for table B status.
+ * @param activeIdx Active index, selected by the user.
+ * @param activeHdrIdx Active index, according to the card header.
+ * @param isValidA Is table A valid?
+ * @param isValidB Is table B valid?
+ */
+void TableSelectPrivate::updateSetDisplay(
+		QAbstractButton *btnA, QAbstractButton *btnB,
+		QLabel *lblA, QLabel *lblB,
+		int activeIdx, int activeHdrIdx,
+		bool isValidA, bool isValidB)
+{
+	// Active table CSS.
+	// Used to indicate which table is active according to the card header.
+	// TODO: Use a better indicator.
+	static const QString cssActiveHdr =
+		QLatin1String("QFrame { border: 2px solid rgb(0,255,0); }");
+	static const QString cssInactiveHdr =
+		QLatin1String("QFrame { margin: 2px; }");
+
+	// Icon size.
+	static const QSize iconSz(16, 16);
+
+	// Check which table is currently active, selected by the user.
+	switch (activeIdx) {
+		case 0:
+			btnA->setChecked(true);
+			btnB->setChecked(false);
+			break;
+		case 1:
+			btnA->setChecked(false);
+			btnB->setChecked(true);
+			break;
+		default:
+			// No active table?
+			btnA->setChecked(false);
+			btnB->setChecked(false);
+			break;
+	}
+
+	// Check which table is active, according to the card header.
+	switch (activeHdrIdx) {
+		case 0:
+			lblA->setStyleSheet(cssActiveHdr);
+			lblB->setStyleSheet(cssInactiveHdr);
+			break;
+		case 1:
+			lblA->setStyleSheet(cssInactiveHdr);
+			lblB->setStyleSheet(cssActiveHdr);
+			break;
+		default:
+			// No active table?
+			lblA->setStyleSheet(cssInactiveHdr);
+			lblB->setStyleSheet(cssInactiveHdr);
+			break;
+	}
+
+	// Check which tables are valid.
+	QStyle::StandardPixmap spA = (isValidA
+					? QStyle::SP_DialogApplyButton
+					: QStyle::SP_MessageBoxCritical);
+	QStyle::StandardPixmap spB = (isValidB
+					? QStyle::SP_DialogApplyButton
+					: QStyle::SP_MessageBoxCritical);
+	QIcon iconA = McRecoverQApplication::StandardIcon(spA, nullptr, lblA);
+	QIcon iconB = McRecoverQApplication::StandardIcon(spB, nullptr, lblB);
+	lblA->setPixmap(iconA.pixmap(iconSz));
+	lblB->setPixmap(iconB.pixmap(iconSz));
+}
+
+/**
  * Update the widget display.
  */
 void TableSelectPrivate::updateWidgetDisplay(void)
@@ -88,106 +182,18 @@ void TableSelectPrivate::updateWidgetDisplay(void)
 	}
 
 	// Update the widget state.
-	// TODO: Consolidate this code.
 
-	// Active table CSS.
-	// Used to indicate which table is active according to the card header.
-	// TODO: Use a better indicator.
-	static const QString cssActiveHdr =
-		QLatin1String("QFrame { border: 2px solid rgb(0,255,0); }");
-	static const QString cssInactiveHdr =
-		QLatin1String("QFrame { margin: 2px; }");
+	// Directory Table.
+	updateSetDisplay(ui.btnDirA, ui.btnDirB,
+			ui.lblDirAStatus, ui.lblDirBStatus,
+			card->activeDatIdx(), card->activeDatHdrIdx(),
+			card->isDatValid(0), card->isDatValid(1));
 
-	// Icon size.
-	static const QSize iconSz(16, 16);
-
-	// Check which Directory Table is currently active.
-	switch (card->activeDatIdx()) {
-		case 0:
-			ui.btnDirA->setChecked(true);
-			break;
-		case 1:
-			ui.btnDirB->setChecked(true);
-			break;
-		default:
-			// No active directory table?
-			ui.btnDirA->setChecked(false);
-			ui.btnDirB->setChecked(false);
-			break;
-	}
-
-	// Check which Directory Table is active according to the card header.
-	switch (card->activeDatHdrIdx()) {
-		case 0:
-			ui.lblDirAStatus->setStyleSheet(cssActiveHdr);
-			ui.lblDirBStatus->setStyleSheet(cssInactiveHdr);
-			break;
-		case 1:
-			ui.lblDirAStatus->setStyleSheet(cssInactiveHdr);
-			ui.lblDirBStatus->setStyleSheet(cssActiveHdr);
-			break;
-		default:
-			// No active directory table?
-			ui.lblDirAStatus->setStyleSheet(cssInactiveHdr);
-			ui.lblDirBStatus->setStyleSheet(cssInactiveHdr);
-			break;
-	}
-
-	// Check which Directory Tables are valid.
-	QStyle::StandardPixmap spDirA = (card->isDatValid(0)
-					? QStyle::SP_DialogApplyButton
-					: QStyle::SP_MessageBoxCritical);
-	QStyle::StandardPixmap spDirB = (card->isDatValid(1)
-					? QStyle::SP_DialogApplyButton
-					: QStyle::SP_MessageBoxCritical);
-	QIcon iconDirA = McRecoverQApplication::StandardIcon(spDirA, nullptr, ui.lblDirAStatus);
-	QIcon iconDirB = McRecoverQApplication::StandardIcon(spDirB, nullptr, ui.lblDirBStatus);
-	ui.lblDirAStatus->setPixmap(iconDirA.pixmap(iconSz));
-	ui.lblDirBStatus->setPixmap(iconDirB.pixmap(iconSz));
-
-	// Block table.
-	switch (card->activeBatIdx()) {
-		case 0:
-			ui.btnBlockA->setChecked(true);
-			break;
-		case 1:
-			ui.btnBlockB->setChecked(true);
-			break;
-		default:
-			// No active block table?
-			ui.btnBlockA->setChecked(false);
-			ui.btnBlockB->setChecked(false);
-			break;
-	}
-
-	// Check which Block Table is active according to the card header.
-	switch (card->activeBatHdrIdx()) {
-		case 0:
-			ui.lblBlockAStatus->setStyleSheet(cssActiveHdr);
-			ui.lblBlockBStatus->setStyleSheet(cssInactiveHdr);
-			break;
-		case 1:
-			ui.lblBlockAStatus->setStyleSheet(cssInactiveHdr);
-			ui.lblBlockBStatus->setStyleSheet(cssActiveHdr);
-			break;
-		default:
-			// No active block table?
-			ui.lblBlockAStatus->setStyleSheet(cssInactiveHdr);
-			ui.lblBlockBStatus->setStyleSheet(cssInactiveHdr);
-			break;
-	}
-
-	// Check which Directory Tables are valid.
-	QStyle::StandardPixmap spBlockA = (card->isBatValid(0)
-					   ? QStyle::SP_DialogApplyButton
-					   : QStyle::SP_MessageBoxCritical);
-	QStyle::StandardPixmap spBlockB = (card->isBatValid(1)
-					   ? QStyle::SP_DialogApplyButton
-					   : QStyle::SP_MessageBoxCritical);
-	QIcon iconBlockA = McRecoverQApplication::StandardIcon(spBlockA, nullptr, ui.lblBlockAStatus);
-	QIcon iconBlockB = McRecoverQApplication::StandardIcon(spBlockB, nullptr, ui.lblBlockBStatus);
-	ui.lblBlockAStatus->setPixmap(iconBlockA.pixmap(iconSz));
-	ui.lblBlockBStatus->setPixmap(iconBlockB.pixmap(iconSz));
+	// Block Table.
+	updateSetDisplay(ui.btnBlockA, ui.btnBlockB,
+			ui.lblBlockAStatus, ui.lblBlockBStatus,
+			card->activeBatIdx(), card->activeBatHdrIdx(),
+			card->isBatValid(0), card->isBatValid(1));
 
 	// TODO: Set tooltips.
 
