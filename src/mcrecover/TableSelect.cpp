@@ -48,6 +48,9 @@ class TableSelectPrivate
 
 		MemCard *card;
 
+		// Icon size.
+		static const int iconSz = 16;
+
 	protected:
 		/**
 		 * Update the display for a set of items.
@@ -118,9 +121,6 @@ void TableSelectPrivate::updateSetDisplay(
 	static const QString cssInactiveHdr =
 		QLatin1String("QFrame { margin: 2px; }");
 
-	// Icon size.
-	static const QSize iconSz(16, 16);
-
 	// Check which table is currently active, selected by the user.
 	switch (activeIdx) {
 		case 0:
@@ -164,8 +164,8 @@ void TableSelectPrivate::updateSetDisplay(
 					: QStyle::SP_MessageBoxCritical);
 	QIcon iconA = McRecoverQApplication::StandardIcon(spA, nullptr, lblA);
 	QIcon iconB = McRecoverQApplication::StandardIcon(spB, nullptr, lblB);
-	lblA->setPixmap(iconA.pixmap(iconSz));
-	lblB->setPixmap(iconB.pixmap(iconSz));
+	lblA->setPixmap(iconA.pixmap(iconSz, iconSz));
+	lblB->setPixmap(iconB.pixmap(iconSz, iconSz));
 }
 
 /**
@@ -213,23 +213,23 @@ TableSelect::TableSelect(QWidget *parent)
 
 	// Set the icons.
 	// TODO: Where to determine icon size?
-	static const QSize iconSz(16, 16);
+	QSize qIconSz(TableSelectPrivate::iconSz, TableSelectPrivate::iconSz);
 
 	QIcon iconDirTable = McRecoverQApplication::StandardIcon(
 		QStyle::SP_DirClosedIcon, nullptr, d->ui.lblDirImage);
-	d->ui.lblDirImage->setPixmap(iconDirTable.pixmap(iconSz));
+	d->ui.lblDirImage->setPixmap(iconDirTable.pixmap(qIconSz));
 
 	// TODO: Windows: Get icon from defrag.exe.
 	QIcon iconBlockTable;
 #ifdef Q_OS_WIN
 	iconBlockTable = McRecoverQApplication::Win32Icon(
-		McRecoverQApplication::W32ICON_DEFRAG, iconSz);
+		McRecoverQApplication::W32ICON_DEFRAG, qIconSz);
 #endif /* Q_OS_WIN */
 	if (iconBlockTable.isNull()) {
 		iconBlockTable = McRecoverQApplication::IconFromTheme(
 			QLatin1String("partitionmanager"));
 	}
-	d->ui.lblBlockImage->setPixmap(iconBlockTable.pixmap(iconSz));
+	d->ui.lblBlockImage->setPixmap(iconBlockTable.pixmap(qIconSz));
 
 	// Connect QAction signals to the QSignalMappers.
 	QObject::connect(d->ui.btnDirA, SIGNAL(clicked()),
