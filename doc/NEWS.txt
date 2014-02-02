@@ -74,6 +74,11 @@ Database statistics in this release:
   supported by GCN MemCard Recover's icon extraction function.
   Banners and static icons are always extracted in PNG format.
 
+- The current directory and block tables can now be switched on the fly.
+  This may allow for easier recovery of files that were deleted in the
+  GameCube file manager, as long as no other files have been saved or
+  updated in the meantime.
+
 - Added a "top-secret" easter egg. :)
 
 ================================================================
