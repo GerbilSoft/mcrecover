@@ -923,6 +923,35 @@ const char *GcImageWriter::extForImageFormat(ImageFormat imgf)
 }
 
 /**
+ * Get the name of the specified image image format.
+ * @param imgf Image format.
+ * @return Name of the image format, or nullptr if invalid.
+ */
+const char *GcImageWriter::nameOfImageFormat(ImageFormat imgf)
+{
+	switch (imgf) {
+		case IMGF_PNG:	return "PNG";
+		default:	break;
+	}
+
+	return nullptr;
+}
+
+/**
+ * Look up an image format from its name.
+ * @param imgf_str Image format name.
+ * @return Image format, or IMGF_UNKNOWN if unknown.
+ */
+GcImageWriter::ImageFormat GcImageWriter::imageFormatFromName(const char *imgf_str)
+{
+	if (strcasecmp(imgf_str, "PNG"))
+		return IMGF_PNG;
+
+	// Unknown image format.
+	return IMGF_UNKNOWN;
+}
+
+/**
  * Check if an animated image format is supported.
  * @param animImgf Animated image format.
  * @return True if supported; false if not.
@@ -976,6 +1005,53 @@ const char *GcImageWriter::extForAnimImageFormat(AnimImageFormat animImgf)
 	}
 
 	return nullptr;
+}
+
+/**
+ * Get the name of the specified animated image format.
+ * @param animImgf Animated image format.
+ * @return Name of the animated image format, or nullptr if invalid.
+ */
+const char *GcImageWriter::nameOfAnimImageFormat(AnimImageFormat animImgf)
+{
+	switch (animImgf) {
+		case ANIMGF_APNG:	return "APNG";
+		case ANIMGF_GIF:	return "GIF";
+		case ANIMGF_PNG_FPF:	return "PNG-FPF";
+		case ANIMGF_PNG_VS:	return "PNG-VS";
+		case ANIMGF_PNG_HS:	return "PNG-HS";
+		default:		break;
+	}
+
+	return nullptr;
+}
+
+/**
+ * Look up an animated image format from its name.
+ * @param animImgf_str Animated image format name.
+ * @return Animated image format, or IMGF_UNKNOWN if unknown.
+ */
+GcImageWriter::AnimImageFormat GcImageWriter::animImageFormatFromName(const char *animImgf_str)
+{
+	if (strcasecmp(animImgf_str, "APNG"))
+		return ANIMGF_APNG;
+	else if (strcasecmp(animImgf_str, "GIF"))
+		return ANIMGF_GIF;
+	else if (strcasecmp(animImgf_str, "PNG-FPF") ||
+		 strcasecmp(animImgf_str, "PNG_FPF") ||
+		 strcasecmp(animImgf_str, "PNG FPF"))
+		return ANIMGF_PNG_FPF;
+	else if (strcasecmp(animImgf_str, "PNG-VS") ||
+		 strcasecmp(animImgf_str, "PNG_VS") ||
+		 strcasecmp(animImgf_str, "PNG VS"))
+		return ANIMGF_PNG_VS;
+	else if (strcasecmp(animImgf_str, "PNG-HS") ||
+		 strcasecmp(animImgf_str, "PNG_HS") ||
+		 strcasecmp(animImgf_str, "PNG HS"))
+		return ANIMGF_PNG_HS;
+
+	// Unknown animated image format.
+	return ANIMGF_UNKNOWN;
 }
 
 /**

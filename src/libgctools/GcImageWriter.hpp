@@ -32,6 +32,12 @@ class GcImage;
 
 class GcImageWriterPrivate;
 
+/**
+ * GcImageWriter class.
+ * Writes GcImage objects to image files.
+ * 
+ * NOTE: All const char* functions use ASCII.
+ */
 class GcImageWriter
 {
 	public:
@@ -50,8 +56,8 @@ class GcImageWriter
 		 * Image formats.
 		 */
 		enum ImageFormat {
-			IMGF_PNG	= 0,	// PNG
-
+			IMGF_UNKNOWN	= 0,
+			IMGF_PNG,	// PNG
 			IMGF_MAX
 		};
 
@@ -59,12 +65,12 @@ class GcImageWriter
 		 * Animated image formats.
 		 */
 		enum AnimImageFormat {
-			ANIMGF_APNG	= 0,	// APNG
-			ANIMGF_GIF	= 1,	// GIF
-			ANIMGF_PNG_FPF	= 2,	// File per frame
-			ANIMGF_PNG_VS	= 3,	// PNG (vertical strip)
-			ANIMGF_PNG_HS	= 4,	// PNG (horizontal strip)
-
+			ANIMGF_UNKNOWN	= 0,
+			ANIMGF_APNG,	// APNG
+			ANIMGF_GIF,	// GIF
+			ANIMGF_PNG_FPF,	// File per frame
+			ANIMGF_PNG_VS,	// PNG (vertical strip)
+			ANIMGF_PNG_HS,	// PNG (horizontal strip)
 			ANIMGF_MAX
 		};
 
@@ -83,6 +89,20 @@ class GcImageWriter
 		static const char *extForImageFormat(ImageFormat imgf);
 
 		/**
+		 * Get the name of the specified image image format.
+		 * @param imgf Image format.
+		 * @return Name of the image format, or nullptr if invalid.
+		 */
+		static const char *nameOfImageFormat(ImageFormat imgf);
+
+		/**
+		 * Look up an image format from its name.
+		 * @param imgf_str Image format name.
+		 * @return Image format, or IMGF_UNKNOWN if unknown.
+		 */
+		static ImageFormat imageFormatFromName(const char *imgf_str);
+
+		/**
 		 * Check if an animated image format is supported.
 		 * @param animImgf Animated image format.
 		 * @return True if supported; false if not.
@@ -95,6 +115,20 @@ class GcImageWriter
 		 * @return File extension (ASCII), without the dot, or nullptr if animImgf is invalid.
 		 */
 		static const char *extForAnimImageFormat(AnimImageFormat animImgf);
+
+		/**
+		 * Get the name of the specified animated image format.
+		 * @param animImgf Animated image format.
+		 * @return Name of the animated image format, or nullptr if invalid.
+		 */
+		static const char *nameOfAnimImageFormat(AnimImageFormat animImgf);
+
+		/**
+		 * Look up an animated image format from its name.
+		 * @param animImgf_str Animated image format name.
+		 * @return Animated image format, or IMGF_UNKNOWN if unknown.
+		 */
+		static AnimImageFormat animImageFormatFromName(const char *animImgf_str);
 
 		/**
 		 * Get the internal memory buffer. (first file only)
