@@ -452,6 +452,22 @@ static int extract_icon(FILE *f, filetype_t ft,
 }
 
 /**
+ * Get the default animated image format.
+ * @return Default animated image format.
+ */
+static GcImageWriter::AnimImageFormat default_anim_image_format(void)
+{
+	for (int i = 1; i < GcImageWriter::ANIMGF_MAX; i++) {
+		GcImageWriter::AnimImageFormat animImgf = (GcImageWriter::AnimImageFormat)i;
+		if (GcImageWriter::isAnimImageFormatSupported(animImgf))
+			return animImgf;
+	}
+
+	// No supported formats...
+	return GcImageWriter::ANIMGF_UNKNOWN;
+}
+
+/**
  * Show program version information.
  */
 static void show_version(void)
@@ -473,6 +489,28 @@ static void show_version(void)
 }
 
 /**
+ * Print supported animated image formats.
+ * @param f FILE* for output.
+ */
+static void print_supported_animImgf(FILE *f)
+{
+	// Animated icon formats.
+	GcImageWriter::AnimImageFormat defAnimImgf = default_anim_image_format();
+	printf("Supported animated image formats:\n");
+	for (int i = 1; i < GcImageWriter::ANIMGF_MAX; i++) {
+		GcImageWriter::AnimImageFormat animImgf = (GcImageWriter::AnimImageFormat)i;
+		if (GcImageWriter::isAnimImageFormatSupported(animImgf)) {
+			fprintf(f, "- %s: %s",
+				GcImageWriter::nameOfAnimImageFormat(animImgf),
+				GcImageWriter::descOfAnimImageFormat(animImgf));
+			if (animImgf == defAnimImgf)
+				fprintf(f, " (default)");
+			fprintf(f, "\n");
+		}
+	}
+}
+
+/**
  * Show program usage information.
  * @param argv0 argv[0]
  */
@@ -486,9 +524,10 @@ static void show_usage(const char *argv0)
 		"\n"
 		"Options:\n"
 		"  -b, --banner\t\t\tExtract the banner.\n"
-		"  -B, --banner-as[=FILENAME]\tExtract the banner to FILENAME.\n"
+		"  -B, --banner-as=FILENAME\tExtract the banner to FILENAME.\n"
 		"  -i, --icon\t\t\tExtract the icon.\n"
-		"  -I, --icon-as[=FILENAME]\tExtract the icon to FILENAME.\n"
+		"  -I, --icon-as=FILENAME\tExtract the icon to FILENAME.\n"
+		"  -f, --format=FORMAT\t\tFormat to use for animated icons.\n"
 		"  -h, --help\t\t\tDisplay this help and exit.\n"
 		"      --version\t\t\tOutput version information and exit.\n"
 		"\n"
@@ -496,7 +535,9 @@ static void show_usage(const char *argv0)
 		"If -b or -i are specified and filenames are not specified, a filename\n"
 		"will be generated based on the filename of opening.bnr.\n"
 		"If only opening.bnr is specified, only the banner will be extracted.\n"
+		"\n"
 		, argv0);
+	print_supported_animImgf(stdout);
 }
 
 /**
@@ -518,6 +559,7 @@ int main(int argc, char *argv[])
 		{"banner-as",	required_argument,	nullptr, 'B'},
 		{"icon",	no_argument,		nullptr, 'i'},
 		{"icon-as",	required_argument,	nullptr, 'I'},
+		{"format",	required_argument,	nullptr, 'f'},
 		{"help",    	no_argument,		nullptr, 'h'},
 		// NOTE: -V is not valid.
 		{"version",	no_argument,		nullptr, 'V'},
@@ -529,9 +571,10 @@ int main(int argc, char *argv[])
 	bool doBanner = false, doIcon = false;
 	const char *banner_png_filename = nullptr;
 	const char *icon_png_filename = nullptr;
+	GcImageWriter::AnimImageFormat animImgf = default_anim_image_format();
 
 	int c, option_index;
-	while ((c = getopt_long(argc, argv, "bB:iI:h", long_options, &option_index)) != -1) {
+	while ((c = getopt_long(argc, argv, "bB:iI:f:h", long_options, &option_index)) != -1) {
 		switch (c) {
 			case 'b':
 				doBanner = true;
@@ -546,6 +589,21 @@ int main(int argc, char *argv[])
 			case 'I':
 				doIcon = true;
 				icon_png_filename = optarg;
+				break;
+			case 'f':
+				animImgf = GcImageWriter::animImageFormatFromName(optarg);
+				if (animImgf != GcImageWriter::ANIMGF_UNKNOWN) {
+					// Check if the format is actually supported.
+					if (!GcImageWriter::isAnimImageFormatSupported(animImgf))
+						animImgf = GcImageWriter::ANIMGF_UNKNOWN;
+				}
+				if (animImgf == GcImageWriter::ANIMGF_UNKNOWN) {
+					fprintf(stderr, "%s: invalid argument '%s' for 'animated image format'\n",
+						argv[0], optarg);
+					print_supported_animImgf(stderr);
+					fprintf(stderr, "Try '%s --help' for more information.\n", argv[0]);
+					return EXIT_FAILURE;
+				}
 				break;
 			case 'h':
 				show_usage(argv[0]);
@@ -630,9 +688,7 @@ int main(int argc, char *argv[])
 
 	// Extract the icon.
 	if (doIcon) {
-		// TODO: Allow the user to select animImgf.
-		ret = extract_icon(f_opening_bnr, ft,
-				GcImageWriter::ANIMGF_APNG,
+		ret = extract_icon(f_opening_bnr, ft, animImgf,
 				opening_bnr_filename,
 				icon_png_filename);
 		if (ret != 0)
