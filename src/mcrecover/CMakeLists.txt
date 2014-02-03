@@ -194,7 +194,6 @@ SET(mcrecover_UIS
 SET(mcrecover_WIDGET_UIS
 	ui/MemCardFileView.ui
 	ui/MemCardView.ui
-	ui/MessageWidget.ui
 	ui/TableSelect.ui
 	)
 

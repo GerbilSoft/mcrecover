@@ -46,7 +46,17 @@ class MessageWidgetPrivate
 		Q_DISABLE_COPY(MessageWidgetPrivate)
 
 	public:
-		Ui::MessageWidget ui;
+		struct Ui_MessageWidget {
+			QHBoxLayout *hboxMain;
+			QFrame *content;
+			QHBoxLayout *hboxFrame;
+			QLabel *lblIcon;
+			QLabel *lblMessage;
+			QToolButton *btnDismiss;
+
+			void setupUi(QWidget *MessageWidget);
+		};
+		Ui_MessageWidget ui;
 
 		// Icon being displayed.
 		MessageWidget::MsgIcon icon;
@@ -79,6 +89,67 @@ MessageWidgetPrivate::MessageWidgetPrivate(MessageWidget *q)
 
 MessageWidgetPrivate::~MessageWidgetPrivate()
 { }
+
+/**
+ * Initialize the UI.
+ * @param MessageWidget MessageWidget.
+ */
+void MessageWidgetPrivate::Ui_MessageWidget::setupUi(QWidget *MessageWidget)
+{
+	if (MessageWidget->objectName().isEmpty())
+		MessageWidget->setObjectName(QLatin1String("MessageWidget"));
+
+	hboxMain = new QHBoxLayout(MessageWidget);
+	hboxMain->setContentsMargins(2, 2, 2, 2);
+	hboxMain->setObjectName(QLatin1String("hboxMain"));
+
+	content = new QFrame(MessageWidget);
+	content->setObjectName(QLatin1String("content"));
+	QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	sizePolicy.setHorizontalStretch(0);
+	sizePolicy.setVerticalStretch(0);
+	sizePolicy.setHeightForWidth(content->sizePolicy().hasHeightForWidth());
+	content->setSizePolicy(sizePolicy);
+	content->setFrameShape(QFrame::NoFrame);
+	content->setLineWidth(0);
+
+	hboxFrame = new QHBoxLayout(content);
+	hboxFrame->setContentsMargins(0, 0, 0, 0);
+	hboxFrame->setObjectName(QLatin1String("hboxFrame"));
+
+	lblIcon = new QLabel(content);
+	lblIcon->setObjectName(QLatin1String("lblIcon"));
+	QSizePolicy sizePolicy1(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	sizePolicy1.setHorizontalStretch(0);
+	sizePolicy1.setVerticalStretch(0);
+	sizePolicy1.setHeightForWidth(lblIcon->sizePolicy().hasHeightForWidth());
+	lblIcon->setSizePolicy(sizePolicy1);
+	lblIcon->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
+
+	hboxFrame->addWidget(lblIcon);
+	hboxFrame->setAlignment(lblIcon, Qt::AlignTop);
+
+	lblMessage = new QLabel(content);
+	lblMessage->setObjectName(QLatin1String("lblMessage"));
+	lblMessage->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
+	lblMessage->setTextInteractionFlags(Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse);
+
+	hboxFrame->addWidget(lblMessage);
+	hboxFrame->setAlignment(lblMessage, Qt::AlignTop);
+
+	btnDismiss = new QToolButton(content);
+	btnDismiss->setObjectName(QLatin1String("btnDismiss"));
+	btnDismiss->setFocusPolicy(Qt::NoFocus);
+	QIcon icon = McRecoverQApplication::StandardIcon(QStyle::SP_DialogCloseButton);
+	btnDismiss->setIcon(icon);
+
+	hboxFrame->addWidget(btnDismiss);
+	hboxFrame->setAlignment(btnDismiss, Qt::AlignTop);
+
+	hboxMain->addWidget(content);
+
+	QMetaObject::connectSlotsByName(MessageWidget);
+}
 
 /**
  * Set the icon.
@@ -152,11 +223,6 @@ MessageWidget::MessageWidget(QWidget *parent)
 {
 	Q_D(MessageWidget);
 	d->ui.setupUi(this);
-	d->ui.btnDismiss->setIcon(McRecoverQApplication::StandardIcon(QStyle::SP_DialogCloseButton));
-	d->ui.hboxMain->setAlignment(Qt::AlignTop);
-	d->ui.hboxFrame->setAlignment(d->ui.lblIcon, Qt::AlignTop);
-	d->ui.hboxFrame->setAlignment(d->ui.lblMessage, Qt::AlignTop);
-	d->ui.hboxFrame->setAlignment(d->ui.btnDismiss, Qt::AlignTop);
 	d->setIcon(d->icon);
 
 	// Connect the timer signal.
