@@ -42,6 +42,8 @@ using std::vector;
 #include <QtCore/QFile>
 #include <QtCore/QIODevice>
 
+#define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
+
 /** MemCardFilePrivate **/
 
 class MemCardFilePrivate
@@ -225,12 +227,19 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	fatEntries.clear();
 	fatEntries.reserve(length);
 	uint16_t last_block = dirEntry->block;
-	if (last_block >= 5 && last_block != 0xFFFF) {
+	if (last_block >= 5 && last_block != 0xFFFF &&
+	    last_block < (uint16_t)NUM_ELEMENTS(bat->fat)) {
 		fatEntries.append(last_block);
+
+		// Go through the rest of the blocks.
 		for (int i = length; i > 1; i--) {
 			last_block = bat->fat[last_block - 5];
-			if (last_block == 0xFFFF || last_block < 5)
+			if (last_block == 0xFFFF || last_block < 5 ||
+			    last_block >= (uint16_t)NUM_ELEMENTS(bat->fat))
+			{
+				// Next block is invalid.
 				break;
+			}
 			fatEntries.append(last_block);
 		}
 	}
