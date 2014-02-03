@@ -961,7 +961,7 @@ GcImageWriter::ImageFormat GcImageWriter::imageFormatFromName(const char *imgf_s
 {
 	if (!imgf_str)
 		return IMGF_UNKNOWN;
-	else if (strcasecmp(imgf_str, "PNG"))
+	else if (!strcasecmp(imgf_str, "PNG"))
 		return IMGF_PNG;
 
 	// Unknown image format.
@@ -1071,21 +1071,21 @@ GcImageWriter::AnimImageFormat GcImageWriter::animImageFormatFromName(const char
 {
 	if (!animImgf_str)
 		return ANIMGF_UNKNOWN;
-	else if (strcasecmp(animImgf_str, "APNG"))
+	else if (!strcasecmp(animImgf_str, "APNG"))
 		return ANIMGF_APNG;
-	else if (strcasecmp(animImgf_str, "GIF"))
+	else if (!strcasecmp(animImgf_str, "GIF"))
 		return ANIMGF_GIF;
-	else if (strcasecmp(animImgf_str, "PNG-FPF") ||
-		 strcasecmp(animImgf_str, "PNG_FPF") ||
-		 strcasecmp(animImgf_str, "PNG FPF"))
+	else if (!strcasecmp(animImgf_str, "PNG-FPF") ||
+		 !strcasecmp(animImgf_str, "PNG_FPF") ||
+		 !strcasecmp(animImgf_str, "PNG FPF"))
 		return ANIMGF_PNG_FPF;
-	else if (strcasecmp(animImgf_str, "PNG-VS") ||
-		 strcasecmp(animImgf_str, "PNG_VS") ||
-		 strcasecmp(animImgf_str, "PNG VS"))
+	else if (!strcasecmp(animImgf_str, "PNG-VS") ||
+		 !strcasecmp(animImgf_str, "PNG_VS") ||
+		 !strcasecmp(animImgf_str, "PNG VS"))
 		return ANIMGF_PNG_VS;
-	else if (strcasecmp(animImgf_str, "PNG-HS") ||
-		 strcasecmp(animImgf_str, "PNG_HS") ||
-		 strcasecmp(animImgf_str, "PNG HS"))
+	else if (!strcasecmp(animImgf_str, "PNG-HS") ||
+		 !strcasecmp(animImgf_str, "PNG_HS") ||
+		 !strcasecmp(animImgf_str, "PNG HS"))
 		return ANIMGF_PNG_HS;
 
 	// Unknown animated image format.
