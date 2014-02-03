@@ -25,8 +25,7 @@
 // C includes. (C++ namespace)
 #include <cstdio>
 
-class GcImage;
-class GcImageWriter;
+#include "GcImageWriter.hpp"
 
 /**
  * Check if the specified file is WIBN_crypt.
@@ -37,7 +36,11 @@ int identify_WIBN_crypt(FILE *f);
 GcImage *read_banner_WIBN_raw(FILE *f);
 GcImage *read_banner_WIBN_crypt(FILE *f);
 
-int read_icon_WIBN_raw(FILE *f, GcImageWriter *gcImageWriter);
-int read_icon_WIBN_crypt(FILE *f, GcImageWriter *gcImageWriter);
+int read_icon_WIBN_raw(FILE *f, GcImageWriter *gcImageWriter,
+			GcImageWriter::AnimImageFormat animImgf,
+			const char **imgf_str);
+int read_icon_WIBN_crypt(FILE *f, GcImageWriter *gcImageWriter,
+			GcImageWriter::AnimImageFormat animImgf,
+			const char **imgf_str);
 
 #endif /* __GCBANNER_WIBN_HPP__ */

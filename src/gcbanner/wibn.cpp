@@ -186,10 +186,14 @@ GcImage *read_banner_WIBN_crypt(FILE *f)
  * Internal function; requires loaded, decrypted data.
  * @param banner Pointer to WIBN banner.
  * @param gcImageWriter GcImageWriter to write the icon to.
+ * @param animImgf Animated image format to use for animated icons.
+ * @param imgf_str Pointer to store const string inicating image format.
  * @param crypted If true, this is an encrypted banner.
  * @return 0 on success; non-zero on error.
  */
-static int read_icon_WIBN_internal(const banner_wibn_t *banner, GcImageWriter *gcImageWriter, bool crypted)
+static int read_icon_WIBN_internal(const banner_wibn_t *banner, GcImageWriter *gcImageWriter,
+				GcImageWriter::AnimImageFormat animImgf,
+				const char **imgf_str, bool crypted)
 {
 	// TODO: Verify magic number.
 	// Clear the memory buffer first.
@@ -256,12 +260,18 @@ static int read_icon_WIBN_internal(const banner_wibn_t *banner, GcImageWriter *g
 		ret = -EINVAL;
 	} else if (gcImages.size() == 1) {
 		// Static icon.
+		if (imgf_str)
+			*imgf_str = gcImageWriter->nameOfImageFormat(GcImageWriter::IMGF_PNG);
 		ret = gcImageWriter->write(gcImages[0], GcImageWriter::IMGF_PNG);
 	} else {
 		// Animated icon.
-		// TODO: Allow user to select animated image format.
-		ret = gcImageWriter->write(&gcImages, &gcIconDelays, GcImageWriter::ANIMGF_APNG);
+		if (imgf_str)
+			*imgf_str = gcImageWriter->nameOfAnimImageFormat(animImgf);
+		ret = gcImageWriter->write(&gcImages, &gcIconDelays, animImgf);
 	}
+
+	if (ret != 0 && imgf_str)
+		*imgf_str = nullptr;
 
 	// Delete the allocated GcImages.
 	for (int i = 0; i < alloc_icons; i++)
@@ -274,9 +284,13 @@ static int read_icon_WIBN_internal(const banner_wibn_t *banner, GcImageWriter *g
  * Raw version; for extracted banner.bin files.
  * @param f File containing the banner.
  * @param gcImageWriter GcImageWriter to write the icon to.
+ * @param animImgf Animated image format to use for animated icons.
+ * @param imgf_str Pointer to store const string inicating image format.
  * @return 0 on success; non-zero on error.
  */
-int read_icon_WIBN_raw(FILE *f, GcImageWriter *gcImageWriter)
+int read_icon_WIBN_raw(FILE *f, GcImageWriter *gcImageWriter,
+			GcImageWriter::AnimImageFormat animImgf,
+			const char **imgf_str)
 {
 	// Read the banner.
 	// TODO: Verify magic number.
@@ -307,7 +321,7 @@ int read_icon_WIBN_raw(FILE *f, GcImageWriter *gcImageWriter)
 	}
 
 	// Convert the icon image data.
-	return read_icon_WIBN_internal(&banner, gcImageWriter, false);
+	return read_icon_WIBN_internal(&banner, gcImageWriter, animImgf, imgf_str, false);
 }
 
 /**
@@ -315,9 +329,13 @@ int read_icon_WIBN_raw(FILE *f, GcImageWriter *gcImageWriter)
  * Encrypted version; for encrypted Wii save files.
  * @param f File containing the banner.
  * @param gcImageWriter GcImageWriter to write the icon to.
+ * @param animImgf Animated image format to use for animated icons.
+ * @param imgf_str Pointer to store const string inicating image format.
  * @return 0 on success; non-zero on error.
  */
-int read_icon_WIBN_crypt(FILE *f, GcImageWriter *gcImageWriter)
+int read_icon_WIBN_crypt(FILE *f, GcImageWriter *gcImageWriter,
+			GcImageWriter::AnimImageFormat animImgf,
+			const char **imgf_str)
 {
 	// Read the encrypted banner data.
 	uint8_t banner_encrypted[0x20 + sizeof(banner_wibn_t)];
@@ -351,5 +369,5 @@ int read_icon_WIBN_crypt(FILE *f, GcImageWriter *gcImageWriter)
 	fclose(x);
 
 	// Convert the icon image data.
-	return read_icon_WIBN_internal(&banner_decrypted.banner, gcImageWriter, true);
+	return read_icon_WIBN_internal(&banner_decrypted.banner, gcImageWriter, animImgf, imgf_str, true);
 }

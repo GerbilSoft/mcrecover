@@ -349,8 +349,11 @@ static int extract_banner(FILE *f, filetype_t ft,
 
 	// Success!
 	fclose(f_banner_png);
-	printf("%s (%s) banner -> %s [OK]\n", opening_bnr_filename,
-	       filetype_str(ft).c_str(), s_banner_png_filename.c_str());
+	printf("%s (%s) banner -> %s [%s] [OK]\n",
+		opening_bnr_filename,
+		filetype_str(ft).c_str(),
+		s_banner_png_filename.c_str(),
+		GcImageWriter::nameOfImageFormat(GcImageWriter::IMGF_PNG));
 	return 0;
 }
 
@@ -358,17 +361,19 @@ static int extract_banner(FILE *f, filetype_t ft,
  * Extract the icon from the specified GCN/Wii banner.
  * @param f opening.bnr file.
  * @param ft Filetype.
- * @param animgf Animated image format.
+ * @param animImgf Animated image format.
  * @param opening_bnr_filename opening.bnr filename.
  * @param icon_png_filename Filename for icon.png.
  */
 static int extract_icon(FILE *f, filetype_t ft,
-		GcImageWriter::AnimImageFormat animgf,
+		GcImageWriter::AnimImageFormat animImgf,
 		const char *opening_bnr_filename,
 		const char *icon_png_filename)
 {
 	fseek(f, 0, SEEK_SET);
 	GcImageWriter gcImageWriter;
+	const char *imgf_str = nullptr;
+	int ret = -EINVAL;
 	switch (ft) {
 		case FT_BNR1:
 		case FT_BNR2:
@@ -379,19 +384,19 @@ static int extract_icon(FILE *f, filetype_t ft,
 
 		case FT_WIBN_RAW:
 			// Wii banner image. (banner.bin)
-			read_icon_WIBN_raw(f, &gcImageWriter);
+			ret = read_icon_WIBN_raw(f, &gcImageWriter, animImgf, &imgf_str);
 			break;
 
 		case FT_WIBN_CRYPT:
 			// Wii banner image. (Encrypted Wii save file)
-			read_icon_WIBN_crypt(f, &gcImageWriter);
+			ret = read_icon_WIBN_crypt(f, &gcImageWriter, animImgf, &imgf_str);
 			break;
 
 		default:
 			break;
 	}
 
-	if (gcImageWriter.numFiles() <= 0) {
+	if (ret != 0 || !imgf_str || gcImageWriter.numFiles() <= 0) {
 		fprintf(stderr, "*** ERROR: could not read icon.\n");
 		return -1;
 	}
@@ -401,7 +406,7 @@ static int extract_icon(FILE *f, filetype_t ft,
 	if (icon_png_filename) {
 		s_icon_png_filename = string(icon_png_filename);
 	} else {
-		const char *ext = GcImageWriter::extForAnimImageFormat(animgf);
+		const char *ext = GcImageWriter::extForAnimImageFormat(animImgf);
 		// TODO: PNG FPF support.
 		string suffix(".icon.");
 		suffix.append(ext);
@@ -438,8 +443,11 @@ static int extract_icon(FILE *f, filetype_t ft,
 
 	// Success!
 	fclose(f_icon_png);
-	printf("%s (%s) icon -> %s [OK]\n", opening_bnr_filename,
-	       filetype_str(ft).c_str(), s_icon_png_filename.c_str());
+	printf("%s (%s) icon -> %s [%s] [OK]\n",
+		opening_bnr_filename,
+		filetype_str(ft).c_str(),
+		s_icon_png_filename.c_str(),
+		imgf_str);
 	return 0;
 }
 
@@ -622,7 +630,7 @@ int main(int argc, char *argv[])
 
 	// Extract the icon.
 	if (doIcon) {
-		// TODO: Allow the user to select animgf.
+		// TODO: Allow the user to select animImgf.
 		ret = extract_icon(f_opening_bnr, ft,
 				GcImageWriter::ANIMGF_APNG,
 				opening_bnr_filename,
