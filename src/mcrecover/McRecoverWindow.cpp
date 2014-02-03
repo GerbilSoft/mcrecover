@@ -93,9 +93,6 @@ class McRecoverWindowPrivate
 	public:
 		Ui::McRecoverWindow ui;
 
-		// Has the initial show been done yet?
-		bool initialShowDone;
-
 		// Is scanning disabled?
 		// (Usually due to PCRE not supporting UTF-8.)
 		bool scanningDisabled;
@@ -209,7 +206,6 @@ class McRecoverWindowPrivate
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	: q_ptr(q)
-	, initialShowDone(false)
 	, scanningDisabled(false)
 	, card(nullptr)
 	, model(new MemCardModel(q))
@@ -776,9 +772,6 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 #endif
 #endif
 
-	// Hide the MessageWidget initially.
-	d->ui.msgWidget->hide();
-
 	// Set up the QSplitter sizes.
 	// We want the card info panel to be 160px wide at startup.
 	// TODO: Save positioning settings somewhere?
@@ -824,6 +817,27 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	d->initTsMenu();
 	d->statusBarManager = new StatusBarManager(d->ui.statusBar, this);
 	d->updateWindowTitle();
+
+	// Check if PCRE supports UTF-8.
+	if (!PcreRegex::PCRE_has_UTF8()) {
+		// UTF-8 is not supported. Disable scanning.
+		d->scanningDisabled = true;
+		d->ui.actionScan->setEnabled(false);
+
+		// FIXME: MessageWidget text cannot be
+		// retranslated while it's still visible.
+		// FIXME: Mac OS X will use a dylib in the application framework.
+#ifdef PCRE_STATIC
+		//: Statically-linked PCRE is missing UTF-8 support.
+		QString msg = tr("The internal PCRE library was not compiled with UTF-8 support.\n"
+				"Scanning for lost files will not work.");
+#else /* !PCRE_STATIC */
+		//: Dynamically-linked PCRE is missing UTF-8 support.
+		QString msg = tr("The system PCRE library was not compiled with UTF-8 support.\n"
+				"Scanning for lost files will not work.");
+#endif /* PCRE_STATIC */
+		d->ui.msgWidget->showMessage(msg, MessageWidget::ICON_CRITICAL, 0);
+	}
 
 	// Shh... it's a secret to everybody.
 	QObject::connect(d->ui.lstFileList, SIGNAL(keyPress(QKeyEvent*)),
@@ -1022,40 +1036,6 @@ void McRecoverWindow::dropEvent(QDropEvent *event)
 
 	// Open the memory card file.
 	openCard(filename);
-}
-
-/**
- * Show event.
- * @param event QShowEvent.
- */
-void McRecoverWindow::showEvent(QShowEvent *event)
-{
-	Q_UNUSED(event);
-	Q_D(McRecoverWindow);
-	if (!d->initialShowDone) {
-		d->initialShowDone = true;
-
-		// Check if PCRE supports UTF-8.
-		if (!PcreRegex::PCRE_has_UTF8()) {
-			// UTF-8 is not supported. Disable scanning.
-			d->scanningDisabled = true;
-			d->ui.actionScan->setEnabled(false);
-
-			// FIXME: MessageWidget text cannot be
-			// retranslated while it's still visible.
-			// FIXME: Mac OS X will use a dylib in the application framework.
-#ifdef PCRE_STATIC
-			//: Statically-linked PCRE is missing UTF-8 support.
-			QString msg = tr("The internal PCRE library was not compiled with UTF-8 support.\n"
-					"Scanning for lost files will not work.");
-#else /* !PCRE_STATIC */
-			//: Dynamically-linked PCRE is missing UTF-8 support.
-			QString msg = tr("The system PCRE library was not compiled with UTF-8 support.\n"
-					"Scanning for lost files will not work.");
-#endif /* PCRE_STATIC */
-			d->ui.msgWidget->showMessage(msg, MessageWidget::ICON_CRITICAL, 0);
-		}
-	}
 }
 
 /**

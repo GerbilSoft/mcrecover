@@ -68,9 +68,6 @@ class McRecoverWindow : public QMainWindow
 		virtual void dragEnterEvent(QDragEnterEvent *event) override;
 		virtual void dropEvent(QDropEvent *event) override;
 
-		// Show event.
-		virtual void showEvent(QShowEvent *event) override;
-
 	protected slots:
 		// UI busy functions.
 		void markUiBusy(void);
