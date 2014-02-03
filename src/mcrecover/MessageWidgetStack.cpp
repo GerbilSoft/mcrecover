@@ -128,6 +128,7 @@ void MessageWidgetStack::showMessage(const QString &msg, MessageWidget::MsgIcon 
 
 	// Show the message.
 	d->ui.vboxMain->addWidget(messageWidget);
+	d->ui.vboxMain->setAlignment(messageWidget, Qt::AlignTop);
 	messageWidget->showMessage(msg, icon, timeout);
 }
 
@@ -157,3 +158,4 @@ void MessageWidgetStack::messageWidget_destroyed_slot(QObject *obj)
 	Q_D(MessageWidgetStack);
 	d->messageWidgets.remove(reinterpret_cast<MessageWidget*>(obj));
 }
+
