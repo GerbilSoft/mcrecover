@@ -692,6 +692,23 @@ void McRecoverWindowPrivate::initTsMenu(void)
 		QString tsLanguage = tsMap.value(tsLocale);
 		QAction *actTs = new QAction(tsLanguage, q);
 		actTs->setCheckable(true);
+
+		// Check for an icon.
+		// Check region, then language.
+		QStringList tsParts = tsLocale.split(QChar(L'_'), QString::SkipEmptyParts);
+		QIcon flagIcon;
+		for (int i = (tsParts.size() - 1); i >= 0; i--) {
+			QString filename = QLatin1String(":/flags/flag-") +
+					   tsParts.at(i).toLower() +
+					   QLatin1String(".png");
+			if (QFile::exists(filename)) {
+				flagIcon = QIcon(filename);
+				break;
+			}
+		}
+		if (!flagIcon.isNull())
+			actTs->setIcon(flagIcon);
+
 		vActionsTS.append(actTs);
 		actgrpTS->addAction(actTs);
 		QObject::connect(actTs, SIGNAL(triggered()),
