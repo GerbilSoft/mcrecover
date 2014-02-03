@@ -907,6 +907,51 @@ void McRecoverWindow::openCard(const QString &filename)
 	if (isJapanese)
 		d->showJpWarning();
 
+	// Check for other card errors.
+	// NOTE: These aren't retranslated if the UI is retranslated.
+	QStringList sl_cardErrors;
+	QFlags<MemCard::Error> cardErrors = d->card->errors();
+	if (cardErrors & MemCard::MCE_SZ_TOO_SMALL) {
+		sl_cardErrors +=
+			tr("The card image is too small. (Card image is %L1 bytes; should be at least 512 KB.)")
+			.arg(d->card->filesize());
+	}
+	if (cardErrors & MemCard::MCE_SZ_TOO_BIG) {
+		// TODO: Convert filesize to KB/MB/GB?
+		sl_cardErrors +=
+			tr("The card image is too big. (Card image is %L1 bytes; should be 16 MB or less.)")
+			.arg(d->card->filesize());
+	}
+	if (cardErrors & MemCard::MCE_SZ_NON_POW2) {
+		// TODO: Convert filesize to KB/MB/GB?
+		sl_cardErrors +=
+			tr("The card image size is not a power of two. (Card image is %L1 bytes.)")
+			.arg(d->card->filesize());
+	}
+	if (cardErrors & MemCard::MCE_INVALID_HEADER) {
+		sl_cardErrors += tr("The header checksum is invalid.");
+	}
+	if (cardErrors & MemCard::MCE_INVALID_DATS) {
+		sl_cardErrors += tr("Both directory tables are invalid.");
+	}
+	if (cardErrors & MemCard::MCE_INVALID_BATS) {
+		sl_cardErrors += tr("Both block tables are invalid.");
+	}
+
+	if (!sl_cardErrors.isEmpty()) {
+		// Errors detected.
+		static const QChar chrBullet(0x2022);  // U+2022: BULLET
+		QString msg;
+		msg.reserve(2048);
+		msg += tr("Error(s) have been detected in this Memory Card image:", "", sl_cardErrors.size());
+		foreach (const QString &str, sl_cardErrors) {
+			msg += QChar(L'\n') + chrBullet + QChar(L' ') + str;
+		}
+
+		// Show a warning message.
+		d->ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING, 0);
+	}
+
 	// Update the UI.
 	d->updateLstFileList();
 	d->statusBarManager->opened(filename);

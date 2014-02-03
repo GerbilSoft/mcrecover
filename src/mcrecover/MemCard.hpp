@@ -43,8 +43,11 @@ class MemCard : public QObject
 {
 	Q_OBJECT
 
+	Q_FLAGS(Error Errors)
+
 	Q_PROPERTY(bool open READ isOpen)
 	Q_PROPERTY(QString filename READ filename)
+	Q_PROPERTY(int filesize READ filesize);
 	Q_PROPERTY(int sizeInBlocks READ sizeInBlocks)
 	Q_PROPERTY(int sizeInBlocksNoSys READ sizeInBlocksNoSys)
 	Q_PROPERTY(int freeBlocks READ freeBlocks)
@@ -111,16 +114,23 @@ class MemCard : public QObject
 		QString filename(void) const;
 
 		/**
+		 * Get the size of the memory card image, in bytes.
+		 * This is the full size of the memory card image.
+		 * @return Size of the memory card image, in bytes. (Negative on error)
+		 */
+		quint64 filesize(void) const;
+
+		/**
 		 * Get the size of the memory card, in blocks.
 		 * NOTE: Includes the 5 reserved blocks. (e.g. MC1019 would return 1024)
-		 * @return Size of memory card, in blocks. (Negative on error)
+		 * @return Size of the memory card, in blocks. (Negative on error)
 		 */
 		int sizeInBlocks(void) const;
 
 		/**
 		 * Get the size of the memory card, in blocks. [minus 5 reserved blocks]
 		 * NOTE: Does NOT include the 5 reserved blocks. (e.g. MC1019 would return 1019)
-		 * @return Size of memory card, in blocks. (Negative on error)
+		 * @return Size of the memory card, in blocks. (Negative on error)
 		 */
 		int sizeInBlocksNoSys(void) const;
 
@@ -276,6 +286,38 @@ class MemCard : public QObject
 		 * @return True if valid; false if not valid or idx is invalid.
 		 */
 		bool isBatValid(int idx) const;
+
+		/**
+		 * Memory card errors.
+		 */
+		enum Error {
+			// Errors are ordered in order of severity.
+
+			// Memory card is too small. (512 KB min)
+			MCE_SZ_TOO_SMALL	= 0x01,
+			// Memory card is too big. (16 MB max)
+			MCE_SZ_TOO_BIG		= 0x02,
+			// Memory card size is not a power of two.
+			MCE_SZ_NON_POW2		= 0x04,
+
+			// Header checksum is invalid.
+			MCE_INVALID_HEADER	= 0x10,
+			// Both DATs are invalid.
+			MCE_INVALID_DATS	= 0x20,
+			// Bot BATs are invalid.
+			MCE_INVALID_BATS	= 0x40,
+
+			// TODO: File open errors?
+		};
+		Q_DECLARE_FLAGS(Errors, Error)
+
+		/**
+		 * Have any errors been detected in this Memory Card?
+		 * @return Error flags.
+		 */
+		QFlags<Error> errors(void) const;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(MemCard::Errors);
 
 #endif /* __MCRECOVER_MEMCARD_HPP__ */

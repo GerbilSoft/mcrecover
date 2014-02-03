@@ -68,7 +68,7 @@ class MemCardPrivate
 		QFile *file;
 
 		// Filesize.
-		int filesize;
+		quint64 filesize;
 
 		// Block size.
 		// NOTE: This is always assumed to be 8 KB.
@@ -149,6 +149,17 @@ class MemCardPrivate
 		void loadBlockTable(card_bat *bat, uint32_t address, uint32_t *checksum);
 
 		/**
+		 * Check if a number is a power of 2.
+		 * Reference: http://stackoverflow.com/questions/108318/whats-the-simplest-way-to-test-whether-a-number-is-a-power-of-2-in-c
+		 * @param n Number.
+		 * @return True if this number is a power of 2.
+		 */
+		template<typename T>
+		static inline bool isPow2(T n) {
+			return !(n == 0) && !(n & (n - 1));
+		}
+
+		/**
 		 * Determine which tables are active.
 		 * Sets mc_dat_hdr_idx and mc_bat_hdr_idx.
 		 * NOTE: All tables must be loaded first!
@@ -160,6 +171,9 @@ class MemCardPrivate
 		 * Load the MemCardFile list.
 		 */
 		void loadMemCardFileList(void);
+
+		// Card errors.
+		QFlags<MemCard::Error> errors;
 };
 
 // Text codecs.
@@ -174,6 +188,7 @@ MemCardPrivate::MemCardPrivate(MemCard *q, const QString &filename)
 	, mc_bat_hdr_idx(-1)
 	, mc_dat(nullptr)
 	, mc_bat(nullptr)
+	, errors(0)
 {
 	// Initialize static variables.
 	StaticInit();
@@ -195,13 +210,26 @@ MemCardPrivate::MemCardPrivate(MemCard *q, const QString &filename)
 	}
 
 	// Get the filesize.
-	filesize = (int)file->size();
-	// TODO: Verify the filesize:
-	// - Should be a power of two.
-	// - Should at least be 40 KB for system information.
+	this->filesize = file->size();
+
+	// Make sure the size isn't out of range.
+	if (this->filesize < (64 * blockSize)) {
+		// Fewer than 59 (64) blocks. Too small.
+		this->errors |= MemCard::MCE_SZ_TOO_SMALL;
+	} else if (filesize > (2048 * blockSize)) {
+		// Larger than 16 MB. Too big.
+		// Only read the first 16 MB.
+		this->errors |= MemCard::MCE_SZ_TOO_BIG;
+		this->filesize = (2048 * blockSize);
+	}
+
+	if (!isPow2(filesize)) {
+		// Size is not a power of 2.
+		this->errors |= MemCard::MCE_SZ_NON_POW2;
+	}
 
 	// Calculate the number of blocks.
-	numBlocks = (filesize / blockSize);
+	numBlocks = (int)(filesize / blockSize);
 
 	// Reset the used block map.
 	resetUsedBlockMap();
@@ -304,6 +332,11 @@ int MemCardPrivate::loadSysInfo(void)
 	headerChecksumValue.expected = (mc_header.chksum1 << 16) |
 				       (mc_header.chksum2);
 
+	if (headerChecksumValue.expected != headerChecksumValue.actual) {
+		// Header checksum is invalid.
+		this->errors |= MemCard::MCE_INVALID_HEADER;
+	}
+
 	/**
 	 * NOTE: formatTime appears to be in units of (CPU clock / 12).
 	 * This means the time format will be different depending on if
@@ -314,7 +347,6 @@ int MemCardPrivate::loadSysInfo(void)
 	 */
 
 	// TODO: Adjust for block size?
-	// TODO: Store the actual and expected DAT/BAT checksums?
 
 	// Directory tables.
 	loadDirTable(&mc_dat_int[0], CARD_SYSDIR, &mc_dat_chk_actual[0]);
@@ -441,8 +473,7 @@ int MemCardPrivate::checkTables(void)
 		idx = !idx;
 		if (!mc_dat_valid[idx]) {
 			// Both directory tables are invalid.
-			// TODO: Report an error.
-			// For now, default to main.
+			this->errors |= MemCard::MCE_INVALID_DATS;
 			idx = -1;
 		}
 	}
@@ -469,8 +500,7 @@ int MemCardPrivate::checkTables(void)
 		idx = !idx;
 		if (!mc_bat_valid[idx]) {
 			// Both block allocation tables are invalid.
-			// TODO: Report an error.
-			// For now, default to main.
+			this->errors |= MemCard::MCE_INVALID_BATS;
 			idx = -1;
 		}
 	}
@@ -583,9 +613,22 @@ QString MemCard::filename(void) const
 }
 
 /**
+ * Get the size of the memory card image, in bytes.
+ * This is the full size of the memory card image.
+ * @return Size of the memory card image, in bytes. (0 on error)
+ */
+quint64 MemCard::filesize(void) const
+{
+	if (!isOpen())
+		return 0;
+	Q_D(const MemCard);
+	return d->file->size();
+}
+
+/**
  * Get the size of the memory card, in blocks.
  * NOTE: Includes the 5 reserved blocks. (e.g. MC1019 would return 1024)
- * @return Size of memory card, in blocks. (Negative on error)
+ * @return Size of the memory card, in blocks. (Negative on error)
  */
 int MemCard::sizeInBlocks(void) const
 {
@@ -598,7 +641,7 @@ int MemCard::sizeInBlocks(void) const
 /**
  * Get the size of the memory card, in blocks. [minus 5 reserved blocks]
  * NOTE: Does NOT include the 5 reserved blocks. (e.g. MC1019 would return 1019)
- * @return Size of memory card, in blocks. (Negative on error)
+ * @return Size of the memory card, in blocks. (Negative on error)
  */
 int MemCard::sizeInBlocksNoSys(void) const
 {
@@ -978,4 +1021,16 @@ bool MemCard::isBatValid(int idx) const
 	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_bat_valid))
 		return -1;
 	return d->mc_bat_valid[idx];
+}
+
+/**
+ * Have any errors been detected in this Memory Card?
+ * @return Error flags.
+ */
+QFlags<MemCard::Error> MemCard::errors(void) const
+{
+	Q_D(const MemCard);
+	if (!isOpen())
+		return 0;
+	return d->errors;
 }
