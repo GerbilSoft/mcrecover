@@ -180,6 +180,13 @@ class McRecoverWindowPrivate
 		QSignalMapper *mapperTS;
 
 		/**
+		 * Get an icon for a given locale.
+		 * @param locale Locale name, e.g. "en_US".
+		 * @return Icon, or null QIcon if not found.
+		 */
+		static QIcon IconForLocale(const QString &locale);
+
+		/**
 		 * Retranslate the "System Default" language action.
 		 */
 		void rets_actTsSysDefault(void);
@@ -645,6 +652,30 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QStri
 }
 
 /**
+ * Get an icon for a given locale.
+ * @param locale Locale name, e.g. "en_US".
+ * @return Icon, or null QIcon if not found.
+ */
+QIcon McRecoverWindowPrivate::IconForLocale(const QString &locale)
+{
+	// Check for an icon.
+	// Check region, then language.
+	QStringList tsParts = locale.split(QChar(L'_'), QString::SkipEmptyParts);
+	QIcon flagIcon;
+	for (int i = (tsParts.size() - 1); i >= 0; i--) {
+		QString filename = QLatin1String(":/flags/flag-") +
+				   tsParts.at(i).toLower() +
+				   QLatin1String(".png");
+		if (QFile::exists(filename)) {
+			flagIcon = QIcon(filename);
+			break;
+		}
+	}
+
+	return flagIcon;
+}
+
+/**
  * Retranslate the "System Default" language action.
  */
 void McRecoverWindowPrivate::rets_actTsSysDefault(void)
@@ -658,10 +689,16 @@ void McRecoverWindowPrivate::rets_actTsSysDefault(void)
 	}
 
 	//: Translation: System Default (retrieved from system settings)
+	QString tsLocale = QLocale::system().name();
 	actTsSysDefault->setText(
 		McRecoverWindow::tr("System Default (%1)", "ts-language")
 				.arg(QLocale::system().name()));
 	mapperTS->setMapping(actTsSysDefault, QString());
+
+	// Check for an icon.
+	QIcon flagIcon = IconForLocale(tsLocale);
+	if (!flagIcon.isNull())
+		actTsSysDefault->setIcon(flagIcon);
 }
 
 /**
@@ -694,18 +731,7 @@ void McRecoverWindowPrivate::initTsMenu(void)
 		actTs->setCheckable(true);
 
 		// Check for an icon.
-		// Check region, then language.
-		QStringList tsParts = tsLocale.split(QChar(L'_'), QString::SkipEmptyParts);
-		QIcon flagIcon;
-		for (int i = (tsParts.size() - 1); i >= 0; i--) {
-			QString filename = QLatin1String(":/flags/flag-") +
-					   tsParts.at(i).toLower() +
-					   QLatin1String(".png");
-			if (QFile::exists(filename)) {
-				flagIcon = QIcon(filename);
-				break;
-			}
-		}
+		QIcon flagIcon = IconForLocale(tsLocale);
 		if (!flagIcon.isNull())
 			actTs->setIcon(flagIcon);
 
