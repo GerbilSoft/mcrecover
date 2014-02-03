@@ -30,6 +30,8 @@ class MessageWidget : public QWidget
 {
 	Q_OBJECT
 
+	Q_ENUMS(MsgIcon)
+
 	public:
 		MessageWidget(QWidget *parent = 0);
 		~MessageWidget();
