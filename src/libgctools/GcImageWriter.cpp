@@ -938,6 +938,21 @@ const char *GcImageWriter::nameOfImageFormat(ImageFormat imgf)
 }
 
 /**
+ * Get the description of the specified image image format.
+ * @param imgf Image format.
+ * @return Description of the image format, or nullptr if invalid.
+ */
+const char *GcImageWriter::descOfImageFormat(ImageFormat imgf)
+{
+	switch (imgf) {
+		case IMGF_PNG:	return "PNG image";
+		default:	break;
+	}
+
+	return nullptr;
+}
+
+/**
  * Look up an image format from its name.
  * @param imgf_str Image format name.
  * @return Image format, or IMGF_UNKNOWN if unknown.
@@ -1020,6 +1035,25 @@ const char *GcImageWriter::nameOfAnimImageFormat(AnimImageFormat animImgf)
 		case ANIMGF_PNG_FPF:	return "PNG-FPF";
 		case ANIMGF_PNG_VS:	return "PNG-VS";
 		case ANIMGF_PNG_HS:	return "PNG-HS";
+		default:		break;
+	}
+
+	return nullptr;
+}
+
+/**
+ * Get the description of the specified animated image format.
+ * @param animImgf Animated image format.
+ * @return Description of the animated image format, or nullptr if invalid.
+ */
+const char *GcImageWriter::descOfAnimImageFormat(AnimImageFormat animImgf)
+{
+	switch (animImgf) {
+		case ANIMGF_APNG:	return "Animated PNG image";
+		case ANIMGF_GIF:	return "Animated GIF image";
+		case ANIMGF_PNG_FPF:	return "PNG, file per frame";
+		case ANIMGF_PNG_VS:	return "PNG, vertical strip";
+		case ANIMGF_PNG_HS:	return "PNG, horizontal strip";
 		default:		break;
 	}
 

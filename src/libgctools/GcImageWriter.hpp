@@ -96,6 +96,13 @@ class GcImageWriter
 		static const char *nameOfImageFormat(ImageFormat imgf);
 
 		/**
+		 * Get the description of the specified image image format.
+		 * @param imgf Image format.
+		 * @return Description of the image format, or nullptr if invalid.
+		 */
+		static const char *descOfImageFormat(ImageFormat imgf);
+
+		/**
 		 * Look up an image format from its name.
 		 * @param imgf_str Image format name.
 		 * @return Image format, or IMGF_UNKNOWN if unknown.
@@ -122,6 +129,13 @@ class GcImageWriter
 		 * @return Name of the animated image format, or nullptr if invalid.
 		 */
 		static const char *nameOfAnimImageFormat(AnimImageFormat animImgf);
+
+		/**
+		 * Get the description of the specified animated image format.
+		 * @param animImgf Animated image format.
+		 * @return Description of the animated image format, or nullptr if invalid.
+		 */
+		static const char *descOfAnimImageFormat(AnimImageFormat animImgf);
 
 		/**
 		 * Look up an animated image format from its name.
