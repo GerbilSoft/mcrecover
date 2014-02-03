@@ -118,4 +118,4 @@ class MessageWidget : public QWidget
 		void dismissed(bool timeout);
 };
 
-#endif /* __MCRECOVER_MEMCARDVIEW_HPP__ */
+#endif /* __MCRECOVER_MESSAGEWIDGET_HPP__ */
