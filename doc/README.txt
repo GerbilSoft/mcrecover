@@ -17,7 +17,8 @@ Table of Contents
 4. How to use GCN MemCard Recover
 5. File Search Limitations
 6. UI Language Translations
-7. External Resources
+7. Additional Tools
+8. External Resources
 X. License
 Y. Trademarks
 
@@ -83,21 +84,32 @@ in a future version.
 
 3. How to compile GCN MemCard Recover
 
-FIXME: Update for zlib and libpng dependencies.
-Also add internal libpcre.
-
 GCN MemCard Recover requires the following libraries:
-- Qt 4.6.0 or later. (4.8.5+ recommended)
-  - NOTE: Qt 5 is not currently supported.
-- libpcre (8.33 or later recommended)
 - cmake 2.6 or later. (2.8.10.2+ recommended)
   - cmake-2.8.7+ is required for Windows builds.
+- Qt 4.6.0 or later. (4.8.5+ recommended)
+  - NOTE: Qt 5 is not currently supported.
+- libpcre (8.30 or later recommended)
+- libpng (1.6 or later with APNG patch recommended)
+- zlib (1.2.5 or later recommended)
 
-On Ubuntu Linux systems, the following packages contain the
-development headers required for compiling the program:
+If you do not have libpcre, libpng, or zlib, GCN MemCard Recover
+includes copies of each of these libraries. They will be used
+automatically.
+
+On Debian and Ubuntu Linux systems, the following packages contain
+the development headers required for compiling the program:
 - build-essential
+- cmake
 - libqt4-dev
 - libpcre3-dev
+- libpng12-dev
+- zlib1g-dev
+
+NOTE: Debian and Ubuntu Linux have not yet upgraded past libpng-1.2,
+and they do not have the APNG patch. If you want APNG support, you
+should configure GCN MemCard Recover to use its built-in libpng by
+specifying -DUSE_INTERNAL_PNG on the cmake command line.
 
 GCN MemCard Recover has been compiled with gcc-4.4 and 4.8.
 Other versions should work, though versions earlier than 4.4
@@ -105,8 +117,8 @@ may encounter problems.
 
 To compile GCN MemCard Recover on Linux, run the following commands
 in a terminal window:
-$ tar xpfv mcrecover-0.1.tar.gz
-$ cd mcrecover-0.1/
+$ tar xpfv mcrecover-0.2.tar.gz
+$ cd mcrecover-0.2/
 $ mkdir build/
 $ cd build/
 $ cmake ../
@@ -170,6 +182,13 @@ it found will appear in the list highlighted in yellow.
 Highlight the file(s) you want to extract, then click the "Save" button.
 The file(s) will be saved in GCI format, which you can then restore onto
 the memory card using GCMM.
+
+In some cases, a recently-deleted file may be accessible by viewing an
+alternate directory table. The GameCube Memory Card has two copies of
+the Directory Table and Block Table. When saving a file, only one of
+each of these tables is actually updated. This also counts for deleting
+files. To change the active Directory Table and Block Table, click the
+A or B buttons for Directory and Block Tables in the Memory Card pane.
 
 In addition to extracting the save files, you can also extract the
 banners and icons. To do this, click the Options menu, then check off
@@ -241,7 +260,20 @@ translation, please let me know.
 
 ================================================================
 
-7. External Resources
+7. Additional Tools
+
+GCN MemCard Recover includes a utility called "gcbanner".
+This utility lets you extract GameCube disc banner images
+from opening.bnr files (both BNR1 and BNR2 format), as well
+as Wii save banner and icon images from Wii save files (both
+Dolphin banner.bin and encrypted Wii save formats).
+
+For more information, see gcbanner's built-in help:
+$ gcbanner --help
+
+================================================================
+
+8. External Resources
 
 A basic tutorial for setting up MinGW-w64 on Windows is available at:
 http://kemovitra.blogspot.com/2012/11/installing-mingw-w64-on-windows.html
