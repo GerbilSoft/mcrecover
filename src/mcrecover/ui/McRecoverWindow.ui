@@ -25,7 +25,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
     <item>
-     <widget class="MessageWidget" name="msgWidget" native="true"/>
+     <widget class="MessageWidgetStack" name="msgWidget" native="true"/>
     </item>
     <item>
      <widget class="QSplitter" name="splitter">
@@ -525,9 +525,9 @@
    <header>QTreeViewOpt.hpp</header>
   </customwidget>
   <customwidget>
-   <class>MessageWidget</class>
+   <class>MessageWidgetStack</class>
    <extends>QWidget</extends>
-   <header>MessageWidget.hpp</header>
+   <header>MessageWidgetStack.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

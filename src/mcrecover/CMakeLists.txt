@@ -135,6 +135,7 @@ SET(mcrecover_WIDGET_SRCS
 	QTreeViewOpt.cpp
 	MessageWidget.cpp
 	TableSelect.cpp
+	MessageWidgetStack.cpp
 	)
 
 # Shh... it's a secret to everybody.
@@ -177,6 +178,7 @@ SET(mcrecover_WIDGET_MOC_H
 	QTreeViewOpt.hpp
 	MessageWidget.hpp
 	TableSelect.hpp
+	MessageWidgetStack.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H

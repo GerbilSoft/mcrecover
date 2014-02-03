@@ -70,6 +70,7 @@ class MessageWidgetPrivate
 
 		// Message timeout. (TODO)
 		QTimer *tmrTimeout;
+		bool timeout;	// True if message was dismissed via timeout.
 
 		// Colors.
 		// TODO: Use system colors on KDE?
@@ -88,6 +89,7 @@ MessageWidgetPrivate::MessageWidgetPrivate(MessageWidget *q)
 	: q_ptr(q)
 	, icon(MessageWidget::ICON_NONE)
 	, tmrTimeout(new QTimer(q))
+	, timeout(false)
 	, timeLine(new QTimeLine(500, q))
 	, animateOnShow(false)
 { }
@@ -305,6 +307,7 @@ void MessageWidget::showEvent(QShowEvent *event)
 	QWidget::showEvent(event);
 
 	Q_D(MessageWidget);
+	d->timeout = false;
 	if (d->animateOnShow) {
 		// Start the animation.
 		d->animateOnShow = false;
@@ -313,20 +316,6 @@ void MessageWidget::showEvent(QShowEvent *event)
 			d->timeLine->start();
 		}
 	}
-}
-
-/**
- * Hide event.
- * @param event QHideEvent.
- */
-void MessageWidget::hideEvent(QHideEvent *event)
-{
-	// Stop the timer.
-	Q_D(MessageWidget);
-	d->tmrTimeout->stop();
-
-	// Call the superclass hideEvent.
-	QWidget::hideEvent(event);
 }
 
 /** Slots. **/
@@ -392,6 +381,8 @@ void MessageWidget::hideAnimated(void)
 void MessageWidget::tmrTimeout_timeout(void)
 {
 	// Hide the message using animation.
+	Q_D(MessageWidget);
+	d->timeout = true;
 	this->hideAnimated();
 }
 
@@ -416,11 +407,16 @@ void MessageWidget::timeLineFinished_slot(void)
 		this->setFixedHeight(d->calcBestHeight());
 
 		// Start the timeout timer, if specified.
+		d->timeout = false;
 		if (d->tmrTimeout->interval() > 0)
 			d->tmrTimeout->start();
 	} else {
-		// Hide the widget.
-		this->hide();
+		// Message is dismissed.
+		// NOTE: This used to call this->hide(),
+		// but that causes a deadlock when
+		// used with MessageWidgetStack.
+		d->tmrTimeout->stop();
+		emit dismissed(d->timeout);
 	}
 }
 
@@ -431,6 +427,9 @@ void MessageWidget::on_btnDismiss_clicked(void)
 {
 	// Hide the message using animation.
 	Q_D(MessageWidget);
-	if (d->timeLine->state() == QTimeLine::NotRunning)
+	if (d->timeLine->state() == QTimeLine::NotRunning) {
+		d->tmrTimeout->stop();
+		d->timeout = false;
 		this->hideAnimated();
+	}
 }
