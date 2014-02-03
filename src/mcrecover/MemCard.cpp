@@ -137,16 +137,18 @@ class MemCardPrivate
 		 * @param dat		[out] card_dat to store the directory table in.
 		 * @param address	[in] Directory table address.
 		 * @param checksum	[out] Calculated checksum. (AddSubDual16)
+		 * @return 0 on success; non-zero on error.
 		 */
-		void loadDirTable(card_dat *dat, uint32_t address, uint32_t *checksum);
+		int loadDirTable(card_dat *dat, uint32_t address, uint32_t *checksum);
 
 		/**
 		 * Load a block allocation table.
 		 * @param bat		[out] card_bat to store the block allocation table in.
 		 * @param address	[in] Directory table address.
 		 * @param checksum	[out] Calculated checksum. (AddSubDual16)
+		 * @return 0 on success; non-zero on error.
 		 */
-		void loadBlockTable(card_bat *bat, uint32_t address, uint32_t *checksum);
+		int loadBlockTable(card_bat *bat, uint32_t address, uint32_t *checksum);
 
 		/**
 		 * Check if a number is a power of 2.
@@ -313,7 +315,11 @@ int MemCardPrivate::loadSysInfo(void)
 
 	// Header.
 	file->seek(0);
-	file->read((char*)&mc_header, sizeof(mc_header));
+	qint64 sz = file->read((char*)&mc_header, sizeof(mc_header));
+	if (sz < (qint64)sizeof(mc_header)) {
+		// Error reading the card header.
+		return -2;
+	}
 
 	// Calculate the header checksum.
 	headerChecksumValue.actual = Checksum::AddInvDual16((uint16_t*)&mc_header, 0x1FC);
@@ -347,36 +353,47 @@ int MemCardPrivate::loadSysInfo(void)
 	 */
 
 	// TODO: Adjust for block size?
+	// TODO: Verify that chksum1 and chksum2 are valid complements.
 
-	// Directory tables.
-	loadDirTable(&mc_dat_int[0], CARD_SYSDIR, &mc_dat_chk_actual[0]);
-	loadDirTable(&mc_dat_int[1], CARD_SYSDIR_BACK, &mc_dat_chk_actual[1]);
+	// NOTE: If an error occurs while loading a DAT or BAT,
+	// it will be zeroed out.
+	static const uint32_t DAT_addr[2] = {CARD_SYSDIR, CARD_SYSDIR_BACK};
+	static const uint32_t BAT_addr[2] = {CARD_SYSBAT, CARD_SYSBAT_BACK};
+	for (int i = 0; i < 2; i++) {
+		// Load the directory table.
+		int ret = loadDirTable(&mc_dat_int[i], DAT_addr[i], &mc_dat_chk_actual[i]);
+		if (ret != 0) {
+			memset(&mc_dat_int[i], 0xFF, sizeof(mc_dat_int[i]));
+			// This checksum can never appear in a valid table.
+			mc_dat_int[i].dircntrl.chksum1 = 0xAA55;
+			mc_dat_int[i].dircntrl.chksum2 = 0xAA55;
+		}
 
-	// Get the expected checksums.
-	mc_dat_chk_expected[0] = (mc_dat_int[0].dircntrl.chksum1 << 16) |
-				 (mc_dat_int[0].dircntrl.chksum2);
-	mc_dat_chk_expected[1] = (mc_dat_int[1].dircntrl.chksum1 << 16) |
-				 (mc_dat_int[1].dircntrl.chksum2);
+		// Get the expected checksum.
+		mc_dat_chk_expected[i] = (mc_dat_int[i].dircntrl.chksum1 << 16) |
+					 (mc_dat_int[i].dircntrl.chksum2);
 
-	// Check which tables are valid.
-	mc_dat_valid[0] = (mc_dat_chk_expected[0] == mc_dat_chk_actual[0]);
-	mc_dat_valid[1] = (mc_dat_chk_expected[1] == mc_dat_chk_actual[1]);
+		// Check if the directory table is valid.
+		mc_dat_valid[i] = (mc_dat_chk_expected[i] == mc_dat_chk_actual[i]);
 
-	// Block allocation tables.
-	loadBlockTable(&mc_bat_int[0], CARD_SYSBAT, &mc_bat_chk_actual[0]);
-	loadBlockTable(&mc_bat_int[1], CARD_SYSBAT_BACK, &mc_bat_chk_actual[1]);
+		// Load the block table.
+		ret = loadBlockTable(&mc_bat_int[i], BAT_addr[i], &mc_bat_chk_actual[i]);
+		if (ret != 0) {
+			memset(&mc_bat_int[i], 0x00, sizeof(mc_bat_int[i]));
+			// This checksum can never appear in a valid table.
+			mc_bat_int[i].chksum1 = 0xAA55;
+			mc_bat_int[i].chksum2 = 0xAA55;
+		}
 
-	// Get the expected checksums.
-	mc_bat_chk_expected[0] = (mc_bat_int[0].chksum1 << 16) |
-				 (mc_bat_int[0].chksum2);
-	mc_bat_chk_expected[1] = (mc_bat_int[1].chksum1 << 16) |
-				 (mc_bat_int[1].chksum2);
+		// Get the expected checksum.
+		mc_bat_chk_expected[i] = (mc_bat_int[i].chksum1 << 16) |
+					 (mc_bat_int[i].chksum2);
 
-	// Check which tables are valid.
-	mc_bat_valid[0] = (mc_bat_chk_expected[0] == mc_bat_chk_actual[0]);
-	mc_bat_valid[1] = (mc_bat_chk_expected[1] == mc_bat_chk_actual[1]);
+		// Check if the block table is valid.
+		mc_bat_valid[i] = (mc_bat_chk_expected[i] == mc_bat_chk_actual[i]);
+	}
 
-	// Determine which table is active.
+	// Determine which tables are active.
 	checkTables();
 	return 0;
 }
@@ -386,12 +403,16 @@ int MemCardPrivate::loadSysInfo(void)
  * @param dat		[out] card_dat to store the directory table in.
  * @param address	[in] Directory table address.
  * @param checksum	[out] Calculated checksum. (AddSubDual16)
+ * @return 0 on success; non-zero on error.
  */
-void MemCardPrivate::loadDirTable(card_dat *dat, uint32_t address, uint32_t *checksum)
+int MemCardPrivate::loadDirTable(card_dat *dat, uint32_t address, uint32_t *checksum)
 {
-	// TODO: Verify read size.
 	file->seek(address);
-	file->read((char*)dat, sizeof(*dat));
+	qint64 sz = file->read((char*)dat, sizeof(*dat));
+	if (sz < (qint64)sizeof(*dat)) {
+		// Error reading the directory table.
+		return -1;
+	}
 
 	// Calculate the checksums.
 	if (checksum != nullptr) {
@@ -416,6 +437,7 @@ void MemCardPrivate::loadDirTable(card_dat *dat, uint32_t address, uint32_t *che
 	dat->dircntrl.updated = be16_to_cpu(dat->dircntrl.updated);
 	dat->dircntrl.chksum1 = be16_to_cpu(dat->dircntrl.chksum1);
 	dat->dircntrl.chksum2 = be16_to_cpu(dat->dircntrl.chksum2);
+	return 0;
 }
 
 /**
@@ -423,12 +445,16 @@ void MemCardPrivate::loadDirTable(card_dat *dat, uint32_t address, uint32_t *che
  * @param bat		[out] card_bat to store the block allocation table in.
  * @param address	[in] Directory table address.
  * @param checksum	[out] Calculated checksum. (AddSubDual16)
+ * @return 0 on success; non-zero on error.
  */
-void MemCardPrivate::loadBlockTable(card_bat *bat, uint32_t address, uint32_t *checksum)
+int MemCardPrivate::loadBlockTable(card_bat *bat, uint32_t address, uint32_t *checksum)
 {
-	// TODO: Verify read size.
 	file->seek(address);
-	file->read((char*)bat, sizeof(*bat));
+	qint64 sz = file->read((char*)bat, sizeof(*bat));
+	if (sz < (qint64)sizeof(*bat)) {
+		// Error reading the directory table.
+		return -1;
+	}
 
 	// Calculate the checksums.
 	if (checksum != nullptr) {
@@ -446,6 +472,8 @@ void MemCardPrivate::loadBlockTable(card_bat *bat, uint32_t address, uint32_t *c
 
 	for (int i = 0; i < NUM_ELEMENTS(bat->fat); i++)
 		bat->fat[i] = be16_to_cpu(bat->fat[i]);
+
+	return 0;
 }
 
 /**

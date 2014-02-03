@@ -208,7 +208,7 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	, fileIdx(fileIdx)
 	, dat(dat)
 	, bat(bat)
-	, banner(QPixmap())
+	, gcBanner(nullptr)
 {
 	// Load the directory table information.
 	dirEntry = &dat->entries[fileIdx];
@@ -255,7 +255,7 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	, fileIdx(-1)
 	, dat(nullptr)
 	, bat(nullptr)
-	, banner(QPixmap())
+	, gcBanner(nullptr)
 {
 	// Take a copy of the constructed directory entry.
 	card_direntry *dentry = (card_direntry*)malloc(sizeof(*dirEntry));
@@ -325,7 +325,13 @@ void MemCardFilePrivate::init(void)
 	const int commentOffset = (dirEntry->commentaddr % blockSize);
 
 	char *commentData = (char*)malloc(blockSize);
-	card->readBlock(commentData, blockSize, fileBlockAddrToPhysBlockAddr(commentBlock));
+	int ret = card->readBlock(commentData, blockSize, fileBlockAddrToPhysBlockAddr(commentBlock));
+	if (ret != blockSize) {
+		// Read error.
+		// File is probably invalid.
+		free(commentData);
+		return;
+	}
 
 	// Load the file comments. (64 bytes)
 	// NOTE: These comments are supposed to be NULL-terminated.
