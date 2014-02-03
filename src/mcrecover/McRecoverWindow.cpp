@@ -389,11 +389,11 @@ void McRecoverWindowPrivate::initToolbar(void)
 		actgrpAnimIconFormat->addAction(animImgfActions[i]);
 
 		// Is this animated image format available?
-		if (GcImageWriter::isAnimImageFormatSupported((GcImageWriter::AnimImageFormat)i)) {
+		if (GcImageWriter::isAnimImageFormatSupported((GcImageWriter::AnimImageFormat)(i+1))) {
 			// Image format is available.
 			QObject::connect(animImgfActions[i], SIGNAL(triggered()),
 					 mapperAnimIconFormat, SLOT(map()));
-			mapperAnimIconFormat->setMapping(animImgfActions[i], i);
+			mapperAnimIconFormat->setMapping(animImgfActions[i], (i+1));
 			if (!isInitSet) {
 				// Set this format as the initial value.
 				// TODO: Save last selected format somewhere.
