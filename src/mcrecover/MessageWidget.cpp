@@ -27,12 +27,17 @@
 #include <QtGui/QPaintEvent>
 #include <QtGui/QPainter>
 
+// Qt widgets.
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QFrame>
+#include <QtGui/QLabel>
+#include <QtGui/QToolButton>
+
 // Qt animation includes.
 #include <QtCore/QTimeLine>
 
 /** MessageWidgetPrivate **/
 
-#include "ui_MessageWidget.h"
 class MessageWidgetPrivate
 {
 	public:
@@ -153,7 +158,7 @@ void MessageWidgetPrivate::Ui_MessageWidget::setupUi(QWidget *MessageWidget)
 
 /**
  * Set the icon.
- * icon Icon to set.
+ * @param icon Icon to set.
  */
 void MessageWidgetPrivate::setIcon(MessageWidget::MsgIcon icon)
 {
@@ -389,7 +394,6 @@ void MessageWidget::tmrTimeout_timeout(void)
 	// Hide the message using animation.
 	this->hideAnimated();
 }
-
 
 /**
  * Animation timeline has changed.
