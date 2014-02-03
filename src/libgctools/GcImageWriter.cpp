@@ -959,7 +959,9 @@ const char *GcImageWriter::descOfImageFormat(ImageFormat imgf)
  */
 GcImageWriter::ImageFormat GcImageWriter::imageFormatFromName(const char *imgf_str)
 {
-	if (strcasecmp(imgf_str, "PNG"))
+	if (!imgf_str)
+		return IMGF_UNKNOWN;
+	else if (strcasecmp(imgf_str, "PNG"))
 		return IMGF_PNG;
 
 	// Unknown image format.
@@ -1067,7 +1069,9 @@ const char *GcImageWriter::descOfAnimImageFormat(AnimImageFormat animImgf)
  */
 GcImageWriter::AnimImageFormat GcImageWriter::animImageFormatFromName(const char *animImgf_str)
 {
-	if (strcasecmp(animImgf_str, "APNG"))
+	if (!animImgf_str)
+		return ANIMGF_UNKNOWN;
+	else if (strcasecmp(animImgf_str, "APNG"))
 		return ANIMGF_APNG;
 	else if (strcasecmp(animImgf_str, "GIF"))
 		return ANIMGF_GIF;
