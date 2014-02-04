@@ -389,7 +389,7 @@ recipe again, to continue to eat the snack.</source>
     </message>
     <message>
         <location filename="../ui/McRecoverWindow.ui" line="441"/>
-        <location filename="../McRecoverWindow.cpp" line="428"/>
+        <location filename="../McRecoverWindow.cpp" line="431"/>
         <source>Preferred Region:</source>
         <translation></translation>
     </message>
@@ -434,42 +434,42 @@ recipe again, to continue to eat the snack.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="278"/>
+        <location filename="../McRecoverWindow.cpp" line="281"/>
         <source>The internal PCRE library was not compiled with Unicode character properties support.
 Some files with Japanese descriptions might not be found when scanning.</source>
         <extracomment>Statically-linked PCRE is missing Unicode character properties support.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="283"/>
+        <location filename="../McRecoverWindow.cpp" line="286"/>
         <source>The system PCRE library was not compiled with Unicode character properties support.
 Some files with Japanese descriptions might not be found when scanning.</source>
         <extracomment>Dynamically-linked PCRE is missing Unicode character properties support.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="298"/>
+        <location filename="../McRecoverWindow.cpp" line="301"/>
         <source>No memory card loaded.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="534"/>
+        <location filename="../McRecoverWindow.cpp" line="537"/>
         <source>Save GCN Save File %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="537"/>
+        <location filename="../McRecoverWindow.cpp" line="540"/>
         <source>GameCube Save Files</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="538"/>
-        <location filename="../McRecoverWindow.cpp" line="1072"/>
+        <location filename="../McRecoverWindow.cpp" line="541"/>
+        <location filename="../McRecoverWindow.cpp" line="1140"/>
         <source>All Files</source>
         <translation></translation>
     </message>
     <message numerus="yes">
-        <location filename="../McRecoverWindow.cpp" line="545"/>
+        <location filename="../McRecoverWindow.cpp" line="548"/>
         <source>Save %Ln GCN Save File(s)</source>
         <translation>
             <numerusform>Save %Ln GCN Save File</numerusform>
@@ -477,67 +477,104 @@ Some files with Japanese descriptions might not be found when scanning.</source>
         </translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="560"/>
+        <location filename="../McRecoverWindow.cpp" line="563"/>
         <source>File Already Exists</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="561"/>
+        <location filename="../McRecoverWindow.cpp" line="564"/>
         <source>A file named &quot;%1&quot; already exists in the specified directory.
 
 Do you want to overwrite it?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="662"/>
+        <location filename="../McRecoverWindow.cpp" line="690"/>
         <source>System Default (%1)</source>
         <comment>ts-language</comment>
-        <extracomment>Translation: System Default (retrieved from system settings)</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1006"/>
+        <location filename="../McRecoverWindow.cpp" line="832"/>
         <source>The internal PCRE library was not compiled with UTF-8 support.
 Scanning for lost files will not work.</source>
         <extracomment>Statically-linked PCRE is missing UTF-8 support.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1010"/>
+        <location filename="../McRecoverWindow.cpp" line="836"/>
         <source>The system PCRE library was not compiled with UTF-8 support.
 Scanning for lost files will not work.</source>
         <extracomment>Dynamically-linked PCRE is missing UTF-8 support.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1069"/>
+        <location filename="../McRecoverWindow.cpp" line="916"/>
+        <source>The card image is too small. (Card image is %L1 bytes; should be at least 512 KB.)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../McRecoverWindow.cpp" line="922"/>
+        <source>The card image is too big. (Card image is %L1 bytes; should be 16 MB or less.)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../McRecoverWindow.cpp" line="928"/>
+        <source>The card image size is not a power of two. (Card image is %L1 bytes.)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../McRecoverWindow.cpp" line="932"/>
+        <source>The header checksum is invalid.</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../McRecoverWindow.cpp" line="935"/>
+        <source>Both directory tables are invalid.</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../McRecoverWindow.cpp" line="938"/>
+        <source>Both block tables are invalid.</source>
+        <translation></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../McRecoverWindow.cpp" line="946"/>
+        <source>Error(s) have been detected in this Memory Card image:</source>
+        <translation>
+            <numerusform>An error has been detected in this Memory Card image:</numerusform>
+            <numerusform>Errors have been detected in this Memory Card image:</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../McRecoverWindow.cpp" line="1137"/>
         <source>Open GameCube Memory Card Image</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1071"/>
+        <location filename="../McRecoverWindow.cpp" line="1139"/>
         <source>GameCube Memory Card Image</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1106"/>
+        <location filename="../McRecoverWindow.cpp" line="1174"/>
         <source>The database files should be located in the data subdirectory in
 mcrecover.exe&apos;s program directory.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1110"/>
+        <location filename="../McRecoverWindow.cpp" line="1178"/>
         <source>The database files should be located in %1.
 Alternatively, you can place your own version in ~/.config/mcrecover/data/</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1117"/>
+        <location filename="../McRecoverWindow.cpp" line="1185"/>
         <source>Database Load Error</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../McRecoverWindow.cpp" line="1118"/>
+        <location filename="../McRecoverWindow.cpp" line="1186"/>
         <source>No GCN MemCard file databases were found.</source>
         <translation></translation>
     </message>
