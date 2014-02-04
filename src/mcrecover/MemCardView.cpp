@@ -140,8 +140,9 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 	}
 
 	// Block count.
-	ui.lblBlockCount->setText(MemCardView::tr("%L1 block(s) (%L2 free)")
-				.arg(card->sizeInBlocksNoSys())
+	int sizeInBlocksNoSys = card->sizeInBlocksNoSys();
+	ui.lblBlockCount->setText(MemCardView::tr("%L1 block(s) (%L2 free)", "", sizeInBlocksNoSys)
+				.arg(sizeInBlocksNoSys)
 				.arg(card->freeBlocks()));
 
 	// Status icon.

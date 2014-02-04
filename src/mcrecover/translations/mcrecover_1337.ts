@@ -704,13 +704,16 @@ ch3ck5um:</translation>
         <comment>checksum</comment>
         <translation>unkn0wn</translation>
     </message>
-    <message>
-        <location filename="../MemCardView.cpp" line="143"/>
+    <message numerus="yes">
+        <location filename="../MemCardView.cpp" line="144"/>
         <source>%L1 block(s) (%L2 free)</source>
-        <translation>%L1 bl0ck(5) (%L2 fr33)</translation>
+        <translation>
+            <numerusform>%L1 bl0ck (%L2 fr33)</numerusform>
+            <numerusform>%L1 bl0ck5 (%L2 fr33)</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../MemCardView.cpp" line="156"/>
+        <location filename="../MemCardView.cpp" line="157"/>
         <source>Memory card header is corrupted.</source>
         <translation>m3m0ry c4rd h34d3r 15 c0rrup73d.</translation>
     </message>

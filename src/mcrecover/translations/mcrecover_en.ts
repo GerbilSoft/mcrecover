@@ -681,13 +681,16 @@ Checksum:</source>
         <comment>checksum</comment>
         <translation></translation>
     </message>
-    <message>
-        <location filename="../MemCardView.cpp" line="143"/>
+    <message numerus="yes">
+        <location filename="../MemCardView.cpp" line="144"/>
         <source>%L1 block(s) (%L2 free)</source>
-        <translation></translation>
+        <translation>
+            <numerusform>%L1 block (%L2 free)</numerusform>
+            <numerusform>%L1 blocks (%L2 free)</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../MemCardView.cpp" line="156"/>
+        <location filename="../MemCardView.cpp" line="157"/>
         <source>Memory card header is corrupted.</source>
         <translation></translation>
     </message>
