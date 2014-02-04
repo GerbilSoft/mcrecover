@@ -195,6 +195,10 @@ MemCardPrivate::MemCardPrivate(MemCard *q, const QString &filename)
 	// Initialize static variables.
 	StaticInit();
 
+	// Cler variables.
+	memset(mc_dat_valid, 0x00, sizeof(mc_dat_valid));
+	memset(mc_bat_valid, 0x00, sizeof(mc_bat_valid));
+
 	// TODO: Set an error code somewhere.
 
 	if (filename.isEmpty()) {

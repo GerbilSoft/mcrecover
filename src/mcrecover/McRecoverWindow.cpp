@@ -1362,13 +1362,15 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 	bool isJapanese = false;
 	foreach (const SearchData &searchData, filesFoundList) {
 		MemCardFile *file = d->card->addLostFile(&(searchData.dirEntry), searchData.fatEntries);
-		if (file->encoding() == SYS_FONT_ENCODING_SJIS)
-			isJapanese = true;
+		if (file) {
+			if (file->encoding() == SYS_FONT_ENCODING_SJIS)
+				isJapanese = true;
 
-		// TODO: Add ChecksumData parameter to addLostFile.
-		// Alternatively, add SearchData overload?
-		if (file)
-			file->setChecksumDefs(searchData.checksumDefs);
+			// TODO: Add ChecksumData parameter to addLostFile.
+			// Alternatively, add SearchData overload?
+			if (file)
+				file->setChecksumDefs(searchData.checksumDefs);
+		}
 	}
 
 	// If the card encoding or any files are Japanese,
