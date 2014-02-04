@@ -601,6 +601,11 @@ void MemCardPrivate::loadMemCardFileList(void)
 		lstMemCardFile.swap(lstMemCardFile_new);
 		emit q->filesInserted();
 	}
+
+	// Block count has changed.
+	emit q->blockCountChanged(
+		(this->numBlocks - 5),
+		this->mc_bat->freeblocks);
 }
 
 /** MemCard **/

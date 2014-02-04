@@ -68,6 +68,11 @@ class MemCardView : public QWidget
 		 * @param obj QObject that was destroyed.
 		 */
 		void memCard_destroyed_slot(QObject *obj = 0);
+
+		/**
+		 * MemCard's block count has changed.
+		 */
+		void memCard_blockCountChanged_slot(void);
 };
 
 #endif /* __MCRECOVER_MEMCARDVIEW_HPP__ */

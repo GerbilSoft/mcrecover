@@ -98,7 +98,12 @@ class MemCard : public QObject
 		 */
 		void filesRemoved(void);
 
-		// TODO: Add signals for DAT or BAT changes.
+		/**
+		 * Block count has changed.
+		 * @param sizeInBlocksNoSys Size in blocks, minus the 5 reserved blocks.
+		 * @param freeBlocks Number of free blocks.
+		 */
+		void blockCountChanged(int sizeInBlocksNoSys, int freeBlocks);
 
 	public:
 		/**

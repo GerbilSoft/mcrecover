@@ -58,6 +58,11 @@ class MemCardViewPrivate
 		 * Update the widget display.
 		 */
 		void updateWidgetDisplay(void);
+
+		/**
+		 * Update the block count display.
+		 */
+		void updateBlockCountDisplay(void);
 };
 
 MemCardViewPrivate::MemCardViewPrivate(MemCardView *q)
@@ -67,6 +72,18 @@ MemCardViewPrivate::MemCardViewPrivate(MemCardView *q)
 
 MemCardViewPrivate::~MemCardViewPrivate()
 { }
+
+/**
+ * Update the block count display.
+ */
+void MemCardViewPrivate::updateBlockCountDisplay(void)
+{
+	int sizeInBlocksNoSys = card->sizeInBlocksNoSys();
+	ui.lblBlockCount->setText(
+		MemCardView::tr("%L1 block(s) (%L2 free)", "", sizeInBlocksNoSys)
+			.arg(sizeInBlocksNoSys)
+			.arg(card->freeBlocks()));
+}
 
 /**
  * Update the widget display.
@@ -140,10 +157,7 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 	}
 
 	// Block count.
-	int sizeInBlocksNoSys = card->sizeInBlocksNoSys();
-	ui.lblBlockCount->setText(MemCardView::tr("%L1 block(s) (%L2 free)", "", sizeInBlocksNoSys)
-				.arg(sizeInBlocksNoSys)
-				.arg(card->freeBlocks()));
+	updateBlockCountDisplay();
 
 	// Status icon.
 	if (isCardHeaderValid) {
@@ -225,6 +239,8 @@ void MemCardView::setCard(MemCard *card)
 	if (d->card) {
 		disconnect(d->card, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(memCard_destroyed_slot(QObject*)));
+		disconnect(d->card, SIGNAL(blockCountChanged(int,int)),
+			   this, SLOT(memCard_blockCountChanged_slot()));
 	}
 
 	d->card = card;
@@ -233,6 +249,8 @@ void MemCardView::setCard(MemCard *card)
 	if (d->card) {
 		connect(d->card, SIGNAL(destroyed(QObject*)),
 			this, SLOT(memCard_destroyed_slot(QObject*)));
+		connect(d->card, SIGNAL(blockCountChanged(int,int)),
+			   this, SLOT(memCard_blockCountChanged_slot()));
 	}
 
 	// Update the widget display.
@@ -273,4 +291,13 @@ void MemCardView::memCard_destroyed_slot(QObject *obj)
 		// Update the widget display.
 		d->updateWidgetDisplay();
 	}
+}
+
+/**
+ * MemCard's block count has changed.
+ */
+void MemCardView::memCard_blockCountChanged_slot(void)
+{
+	Q_D(MemCardView);
+	d->updateBlockCountDisplay();
 }
