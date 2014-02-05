@@ -248,7 +248,7 @@ QString AboutDialogPrivate::GetCredits(void)
 
 		{CT_TRANSLATORS,	"Overlord", "en_GB"},
 
-		{CT_MAX, nullptr}
+		{CT_MAX, nullptr, nullptr}
 	};
 	
 	CreditType_t lastCreditType = CT_CONTINUE;
