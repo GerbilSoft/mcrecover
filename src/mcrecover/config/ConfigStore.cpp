@@ -312,12 +312,12 @@ void ConfigStore::set(const QString &key, const QVariant &value)
 	// Reverse order makes it easier to remove deleted objects.
 	// TODO: Use QLinkedList instead?
 	for (int i = (signalMapVector->size() - 1); i >= 0; i--) {
-		const ConfigStorePrivate::SignalMap *smap = &signalMapVector->at(i);
-		if (smap->object.isNull()) {
+		const ConfigStorePrivate::SignalMap &smap = signalMapVector->at(i);
+		if (smap.object.isNull()) {
 			signalMapVector->remove(i);
 		} else {
 			// Invoke this method.
-			ConfigStorePrivate::InvokeQtMethod(smap->object, smap->method_idx, newValue);
+			ConfigStorePrivate::InvokeQtMethod(smap.object, smap.method_idx, newValue);
 		}
 	}
 }
@@ -543,12 +543,12 @@ void ConfigStore::unregisterChangeNotification(const QString &property, QObject 
 	// Reverse order makes it easier to remove deleted objects.
 	// TODO: Use QLinkedList instead?
 	for (int i = (signalMapVector->size() - 1); i >= 0; i--) {
-		const ConfigStorePrivate::SignalMap *smap = &signalMapVector->at(i);
-		if (smap->object.isNull()) {
+		const ConfigStorePrivate::SignalMap &smap = signalMapVector->at(i);
+		if (smap.object.isNull()) {
 			signalMapVector->remove(i);
-		} else if (smap->object == object) {
+		} else if (smap.object == object) {
 			// Found the object.
-			if (method == nullptr || method_idx == smap->method_idx) {
+			if (method == nullptr || method_idx == smap.method_idx) {
 				// Found a matching signal map.
 				signalMapVector->remove(i);
 			}
@@ -579,12 +579,12 @@ void ConfigStore::notifyAll(void)
 		// TODO: Use QLinkedList instead?
 		for (int i = (signalMapVector->size() - 1); i >= 0; i--)
 		{
-			const ConfigStorePrivate::SignalMap *smap = &signalMapVector->at(i);
-			if (smap->object.isNull()) {
+			const ConfigStorePrivate::SignalMap &smap = signalMapVector->at(i);
+			if (smap.object.isNull()) {
 				signalMapVector->remove(i);
 			} else {
 				// Invoke this method.
-				ConfigStorePrivate::InvokeQtMethod(smap->object, smap->method_idx, value);
+				ConfigStorePrivate::InvokeQtMethod(smap.object, smap.method_idx, value);
 			}
 		}
 	}
