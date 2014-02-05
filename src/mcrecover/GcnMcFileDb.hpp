@@ -46,10 +46,11 @@ class GcnMcFileDb : public QObject
 		GcnMcFileDb(QObject *parent = 0);
 		~GcnMcFileDb();
 
+	protected:
+		GcnMcFileDbPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(GcnMcFileDb)
 	private:
-		friend class GcnMcFileDbPrivate;
-		GcnMcFileDbPrivate *const d;
-		Q_DISABLE_COPY(GcnMcFileDb);
+		Q_DISABLE_COPY(GcnMcFileDb)
 
 	public:
 		/**

@@ -56,8 +56,8 @@ class GcnMcFileDbPrivate
 		~GcnMcFileDbPrivate();
 
 	private:
-		GcnMcFileDb *const q;
-		Q_DISABLE_COPY(GcnMcFileDbPrivate);
+		GcnMcFileDb *const q_ptr;
+		Q_DECLARE_PUBLIC(GcnMcFileDb)
 
 		// Block size.
 		static const uint32_t BLOCK_SIZE = 0x2000;
@@ -132,7 +132,7 @@ class GcnMcFileDbPrivate
 };
 
 GcnMcFileDbPrivate::GcnMcFileDbPrivate(GcnMcFileDb *q)
-	: q(q)
+	: q_ptr(q)
 	, textCodecJP(QTextCodec::codecForName("Shift-JIS"))
 	, textCodecUS(QTextCodec::codecForName("Windows-1252"))
 { }
@@ -866,12 +866,12 @@ SearchData GcnMcFileDbPrivate::constructSearchData(
 
 GcnMcFileDb::GcnMcFileDb(QObject *parent)
 	: QObject(parent)
-	, d(new GcnMcFileDbPrivate(this))
+	, d_ptr(new GcnMcFileDbPrivate(this))
 { }
 
 GcnMcFileDb::~GcnMcFileDb()
 {
-	delete d;
+	delete d_ptr;
 }
 
 
@@ -882,6 +882,7 @@ GcnMcFileDb::~GcnMcFileDb()
  */
 int GcnMcFileDb::load(const QString &filename)
 {
+	Q_D(GcnMcFileDb);
 	return d->load(filename);
 }
 
@@ -893,6 +894,7 @@ int GcnMcFileDb::load(const QString &filename)
  */
 QString GcnMcFileDb::errorString(void) const
 {
+	Q_D(const GcnMcFileDb);
 	return d->errorString;
 }
 
@@ -908,6 +910,7 @@ QVector<SearchData> GcnMcFileDb::checkBlock(const void *buf, int siz) const
 	// File entry matches.
 	QVector<SearchData> fileMatches;
 
+	Q_D(const GcnMcFileDb);
 	foreach (uint32_t address, d->addr_file_defs.keys()) {
 		// Make sure this address is within the bounds of the buffer.
 		// Game Description + File Description == 64 bytes. (0x40)
