@@ -46,6 +46,7 @@ const ConfigDefaults::DefaultSetting ConfigDefaults::DefaultSettings[] =
 	{"preferredRegion",	"", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
 	{"searchUsedBlocks",	"false", 0, 0,	DefaultSetting::VT_BOOL, 0, 0},
 	{"animIconFormat",	"", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
+	{"language",		"", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
 
 	/** End of array. **/
 	{nullptr, nullptr, 0, 0, DefaultSetting::VT_NONE, 0, 0}
