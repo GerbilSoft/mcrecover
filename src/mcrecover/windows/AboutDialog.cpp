@@ -231,27 +231,29 @@ QString AboutDialogPrivate::GetCredits(void)
 	struct CreditsData_t {
 		CreditType_t type;
 		const char *name;
+		const char *url;
 		const char *sub;
 	};
 
 	// Credits data.
 	static const CreditsData_t CreditsData[] = {
-		{CT_MCF_CONTRIBUTORS,	"MainMemory", nullptr},	// NTSC-U, fragmented card
-		{CT_CONTINUE,	"Carbuncle", nullptr},		// NTSC-U (aka megamanblue)
-		{CT_CONTINUE,	"Jeff Turner", nullptr},	// NTSC-U
-		{CT_CONTINUE,	"gold lightning", nullptr},	// NTSC-U
-		{CT_CONTINUE,	"Thomas Vasto", nullptr},	// PAL
-		{CT_CONTINUE,	"Henke37", nullptr},		// PAL
-		{CT_CONTINUE,	"Gordon Griffin", nullptr},	// NTSC-U
-		{CT_CONTINUE,	"LocalH", nullptr},		// NTSC-U
-		{CT_CONTINUE,	"McLaglen", nullptr},		// PAL (aka Mainman)
-		{CT_CONTINUE,	"einstein95", nullptr},		// Multiple regions
-		{CT_CONTINUE,	"Hendricks266", nullptr},	// NTSC-U
-		{CT_CONTINUE,	"Typpex", nullptr},		// NTSC-U, PAL
+		{CT_MCF_CONTRIBUTORS,	"MainMemory", nullptr, nullptr},	// NTSC-U, fragmented card
+		{CT_CONTINUE,	"Carbuncle", nullptr, nullptr},			// NTSC-U (aka megamanblue)
+		{CT_CONTINUE,	"Jeff Turner", nullptr, nullptr},		// NTSC-U
+		{CT_CONTINUE,	"gold lightning", nullptr, nullptr},		// NTSC-U
+		{CT_CONTINUE,	"Thomas Vasto", nullptr, nullptr},		// PAL
+		{CT_CONTINUE,	"Henke37", nullptr, nullptr,},			// PAL
+		{CT_CONTINUE,	"Gordon Griffin", nullptr, nullptr},		// NTSC-U
+		{CT_CONTINUE,	"LocalH", nullptr, nullptr},			// NTSC-U
+		{CT_CONTINUE,	"McLaglen", nullptr, nullptr},			// PAL (aka Mainman)
+		{CT_CONTINUE,	"einstein95", nullptr, nullptr},		// Multiple regions
+		{CT_CONTINUE,	"Hendricks266", nullptr, nullptr},		// NTSC-U
+		{CT_CONTINUE,	"Typpex", nullptr, nullptr},			// NTSC-U, PAL
 
-		{CT_TRANSLATORS,	"Overlord", "en_GB"},
+		{CT_TRANSLATORS,	"Overlord", nullptr, "en_GB"},
+		{CT_CONTINUE,	"Kevin L\xC3\xB3pez", "http://kelopez.cl/", "es_CL"},
 
-		{CT_MAX, nullptr, nullptr}
+		{CT_MAX, nullptr, nullptr, nullptr}
 	};
 	
 	CreditType_t lastCreditType = CT_CONTINUE;
@@ -280,8 +282,16 @@ QString AboutDialogPrivate::GetCredits(void)
 
 		// Append the contributor's name.
 		credits += sLineBreak + sIndent +
-			chrBullet + QChar(L' ') +
-			QLatin1String(creditsData->name);
+			chrBullet + QChar(L' ');
+		if (creditsData->url) {
+			credits += QLatin1String("<a href='") +
+				QLatin1String(creditsData->url) +
+				QLatin1String("'>");
+		}
+		credits += QString::fromUtf8(creditsData->name);
+		if (creditsData->url) {
+			credits += QLatin1String("</a>");
+		}
 		if (creditsData->sub) {
 			credits += QLatin1String(" (") +
 				QLatin1String(creditsData->sub) +
