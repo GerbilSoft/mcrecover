@@ -124,6 +124,7 @@ SET(mcrecover_SRCS
 	TranslationManager.cpp
 	config/ConfigStore.cpp
 	config/ConfigDefaults.cpp
+	PathFuncs.cpp
 	)
 
 SET(mcrecover_WINDOW_SRCS

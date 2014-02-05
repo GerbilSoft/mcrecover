@@ -35,6 +35,9 @@
 #include <QtCore/QCoreApplication>
 #include <QtGui/QScrollArea>
 
+// Path functions.
+#include "PathFuncs.hpp"
+
 // Third-party libraries.
 #include <pcre.h>
 #include "PcreRegex.hpp"
@@ -477,38 +480,14 @@ QString AboutDialogPrivate::GetDebugInfo(void)
 				sDebugInfo += QChar(L'\n');
 			sDebugInfo += chrBullet + QChar(L' ');
 
-			// TODO: Query file system to see if it's case-sensitive?
-#if defined(Q_OS_WIN) || defined(Q_OS_MAC)
-			const Qt::CaseSensitivity cs = Qt::CaseInsensitive;
-#else
-			const Qt::CaseSensitivity cs = Qt::CaseSensitive;
-#endif
-
-			// Check if the filename is relative to any special directories.
-			// NOTE: We're not using QFileInfo/QDir like in GcnMcFileDb
-			// because we're just printing the filenames, not searching paths.
 			QString filename = dbFilenames.at(i);
-			const QString applicationDirPath = QCoreApplication::applicationDirPath();
-			if (filename.startsWith(applicationDirPath, cs)) {
-				int pos = applicationDirPath.size();
-				if (filename.size() > pos && filename.at(pos) == QChar(L'/')) {
-					// File is in the application directory.
-					filename.remove(0, pos);
-					filename.prepend(QChar(L'.'));
-				}
-			}
+
+			// Check if the filename is relative to the application path.
+			filename = PathFuncs::makeRelativeToApplication(filename);
 #ifndef Q_OS_WIN
 			// Non-Windows systems: Check if relative to the user's home directory.
-			const QString homeDir = QDir::home().absolutePath();
-			if (filename.startsWith(homeDir, cs)) {
-				int pos = homeDir.size();
-				if (filename.size() > pos && filename.at(pos) == QChar(L'/')) {
-					// File is in the user's home directory.
-					filename.remove(0, pos);
-					filename.prepend(QChar(L'~'));
-				}
-			}
-#endif /* Q_OS_WIN */
+			filename = PathFuncs::makeRelativeToHome(filename);
+#endif /* !Q_OS_WIN */
 
 			sDebugInfo += QDir::toNativeSeparators(filename);
 		}
