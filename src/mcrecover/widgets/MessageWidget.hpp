@@ -76,7 +76,7 @@ class MessageWidget : public QWidget
 		 * @param icon Icon.
 		 * @param timeout Timeout, in milliseconds. (0 for no timeout)
 		 */
-		void showMessage(const QString &msg, MsgIcon icon, int timeout);
+		void showMessage(const QString &msg, MsgIcon icon, int timeout = 0);
 
 		/**
 		 * Show the MessageWidget using animation.
