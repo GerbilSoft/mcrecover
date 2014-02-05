@@ -206,6 +206,18 @@ class McRecoverWindowPrivate
 		// Configuration.
 		ConfigStore *cfg;
 
+		/**
+		 * Get the last path.
+		 * @return Last path.
+		 */
+		QString lastPath(void) const;
+
+		/**
+		 * Set the last path.
+		 * @param path Last path.
+		 */
+		void setLastPath(const QString &path);
+
 		// Shh... it's a secret to everybody.
 		HerpDerpEggListener *herpDerp;
 };
@@ -539,22 +551,32 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QStri
 		overwriteAll = OVERWRITEALL_YESTOALL;
 		MemCardFile *file = files.at(0);
 
+		const QString defFilename = lastPath() + QChar(L'/') +
+						file->defaultGciFilename();
+
 		// Prompt the user for a save location.
 		filename = QFileDialog::getSaveFileName(q,
 				McRecoverWindow::tr("Save GCN Save File %1")
 					.arg(file->filename()),	// Dialog title
-				file->defaultGciFilename(),	// Default filename
+				defFilename,			// Default filename
 				McRecoverWindow::tr("GameCube Save Files") + QLatin1String(" (*.gci);;") +
 				McRecoverWindow::tr("All Files") + QLatin1String(" (*)"));
 		if (filename.isEmpty())
 			return;
+
+		// Set the last path.
+		setLastPath(filename);
 	} else if (files.size() > 1 && path.isEmpty()) {
 		// Multiple files, path not specified.
 		// Prompt the user for a save location.
 		path = QFileDialog::getExistingDirectory(q,
-				McRecoverWindow::tr("Save %Ln GCN Save File(s)", "", files.size()));
+				McRecoverWindow::tr("Save %Ln GCN Save File(s)", "", files.size()),
+				lastPath());
 		if (path.isEmpty())
 			return;
+
+		// Set the last path.
+		setLastPath(path);
 	}
 
 	foreach (MemCardFile *file, files) {
@@ -751,6 +773,35 @@ void McRecoverWindowPrivate::initTsMenu(void)
 	actTsSysDefault->setChecked(true);
 }
 
+/**
+ * Get the last path.
+ * @return Last path.
+ */
+QString McRecoverWindowPrivate::lastPath(void) const
+{
+	// NOTE: Path is stored using native separators.
+	return QDir::fromNativeSeparators(
+		cfg->get(QLatin1String("lastPath")).toString());
+}
+
+/**
+ * Set the last path.
+ * @param path Last path.
+ */
+void McRecoverWindowPrivate::setLastPath(const QString &path)
+{
+	// TODO: Relative to application directory on Windows?
+	QFileInfo fileInfo(path);
+	QString lastPath;
+	if (fileInfo.isDir())
+		lastPath = path;
+	else
+		lastPath = fileInfo.dir().absolutePath();
+
+	lastPath = QDir::toNativeSeparators(lastPath);
+	cfg->set(QLatin1String("lastPath"), lastPath);
+}
+
 /** McRecoverWindow **/
 
 McRecoverWindow::McRecoverWindow(QWidget *parent)
@@ -877,6 +928,7 @@ void McRecoverWindow::openCard(const QString &filename)
 	}
 
 	// Open the specified memory card image.
+	// TODO: Set this as the last path?
 	d->card = new MemCard(filename);
 	if (!d->card->isOpen()) {
 		// Could not open the card.
@@ -1142,15 +1194,18 @@ void McRecoverWindow::markUiNotBusy(void)
  */
 void McRecoverWindow::on_actionOpen_triggered(void)
 {
-	// TODO: Set the default filename.
+	Q_D(McRecoverWindow);
 	QString filename = QFileDialog::getOpenFileName(this,
 			tr("Open GameCube Memory Card Image"),	// Dialog title
-			QString(),				// Default filename
+			d->lastPath(),				// Default filename
 			tr("GameCube Memory Card Image") + QLatin1String(" (*.raw);;") +
 			tr("All Files") + QLatin1String(" (*)"));
 
 	if (filename.isEmpty())
 		return;
+
+	// Set the last path.
+	d->setLastPath(filename);
 
 	// Open the memory card file.
 	openCard(filename);
@@ -1324,7 +1379,7 @@ void McRecoverWindow::setPreferredRegion_slot(int preferredRegion)
 	 * Save the preferred region in the configuration.
 	 *
 	 * NOTE: Saving a QChar results in a wacky entry:
-	 * preferredRegion=@Variant(\0\0\0\a\0E)
+	 * - preferredRegion=@Variant(\0\0\0\a\0E)
 	 * Convert it to QString to avoid this problem.
 	 */
 	QString str = QChar((uint16_t)preferredRegion);
