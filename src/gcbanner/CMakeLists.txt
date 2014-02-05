@@ -44,12 +44,20 @@ SET(gcbanner_SRCS
 	wibn.cpp
 	)
 
+# Win32-specific sources.
+IF(WIN32)
+	SET(gcbanner_OS_SRCS
+		win32/gcbanner.rc
+		)
+ENDIF(WIN32)
+
 #########################
 # Build the executable. #
 #########################
 
 ADD_EXECUTABLE(gcbanner
 	${gcbanner_SRCS}
+	${gcbanner_OS_SRCS}
 	${getopt_SRCS}
 	)
 

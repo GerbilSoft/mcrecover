@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+	<assemblyIdentity
+		type="win32"
+		name="GCN.MemCard.Recover.gcbanner"
+		version="0.2.0.0"
+		processorArchitecture="x86"
+	/>
+
+	<description>GameCube Banner Extraction Utility</description>
+
+	<!-- Application security requirements. Used for Vista UAC. -->
+	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+		<security>
+			<requestedPrivileges>
+				<requestedExecutionLevel
+					level="asInvoker"
+					uiAccess="false"
+				/>
+			</requestedPrivileges>
+		</security>
+	</trustInfo>
+</assembly>  
