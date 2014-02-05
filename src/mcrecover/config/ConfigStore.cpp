@@ -134,6 +134,7 @@ ConfigStorePrivate::ConfigStorePrivate(ConfigStore* q)
 	configPath = configDir.absolutePath();
 	if (!configPath.endsWith(QChar(L'/')))
 		configPath.append(QChar(L'/'));
+	this->configPath = configPath;
 }
 
 ConfigStorePrivate::~ConfigStorePrivate()
