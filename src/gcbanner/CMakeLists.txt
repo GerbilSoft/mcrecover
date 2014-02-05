@@ -67,7 +67,7 @@ TARGET_LINK_LIBRARIES(gcbanner gctools)
 # Split debug information.
 INCLUDE(SplitDebugInformation)
 IF(SPLIT_DEBUG)
-	#SPLIT_DEBUG_INFORMATION(gcbanner)
+	SPLIT_DEBUG_INFORMATION(gcbanner)
 ENDIF(SPLIT_DEBUG)
 
 #################
