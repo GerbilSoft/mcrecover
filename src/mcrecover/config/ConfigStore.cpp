@@ -52,9 +52,6 @@ class ConfigStorePrivate
 		Q_DISABLE_COPY(ConfigStorePrivate)
 
 	public:
-		// Configuration path.
-		QString configPath;
-
 		/**
 		 * Validate a property.
 		 * @param key Property name.
@@ -80,6 +77,9 @@ class ConfigStorePrivate
 		static void InvokeQtMethod(QObject *object, int method_idx, const QVariant &param);
 
 		/** Internal variables. **/
+
+		// Configuration path.
+		QString configPath;
 
 		// Current settings.
 		// TODO: Use const char* for the key instead of QString?
