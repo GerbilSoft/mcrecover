@@ -43,9 +43,9 @@ const ConfigDefaults::DefaultSetting ConfigDefaults::DefaultSettings[] =
 
 	/** General settings. **/
 	{"lastPath",		"", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
-	{"preferredRegion",	"", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
+	{"preferredRegion",	"E", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
 	{"searchUsedBlocks",	"false", 0, 0,	DefaultSetting::VT_BOOL, 0, 0},
-	{"animIconFormat",	"", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
+	{"animIconFormat",	"APNG", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
 	{"language",		"", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
 
 	/** End of array. **/
