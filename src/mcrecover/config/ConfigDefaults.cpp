@@ -49,7 +49,8 @@ ConfigDefaults::ConfigDefaults()
 {
 	// Populate the default settings hash.
 	defaultSettingsHash.clear();
-	for (const DefaultSetting *def = &DefaultSettings[0]; def->key != nullptr; def++)
+	for (const DefaultSetting *def = &DefaultSettings[0];
+	     def->key != nullptr; def++)
 	{
 		const QString key = QLatin1String(def->key);
 		defaultSettingsHash.insert(key, def);

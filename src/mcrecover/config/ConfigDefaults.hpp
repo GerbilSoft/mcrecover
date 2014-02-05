@@ -94,7 +94,7 @@ class ConfigDefaults
 		 * @param key Setting key.
 		 * @return DefaultSetting struct, or nullptr if not found.
 		 */
-		const DefaultSetting *get(QString key) const;
+		const DefaultSetting *get(const QString &key) const;
 
 	private:
 		// Internal settings hash.
@@ -106,7 +106,7 @@ class ConfigDefaults
  * @param key Setting key.
  * @return DefaultSetting struct, or nullptr if not found.
  */
-inline const ConfigDefaults::DefaultSetting *ConfigDefaults::get(QString key) const
+inline const ConfigDefaults::DefaultSetting *ConfigDefaults::get(const QString &key) const
 	{ return defaultSettingsHash.value(key, nullptr); }
 
 #endif /* __MCRECOVER_CONFIG_CONFIGDEFAULTS_HPP__ */

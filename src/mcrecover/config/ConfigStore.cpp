@@ -67,21 +67,21 @@ class ConfigStorePrivate
 		 * @param value Property value. (May be edited for validation.)
 		 * @return Property value (possibly adjusted) if validated; invalid QVariant on failure.
 		 */
-		static QVariant Validate(QString name, QVariant value);
+		static QVariant Validate(const QString &name, const QVariant &value);
 
 		/**
 		 * Set a property.
 		 * @param key Property name.
 		 * @param value Property value.
 		 */
-		void set(QString key, QVariant value);
+		void set(const QString &key, const QVariant &value);
 
 		/**
 		 * Get a property.
 		 * @param key Property name.
 		 * @return Property value.
 		 */
-		QVariant get(QString key) const;
+		QVariant get(const QString &key) const;
 
 		/**
 		 * Get a property.
@@ -89,7 +89,7 @@ class ConfigStorePrivate
 		 * @param key Property name.
 		 * @return Property value.
 		 */
-		unsigned int getUInt(QString key) const;
+		unsigned int getUInt(const QString &key) const;
 
 		/**
 		 * Get a property.
@@ -97,14 +97,14 @@ class ConfigStorePrivate
 		 * @param key Property name.
 		 * @return Property value.
 		 */
-		int getInt(QString key) const;
+		int getInt(const QString &key) const;
 
 		/**
 		 * Load the configuration file.
 		 * @param filename Configuration filename.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int load(QString filename);
+		int load(const QString &filename);
 
 		/**
 		 * Load the configuration file.
@@ -118,7 +118,7 @@ class ConfigStorePrivate
 		 * @param filename Configuration filename.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int save(QString filename) const;
+		int save(const QString &filename) const;
 
 		/**
 		 * Save the configuration file.
@@ -133,7 +133,7 @@ class ConfigStorePrivate
 		 * @param object QObject to register.
 		 * @param slot Slot name.
 		 */
-		void registerChangeNotification(QString property, QObject *object, const char *slot);
+		void registerChangeNotification(const QString &property, QObject *object, const char *slot);
 
 		/**
 		 * Unregister an object for property change notification.
@@ -141,7 +141,7 @@ class ConfigStorePrivate
 		 * @param object QObject to register.
 		 * @param slot Slot name.
 		 */
-		void unregisterChangeNotification(QString property, QObject *object, const char *slot);
+		void unregisterChangeNotification(const QString &property, QObject *object, const char *slot);
 
 		/**
 		 * Notify all registered objects that configuration settings have changed.
@@ -163,7 +163,7 @@ class ConfigStorePrivate
 		 * @param method_idx Method index.
 		 * @param param QVariant parameter.
 		 */
-		static void InvokeQtMethod(QObject *object, int method_idx, QVariant param);
+		static void InvokeQtMethod(QObject *object, int method_idx, const QVariant &param);
 
 		/** Internal variables. **/
 
@@ -243,7 +243,7 @@ ConfigStorePrivate::~ConfigStorePrivate()
  * @param object QObject to register.
  * @param method Method name.
  */
-void ConfigStorePrivate::registerChangeNotification(QString property, QObject *object, const char *method)
+void ConfigStorePrivate::registerChangeNotification(const QString &property, QObject *object, const char *method)
 {
 	if (!object)
 		return;
@@ -275,7 +275,7 @@ void ConfigStorePrivate::registerChangeNotification(QString property, QObject *o
  * @param object QObject to register.
  * @param method Method name. (If nullptr, unregisters all slots for this object.)
  */
-void ConfigStorePrivate::unregisterChangeNotification(QString property, QObject *object, const char *method)
+void ConfigStorePrivate::unregisterChangeNotification(const QString &property, QObject *object, const char *method)
 {
 	if (!object)
 		return;
@@ -332,7 +332,7 @@ void ConfigStorePrivate::reset(void)
  * @param value Property value. (May be edited for validation.)
  * @return Property value (possibly adjusted) if validated; invalid QVariant on failure.
  */
-QVariant ConfigStorePrivate::Validate(QString name, QVariant value)
+QVariant ConfigStorePrivate::Validate(const QString &name, const QVariant &value)
 {
 	// Get the DefaultSetting entry for this property.
 	// TODO: Lock the hash?
@@ -371,7 +371,7 @@ QVariant ConfigStorePrivate::Validate(QString name, QVariant value)
  * @param key Property name.
  * @param value Property value.
  */
-void ConfigStorePrivate::set(QString key, QVariant value)
+void ConfigStorePrivate::set(const QString &key, const QVariant &value)
 {
 #ifndef NDEBUG
 	// Make sure this property exists.
@@ -429,7 +429,7 @@ void ConfigStorePrivate::set(QString key, QVariant value)
  * @param key Property name.
  * @return Property value.
  */
-QVariant ConfigStorePrivate::get(QString key) const
+QVariant ConfigStorePrivate::get(const QString &key) const
 {
 #ifndef NDEBUG
 	// Make sure this property exists.
@@ -450,7 +450,7 @@ QVariant ConfigStorePrivate::get(QString key) const
  * @param key Property name.
  * @return Property value.
  */
-unsigned int ConfigStorePrivate::getUInt(QString key) const
+unsigned int ConfigStorePrivate::getUInt(const QString &key) const
 	{ return get(key).toString().toUInt(nullptr, 0); }
 
 /**
@@ -459,7 +459,7 @@ unsigned int ConfigStorePrivate::getUInt(QString key) const
  * @param key Property name.
  * @return Property value.
  */
-int ConfigStorePrivate::getInt(QString key) const
+int ConfigStorePrivate::getInt(const QString &key) const
 	{ return get(key).toString().toInt(nullptr, 0); }
 
 
@@ -468,7 +468,7 @@ int ConfigStorePrivate::getInt(QString key) const
  * @param filename Configuration filename.
  * @return 0 on success; non-zero on error.
  */
-int ConfigStorePrivate::load(QString filename)
+int ConfigStorePrivate::load(const QString &filename)
 {
 	QSettings qSettings(filename, QSettings::IniFormat);
 
@@ -516,7 +516,7 @@ int ConfigStorePrivate::load(void)
  * @param filename Configuration filename.
  * @return 0 on success; non-zero on error.
  */
-int ConfigStorePrivate::save(QString filename) const
+int ConfigStorePrivate::save(const QString &filename) const
 {
 	QSettings qSettings(filename, QSettings::IniFormat);
 
@@ -654,7 +654,7 @@ int ConfigStorePrivate::LookupQtMethod(const QObject *object, const char *method
  * @param method_idx Method index.
  * @param param QVariant parameter.
  */
-void ConfigStorePrivate::InvokeQtMethod(QObject *object, int method_idx, QVariant param)
+void ConfigStorePrivate::InvokeQtMethod(QObject *object, int method_idx, const QVariant &param)
 {
 	// Based on QMetaObject::invokeMethod().
 	QMetaMethod metaMethod = object->metaObject()->method(method_idx);
@@ -683,7 +683,7 @@ void ConfigStore::reset(void)
  * @param key Property name.
  * @param value Property value.
  */
-void ConfigStore::set(QString key, QVariant value)
+void ConfigStore::set(const QString &key, const QVariant &value)
 	{ d->set(key, value); }
 
 /**
@@ -691,7 +691,7 @@ void ConfigStore::set(QString key, QVariant value)
  * @param key Property name.
  * @return Property value.
  */
-QVariant ConfigStore::get(QString key) const
+QVariant ConfigStore::get(const QString &key) const
 	{ return d->get(key); }
 
 /**
@@ -700,7 +700,7 @@ QVariant ConfigStore::get(QString key) const
  * @param key Property name.
  * @return Property value.
  */
-unsigned int ConfigStore::getUInt(QString key) const
+unsigned int ConfigStore::getUInt(const QString &key) const
 	{ return d->getUInt(key); }
 
 /**
@@ -709,7 +709,7 @@ unsigned int ConfigStore::getUInt(QString key) const
  * @param key Property name.
  * @return Property value.
  */
-int ConfigStore::getInt(QString key) const
+int ConfigStore::getInt(const QString &key) const
 	{ return d->getInt(key); }
 
 /**
@@ -717,7 +717,7 @@ int ConfigStore::getInt(QString key) const
  * @param filename Configuration filename.
  * @return 0 on success; non-zero on error.
  */
-int ConfigStore::load(QString filename)
+int ConfigStore::load(const QString &filename)
 	{ return d->load(filename); }
 
 /**
@@ -733,7 +733,7 @@ int ConfigStore::load(void)
  * @param filename Filename.
  * @return 0 on success; non-zero on error.
  */
-int ConfigStore::save(QString filename) const
+int ConfigStore::save(const QString &filename) const
 	{ return d->save(filename); }
 
 /**
@@ -750,7 +750,7 @@ int ConfigStore::save(void) const
  * @param object QObject to register.
  * @param method Method name.
  */
-void ConfigStore::registerChangeNotification(QString property, QObject *object, const char *method)
+void ConfigStore::registerChangeNotification(const QString &property, QObject *object, const char *method)
 	{ d->registerChangeNotification(property, object, method); }
 
 /**
@@ -759,7 +759,7 @@ void ConfigStore::registerChangeNotification(QString property, QObject *object, 
  * @param object QObject to register.
  * @param method Method name.
  */
-void ConfigStore::unregisterChangeNotification(QString property, QObject *object, const char *method)
+void ConfigStore::unregisterChangeNotification(const QString &property, QObject *object, const char *method)
 	{ d->unregisterChangeNotification(property, object, method); }
 
 /**
