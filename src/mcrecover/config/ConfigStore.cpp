@@ -51,15 +51,9 @@ class ConfigStorePrivate
 		ConfigStore *const q;
 		Q_DISABLE_COPY(ConfigStorePrivate)
 
-	private:
+	public:
 		// Configuration path.
 		QString configPath;
-
-	public:
-		/**
-		 * Reset all settings to defaults.
-		 */
-		void reset(void);
 
 		/**
 		 * Validate a property.
@@ -68,86 +62,6 @@ class ConfigStorePrivate
 		 * @return Property value (possibly adjusted) if validated; invalid QVariant on failure.
 		 */
 		static QVariant Validate(const QString &name, const QVariant &value);
-
-		/**
-		 * Set a property.
-		 * @param key Property name.
-		 * @param value Property value.
-		 */
-		void set(const QString &key, const QVariant &value);
-
-		/**
-		 * Get a property.
-		 * @param key Property name.
-		 * @return Property value.
-		 */
-		QVariant get(const QString &key) const;
-
-		/**
-		 * Get a property.
-		 * Converts hexadecimal string values to unsigned int.
-		 * @param key Property name.
-		 * @return Property value.
-		 */
-		unsigned int getUInt(const QString &key) const;
-
-		/**
-		 * Get a property.
-		 * Converts hexadecimal string values to signed int.
-		 * @param key Property name.
-		 * @return Property value.
-		 */
-		int getInt(const QString &key) const;
-
-		/**
-		 * Load the configuration file.
-		 * @param filename Configuration filename.
-		 * @return 0 on success; non-zero on error.
-		 */
-		int load(const QString &filename);
-
-		/**
-		 * Load the configuration file.
-		 * No filename specified; use the default filename.
-		 * @return 0 on success; non-zero on error.
-		 */
-		int load(void);
-
-		/**
-		 * Save the configuration file.
-		 * @param filename Configuration filename.
-		 * @return 0 on success; non-zero on error.
-		 */
-		int save(const QString &filename) const;
-
-		/**
-		 * Save the configuration file.
-		 * No filename specified; use the default filename.
-		 * @return 0 on success; non-zero on error.
-		 */
-		int save(void) const;
-
-		/**
-		 * Register an object for property change notification.
-		 * @param property Property to watch.
-		 * @param object QObject to register.
-		 * @param slot Slot name.
-		 */
-		void registerChangeNotification(const QString &property, QObject *object, const char *slot);
-
-		/**
-		 * Unregister an object for property change notification.
-		 * @param property Property to watch.
-		 * @param object QObject to register.
-		 * @param slot Slot name.
-		 */
-		void unregisterChangeNotification(const QString &property, QObject *object, const char *slot);
-
-		/**
-		 * Notify all registered objects that configuration settings have changed.
-		 * Useful when starting the emulator.
-		 */
-		void notifyAll(void);
 
 		/**
 		 * Look up the method index of a SIGNAL() or SLOT() in a QObject.
@@ -220,110 +134,13 @@ ConfigStorePrivate::ConfigStorePrivate(ConfigStore* q)
 	configPath = configDir.absolutePath();
 	if (!configPath.endsWith(QChar(L'/')))
 		configPath.append(QChar(L'/'));
-
-	// Initialize defaults and load user settings.
-	reset();
-	load();
 }
 
 ConfigStorePrivate::~ConfigStorePrivate()
 {
-	// Save the configuration.
-	// TODO: Handle non-default filenames.
-	save();
-
 	// Delete all the signal map vectors.
 	qDeleteAll(signalMaps);
 	signalMaps.clear();
-}
-
-/**
- * Register an object for property change notification.
- * @param property Property to watch.
- * @param object QObject to register.
- * @param method Method name.
- */
-void ConfigStorePrivate::registerChangeNotification(const QString &property, QObject *object, const char *method)
-{
-	if (!object)
-		return;
-
-	// Get the vector of signal maps for this property.
-	QMutexLocker mtxLocker(&mtxSignalMaps);
-	QVector<SignalMap>* signalMapVector = signalMaps.value(property, nullptr);
-	if (!signalMapVector) {
-		// No vector found. Create one.
-		signalMapVector = new QVector<SignalMap>();
-		signalMaps.insert(property, signalMapVector);
-	}
-
-	// Look up the method index.
-	int method_idx = LookupQtMethod(object, method);
-	if (method_idx < 0)
-		return;
-
-	// Add this object and slot to the signal maps vector.
-	SignalMap smap;
-	smap.object = object;
-	smap.method_idx = method_idx;
-	signalMapVector->append(smap);
-}
-
-/**
- * Unregister an object for property change notification.
- * @param property Property to watch.
- * @param object QObject to register.
- * @param method Method name. (If nullptr, unregisters all slots for this object.)
- */
-void ConfigStorePrivate::unregisterChangeNotification(const QString &property, QObject *object, const char *method)
-{
-	if (!object)
-		return;
-
-	// Get the vector of signal maps for this property.
-	QMutexLocker mtxLocker(&mtxSignalMaps);
-	QVector<SignalMap>* signalMapVector = signalMaps.value(property, nullptr);
-	if (!signalMapVector)
-		return;
-
-	// Get the method index.
-	int method_idx = -1;
-	if (method != nullptr) {
-		method_idx = LookupQtMethod(object, method);
-		if (method_idx < 0)
-			return;
-	}
-
-	// Process the signal map vector in reverse-order.
-	// Reverse order makes it easier to remove deleted objects.
-	// TODO: Use QLinkedList instead?
-	for (int i = (signalMapVector->size() - 1); i >= 0; i--) {
-		const SignalMap *smap = &signalMapVector->at(i);
-		if (smap->object.isNull()) {
-			signalMapVector->remove(i);
-		} else if (smap->object == object) {
-			// Found the object.
-			if (method == nullptr || method_idx == smap->method_idx) {
-				// Found a matching signal map.
-				signalMapVector->remove(i);
-			}
-		}
-	}
-}
-
-/**
- * Reset all settings to defaults.
- */
-void ConfigStorePrivate::reset(void)
-{
-	// Initialize settings with DefaultSettings.
-	settings.clear();
-	for (const ConfigDefaults::DefaultSetting *def = &ConfigDefaults::DefaultSettings[0];
-	     def->key != nullptr; def++)
-	{
-		settings.insert(QLatin1String(def->key),
-				(def->value ? QLatin1String(def->value) : QString()));
-	}
 }
 
 /**
@@ -364,255 +181,6 @@ QVariant ConfigStorePrivate::Validate(const QString &name, const QVariant &value
 	// Should not get here...
 	return QVariant();
 }
-
-
-/**
- * Set a property.
- * @param key Property name.
- * @param value Property value.
- */
-void ConfigStorePrivate::set(const QString &key, const QVariant &value)
-{
-#ifndef NDEBUG
-	// Make sure this property exists.
-	if (!settings.contains(key)) {
-		// Property does not exist. Print a warning.
-		// TODO: Make this an error, since it won't be saved?
-		fprintf(stderr, "ConfigStorePrivate: Property '%s' has no default value. FIX THIS!",
-			key.toUtf8().constData());
-	}
-#endif
-
-	// Get the default value.
-	const ConfigDefaults::DefaultSetting *def = ConfigDefaults::Instance()->get(key);
-	if (!def)
-		return;
-
-	if (!(def->flags & ConfigDefaults::DefaultSetting::DEF_ALLOW_SAME_VALUE)) {
-		// Check if the new value is the same as the old value.
-		QVariant oldValue = settings.value(key);
-		if (value == oldValue)
-			return;
-	}
-
-	// Verify that this value passes validation.
-	QVariant newValue = Validate(key, value);
-	if (!newValue.isValid())
-		return;
-
-	// Set the new value.
-	settings.insert(key, newValue);
-
-	// Invoke methods for registered objects.
-	QMutexLocker mtxLocker(&mtxSignalMaps);
-	QVector<SignalMap> *signalMapVector = signalMaps.value(key, nullptr);
-	if (!signalMapVector)
-		return;
-
-	// Process the signal map vector in reverse-order.
-	// Reverse order makes it easier to remove deleted objects.
-	// TODO: Use QLinkedList instead?
-	for (int i = (signalMapVector->size() - 1); i >= 0; i--) {
-		const SignalMap *smap = &signalMapVector->at(i);
-		if (smap->object.isNull()) {
-			signalMapVector->remove(i);
-		} else {
-			// Invoke this method.
-			InvokeQtMethod(smap->object, smap->method_idx, newValue);
-		}
-	}
-}
-
-
-/**
- * Get a property.
- * @param key Property name.
- * @return Property value.
- */
-QVariant ConfigStorePrivate::get(const QString &key) const
-{
-#ifndef NDEBUG
-	// Make sure this property exists.
-	if (!settings.contains(key)) {
-		// Property does not exist. Print a warning.
-		// TODO: Make this an error, since it won't be saved?
-		fprintf(stderr, "ConfigStorePrivate: Property '%s' has no default value. FIX THIS!",
-			key.toUtf8().constData());
-	}
-#endif
-
-	return settings.value(key);
-}
-
-/**
- * Get a property.
- * Converts hexadecimal string values to unsigned int.
- * @param key Property name.
- * @return Property value.
- */
-unsigned int ConfigStorePrivate::getUInt(const QString &key) const
-	{ return get(key).toString().toUInt(nullptr, 0); }
-
-/**
- * Get a property.
- * Converts hexadecimal string values to signed int.
- * @param key Property name.
- * @return Property value.
- */
-int ConfigStorePrivate::getInt(const QString &key) const
-	{ return get(key).toString().toInt(nullptr, 0); }
-
-
-/**
- * Load the configuration file.
- * @param filename Configuration filename.
- * @return 0 on success; non-zero on error.
- */
-int ConfigStorePrivate::load(const QString &filename)
-{
-	QSettings qSettings(filename, QSettings::IniFormat);
-
-	// NOTE: Only known settings will be loaded.
-	settings.clear();
-	// TODO: Add function to get sizeof(DefaultSettings) from ConfigDefaults.
-	settings.reserve(32);
-
-	// Load known settings from the configuration file.
-	for (const ConfigDefaults::DefaultSetting *def = &ConfigDefaults::DefaultSettings[0];
-	     def->key != nullptr; def++)
-	{
-		const QString key = QLatin1String(def->key);
-		QVariant value = qSettings.value(key, QLatin1String(def->value));
-
-		// Validate this value.
-		value = Validate(key, value);
-		if (!value.isValid()) {
-			// Validation failed. Use the default value.
-			value = QVariant(QLatin1String(def->value));
-		}
-
-		settings.insert(key, value);
-	}
-
-	// Finished loading settings.
-	// NOTE: Caller must call emitAll() for settings to take effect.
-	return 0;
-}
-
-/**
- * Load the configuration file.
- * No filename specified; use the default filename.
- * @return 0 on success; non-zero on error.
- */
-int ConfigStorePrivate::load(void)
-{
-	const QString cfgFilename = configPath +
-		QLatin1String(ConfigDefaults::DefaultConfigFilename);
-	return load(cfgFilename);
-}
-
-/**
- * Save the configuration file.
- * @param filename Configuration filename.
- * @return 0 on success; non-zero on error.
- */
-int ConfigStorePrivate::save(const QString &filename) const
-{
-	QSettings qSettings(filename, QSettings::IniFormat);
-
-	/** Application information. **/
-
-	// Stored in the "General" section.
-	// TODO: Move "General" settings to another section?
-	// ("General" is always moved to the top of the file.)
-	qSettings.setValue(QLatin1String("_Application"), QCoreApplication::applicationName());
-	qSettings.setValue(QLatin1String("_Version"), QCoreApplication::applicationVersion());
-
-#ifdef MCRECOVER_GIT_VERSION
-	qSettings.setValue(QLatin1String("_VersionVcs"),
-				QLatin1String(MCRECOVER_GIT_VERSION));
-#ifdef MCRECOVER_GIT_DESCRIBE
-	qSettings.setValue(QLatin1String("_VersionVcsExt"),
-				QLatin1String(MCRECOVER_GIT_DESCRIBE));
-#else
-	qSettings.remove(QLatin1String("_VersionVcsExt"));
-#endif /* MCRECOVER_GIT_DESCRIBE */
-#else
-	qSettings.remove(QLatin1String("_VersionVcs"));
-	qSettings.remove(QLatin1String("_VersionVcsExt"));
-#endif /* MCRECOVER_GIT_DESCRIBE */
-
-	// NOTE: Only known settings will be saved.
-	
-	// Save known settings to the configuration file.
-	for (const ConfigDefaults::DefaultSetting *def = &ConfigDefaults::DefaultSettings[0];
-	     def->key != nullptr; def++)
-	{
-		if (def->flags & ConfigDefaults::DefaultSetting::DEF_NO_SAVE)
-			continue;
-
-		const QString key = QLatin1String(def->key);
-		QVariant value = settings.value(key, QLatin1String(def->value));
-		if (def->hex_digits > 0) {
-			// Convert to hexadecimal.
-			unsigned int uint_val = value.toString().toUInt(nullptr, 0);
-			QString str = QLatin1String("0x") +
-					QString::number(uint_val, 16).toUpper().rightJustified(4, QChar(L'0'));
-			value = str;
-		}
-
-		qSettings.setValue(key, value);
-	}
-
-	return 0;
-}
-
-/**
- * Save the configuration file.
- * No filename specified; use the default filename.
- * @return 0 on success; non-zero on error.
- */
-int ConfigStorePrivate::save(void) const
-{
-	const QString cfgFilename = configPath +
-		QLatin1String(ConfigDefaults::DefaultConfigFilename);
-	return save(cfgFilename);
-}
-
-
-/**
- * Notify all registered objects that configuration settings have changed.
- * Useful when starting the emulator.
- */
-void ConfigStorePrivate::notifyAll(void)
-{
-	// Invoke methods for registered objects.
-	QMutexLocker mtxLocker(&mtxSignalMaps);
-
-	foreach (QString property, signalMaps.keys()) {
-		QVector<SignalMap> *signalMapVector = signalMaps.value(property);
-		if (signalMapVector->isEmpty())
-			continue;
-
-		// Get the property value.
-		const QVariant value = settings.value(property);
-
-		// Process the signal map vector in reverse-order.
-		// Reverse order makes it easier to remove deleted objects.
-		// TODO: Use QLinkedList instead?
-		for (int i = (signalMapVector->size() - 1); i >= 0; i--)
-		{
-			const SignalMap *smap = &signalMapVector->at(i);
-			if (smap->object.isNull()) {
-				signalMapVector->remove(i);
-			} else {
-				// Invoke this method.
-				InvokeQtMethod(smap->object, smap->method_idx, value);
-			}
-		}
-	}
-}
-
 
 /**
  * Look up the method index of a SIGNAL() or SLOT() in a QObject.
@@ -667,16 +235,35 @@ void ConfigStorePrivate::InvokeQtMethod(QObject *object, int method_idx, const Q
 ConfigStore::ConfigStore(QObject *parent)
 	: QObject(parent)
 	, d(new ConfigStorePrivate(this))
-{ }
+{
+	// Initialize defaults and load user settings.
+	reset();
+	load();
+}
 
 ConfigStore::~ConfigStore()
-	{ delete d; }
+{
+	// Save the configuration.
+	// TODO: Handle non-default filenames.
+	save();
+
+	delete d;
+}
 
 /**
  * Reset all settings to defaults.
  */
 void ConfigStore::reset(void)
-	{ d->reset(); }
+{
+	// Initialize settings with DefaultSettings.
+	d->settings.clear();
+	for (const ConfigDefaults::DefaultSetting *def = &ConfigDefaults::DefaultSettings[0];
+	     def->key != nullptr; def++)
+	{
+		d->settings.insert(QLatin1String(def->key),
+			(def->value ? QLatin1String(def->value) : QString()));
+	}
+}
 
 /**
  * Set a property.
@@ -684,7 +271,56 @@ void ConfigStore::reset(void)
  * @param value Property value.
  */
 void ConfigStore::set(const QString &key, const QVariant &value)
-	{ d->set(key, value); }
+{
+#ifndef NDEBUG
+	// Make sure this property exists.
+	if (!d->settings.contains(key)) {
+		// Property does not exist. Print a warning.
+		// TODO: Make this an error, since it won't be saved?
+		fprintf(stderr, "ConfigStore: Property '%s' has no default value. FIX THIS!",
+			key.toUtf8().constData());
+	}
+#endif
+
+	// Get the default value.
+	const ConfigDefaults::DefaultSetting *def = ConfigDefaults::Instance()->get(key);
+	if (!def)
+		return;
+
+	if (!(def->flags & ConfigDefaults::DefaultSetting::DEF_ALLOW_SAME_VALUE)) {
+		// Check if the new value is the same as the old value.
+		QVariant oldValue = d->settings.value(key);
+		if (value == oldValue)
+			return;
+	}
+
+	// Verify that this value passes validation.
+	QVariant newValue = ConfigStorePrivate::Validate(key, value);
+	if (!newValue.isValid())
+		return;
+
+	// Set the new value.
+	d->settings.insert(key, newValue);
+
+	// Invoke methods for registered objects.
+	QMutexLocker mtxLocker(&d->mtxSignalMaps);
+	QVector<ConfigStorePrivate::SignalMap> *signalMapVector = d->signalMaps.value(key, nullptr);
+	if (!signalMapVector)
+		return;
+
+	// Process the signal map vector in reverse-order.
+	// Reverse order makes it easier to remove deleted objects.
+	// TODO: Use QLinkedList instead?
+	for (int i = (signalMapVector->size() - 1); i >= 0; i--) {
+		const ConfigStorePrivate::SignalMap *smap = &signalMapVector->at(i);
+		if (smap->object.isNull()) {
+			signalMapVector->remove(i);
+		} else {
+			// Invoke this method.
+			ConfigStorePrivate::InvokeQtMethod(smap->object, smap->method_idx, newValue);
+		}
+	}
+}
 
 /**
  * Get a property.
@@ -692,7 +328,19 @@ void ConfigStore::set(const QString &key, const QVariant &value)
  * @return Property value.
  */
 QVariant ConfigStore::get(const QString &key) const
-	{ return d->get(key); }
+{
+#ifndef NDEBUG
+	// Make sure this property exists.
+	if (!d->settings.contains(key)) {
+		// Property does not exist. Print a warning.
+		// TODO: Make this an error, since it won't be saved?
+		fprintf(stderr, "ConfigStore: Property '%s' has no default value. FIX THIS!",
+			key.toUtf8().constData());
+	}
+#endif
+
+	return d->settings.value(key);
+}
 
 /**
  * Get a property.
@@ -701,7 +349,9 @@ QVariant ConfigStore::get(const QString &key) const
  * @return Property value.
  */
 unsigned int ConfigStore::getUInt(const QString &key) const
-	{ return d->getUInt(key); }
+{
+	return get(key).toString().toUInt(nullptr, 0);
+}
 
 /**
  * Get a property.
@@ -710,7 +360,9 @@ unsigned int ConfigStore::getUInt(const QString &key) const
  * @return Property value.
  */
 int ConfigStore::getInt(const QString &key) const
-	{ return d->getInt(key); }
+{
+	return get(key).toString().toInt(nullptr, 0);
+}
 
 /**
  * Load the configuration file.
@@ -718,7 +370,35 @@ int ConfigStore::getInt(const QString &key) const
  * @return 0 on success; non-zero on error.
  */
 int ConfigStore::load(const QString &filename)
-	{ return d->load(filename); }
+{
+	QSettings qSettings(filename, QSettings::IniFormat);
+
+	// NOTE: Only known settings will be loaded.
+	d->settings.clear();
+	// TODO: Add function to get sizeof(DefaultSettings) from ConfigDefaults.
+	d->settings.reserve(32);
+
+	// Load known settings from the configuration file.
+	for (const ConfigDefaults::DefaultSetting *def = &ConfigDefaults::DefaultSettings[0];
+	     def->key != nullptr; def++)
+	{
+		const QString key = QLatin1String(def->key);
+		QVariant value = qSettings.value(key, QLatin1String(def->value));
+
+		// Validate this value.
+		value = ConfigStorePrivate::Validate(key, value);
+		if (!value.isValid()) {
+			// Validation failed. Use the default value.
+			value = QVariant(QLatin1String(def->value));
+		}
+
+		d->settings.insert(key, value);
+	}
+
+	// Finished loading settings.
+	// NOTE: Caller must call emitAll() for settings to take effect.
+	return 0;
+}
 
 /**
  * Load the configuration file.
@@ -726,7 +406,11 @@ int ConfigStore::load(const QString &filename)
  * @return 0 on success; non-zero on error.
  */
 int ConfigStore::load(void)
-	{ return d->load(); }
+{
+	const QString cfgFilename = d->configPath +
+		QLatin1String(ConfigDefaults::DefaultConfigFilename);
+	return load(cfgFilename);
+}
 
 /**
  * Save the configuration file.
@@ -734,7 +418,55 @@ int ConfigStore::load(void)
  * @return 0 on success; non-zero on error.
  */
 int ConfigStore::save(const QString &filename) const
-	{ return d->save(filename); }
+{
+	QSettings qSettings(filename, QSettings::IniFormat);
+
+	/** Application information. **/
+
+	// Stored in the "General" section.
+	// TODO: Move "General" settings to another section?
+	// ("General" is always moved to the top of the file.)
+	qSettings.setValue(QLatin1String("_Application"), QCoreApplication::applicationName());
+	qSettings.setValue(QLatin1String("_Version"), QCoreApplication::applicationVersion());
+
+#ifdef MCRECOVER_GIT_VERSION
+	qSettings.setValue(QLatin1String("_VersionVcs"),
+				QLatin1String(MCRECOVER_GIT_VERSION));
+#ifdef MCRECOVER_GIT_DESCRIBE
+	qSettings.setValue(QLatin1String("_VersionVcsExt"),
+				QLatin1String(MCRECOVER_GIT_DESCRIBE));
+#else
+	qSettings.remove(QLatin1String("_VersionVcsExt"));
+#endif /* MCRECOVER_GIT_DESCRIBE */
+#else
+	qSettings.remove(QLatin1String("_VersionVcs"));
+	qSettings.remove(QLatin1String("_VersionVcsExt"));
+#endif /* MCRECOVER_GIT_DESCRIBE */
+
+	// NOTE: Only known settings will be saved.
+	
+	// Save known settings to the configuration file.
+	for (const ConfigDefaults::DefaultSetting *def = &ConfigDefaults::DefaultSettings[0];
+	     def->key != nullptr; def++)
+	{
+		if (def->flags & ConfigDefaults::DefaultSetting::DEF_NO_SAVE)
+			continue;
+
+		const QString key = QLatin1String(def->key);
+		QVariant value = d->settings.value(key, QLatin1String(def->value));
+		if (def->hex_digits > 0) {
+			// Convert to hexadecimal.
+			unsigned int uint_val = value.toString().toUInt(nullptr, 0);
+			QString str = QLatin1String("0x") +
+					QString::number(uint_val, 16).toUpper().rightJustified(4, QChar(L'0'));
+			value = str;
+		}
+
+		qSettings.setValue(key, value);
+	}
+
+	return 0;
+}
 
 /**
  * Save the configuration file.
@@ -742,7 +474,11 @@ int ConfigStore::save(const QString &filename) const
  * @return 0 on success; non-zero on error.
  */
 int ConfigStore::save(void) const
-	{ return d->save(); }
+{
+	const QString cfgFilename = d->configPath +
+		QLatin1String(ConfigDefaults::DefaultConfigFilename);
+	return save(cfgFilename);
+}
 
 /**
  * Register an object for property change notification.
@@ -751,7 +487,31 @@ int ConfigStore::save(void) const
  * @param method Method name.
  */
 void ConfigStore::registerChangeNotification(const QString &property, QObject *object, const char *method)
-	{ d->registerChangeNotification(property, object, method); }
+{
+	if (!object || !method || property.isEmpty())
+		return;
+
+	// Get the vector of signal maps for this property.
+	QMutexLocker mtxLocker(&d->mtxSignalMaps);
+	QVector<ConfigStorePrivate::SignalMap>* signalMapVector =
+		d->signalMaps.value(property, nullptr);
+	if (!signalMapVector) {
+		// No vector found. Create one.
+		signalMapVector = new QVector<ConfigStorePrivate::SignalMap>();
+		d->signalMaps.insert(property, signalMapVector);
+	}
+
+	// Look up the method index.
+	int method_idx = ConfigStorePrivate::LookupQtMethod(object, method);
+	if (method_idx < 0)
+		return;
+
+	// Add this object and slot to the signal maps vector.
+	ConfigStorePrivate::SignalMap smap;
+	smap.object = object;
+	smap.method_idx = method_idx;
+	signalMapVector->append(smap);
+}
 
 /**
  * Unregister an object for property change notification.
@@ -760,11 +520,72 @@ void ConfigStore::registerChangeNotification(const QString &property, QObject *o
  * @param method Method name.
  */
 void ConfigStore::unregisterChangeNotification(const QString &property, QObject *object, const char *method)
-	{ d->unregisterChangeNotification(property, object, method); }
+{
+	if (!object)
+		return;
+
+	// Get the vector of signal maps for this property.
+	QMutexLocker mtxLocker(&d->mtxSignalMaps);
+	QVector<ConfigStorePrivate::SignalMap>* signalMapVector =
+		d->signalMaps.value(property, nullptr);
+	if (!signalMapVector)
+		return;
+
+	// Get the method index.
+	int method_idx = -1;
+	if (method != nullptr) {
+		method_idx = ConfigStorePrivate::LookupQtMethod(object, method);
+		if (method_idx < 0)
+			return;
+	}
+
+	// Process the signal map vector in reverse-order.
+	// Reverse order makes it easier to remove deleted objects.
+	// TODO: Use QLinkedList instead?
+	for (int i = (signalMapVector->size() - 1); i >= 0; i--) {
+		const ConfigStorePrivate::SignalMap *smap = &signalMapVector->at(i);
+		if (smap->object.isNull()) {
+			signalMapVector->remove(i);
+		} else if (smap->object == object) {
+			// Found the object.
+			if (method == nullptr || method_idx == smap->method_idx) {
+				// Found a matching signal map.
+				signalMapVector->remove(i);
+			}
+		}
+	}
+}
 
 /**
  * Notify all registered objects that configuration settings have changed.
- * Useful when starting the emulator.
+ * Useful when starting the program.
  */
 void ConfigStore::notifyAll(void)
-	{ d->notifyAll(); }
+{
+	// Invoke methods for registered objects.
+	QMutexLocker mtxLocker(&d->mtxSignalMaps);
+
+	foreach (QString property, d->signalMaps.keys()) {
+		QVector<ConfigStorePrivate::SignalMap> *signalMapVector =
+			d->signalMaps.value(property);
+		if (signalMapVector->isEmpty())
+			continue;
+
+		// Get the property value.
+		const QVariant value = d->settings.value(property);
+
+		// Process the signal map vector in reverse-order.
+		// Reverse order makes it easier to remove deleted objects.
+		// TODO: Use QLinkedList instead?
+		for (int i = (signalMapVector->size() - 1); i >= 0; i--)
+		{
+			const ConfigStorePrivate::SignalMap *smap = &signalMapVector->at(i);
+			if (smap->object.isNull()) {
+				signalMapVector->remove(i);
+			} else {
+				// Invoke this method.
+				ConfigStorePrivate::InvokeQtMethod(smap->object, smap->method_idx, value);
+			}
+		}
+	}
+}

@@ -122,7 +122,7 @@ class ConfigStore : public QObject
 
 		/**
 		 * Notify all registered objects that configuration settings have changed.
-		 * Useful when starting the emulator.
+		 * Useful when starting the program.
 		 */
 		void notifyAll(void);
 };
