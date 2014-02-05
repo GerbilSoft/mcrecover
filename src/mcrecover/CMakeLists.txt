@@ -330,22 +330,14 @@ ADD_DEPENDENCIES(mcrecover translations_target)
 GET_PROPERTY(MCRECOVER_EXE_LOCATION TARGET mcrecover PROPERTY LOCATION)
 
 # Split debug information.
-INCLUDE(SplitDebugInformation)
 IF(SPLIT_DEBUG)
+	INCLUDE(SplitDebugInformation)
 	SPLIT_DEBUG_INFORMATION(mcrecover)
 ENDIF(SPLIT_DEBUG)
 
 IF(COMPRESS_EXE)
-	FIND_PROGRAM(UPX upx)
-	IF(WIN32)
-		SET(UPX_OPTIONS "--compress-icons=0")
-	ENDIF(WIN32)
-	IF(UPX)
-		ADD_CUSTOM_COMMAND(TARGET mcrecover POST_BUILD
-			COMMAND ${UPX} --best --lzma
-				${MCRECOVER_EXE_LOCATION}
-			)
-	ENDIF(UPX)
+	INCLUDE(CompressExeWithUpx)
+	COMPRESS_EXE_WITH_UPX(mcrecover)
 ENDIF(COMPRESS_EXE)
 
 # Qt options:
