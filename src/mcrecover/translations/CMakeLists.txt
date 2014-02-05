@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 2.6)
 SET(TRANSLATION_FILES
 	mcrecover_en.ts
 	mcrecover_1337.ts
+	mcrecover_en_GB.ts
 	)
 QT4_ADD_TRANSLATION(QM_FILES ${TRANSLATION_FILES})
 
