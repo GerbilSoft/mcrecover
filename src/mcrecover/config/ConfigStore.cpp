@@ -53,6 +53,12 @@ class ConfigStorePrivate
 	private:
 		Q_DISABLE_COPY(ConfigStorePrivate)
 
+	private:
+		/**
+		* Initialize the configuration path.
+		*/
+		void initConfigPath(void);
+
 	public:
 		/**
 		 * Validate a property.
@@ -109,6 +115,27 @@ ConfigStorePrivate::ConfigStorePrivate(ConfigStore* q)
 	: q_ptr(q)
 {
 	// Determine the configuration path.
+	initConfigPath();
+}
+
+/**
+ * Initialize the configuration path.
+ */
+void ConfigStorePrivate::initConfigPath(void)
+{
+#ifdef Q_OS_WIN
+	// Win32: Check if the application directory is writable.
+	QFileInfo prgDir(QCoreApplication::applicationDirPath());
+	if (prgDir.isWritable()) {
+		// Application directory is writable.
+		QString configPath = QCoreApplication::applicationDirPath();
+		if (!configPath.endsWith(QChar(L'/')))
+			configPath.append(QChar(L'/'));
+		this->configPath = configPath;
+		return;
+	}
+#endif /* Q_OS_WIN */
+
 	// TODO: Portable mode.
 	// TODO: Fallback if the user directory isn't writable.
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope,
