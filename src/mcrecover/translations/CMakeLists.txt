@@ -8,6 +8,7 @@ SET(TRANSLATION_FILES
 	mcrecover_en.ts
 	mcrecover_1337.ts
 	mcrecover_en_GB.ts
+	mcrecover_es.ts
 	)
 QT4_ADD_TRANSLATION(QM_FILES ${TRANSLATION_FILES})
 
