@@ -176,7 +176,8 @@ class McRecoverWindowPrivate
 
 		// Translations.
 		QAction *actTsSysDefault;
-		QVector<QAction*> vActionsTS;
+		// Key: Locale ID; value: QAction
+		QHash<QString, QAction*> hashActionsTS;
 		QActionGroup *actgrpTS;
 		QSignalMapper *mapperTS;
 
@@ -280,6 +281,8 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 			q, SLOT(setPreferredRegion_slot(QVariant)));
 	cfg->registerChangeNotification(QLatin1String("searchUsedBlocks"),
 			q, SLOT(searchUsedBlocks_cfg_slot(QVariant)));
+	cfg->registerChangeNotification(QLatin1String("language"),
+			q, SLOT(setTranslation_cfg_slot(QVariant)));
 }
 
 McRecoverWindowPrivate::~McRecoverWindowPrivate()
@@ -738,8 +741,8 @@ void McRecoverWindowPrivate::initTsMenu(void)
 	ui.menuLanguage->clear();
 	if (actgrpTS)
 		delete actgrpTS;
-	qDeleteAll(vActionsTS);
-	vActionsTS.clear();
+	qDeleteAll(hashActionsTS);
+	hashActionsTS.clear();
 	actgrpTS = new QActionGroup(q);
 
 	// Add the system default translation.
@@ -750,7 +753,7 @@ void McRecoverWindowPrivate::initTsMenu(void)
 	// Add all other translations.
 	ui.menuLanguage->addSeparator();
 	QMap<QString, QString> tsMap = TranslationManager::instance()->enumerate();
-	vActionsTS.reserve(tsMap.size());
+	hashActionsTS.reserve(tsMap.size());
 	foreach (QString tsLocale, tsMap.keys()) {
 		QString tsLanguage = tsMap.value(tsLocale);
 		QAction *actTs = new QAction(tsLanguage, q);
@@ -761,7 +764,7 @@ void McRecoverWindowPrivate::initTsMenu(void)
 		if (!flagIcon.isNull())
 			actTs->setIcon(flagIcon);
 
-		vActionsTS.append(actTs);
+		hashActionsTS.insert(tsLocale, actTs);
 		actgrpTS->addAction(actTs);
 		QObject::connect(actTs, SIGNAL(triggered()),
 				 mapperTS, SLOT(map()));
@@ -1542,15 +1545,43 @@ void McRecoverWindow::lstFileList_selectionModel_currentRowChanged(
 }
 
 /**
- * Set the translation.
+ * UI language was changed by the user.
  * @param tsLocale Translation to use. (locale tag)
  */
 void McRecoverWindow::setTranslation_slot(const QString &tsLocale)
 {
+	Q_D(McRecoverWindow);
+	// If the locale isn't available, use the default.
+	QString locale = (d->hashActionsTS.contains(tsLocale)
+			  ? tsLocale
+			  : QString());
+
+	// d->cfg->set() will trigger a notification.
+	d->cfg->set(QLatin1String("language"), locale);
+}
+
+/**
+ * UI language was changed by the configuration.
+ * @param tsLocale Translation to use. (locale tag)
+ */
+void McRecoverWindow::setTranslation_cfg_slot(const QVariant &tsLocale)
+{
+	Q_D(McRecoverWindow);
+	QString locale = tsLocale.toString();
+	QAction *action = d->hashActionsTS.value(locale);
+	if (!action)
+		locale = QString();
+
+	// Set the UI language.
 	TranslationManager::instance()->setTranslation(
-		(!tsLocale.isEmpty()
-			? tsLocale
+		(!locale.isEmpty()
+			? locale
 			: QLocale::system().name()));
+	// Mark the language as selected.
+	if (action)
+		action->setChecked(true);
+	else
+		d->actTsSysDefault->setChecked(true);
 }
 
 /**
@@ -1561,6 +1592,7 @@ void McRecoverWindow::on_actionSearchUsedBlocks_triggered(bool checked)
 {
 	// Save the setting in the configuration.
 	Q_D(McRecoverWindow);
+	// d->cfg->set() will trigger a notification.
 	d->cfg->set(QLatin1String("searchUsedBlocks"), checked);
 }
 

@@ -119,10 +119,16 @@ class McRecoverWindow : public QMainWindow
 		void lstFileList_selectionModel_currentRowChanged(const QModelIndex& current, const QModelIndex& previous);
 
 		/**
-		 * Set the translation.
+		 * UI language was changed by the user.
 		 * @param tsLocale Translation to use. (locale tag)
 		 */
 		void setTranslation_slot(const QString &tsLocale);
+
+		/**
+		 * UI language was changed by the configuration.
+		 * @param tsLocale Translation to use. (locale tag)
+		 */
+		void setTranslation_cfg_slot(const QVariant &tsLocale);
 
 		/**
 		 * "Search Used Blocks" was changed by the user.
