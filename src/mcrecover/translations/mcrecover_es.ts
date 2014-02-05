@@ -166,10 +166,10 @@ You must reinstall the game and accept the game
 license again, to continue to play the game.</source>
         <comment>DT_H</comment>
         <extracomment>&quot;Hack Detection&quot; message. Preserve the linebreaks!</extracomment>
-        <translation>Uno o más recursos del juego fueron manipulados por una 
-fuente externa. Esto no está permitido como se especifica en 
-la licencia de juego. 
-Debe volver a instalar el juego y aceptar la licencia 
+        <translation>Uno o más recursos del juego fueron manipulados por
+una fuente externa. Esto no está permitido como se
+especifica en la licencia de juego.
+Debe volver a instalar el juego y aceptar la licencia
 de nuevo, para seguir jugando el juego.</translation>
     </message>
     <message>
@@ -187,9 +187,9 @@ You must rebake the snack and accept the snack
 recipe again, to continue to eat the snack.</source>
         <comment>DT_S</comment>
         <extracomment>&quot;Snack Detection&quot; message. Preserve the linebreaks!</extracomment>
-        <translation>Uno o más ingredientes del snack fueron modificados por
-una fuente externa. Esto no esta permitido, de a-
-cuerdo con la receta.
+        <translation>Uno o más ingredientes del snack fueron modificados
+por una fuente externa. Esto no esta permitido, de
+acuerdo con la receta.
 Debes volver a hornear el snack, y aceptar la receta
 otra vez, para volver a comer el snack.</translation>
     </message>
