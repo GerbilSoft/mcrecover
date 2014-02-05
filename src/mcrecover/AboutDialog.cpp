@@ -220,6 +220,7 @@ QString AboutDialogPrivate::GetCredits(void)
 	enum CreditType_t {
 		CT_CONTINUE = 0,	// Continue previous type.
 		CT_MCF_CONTRIBUTORS,	// Memory Card File Contributors
+		CT_TRANSLATORS,		// Translators
 
 		CT_MAX
 	};
@@ -227,22 +228,25 @@ QString AboutDialogPrivate::GetCredits(void)
 	struct CreditsData_t {
 		CreditType_t type;
 		const char *name;
+		const char *sub;
 	};
 
 	// Credits data.
 	static const CreditsData_t CreditsData[] = {
-		{CT_MCF_CONTRIBUTORS,	"MainMemory"},		// NTSC-U, fragmented card
-		{CT_CONTINUE,		"Carbuncle"},		// NTSC-U (aka megamanblue)
-		{CT_CONTINUE,		"Jeff Turner"},		// NTSC-U
-		{CT_CONTINUE,		"gold lightning"},	// NTSC-U
-		{CT_CONTINUE,		"Thomas Vasto"},	// PAL
-		{CT_CONTINUE,		"Henke37"},		// PAL
-		{CT_CONTINUE,		"Gordon Griffin"},	// NTSC-U
-		{CT_CONTINUE,		"LocalH"},		// NTSC-U
-		{CT_CONTINUE,		"McLaglen"},		// PAL (aka Mainman)
-		{CT_CONTINUE,		"einstein95"},		// Multiple regions
-		{CT_CONTINUE,		"Hendricks266"},	// NTSC-U
-		{CT_CONTINUE,		"Typpex"},		// NTSC-U, PAL
+		{CT_MCF_CONTRIBUTORS,	"MainMemory", nullptr},	// NTSC-U, fragmented card
+		{CT_CONTINUE,	"Carbuncle", nullptr},		// NTSC-U (aka megamanblue)
+		{CT_CONTINUE,	"Jeff Turner", nullptr},	// NTSC-U
+		{CT_CONTINUE,	"gold lightning", nullptr},	// NTSC-U
+		{CT_CONTINUE,	"Thomas Vasto", nullptr},	// PAL
+		{CT_CONTINUE,	"Henke37", nullptr},		// PAL
+		{CT_CONTINUE,	"Gordon Griffin", nullptr},	// NTSC-U
+		{CT_CONTINUE,	"LocalH", nullptr},		// NTSC-U
+		{CT_CONTINUE,	"McLaglen", nullptr},		// PAL (aka Mainman)
+		{CT_CONTINUE,	"einstein95", nullptr},		// Multiple regions
+		{CT_CONTINUE,	"Hendricks266", nullptr},	// NTSC-U
+		{CT_CONTINUE,	"Typpex", nullptr},		// NTSC-U, PAL
+
+		{CT_TRANSLATORS,	"Overlord", "en_GB"},
 
 		{CT_MAX, nullptr}
 	};
@@ -262,6 +266,8 @@ QString AboutDialogPrivate::GetCredits(void)
 				case CT_MCF_CONTRIBUTORS:
 					credits += AboutDialog::tr("Memory Card File Contributors:");
 					break;
+				case CT_TRANSLATORS:
+					credits += AboutDialog::tr("UI Translators:");
 				default:
 					break;
 			}
@@ -273,6 +279,11 @@ QString AboutDialogPrivate::GetCredits(void)
 		credits += sLineBreak + sIndent +
 			chrBullet + QChar(L' ') +
 			QLatin1String(creditsData->name);
+		if (creditsData->sub) {
+			credits += QLatin1String(" (") +
+				QLatin1String(creditsData->sub) +
+				QChar(L')');
+		}
 	}
 
 	return credits;
