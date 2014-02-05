@@ -11,14 +11,20 @@
 #   and Windows 7 will claim that the executable isn't a valid Win32
 #   executable. (Wine ignores it and works fine!)
 #
-MACRO(SPLIT_DEBUG_INFORMATION EXE_TARGET)
 IF(NOT MSVC)
+	FIND_PROGRAM(OBJCOPY objcopy)
+	IF(NOT OBJCOPY)
+		MESSAGE(WARNING "objcopy was not found; debug information will not be split.")
+	ENDIF(NOT OBJCOPY)
+ENDIF(NOT MSVC)
+
+MACRO(SPLIT_DEBUG_INFORMATION EXE_TARGET)
+IF(OBJCOPY AND NOT MSVC)
 	# NOTE: $<TARGET_FILE:gcbanner> is preferred,
 	# but this doesn't seem to work on Ubuntu 10.04.
 	# (cmake_2.8.0-5ubuntu1_i386)
 	GET_PROPERTY(SPLITDEBUG_EXE_LOCATION TARGET ${EXE_TARGET} PROPERTY LOCATION)
 
-	FIND_PROGRAM(OBJCOPY objcopy)
 	ADD_CUSTOM_COMMAND(TARGET ${EXE_TARGET} POST_BUILD
 		COMMAND ${OBJCOPY} --only-keep-debug
 			${SPLITDEBUG_EXE_LOCATION} ${CMAKE_CURRENT_BINARY_DIR}/${EXE_TARGET}.debug
@@ -29,5 +35,5 @@ IF(NOT MSVC)
 		)
 
 	UNSET(SPLITDEBUG_EXE_LOCATION)
-ENDIF(NOT MSVC)
+ENDIF(OBJCOPY AND NOT MSVC)
 ENDMACRO(SPLIT_DEBUG_INFORMATION)
