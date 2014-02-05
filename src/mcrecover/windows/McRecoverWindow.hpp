@@ -123,6 +123,18 @@ class McRecoverWindow : public QMainWindow
 		 * @param tsLocale Translation to use. (locale tag)
 		 */
 		void setTranslation_slot(const QString &tsLocale);
+
+		/**
+		 * "Search Used Blocks" was changed by the user.
+		 * @param checked True if checked; false if not.
+		 */
+		void on_actionSearchUsedBlocks_triggered(bool checked);
+
+		/**
+		 * "Search Used Blocks" was changed by the configuration.
+		 * @param checked True if checked; false if not.
+		 */
+		void searchUsedBlocks_cfg_slot(const QVariant &checked);
 };
 
 #endif /* __MCRECOVER_MCRECOVERWINDOW_HPP__ */

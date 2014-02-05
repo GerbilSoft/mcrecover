@@ -265,6 +265,8 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	// Configuration signals.
 	cfg->registerChangeNotification(QLatin1String("preferredRegion"),
 			q, SLOT(setPreferredRegion_slot(QVariant)));
+	cfg->registerChangeNotification(QLatin1String("searchUsedBlocks"),
+			q, SLOT(searchUsedBlocks_cfg_slot(QVariant)));
 }
 
 McRecoverWindowPrivate::~McRecoverWindowPrivate()
@@ -1470,4 +1472,25 @@ void McRecoverWindow::setTranslation_slot(const QString &tsLocale)
 		(!tsLocale.isEmpty()
 			? tsLocale
 			: QLocale::system().name()));
+}
+
+/**
+ * "Search Used Blocks" was changed by the user.
+ * @param checked True if checked; false if not.
+ */
+void McRecoverWindow::on_actionSearchUsedBlocks_triggered(bool checked)
+{
+	// Save the setting in the configuration.
+	Q_D(McRecoverWindow);
+	d->cfg->set(QLatin1String("searchUsedBlocks"), checked);
+}
+
+/**
+ * "Search Used Blocks" was changed by the configuration.
+ * @param checked True if checked; false if not.
+ */
+void McRecoverWindow::searchUsedBlocks_cfg_slot(const QVariant &checked)
+{
+	Q_D(McRecoverWindow);
+	d->ui.actionSearchUsedBlocks->setChecked(checked.toBool());
 }
