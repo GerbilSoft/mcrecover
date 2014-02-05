@@ -100,14 +100,6 @@ class McRecoverWindow : public QMainWindow
 		 */
 		void setPreferredRegion_slot(const QVariant &preferredRegion);
 
-		/**
-		 * Set the animated icon format.
-		 * This slot is triggered by a QSignalMapper that
-		 * maps the various QActions.
-		 * @param animIconFormat Animated icon format.
-		 */
-		void setAnimIconFormat_slot(int animIconFormat);
-
 		// MemCardModel slots.
 		void memCardModel_layoutChanged(void);
 		void memCardModel_rowsInserted(void);
@@ -117,6 +109,20 @@ class McRecoverWindow : public QMainWindow
 
 		// lstFileList slots.
 		void lstFileList_selectionModel_currentRowChanged(const QModelIndex& current, const QModelIndex& previous);
+
+		/**
+		 * Set the animated icon format.
+		 * This slot is triggered by a QSignalMapper that
+		 * maps the various QActions.
+		 * @param animIconFormat Animated icon format.
+		 */
+		void setAnimIconFormat_slot(int animIconFormat);
+
+		/**
+		 * UI language was changed by the configuration.
+		 * @param animIconFormat Animated icon format.
+		 */
+		void setAnimIconFormat_cfg_slot(const QVariant &animIconFormat);
 
 		/**
 		 * UI language was changed by the user.

@@ -201,7 +201,6 @@ class McRecoverWindowPrivate
 		/**
 		 * "Animated Icon Format" selection.
 		 */
-		GcImageWriter::AnimImageFormat animIconFormat;
 		QActionGroup *actgrpAnimIconFormat;
 		QSignalMapper *mapperAnimIconFormat;
 
@@ -219,6 +218,12 @@ class McRecoverWindowPrivate
 		 * @param path Last path.
 		 */
 		void setLastPath(const QString &path);
+
+		/**
+		 * Get the animated icon format to use.
+		 * @return Animated icon format to use.
+		 */
+		GcImageWriter::AnimImageFormat animIconFormat(void) const;
 
 		// Shh... it's a secret to everybody.
 		HerpDerpEggListener *herpDerp;
@@ -281,6 +286,8 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 			q, SLOT(setPreferredRegion_slot(QVariant)));
 	cfg->registerChangeNotification(QLatin1String("searchUsedBlocks"),
 			q, SLOT(searchUsedBlocks_cfg_slot(QVariant)));
+	cfg->registerChangeNotification(QLatin1String("animIconFormat"),
+			 q, SLOT(setAnimIconFormat_cfg_slot(QVariant)));
 	cfg->registerChangeNotification(QLatin1String("language"),
 			q, SLOT(setTranslation_cfg_slot(QVariant)));
 }
@@ -410,23 +417,18 @@ void McRecoverWindowPrivate::initToolbar(void)
 		ui.actionAnimPNGhs,
 	};
 
-	bool isInitSet = false;
+	// Initial setting will be set by a ConfigStore notification.
 	for (int i = 0; i < ARRAY_SIZE(animImgfActions); i++) {
 		actgrpAnimIconFormat->addAction(animImgfActions[i]);
 
 		// Is this animated image format available?
-		if (GcImageWriter::isAnimImageFormatSupported((GcImageWriter::AnimImageFormat)(i+1))) {
+		if (GcImageWriter::isAnimImageFormatSupported(
+			(GcImageWriter::AnimImageFormat)(i+1)))
+		{
 			// Image format is available.
 			QObject::connect(animImgfActions[i], SIGNAL(triggered()),
 					 mapperAnimIconFormat, SLOT(map()));
 			mapperAnimIconFormat->setMapping(animImgfActions[i], (i+1));
-			if (!isInitSet) {
-				// Set this format as the initial value.
-				// TODO: Save last selected format somewhere.
-				animImgfActions[i]->setChecked(true);
-				this->animIconFormat = (GcImageWriter::AnimImageFormat)i;
-				isInitSet = true;
-			}
 		} else {
 			// Image format is not available.
 			// Disable the action.
@@ -583,6 +585,9 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QStri
 		setLastPath(path);
 	}
 
+	// Animted image format for icons.
+	GcImageWriter::AnimImageFormat animImgf = animIconFormat();
+
 	foreach (MemCardFile *file, files) {
 		if (!singleFile)
 			filename = path + QChar(L'/') + file->defaultGciFilename();
@@ -655,7 +660,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QStri
 			if (file->numIcons() >= 1) {
 				// File has an icon.
 				QString iconFilename = changeFileExtension(filename, extIcon);
-				file->saveIcon(iconFilename, animIconFormat);
+				file->saveIcon(iconFilename, animImgf);
 			}
 		}
 	}
@@ -827,6 +832,39 @@ void McRecoverWindowPrivate::setLastPath(const QString &path)
 
 	cfg->set(QLatin1String("lastPath"),
 		 QDir::toNativeSeparators(lastPath));
+}
+
+/**
+ * Get the animated icon format to use.
+ * @return Animated icon format to use.
+ */
+GcImageWriter::AnimImageFormat McRecoverWindowPrivate::animIconFormat(void) const
+{
+	// TODO: Cache the last animated icon format?
+
+	QString fmt = cfg->get(QLatin1String("animIconFormat")).toString();
+	GcImageWriter::AnimImageFormat animImgf =
+		GcImageWriter::animImageFormatFromName(fmt.toLatin1().constData());
+	if (!GcImageWriter::isAnimImageFormatSupported(animImgf)) {
+		// Format is not supported.
+		animImgf = GcImageWriter::ANIMGF_UNKNOWN;
+	}
+
+	if (animImgf == GcImageWriter::ANIMGF_UNKNOWN) {
+		// Determine which format to use.
+		for (int i = 1; i < GcImageWriter::ANIMGF_MAX; i++) {
+			// Is this animated image format available?
+			if (GcImageWriter::isAnimImageFormatSupported(
+				(GcImageWriter::AnimImageFormat)i))
+			{
+				// Image format is available.
+				animImgf = (GcImageWriter::AnimImageFormat)i;
+				break;
+			}
+		}
+	}
+
+	return animImgf;
 }
 
 /** McRecoverWindow **/
@@ -1450,20 +1488,6 @@ void McRecoverWindow::setPreferredRegion_slot(const QVariant &preferredRegion)
 	}
 }
 
-/**
- * Set the animated icon format.
- * This slot is triggered by a QSignalMapper that
- * maps the various QActions.
- * @param animIconFormat Animated icon format.
- */
-void McRecoverWindow::setAnimIconFormat_slot(int animIconFormat)
-{
-	// TODO: Enum.
-	Q_D(McRecoverWindow);
-	if (animIconFormat >= 0 && animIconFormat < GcImageWriter::ANIMGF_MAX)
-		d->animIconFormat = (GcImageWriter::AnimImageFormat)animIconFormat;
-}
-
 void McRecoverWindow::memCardModel_layoutChanged(void)
 {
 	// Update the QTreeView columns, etc.
@@ -1545,6 +1569,58 @@ void McRecoverWindow::lstFileList_selectionModel_currentRowChanged(
 }
 
 /**
+ * Animated icon format was changed by the user.
+ * @param animIconFormat Animated icon format.
+ */
+void McRecoverWindow::setAnimIconFormat_slot(int animIconFormat)
+{
+	const char *fmt = GcImageWriter::nameOfAnimImageFormat(
+				(GcImageWriter::AnimImageFormat)animIconFormat);
+	QString s_fmt = (fmt ? QLatin1String(fmt) : QString());
+
+	Q_D(McRecoverWindow);
+	// d->cfg->set() will trigger a notification.
+	d->cfg->set(QLatin1String("animIconFormat"), s_fmt);
+}
+
+/**
+ * UI language was changed by the configuration.
+ * @param animIconFormat Animated icon format.
+ */
+void McRecoverWindow::setAnimIconFormat_cfg_slot(const QVariant &animIconFormat)
+{
+	Q_UNUSED(animIconFormat)
+
+	Q_D(McRecoverWindow);
+	GcImageWriter::AnimImageFormat animImgf = d->animIconFormat();
+	switch (animImgf) {
+		case GcImageWriter::ANIMGF_APNG:
+			d->ui.actionAnimAPNG->setChecked(true);
+			break;
+		case GcImageWriter::ANIMGF_GIF:
+			d->ui.actionAnimGIF->setChecked(true);
+			break;
+		case GcImageWriter::ANIMGF_PNG_FPF:
+			d->ui.actionAnimPNGfpf->setChecked(true);
+			break;
+		case GcImageWriter::ANIMGF_PNG_VS:
+			d->ui.actionAnimPNGhs->setChecked(true);
+			break;
+		case GcImageWriter::ANIMGF_PNG_HS:
+			d->ui.actionAnimPNGhs->setChecked(true);
+			break;
+		default:
+			// Invalid format.
+			d->ui.actionAnimAPNG->setChecked(false);
+			d->ui.actionAnimGIF->setChecked(false);
+			d->ui.actionAnimPNGfpf->setChecked(false);
+			d->ui.actionAnimPNGhs->setChecked(false);
+			d->ui.actionAnimPNGhs->setChecked(false);
+			break;
+	};
+}
+
+/**
  * UI language was changed by the user.
  * @param tsLocale Translation to use. (locale tag)
  */
@@ -1555,9 +1631,6 @@ void McRecoverWindow::setTranslation_slot(const QString &tsLocale)
 	QString locale = (d->hashActionsTS.contains(tsLocale)
 			  ? tsLocale
 			  : QString());
-
-	// d->cfg->set() will trigger a notification.
-	d->cfg->set(QLatin1String("language"), locale);
 }
 
 /**
