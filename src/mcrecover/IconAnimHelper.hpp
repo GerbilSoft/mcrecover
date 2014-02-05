@@ -34,6 +34,10 @@ class IconAnimHelper : public QObject
 {
 	Q_OBJECT
 
+	Q_PROPERTY(const MemCardFile* file READ file WRITE setFile)
+	Q_PROPERTY(bool animated READ isAnimated STORED false)
+	Q_PROPERTY(QPixmap icon READ icon STORED false)
+
 	public:
 		IconAnimHelper();
 		IconAnimHelper(const MemCardFile *file);

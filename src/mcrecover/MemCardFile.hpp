@@ -75,7 +75,7 @@ class MemCardFile : public QObject
 	Q_PROPERTY(Checksum::ChkStatus checksumStatus READ checksumStatus)
 	// TODO: checksumValuesFormatted?
 	*/
-	Q_PROPERTY(QString defaultGciFilename READ defaultGciFilename)
+	Q_PROPERTY(QString defaultGciFilename READ defaultGciFilename STORED false)
 
 	public:
 		/**
