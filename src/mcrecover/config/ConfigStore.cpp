@@ -577,8 +577,7 @@ void ConfigStore::notifyAll(void)
 		// Process the signal map vector in reverse-order.
 		// Reverse order makes it easier to remove deleted objects.
 		// TODO: Use QLinkedList instead?
-		for (int i = (signalMapVector->size() - 1); i >= 0; i--)
-		{
+		for (int i = (signalMapVector->size() - 1); i >= 0; i--) {
 			const ConfigStorePrivate::SignalMap &smap = signalMapVector->at(i);
 			if (smap.object.isNull()) {
 				signalMapVector->remove(i);
