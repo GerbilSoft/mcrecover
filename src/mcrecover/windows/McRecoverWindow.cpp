@@ -74,6 +74,7 @@ using std::vector;
 
 // Configuration.
 #include "config/ConfigStore.hpp"
+#include "PathFuncs.hpp"
 
 // Shh... it's a secret to everybody.
 #include "sekrit/HerpDerpEggListener.hpp"
@@ -779,9 +780,25 @@ void McRecoverWindowPrivate::initTsMenu(void)
  */
 QString McRecoverWindowPrivate::lastPath(void) const
 {
+	// TODO: Cache the last absolute path?
+
 	// NOTE: Path is stored using native separators.
-	return QDir::fromNativeSeparators(
+	QString path = QDir::fromNativeSeparators(
 		cfg->get(QLatin1String("lastPath")).toString());
+
+	// If this is a relative path, convert to absolute.
+	if (path.startsWith(QLatin1String("./"))) {
+		// Path is relative to the application directory.
+		QDir applicationDir(QCoreApplication::applicationDirPath());
+		path.remove(0, 2);
+		path = applicationDir.absoluteFilePath(path);
+	} else if (path.startsWith(QLatin1String("~/"))) {
+		// Path is relative to the user's home directory.
+		path.remove(0, 2);
+		path = QDir::home().absoluteFilePath(path);
+	}
+
+	return path;
 }
 
 /**
@@ -798,8 +815,15 @@ void McRecoverWindowPrivate::setLastPath(const QString &path)
 	else
 		lastPath = fileInfo.dir().absolutePath();
 
-	lastPath = QDir::toNativeSeparators(lastPath);
-	cfg->set(QLatin1String("lastPath"), lastPath);
+	// Make this path relative to the application directory.
+	lastPath = PathFuncs::makeRelativeToApplication(lastPath);
+#ifndef Q_OS_WIN
+	// Make this path relative to the user's home directory.
+	lastPath = PathFuncs::makeRelativeToHome(lastPath);
+#endif /* !Q_OS_WIN */
+
+	cfg->set(QLatin1String("lastPath"),
+		 QDir::toNativeSeparators(lastPath));
 }
 
 /** McRecoverWindow **/
