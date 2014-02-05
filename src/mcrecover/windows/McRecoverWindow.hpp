@@ -94,6 +94,13 @@ class McRecoverWindow : public QMainWindow
 		void setPreferredRegion_slot(int preferredRegion);
 
 		/**
+		 * Set the preferred region.
+		 * This version is used by ConfigDefaults.
+		 * @param preferredRegion Preferred region. (actually char)
+		 */
+		void setPreferredRegion_slot(const QVariant &preferredRegion);
+
+		/**
 		 * Set the animated icon format.
 		 * This slot is triggered by a QSignalMapper that
 		 * maps the various QActions.

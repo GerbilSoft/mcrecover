@@ -72,6 +72,9 @@ using std::vector;
 // GcImageWriter.
 #include "GcImageWriter.hpp"
 
+// Configuration.
+#include "config/ConfigStore.hpp"
+
 // Shh... it's a secret to everybody.
 #include "sekrit/HerpDerpEggListener.hpp"
 
@@ -200,6 +203,9 @@ class McRecoverWindowPrivate
 		QActionGroup *actgrpAnimIconFormat;
 		QSignalMapper *mapperAnimIconFormat;
 
+		// Configuration.
+		ConfigStore *cfg;
+
 		// Shh... it's a secret to everybody.
 		HerpDerpEggListener *herpDerp;
 };
@@ -221,6 +227,7 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, mapperTS(new QSignalMapper(q))
 	, actgrpAnimIconFormat(new QActionGroup(q))
 	, mapperAnimIconFormat(new QSignalMapper(q))
+	, cfg(new ConfigStore(q))
 	, herpDerp(new HerpDerpEggListener(q))
 {
 	// Connect the MemCardModel slots.
@@ -254,10 +261,17 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	// Connect the QSignalMapper slot for translations.
 	QObject::connect(mapperTS, SIGNAL(mapped(QString)),
 			 q, SLOT(setTranslation_slot(QString)));
+
+	// Configuration signals.
+	cfg->registerChangeNotification(QLatin1String("preferredRegion"),
+			q, SLOT(setPreferredRegion_slot(QVariant)));
 }
 
 McRecoverWindowPrivate::~McRecoverWindowPrivate()
 {
+	// Save the configuration.
+	cfg->save();
+
 	// NOTE: Delete the MemCardModel first to prevent issues later.
 	delete model;
 	delete card;
@@ -367,15 +381,6 @@ void McRecoverWindowPrivate::initToolbar(void)
 	mapperPreferredRegion->setMapping(ui.actionRegionPAL, 'P');
 	mapperPreferredRegion->setMapping(ui.actionRegionJPN, 'J');
 	mapperPreferredRegion->setMapping(ui.actionRegionKOR, 'K');
-
-	// Set an initial "Preferred region".
-	// TODO: Determine default based on system locale.
-	// TODO: Save last selected region somewhere.
-	// NOTE: We're not calling trigger(), since we know
-	// which button is being checked. Hence, we need to
-	// set this->preferredRegion manually.
-	ui.actionRegionUSA->setChecked(true);
-	this->preferredRegion = 'E';
 
 	// Set up the QActionGroup for the "Animated Icon Format" options.
 	// Indexes correspond to GcImageWriter::AnimImageFormat enum values.
@@ -844,6 +849,9 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 			 d->herpDerp, SLOT(widget_keyPress(QKeyEvent*)));
 	QObject::connect(d->ui.lstFileList, SIGNAL(focusOut(QFocusEvent*)),
 			 d->herpDerp, SLOT(widget_focusOut(QFocusEvent*)));
+
+	// Emit all configuration signals.
+	d->cfg->notifyAll();
 }
 
 McRecoverWindow::~McRecoverWindow()
@@ -1309,6 +1317,53 @@ void McRecoverWindow::setPreferredRegion_slot(int preferredRegion)
 {
 	Q_D(McRecoverWindow);
 	d->preferredRegion = static_cast<char>(preferredRegion);
+
+	/**
+	 * Save the preferred region in the configuration.
+	 *
+	 * NOTE: Saving a QChar results in a wacky entry:
+	 * preferredRegion=@Variant(\0\0\0\a\0E)
+	 * Convert it to QString to avoid this problem.
+	 */
+	QString str = QChar((uint16_t)preferredRegion);
+	d->cfg->set(QLatin1String("preferredRegion"), str);
+}
+
+/**
+ * Set the preferred region.
+ * This version is used by ConfigDefaults.
+ * @param preferredRegion Preferred region. (actually char)
+ */
+void McRecoverWindow::setPreferredRegion_slot(const QVariant &preferredRegion)
+{
+	uint8_t chr = 0;
+	if (preferredRegion.canConvert(QVariant::String)) {
+		QString str = preferredRegion.toString();
+		if (str.size() == 1)
+			chr = (uint8_t)str.at(0).unicode();
+	} else if (preferredRegion.canConvert(QVariant::Char)) {
+		chr = (uint8_t)preferredRegion.toChar().unicode();
+	}
+
+	Q_D(McRecoverWindow);
+	switch (chr) {
+		case 'E':
+			d->ui.actionRegionUSA->setChecked(true);
+			break;
+		case 'P':
+			d->ui.actionRegionPAL->setChecked(true);
+			break;
+		case 'J':
+			d->ui.actionRegionJPN->setChecked(true);
+			break;
+		case 'K':
+			d->ui.actionRegionKOR->setChecked(true);
+			break;
+		default:
+			// TODO: Determine based on system locale.
+			d->ui.actionRegionUSA->setChecked(true);
+			break;
+	}
 }
 
 /**

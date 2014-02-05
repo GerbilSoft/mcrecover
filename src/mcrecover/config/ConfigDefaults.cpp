@@ -41,6 +41,12 @@ const ConfigDefaults::DefaultSetting ConfigDefaults::DefaultSettings[] =
 	/** Super hidden settings! **/
 	{"iKnowWhatImDoingAndWillVoidTheWarranty", "false", 0, DefaultSetting::DEF_NO_SAVE, DefaultSetting::VT_BOOL, 0, 0},
 
+	/** General settings. **/
+	{"lastPath",		"", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
+	{"preferredRegion",	"", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
+	{"searchUsedBlocks",	"false", 0, 0,	DefaultSetting::VT_BOOL, 0, 0},
+	{"animIconFormat",	"", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
+
 	/** End of array. **/
 	{nullptr, nullptr, 0, 0, DefaultSetting::VT_NONE, 0, 0}
 };
