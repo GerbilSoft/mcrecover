@@ -1631,6 +1631,8 @@ void McRecoverWindow::setTranslation_slot(const QString &tsLocale)
 	QString locale = (d->hashActionsTS.contains(tsLocale)
 			  ? tsLocale
 			  : QString());
+	// d->cfg->set() will trigger a notification.
+	d->cfg->set(QLatin1String("language"), locale);
 }
 
 /**
