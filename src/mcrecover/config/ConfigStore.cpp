@@ -48,7 +48,9 @@ class ConfigStorePrivate
 		~ConfigStorePrivate();
 
 	private:
-		ConfigStore *const q;
+		ConfigStore *const q_ptr;
+		Q_DECLARE_PUBLIC(ConfigStore)
+	private:
 		Q_DISABLE_COPY(ConfigStorePrivate)
 
 	public:
@@ -104,7 +106,7 @@ class ConfigStorePrivate
 /** ConfigStorePrivate **/
 
 ConfigStorePrivate::ConfigStorePrivate(ConfigStore* q)
-	: q(q)
+	: q_ptr(q)
 {
 	// Determine the configuration path.
 	// TODO: Portable mode.
@@ -235,7 +237,7 @@ void ConfigStorePrivate::InvokeQtMethod(QObject *object, int method_idx, const Q
 
 ConfigStore::ConfigStore(QObject *parent)
 	: QObject(parent)
-	, d(new ConfigStorePrivate(this))
+	, d_ptr(new ConfigStorePrivate(this))
 {
 	// Initialize defaults and load user settings.
 	reset();
@@ -248,7 +250,7 @@ ConfigStore::~ConfigStore()
 	// TODO: Handle non-default filenames.
 	save();
 
-	delete d;
+	delete d_ptr;
 }
 
 /**
@@ -257,6 +259,7 @@ ConfigStore::~ConfigStore()
 void ConfigStore::reset(void)
 {
 	// Initialize settings with DefaultSettings.
+	Q_D(ConfigStore);
 	d->settings.clear();
 	for (const ConfigDefaults::DefaultSetting *def = &ConfigDefaults::DefaultSettings[0];
 	     def->key != nullptr; def++)
@@ -273,6 +276,8 @@ void ConfigStore::reset(void)
  */
 void ConfigStore::set(const QString &key, const QVariant &value)
 {
+	Q_D(ConfigStore);
+
 #ifndef NDEBUG
 	// Make sure this property exists.
 	if (!d->settings.contains(key)) {
@@ -330,6 +335,8 @@ void ConfigStore::set(const QString &key, const QVariant &value)
  */
 QVariant ConfigStore::get(const QString &key) const
 {
+	Q_D(const ConfigStore);
+
 #ifndef NDEBUG
 	// Make sure this property exists.
 	if (!d->settings.contains(key)) {
@@ -372,6 +379,7 @@ int ConfigStore::getInt(const QString &key) const
  */
 int ConfigStore::load(const QString &filename)
 {
+	Q_D(ConfigStore);
 	QSettings qSettings(filename, QSettings::IniFormat);
 
 	// NOTE: Only known settings will be loaded.
@@ -408,6 +416,7 @@ int ConfigStore::load(const QString &filename)
  */
 int ConfigStore::load(void)
 {
+	Q_D(ConfigStore);
 	const QString cfgFilename = d->configPath +
 		QLatin1String(ConfigDefaults::DefaultConfigFilename);
 	return load(cfgFilename);
@@ -420,6 +429,7 @@ int ConfigStore::load(void)
  */
 int ConfigStore::save(const QString &filename) const
 {
+	Q_D(const ConfigStore);
 	QSettings qSettings(filename, QSettings::IniFormat);
 
 	/** Application information. **/
@@ -476,6 +486,7 @@ int ConfigStore::save(const QString &filename) const
  */
 int ConfigStore::save(void) const
 {
+	Q_D(const ConfigStore);
 	const QString cfgFilename = d->configPath +
 		QLatin1String(ConfigDefaults::DefaultConfigFilename);
 	return save(cfgFilename);
@@ -493,6 +504,7 @@ void ConfigStore::registerChangeNotification(const QString &property, QObject *o
 		return;
 
 	// Get the vector of signal maps for this property.
+	Q_D(ConfigStore);
 	QMutexLocker mtxLocker(&d->mtxSignalMaps);
 	QVector<ConfigStorePrivate::SignalMap>* signalMapVector =
 		d->signalMaps.value(property, nullptr);
@@ -526,6 +538,7 @@ void ConfigStore::unregisterChangeNotification(const QString &property, QObject 
 		return;
 
 	// Get the vector of signal maps for this property.
+	Q_D(ConfigStore);
 	QMutexLocker mtxLocker(&d->mtxSignalMaps);
 	QVector<ConfigStorePrivate::SignalMap>* signalMapVector =
 		d->signalMaps.value(property, nullptr);
@@ -564,6 +577,7 @@ void ConfigStore::unregisterChangeNotification(const QString &property, QObject 
 void ConfigStore::notifyAll(void)
 {
 	// Invoke methods for registered objects.
+	Q_D(ConfigStore);
 	QMutexLocker mtxLocker(&d->mtxSignalMaps);
 
 	foreach (QString property, d->signalMaps.keys()) {

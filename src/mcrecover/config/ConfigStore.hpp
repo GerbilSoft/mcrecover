@@ -36,8 +36,9 @@ class ConfigStore : public QObject
 		~ConfigStore();
 
 	private:
-		friend class ConfigStorePrivate;
-		ConfigStorePrivate *const d;
+		ConfigStorePrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(ConfigStore)
+	private:
 		Q_DISABLE_COPY(ConfigStore)
 
 	public:
