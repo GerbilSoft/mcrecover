@@ -84,6 +84,7 @@ void HerpDerpEggListenerPrivate::doHackDetection(void)
 	QDesktopWidget *desktop = QApplication::desktop();
 	for (int i = 0; i < desktop->numScreens(); i++) {
 		HackDetection *hd = new HackDetection(i, parent);
+		hd->setDetectType(this->detectType);
 		QObject::connect(hd, SIGNAL(destroyed(QObject*)),
 				 q, SLOT(hd_destroyed(QObject*)));
 		hdSet.insert(hd);
