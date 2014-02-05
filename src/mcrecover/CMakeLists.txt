@@ -149,8 +149,7 @@ SET(mcrecover_SEKRIT_SRCS
 
 # Win32-specific sources.
 IF(WIN32)
-	SET(mcrecover_SRCS
-		${mcrecover_SRCS}
+	SET(mcrecover_OS_SRCS
 		McRecoverQApplication_win32.cpp
 		resources/win32/mcrecover.rc
 		)
@@ -278,6 +277,7 @@ QT4_ADD_RESOURCES(
 # to disable the command prompt window.
 ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_SRCS}
+	${mcrecover_OS_SRCS}
 	${mcrecover_WINDOW_SRCS}
 	${mcrecover_WIDGET_SRCS}
 	${mcrecover_SEKRIT_SRCS}
