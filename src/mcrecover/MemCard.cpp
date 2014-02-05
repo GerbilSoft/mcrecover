@@ -67,6 +67,9 @@ class MemCardPrivate
 		QString filename;
 		QFile *file;
 
+		// Error string.
+		QString errorString;
+
 		// Filesize.
 		quint64 filesize;
 
@@ -210,6 +213,10 @@ MemCardPrivate::MemCardPrivate(MemCard *q, const QString &filename)
 	file = new QFile(filename, q);
 	if (!file->open(QIODevice::ReadOnly)) {
 		// Error opening the file.
+		// NOTE: Qt doesn't return the raw error number.
+		// QFile::error() has a useless generic error number.
+		// TODO: Translate the error message.
+		this->errorString = file->errorString();
 		delete file;
 		file = nullptr;
 		return;
@@ -637,6 +644,18 @@ bool MemCard::isOpen(void) const
 {
 	Q_D(const MemCard);
 	return !!(d->file);
+}
+
+/**
+ * Get the last error string.
+ * Usually used for open() errors.
+ * TODO: Change to error code constants for translation?
+ * @return Error string.
+ */
+QString MemCard::errorString(void) const
+{
+	Q_D(const MemCard);
+	return d->errorString;
 }
 
 /**

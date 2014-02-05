@@ -46,6 +46,7 @@ class MemCard : public QObject
 	Q_FLAGS(Error Errors)
 
 	Q_PROPERTY(bool open READ isOpen)
+	Q_PROPERTY(QString errorString READ errorString)
 	Q_PROPERTY(QString filename READ filename)
 	Q_PROPERTY(int filesize READ filesize);
 	Q_PROPERTY(int sizeInBlocks READ sizeInBlocks)
@@ -111,6 +112,14 @@ class MemCard : public QObject
 		 * @return True if open; false if not.
 		 */
 		bool isOpen(void) const;
+
+		/**
+		 * Get the last error string.
+		 * Usually used for open() errors.
+		 * TODO: Change to error code constants for translation?
+		 * @return Error string.
+		 */
+		QString errorString(void) const;
 
 		/**
 		 * Get the memory card filename.

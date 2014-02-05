@@ -326,7 +326,7 @@ void McRecoverWindowPrivate::showJpWarning(void)
 				"The system PCRE library was not compiled with Unicode character properties support.\n"
 				"Some files with Japanese descriptions might not be found when scanning.");
 #endif /* PCRE_STATIC */
-		ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING, 0);
+		ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING);
 	}
 }
 
@@ -959,7 +959,7 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 		QString msg = tr("The system PCRE library was not compiled with UTF-8 support.\n"
 				"Scanning for lost files will not work.");
 #endif /* PCRE_STATIC */
-		d->ui.msgWidget->showMessage(msg, MessageWidget::ICON_CRITICAL, 0);
+		d->ui.msgWidget->showMessage(msg, MessageWidget::ICON_CRITICAL);
 	}
 
 	// Shh... it's a secret to everybody.
@@ -997,7 +997,13 @@ void McRecoverWindow::openCard(const QString &filename)
 	d->card = new MemCard(filename);
 	if (!d->card->isOpen()) {
 		// Could not open the card.
-		// TODO: Show an error mesage.
+		static const QChar chrBullet(0x2022);  // U+2022: BULLET
+		QString filename_noPath = QFileInfo(filename).fileName();
+		QString errMsg = tr("An error occurred while opening %1:")
+					.arg(filename_noPath) +
+				QChar(L'\n') + chrBullet + QChar(L' ') +
+				d->card->errorString();
+		d->ui.msgWidget->showMessage(errMsg, MessageWidget::ICON_WARNING);
 		closeCard(true);
 		return;
 	}
@@ -1076,7 +1082,7 @@ void McRecoverWindow::openCard(const QString &filename)
 		}
 
 		// Show a warning message.
-		d->ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING, 0);
+		d->ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING);
 	}
 
 	// Update the UI.
