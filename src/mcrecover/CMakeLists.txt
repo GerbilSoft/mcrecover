@@ -122,6 +122,8 @@ SET(mcrecover_SRCS
 	TaskbarButtonManager/TaskbarButtonManager.cpp
 	GcToolsQt.cpp
 	TranslationManager.cpp
+	config/ConfigStore.cpp
+	config/ConfigDefaults.cpp
 	)
 
 SET(mcrecover_WINDOW_SRCS
@@ -167,6 +169,7 @@ SET(mcrecover_MOC_H
 	McRecoverQApplication.hpp
 	MemCardItemDelegate.hpp
 	TaskbarButtonManager/TaskbarButtonManager.hpp
+	config/ConfigStore.hpp
 	)
 
 SET(mcrecover_WINDOW_MOC_H
