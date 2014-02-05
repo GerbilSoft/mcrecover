@@ -25,8 +25,8 @@
 #include "IconAnimHelper.hpp"
 
 // XML template dialog.
-#include "XmlTemplateDialog.hpp"
-#include "XmlTemplateDialogManager.hpp"
+#include "../windows/XmlTemplateDialog.hpp"
+#include "../windows/XmlTemplateDialogManager.hpp"
 
 // Qt includes.
 #include <QtCore/QTimer>

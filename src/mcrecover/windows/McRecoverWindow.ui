@@ -282,7 +282,7 @@
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset resource="resources/oxygen/oxygen.qrc">
+    <iconset resource="../resources/oxygen/oxygen.qrc">
      <normaloff>:/oxygen/16x16/document-open.png</normaloff>:/oxygen/16x16/document-open.png</iconset>
    </property>
    <property name="text">
@@ -297,7 +297,7 @@
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset resource="resources/oxygen/oxygen.qrc">
+    <iconset resource="../resources/oxygen/oxygen.qrc">
      <normaloff>:/oxygen/16x16/document-save.png</normaloff>:/oxygen/16x16/document-save.png</iconset>
    </property>
    <property name="text">
@@ -312,7 +312,7 @@
   </action>
   <action name="actionSaveAll">
    <property name="icon">
-    <iconset resource="resources/oxygen/oxygen.qrc">
+    <iconset resource="../resources/oxygen/oxygen.qrc">
      <normaloff>:/oxygen/16x16/document-save-all.png</normaloff>:/oxygen/16x16/document-save-all.png</iconset>
    </property>
    <property name="text">
@@ -324,7 +324,7 @@
   </action>
   <action name="actionExit">
    <property name="icon">
-    <iconset resource="resources/oxygen/oxygen.qrc">
+    <iconset resource="../resources/oxygen/oxygen.qrc">
      <normaloff>:/oxygen/16x16/application-exit.png</normaloff>:/oxygen/16x16/application-exit.png</iconset>
    </property>
    <property name="text">
@@ -336,7 +336,7 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset resource="resources/oxygen/oxygen.qrc">
+    <iconset resource="../resources/oxygen/oxygen.qrc">
      <normaloff>:/oxygen/16x16/help-about.png</normaloff>:/oxygen/16x16/help-about.png</iconset>
    </property>
    <property name="text">
@@ -348,7 +348,7 @@
   </action>
   <action name="actionScan">
    <property name="icon">
-    <iconset resource="resources/oxygen/oxygen.qrc">
+    <iconset resource="../resources/oxygen/oxygen.qrc">
      <normaloff>:/oxygen/16x16/edit-find.png</normaloff>:/oxygen/16x16/edit-find.png</iconset>
    </property>
    <property name="text">
@@ -360,7 +360,7 @@
   </action>
   <action name="actionClose">
    <property name="icon">
-    <iconset resource="resources/oxygen/oxygen.qrc">
+    <iconset resource="../resources/oxygen/oxygen.qrc">
      <normaloff>:/oxygen/16x16/document-close.png</normaloff>:/oxygen/16x16/document-close.png</iconset>
    </property>
    <property name="text">
@@ -378,7 +378,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources/flags/flags.qrc">
+    <iconset resource="../resources/flags/flags.qrc">
      <normaloff>:/flags/flag-us.png</normaloff>:/flags/flag-us.png</iconset>
    </property>
    <property name="text">
@@ -393,7 +393,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources/flags/flags.qrc">
+    <iconset resource="../resources/flags/flags.qrc">
      <normaloff>:/flags/flag-eu.png</normaloff>:/flags/flag-eu.png</iconset>
    </property>
    <property name="text">
@@ -408,7 +408,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources/flags/flags.qrc">
+    <iconset resource="../resources/flags/flags.qrc">
      <normaloff>:/flags/flag-jp.png</normaloff>:/flags/flag-jp.png</iconset>
    </property>
    <property name="text">
@@ -423,7 +423,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources/flags/flags.qrc">
+    <iconset resource="../resources/flags/flags.qrc">
      <normaloff>:/flags/flag-kr.png</normaloff>:/flags/flag-kr.png</iconset>
    </property>
    <property name="text">
@@ -510,24 +510,24 @@
   <customwidget>
    <class>MemCardFileView</class>
    <extends>QWidget</extends>
-   <header>MemCardFileView.hpp</header>
+   <header>widgets/MemCardFileView.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>MemCardView</class>
    <extends>QWidget</extends>
-   <header>MemCardView.hpp</header>
+   <header>widgets/MemCardView.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>QTreeViewOpt</class>
    <extends>QTreeView</extends>
-   <header>QTreeViewOpt.hpp</header>
+   <header>widgets/QTreeViewOpt.hpp</header>
   </customwidget>
   <customwidget>
    <class>MessageWidgetStack</class>
    <extends>QWidget</extends>
-   <header>MessageWidgetStack.hpp</header>
+   <header>widgets/MessageWidgetStack.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -539,8 +539,8 @@
   <tabstop>mcfFileView</tabstop>
  </tabstops>
  <resources>
-  <include location="resources/oxygen/oxygen.qrc"/>
-  <include location="resources/flags/flags.qrc"/>
+  <include location="../resources/oxygen/oxygen.qrc"/>
+  <include location="../resources/flags/flags.qrc"/>
  </resources>
  <connections/>
 </ui>

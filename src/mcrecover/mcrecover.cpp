@@ -21,7 +21,7 @@
 
 #include "mcrecover.hpp"
 
-#include "McRecoverWindow.hpp"
+#include "windows/McRecoverWindow.hpp"
 
 // C includes.
 #include <stdio.h>

@@ -28,7 +28,7 @@
         </sizepolicy>
        </property>
        <property name="pixmap">
-        <pixmap resource="resources/mcrecover/mcrecover.qrc">:/mcrecover/128x128/mcrecover.png</pixmap>
+        <pixmap resource="../resources/mcrecover/mcrecover.qrc">:/mcrecover/128x128/mcrecover.png</pixmap>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -213,6 +213,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../resources/mcrecover/mcrecover.qrc"/>
   <include location="resources/mcrecover/mcrecover.qrc"/>
  </resources>
  <connections>

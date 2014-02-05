@@ -238,7 +238,7 @@ Checksum:</string>
   <customwidget>
    <class>TableSelect</class>
    <extends>QWidget</extends>
-   <header>TableSelect.hpp</header>
+   <header>widgets/TableSelect.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

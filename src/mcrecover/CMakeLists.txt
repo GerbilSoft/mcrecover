@@ -108,34 +108,37 @@ SET(mcrecover_SRCS
 	mcrecover.cpp
 	MemCard.cpp
 	MemCardFile.cpp
-	McRecoverWindow.cpp
 	MemCardModel.cpp
 	GcnMcFileDb.cpp
 	SearchThread.cpp
-	StatusBarManager.cpp
 	SearchThreadWorker.cpp
 	PcreRegex.cpp
 	GcnDateTime.cpp
 	IconAnimHelper.cpp
 	McRecoverQApplication.cpp
-	AboutDialog.cpp
 	VarReplace.cpp
 	MemCardItemDelegate.cpp
 	FileComments.cpp
 	TaskbarButtonManager/TaskbarButtonManager.cpp
 	GcToolsQt.cpp
 	TranslationManager.cpp
-	XmlTemplateDialog.cpp
-	XmlTemplateDialogManager.cpp
 	)
 
+SET(mcrecover_WINDOW_SRCS
+	windows/McRecoverWindow.cpp
+	windows/AboutDialog.cpp
+	windows/XmlTemplateDialog.cpp
+	windows/XmlTemplateDialogManager.cpp
+	)
+	
 SET(mcrecover_WIDGET_SRCS
-	MemCardFileView.cpp
-	MemCardView.cpp
-	QTreeViewOpt.cpp
-	MessageWidget.cpp
-	TableSelect.cpp
-	MessageWidgetStack.cpp
+	widgets/StatusBarManager.cpp
+	widgets/MemCardFileView.cpp
+	widgets/MemCardView.cpp
+	widgets/QTreeViewOpt.cpp
+	widgets/MessageWidget.cpp
+	widgets/TableSelect.cpp
+	widgets/MessageWidgetStack.cpp
 	)
 
 # Shh... it's a secret to everybody.
@@ -149,7 +152,7 @@ IF(WIN32)
 	SET(mcrecover_SRCS
 		${mcrecover_SRCS}
 		McRecoverQApplication_win32.cpp
-		ui/resources/win32/mcrecover.rc
+		resources/win32/mcrecover.rc
 		)
 ENDIF(WIN32)
 
@@ -157,28 +160,31 @@ ENDIF(WIN32)
 SET(mcrecover_MOC_H
 	MemCard.hpp
 	MemCardFile.hpp
-	McRecoverWindow.hpp
 	MemCardModel.hpp
 	GcnMcFileDb.hpp
 	SearchThread.hpp
-	StatusBarManager.hpp
 	SearchThreadWorker.hpp
 	IconAnimHelper.hpp
 	McRecoverQApplication.hpp
-	AboutDialog.hpp
 	MemCardItemDelegate.hpp
 	TaskbarButtonManager/TaskbarButtonManager.hpp
-	XmlTemplateDialog.hpp
-	XmlTemplateDialogManager.hpp
+	)
+
+SET(mcrecover_WINDOW_MOC_H
+	windows/McRecoverWindow.hpp
+	windows/AboutDialog.hpp
+	windows/XmlTemplateDialog.hpp
+	windows/XmlTemplateDialogManager.hpp
 	)
 
 SET(mcrecover_WIDGET_MOC_H
-	MemCardFileView.hpp
-	MemCardView.hpp
-	QTreeViewOpt.hpp
-	MessageWidget.hpp
-	TableSelect.hpp
-	MessageWidgetStack.hpp
+	widgets/StatusBarManager.hpp
+	widgets/MemCardFileView.hpp
+	widgets/MemCardView.hpp
+	widgets/QTreeViewOpt.hpp
+	widgets/MessageWidget.hpp
+	widgets/TableSelect.hpp
+	widgets/MessageWidgetStack.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H
@@ -187,27 +193,28 @@ SET(mcrecover_SEKRIT_MOC_H
 	)
 
 # UI files.
-SET(mcrecover_UIS
-	ui/McRecoverWindow.ui
-	ui/AboutDialog.ui
-	ui/XmlTemplateDialog.ui
+SET(mcrecover_WINDOW_UIS
+	windows/McRecoverWindow.ui
+	windows/AboutDialog.ui
+	windows/XmlTemplateDialog.ui
 	)
 
 SET(mcrecover_WIDGET_UIS
-	ui/MemCardFileView.ui
-	ui/MemCardView.ui
-	ui/TableSelect.ui
+	widgets/MemCardFileView.ui
+	widgets/MemCardView.ui
+	widgets/TableSelect.ui
 	)
 
 # Generate the header files from the UI files.
 QT4_WRAP_UI(mcrecover_UIS_H
-	${mcrecover_UIS}
+	${mcrecover_WINDOW_UIS}
 	${mcrecover_WIDGET_UIS}
 	)
 
 # Create MOC source files for classes that need them.
 QT4_WRAP_CPP(mcrecover_MOC_SRCS
 	${mcrecover_MOC_H}
+	${mcrecover_WINDOW_MOC_H}
 	${mcrecover_WIDGET_MOC_H}
 	${mcrecover_SEKRIT_MOC_H}
 	)
@@ -252,9 +259,9 @@ ADD_SUBDIRECTORY(translations)
 ######################
 
 SET(mcrecover_RCC_SRCS
-	ui/resources/mcrecover/mcrecover.qrc
-	ui/resources/oxygen/oxygen.qrc
-	ui/resources/flags/flags.qrc
+	resources/mcrecover/mcrecover.qrc
+	resources/oxygen/oxygen.qrc
+	resources/flags/flags.qrc
 	)
 
 # Add the resource files to the project.
@@ -271,6 +278,7 @@ QT4_ADD_RESOURCES(
 # to disable the command prompt window.
 ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_SRCS}
+	${mcrecover_WINDOW_SRCS}
 	${mcrecover_WIDGET_SRCS}
 	${mcrecover_SEKRIT_SRCS}
 	${mcrecover_MOC_SRCS}

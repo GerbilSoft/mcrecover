@@ -40,7 +40,7 @@
 
 // Search classes.
 #include "SearchThread.hpp"
-#include "StatusBarManager.hpp"
+#include "widgets/StatusBarManager.hpp"
 
 // Translation Manager.
 #include "TranslationManager.hpp"
