@@ -65,10 +65,16 @@ ADD_EXECUTABLE(gcbanner
 TARGET_LINK_LIBRARIES(gcbanner gctools)
 
 # Split debug information.
-INCLUDE(SplitDebugInformation)
 IF(SPLIT_DEBUG)
+	INCLUDE(SplitDebugInformation)
 	SPLIT_DEBUG_INFORMATION(gcbanner)
 ENDIF(SPLIT_DEBUG)
+
+# Compress the EXE.
+IF(COMPRESS_EXE)
+	INCLUDE(CompressExeWithUpx)
+	COMPRESS_EXE_WITH_UPX(gcbanner)
+ENDIF(COMPRESS_EXE)
 
 #################
 # Installation. #
