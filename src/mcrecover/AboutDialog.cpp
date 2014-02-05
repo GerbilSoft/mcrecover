@@ -296,7 +296,7 @@ QString AboutDialogPrivate::GetCredits(void)
 QString AboutDialogPrivate::GetLibraries(void)
 {
 	// Double linebreak.
-	static const QString sDLineBreak = QChar(L'\n') + QChar(L'\n');
+	static const QString sDLineBreak = QLatin1String("\n\n");
 
 	// NOTE: These strings can NOT be static.
 	// Otherwise, they won't be retranslated if the UI language
@@ -320,8 +320,14 @@ QString AboutDialogPrivate::GetLibraries(void)
 	// Icon set.
 	sLibraries = QLatin1String(
 		"Icon set is based on KDE's Oxygen icons.\n"
-		"Copyright (C) 2005-2013 by David Vignoni.\n");
+		"Copyright (C) 2005-2014 by David Vignoni.\n");
 	sLibraries += sLicenses.arg(QLatin1String("CC BY-SA 3.0, GNU LGPL v2.1+"));
+
+	// Flag icons.
+	sLibraries += sDLineBreak;
+	sLibraries += QLatin1String(
+		"Flag icons are based on KDE 4.12.1's locale icons.\n"
+		"EU flag icon is based on Dolphin Emulator 4.0's Flag_Europe.xpm icon.");
 
 	// TODO: Don't show compiled-with version if the same as in-use version?
 
