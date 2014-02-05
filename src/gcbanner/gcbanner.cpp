@@ -242,7 +242,7 @@ static GcImage *read_banner_BNR1(FILE *f)
  * @param suffix New suffix.
  * @return New filename.
  */
-string create_filename(const char *filename, const char *suffix)
+static string create_filename(const char *filename, const char *suffix)
 {
 	// image.png was not specified.
 	// Remove the extension from the current file (if any),
@@ -263,6 +263,17 @@ string create_filename(const char *filename, const char *suffix)
 	// Append the new extension.
 	tmp_filename.append(suffix);
 	return tmp_filename;
+}
+
+/**
+ * Create a new filename based on a given filename.
+ * @param filename Original filename.
+ * @param suffix New suffix.
+ * @return New filename.
+ */
+static inline string create_filename(const std::string &filename, const char *suffix)
+{
+	return create_filename(filename.c_str(), suffix);
 }
 
 /**
@@ -403,46 +414,61 @@ static int extract_icon(FILE *f, filetype_t ft,
 
 	// Determine the destination filename.
 	string s_icon_png_filename;
+	const char *ext = GcImageWriter::extForAnimImageFormat(animImgf);
 	if (icon_png_filename) {
 		s_icon_png_filename = string(icon_png_filename);
 	} else {
-		const char *ext = GcImageWriter::extForAnimImageFormat(animImgf);
-		// TODO: PNG FPF support.
 		string suffix(".icon.");
 		suffix.append(ext);
 		s_icon_png_filename = create_filename(opening_bnr_filename, suffix.c_str());
 	}
 
+	// TODO: Better error messages.
+
 	// Open the destination file.
-	// TODO: PNG FPF support.
 	// TODO: Delete on failure?
-	FILE *f_icon_png = fopen(s_icon_png_filename.c_str(), "wb");
-	if (!f_icon_png) {
-		fprintf(stderr, "*** ERROR opening file %s: %s\n",
-			s_icon_png_filename.c_str(), strerror(errno));
-		return -2;
-	}
+	for (int i = 0; i < gcImageWriter.numFiles(); i++) {
+		string filename;
+		if (gcImageWriter.numFiles() > 1) {
+			// Multiple files.
+			// Append the file number.
+			char tmp[16];
+			snprintf(tmp, sizeof(tmp), ".%02d.%s", i+1, ext);
+			filename = create_filename(s_icon_png_filename, tmp);
+		} else {
+			// Single file.
+			filename = s_icon_png_filename;
+		}
 
-	// Get the PNG image data.
-	// TODO: PNG FPF support.
-	const vector<uint8_t> *pngImageData = gcImageWriter.memBuffer();
-	if (!pngImageData || pngImageData->empty()) {
-		fprintf(stderr, "*** ERROR: GcImageWriter has no image data.\n");
-		fclose(f_icon_png);
-		return -3;
-	}
+		FILE *f_icon_png = fopen(filename.c_str(), "wb");
+		if (!f_icon_png) {
+			fprintf(stderr, "*** ERROR opening file %s: %s\n",
+				filename.c_str(), strerror(errno));
+			return -2;
+		}
 
-	// Write the PNG image data.
-	size_t ret_sz = fwrite(pngImageData->data(), 1, pngImageData->size(), f_icon_png);
-	if (ret_sz != pngImageData->size()) {
-		fprintf(stderr, "*** ERROR: wrote %u bytes to image; expected %u bytes\n",
-			(unsigned int)ret_sz, (unsigned int)pngImageData->size());
+		// Get the image data.
+		const vector<uint8_t> *pngData = gcImageWriter.memBuffer(i);
+		if (!pngData || pngData->empty()) {
+			fprintf(stderr, "*** ERROR: GcImageWriter has no data for image %d.\n", i);
+			fclose(f_icon_png);
+			return -3;
+		}
+
+		// Write the image data.
+		size_t ret_sz = fwrite(pngData->data(), 1, pngData->size(), f_icon_png);
+		if (ret_sz != pngData->size()) {
+			fprintf(stderr, "*** ERROR: wrote %u bytes to image; expected %u bytes\n",
+				(unsigned int)ret_sz, (unsigned int)pngData->size());
+			fclose(f_icon_png);
+			return -4;
+		}
+
+		// Image written successfully.
 		fclose(f_icon_png);
-		return -4;
 	}
 
 	// Success!
-	fclose(f_icon_png);
 	printf("%s (%s) icon -> %s [%s] [OK]\n",
 		opening_bnr_filename,
 		filetype_str(ft).c_str(),
