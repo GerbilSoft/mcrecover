@@ -48,7 +48,7 @@
     <message>
         <location filename="../windows/AboutDialog.cpp" line="275"/>
         <source>UI Translators:</source>
-        <translation type="unfinished"></translation>
+        <translation>Traductores de la IU:</translation>
     </message>
     <message>
         <location filename="../windows/AboutDialog.cpp" line="319"/>
@@ -148,14 +148,14 @@
         <source>Quack Detection</source>
         <comment>DT_Q</comment>
         <extracomment>&quot;Quack Detection&quot; title.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Detección de quackeo</translation>
     </message>
     <message>
         <location filename="../sekrit/HackDetection.cpp" line="247"/>
         <source>Snack Detection</source>
         <comment>DT_S</comment>
         <extracomment>&quot;&apos;Snack Detection&quot; title.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Detección de snack</translation>
     </message>
     <message>
         <location filename="../sekrit/HackDetection.cpp" line="258"/>
@@ -187,13 +187,17 @@ You must rebake the snack and accept the snack
 recipe again, to continue to eat the snack.</source>
         <comment>DT_S</comment>
         <extracomment>&quot;Snack Detection&quot; message. Preserve the linebreaks!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Uno o más ingredientes del snack fueron modificados por
+una fuente externa. Esto no esta permitido, de a-
+cuerdo con la receta.
+Debes volver a hornear el snack, y aceptar la receta
+otra vez, para volver a comer el snack.</translation>
     </message>
     <message>
         <location filename="../sekrit/HackDetection.cpp" line="275"/>
         <source>Snack salted.</source>
         <comment>DT_S</comment>
-        <translation type="unfinished"></translation>
+        <translation>Snack salteado.</translation>
     </message>
     <message>
         <location filename="../sekrit/HackDetection.cpp" line="280"/>
@@ -726,46 +730,48 @@ Espe&amp;rado:</translation>
     <message>
         <location filename="../widgets/StatusBarManager.cpp" line="111"/>
         <source>Ready.</source>
-        <translation type="unfinished"></translation>
+        <translation>Listo.</translation>
     </message>
     <message>
         <location filename="../widgets/StatusBarManager.cpp" line="135"/>
         <source>Scanning block #%L1 (%L2 scanned, %L3 remaining)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Escaneando bloque %L1 (%L2 escaneados, %L3 restantes)...</translation>
     </message>
     <message>
         <location filename="../widgets/StatusBarManager.cpp" line="350"/>
         <source>Loaded GameCube Memory Card image %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Imagen de tarjeta GameCube %1 cargada</translation>
     </message>
     <message>
         <location filename="../widgets/StatusBarManager.cpp" line="366"/>
         <source>GameCube Memory Card image closed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Imagen de tarjeta GameCube cerrada.</translation>
     </message>
     <message numerus="yes">
         <location filename="../widgets/StatusBarManager.cpp" line="383"/>
         <source>%Ln file(s) saved to %1.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln archivo guardado a %1.</numerusform>
+            <numerusform>%Ln archivos guardado a %1.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../widgets/StatusBarManager.cpp" line="447"/>
         <source>Scan cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Escaneo cancelado</translation>
     </message>
     <message numerus="yes">
         <location filename="../widgets/StatusBarManager.cpp" line="467"/>
         <source>Scan complete. %Ln lost file(s) found.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Escaneo completado: %Ln archivo perdido encontrado.</numerusform>
+            <numerusform>Escaneo completado: %Ln archivos perdidos encontrados.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../widgets/StatusBarManager.cpp" line="501"/>
         <source>An error occurred while scanning: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ocurrió un error al escanear: %1</translation>
     </message>
 </context>
 <context>
