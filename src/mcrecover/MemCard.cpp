@@ -1009,10 +1009,10 @@ int MemCard::activeDatHdrIdx(void) const
 bool MemCard::isDatValid(int idx) const
 {
 	if (!isOpen())
-		return -1;
+		return false;
 	Q_D(const MemCard);
 	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_dat_valid))
-		return -1;
+		return false;
 	return d->mc_dat_valid[idx];
 }
 
@@ -1064,10 +1064,10 @@ int MemCard::activeBatHdrIdx(void) const
 bool MemCard::isBatValid(int idx) const
 {
 	if (!isOpen())
-		return -1;
+		return false;
 	Q_D(const MemCard);
 	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_bat_valid))
-		return -1;
+		return false;
 	return d->mc_bat_valid[idx];
 }
 
