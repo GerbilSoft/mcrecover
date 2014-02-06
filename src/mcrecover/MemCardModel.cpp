@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 #include "MemCardModel.hpp"
+#include "McRecoverQApplication.hpp"
 
 // MemCard classes.
 #include "MemCard.hpp"
@@ -276,7 +277,14 @@ void MemCardModelPrivate::animTimerSlot(void)
 MemCardModel::MemCardModel(QObject *parent)
 	: QAbstractListModel(parent)
 	, d_ptr(new MemCardModelPrivate(this))
-{ }
+{
+	// Connect the "themeChanged" signal.
+	McRecoverQApplication *mcrqa = qobject_cast<McRecoverQApplication*>(McRecoverQApplication::instance());
+	if (mcrqa) {
+		connect(mcrqa, SIGNAL(themeChanged()),
+			this, SLOT(themeChanged_slot()));
+	}
+}
 
 MemCardModel::~MemCardModel()
 {
@@ -658,4 +666,18 @@ void MemCardModel::memCard_filesRemoved_slot(void)
 
 	// Done removing rows.
 	endRemoveRows();
+}
+
+/** Slots. **/
+
+/**
+ * The system theme has changed.
+ */
+void MemCardModel::themeChanged_slot(void)
+{
+	// Reinitialize the style.
+	Q_D(MemCardModel);
+	d->style.init();
+
+	// TODO: Force an update?
 }

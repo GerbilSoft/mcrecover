@@ -108,6 +108,11 @@ class MemCardModel : public QAbstractListModel
 		 * Files have been removed from the MemCard.
 		 */
 		void memCard_filesRemoved_slot(void);
+
+		/**
+		 * The system theme has changed.
+		 */
+		void themeChanged_slot(void);
 };
 
 #endif /* __MCRECOVER_MEMCARDMODEL_HPP__ */
