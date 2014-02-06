@@ -221,27 +221,23 @@ QVariant ConfigStorePrivate::Validate(const QString &name, const QVariant &value
 int ConfigStorePrivate::LookupQtMethod(const QObject *object, const char *method)
 {
 	// Based on QMetaObject::invokeMethod().
-	
+
 	// NOTE: The first character of method indicates whether it's a signal or slot.
-	// We don't need this information, so we use method+1.
+	// We don't need this information, so we'll use method+1.
 	method++;
-	
+
 	int idx = object->metaObject()->indexOfMethod(method);
-	if (idx < 0)
-	{
+	if (idx < 0) {
+		// Normalize the signature and try again.
 		QByteArray norm = QMetaObject::normalizedSignature(method);
 		idx = object->metaObject()->indexOfMethod(norm.constData());
 	}
-	
-	if (idx < 0 || idx >= object->metaObject()->methodCount())
-	{
-		// TODO: Do verification in registerChangeNotification()?
-		fprintf(stderr, "ConfigStorePrivate::LookupQtMethod(): "
-			"No such method %s::%s",
-			object->metaObject()->className(), method);
+
+	if (idx < 0 || idx >= object->metaObject()->methodCount()) {
+		// Method index not found.
 		return -1;
 	}
-	
+
 	// Method index found.
 	return idx;
 }
@@ -310,7 +306,7 @@ void ConfigStore::set(const QString &key, const QVariant &value)
 	if (!d->settings.contains(key)) {
 		// Property does not exist. Print a warning.
 		// TODO: Make this an error, since it won't be saved?
-		fprintf(stderr, "ConfigStore: Property '%s' has no default value. FIX THIS!",
+		fprintf(stderr, "ConfigStore: Property '%s' has no default value. FIX THIS!\n",
 			key.toUtf8().constData());
 	}
 #endif
@@ -369,7 +365,7 @@ QVariant ConfigStore::get(const QString &key) const
 	if (!d->settings.contains(key)) {
 		// Property does not exist. Print a warning.
 		// TODO: Make this an error, since it won't be saved?
-		fprintf(stderr, "ConfigStore: Property '%s' has no default value. FIX THIS!",
+		fprintf(stderr, "ConfigStore: Property '%s' has no default value. FIX THIS!\n",
 			key.toUtf8().constData());
 	}
 #endif
@@ -543,8 +539,16 @@ void ConfigStore::registerChangeNotification(const QString &property, QObject *o
 
 	// Look up the method index.
 	int method_idx = ConfigStorePrivate::LookupQtMethod(object, method);
-	if (method_idx < 0)
+	if (method_idx < 0) {
+		// NOTE: The first character of method indicates whether it's a signal or slot.
+		// This is useless in error messages, so we'll use method+1.
+		if (*method != 0)
+			method++;
+		fprintf(stderr, "ConfigStore::registerChangeNotification(): "
+			"No such method %s::%s\n",
+			object->metaObject()->className(), method);
 		return;
+	}
 
 	// Add this object and slot to the signal maps vector.
 	ConfigStorePrivate::SignalMap smap;
