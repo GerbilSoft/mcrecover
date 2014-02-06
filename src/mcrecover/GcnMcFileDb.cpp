@@ -259,8 +259,7 @@ void GcnMcFileDbPrivate::parseXml_GcnMcFileDb(QXmlStreamReader &xml)
 			// Found a <file> element.
 			GcnMcFileDef *gcnMcFileDef = parseXml_file(xml);
 			if (gcnMcFileDef && gcnMcFileDef->search.address > BLOCK_SIZE_MASK) {
-				// FIXME: Support for files with
-				// search address above 0x1FFF.
+				// FIXME: Support for files with search address above 0x1FFF.
 				delete gcnMcFileDef;
 			} else if (gcnMcFileDef) {
 				// Add the file to the database.
@@ -418,11 +417,7 @@ void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDe
 
 	// Attempt to compile the regular expressions.
 	// TODO: Display errors if setRegex() fails.
-
-	// Game Description.
 	gcnMcFileDef->search.gameDesc_regex.setRegex(gcnMcFileDef->search.gameDesc);
-
-	// File Description.
 	gcnMcFileDef->search.fileDesc_regex.setRegex(gcnMcFileDef->search.fileDesc);
 }
 
@@ -553,8 +548,7 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 	if (instances > 2043)
 		instances = 2043;
 
-	// TODO: Make sure (instances * increment)
-	// doesn't go past the end of the card?
+	// TODO: Make sure (instances * increment) doesn't go past the end of the card?
 	for (; instances > 0; instances--) {
 		// Add the checksum definition.
 		gcnMcFileDef->checksumDefs.append(checksumDef);

@@ -68,7 +68,7 @@ class MessageWidgetPrivate
 		static const int iconSz = 22;
 		void setIcon(MessageWidget::MsgIcon icon);
 
-		// Message timeout. (TODO)
+		// Message timeout.
 		QTimer *tmrTimeout;
 		bool timeout;	// True if message was dismissed via timeout.
 

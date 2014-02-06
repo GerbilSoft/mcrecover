@@ -182,7 +182,8 @@ uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, u
 			return SonicChaoGarden(reinterpret_cast<const uint8_t*>(buf), siz);
 
 		case CHKALG_CRC32:
-			// TODO
+			// TODO: Implement CRC32 once I encounter a file that uses it.
+			break;
 
 		default:
 			break;

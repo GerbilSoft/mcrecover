@@ -202,10 +202,10 @@ MemCardPrivate::MemCardPrivate(MemCard *q, const QString &filename)
 	memset(mc_dat_valid, 0x00, sizeof(mc_dat_valid));
 	memset(mc_bat_valid, 0x00, sizeof(mc_bat_valid));
 
-	// TODO: Set an error code somewhere.
-
 	if (filename.isEmpty()) {
 		// No filename specified.
+		// TODO: Translate the error message.
+		this->errorString = QLatin1String("No such file or directory");
 		return;
 	}
 
@@ -321,8 +321,6 @@ int MemCardPrivate::loadSysInfo(void)
 {
 	if (!file)
 		return -1;
-
-	// TODO: Verify read sizes.
 
 	// Header.
 	file->seek(0);
@@ -501,8 +499,6 @@ int MemCardPrivate::checkTables(void)
 	 * - 2. Validate checksums.
 	 * - 3. If invalid checksum, use other one.
 	 * - 4. If both are invalid, error!
-	 * TODO: If both checksums are invalid, report an error. Defaulting to table 0 for now.
-	 * TODO: Allow user to select?
 	 */
 	int idx = (mc_dat_int[1].dircntrl.updated > mc_dat_int[0].dircntrl.updated);
 
@@ -528,8 +524,6 @@ int MemCardPrivate::checkTables(void)
 	 * - 2. Validate checksums.
 	 * - 3. If invalid checksum, use other one.
 	 * - 4. If both are invalid, error!
-	 * TODO: If both checksums are invalid, report an error. Defaulting to table 0 for now.
-	 * TODO: Allow user to select?
 	 */
 	idx = (mc_bat_int[1].updated > mc_bat_int[0].updated);
 
@@ -763,9 +757,7 @@ QString MemCard::serialNumber(void) const
 	QString serial_text;
 	char tmp[4];
 
-	// TODO: ARRAY_SIZE() macro.
 	serial_text.reserve(sizeof(d->mc_header.serial)*2);
-
 	for (int i = 0; i < (int)sizeof(d->mc_header.serial); i++) {
 		snprintf(tmp, sizeof(tmp), "%02X", d->mc_header.serial[i]);
 		serial_text += QLatin1String(tmp);

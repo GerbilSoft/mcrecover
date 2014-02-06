@@ -441,8 +441,6 @@ void StatusBarManager::searchStarted_slot(int totalPhysBlocks, int totalSearchBl
 void StatusBarManager::searchCancelled_slot(void)
 {
 	Q_D(StatusBarManager);
-
-	// TODO
 	d->scanning = false;
 	d->lastStatusMessage = tr("Scan cancelled.");
 	d->updateStatusBar();

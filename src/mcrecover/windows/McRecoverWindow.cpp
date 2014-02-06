@@ -312,8 +312,7 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 void McRecoverWindowPrivate::showJpWarning(void)
 {
 	if (!PcreRegex::PCRE_has_UCP()) {
-		// FIXME: MessageWidget text cannot be
-		// retranslated while it's still visible.
+		// FIXME: MessageWidget text cannot be retranslated while it's still visible.
 		// FIXME: Mac OS X will use a dylib in the application framework.
 #ifdef PCRE_STATIC
 		//: Statically-linked PCRE is missing Unicode character properties support.
@@ -777,9 +776,8 @@ void McRecoverWindowPrivate::initTsMenu(void)
 		ui.menuLanguage->addAction(actTs);
 	}
 
-	// Set the default language.
-	// TODO: If user set a language before, reload that setting.
-	actTsSysDefault->setChecked(true);
+	// Initial language is set by a ConfigStore notification,
+	// connected to setTranslation_cfg_slot().
 }
 
 /**
@@ -947,8 +945,7 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 		d->scanningDisabled = true;
 		d->ui.actionScan->setEnabled(false);
 
-		// FIXME: MessageWidget text cannot be
-		// retranslated while it's still visible.
+		// FIXME: MessageWidget text cannot be retranslated while it's still visible.
 		// FIXME: Mac OS X will use a dylib in the application framework.
 #ifdef PCRE_STATIC
 		//: Statically-linked PCRE is missing UTF-8 support.
@@ -1325,7 +1322,7 @@ void McRecoverWindow::on_actionScan_triggered(void)
 	}
 
 	// Load the databases.
-	// TODO:
+	// TODO: Optimize database loading:
 	// - Only if the database is not loaded,
 	//   or if the database file has been changed.
 	int ret = d->searchThread->loadGcnMcFileDbs(dbFilenames);

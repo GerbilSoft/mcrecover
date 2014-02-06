@@ -117,7 +117,7 @@ class SearchThread : public QObject
 		 * @return Number of files found on success; negative on error.
 		 *
 		 * If successful, retrieve the file list using dirEntryList().
-		 * If an error occurs, check the errorString(). (TODO)(
+		 * If an error occurs, check the errorString(). (TODO)
 		 */
 		int searchMemCard(MemCard *card, char preferredRegion = 0, bool searchUsedBlocks = false);
 

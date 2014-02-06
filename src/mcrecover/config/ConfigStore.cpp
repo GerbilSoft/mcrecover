@@ -101,6 +101,7 @@ class ConfigStorePrivate
 		 *   - SignalMap.object: Object to send signal to.
 		 *   - SignalMap.method: Method name.
 		 */
+		// TODO: Use QLinkedList<SignalMap>* instead?
 		struct SignalMap {
 			QPointer<QObject> object;
 			int method_idx;
@@ -136,7 +137,6 @@ void ConfigStorePrivate::initConfigPath(void)
 	}
 #endif /* Q_OS_WIN */
 
-	// TODO: Portable mode.
 	// TODO: Fallback if the user directory isn't writable.
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope,
 				QLatin1String("mcrecover"),
@@ -339,7 +339,6 @@ void ConfigStore::set(const QString &key, const QVariant &value)
 
 	// Process the signal map vector in reverse-order.
 	// Reverse order makes it easier to remove deleted objects.
-	// TODO: Use QLinkedList instead?
 	for (int i = (signalMapVector->size() - 1); i >= 0; i--) {
 		const ConfigStorePrivate::SignalMap &smap = signalMapVector->at(i);
 		if (smap.object.isNull()) {
@@ -586,7 +585,6 @@ void ConfigStore::unregisterChangeNotification(const QString &property, QObject 
 
 	// Process the signal map vector in reverse-order.
 	// Reverse order makes it easier to remove deleted objects.
-	// TODO: Use QLinkedList instead?
 	for (int i = (signalMapVector->size() - 1); i >= 0; i--) {
 		const ConfigStorePrivate::SignalMap &smap = signalMapVector->at(i);
 		if (smap.object.isNull()) {
@@ -622,7 +620,6 @@ void ConfigStore::notifyAll(void)
 
 		// Process the signal map vector in reverse-order.
 		// Reverse order makes it easier to remove deleted objects.
-		// TODO: Use QLinkedList instead?
 		for (int i = (signalMapVector->size() - 1); i >= 0; i--) {
 			const ConfigStorePrivate::SignalMap &smap = signalMapVector->at(i);
 			if (smap.object.isNull()) {

@@ -15,7 +15,6 @@
 #include <stdio.h>
 #include <string.h>
 
-// 
 /** MSVC compatibility macros. **/
 #ifdef _MSC_VER
 #define inline __inline

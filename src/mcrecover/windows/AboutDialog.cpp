@@ -183,7 +183,6 @@ void AboutDialogPrivate::initAboutDialogText(void)
 		scrlDebugInfo->setStyleSheet(css);
 		ui.lblDebugInfo->setStyleSheet(css);
 		// Don't turn off hscroll because the default db filename might be too long.
-		// TODO: Re-enable this once multiple db files are supported.
 		//scrlDebugInfo->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 		scrlDebugInfo->setWidget(ui.lblDebugInfo);
 		scrlDebugInfo->setWidgetResizable(true);
@@ -479,7 +478,6 @@ QString AboutDialogPrivate::GetDebugInfo(void)
 #endif /* Q_OS_WIN */
 
 	// Database filenames.
-	// TODO: List loaded databases.
 	QVector<QString> dbFilenames = GcnMcFileDb::GetDbFilenames();
 	sDebugInfo += AboutDialog::tr("Available databases:") + QChar(L'\n');
 	if (dbFilenames.isEmpty()) {
