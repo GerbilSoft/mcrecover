@@ -31,11 +31,6 @@ Actual text is in XmlTemplateDialog.cpp.</string>
    </item>
    <item>
     <widget class="QPlainTextEdit" name="txtTemplate">
-     <property name="font">
-      <font>
-       <family>Monospace</family>
-      </font>
-     </property>
      <property name="lineWrapMode">
       <enum>QPlainTextEdit::NoWrap</enum>
      </property>

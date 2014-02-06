@@ -259,6 +259,15 @@ void XmlTemplateDialog::init(void)
 	this->setWindowIcon(QIcon());
 #endif
 
+	// Set the correct font on the QPlainTextEdit widget.
+	// Qt/Windows doesn't recognize the Monospace font,
+	// so we have to initialize the font family to ""
+	// and set the style hint to QFont::TypeWriter.
+	// FIXME: Font is a bit small on Windows...
+	QFont fntMonospace(QLatin1String(""));
+	fntMonospace.setStyleHint(QFont::TypeWriter);
+	d->ui.txtTemplate->setFont(fntMonospace);
+
 	// FIXME: QPlainTextEdit cursor doesn't show up when readOnly.
 
 	// Update the window text.
