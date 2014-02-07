@@ -75,11 +75,13 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.0)
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake) # for FindReadline.cmake
 
 # mcrecover: Disable external packages.
+IF(0)
 # external packages
-#FIND_PACKAGE( BZip2 )
-#FIND_PACKAGE( ZLIB )
-#FIND_PACKAGE( Readline )
-#FIND_PACKAGE( Editline )
+FIND_PACKAGE( BZip2 )
+FIND_PACKAGE( ZLIB )
+FIND_PACKAGE( Readline )
+FIND_PACKAGE( Editline )
+ENDIF(0)
 
 # Configuration checks
 
@@ -873,6 +875,8 @@ echo RunTest.bat tests successfully completed
 
 ENDIF(PCRE_BUILD_TESTS)
 
+# mcrecover: Disable installation.
+IF(0)
 # Installation
 SET(CMAKE_INSTALL_ALWAYS 1)
 
@@ -914,6 +918,7 @@ IF(MSVC AND INSTALL_MSVC_PDB)
             DESTINATION bin
             CONFIGURATIONS Debug)
 ENDIF(MSVC AND INSTALL_MSVC_PDB)
+ENDIF(0)
 
 # help, only for nice output
 IF(BUILD_SHARED_LIBS)
