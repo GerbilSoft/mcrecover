@@ -26,5 +26,3 @@ INSTALL(FILES ${QM_FILES}
 	DESTINATION "${DIR_INSTALL_TRANSLATIONS}"
 	COMPONENT "translations"
 	)
-
-# TODO: Install system translations on Win32 and Apple.

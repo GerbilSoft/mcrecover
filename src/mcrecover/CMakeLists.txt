@@ -413,3 +413,14 @@ IF(UNIX AND NOT APPLE)
 		COMPONENT "desktop-icon"
 		)
 ENDIF(UNIX AND NOT APPLE)
+
+# System translations.
+# Install on Windows and Mac OS X, or if we're using statically-linked Qt.
+# Dynamically-linked Qt uses system translations.
+IF(QT_IS_STATIC OR APPLE OR NOT UNIX)
+	FILE(GLOB QT_SYS_TRANSLATIONS "${QT_TRANSLATIONS_DIR}/qt_??.qm")
+	INSTALL(FILES ${QT_SYS_TRANSLATIONS}
+		DESTINATION ${DIR_INSTALL_TRANSLATIONS}
+		COMPONENT "translations"
+		)
+ENDIF(QT_IS_STATIC OR APPLE OR NOT UNIX)
