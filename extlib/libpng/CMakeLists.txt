@@ -13,7 +13,9 @@ set(CMAKE_CONFIGURATION_TYPES "Release;Debug;MinSizeRel;RelWithDebInfo")
 
 project(libpng C)
 # mcrecover: Disable libpng testing.
-#enable_testing()
+IF(0)
+enable_testing()
+ENDIF(0)
 
 set(PNGLIB_MAJOR 1)
 set(PNGLIB_MINOR 6)
@@ -43,25 +45,31 @@ else()
 endif()
 
 # mcrecover: Disable libpng options.
+IF(0)
 # COMMAND LINE OPTIONS
-#if(DEFINED PNG_SHARED)
-#  option(PNG_SHARED "Build shared lib" ${PNG_SHARED})
-#else()
-#  option(PNG_SHARED "Build shared lib" ON)
-#endif()
-#if(DEFINED PNG_STATIC)
-#  option(PNG_STATIC "Build static lib" ${PNG_STATIC})
-#else()
-#  option(PNG_STATIC "Build static lib" ON)
-#endif()
+if(DEFINED PNG_SHARED)
+  option(PNG_SHARED "Build shared lib" ${PNG_SHARED})
+else()
+  option(PNG_SHARED "Build shared lib" ON)
+endif()
+if(DEFINED PNG_STATIC)
+  option(PNG_STATIC "Build static lib" ${PNG_STATIC})
+else()
+  option(PNG_STATIC "Build static lib" ON)
+endif()
+ENDIF(0)
 
 # mcrecover: Disable libpng options.
-#option(PNG_TESTS  "Build libpng tests" YES)
+IF(0)
+option(PNG_TESTS  "Build libpng tests" YES)
+ENDIF(0)
 
 # mcrecover: Disable libpng options.
 # Many more configuration options could be added here
-#option(PNG_DEBUG         "Build with debug output" NO)
-#option(PNGARG            "Disable ANSI-C prototypes" NO)
+IF(0)
+option(PNG_DEBUG         "Build with debug output" NO)
+option(PNGARG            "Disable ANSI-C prototypes" NO)
+ENDIF(0)
 
 # SET LIBNAME
 set(PNG_LIB_NAME png${PNGLIB_MAJOR}${PNGLIB_MINOR})
