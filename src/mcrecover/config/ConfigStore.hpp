@@ -78,6 +78,12 @@ class ConfigStore : public QObject
 		int getInt(const QString &key) const;
 
 		/**
+		 * Get the default configuration path.
+		 * @return Default configuration path.
+		 */
+		static QString ConfigPath(void);
+
+		/**
 		 * Load the configuration file.
 		 * @param filename Configuration filename.
 		 * @return 0 on success; non-zero on error.

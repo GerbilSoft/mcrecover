@@ -53,13 +53,12 @@ class ConfigStorePrivate
 	private:
 		Q_DISABLE_COPY(ConfigStorePrivate)
 
-	private:
+	public:
 		/**
 		* Initialize the configuration path.
 		*/
-		void initConfigPath(void);
+		static void InitConfigPath(void);
 
-	public:
 		/**
 		 * Validate a property.
 		 * @param key Property name.
@@ -87,7 +86,7 @@ class ConfigStorePrivate
 		/** Internal variables. **/
 
 		// Configuration path.
-		QString configPath;
+		static QString ConfigPath;
 
 		// Current settings.
 		// TODO: Use const char* for the key instead of QString?
@@ -112,17 +111,21 @@ class ConfigStorePrivate
 
 /** ConfigStorePrivate **/
 
+QString ConfigStorePrivate::ConfigPath;
+
 ConfigStorePrivate::ConfigStorePrivate(ConfigStore* q)
 	: q_ptr(q)
 {
 	// Determine the configuration path.
-	initConfigPath();
+	// TODO: Use a mutex?
+	if (ConfigPath.isEmpty())
+		InitConfigPath();
 }
 
 /**
  * Initialize the configuration path.
  */
-void ConfigStorePrivate::initConfigPath(void)
+void ConfigStorePrivate::InitConfigPath(void)
 {
 #ifdef Q_OS_WIN
 	// Win32: Check if the application directory is writable.
@@ -163,7 +166,7 @@ void ConfigStorePrivate::initConfigPath(void)
 	configPath = configDir.absolutePath();
 	if (!configPath.endsWith(QChar(L'/')))
 		configPath.append(QChar(L'/'));
-	this->configPath = configPath;
+	ConfigStorePrivate::ConfigPath = configPath;
 }
 
 ConfigStorePrivate::~ConfigStorePrivate()
@@ -395,6 +398,17 @@ int ConfigStore::getInt(const QString &key) const
 }
 
 /**
+ * Get the default configuration path.
+ * @return Default configuration path.
+ */
+QString ConfigStore::ConfigPath(void)
+{
+	if (ConfigStorePrivate::ConfigPath.isEmpty())
+		ConfigStorePrivate::InitConfigPath();
+	return ConfigStorePrivate::ConfigPath;
+}
+
+/**
  * Load the configuration file.
  * @param filename Configuration filename.
  * @return 0 on success; non-zero on error.
@@ -439,7 +453,7 @@ int ConfigStore::load(const QString &filename)
 int ConfigStore::load(void)
 {
 	Q_D(ConfigStore);
-	const QString cfgFilename = d->configPath +
+	const QString cfgFilename = ConfigStorePrivate::ConfigPath +
 		QLatin1String(ConfigDefaults::DefaultConfigFilename);
 	return load(cfgFilename);
 }
@@ -509,7 +523,7 @@ int ConfigStore::save(const QString &filename) const
 int ConfigStore::save(void) const
 {
 	Q_D(const ConfigStore);
-	const QString cfgFilename = d->configPath +
+	const QString cfgFilename = ConfigStorePrivate::ConfigPath +
 		QLatin1String(ConfigDefaults::DefaultConfigFilename);
 	return save(cfgFilename);
 }
