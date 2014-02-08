@@ -22,6 +22,9 @@
 #include "HackDetection.hpp"
 #include "util/array_size.h"
 
+// C includes.
+#include <stdint.h>
+
 // Qt includes.
 #include <QtCore/QEvent>
 #include <QtCore/QTimer>
@@ -32,7 +35,12 @@
 #include <QtGui/QPaintEvent>
 #include <QtGui/QFont>
 #include <QtGui/QFontMetrics>
+
+// QRawFont was added in qt-4.8
+#if QT_VERSION >= 0x040800
+#define HAVE_QRAWFONT
 #include <QtGui/QRawFont>
+#endif
 
 /** HackDetectionPrivate **/
 
@@ -205,6 +213,7 @@ void HackDetectionPrivate::initFont(void)
 	fntHackText.setItalic(true);
 
 	// Check if either the italic or normal font has "BLACK STAR" (U+2605).
+#ifdef HAVE_QRAWFONT
 	QRawFont rawFont = QRawFont::fromFont(fntHackText);
 	if (rawFont.supportsCharacter(0x2605)) {
 		chrStar = QChar(0x2605);
@@ -220,6 +229,13 @@ void HackDetectionPrivate::initFont(void)
 			fntHackStar = fntHackText;
 		}
 	}
+#else /* !HAVE_QRAWFONT */
+	// QRawFont is not available.
+	// Assume the normal font has "BLACK STAR",
+	// since this is most likely the Linux build.
+	chrStar = QChar(0x2605);
+	fntHackStar = fntHack;
+#endif /* HAVE_QRAWFONT */
 }
 
 /**

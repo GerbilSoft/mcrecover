@@ -22,6 +22,9 @@
 #ifndef __MCRECOVER_CONFIG_CONFIGDEFAULTS_HPP__
 #define __MCRECOVER_CONFIG_CONFIGDEFAULTS_HPP__
 
+// C includes.
+#include <stdint.h>
+
 // Qt includes.
 #include <QtCore/QHash>
 

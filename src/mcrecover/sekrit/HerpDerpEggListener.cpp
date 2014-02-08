@@ -23,7 +23,10 @@
 #include "util/array_size.h"
 
 // C includes.
-#include <string.h>
+#include <stdint.h>
+
+// C includes. (C++ namespace)
+#include <cstring>
 
 // Qt includes.
 #include <QtGui/QKeyEvent>
@@ -67,8 +70,10 @@ HerpDerpEggListenerPrivate::HerpDerpEggListenerPrivate(HerpDerpEggListener *q)
 
 HerpDerpEggListenerPrivate::~HerpDerpEggListenerPrivate()
 {
+	// NOTE: QSet::swap() was added in qt-4.8.
 	QSet<QObject*> hdSet_del;
-	hdSet_del.swap(hdSet);
+	hdSet_del = hdSet;
+	hdSet.clear();
 	qDeleteAll(hdSet_del);
 }
 
@@ -223,8 +228,10 @@ void HerpDerpEggListener::hd_destroyed(QObject *object)
 	Q_D(HerpDerpEggListener);
 	if (d->hdSet.contains(object)) {
 		// Delete all HackDetections.
+		// NOTE: QSet::swap() was added in qt-4.8.
 		QSet<QObject*> hdSet_del;
-		hdSet_del.swap(d->hdSet);
+		hdSet_del = d->hdSet;
+		d->hdSet.clear();
 		hdSet_del.remove(object);
 		qDeleteAll(hdSet_del);
 	}

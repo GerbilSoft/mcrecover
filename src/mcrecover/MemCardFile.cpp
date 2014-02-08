@@ -30,6 +30,9 @@
 #include "GcImage.hpp"
 #include "GcToolsQt.hpp"
 
+// C includes. (C++ namespace)
+#include <cerrno>
+
 // C++ includes.
 #include <string>
 #include <vector>

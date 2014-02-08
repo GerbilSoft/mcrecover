@@ -603,7 +603,8 @@ void MemCardPrivate::loadMemCardFileList(void)
 	if (!lstMemCardFile_new.isEmpty()) {
 		// Files have been added to the memory card.
 		emit q->filesAboutToBeInserted(0, (lstMemCardFile_new.size() - 1));
-		lstMemCardFile.swap(lstMemCardFile_new);
+		// NOTE: QVector::swap() was added in qt-4.8.
+		lstMemCardFile = lstMemCardFile_new;
 		emit q->filesInserted();
 	}
 

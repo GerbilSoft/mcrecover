@@ -31,6 +31,7 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QString>
 #include <QtCore/QTime>
+#include <QtCore/QMetaType>
 
 // Stream operators.
 #ifndef QT_NO_DATASTREAM

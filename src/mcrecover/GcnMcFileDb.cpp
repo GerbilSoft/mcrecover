@@ -1031,7 +1031,6 @@ QVector<QString> GcnMcFileDb::GetDbFilenames(void)
 	};
 
 	QStringList nameFilters;
-	nameFilters.reserve(8);
 	for (int i = 0; i < 8; i++)
 		nameFilters << QLatin1String(nameFilters_c[i]);
 

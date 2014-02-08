@@ -206,7 +206,6 @@ QMap<QString, QString> TranslationManager::enumerate(void) const
 	};
 
 	QStringList nameFilters;
-	nameFilters.reserve(4);
 	for (int i = 0; i < 4; i++)
 		nameFilters << QLatin1String(nameFilters_c[i]);
 
