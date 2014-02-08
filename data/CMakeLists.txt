@@ -11,6 +11,8 @@ INCLUDE(ConvertTextFilesToNative)
 CONVERT_TEXT_FILES_TO_NATIVE(DATABASE_FILES
 	GcnMcFileDb.USA.xml
 	GcnMcFileDb.PAL.xml
+	GcnMcFileDb.JPN.xml
+	GcnMcFileDb.Unlicensed.xml
 	GcnMcFileDb.Homebrew.xml
 	)
 
