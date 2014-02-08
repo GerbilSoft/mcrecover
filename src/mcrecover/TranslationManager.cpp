@@ -74,6 +74,9 @@ TranslationManagerPrivate::TranslationManagerPrivate(TranslationManager *q)
 	// Determine which paths to check for translations.
 	pathList.clear();
 
+	// Search the installed translations directory.
+	pathList.append(QString::fromUtf8(MCRECOVER_TRANSLATIONS_DIRECTORY));
+
 #ifdef Q_OS_WIN
 	// Win32: Search the program's /translations/ and main directories.
 	pathList.append(QCoreApplication::applicationDirPath() + QLatin1String("/translations"));
