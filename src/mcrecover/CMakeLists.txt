@@ -365,7 +365,7 @@ SET(MACOSX_BUNDLE_LONG_VERSION_STRING "0.0.0")
 # Mac OS X: Set a custom info.plist file for the application bundle.
 # TODO
 #SET_TARGET_PROPERTIES(mcrecover
-#	PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/ui/resources/mac/Info-CMake.plist")
+#	PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/resources/mac/Info-CMake.plist")
 
 #################
 # Installation. #
@@ -396,19 +396,19 @@ ENDIF(INSTALL_DEBUG)
 # FreeDesktop.org icon specification.
 IF(UNIX AND NOT APPLE)
 	FOREACH(ICON_SIZE 16x16 22x22 24x24 32x32 48x48 64x64 128x128)
-		INSTALL(FILES ui/resources/mcrecover/${ICON_SIZE}/mcrecover.png
+		INSTALL(FILES resources/mcrecover/${ICON_SIZE}/mcrecover.png
 			DESTINATION share/icons/hicolor/${ICON_SIZE}/apps
 			COMPONENT "desktop-icon"
 			)
 	ENDFOREACH()
 
 	# FreeDesktop.org desktop file specification.
-	INSTALL(FILES ui/resources/mcrecover/xdg/mcrecover.desktop
+	INSTALL(FILES resources/mcrecover/xdg/mcrecover.desktop
 		DESTINATION share/applications
 		COMPONENT "desktop-icon"
 		)
 	# /usr/share/pixmaps
-	INSTALL(FILES ui/resources/mcrecover/xdg/mcrecover.xpm
+	INSTALL(FILES resources/mcrecover/xdg/mcrecover.xpm
 		DESTINATION share/pixmaps
 		COMPONENT "desktop-icon"
 		)
