@@ -1,5 +1,5 @@
 GCN MemCard Recover
-Version 0.1+
+Version 0.2
 
 Copyright (c) 2012-2014 by David Korth.
 Email: gerbilsoft@gerbilsoft.com
@@ -10,12 +10,12 @@ See README.txt, Section X for more information.
 ================================================================
 
 GCN MemCard Recover v0.2
-[released 2014/??/??]
+[released 2014/02/08]
 
 Database statistics in this release:
-- USA: 79 files
+- USA: 83 files
 - PAL: 59 files
-- JPN: 3 files
+- JPN: 4 files
 - KOR: 0 files :(
 - Unlicensed: 1 file
 - Homebrew: 1 file
@@ -38,10 +38,8 @@ Database statistics in this release:
   library, libgctools. This library depends on libpng but does not
   depend on Qt.
 
-- Added support for the Qt translation system. Currently, the only
-  translation included aside from the default en_US is a "1337"
-  translation.
-  (FIXME: Add translations included with v0.2)
+- Added support for the Qt translation system. Currently, translations
+  for en_US, en_GB, es_CL, and "1337" are included.
 
 - Fixed some corner cases with full memory card images and certain
   save files.
@@ -53,8 +51,8 @@ Database statistics in this release:
 
 - Banners and icons can now be exported as image files. Banners and
   non-animated icons are always exported as PNG. Icons can be exported
-  as APNG, GIF (FIXME: not implemented in v0.2?), PNG (file per frame),
-  PNG (vertical strip), and PNG (horizontal strip).
+  as APNG, PNG (file per frame), PNG (vertical strip), and
+  PNG (horizontal strip).
 
 - Added "Preferred Region" support. Some games don't have any way to
   determine the region by simply looking at the description, and in

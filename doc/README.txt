@@ -1,5 +1,5 @@
 GCN MemCard Recover
-Version 0.1+
+Version 0.2
 
 Copyright (c) 2012-2014 by David Korth.
 Email: gerbilsoft@gerbilsoft.com
@@ -72,7 +72,7 @@ Windows XP and Windows Vista are only supported with thier latest
 service packs. Older service packs may work, but you may encounter
 issues.
 
-Windows 8 is not officially supported, though GCN MemCard Recover
+Windows 8.x is not officially supported, though GCN MemCard Recover
 should run as long as the Win32 subsystem is working.
 
 Windows RT is not supported.
@@ -197,9 +197,8 @@ be saved with the same name as the files, but with a different extension.
 
 Banners and non-animated icons will always be saved in PNG format.
 
-Animated icons can be extracted in one of five formats:
+Animated icons can be extracted in one of four formats:
 - APNG
-- GIF (FIXME: Not implemented in v0.2?)
 - PNG (file per frame): Each frame is saved in its own file.
 - PNG (vertical strip): Each frame is stored one above another.
 - PNG (horizontal strip): Each frame is stored next to each other.
@@ -226,7 +225,7 @@ that file recovery has a few limitations:
         for this file, please email me so I can add support for the
         algorithm in the next version.
 
-   Note that checksums are only currently checked for "lost" files (that is,
+   Note that checksums are currently only checked for "lost" files (that is,
    files found using the scanning algorithm). Files that are visible on
    the card normally are not checked, and hence won't show any icon in the
    rightmost column.
@@ -253,16 +252,28 @@ that file recovery has a few limitations:
 6. UI Language Translations
 
 GCN MemCard Recover has a fully-localizable user interface.
-Currently, the only translations included with GCN MemCard Recover
-are English (US) and "1337 5p34k". If you are a fluent speaker of
-English and another language and would like to contribute a
-translation, please let me know.
+The following translations are included with v0.2:
+
+- English (US): Base translation.
+
+- English (GB): British English translation.
+  Provided by Overlord.
+
+- Español (CL): Spanish translation.
+  Provided by Kevin López.
+
+- "1337 5p34k": Basic en_US to 1337 conversion.
+  The following converter was used in "basic leet" mode:
+  http://www.robertecker.com/hp/research/leet-converter.php?lang=en
+
+If you are a fluent speaker of English and another language and
+would like to contribute a translation, please let me know.
 
 ================================================================
 
 7. Additional Tools
 
-GCN MemCard Recover includes a utility called "gcbanner".
+GCN MemCard Recover includes a command-line utility called "gcbanner".
 This utility lets you extract GameCube disc banner images
 from opening.bnr files (both BNR1 and BNR2 format), as well
 as Wii save banner and icon images from Wii save files (both
@@ -283,7 +294,7 @@ structure of GameCube memory card images:
 http://hitmen.c02.at/files/yagcd/yagcd/chap12.html
 
 Finally, support for GCN MemCard Recover is available at:
-- Sonic Retro: http://forums.sonicretro.org/index.php?showtopic=31772
+- Sonic Retro: http://forums.sonicretro.org/index.php?showtopic=32621
 - GBAtemp: http://gbatemp.net/threads/gcn-memcard-recover.349406/
 - Email: gerbilsoft@gerbilsoft.com
 - IRC: irc.badnik.net #retrotech
