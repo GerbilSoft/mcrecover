@@ -609,7 +609,7 @@ QString AboutDialogPrivate::GetSupport(void)
 
 	// Support sites.
 	const supportSite_t supportSites[] = {
-		{QT_TRANSLATE_NOOP(AboutDialog, "Sonic Retro"), "http://forums.sonicretro.org/index.php?showtopic=31772"},
+		{QT_TRANSLATE_NOOP(AboutDialog, "Sonic Retro"), "http://forums.sonicretro.org/index.php?showtopic=32621"},
 		{QT_TRANSLATE_NOOP(AboutDialog, "GBAtemp"), "http://gbatemp.net/threads/gcn-memcard-recover.349406/"},
 		{nullptr, nullptr}
 	};
