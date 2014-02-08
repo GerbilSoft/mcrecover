@@ -24,6 +24,6 @@ MACRO(CONVERT_TEXT_FILES_TO_NATIVE _filenames)
 		ENDFOREACH(_current_FILE)
 	ELSE(WIN32)
 		# Not Win32. Don't do anything.
-		SET(${${_filenames}} ${ARGN})
+		SET(${_filenames} ${ARGN})
 	ENDIF(WIN32)
 ENDMACRO(CONVERT_TEXT_FILES_TO_NATIVE)
