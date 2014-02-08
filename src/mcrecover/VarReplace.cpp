@@ -284,7 +284,6 @@ int VarReplace::strToInt(const QString &str)
 	QString std_str(str);
 	for (int i = 0; i < std_str.size(); i++) {
 		uint16_t chr = std_str[i].unicode();
-		printf("chr == %d\n", chr);
 		if ((chr & 0xFF00) == 0xFF00) {
 			// Fullwidth/halfwidth.
 			chr = fwhwToStd[chr & 0xFF];
