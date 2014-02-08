@@ -26,6 +26,7 @@
 
 #include "config.mcrecover.h"
 #include "GcnMcFileDb.hpp"
+#include "config/ConfigStore.hpp"
 
 // GCN Memory Card File Definition class.
 #include "GcnMcFileDef.hpp"
@@ -1014,12 +1015,14 @@ QVector<QString> GcnMcFileDb::GetDbFilenames(void)
 
 	// Search the installed data directory.
 	pathList.append(QString::fromUtf8(MCRECOVER_DATA_DIRECTORY));
-
-	// Search the user's .config directory.
-	// TODO: Get default save directory using QSettings?
-	pathList.append(homeDir.absoluteFilePath(QLatin1String(".config/mcrecover/data")));
-	pathList.append(homeDir.absoluteFilePath(QLatin1String(".config/mcrecover")));
 #endif /* Q_OS_WIN */
+
+	// Search the user's configuration directory.
+	QDir configDir(ConfigStore::ConfigPath());
+	if (configDir != QDir(QCoreApplication::applicationDirPath())) {
+		pathList.append(configDir.absoluteFilePath(QLatin1String("data")));
+		pathList.append(configDir.absolutePath());
+	}
 
 	// Name filters.
 	static const char nameFilters_c[8][6] = {

@@ -21,6 +21,7 @@
 
 #include "config.mcrecover.h"
 #include "TranslationManager.hpp"
+#include "config/ConfigStore.hpp"
 
 // Qt includes.
 #include <QtCore/QTranslator>
@@ -104,12 +105,14 @@ TranslationManagerPrivate::TranslationManagerPrivate(TranslationManager *q)
 
 	// Search the installed translations directory.
 	pathList.append(QString::fromUtf8(MCRECOVER_TRANSLATIONS_DIRECTORY));
-
-	// Search the user's .config directory.
-	// TODO: Get default save directory using QSettings?
-	pathList.append(homeDir.absoluteFilePath(QLatin1String("/.config/mcrecover/translations")));
-	pathList.append(homeDir.absoluteFilePath(QLatin1String("/.config/mcrecover")));
 #endif /* Q_OS_WIN */
+
+	// Search the user's configuration directory.
+	QDir configDir(ConfigStore::ConfigPath());
+	if (configDir != QDir(QCoreApplication::applicationDirPath())) {
+		pathList.append(configDir.absoluteFilePath(QLatin1String("translations")));
+		pathList.append(configDir.absolutePath());
+	}
 }
 
 TranslationManagerPrivate::~TranslationManagerPrivate()
