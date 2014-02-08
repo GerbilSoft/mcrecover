@@ -16,6 +16,9 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
+# NOTE: CMAKE_PARSE_ARGUMENTS() was added in cmake-2.8.3.
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
+
 MACRO(QT4_ADD_DBUS_INTERFACE_NONS _sources _interface _basename _include)
   GET_FILENAME_COMPONENT(_infile ${_interface} ABSOLUTE)
   SET(_header ${CMAKE_CURRENT_BINARY_DIR}/${_basename}.h)
