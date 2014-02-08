@@ -135,7 +135,7 @@ void ConfigStorePrivate::InitConfigPath(void)
 		QString configPath = QCoreApplication::applicationDirPath();
 		if (!configPath.endsWith(QChar(L'/')))
 			configPath.append(QChar(L'/'));
-		this->configPath = configPath;
+		ConfigStorePrivate::ConfigPath = configPath;
 		return;
 	}
 #endif /* Q_OS_WIN */
