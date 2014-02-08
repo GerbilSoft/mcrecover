@@ -19,7 +19,7 @@ ELSE(UNIX AND NOT APPLE)
 SET(ENABLE_DBUS 0)
 ENDIF(UNIX AND NOT APPLE)
 
-# libpng.
+# Internal libpng.
 # NOTE: Also controls internal zlib usage.
 # TODO: Separate it so int libpng / ext zlib can be used?
 IF(NOT WIN32)
@@ -28,3 +28,6 @@ ELSE(NOT WIN32)
 	# TODO: Allow use of external libpng on Win32?
 	SET(USE_INTERNAL_PNG 1)
 ENDIF(NOT WIN32)
+
+# Internal PCRE.
+OPTION(USE_INTERNAL_PCRE	"Always use the internal copy of PCRE." 	0)
