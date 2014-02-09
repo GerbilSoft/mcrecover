@@ -727,7 +727,9 @@ int MemCard::sizeInBlocksNoSys(void) const
 	if (!isOpen())
 		return -1;
 	Q_D(const MemCard);
-	return (d->numBlocks - 5);
+	return (d->numBlocks > 5
+		? (d->numBlocks - 5)
+		: 0);
 }
 
 /**
