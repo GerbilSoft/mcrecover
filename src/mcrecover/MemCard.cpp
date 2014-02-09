@@ -327,6 +327,34 @@ int MemCardPrivate::loadSysInfo(void)
 	qint64 sz = file->read((char*)&mc_header, sizeof(mc_header));
 	if (sz < (qint64)sizeof(mc_header)) {
 		// Error reading the card header.
+		// Zero the header and block tables,
+		// and 0xFF the directory tables.
+		memset(&mc_header, 0x00, sizeof(mc_header));
+		// This checksum can never appear in a valid header.
+		mc_header.chksum1 = 0xAA55;
+		mc_header.chksum2 = 0xAA55;
+
+		// Header checksum.
+		headerChecksumValue.actual = Checksum::AddInvDual16((uint16_t*)&mc_header, 0x1FC);
+		headerChecksumValue.expected = (mc_header.chksum1 << 16) |
+					       (mc_header.chksum2);
+
+		memset(mc_dat_int, 0xFF, sizeof(mc_dat_int));
+		// This checksum can never appear in a valid table.
+		mc_dat_int[0].dircntrl.chksum1 = 0xAA55;
+		mc_dat_int[0].dircntrl.chksum2 = 0xAA55;
+		mc_dat_int[1].dircntrl.chksum1 = 0xAA55;
+		mc_dat_int[1].dircntrl.chksum2 = 0xAA55;
+
+		memset(mc_bat_int, 0x00, sizeof(mc_bat_int));
+		// This checksum can never appear in a valid table.
+		mc_bat_int[0].chksum1 = 0xAA55;
+		mc_bat_int[0].chksum2 = 0xAA55;
+		mc_bat_int[1].chksum1 = 0xAA55;
+		mc_bat_int[1].chksum2 = 0xAA55;
+
+		// Make sure mc_dat and mc_bat are initialized.
+		checkTables();
 		return -2;
 	}
 
