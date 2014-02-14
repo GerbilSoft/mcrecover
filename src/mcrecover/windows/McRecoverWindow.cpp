@@ -721,8 +721,9 @@ void McRecoverWindowPrivate::rets_actTsSysDefault(void)
 				 mapperTS, SLOT(map()));
 	}
 
-	//: Translation: System Default (retrieved from system settings)
 	QString tsLocale = QLocale::system().name();
+
+	//: Translation: System Default (retrieved from system settings)
 	actTsSysDefault->setText(
 		McRecoverWindow::tr("System Default (%1)", "ts-language")
 				.arg(QLocale::system().name()));
