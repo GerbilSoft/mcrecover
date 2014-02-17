@@ -66,6 +66,38 @@ class FileComments
 		 */
 		QString toString(void) const;
 
+		/**
+		 * Compare fc1 and fc2, using the case sensitivity setting cs.
+		 * @param fc1 FileComments 1.
+		 * @param fc2 FileComments 2.
+		 * @param cs Case sensitivity setting.
+		 * @return Integer less than, equal to, or greater than zero if fc1 is less than, equal to, or greater than fc2.
+		 */
+		static int compare(const FileComments &fc1, const FileComments &fc2, Qt::CaseSensitivity cs);
+
+		/**
+		 * Compare fc1 and fc2, case sensitive.
+		 * @param fc1 FileComments 1.
+		 * @param fc2 FileComments 2.
+		 * @return Integer less than, equal to, or greater than zero if fc1 is less than, equal to, or greater than fc2.
+		 */
+		static int compare(const FileComments &fc1, const FileComments &fc2);
+
+		/**
+		 * Compare this FileComments to another FileComments, using the case sensitivity setting cs.
+		 * @param other Other FileComments.
+		 * @param cs Case sensitivity setting.
+		 * @return Integer less than, equal to, or greater than zero if this is less than, equal to, or greater than other.
+		 */
+		int compare(const FileComments &other, Qt::CaseSensitivity cs) const;
+
+		/**
+		 * Compare this FileComments to another FileComments, case sensitive.
+		 * @param other Other FileComments.
+		 * @return Integer less than, equal to, or greater than zero if this is less than, equal to, or greater than other.
+		 */
+		int compare(const FileComments &other) const;
+
 	private:
 		QString m_gameDesc;
 		QString m_fileDesc;
@@ -82,5 +114,22 @@ inline QString FileComments::fileDesc(void) const
 	{ return m_fileDesc; }
 inline void FileComments::setFileDesc(const QString &fileDesc)
 	{ m_fileDesc = fileDesc; }
+
+inline int FileComments::compare(const FileComments &fc1, const FileComments &fc2, Qt::CaseSensitivity cs)
+{
+	int ret = fc1.m_gameDesc.compare(fc2.m_gameDesc, cs);
+	if (ret == 0)
+		ret = fc1.m_fileDesc.compare(fc2.m_fileDesc, cs);
+	return ret;
+}
+
+inline int FileComments::compare(const FileComments &fc1, const FileComments &fc2)
+	{ return compare(fc1, fc2, Qt::CaseSensitive); }
+
+inline int FileComments::compare(const FileComments &other, Qt::CaseSensitivity cs) const
+	{ return compare(*this, other, cs); }
+
+inline int FileComments::compare(const FileComments &other) const
+	{ return compare(*this, other, Qt::CaseSensitive); }
 
 #endif /* __MCRECOVER_FILECOMMENTS_HPP__ */

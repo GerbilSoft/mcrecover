@@ -125,6 +125,7 @@ SET(mcrecover_SRCS
 	config/ConfigStore.cpp
 	config/ConfigDefaults.cpp
 	PathFuncs.cpp
+	MemCardSortFilterProxyModel.cpp
 	)
 
 SET(mcrecover_WINDOW_SRCS
@@ -171,6 +172,7 @@ SET(mcrecover_MOC_H
 	MemCardItemDelegate.hpp
 	TaskbarButtonManager/TaskbarButtonManager.hpp
 	config/ConfigStore.hpp
+	MemCardSortFilterProxyModel.hpp
 	)
 
 SET(mcrecover_WINDOW_MOC_H

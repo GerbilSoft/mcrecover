@@ -34,6 +34,7 @@
 #include "MemCardFile.hpp"
 #include "MemCardModel.hpp"
 #include "MemCardItemDelegate.hpp"
+#include "MemCardSortFilterProxyModel.hpp"
 
 // File database.
 #include "GcnMcFileDb.hpp"
@@ -104,6 +105,7 @@ class McRecoverWindowPrivate
 		// Memory Card.
 		MemCard *card;
 		MemCardModel *model;
+		MemCardSortFilterProxyModel *proxyModel;
 
 		/**
 		 * Show a warning if the card (or files on the card) are Japanese,
@@ -234,6 +236,7 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, scanningDisabled(false)
 	, card(nullptr)
 	, model(new MemCardModel(q))
+	, proxyModel(new MemCardSortFilterProxyModel(q))
 	, searchThread(new SearchThread(q))
 	, statusBarManager(nullptr)
 	, uiBusyCounter(0)
@@ -911,11 +914,18 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	// Initialize lstFileList's item delegate.
 	d->ui.lstFileList->setItemDelegate(new MemCardItemDelegate(this));
 
-	// Set lstFileList's model.
-	d->ui.lstFileList->setModel(d->model);
+	// Set the models.
+	d->proxyModel->setSourceModel(d->model);
+	d->ui.lstFileList->setModel(d->proxyModel);
 
 	// Don't expand the last header column to fill the QTreeView.
-	d->ui.lstFileList->header()->setStretchLastSection(false);
+	QHeaderView *header = d->ui.lstFileList->header();
+	header->setStretchLastSection(false);
+
+	// Sort by COL_DESCRIPTION by default.
+	// TODO: Disable sorting on specific columns.
+	//d->proxyModel->setDynamicSortFilter(true);
+	//d->ui.lstFileList->sortByColumn(MemCardModel::COL_DESCRIPTION, Qt::AscendingOrder);
 
 	// Show icon, description, size, mtime, permission, and gamecode by default.
 	// TODO: Allow the user to customize the columns, and save the 
@@ -1390,7 +1400,8 @@ void McRecoverWindow::on_actionSave_triggered(void)
 	files.reserve(selList.size());
 
 	foreach(QModelIndex idx, selList) {
-		MemCardFile *file = d->card->getFile(idx.row());
+		QModelIndex srcIdx = d->proxyModel->mapToSource(idx);
+		MemCardFile *file = d->card->getFile(srcIdx.row());
 		if (file != nullptr)
 			files.append(file);
 	}
@@ -1557,15 +1568,17 @@ void McRecoverWindow::lstFileList_selectionModel_currentRowChanged(
 	Q_UNUSED(previous)
 	Q_D(McRecoverWindow);
 
+	QModelIndex srcCurrent = d->proxyModel->mapToSource(current);
+
 	// If file(s) are selected, enable the Save action.
 	// FIXME: Selection model is empty due to the initial selection bug
 	// that happens if a file was specified on the command line.
 	//actionSave->setEnabled(lstFileList->selectionModel()->hasSelection());
-	d->ui.actionSave->setEnabled(current.row() >= 0);
+	d->ui.actionSave->setEnabled(srcCurrent.row() >= 0);
 
 	// Set the MemCardFileView's MemCardFile to the
 	// selected file in the QTreeView.
-	const MemCardFile *file = d->card->getFile(current.row());
+	const MemCardFile *file = d->card->getFile(srcCurrent.row());
 	d->ui.mcfFileView->setFile(file);
 
 	// Shh... it's a secret to everybody.
