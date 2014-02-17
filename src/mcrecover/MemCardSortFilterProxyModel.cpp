@@ -40,15 +40,26 @@ bool MemCardSortFilterProxyModel::lessThan(const QModelIndex &left, const QModel
 		return QSortFilterProxyModel::lessThan(left, right);
 	}
 
+	const QVariant vLeft = left.data();
+	const QVariant vRight = right.data();
+
 	// Check for FileComments.
-	if (left.data().canConvert<FileComments>() &&
-	    right.data().canConvert<FileComments>())
+	if (vLeft.canConvert<FileComments>() &&
+	    vRight.canConvert<FileComments>())
 	{
 		// Compare the file comments.
 		// NOTE: Case-insensitive compare!
-		FileComments fcLeft = left.data().value<FileComments>();
-		FileComments fcRight = right.data().value<FileComments>();
+		FileComments fcLeft = vLeft.value<FileComments>();
+		FileComments fcRight = vRight.value<FileComments>();
 		return (fcLeft.compare(fcRight, Qt::CaseInsensitive) < 0);
+	}
+	else if (vLeft.type() == QVariant::String &&
+		 vRight.type() == QVariant::String)
+	{
+		// String. Do a case-insensitive comparison.
+		QString sLeft = vLeft.toString();
+		QString sRight = vRight.toString();
+		return (sLeft.compare(sRight, Qt::CaseInsensitive) < 0);
 	}
 
 	// Unhandled type.
