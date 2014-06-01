@@ -28,10 +28,12 @@
 // Qt includes and classes.
 #include <QtCore/QObject>
 #include <QtCore/QVector>
+#include <QtCore/QLinkedList>
 class QTextCodec;
 
 #include "card.h"
 #include "Checksum.hpp"
+#include "SearchData.hpp"
 
 // MemCardFile
 class MemCardFile;
@@ -241,6 +243,13 @@ class MemCard : public QObject
 		 * @return MemCardFile added to the MemCard, or nullptr on error.
 		 */
 		MemCardFile *addLostFile(const card_direntry *dirEntry, const QVector<uint16_t> &fatEntries);
+
+		/**
+		 * Add "lost" files.
+		 * @param filesFoundList List of SearchData.
+		 * @return List of MemCardFiles added to the MemCard, or empty list on error.
+		 */
+		QList<MemCardFile*> addLostFiles(const QLinkedList<SearchData> &filesFoundList);
 
 		/**
 		 * Get the header checksum value.

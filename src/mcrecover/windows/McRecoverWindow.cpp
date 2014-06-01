@@ -1543,17 +1543,15 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 	QLinkedList<SearchData> filesFoundList = d->searchThread->filesFoundList();
 
 	// Add the directory entries.
-	bool isJapanese = false;
-	foreach (const SearchData &searchData, filesFoundList) {
-		MemCardFile *file = d->card->addLostFile(&(searchData.dirEntry), searchData.fatEntries);
-		if (file) {
-			if (file->encoding() == SYS_FONT_ENCODING_SJIS)
-				isJapanese = true;
+	QList<MemCardFile*> files = d->card->addLostFiles(filesFoundList);
 
-			// TODO: Add ChecksumData parameter to addLostFile.
-			// Alternatively, add SearchData overload?
-			if (file)
-				file->setChecksumDefs(searchData.checksumDefs);
+	// Check for any Japanese files.
+	bool isJapanese = false;
+	foreach (const MemCardFile *file, files) {
+		if (file->encoding() == SYS_FONT_ENCODING_SJIS) {
+			// Found a Japanese file.
+			isJapanese = true;
+			break;
 		}
 	}
 

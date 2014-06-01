@@ -980,6 +980,41 @@ MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry, const QVector<u
 	return file;
 }
 
+/**
+ * Add "lost" files.
+ * @param filesFoundList List of SearchData.
+ * @return List of MemCardFiles added to the MemCard, or empty list on error.
+ */
+QList<MemCardFile*> MemCard::addLostFiles(const QLinkedList<SearchData> &filesFoundList)
+{
+	QList<MemCardFile*> files;
+	if (!isOpen())
+		return files;
+	if (filesFoundList.isEmpty())
+		return files;
+
+	Q_D(MemCard);
+	const int idx = d->lstMemCardFile.size();
+	const int idxLast = idx + filesFoundList.size() - 1;
+	emit filesAboutToBeInserted(idx, idxLast);
+
+	foreach (const SearchData &searchData, filesFoundList) {
+		MemCardFile *file = new MemCardFile(this, &searchData.dirEntry, searchData.fatEntries);
+		// NOTE: If file is nullptr, this may screw up the QTreeView
+		// due to filesAboutToBeInserted().
+
+		// TODO: Add ChecksumData parameter to addLostFile.
+		// Alternatively, add SearchData overload?
+		if (file) {
+			files.append(file);
+			d->lstMemCardFile.append(file);
+			file->setChecksumDefs(searchData.checksumDefs);
+		}
+	}
+
+	emit filesInserted();
+	return files;
+}
 
 /**
  * Get the header checksum value.
