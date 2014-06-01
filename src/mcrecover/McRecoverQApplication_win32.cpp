@@ -180,22 +180,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 	// Enable extra security options.
 	McRecoverQApplicationWin32Private::SetSecurityOptions();
 
-	// Show a warning if an app-based operating system is in use.
-	OSVERSIONINFOA osVersionInfo;
-	osVersionInfo.dwOSVersionInfoSize = sizeof(osVersionInfo);
-	if (GetVersionExA(&osVersionInfo)) {
-		if (osVersionInfo.dwMajorVersion > 6 ||
-		    (osVersionInfo.dwMajorVersion == 6 &&
-		     osVersionInfo.dwMinorVersion >= 2))
-		{
-			MessageBoxA(nullptr,
-				"You are using an app-based operating system.\n"
-				"GCN MemCard Recover is a real program, not an app.\n"
-				"As such, proper operation cannot be guaranteed.",
-				"App-based OS detected", MB_ICONEXCLAMATION);
-		}
-	}
-
 	// NOTE: lpCmdLine does not include the program's name.
 	// TODO: qtmain converts GetCommandLineW()'s output to local 8-bit.
 	// Should we just use GetCommandLineA() unconditionally?
