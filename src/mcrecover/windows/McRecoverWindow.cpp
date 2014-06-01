@@ -1498,9 +1498,15 @@ void McRecoverWindow::setPreferredRegion_slot(const QVariant &preferredRegion)
 			break;
 		default:
 			// TODO: Determine based on system locale.
+			chr = 'E';
 			d->ui.actionRegionUSA->setChecked(true);
 			break;
 	}
+
+	// NOTE: If region is 'E', then preferredRegion won't be set,
+	// since actionRegionUSA is checked by default.
+	// Set it here to make sure it's set properly.
+	d->preferredRegion = chr;
 }
 
 void McRecoverWindow::memCardModel_layoutChanged(void)
