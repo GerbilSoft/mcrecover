@@ -670,7 +670,8 @@
 		<company>8P</company>
 		<search>
 			<address>0x0000</address>
-			<gameDesc>^PSO EPISODE I &amp; II$</gameDesc>
+			<!-- NOTE: PSO I & II and PSO I & II Plus have identical save files. -->
+			<gameDesc>^PSO EPISODE I &amp; II(?: Plus)?$</gameDesc>
 			<fileDesc>^SYSTEM_FILE$</fileDesc>
 			<!-- TODO: Checksum algorithm is known, but depends on card serial number. -->
 		</search>
@@ -691,7 +692,8 @@
 		<company>8P</company>
 		<search>
 			<address>0x0000</address>
-			<gameDesc>^PSO EPISODE I &amp; II$</gameDesc>
+			<!-- NOTE: PSO I & II and PSO I & II Plus have identical save files. -->
+			<gameDesc>^PSO EPISODE I &amp; II(?: Plus)?$</gameDesc>
 			<fileDesc>^CHARACTER_FILE$</fileDesc>
 			<!-- TODO: Checksum algorithm is known, but depends on card serial number. -->
 		</search>
@@ -712,7 +714,8 @@
 		<company>8P</company>
 		<search>
 			<address>0x0000</address>
-			<gameDesc>^PSO EPISODE I &amp; II$</gameDesc>
+			<!-- NOTE: PSO I & II and PSO I & II Plus have identical save files. -->
+			<gameDesc>^PSO EPISODE I &amp; II(?: Plus)?$</gameDesc>
 			<fileDesc>^GUILDCARD_FILE$</fileDesc>
 			<!-- TODO: Checksum algorithm is known, but depends on card serial number. -->
 		</search>

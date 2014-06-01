@@ -386,6 +386,70 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Dragon Ball Z Budokai</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GD7E</gamecode>
+		<company>70</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Dragon Ball Z$</gameDesc>
+			<!-- Date format: MM/DD/YYYY - Verify for PAL! -->
+			<fileDesc>^SaveData (\d{2})/(\d{2})/(\d{4})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>DRAGONBALLZ</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x0C</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Dragon Ball Z Budokai 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GZ3E</gamecode>
+		<company>70</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Dragon Ball Z 2$</gameDesc>
+			<!-- Date format: MM/DD/YYYY - Verify for PAL! -->
+			<fileDesc>^SaveData (\d{2})/(\d{2})/(\d{4})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>DRAGONBALLZ2</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Eternal Darkness</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GEDE</gamecode>
@@ -577,6 +641,48 @@
 			<iconSpeed>0x02</iconSpeed>
 			<permission>0x04</permission>
 			<length>9</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Ikaruga</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GIKE</gamecode>
+		<company>70</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^IKARUGA$</gameDesc>
+			<!-- Date format: MM/DD/YYYY HH:mm:ss - Verify for PAL! -->
+			<!-- TODO: D vs DD, H vs HH -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{1,2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>ikaruga_save_data</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAA</iconFormat>
+			<iconSpeed>0xFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -1317,6 +1423,72 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Phantasy Star Online: Episodes I &amp; II</gameName>
+		<fileInfo>System File</fileInfo>
+		<gamecode>GPOE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<!-- NOTE: PSO I & II and PSO I & II Plus have identical save files. -->
+			<gameDesc>^PSO EPISODE I &amp; II(?: Plus)?$</gameDesc>
+			<fileDesc>^SYSTEM_FILE$</fileDesc>
+			<!-- TODO: Checksum algorithm is known, but depends on card serial number. -->
+		</search>
+		<dirEntry>
+			<filename>PSO_SYSTEM</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x1C</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Phantasy Star Online: Episodes I &amp; II</gameName>
+		<fileInfo>Character File</fileInfo>
+		<gamecode>GPOE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<!-- NOTE: PSO I & II and PSO I & II Plus have identical save files. -->
+			<gameDesc>^PSO EPISODE I &amp; II(?: Plus)?$</gameDesc>
+			<fileDesc>^CHARACTER_FILE$</fileDesc>
+			<!-- TODO: Checksum algorithm is known, but depends on card serial number. -->
+		</search>
+		<dirEntry>
+			<filename>PSO_CHARACTER</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x1C</permission>
+			<length>11</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Phantasy Star Online: Episodes I &amp; II</gameName>
+		<fileInfo>Guild Card File</fileInfo>
+		<gamecode>GPOE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<!-- NOTE: PSO I & II and PSO I & II Plus have identical save files. -->
+			<gameDesc>^PSO EPISODE I &amp; II(?: Plus)?$</gameDesc>
+			<fileDesc>^GUILDCARD_FILE$</fileDesc>
+			<!-- TODO: Checksum algorithm is known, but depends on card serial number. -->
+		</search>
+		<dirEntry>
+			<filename>PSO_GUILDCARD</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x1C</permission>
+			<length>10</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Pikmin</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GPIE</gamecode>
@@ -1563,6 +1735,26 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>SEGA Network Information</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>G9AE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SEGA Network Information$</gameDesc>
+			<fileDesc>^Common user ID &amp; net data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>sega_network_information</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x1C</permission>
+			<length>4</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -1894,6 +2086,26 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>SONIC RIDERS</gameName>
+		<fileInfo>Ghost Data</fileInfo>
+		<gamecode>GXEE</gamecode>
+		<company>8P</company>
+		<search>
+			<address>0x1400</address>
+			<gameDesc>^SONIC RIDERS$</gameDesc>
+			<fileDesc>^Ghost Data\.(\d{2}): (?:.*)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SONICRIDERS_GHOSTDATA_${F1}</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>14</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>SoulCalibur II</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GRSE</gamecode>
@@ -1975,6 +2187,26 @@
 			<iconSpeed>0xAAAA</iconSpeed>
 			<permission>0x04</permission>
 			<length>10</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Spyro: A Hero's Tail</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>G5SE</gamecode>
+		<company>7D</company>
+		<search>
+			<address>0x0180</address>
+			<gameDesc>^Spyro A Hero's Tail™$</gameDesc>
+			<fileDesc>^Game Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>G5SE</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x01C0</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>20</length>
 		</dirEntry>
 	</file>
 	<file>
