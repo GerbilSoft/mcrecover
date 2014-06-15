@@ -76,6 +76,85 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Dream Mix TV World Fighters</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GKWJ</gamecode>
+		<company>18</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^ワールドファイターズ$</gameDesc>
+			<!-- Date format: M月D日 -->
+			<!-- TODO: D or DD? -->
+			<fileDesc>^(\d{1,2})月(\d{1,2})日のセーブデータです$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>DREAM-MIX-TV-WORLD-FIGHTERS</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAA</iconFormat>
+			<iconSpeed>0xFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Hudson Selection Vol.4: Adventure Island</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GTNJ</gamecode>
+		<company>18</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^高橋名人の冒険島$</gameDesc>
+			<!-- Date format: M月 D日 (NOTE the leading spaces for single-digit month/day!) -->
+			<fileDesc>^プレイデータ(　\p{Nd}|\p{Nd}{2})月(　\p{Nd}|\p{Nd}{2})日$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>ADVISLAND</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x15</iconFormat>
+			<iconSpeed>0x2F</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Kururin Squash!</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GKQJ</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^くるりんスカッシュ！$</gameDesc>
+			<fileDesc>^回転アクションゲーム$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>kururin3.sys</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x01C0</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x01</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Nintendo Puzzle Collection</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GPZJ</gamecode>
