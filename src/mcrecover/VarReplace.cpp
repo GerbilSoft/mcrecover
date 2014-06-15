@@ -284,6 +284,7 @@ int VarReplace::strToInt(const QString &str)
 	QString std_str(str);
 	for (int i = 0; i < std_str.size(); i++) {
 		uint16_t chr = std_str[i].unicode();
+		uint16_t old_chr = chr;
 		if ((chr & 0xFF00) == 0xFF00) {
 			// Fullwidth/halfwidth.
 			chr = fwhwToStd[chr & 0xFF];
@@ -322,6 +323,16 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifier
 		QString var = vars.value(id);
 		const VarModifierDef &varModifierDef = varModifierDefs[id];
 
+		// Always convert the string to num and char,
+		// in case it's needed for e.g. useAs==month.
+		int num = strToInt(var);
+		num += varModifierDef.addValue;
+		char chr = 0;
+		if (var.size() == 1) {
+			chr = var.at(0).toLatin1();
+			chr += varModifierDef.addValue;
+		}
+
 		// Apply the modifier.
 		switch (varModifierDef.varType) {
 			default:
@@ -330,24 +341,17 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifier
 				// Nothing special needs to be done here...
 				break;
 
-			case VarModifierDef::VARTYPE_NUMBER: {
+			case VarModifierDef::VARTYPE_NUMBER:
 				// Parse as a number. (Base 10)
-				// TODO: Add support for other bases?
-				int num = strToInt(var);
-				num += varModifierDef.addValue;
 				var = QString::number(num, 10);
 				break;
-			}
 
-			case VarModifierDef::VARTYPE_CHAR: {
+			case VarModifierDef::VARTYPE_CHAR:
 				// Parse as an ASCII character.
 				if (var.size() != 1)
 					return -2;
-				char chr = var.at(0).toLatin1();
-				chr += varModifierDef.addValue;
 				var = QChar::fromLatin1(chr);
 				break;
-			}
 		}
 
 		// Pad the variable with fillChar, if necessary.
@@ -364,7 +368,6 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifier
 		}
 
 		// Check if this variable should be used in the GcnDateTime.
-		int num = var.toInt(nullptr, 10);
 		switch (varModifierDef.useAs) {
 			default:
 			case VarModifierDef::USEAS_FILENAME:
@@ -384,12 +387,13 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifier
 				}
 				break;
 
-			case VarModifierDef::USEAS_TS_MONTH:
+			case VarModifierDef::USEAS_TS_MONTH: {
 				if (num >= 1 && num <= 12)
 					month = num;
 				else
 					return -4;
 				break;
+			}
 
 			case VarModifierDef::USEAS_TS_DAY:
 				if (num >= 1 && num <= 31)
