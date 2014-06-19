@@ -63,16 +63,6 @@
 
 #elif defined(_MSC_VER)
 
-/**
- * MSVC prefixes some POSIX/C99 functions with underscores,
- * and has completely different names for others.
- * Instead, it has _snprintf().
- */
-#define snprintf(str, size, format, ...) _snprintf(str, size, format, __VA_ARGS__)
-#define vsnprintf(str, size, format, ap) _vsnprintf(str, size, format, ap)
-#define strcasecmp(s1, s2) _stricmp(s1, s2)
-#define strncasecmp(s1, s2, n) _strnicmp(s1, s2, n)
-
 /* No versions of MSVC support char16_t/char32_t yet. */
 #define CXX11_COMPAT_CHARTYPES
 
@@ -129,6 +119,18 @@ namespace std {
 #ifdef CXX11_COMPAT_OVERRIDE
 #define override
 #define final
+#endif
+
+#ifdef _MSC_VER
+/**
+ * MSVC prefixes some POSIX/C99 functions with underscores,
+ * and has completely different names for others.
+ * Instead, it has _snprintf().
+ */
+#define snprintf(str, size, format, ...) _snprintf(str, size, format, __VA_ARGS__)
+#define vsnprintf(str, size, format, ap) _vsnprintf(str, size, format, ap)
+#define strcasecmp(s1, s2) _stricmp(s1, s2)
+#define strncasecmp(s1, s2, n) _strnicmp(s1, s2, n)
 #endif
 
 #endif /* __CXX11_COMPAT_H__ */
