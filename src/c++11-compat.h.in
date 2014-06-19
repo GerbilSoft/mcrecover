@@ -121,6 +121,8 @@ namespace std {
 #define final
 #endif
 
+/** Other compatibility stuff. **/
+
 #ifdef _MSC_VER
 /**
  * MSVC prefixes some POSIX/C99 functions with underscores,
@@ -131,6 +133,18 @@ namespace std {
 #define vsnprintf(str, size, format, ap) _vsnprintf(str, size, format, ap)
 #define strcasecmp(s1, s2) _stricmp(s1, s2)
 #define strncasecmp(s1, s2, n) _strnicmp(s1, s2, n)
+#endif
+
+/**
+ * MSVC (and old gcc) doesn't have __func__.
+ * Reference: http://gcc.gnu.org/onlinedocs/gcc/Function-Names.html
+ */
+#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 199901L
+# if (defined(__GNUC__) && __GNUC__ >= 2) || defined(_MSC_VER)
+#  define __func__ __FUNCTION__
+# else
+#  define __func__ "<unknown>"
+# endif
 #endif
 
 #endif /* __CXX11_COMPAT_H__ */
