@@ -164,7 +164,7 @@ logunsupported = 1
 
 # NONE
 
-# Note that PNG_USR_CONFIG only has an effect when building
+# Note that PNG_USER_CONFIG only has an effect when building
 # pnglibconf.h
 
 setting USER_CONFIG
@@ -304,10 +304,6 @@ option MNG_FEATURES
 option FLOATING_ARITHMETIC
 option FLOATING_POINT
 option FIXED_POINT
-
-# The following is always on (defined empty)
-
-setting CALLOC_SUPPORTED default
 
 # This protects us against compilers that run on a windowing system
 # and thus don't have or would rather us not use the stdio types:
@@ -480,6 +476,7 @@ option INCH_CONVERSIONS
 = INCH_CONVERSIONS INCH_CONVERSIONS
 
 # API to build a grayscale palette
+# NOTE: this is not used internally by libpng at present.
 
 option BUILD_GRAYSCALE_PALETTE
 
@@ -577,22 +574,25 @@ option GAMMA disabled
 option COLORSPACE enables GAMMA disabled
 
 # When an ICC profile is read, or png_set, it will be checked for a match
-# against known sRGB profiles if the sRGB handling is enabled.  This
-# setting controls how much work is done during the check:
+# against known sRGB profiles if the sRGB handling is enabled.  The
+# PNG_sRGB_PROFILE_CHECKS setting controls how much work is done during the
+# check:
 #
-# 0: Just validate the profile MD5 signature if present, otherwise use
-#    the checks in option 1.
+# -1: Don't do any sRGB profile checking.
 #
-# 1: Additionally check the length, intent and adler32 checksum of the
-#    actual data.   If enabled this will reject known profiles that have
-#    had the rendering intent in the header changed as well as other edits
-#    done without updating the checksum.  See the discussion below.
+#  0: Just validate the profile MD5 signature if present, otherwise use
+#     the checks in option 1.
 #
-# 2: Additionally checksum all the data using the ethernet CRC32 algorithm.
-#    This makes it more difficult to fake profiles and makes it less likely
-#    to get a false positive on profiles with no signature, but is probably
-#    just a waste of time since all currently approved ICC sRGB profiles have
-#    a secure MD5 signature.
+#  1: Additionally check the length, intent and adler32 checksum of the
+#     actual data.   If enabled this will reject known profiles that have
+#     had the rendering intent in the header changed as well as other edits
+#     done without updating the checksum.  See the discussion below.
+#
+#  2: Additionally checksum all the data using the ethernet CRC32 algorithm.
+#     This makes it more difficult to fake profiles and makes it less likely
+#     to get a false positive on profiles with no signature, but is probably
+#     just a waste of time since all currently approved ICC sRGB profiles have
+#     a secure MD5 signature.
 #
 # The rendering intent.  An ICC profile stores an intended rendering intent,
 # but does not include the value in the signature.  The intent is documented

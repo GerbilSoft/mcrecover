@@ -1,8 +1,8 @@
 
 /* pngpread.c - read a png file in push mode
  *
- * Last changed in libpng 1.6.8 [December 19, 2013]
- * Copyright (c) 1998-2013 Glenn Randers-Pehrson
+ * Last changed in libpng 1.6.11 [June 12, 2014]
+ * Copyright (c) 1998-2014 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  *
@@ -49,7 +49,7 @@ png_process_data_pause(png_structrp png_ptr, int save)
       /* It's easiest for the caller if we do the save, then the caller doesn't
        * have to supply the same data again:
        */
-      if (save)
+      if (save != 0)
          png_push_save_buffer(png_ptr);
       else
       {
@@ -337,6 +337,7 @@ png_push_read_chunk(png_structrp png_ptr, png_inforp info_ptr)
          png_error(png_ptr, "Missing PLTE before IDAT");
 
       png_ptr->mode |= PNG_HAVE_IDAT;
+      png_ptr->process_mode = PNG_READ_IDAT_MODE;
 
       if (!(png_ptr->mode & PNG_HAVE_CHUNK_AFTER_IDAT))
          if (png_ptr->push_length == 0)
@@ -635,6 +636,7 @@ png_push_read_chunk(png_structrp png_ptr, png_inforp info_ptr)
       png_handle_iTXt(png_ptr, info_ptr, png_ptr->push_length);
    }
 #endif
+
 #ifdef PNG_READ_APNG_SUPPORTED
    else if (chunk_name == png_acTL)
    {
@@ -659,7 +661,6 @@ png_push_read_chunk(png_structrp png_ptr, png_inforp info_ptr)
    }
 
 #endif /* PNG_READ_APNG_SUPPORTED */
-
    else
    {
       if (png_ptr->push_length + 4 > png_ptr->buffer_size)
@@ -1168,15 +1169,15 @@ png_push_process_row(png_structrp png_ptr)
 
 
 #ifdef PNG_READ_INTERLACING_SUPPORTED
-   /* Blow up interlaced rows to full size */
+   /* Expand interlaced rows to full size */
    if (png_ptr->interlaced && (png_ptr->transformations & PNG_INTERLACE))
    {
       if (png_ptr->pass < 6)
          png_do_read_interlace(&row_info, png_ptr->row_buf + 1, png_ptr->pass,
             png_ptr->transformations);
 
-    switch (png_ptr->pass)
-    {
+      switch (png_ptr->pass)
+      {
          case 0:
          {
             int i;
@@ -1343,7 +1344,6 @@ png_push_process_row(png_structrp png_ptr)
       }
    }
    else
-#endif
    {
       png_push_have_row(png_ptr, png_ptr->row_buf + 1);
       png_read_push_finish_row(png_ptr);
@@ -1353,7 +1353,6 @@ png_push_process_row(png_structrp png_ptr)
 void /* PRIVATE */
 png_read_push_finish_row(png_structrp png_ptr)
 {
-#ifdef PNG_READ_INTERLACING_SUPPORTED
    /* Arrays to facilitate easy interlacing - use pass (0 - 6) as index */
 
    /* Start of interlace block */
@@ -1378,7 +1377,6 @@ png_read_push_finish_row(png_structrp png_ptr)
    if (png_ptr->row_number < png_ptr->num_rows)
       return;
 
-#ifdef PNG_READ_INTERLACING_SUPPORTED
    if (png_ptr->interlaced)
    {
       png_ptr->row_number = 0;
@@ -1413,7 +1411,6 @@ png_read_push_finish_row(png_structrp png_ptr)
 
       } while (png_ptr->iwidth == 0 || png_ptr->num_rows == 0);
    }
-#endif /* PNG_READ_INTERLACING_SUPPORTED */
 }
 
 void /* PRIVATE */
@@ -1438,7 +1435,6 @@ png_push_have_row(png_structrp png_ptr, png_bytep row)
          (int)png_ptr->pass);
 }
 
-#ifdef PNG_READ_INTERLACING_SUPPORTED
 void PNGAPI
 png_progressive_combine_row(png_const_structrp png_ptr, png_bytep old_row,
     png_const_bytep new_row)
@@ -1451,9 +1447,8 @@ png_progressive_combine_row(png_const_structrp png_ptr, png_bytep old_row,
     * it must be png_ptr->row_buf+1
     */
    if (new_row != NULL)
-      png_combine_row(png_ptr, old_row, 1/*display*/);
+      png_combine_row(png_ptr, old_row, 1/*blocky display*/);
 }
-#endif /* PNG_READ_INTERLACING_SUPPORTED */
 
 void PNGAPI
 png_set_progressive_read_fn(png_structrp png_ptr, png_voidp progressive_ptr,
