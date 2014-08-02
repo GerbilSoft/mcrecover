@@ -1,11 +1,44 @@
 GCN MemCard Recover
-Version 0.2
+Version 0.2.1
 
 Copyright (c) 2012-2014 by David Korth.
 Email: gerbilsoft@gerbilsoft.com
 
 This program is licensed under the GNU General Public License v2.
 See README.txt, Section X for more information.
+
+================================================================
+
+GCN MemCard Recover v0.2.1
+[released 2014/06/??]
+
+Database statistics in this release:
+- USA: 104 files
+- PAL: 59 files
+- JPN: 4 files
+- KOR: 0 files :(
+- Unlicensed: 1 file
+- Homebrew: 1 file
+
+- Disabled High DPI mode on Windows. Region icons and GameCube icons and
+  banners were not drawn with the correct scaling. Properly implementing
+  High DPI support will probably require switching to Qt 5.
+
+- Fixed an issue with the Windows build that caused variable expansions
+  to be removed from the XML database files, resulting in unusable
+  databases. This was caused by using cmake's CONFIGURE_FILE() to convert
+  the files from UNIX line endings to DOS line endings.
+
+- Use `unix2dos' to convert text and XML files from UNIX line endings to
+  DOS line endings when building for Win32. If `unix2dos' isn't available,
+  use the included program `miniu2d' to do the conversion instead.
+
+- Fixed an issue where the preferred region was not correctly loaded on
+  startup if it was set to USA. This could be worked around by selecting
+  a different region and then switching back to USA.
+
+- Eliminated the lag that happened after scanning for lost files on cards
+  with lots of lost files (or with "Scan Used Blocks" enabled).
 
 ================================================================
 
