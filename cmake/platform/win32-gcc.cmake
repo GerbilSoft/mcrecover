@@ -15,7 +15,7 @@ SET(MCRECOVER_CXXFLAGS_PLATFORM "-fshort-wchar -DSTRICT ${MCRECOVER_CFLAG_WIN32_
 
 # Test for static libgcc/libstdc++.
 SET(MCRECOVER_LDFLAGS_PLATFORM "")
-FOREACH(FLAG_TEST "-static-libgcc" "-static-libstdc++" "-Wl,--large-address-aware" "-Wl,--nxcompat" "-Wl,--dynamicbase")
+FOREACH(FLAG_TEST "-static-libgcc" "-static-libstdc++" "-Wl,--large-address-aware" "-Wl,--nxcompat" "-Wl,--dynamicbase" "-Wl,--tsaware")
 	# CMake doesn't like "+" characters in variable names.
 	STRING(REPLACE "+" "_" FLAG_TEST_VARNAME "${FLAG_TEST}")
 
