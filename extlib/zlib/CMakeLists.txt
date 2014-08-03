@@ -144,7 +144,13 @@ if(CMAKE_COMPILER_IS_GNUCC)
 
 	if(ZLIB_ASMS)
 		add_definitions(-DASMV)
-		set_source_files_properties(${ZLIB_ASMS} PROPERTIES LANGUAGE C COMPILE_FLAGS -DNO_UNDERLINE)
+		# mcrecover: Disable underlines only if not Windows.
+		# NOTE: We have to force compilation as C.
+		if(WIN32)
+			set_source_files_properties(${ZLIB_ASMS} PROPERTIES LANGUAGE C)
+		else()
+			set_source_files_properties(${ZLIB_ASMS} PROPERTIES LANGUAGE C COMPILE_FLAGS -DNO_UNDERLINE)
+		endif()
 	endif()
 endif()
 
