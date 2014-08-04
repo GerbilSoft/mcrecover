@@ -599,11 +599,14 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QStri
 		if (qfile.exists()) {
 			if (overwriteAll == OVERWRITEALL_UNKNOWN) {
 				bool overwrite = false;
+				QString onlyFilename;
+				int slashPos = filename.lastIndexOf(QChar(L'/'));
+				onlyFilename = (slashPos >= 0 ? filename.mid(slashPos + 1) : filename);
 				int ret = QMessageBox::warning(q,
 					McRecoverWindow::tr("File Already Exists"),
 					McRecoverWindow::tr("A file named \"%1\" already exists in the specified directory.\n\n"
 							    "Do you want to overwrite it?")
-							.arg(QDir::toNativeSeparators(filename)),
+							.arg(onlyFilename),
 					(QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll),
 					QMessageBox::No);
 				switch (ret) {
