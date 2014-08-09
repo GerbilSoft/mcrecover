@@ -20,7 +20,7 @@ ENDIF(NOT MSVC)
 
 MACRO(SPLIT_DEBUG_INFORMATION EXE_TARGET)
 IF(OBJCOPY AND NOT MSVC)
-	# NOTE: $<TARGET_FILE:gcbanner> is preferred,
+	# NOTE: $<TARGET_FILE:target> is preferred,
 	# but this doesn't seem to work on Ubuntu 10.04.
 	# (cmake_2.8.0-5ubuntu1_i386)
 	GET_PROPERTY(SPLITDEBUG_EXE_LOCATION TARGET ${EXE_TARGET} PROPERTY LOCATION)

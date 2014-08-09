@@ -606,7 +606,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QStri
 					McRecoverWindow::tr("File Already Exists"),
 					McRecoverWindow::tr("A file named \"%1\" already exists in the specified directory.\n\n"
 							    "Do you want to overwrite it?")
-							.arg(onlyFilename),
+							.arg(filename),
 					(QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll),
 					QMessageBox::No);
 				switch (ret) {
