@@ -44,7 +44,23 @@ IF(NOT USE_INTERNAL_PNG)
 	SET(gctools_DL_LIBS ${CMAKE_DL_LIBS})
 ENDIF(NOT USE_INTERNAL_PNG)
 
-# Build the library.
+######################
+# Build the library. #
+######################
+
+IF(MSVC)
+	# CMake seems to use weird settings for the PDB file.
+	# (at least version 2.8.12.2; 3.0.0 might be different)
+	STRING(REGEX REPLACE
+		"/Fd<OBJECT_DIR>/${_FS_C}"
+		"/Fd${CMAKE_CURRENT_BINARY_DIR}/gctools.pdb"
+		CMAKE_C_COMPILE_OBJECT "${CMAKE_C_COMPILE_OBJECT}")
+	STRING(REGEX REPLACE
+		"/Fd<OBJECT_DIR>/${_FS_CXX}"
+		"/Fd${CMAKE_CURRENT_BINARY_DIR}/gctools.pdb"
+		CMAKE_CXX_COMPILE_OBJECT "${CMAKE_CXX_COMPILE_OBJECT}")
+ENDIF(MSVC)
+
 ADD_LIBRARY(gctools STATIC ${libgctools_SRCS} ${libgctools_PNG_SRCS})
 TARGET_LINK_LIBRARIES(gctools ${PNG_LIBRARY} ${gctools_DL_LIBS})
 SET_TARGET_PROPERTIES(gctools PROPERTIES
