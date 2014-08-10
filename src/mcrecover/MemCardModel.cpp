@@ -462,7 +462,9 @@ QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int 
 				case COL_DESCRIPTION:	return tr("Description");
 				case COL_SIZE:		return tr("Size");
 				case COL_MTIME:		return tr("Last Modified");
+				//: File permissions. (Known as "mode" on Unix systems.)
 				case COL_PERMISSION:	return tr("Mode");
+				//: 6-digit game ID, e.g. GALE01.
 				case COL_GAMEID:	return tr("Game ID");
 				case COL_FILENAME:	return tr("Filename");
 
