@@ -223,7 +223,7 @@ recipe again, to continue to eat the snack.</source>
         <source>C</source>
         <comment>ts-locale</comment>
         <extracomment>Locale name, e.g. &quot;en_US&quot;.</extracomment>
-        <translation>ru</translation>
+        <translation>ru_RU</translation>
     </message>
 </context>
 <context>
