@@ -253,6 +253,7 @@ QString AboutDialogPrivate::GetCredits(void)
 
 		{CT_TRANSLATORS,	"Overlord", nullptr, "en_GB"},
 		{CT_CONTINUE,	"Kevin L\xC3\xB3pez", "http://kelopez.cl/", "es_CL"},
+		{CT_CONTINUE,	"Egor305", nullptr, "ru_RU"},
 
 		{CT_MAX, nullptr, nullptr, nullptr}
 	};
