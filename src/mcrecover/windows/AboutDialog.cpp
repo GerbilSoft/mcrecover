@@ -340,7 +340,7 @@ QString AboutDialogPrivate::GetLibraries(void)
 	// Flag icons.
 	sLibraries += sDLineBreak;
 	sLibraries += QLatin1String(
-		"Flag icons are based on KDE 4.12.1's locale icons.\n"
+		"Flag icons are based on KDE 4.13.3's locale icons.\n"
 		"EU flag icon is based on Dolphin Emulator 4.0's Flag_Europe.xpm icon.");
 
 	// TODO: Don't show compiled-with version if the same as in-use version?
