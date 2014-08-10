@@ -79,12 +79,13 @@ ADD_EXECUTABLE(gcbanner
 # libgctools
 TARGET_LINK_LIBRARIES(gcbanner gctools)
 
-# PDB and program version.
+# PDB filename.
 SET_TARGET_PROPERTIES(gcbanner
-	PROPERTIES
-		PDB "${GCBANNER_PDB_FILE}"
-		VERSION "${VERSION_MAJOR}.${VERSION_MINOR}"
-	)
+	PROPERTIES PDB "${GCBANNER_PDB_FILE}")
+
+# Win32: image version.
+INCLUDE(Win32ImageVersionLinkerFlags)
+WIN32_IMAGE_VERSION_LINKER_FLAGS(${VERSION_MAJOR} ${VERSION_MINOR})
 
 # Split debug information.
 IF(SPLIT_DEBUG)
