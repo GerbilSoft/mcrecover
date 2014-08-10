@@ -41,96 +41,96 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="272"/>
+        <location filename="../windows/AboutDialog.cpp" line="274"/>
         <source>Memory Card File Contributors:</source>
         <translation>Предоставили свои образы Карт Памяти:</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="275"/>
+        <location filename="../windows/AboutDialog.cpp" line="277"/>
         <source>UI Translators:</source>
         <translation>Переводчики Интерфейса:</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="319"/>
+        <location filename="../windows/AboutDialog.cpp" line="321"/>
         <source>Internal copy of %1.</source>
         <extracomment>Using an internal copy of a library.</extracomment>
         <translatorcomment>Перевел как &quot;Statically linked with&quot;/Translated as &quot;Statically linked with&quot;</translatorcomment>
         <translation>Статически связано с %1.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="321"/>
+        <location filename="../windows/AboutDialog.cpp" line="323"/>
         <source>Compiled with %1.</source>
         <extracomment>Compiled with a specific version of an external library.</extracomment>
         <translation>Скомпилировано с %1.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="323"/>
+        <location filename="../windows/AboutDialog.cpp" line="325"/>
         <source>Using %1.</source>
         <extracomment>Using an external library, e.g. libpcre.so</extracomment>
         <translation>Использует %1.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="325"/>
+        <location filename="../windows/AboutDialog.cpp" line="327"/>
         <source>License: %1</source>
         <extracomment>License: (libraries with only a single license)</extracomment>
         <translation>Лицензия: %1</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="327"/>
+        <location filename="../windows/AboutDialog.cpp" line="329"/>
         <source>Licenses: %1</source>
         <extracomment>Licenses: (libraries with multiple licenses)</extracomment>
         <translation>Лицензии: %1</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="389"/>
+        <location filename="../windows/AboutDialog.cpp" line="391"/>
         <source>WARNING: PCRE does not have UTF-8 support.</source>
         <translation>Предупреждение: PCRE не поддерживает UTF-8.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="391"/>
+        <location filename="../windows/AboutDialog.cpp" line="393"/>
         <source>WARNING: PCRE does not have Unicode character properties support.</source>
         <translation>Предупреждение: PCRE не поддерживает свойства символов Unicode.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="421"/>
+        <location filename="../windows/AboutDialog.cpp" line="423"/>
         <source> (No APNG support)</source>
         <translation>(Без поддержки APNG)</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="484"/>
+        <location filename="../windows/AboutDialog.cpp" line="485"/>
         <source>Available databases:</source>
         <translation>Доступные базы данных:</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="486"/>
+        <location filename="../windows/AboutDialog.cpp" line="487"/>
         <source>(none found)</source>
         <translation>(базы данных не найдены)</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="545"/>
+        <location filename="../windows/AboutDialog.cpp" line="546"/>
         <source>Unknown [GetCPInfoExA() failed]</source>
         <extracomment>GetCPInfoExA() call failed.</extracomment>
         <translation>Неизвестно [Ошибка GetCPInfoExA()]</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="583"/>
+        <location filename="../windows/AboutDialog.cpp" line="584"/>
         <source>Using Unicode strings for Win32 API.</source>
         <extracomment>Win32: Unicode strings are being used. (WinNT)</extracomment>
         <translation>Используется строки Unicode для Win32 API.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="586"/>
+        <location filename="../windows/AboutDialog.cpp" line="587"/>
         <source>Using ANSI strings for Win32 API.</source>
         <extracomment>Win32: ANSI strings are being used. (Win9x)</extracomment>
         <translation>Используется строки ANSI для Win32 API.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="603"/>
+        <location filename="../windows/AboutDialog.cpp" line="604"/>
         <source>For technical support, you can visit the following websites:</source>
         <translation>Для тех. поддержки, посетите следующие сайты:</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="635"/>
+        <location filename="../windows/AboutDialog.cpp" line="636"/>
         <source>You can also email the developer directly:</source>
         <translation>Вы также можете отправить электронное письмо разработчику:</translation>
     </message>
@@ -138,7 +138,7 @@
 <context>
     <name>HackDetection</name>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="237"/>
+        <location filename="../sekrit/HackDetection.cpp" line="253"/>
         <source>Hack Detection</source>
         <comment>DT_H</comment>
         <extracomment>&quot;Hack Detection&quot; title.</extracomment>
@@ -146,21 +146,21 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="242"/>
+        <location filename="../sekrit/HackDetection.cpp" line="258"/>
         <source>Quack Detection</source>
         <comment>DT_Q</comment>
         <extracomment>&quot;Quack Detection&quot; title.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="247"/>
+        <location filename="../sekrit/HackDetection.cpp" line="263"/>
         <source>Snack Detection</source>
         <comment>DT_S</comment>
         <extracomment>&quot;&apos;Snack Detection&quot; title.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="258"/>
+        <location filename="../sekrit/HackDetection.cpp" line="274"/>
         <source>One or more game resources were manipulated by an
 outside source. This is not allowed as specified in
 the game license.
@@ -171,13 +171,13 @@ license again, to continue to play the game.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="264"/>
+        <location filename="../sekrit/HackDetection.cpp" line="280"/>
         <source>Game halted.</source>
         <comment>DT_H</comment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="269"/>
+        <location filename="../sekrit/HackDetection.cpp" line="285"/>
         <source>One or more snack ingredients were manipulated by an
 outside sauce. This is not allowed as specified in
 the snack recipe.
@@ -188,13 +188,13 @@ recipe again, to continue to eat the snack.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="275"/>
+        <location filename="../sekrit/HackDetection.cpp" line="291"/>
         <source>Snack salted.</source>
         <comment>DT_S</comment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../sekrit/HackDetection.cpp" line="280"/>
+        <location filename="../sekrit/HackDetection.cpp" line="296"/>
         <source>Press Escape to go back.</source>
         <translation></translation>
     </message>
@@ -202,7 +202,7 @@ recipe again, to continue to eat the snack.</source>
 <context>
     <name>McRecoverQApplication</name>
     <message>
-        <location filename="../TranslationManager.cpp" line="179"/>
+        <location filename="../TranslationManager.cpp" line="182"/>
         <source>David Korth</source>
         <comment>ts-author</comment>
         <extracomment>Translation file author. Put your name here.</extracomment>
@@ -210,16 +210,16 @@ recipe again, to continue to eat the snack.</source>
         <translation>Egor305</translation>
     </message>
     <message>
-        <location filename="../TranslationManager.cpp" line="182"/>
-        <location filename="../TranslationManager.cpp" line="231"/>
+        <location filename="../TranslationManager.cpp" line="185"/>
+        <location filename="../TranslationManager.cpp" line="233"/>
         <source>Default</source>
         <comment>ts-language</comment>
         <extracomment>Language this translation provides, e.g. &quot;English (US)&quot;.</extracomment>
         <translation>Русский (RU)</translation>
     </message>
     <message>
-        <location filename="../TranslationManager.cpp" line="185"/>
-        <location filename="../TranslationManager.cpp" line="228"/>
+        <location filename="../TranslationManager.cpp" line="188"/>
+        <location filename="../TranslationManager.cpp" line="230"/>
         <source>C</source>
         <comment>ts-locale</comment>
         <extracomment>Locale name, e.g. &quot;en_US&quot;.</extracomment>
@@ -401,7 +401,7 @@ recipe again, to continue to eat the snack.</source>
     </message>
     <message>
         <location filename="../windows/McRecoverWindow.ui" line="441"/>
-        <location filename="../windows/McRecoverWindow.cpp" line="456"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="458"/>
         <source>Preferred Region:</source>
         <translation>Предпочитаемый регион:</translation>
     </message>
@@ -436,7 +436,7 @@ recipe again, to continue to eat the snack.</source>
         <translation>Извлечь &amp;Баннеры</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="320"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="322"/>
         <source>The internal PCRE library was not compiled with Unicode character properties support.
 Some files with Japanese descriptions might not be found when scanning.</source>
         <extracomment>Statically-linked PCRE is missing Unicode character properties support.</extracomment>
@@ -444,7 +444,7 @@ Some files with Japanese descriptions might not be found when scanning.</source>
 Некоторые файлы с описанием на Японском языке могут быть не найдены во время сканирования.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="325"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="327"/>
         <source>The system PCRE library was not compiled with Unicode character properties support.
 Some files with Japanese descriptions might not be found when scanning.</source>
         <extracomment>Dynamically-linked PCRE is missing Unicode character properties support.</extracomment>
@@ -452,28 +452,28 @@ Some files with Japanese descriptions might not be found when scanning.</source>
 Некоторые файлы с описанием на Японском языке могут быть не найдены во время сканирования.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="340"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="342"/>
         <source>No memory card loaded.</source>
         <translation>Карта памяти не была открыта.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="565"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="567"/>
         <source>Save GCN Save File %1</source>
         <translation>Сохранить файл сохранения GCN %1</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="568"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="570"/>
         <source>GameCube Save Files</source>
         <translation>Файлы Сохранений GameCube</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="569"/>
-        <location filename="../windows/McRecoverWindow.cpp" line="1273"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="571"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1285"/>
         <source>All Files</source>
         <translation>Все файлы</translation>
     </message>
     <message numerus="yes">
-        <location filename="../windows/McRecoverWindow.cpp" line="579"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="581"/>
         <source>Save %Ln GCN Save File(s)</source>
         <translation>
             <numerusform>Сохранить %Ln файл сохранения GCN</numerusform>
@@ -482,12 +482,12 @@ Some files with Japanese descriptions might not be found when scanning.</source>
         </translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="601"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="606"/>
         <source>File Already Exists</source>
         <translation>Файл уже существует</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="602"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="607"/>
         <source>A file named &quot;%1&quot; already exists in the specified directory.
 
 Do you want to overwrite it?</source>
@@ -496,13 +496,14 @@ Do you want to overwrite it?</source>
 Перезаписать файл?</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="728"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="735"/>
         <source>System Default (%1)</source>
         <comment>ts-language</comment>
+        <extracomment>Translation: System Default (retrieved from system settings)</extracomment>
         <translation>Системный Язык (%1)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="955"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="967"/>
         <source>The internal PCRE library was not compiled with UTF-8 support.
 Scanning for lost files will not work.</source>
         <extracomment>Statically-linked PCRE is missing UTF-8 support.</extracomment>
@@ -510,7 +511,7 @@ Scanning for lost files will not work.</source>
 Сканирование на предмет потерянных файлов будет невозможным.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="959"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="971"/>
         <source>The system PCRE library was not compiled with UTF-8 support.
 Scanning for lost files will not work.</source>
         <extracomment>Dynamically-linked PCRE is missing UTF-8 support.</extracomment>
@@ -518,45 +519,45 @@ Scanning for lost files will not work.</source>
 Сканирование на предмет потерянных файлов будет невозможным.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1002"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1014"/>
         <source>An error occurred while opening %1:</source>
         <translation>Ошибка была обнаружена во время открытия %1:</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1049"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1061"/>
         <source>The card image is too small. (Card image is %L1 bytes; should be at least 512 KB.)</source>
         <translatorcomment>Note for developer: change %L1 to %Ln</translatorcomment>
         <translation>Образ карты памяти слишком мал. (Размер образа в байтах: %L1; должен быть как минимум 512 КБ.)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1055"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1067"/>
         <source>The card image is too big. (Card image is %L1 bytes; should be 16 MB or less.)</source>
         <translatorcomment>Note for developer: change %L1 to %Ln</translatorcomment>
         <translation>Образ карты памяти слишком велик. (Размер образа в байтах: %L1; должен быть 16 МБ или меньше.)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1061"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1073"/>
         <source>The card image size is not a power of two. (Card image is %L1 bytes.)</source>
         <translatorcomment>Note for developer: change %L1 to %Ln</translatorcomment>
         <translation>Размер образа карты памяти не является степенью двойки. (Размер образа в байтах: %L1.)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1065"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1077"/>
         <source>The header checksum is invalid.</source>
         <translation>Контрольная сумма заголовка является неверной.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1068"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1080"/>
         <source>Both directory tables are invalid.</source>
         <translation>Обе таблицы каталогов являются неверными.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1071"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1083"/>
         <source>Both block tables are invalid.</source>
         <translation>Обе таблицы блоков являются неверными.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../windows/McRecoverWindow.cpp" line="1079"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1091"/>
         <source>Error(s) have been detected in this Memory Card image:</source>
         <translation>
             <numerusform>Ошибка была обнаружена в карте памяти:</numerusform>
@@ -565,36 +566,36 @@ Scanning for lost files will not work.</source>
         </translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1270"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1282"/>
         <source>Open GameCube Memory Card Image</source>
         <translation>Открыть образ GameCube Memory Card</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1272"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1284"/>
         <source>GameCube Memory Card Image</source>
         <translation>Образ GameCube Memory Card</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1310"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1322"/>
         <source>The database files should be located in the data subdirectory in
 mcrecover.exe&apos;s program directory.</source>
         <translation>Файлы баз данных должны быть расположены в под-катологе data в
 каталоге с программой mcrecover.exe.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1314"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1326"/>
         <source>The database files should be located in %1.
 Alternatively, you can place your own version in ~/.config/mcrecover/data/</source>
         <translation>Файлы баз данных должны быть расположены в %1.
 Также, вы можете расположить ваши собственные в ~/.config/mcrecover/data/</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1321"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1333"/>
         <source>Database Load Error</source>
         <translation>Ошибка загрузки баз данных</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1322"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1334"/>
         <source>No GCN MemCard file databases were found.</source>
         <translation>Базы данных GCN MemCard не были найдены.</translation>
     </message>
@@ -639,42 +640,44 @@ Checksum:</source>
 <context>
     <name>MemCardModel</name>
     <message>
-        <location filename="../MemCardModel.cpp" line="452"/>
+        <location filename="../MemCardModel.cpp" line="460"/>
         <source>Icon</source>
         <translation>Иконка</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="453"/>
+        <location filename="../MemCardModel.cpp" line="461"/>
         <source>Banner</source>
         <translation>Баннер</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="454"/>
+        <location filename="../MemCardModel.cpp" line="462"/>
         <source>Description</source>
         <translation>Описание</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="455"/>
+        <location filename="../MemCardModel.cpp" line="463"/>
         <source>Size</source>
         <translation>Размер</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="456"/>
+        <location filename="../MemCardModel.cpp" line="464"/>
         <source>Last Modified</source>
         <translation>Дата изменения</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="457"/>
+        <location filename="../MemCardModel.cpp" line="466"/>
         <source>Mode</source>
+        <extracomment>File permissions. (Known as &quot;mode&quot; on Unix systems.)</extracomment>
         <translation>Режим</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="458"/>
+        <location filename="../MemCardModel.cpp" line="468"/>
         <source>Game ID</source>
+        <extracomment>6-digit game ID, e.g. GALE01.</extracomment>
         <translation>ID-номер игры</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="459"/>
+        <location filename="../MemCardModel.cpp" line="469"/>
         <source>Filename</source>
         <translation>Имя Файла</translation>
     </message>
@@ -767,12 +770,12 @@ Checksum:</source>
         </translation>
     </message>
     <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="447"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="445"/>
         <source>Scan cancelled.</source>
         <translation>Сканирование отменено.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../widgets/StatusBarManager.cpp" line="467"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="465"/>
         <source>Scan complete. %Ln lost file(s) found.</source>
         <translation>
             <numerusform>Сканирование завершено. %Ln потерянный файл найден.</numerusform>
@@ -781,7 +784,7 @@ Checksum:</source>
         </translation>
     </message>
     <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="501"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="499"/>
         <source>An error occurred while scanning: %1</source>
         <translation>Во время сканирования, была обнаружена ошибка: %1</translation>
     </message>
