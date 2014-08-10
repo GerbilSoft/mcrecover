@@ -10,6 +10,7 @@ STRING(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 # - MSVCRT "deprecated" functions
 SET(MCRECOVER_BASE_C_FLAGS_COMMON "-nologo -wd4355 -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE")
 SET(MCRECOVER_BASE_CXX_FLAGS_COMMON "${MCRECOVER_BASE_C_FLAGS_COMMON}")
+# NOTE: -tsaware is automatically set for Windows 2000 and later. (as of at least Visual Studio .NET 2003)
 # FIXME: If built as 64-bit, needs -subsystem:windows,5.02.
 SET(MCRECOVER_BASE_EXE_LINKER_FLAGS_COMMON "-nologo /manifest:no -subsystem:windows,5.01 -dynamicbase -nxcompat -largeaddressaware")
 SET(MCRECOVER_BASE_SHARED_LINKER_FLAGS_COMMON "${MCRECOVER_BASE_EXE_LINKER_FLAGS_COMMON}")
