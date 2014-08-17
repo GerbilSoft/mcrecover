@@ -72,7 +72,10 @@ PROJECT(PCRE C CXX)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.0)
 
-SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake) # for FindReadline.cmake
+# for FindReadline.cmake
+list (APPEND CMAKE_MODULE_PATH
+	${PROJECT_SOURCE_DIR}/cmake
+	)
 
 # mcrecover: Disable external packages.
 IF(0)
@@ -874,6 +877,12 @@ echo RunTest.bat tests successfully completed
   ENDIF(PCRE_BUILD_PCRECPP)
 
 ENDIF(PCRE_BUILD_TESTS)
+
+# mcrecover: Set MSVC debug paths.
+INCLUDE(SetMSVCDebugPath)
+FOREACH(_target "${targets}")
+	SET_MSVC_DEBUG_PATH(${_target})
+ENDFOREACH()
 
 # mcrecover: Disable installation.
 IF(0)

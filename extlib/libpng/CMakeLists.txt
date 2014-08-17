@@ -144,6 +144,9 @@ if(PNG_SHARED)
     # msvc does not append 'lib' - do it here to have consistent name
     set_target_properties(${PNG_LIB_NAME} PROPERTIES PREFIX "lib")
     set_target_properties(${PNG_LIB_NAME} PROPERTIES IMPORT_PREFIX "lib")
+    # mcrecover: Set MSVC debug path.
+    INCLUDE(SetMSVCDebugPath)
+    SET_MSVC_DEBUG_PATH(${PNG_LIB_NAME})
   endif()
   target_link_libraries(${PNG_LIB_NAME} ${ZLIB_LIBRARY} ${M_LIBRARY})
 endif()
@@ -156,6 +159,9 @@ if(PNG_STATIC)
   if(MSVC)
     # msvc does not append 'lib' - do it here to have consistent name
     set_target_properties(${PNG_LIB_NAME_STATIC} PROPERTIES PREFIX "lib")
+    # mcrecover: Set MSVC debug path.
+    INCLUDE(SetMSVCDebugPath)
+    SET_MSVC_DEBUG_PATH(${PNG_LIB_NAME_STATIC})
   endif()
   target_link_libraries(${PNG_LIB_NAME_STATIC} ${ZLIB_LIBRARY} ${M_LIBRARY})
 endif()

@@ -279,21 +279,6 @@ QT4_ADD_RESOURCES(
 # Build the executable. #
 #########################
 
-SET(MCRECOVER_PDB_FILE "${CMAKE_CURRENT_BINARY_DIR}/mcrecover.pdb")
-
-IF(MSVC)
-	# CMake seems to use weird settings for the PDB file.
-	# (at least version 2.8.12.2; 3.0.0 might be different)
-	STRING(REGEX REPLACE
-		"/Fd<OBJECT_DIR>/${_FS_C}"
-		"/Fd${MCRECOVER_PDB_FILE}"
-		CMAKE_C_COMPILE_OBJECT "${CMAKE_C_COMPILE_OBJECT}")
-	STRING(REGEX REPLACE
-		"/Fd<OBJECT_DIR>/${_FS_CXX}"
-		"/Fd${MCRECOVER_PDB_FILE}"
-		CMAKE_CXX_COMPILE_OBJECT "${CMAKE_CXX_COMPILE_OBJECT}")
-ENDIF(MSVC)
-
 # TODO: Set Win32 when compiling release build
 # to disable the command prompt window.
 ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
@@ -308,6 +293,8 @@ ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_DBUS_SRCS}
 	${mcrecover_DBUS_MOC_SRCS}
 	)
+INCLUDE(SetMSVCDebugPath)
+SET_MSVC_DEBUG_PATH(mcrecover)
 
 # libgctools
 TARGET_LINK_LIBRARIES(mcrecover gctools)
@@ -371,10 +358,6 @@ SET_TARGET_PROPERTIES(mcrecover PROPERTIES
 # PCRE compile flags.
 SET_TARGET_PROPERTIES(mcrecover PROPERTIES
 	COMPILE_FLAGS "${PCRE_DEFINITIONS}")
-
-# PDB filename.
-SET_TARGET_PROPERTIES(mcrecover
-	PROPERTIES PDB "${MCRECOVER_PDB_FILE}")
 
 # Win32: image version.
 INCLUDE(Win32ImageVersionLinkerFlags)
