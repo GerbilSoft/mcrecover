@@ -80,6 +80,8 @@ int main(int argc, char *argv[])
 			if (ferror(f_unix)) {
 				fprintf(stderr, "ERROR reading UNIX text file '%s': %s\n",
 					argv[1], strerror(errno));
+				fclose(f_unix);
+				fclose(f_dos);
 				return EXIT_FAILURE;
 			}
 		}
@@ -123,6 +125,8 @@ int main(int argc, char *argv[])
 		if (pos != bytes_out) {
 			// Short write!
 			fprintf(stderr, "ERROR writing DOS text file '%s': short write\n", argv[1]);
+			fclose(f_unix);
+			fclose(f_dos);
 			return EXIT_FAILURE;
 		}
 	}
