@@ -2,40 +2,24 @@
 # This only has an effect on Win32 platforms, since the software is developed
 # on Linux and hence uses Unix line endings.
 
-IF(WIN32)
-	# Search for unix2dos.
-	FIND_PROGRAM(UNIX2DOS unix2dos)
-ENDIF(WIN32)
-
 # Parameters:
 # - _filenames: Variable to store converted (or as-is) filenames in.
 # - Additional: Files to convert.
 MACRO(CONVERT_TEXT_FILES_TO_NATIVE _filenames)
 	IF(WIN32)
 		# Win32: Convert text files to use Windows line endings.
-		IF(NOT UNIX2DOS)
-			GET_PROPERTY(MINIU2D_EXE_LOCATION TARGET miniu2d PROPERTY LOCATION)
-		ENDIF(NOT UNIX2DOS)
+		GET_PROPERTY(MINIU2D_EXE_LOCATION TARGET miniu2d PROPERTY LOCATION)
 
 		UNSET(${_filenames})
 		FOREACH(_current_FILE ${ARGN})
 			SET(CURRENT_SOURCE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/${_current_FILE}")
 			SET(CURRENT_OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/${_current_FILE}")
 
-			IF(UNIX2DOS)
-				# Use unix2dos.
-				ADD_CUSTOM_COMMAND(
-					OUTPUT "${CURRENT_OUTPUT_FILE}"
-					COMMAND ${UNIX2DOS} <"${CURRENT_SOURCE_FILE}" >"${CURRENT_OUTPUT_FILE}"
-					)
-			ELSE(UNIX2DOS)
-				# unix2dos wasn't found. Use miniu2d.
-				ADD_CUSTOM_COMMAND(
-					OUTPUT "${CURRENT_OUTPUT_FILE}"
-					DEPENDS miniu2d
-					COMMAND "${MINIU2D_EXE_LOCATION}" "${CURRENT_SOURCE_FILE}" "${CURRENT_OUTPUT_FILE}"
-					)
-			ENDIF(UNIX2DOS)
+			ADD_CUSTOM_COMMAND(
+				OUTPUT "${CURRENT_OUTPUT_FILE}"
+				DEPENDS miniu2d
+				COMMAND "${MINIU2D_EXE_LOCATION}" "${CURRENT_SOURCE_FILE}" "${CURRENT_OUTPUT_FILE}"
+				)
 
 			SET(${_filenames} ${${_filenames}} "${CURRENT_OUTPUT_FILE}")
 			UNSET(CURRENT_OUTPUT_FILE)
@@ -46,9 +30,7 @@ MACRO(CONVERT_TEXT_FILES_TO_NATIVE _filenames)
 			DEPENDS ${${_filenames}}
 			)
 
-		IF(NOT UNIX2DOS)
-			UNSET(MINIU2D_EXE_LOCATION)
-		ENDIF(NOT UNIX2DOS)
+		UNSET(MINIU2D_EXE_LOCATION)
 	ELSE(WIN32)
 		# Not Win32. Don't do anything.
 		SET(${_filenames} ${ARGN})
