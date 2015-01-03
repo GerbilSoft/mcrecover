@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Process the file.
+	char last_chr = 0;
 	while (!feof(f_unix)) {
 		size_t bytes_in, bytes_out, pos;
 
@@ -86,14 +87,35 @@ int main(int argc, char *argv[])
 		// Process the bytes.
 		bytes_out = 0;
 		for (pos = 0; pos < bytes_in; pos++) {
-			if (unix_in[pos] == '\n') {
-				// Newline. Convert to "\r\n".
-				dos_out[bytes_out++] = '\r';
-				dos_out[bytes_out++] = '\n';
-			} else {
-				// Other character.
-				dos_out[bytes_out++] = unix_in[pos];
+			switch (unix_in[pos]) {
+				case '\n': {
+					if (last_chr != '\r') {
+						// Last character was not CR.
+						// Convert to CRLF.
+						dos_out[bytes_out++] = '\r';
+						dos_out[bytes_out++] = '\n';
+					} else {
+						// Last character was CR.
+						// Output newline as-is.
+						dos_out[bytes_out++] = '\n';
+					}
+					break;
+				}
+
+				default: {
+					if (last_chr == '\r') {
+						// Last character was CR.
+						// Convert to CRLF.
+						dos_out[bytes_out++] = '\r';
+						dos_out[bytes_out++] = '\n';
+					} else {
+						// Other character.
+						dos_out[bytes_out++] = unix_in[pos];
+					}
+				}
 			}
+
+			last_chr = unix_in[pos];
 		}
 
 		// Write the bytes.
