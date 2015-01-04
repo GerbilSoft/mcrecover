@@ -4,7 +4,7 @@
 		<dbFormatVersion>0.1</dbFormatVersion>
 		<dbName>GCN Memory Card File Database (JPN)</dbName>
 		<dbDesc>Definitions for Japanese (NTSC) GameCube games.</dbDesc>
-		<version>0.1+</version>
+		<version>0.2.1</version>
 		<author>David Korth</author>
 		<email>gerbilsoft@gerbilsoft.com</email>
 	</dbInfo>
