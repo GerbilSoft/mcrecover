@@ -10,7 +10,7 @@ See README.txt, Section X for more information.
 ================================================================
 
 GCN MemCard Recover v0.2.1
-[released 2014/06/??]
+[released 2015/01/04]
 
 Database statistics in this release:
 - USA: 105 files
