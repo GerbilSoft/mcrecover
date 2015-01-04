@@ -48,7 +48,7 @@ class HerpDerpEggListener : public QObject
 
 	public:
 		/**
-		 * Set the selected game ID.
+		 * Set the selected game ID. (ID6)
 		 * @param gameID Game ID. (gamecode+company)
 		 */
 		void setSelGameID(const QString &gameID);

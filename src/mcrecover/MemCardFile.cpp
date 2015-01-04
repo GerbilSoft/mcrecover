@@ -111,9 +111,8 @@ class MemCardFilePrivate
 		QVector<uint16_t> fatEntries;
 
 		// File information. (Directory table.)
-		QString gamecode;
-		QString company;
-		QString filename;
+		QString id6;			// 6-character game ID, e.g. GALE01
+		QString filename;		// Internal filename.
 		GcnDateTime lastModified;	// Last modified time.
 
 		// File information. (Comment, banner, icon)
@@ -300,13 +299,15 @@ MemCardFilePrivate::~MemCardFilePrivate()
  */
 void MemCardFilePrivate::init(void)
 {
-	// Game Code and Company are always Latin-1.
-	gamecode = QString::fromLatin1(dirEntry->gamecode, sizeof(dirEntry->gamecode));
-	company = QString::fromLatin1(dirEntry->company, sizeof(dirEntry->company));
+	// ID6 is always Latin-1.
+	// NOTE: gamecode and company are right next to each other,
+	// so we can "overrun" the buffer here.
+	id6 = QString::fromLatin1(dirEntry->gamecode,
+				sizeof(dirEntry->gamecode) + sizeof(dirEntry->company));
 
 	// Get the appropriate QTextCodec for this file.
-	const char region = (gamecode.size() >= 4
-				? gamecode.at(3).toLatin1()
+	const char region = (id6.size() >= 4
+				? id6.at(3).toLatin1()
 				: 0);
 	QTextCodec *textCodec = card->textCodec(region);
 
@@ -887,38 +888,49 @@ MemCardFile::~MemCardFile()
 }
 
 /**
- * Get the game code.
- * @return Game code.
+ * Get the 6-character game ID, e.g. GALE01.
+ * @return 6-character game ID.
  */
-QString MemCardFile::gamecode(void) const
+QString MemCardFile::id6(void) const
 {
 	Q_D(const MemCardFile);
-	return d->gamecode;
+	return d->id6;
 }
 
 /**
- * Get the company code.
+ * Get the 4-character game ID, e.g. GALE.
+ * @return 4-character game ID.
+ */
+QString MemCardFile::id4(void) const
+{
+	Q_D(const MemCardFile);
+	return d->id6.left(4);
+}
+
+/**
+ * Get the 3-character game ID, e.g. GAL.
+ * @return 3-character game ID.
+ */
+QString MemCardFile::id3(void) const
+{
+	Q_D(const MemCardFile);
+	return d->id6.left(3);
+}
+
+/**
+ * Get the company code, e.g. 01.
  * @return Company code.
  */
 QString MemCardFile::company(void) const
 {
 	Q_D(const MemCardFile);
-	return d->company;
+	// NOTE: Assuming id6 is always 6 characters.
+	return d->id6.right(2);
 }
 
 /**
- * Get the game ID. (gamecode+company)
- * @return Game ID.
- */
-QString MemCardFile::gameID(void) const
-{
-	Q_D(const MemCardFile);
-	return (d->gamecode + d->company);
-}
-
-/**
- * Get the GCN filename.
- * @return GCN filename.
+ * Get the internal filename.
+ * @return internal filename.
  */
 QString MemCardFile::filename(void) const
 {
@@ -1156,9 +1168,9 @@ QString MemCardFile::defaultGciFilename(void) const
 	Q_D(const MemCardFile);
 
 	QString filename;
-	filename.reserve(d->gamecode.size() + d->company.size() + 1 +
+	filename.reserve(d->id6.size() + + 1 +
 			 d->filename.size() + 1 + 6 + 4);
-	filename += d->gamecode + d->company + QChar(L'_');
+	filename += d->id6 + QChar(L'_');
 	filename += d->filename + QChar(L'_');
 
 	// Convert the start address to hexadecimal.
@@ -1181,8 +1193,8 @@ QString MemCardFile::defaultGciFilename(void) const
 int MemCardFile::encoding(void) const
 {
 	Q_D(const MemCardFile);
-	const char region = (d->gamecode.size() >= 4
-				? d->gamecode.at(3).toLatin1()
+	const char region = (d->id6.size() >= 4
+				? d->id6.at(3).toLatin1()
 				: 0);
 	return d->card->encodingForRegion(region);
 }

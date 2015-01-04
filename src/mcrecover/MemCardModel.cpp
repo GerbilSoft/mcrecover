@@ -330,7 +330,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 				case COL_PERMISSION:
 					return file->permissionAsString();
 				case COL_GAMEID:
-					return file->gameID();
+					return file->id6();
 				case COL_FILENAME:
 					return file->filename();
 				default:

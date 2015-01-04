@@ -53,9 +53,10 @@ class MemCardFile : public QObject
 {
 	Q_OBJECT
 
-	Q_PROPERTY(QString gamecode READ gamecode)
+	Q_PROPERTY(QString id6 READ id6)
+	Q_PROPERTY(QString id4 READ id4)
+	Q_PROPERTY(QString id3 READ id3)
 	Q_PROPERTY(QString company READ company)
-	Q_PROPERTY(QString gameID READ gameID)
 	Q_PROPERTY(QString filename READ filename)
 	Q_PROPERTY(GcnDateTime lastModified READ lastModified)
 	Q_PROPERTY(QString gameDesc READ gameDesc)
@@ -110,26 +111,32 @@ class MemCardFile : public QObject
 
 	public:
 		/**
-		 * Get the game code.
-		 * @return Game code.
+		 * Get the 6-character game ID, e.g. GALE01.
+		 * @return 6-character game ID.
 		 */
-		QString gamecode(void) const;
+		QString id6(void) const;
 
 		/**
-		 * Get the company code.
+		 * Get the 4-character game ID, e.g. GALE.
+		 * @return 4-character game ID.
+		 */
+		QString id4(void) const;
+
+		/**
+		 * Get the 3-character game ID, e.g. GAL.
+		 * @return 3-character game ID.
+		 */
+		QString id3(void) const;
+
+		/**
+		 * Get the company code, e.g. 01.
 		 * @return Company code.
 		 */
 		QString company(void) const;
 
 		/**
-		 * Get the game ID. (gamecode+company)
-		 * @return Game ID.
-		 */
-		QString gameID(void) const;
-
-		/**
-		 * Get the GCN filename.
-		 * @return GCN filename.
+		 * Get the internal filename.
+		 * @return Internal filename.
 		 */
 		QString filename(void) const;
 

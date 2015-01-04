@@ -1590,7 +1590,7 @@ void McRecoverWindow::lstFileList_selectionModel_currentRowChanged(
 	d->ui.mcfFileView->setFile(file);
 
 	// Shh... it's a secret to everybody.
-	d->herpDerp->setSelGameID(file ? file->gameID() : QString());
+	d->herpDerp->setSelGameID(file ? file->id6() : QString());
 }
 
 /**
