@@ -468,7 +468,7 @@ Some files with Japanese descriptions might not be found when scanning.</source>
     </message>
     <message>
         <location filename="../windows/McRecoverWindow.cpp" line="571"/>
-        <location filename="../windows/McRecoverWindow.cpp" line="1285"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1308"/>
         <source>All Files</source>
         <translation>Все файлы</translation>
     </message>
@@ -566,36 +566,36 @@ Scanning for lost files will not work.</source>
         </translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1282"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1305"/>
         <source>Open GameCube Memory Card Image</source>
         <translation>Открыть образ GameCube Memory Card</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1284"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1307"/>
         <source>GameCube Memory Card Image</source>
         <translation>Образ GameCube Memory Card</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1322"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1345"/>
         <source>The database files should be located in the data subdirectory in
 mcrecover.exe&apos;s program directory.</source>
         <translation>Файлы баз данных должны быть расположены в под-катологе data в
 каталоге с программой mcrecover.exe.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1326"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1349"/>
         <source>The database files should be located in %1.
 Alternatively, you can place your own version in ~/.config/mcrecover/data/</source>
         <translation>Файлы баз данных должны быть расположены в %1.
 Также, вы можете расположить ваши собственные в ~/.config/mcrecover/data/</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1333"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1356"/>
         <source>Database Load Error</source>
         <translation>Ошибка загрузки баз данных</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1334"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1357"/>
         <source>No GCN MemCard file databases were found.</source>
         <translation>Базы данных GCN MemCard не были найдены.</translation>
     </message>
@@ -640,44 +640,44 @@ Checksum:</source>
 <context>
     <name>MemCardModel</name>
     <message>
-        <location filename="../MemCardModel.cpp" line="460"/>
+        <location filename="../MemCardModel.cpp" line="465"/>
         <source>Icon</source>
         <translation>Иконка</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="461"/>
+        <location filename="../MemCardModel.cpp" line="466"/>
         <source>Banner</source>
         <translation>Баннер</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="462"/>
+        <location filename="../MemCardModel.cpp" line="467"/>
         <source>Description</source>
         <translation>Описание</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="463"/>
+        <location filename="../MemCardModel.cpp" line="468"/>
         <source>Size</source>
         <translation>Размер</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="464"/>
+        <location filename="../MemCardModel.cpp" line="469"/>
         <source>Last Modified</source>
         <translation>Дата изменения</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="466"/>
+        <location filename="../MemCardModel.cpp" line="471"/>
         <source>Mode</source>
         <extracomment>File permissions. (Known as &quot;mode&quot; on Unix systems.)</extracomment>
         <translation>Режим</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="468"/>
+        <location filename="../MemCardModel.cpp" line="473"/>
         <source>Game ID</source>
         <extracomment>6-digit game ID, e.g. GALE01.</extracomment>
         <translation>ID-номер игры</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="469"/>
+        <location filename="../MemCardModel.cpp" line="474"/>
         <source>Filename</source>
         <translation>Имя Файла</translation>
     </message>
