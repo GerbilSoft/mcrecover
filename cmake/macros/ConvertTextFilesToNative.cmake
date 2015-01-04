@@ -5,7 +5,7 @@
 IF(WIN32 AND NOT MSVC)
 	# Search for unix2dos.
 	FIND_PROGRAM(UNIX2DOS unix2dos)
-ENDIF(WIN32)
+ENDIF(WIN32 AND NOT MSVC)
 
 # Parameters:
 # - _filenames: Variable to store converted (or as-is) filenames in.
@@ -55,8 +55,8 @@ MACRO(CONVERT_TEXT_FILES_TO_NATIVE _filenames)
 		IF(NOT UNIX2DOS)
 			UNSET(MINIU2D_EXE_LOCATION)
 		ENDIF(NOT UNIX2DOS)
-	ELSE(WIN32)
-		# Not Win32. Don't do anything.
+	ELSE(WIN32 AND NOT MSVC)
+		# Not Win32, or compiling with MSVC. Don't do anything.
 		SET(${_filenames} ${ARGN})
-	ENDIF(WIN32)
+	ENDIF(WIN32 AND NOT MSVC)
 ENDMACRO(CONVERT_TEXT_FILES_TO_NATIVE)
