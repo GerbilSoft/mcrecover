@@ -1,5 +1,4 @@
-
-Libpng 1.6.12 - June 12, 2014
+Libpng 1.6.16 - December 22, 2014
 
 This is a public release of libpng, intended for use in production codes.
 
@@ -8,28 +7,30 @@ Files available for download:
 Source files with LF line endings (for Unix/Linux) and with a
 "configure" script
 
-   libpng-1.6.12.tar.xz (LZMA-compressed, recommended)
-   libpng-1.6.12.tar.gz
+   libpng-1.6.16.tar.xz (LZMA-compressed, recommended)
+   libpng-1.6.16.tar.gz
 
 Source files with CRLF line endings (for Windows), without the
 "configure" script
 
-   lpng1612.7z  (LZMA-compressed, recommended)
-   lpng1612.zip
+   lpng1616.7z  (LZMA-compressed, recommended)
+   lpng1616.zip
 
 Other information:
 
-   libpng-1.6.12-README.txt
-   libpng-1.6.12-LICENSE.txt
-   libpng-1.6.12-*.asc (armored detached GPG signatures)
+   libpng-1.6.16-README.txt
+   libpng-1.6.16-LICENSE.txt
+   libpng-1.6.16-*.asc (armored detached GPG signatures)
 
-Changes since the last public release (1.6.11):
-  Relocated new code from 1.6.11 in png.c to a point after the
-    declarations (Max Stepin).
-  Changed file permissions of contrib/tools/intgamma.sh,
-    test-driver, and compile from 0644 to 0755 (Cosmin).
-  Ensure "__has_attribute()" macro exists before trying to use it with
-    old clang compilers (MacPorts Ticket #43939).
+Changes since the last public release (1.6.15):
+  Added ".align 2" to arm/filter_neon.S to support old GAS assemblers that
+    don't do alignment correctly.
+  Revised Makefile.am and scripts/*.dfn to work with MinGW/MSYS;
+    renamed scripts/*.dfn to scripts/*.c (Bob Friesenhahn and John Bowler).
+  Quiet a "comparison always true" warning in pngstest.c (John Bowler).
+  Restored a test on width that was removed from png.c at libpng-1.6.9
+    (Bug report by Alex Eubanks).
+  Fixed an overflow in png_combine_row with very wide interlaced images.
 
 Send comments/corrections/commendations to png-mng-implement at lists.sf.net
 (subscription required; visit
@@ -38,4 +39,3 @@ to subscribe)
 or to glennrp at users.sourceforge.net
 
 Glenn R-P
-#endif
