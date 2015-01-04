@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * AboutDialog.cpp: About Dialog.                                          *
  *                                                                         *
- * Copyright (c) 2013-2014 by David Korth.                                 *
+ * Copyright (c) 2013-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -217,7 +217,7 @@ QString AboutDialogPrivate::GetCredits(void)
 
 	QString credits;
 	credits.reserve(4096);
-	credits += QLatin1String("Copyright (c) 2012-2014 by David Korth.");
+	credits += QLatin1String("Copyright (c) 2012-2015 by David Korth.");
 
 	enum CreditType_t {
 		CT_CONTINUE = 0,	// Continue previous type.
