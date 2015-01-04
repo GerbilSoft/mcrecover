@@ -1,7 +1,7 @@
 GCN MemCard Recover
 Version 0.2.1
 
-Copyright (c) 2012-2014 by David Korth.
+Copyright (c) 2012-2015 by David Korth.
 Email: gerbilsoft@gerbilsoft.com
 
 This program is licensed under the GNU General Public License v2.
