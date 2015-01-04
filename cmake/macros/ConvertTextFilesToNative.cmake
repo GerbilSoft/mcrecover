@@ -30,6 +30,11 @@ MACRO(CONVERT_TEXT_FILES_TO_NATIVE _filenames)
 					)
 			ELSE(UNIX2DOS)
 				# unix2dos wasn't found. Use miniu2d.
+				# NOTE: This won't work if cross-compiling, since
+				# cmake doesn't support compiling for the `build' system.
+				IF(CMAKE_CROSSCOMPILING)
+					MESSAGE(FATAL_ERROR "unix2dos not found and we're cross-compiling; cannot convert documentation")
+				ENDIF(CMAKE_CROSSCOMPILING)
 				ADD_CUSTOM_COMMAND(
 					OUTPUT "${CURRENT_OUTPUT_FILE}"
 					DEPENDS miniu2d
