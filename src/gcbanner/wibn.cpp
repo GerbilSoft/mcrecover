@@ -180,7 +180,6 @@ GcImage *read_banner_WIBN_crypt(FILE *f)
 	return read_banner_WIBN_internal(&banner_decrypted.banner, true);
 }
 
-// MCRECOVER UPDATE [2014/01/29 10:45 AM EST]
 /**
  * Read the icon from a WIBN banner.
  * Internal function; requires loaded, decrypted data.

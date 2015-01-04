@@ -2,7 +2,7 @@
  * GameCube Banner Extraction Utility.                                     *
  * gcbanner.cpp: Main program.                                             *
  *                                                                         *
- * Copyright (c) 2014 by David Korth.                                      *
+ * Copyright (c) 2014-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -500,7 +500,7 @@ static void show_version(void)
 {
 	printf("GameCube Banner Extraction Utility\n"
 		"Part of GCN MemCard Recover.\n"
-		"Copyright (c) 2012-2014 by David Korth.\n"
+		"Copyright (c) 2012-2015 by David Korth.\n"
 		"\n"
 		"mcrecover version: " MCRECOVER_VERSION_STRING "\n"
 #ifdef MCRECOVER_GIT_VERSION
