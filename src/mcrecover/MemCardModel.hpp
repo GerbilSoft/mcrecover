@@ -72,6 +72,23 @@ class MemCardModel : public QAbstractListModel
 		 */
 		void setMemCard(MemCard *card);
 
+	public slots:
+		/**
+		 * Pause animation.
+		 * Should be used if e.g. the window is minimized.
+		 * NOTE: This uses an internal counter; the number of resumes
+		 * must match the number of pauses to resume animation.
+		 */
+		void pauseAnimation(void);
+
+		/**
+		 * Resume animation.
+		 * Should be used if e.g. the window is un-minimized.
+		 * NOTE: This uses an internal counter; the number of resumes
+		 * must match the number of pauses to resume animation.
+		 */
+		void resumeAnimation(void);
+
 	private slots:
 		/**
 		 * Animation timer slot.

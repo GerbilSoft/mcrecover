@@ -1140,18 +1140,41 @@ void McRecoverWindow::changeEvent(QEvent *event)
 {
 	Q_D(McRecoverWindow);
 
-	if (event->type() == QEvent::LanguageChange) {
-		// Retranslate the UI.
-		d->ui.retranslateUi(this);
-		d->updateLstFileList();
-		d->updateWindowTitle();
-		d->retranslateToolbar();
-		d->rets_actTsSysDefault();
-	} else if (event->type() == QEvent::LocaleChange) {
-		// Locale change usually requires a UI retranslation.
-		QAction *actionTS = d->actgrpTS->checkedAction();
-		if (actionTS)
-			actionTS->trigger();
+	switch (event->type()) {
+		case QEvent::LanguageChange:
+			// Retranslate the UI.
+			d->ui.retranslateUi(this);
+			d->updateLstFileList();
+			d->updateWindowTitle();
+			d->retranslateToolbar();
+			d->rets_actTsSysDefault();
+			break;
+
+		case QEvent::LocaleChange: {
+			// Locale change usually requires a UI retranslation.
+			QAction *actionTS = d->actgrpTS->checkedAction();
+			if (actionTS)
+				actionTS->trigger();
+			break;
+		}
+
+		case QEvent::WindowStateChange: {
+			// TODO: Add onMinimized() / onMaximized() signals/slots to a base class?
+			if (d->model) {
+				QWindowStateChangeEvent *wsc_event = (QWindowStateChangeEvent*)event;
+				if (!(wsc_event->oldState() & Qt::WindowMinimized) && isMinimized()) {
+					// Window was just minimized.
+					d->model->pauseAnimation();
+				} else if ((wsc_event->oldState() & Qt::WindowMinimized) && !isMinimized()) {
+					// Window was just un-minimized.
+					d->model->resumeAnimation();
+				}
+			}
+			break;
+		}
+
+		default:
+			break;
 	}
 
 	// Pass the event to the base class.

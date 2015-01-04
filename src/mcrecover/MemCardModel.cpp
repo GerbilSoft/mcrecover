@@ -85,10 +85,9 @@ class MemCardModelPrivate
 
 		// Animation timer.
 		QTimer animTimer;
-
-		/**
-		 * Animation timer "slot".
-		 */
+		// Pause count. If >0, animation is paused.
+		int pauseCounter;
+		// Animation timer "slot".
 		void animTimerSlot(void);
 
 		// Style variables.
@@ -128,6 +127,7 @@ MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	: q_ptr(q)
 	, card(nullptr)
 	, animTimer(new QTimer(q))
+	, pauseCounter(0)
 	, numFiles(0)
 	, insertStart(-1)
 	, insertEnd(-1)
@@ -236,10 +236,15 @@ void MemCardModelPrivate::initAnimState(const MemCardFile *file)
  */
 void MemCardModelPrivate::updateAnimTimerState(void)
 {
-	if (!animState.isEmpty())
+	if (pauseCounter <= 0 && !animState.isEmpty()) {
+		// Animation is not paused, and we have animated icons.
+		// Start the timer.
 		animTimer.start(IconAnimHelper::FAST_ANIM_TIMER);
-	else
+	} else {
+		// Either animation is paused, or we don't have animated icons.
+		// Stop the timer.
 		animTimer.stop();
+	}
 }
 
 /**
@@ -561,6 +566,42 @@ void MemCardModel::setMemCard(MemCard *card)
 			endInsertRows();
 	}
 }
+
+/** Public slots. **/
+
+/**
+ * Pause animation.
+ * Should be used if e.g. the window is minimized.
+ * NOTE: This uses an internal counter; the number of resumes
+ * must match the number of pauses to resume animation.
+ */
+void MemCardModel::pauseAnimation(void)
+{
+	Q_D(MemCardModel);
+	d->pauseCounter++;
+	d->updateAnimTimerState();
+}
+
+/**
+ * Resume animation.
+ * Should be used if e.g. the window is un-minimized.
+ * NOTE: This uses an internal counter; the number of resumes
+ * must match the number of pauses to resume animation.
+ */
+void MemCardModel::resumeAnimation(void)
+{
+	Q_D(MemCardModel);
+	if (d->pauseCounter > 0) {
+		d->pauseCounter--;
+	} else {
+		// Not paused...
+		d->pauseCounter = 0; // TODO: Probably not needed.
+	}
+
+	d->updateAnimTimerState();
+}
+
+/** Private slots. **/
 
 /**
  * Animation timer slot.
