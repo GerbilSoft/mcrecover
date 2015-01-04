@@ -40,6 +40,9 @@ Database statistics in this release:
 - Eliminated the lag that happened after scanning for lost files on cards
   with lots of lost files (or with "Scan Used Blocks" enabled).
 
+- Icon animations are now disabled when the window is minimized.
+  This should reduce CPU usage and battery usage (on laptops).
+
 ================================================================
 
 GCN MemCard Recover v0.2
