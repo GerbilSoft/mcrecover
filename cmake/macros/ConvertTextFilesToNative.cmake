@@ -2,7 +2,7 @@
 # This only has an effect on Win32 platforms, since the software is developed
 # on Linux and hence uses Unix line endings.
 
-IF(WIN32)
+IF(WIN32 AND NOT MSVC)
 	# Search for unix2dos.
 	FIND_PROGRAM(UNIX2DOS unix2dos)
 ENDIF(WIN32)
@@ -11,7 +11,7 @@ ENDIF(WIN32)
 # - _filenames: Variable to store converted (or as-is) filenames in.
 # - Additional: Files to convert.
 MACRO(CONVERT_TEXT_FILES_TO_NATIVE _filenames)
-	IF(WIN32)
+	IF(WIN32 AND NOT MSVC)
 		# Win32: Convert text files to use Windows line endings.
 		IF(NOT UNIX2DOS)
 			GET_PROPERTY(MINIU2D_EXE_LOCATION TARGET miniu2d PROPERTY LOCATION)
@@ -24,6 +24,7 @@ MACRO(CONVERT_TEXT_FILES_TO_NATIVE _filenames)
 
 			IF(UNIX2DOS)
 				# Use unix2dos.
+				# FIXME: Not working with nmake...
 				ADD_CUSTOM_COMMAND(
 					OUTPUT "${CURRENT_OUTPUT_FILE}"
 					COMMAND ${UNIX2DOS} <"${CURRENT_SOURCE_FILE}" >"${CURRENT_OUTPUT_FILE}"
