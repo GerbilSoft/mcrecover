@@ -66,11 +66,18 @@ class MemCardPrivate
 	public:
 		/**
 		 * Open an existing Memory Card image.
-		 * NOTE: This must be called *after* MemCard is initialized!
 		 * @param filename Memory Card image filename.
 		 * @return 0 on success; non-zero on error. (also check errorString)
 		 */
 		void open(const QString &filename);
+
+		/**
+		 * Format a new Memory Card image.
+		 * @param filename Memory Card image filename.
+		 * TODO: Parameters.
+		 * @return 0 on success; non-zero on error. (also check errorString)
+		 */
+		void format(const QString &filename);
 
 	public:
 		QString filename;
@@ -273,7 +280,7 @@ void MemCardPrivate::open(const QString &filename)
 	if (filename.isEmpty()) {
 		// No filename specified.
 		// TODO: Translate the error message.
-		this->errorString = QLatin1String("No such file or directory");
+		this->errorString = QLatin1String("No filename specified");
 		return;
 	}
 
@@ -313,6 +320,139 @@ void MemCardPrivate::open(const QString &filename)
 
 	// Calculate the number of blocks.
 	numBlocks = (int)(filesize / blockSize);
+
+	// Reset the used block map.
+	resetUsedBlockMap();
+
+	// Load the memory card system information.
+	// This includes the header, directory, and block allocation table.
+	loadSysInfo();
+
+	// Load the MemCardFile list.
+	loadMemCardFileList();
+}
+
+/**
+ * Format a new Memory Card image.
+ * @param filename Memory Card image filename.
+ * TODO: Parameters.
+ * @return 0 on success; non-zero on error. (also check errorString)
+ */
+void MemCardPrivate::format(const QString &filename)
+{
+	if (file) {
+		// File is already open.
+		// TODO: Don't allow this, or clear all variables?
+		file->close();
+		delete file;
+		file = nullptr;
+		this->filesize = 0;
+	}
+
+	this->filename.clear();
+	if (filename.isEmpty()) {
+		// No filename specified.
+		// TODO: Translate the error message.
+		this->errorString = QLatin1String("No filename specified");
+		return;
+	}
+
+	// Open the file.
+	Q_Q(MemCard);
+	QFile *tmp_file = new QFile(filename, q);
+	if (!tmp_file->open(QIODevice::ReadWrite)) {
+		// Error opening the file.
+		// NOTE: Qt doesn't return the raw error number.
+		// QFile::error() has a useless generic error number.
+		// TODO: Translate the error message.
+		this->errorString = tmp_file->errorString();
+		delete tmp_file;
+		return;
+	}
+	this->file = tmp_file;
+	this->filename = filename;
+
+	// Create a 251-block card.
+	// Formatting routine based on the Nintendont Loader (r254).
+	// TODO: Parameters.
+	numBlocks = 256;
+	file->resize(numBlocks * blockSize);
+	this->filesize = file->size();
+	// TODO: Verify that the filesize matches.
+
+	/**
+	 * NOTE: We're storing data as Big-Endian because it's
+	 * being written to the Memory Card image file.
+	 * The data will need to be reloaded afterwards.
+	 */
+
+	// Create the header. (block 0)
+	memset(&mc_header, 0xFF, sizeof(mc_header));
+	// The first 0x14 bytes contains SRAM and formatting time information.
+	// Nintendont skips this by simply writing all 0s here.
+	memset(mc_header.serial, 0, sizeof(mc_header.serial));
+	// TODO: Set formatTime? (tick rate depends on whether GCN or Wii is used)
+	memset(&mc_header.formatTime, 0, sizeof(mc_header.formatTime));
+	// SRAM bias. (FIXME: 'U' suffix required due to issues with byteswap code.)
+	mc_header.sramBias = cpu_to_be32(0x17CA2A85U);
+	// SRAM language. (TODO)
+	mc_header.sramLang = cpu_to_be32(0);
+	// Reserved.
+	memset(mc_header.reserved1, 0, sizeof(mc_header.reserved1));
+	// Device ID. (Assume formatted in slot A.)
+	mc_header.device_id = cpu_to_be16(0);
+	// Memory Card size, in megabits.
+	mc_header.size = cpu_to_be16(numBlocks / 16);
+	// Encoding. (Assume cp1252 for now.)
+	mc_header.encoding = cpu_to_be16(SYS_FONT_ENCODING_ANSI);
+	// Calculate the header checksum.
+	uint32_t chksum = Checksum::AddInvDual16((uint16_t*)&mc_header, 0x1FC);
+	mc_header.chksum1 = cpu_to_be16(chksum >> 16);
+	mc_header.chksum2 = cpu_to_be16(chksum & 0xFFFF);
+
+	// Create the directory tables. (blocks 1, 2)
+	memset(mc_dat_int, 0xFF, sizeof(mc_dat_int));
+	// TODO: Compare to GCN/Wii IPL.
+	mc_dat_int[0].dircntrl.updated = cpu_to_be16(0);
+	mc_dat_int[1].dircntrl.updated = cpu_to_be16(1);
+	// Calculate the directory checksums.
+	chksum = Checksum::AddInvDual16((uint16_t*)&mc_dat_int[0], 0x1FFC);
+	mc_dat_int[0].dircntrl.chksum1 = cpu_to_be16(chksum >> 16);
+	mc_dat_int[0].dircntrl.chksum2 = cpu_to_be16(chksum & 0xFFFF);
+	chksum = Checksum::AddInvDual16((uint16_t*)&mc_dat_int[1], 0x1FFC);
+	mc_dat_int[1].dircntrl.chksum1 = cpu_to_be16(chksum >> 16);
+	mc_dat_int[1].dircntrl.chksum2 = cpu_to_be16(chksum & 0xFFFF);
+
+	// Create the block tables. (blocks 3, 4)
+	memset(mc_bat_int, 0xFF, sizeof(mc_bat_int));
+	// TODO: Compare to GCN/Wii IPL.
+	mc_bat_int[0].updated = cpu_to_be16(0);
+	mc_bat_int[1].updated = cpu_to_be16(1);
+	// Free block counter.
+	mc_bat_int[0].freeblocks = cpu_to_be16(numBlocks - 5);
+	mc_bat_int[1].freeblocks = cpu_to_be16(numBlocks - 5);
+	// Last allocated block.
+	mc_bat_int[0].lastalloc = cpu_to_be16(4);
+	mc_bat_int[1].lastalloc = cpu_to_be16(4);
+	// Calculate the block table checksums.
+	chksum = Checksum::AddInvDual16((uint16_t*)&mc_bat_int[0], 0x1FFC);
+	mc_bat_int[0].chksum1 = cpu_to_be16(chksum >> 16);
+	mc_bat_int[0].chksum2 = cpu_to_be16(chksum & 0xFFFF);
+	chksum = Checksum::AddInvDual16((uint16_t*)&mc_bat_int[1], 0x1FFC);
+	mc_bat_int[1].chksum1 = cpu_to_be16(chksum >> 16);
+	mc_bat_int[1].chksum2 = cpu_to_be16(chksum & 0xFFFF);
+
+	// Write everything to the file.
+	// TODO: Check for errors.
+	file->seek(0);
+	file->write((char*)&mc_header, sizeof(mc_header));
+	file->seek(1*blockSize);
+	file->write((char*)mc_dat_int, sizeof(mc_dat_int));
+	file->write((char*)mc_bat_int, sizeof(mc_bat_int));
+	file->flush();
+
+	// TODO: Don't reload the header and tables;
+	// instead, just un-byteswap them.
 
 	// Reset the used block map.
 	resetUsedBlockMap();
@@ -670,15 +810,39 @@ void MemCardPrivate::loadMemCardFileList(void)
 
 /** MemCard **/
 
-MemCard::MemCard(const QString& filename, QObject *parent)
+MemCard::MemCard(QObject *parent)
 	: QObject(parent)
 	, d_ptr(new MemCardPrivate(this))
+{ }
+
+/**
+ * Open an existing Memory Card image.
+ * @param filename Filename.
+ * @param parent Parent object.
+ * @return MemCard object, or nullptr on error.
+ */
+MemCard *MemCard::open(const QString& filename, QObject *parent)
 {
-	// Open the file.
-	// TODO: Alternate constructor to format a new card?
-	// Or, a static "open" function instead.
-	Q_D(MemCard);
+	MemCard *memCard = new MemCard(parent);
+	MemCardPrivate *const d = memCard->d_func();
 	d->open(filename);
+	return memCard;
+}
+
+/**
+ * Format a new Memory Card image.
+ * @param filename Filename.
+ * @param parent Parent object.
+ * @return MemCard object, or nullptr on error.
+ */
+MemCard *MemCard::format(const QString& filename, QObject *parent)
+{
+	// Format a new MemCard.
+	// TODO: Parameters.
+	MemCard *memCard = new MemCard(parent);
+	MemCardPrivate *const d = memCard->d_func();
+	d->format(filename);
+	return memCard;
 }
 
 MemCard::~MemCard()

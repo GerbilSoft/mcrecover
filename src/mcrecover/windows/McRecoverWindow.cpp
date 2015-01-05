@@ -1006,15 +1006,16 @@ void McRecoverWindow::openCard(const QString &filename)
 
 	// Open the specified memory card image.
 	// TODO: Set this as the last path?
-	d->card = new MemCard(filename);
-	if (!d->card->isOpen()) {
+	//d->card = MemCard::open(filename, this);
+	d->card = MemCard::open(filename, this);
+	if (!d->card || !d->card->isOpen()) {
 		// Could not open the card.
 		static const QChar chrBullet(0x2022);  // U+2022: BULLET
 		QString filename_noPath = QFileInfo(filename).fileName();
 		QString errMsg = tr("An error occurred while opening %1:")
 					.arg(filename_noPath) +
 				QChar(L'\n') + chrBullet + QChar(L' ') +
-				d->card->errorString();
+				(d->card ? d->card->errorString() : tr("MemCard::open() failed."));
 		d->ui.msgWidget->showMessage(errMsg, MessageWidget::ICON_WARNING);
 		closeCard(true);
 		return;

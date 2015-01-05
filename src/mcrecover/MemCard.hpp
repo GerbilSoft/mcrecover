@@ -66,9 +66,27 @@ class MemCard : public QObject
 	Q_PROPERTY(int activeBatIdx READ activeBatIdx WRITE setActiveBatIdx)
 	Q_PROPERTY(int activeBatHdrIdx READ activeBatHdrIdx)
 
+	protected:
+		MemCard(QObject *parent = 0);
 	public:
-		MemCard(const QString& filename, QObject *parent = 0);
 		~MemCard();
+
+	public:
+		/**
+		 * Open an existing Memory Card image.
+		 * @param filename Filename.
+		 * @param parent Parent object.
+		 * @return MemCard object, or nullptr on error.
+		 */
+		static MemCard *open(const QString& filename, QObject *parent);
+
+		/**
+		 * Format a new Memory Card image.
+		 * @param filename Filename.
+		 * @param parent Parent object.
+		 * @return MemCard object, or nullptr on error.
+		 */
+		static MemCard *format(const QString& filename, QObject *parent);
 
 	protected:
 		MemCardPrivate *const d_ptr;
