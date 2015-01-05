@@ -61,8 +61,7 @@ FormatNewMemCardDialogPrivate::FormatNewMemCardDialogPrivate(FormatNewMemCardDia
  */
 void FormatNewMemCardDialogPrivate::updateSldSizeDisplay(int value)
 {
-	int sz_mbit = (4 << value);
-	int sz_blocks = ((sz_mbit * 16) - 5);
+	const int sz_blocks = ((64 << value) - 5);
 	ui.lblSizeValue->setText(FormatNewMemCardDialog::tr("%Ln block(s)", "", sz_blocks));
 
 	// Show a warning for >251 blocks.
