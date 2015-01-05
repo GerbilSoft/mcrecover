@@ -133,6 +133,7 @@ SET(mcrecover_WINDOW_SRCS
 	windows/AboutDialog.cpp
 	windows/XmlTemplateDialog.cpp
 	windows/XmlTemplateDialogManager.cpp
+	windows/FormatNewMemCardDialog.cpp
 	)
 	
 SET(mcrecover_WIDGET_SRCS
@@ -180,6 +181,7 @@ SET(mcrecover_WINDOW_MOC_H
 	windows/AboutDialog.hpp
 	windows/XmlTemplateDialog.hpp
 	windows/XmlTemplateDialogManager.hpp
+	windows/FormatNewMemCardDialog.hpp
 	)
 
 SET(mcrecover_WIDGET_MOC_H
@@ -202,6 +204,7 @@ SET(mcrecover_WINDOW_UIS
 	windows/McRecoverWindow.ui
 	windows/AboutDialog.ui
 	windows/XmlTemplateDialog.ui
+	windows/FormatNewMemCardDialog.ui
 	)
 
 SET(mcrecover_WIDGET_UIS
