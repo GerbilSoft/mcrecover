@@ -416,12 +416,12 @@ void MemCardPrivate::format(const QString &filename)
 	mc_dat_int[0].dircntrl.updated = cpu_to_be16(0);
 	mc_dat_int[1].dircntrl.updated = cpu_to_be16(1);
 	// Calculate the directory checksums.
-	chksum = Checksum::AddInvDual16((uint16_t*)&mc_dat_int[0], 0x1FFC);
-	mc_dat_int[0].dircntrl.chksum1 = cpu_to_be16(chksum >> 16);
-	mc_dat_int[0].dircntrl.chksum2 = cpu_to_be16(chksum & 0xFFFF);
-	chksum = Checksum::AddInvDual16((uint16_t*)&mc_dat_int[1], 0x1FFC);
-	mc_dat_int[1].dircntrl.chksum1 = cpu_to_be16(chksum >> 16);
-	mc_dat_int[1].dircntrl.chksum2 = cpu_to_be16(chksum & 0xFFFF);
+	for (int i = 0; i < 2; i++) {
+		mc_dat_chk_actual[i] = Checksum::AddInvDual16((uint16_t*)&mc_dat_int[i], 0x1FFC);
+		mc_dat_chk_expected[i] = mc_dat_chk_actual[i];
+		mc_dat_int[i].dircntrl.chksum1 = cpu_to_be16(mc_dat_chk_actual[i] >> 16);
+		mc_dat_int[i].dircntrl.chksum2 = cpu_to_be16(mc_dat_chk_actual[i] & 0xFFFF);
+	}
 
 	// Create the block tables. (blocks 3, 4)
 	memset(mc_bat_int, 0xFF, sizeof(mc_bat_int));
@@ -435,12 +435,12 @@ void MemCardPrivate::format(const QString &filename)
 	mc_bat_int[0].lastalloc = cpu_to_be16(4);
 	mc_bat_int[1].lastalloc = cpu_to_be16(4);
 	// Calculate the block table checksums.
-	chksum = Checksum::AddInvDual16((uint16_t*)&mc_bat_int[0], 0x1FFC);
-	mc_bat_int[0].chksum1 = cpu_to_be16(chksum >> 16);
-	mc_bat_int[0].chksum2 = cpu_to_be16(chksum & 0xFFFF);
-	chksum = Checksum::AddInvDual16((uint16_t*)&mc_bat_int[1], 0x1FFC);
-	mc_bat_int[1].chksum1 = cpu_to_be16(chksum >> 16);
-	mc_bat_int[1].chksum2 = cpu_to_be16(chksum & 0xFFFF);
+	for (int i = 0; i < 2; i++) {
+		mc_bat_chk_actual[i] = Checksum::AddInvDual16((uint16_t*)&mc_bat_int[i], 0x1FFC);
+		mc_bat_chk_expected[i] = mc_bat_chk_actual[i];
+		mc_bat_int[i].chksum1 = cpu_to_be16(mc_bat_chk_actual[i] >> 16);
+		mc_bat_int[i].chksum2 = cpu_to_be16(mc_bat_chk_actual[i] & 0xFFFF);
+	}
 
 	// Write everything to the file.
 	// TODO: Check for errors.
@@ -451,17 +451,42 @@ void MemCardPrivate::format(const QString &filename)
 	file->write((char*)mc_bat_int, sizeof(mc_bat_int));
 	file->flush();
 
-	// TODO: Don't reload the header and tables;
-	// instead, just un-byteswap them.
+	// Un-byteswap the tables.
+	// TODO: Skip this on big-endian.
+	// Header.
+	mc_header.sramBias	= be32_to_cpu(mc_header.sramBias);
+	mc_header.sramLang	= be32_to_cpu(0);
+	mc_header.device_id	= be16_to_cpu(mc_header.device_id);
+	mc_header.size		= be16_to_cpu(mc_header.size);
+	mc_header.encoding	= be16_to_cpu(mc_header.encoding);
+	mc_header.chksum1	= be16_to_cpu(mc_header.chksum1);
+	mc_header.chksum2	= be16_to_cpu(mc_header.chksum2);
+	headerChecksumValue.actual = ((mc_header.chksum1 << 16) | mc_header.chksum2);
+	headerChecksumValue.expected = headerChecksumValue.actual;
+	for (int i = 0; i < 2; i++) {
+		// Directory Table.
+		mc_dat_int[i].dircntrl.updated = cpu_to_be16(mc_dat_int[i].dircntrl.updated);
+		mc_dat_int[i].dircntrl.chksum1 = cpu_to_be16(mc_dat_int[i].dircntrl.chksum1);
+		mc_dat_int[i].dircntrl.chksum2 = cpu_to_be16(mc_dat_int[i].dircntrl.chksum2);
+		mc_dat_valid[i] = true;
+
+		// Block Table.
+		mc_bat_int[i].updated		= cpu_to_be16(mc_bat_int[i].updated);
+		mc_bat_int[i].freeblocks	= cpu_to_be16(mc_bat_int[i].freeblocks);
+		mc_bat_int[i].lastalloc		= cpu_to_be16(mc_bat_int[i].lastalloc);
+		mc_bat_int[i].chksum1		= cpu_to_be16(mc_bat_int[i].chksum1);
+		mc_bat_int[i].chksum2		= cpu_to_be16(mc_bat_int[i].chksum2);
+		mc_bat_valid[i] = true;
+	}
 
 	// Reset the used block map.
 	resetUsedBlockMap();
 
-	// Load the memory card system information.
-	// This includes the header, directory, and block allocation table.
-	loadSysInfo();
+	// Check which table is active.
+	checkTables();
 
 	// Load the MemCardFile list.
+	// FIXME: Probably not necessary.
 	loadMemCardFileList();
 }
 
