@@ -45,7 +45,7 @@
 class MemCardPrivate
 {
 	public:
-		MemCardPrivate(MemCard *q, const QString &filename);
+		MemCardPrivate(MemCard *q);
 		~MemCardPrivate();
 		void init(void);
 
@@ -62,6 +62,15 @@ class MemCardPrivate
 		// QTextCodec for memory card text encoding.
 		static QTextCodec *TextCodecUS;	// cp1252
 		static QTextCodec *TextCodecJP;	// Shift-JIS
+
+	public:
+		/**
+		 * Open an existing Memory Card image.
+		 * NOTE: This must be called *after* MemCard is initialized!
+		 * @param filename Memory Card image filename.
+		 * @return 0 on success; non-zero on error. (also check errorString)
+		 */
+		void open(const QString &filename);
 
 	public:
 		QString filename;
@@ -185,10 +194,11 @@ class MemCardPrivate
 QTextCodec *MemCardPrivate::TextCodecUS = nullptr;	// cp1252
 QTextCodec *MemCardPrivate::TextCodecJP = nullptr;	// Shift-JIS
 
-MemCardPrivate::MemCardPrivate(MemCard *q, const QString &filename)
+MemCardPrivate::MemCardPrivate(MemCard *q)
 	: q_ptr(q)
-	, filename(filename)
 	, file(nullptr)
+	, filesize(0)
+	, numBlocks(0)
 	, mc_dat_hdr_idx(-1)
 	, mc_bat_hdr_idx(-1)
 	, mc_dat(nullptr)
@@ -199,55 +209,15 @@ MemCardPrivate::MemCardPrivate(MemCard *q, const QString &filename)
 	StaticInit();
 
 	// Cler variables.
-	memset(mc_dat_valid, 0x00, sizeof(mc_dat_valid));
-	memset(mc_bat_valid, 0x00, sizeof(mc_bat_valid));
-
-	if (filename.isEmpty()) {
-		// No filename specified.
-		// TODO: Translate the error message.
-		this->errorString = QLatin1String("No such file or directory");
-		return;
-	}
-
-	// Open the file.
-	file = new QFile(filename, q);
-	if (!file->open(QIODevice::ReadOnly)) {
-		// Error opening the file.
-		// NOTE: Qt doesn't return the raw error number.
-		// QFile::error() has a useless generic error number.
-		// TODO: Translate the error message.
-		this->errorString = file->errorString();
-		delete file;
-		file = nullptr;
-		return;
-	}
-
-	// Get the filesize.
-	this->filesize = file->size();
-
-	// Make sure the size isn't out of range.
-	if (this->filesize < (64 * blockSize)) {
-		// Fewer than 59 (64) blocks. Too small.
-		this->errors |= MemCard::MCE_SZ_TOO_SMALL;
-	} else if (filesize > (2048 * blockSize)) {
-		// Larger than 16 MB. Too big.
-		// Only read the first 16 MB.
-		this->errors |= MemCard::MCE_SZ_TOO_BIG;
-		this->filesize = (2048 * blockSize);
-	}
-
-	if (!isPow2(filesize)) {
-		// Size is not a power of 2.
-		this->errors |= MemCard::MCE_SZ_NON_POW2;
-	}
-
-	// Calculate the number of blocks.
-	numBlocks = (int)(filesize / blockSize);
-
-	// Reset the used block map.
-	resetUsedBlockMap();
-
-	// NOTE: Initialization must be done *after* MemCard is initialized!
+	memset(&mc_header, 0, sizeof(mc_header));
+	memset(mc_dat_int, 0, sizeof(mc_dat_int));
+	memset(mc_bat_int, 0, sizeof(mc_bat_int));
+	memset(mc_dat_chk_actual, 0, sizeof(mc_dat_chk_actual));
+	memset(mc_dat_chk_expected, 0, sizeof(mc_dat_chk_expected));
+	memset(mc_bat_chk_actual, 0, sizeof(mc_bat_chk_actual));
+	memset(mc_bat_chk_expected, 0, sizeof(mc_bat_chk_expected));
+	memset(mc_dat_valid, 0, sizeof(mc_dat_valid));
+	memset(mc_bat_valid, 0, sizeof(mc_bat_valid));
 }
 
 MemCardPrivate::~MemCardPrivate()
@@ -283,13 +253,69 @@ void MemCardPrivate::StaticInit(void)
 }
 
 /**
- * Initialize MemCardPrivate.
- * This must be run *after* MemCard is initialized!
+ * Open an existing Memory Card image.
+ * NOTE: This must be called *after* MemCard is initialized!
+ * @param filename Memory Card image filename.
+ * @return 0 on success; non-zero on error. (also check errorString)
  */
-void MemCardPrivate::init(void)
+void MemCardPrivate::open(const QString &filename)
 {
-	if (!file)
+	if (file) {
+		// File is already open.
+		// TODO: Don't allow this, or clear all variables?
+		file->close();
+		delete file;
+		file = nullptr;
+		this->filesize = 0;
+	}
+
+	this->filename.clear();
+	if (filename.isEmpty()) {
+		// No filename specified.
+		// TODO: Translate the error message.
+		this->errorString = QLatin1String("No such file or directory");
 		return;
+	}
+
+	// Open the file.
+	Q_Q(MemCard);
+	QFile *tmp_file = new QFile(filename, q);
+	if (!tmp_file->open(QIODevice::ReadOnly)) {
+		// Error opening the file.
+		// NOTE: Qt doesn't return the raw error number.
+		// QFile::error() has a useless generic error number.
+		// TODO: Translate the error message.
+		this->errorString = tmp_file->errorString();
+		delete tmp_file;
+		return;
+	}
+	this->file = tmp_file;
+	this->filename = filename;
+
+	// Get the filesize.
+	this->filesize = file->size();
+
+	// Make sure the size isn't out of range.
+	if (this->filesize < (64 * blockSize)) {
+		// Fewer than 59 (64) blocks. Too small.
+		this->errors |= MemCard::MCE_SZ_TOO_SMALL;
+	} else if (filesize > (2048 * blockSize)) {
+		// Larger than 16 MB. Too big.
+		// Only read the first 16 MB.
+		this->errors |= MemCard::MCE_SZ_TOO_BIG;
+		this->filesize = (2048 * blockSize);
+	}
+
+	if (!isPow2(filesize)) {
+		// Size is not a power of 2.
+		this->errors |= MemCard::MCE_SZ_NON_POW2;
+	}
+
+	// Calculate the number of blocks.
+	numBlocks = (int)(filesize / blockSize);
+
+	// Reset the used block map.
+	resetUsedBlockMap();
 
 	// Load the memory card system information.
 	// This includes the header, directory, and block allocation table.
@@ -646,11 +672,13 @@ void MemCardPrivate::loadMemCardFileList(void)
 
 MemCard::MemCard(const QString& filename, QObject *parent)
 	: QObject(parent)
-	, d_ptr(new MemCardPrivate(this, filename))
+	, d_ptr(new MemCardPrivate(this))
 {
-	// Initialize MemCardPrivate.
+	// Open the file.
+	// TODO: Alternate constructor to format a new card?
+	// Or, a static "open" function instead.
 	Q_D(MemCard);
-	d->init();
+	d->open(filename);
 }
 
 MemCard::~MemCard()
