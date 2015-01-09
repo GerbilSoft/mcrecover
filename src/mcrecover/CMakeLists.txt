@@ -141,6 +141,7 @@ SET(mcrecover_WIDGET_SRCS
 	)
 
 SET(mcrecover_CARD_SRCS
+	card/Card.cpp
 	card/MemCard.cpp
 	card/MemCardFile.cpp
 	card/MemCardModel.cpp
@@ -192,6 +193,7 @@ SET(mcrecover_WIDGET_MOC_H
 	)
 
 SET(mcrecover_CARD_MOC_H
+	card/Card.hpp
 	card/MemCard.hpp
 	card/MemCardFile.hpp
 	card/MemCardModel.hpp
