@@ -22,7 +22,7 @@
 #include "SearchThread.hpp"
 
 // MemCard
-#include "MemCard.hpp"
+#include "card/MemCard.hpp"
 
 // GCN Memory Card File Database.
 #include "GcnMcFileDb.hpp"

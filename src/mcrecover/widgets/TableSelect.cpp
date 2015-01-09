@@ -21,7 +21,7 @@
 
 #include "TableSelect.hpp"
 
-#include "MemCard.hpp"
+#include "card/MemCard.hpp"
 #include "McRecoverQApplication.hpp"
 
 // Qt includes.

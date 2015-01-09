@@ -22,7 +22,7 @@
 #include "IconAnimHelper.hpp"
 
 #include "card.h"
-#include "MemCardFile.hpp"
+#include "card/MemCardFile.hpp"
 
 class IconAnimHelperPrivate
 {

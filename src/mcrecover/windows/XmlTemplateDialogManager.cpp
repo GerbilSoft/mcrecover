@@ -22,7 +22,7 @@
 #include "XmlTemplateDialogManager.hpp"
 
 // Classes this class manages.
-#include "MemCardFile.hpp"
+#include "card/MemCardFile.hpp"
 #include "XmlTemplateDialog.hpp"
 
 // Qt includes.

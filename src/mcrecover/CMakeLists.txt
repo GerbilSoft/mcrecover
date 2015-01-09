@@ -106,9 +106,6 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.mcrecover.h.in" "${CMAKE_CURR
 # Sources.
 SET(mcrecover_SRCS
 	mcrecover.cpp
-	MemCard.cpp
-	MemCardFile.cpp
-	MemCardModel.cpp
 	GcnMcFileDb.cpp
 	SearchThread.cpp
 	SearchThreadWorker.cpp
@@ -117,14 +114,12 @@ SET(mcrecover_SRCS
 	IconAnimHelper.cpp
 	McRecoverQApplication.cpp
 	VarReplace.cpp
-	MemCardItemDelegate.cpp
 	TaskbarButtonManager/TaskbarButtonManager.cpp
 	GcToolsQt.cpp
 	TranslationManager.cpp
 	config/ConfigStore.cpp
 	config/ConfigDefaults.cpp
 	PathFuncs.cpp
-	MemCardSortFilterProxyModel.cpp
 	)
 
 SET(mcrecover_WINDOW_SRCS
@@ -145,6 +140,14 @@ SET(mcrecover_WIDGET_SRCS
 	widgets/MessageWidgetStack.cpp
 	)
 
+SET(mcrecover_CARD_SRCS
+	card/MemCard.cpp
+	card/MemCardFile.cpp
+	card/MemCardModel.cpp
+	card/MemCardItemDelegate.cpp
+	card/MemCardSortFilterProxyModel.cpp
+	)
+
 # Shh... it's a secret to everybody.
 SET(mcrecover_SEKRIT_SRCS
 	sekrit/HerpDerpEggListener.cpp
@@ -161,18 +164,13 @@ ENDIF(WIN32)
 
 # Headers with Qt4 objects.
 SET(mcrecover_MOC_H
-	MemCard.hpp
-	MemCardFile.hpp
-	MemCardModel.hpp
 	GcnMcFileDb.hpp
 	SearchThread.hpp
 	SearchThreadWorker.hpp
 	IconAnimHelper.hpp
 	McRecoverQApplication.hpp
-	MemCardItemDelegate.hpp
 	TaskbarButtonManager/TaskbarButtonManager.hpp
 	config/ConfigStore.hpp
-	MemCardSortFilterProxyModel.hpp
 	)
 
 SET(mcrecover_WINDOW_MOC_H
@@ -191,6 +189,14 @@ SET(mcrecover_WIDGET_MOC_H
 	widgets/MessageWidget.hpp
 	widgets/TableSelect.hpp
 	widgets/MessageWidgetStack.hpp
+	)
+
+SET(mcrecover_CARD_MOC_H
+	card/MemCard.hpp
+	card/MemCardFile.hpp
+	card/MemCardModel.hpp
+	card/MemCardItemDelegate.hpp
+	card/MemCardSortFilterProxyModel.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H
@@ -223,6 +229,7 @@ QT4_WRAP_CPP(mcrecover_MOC_SRCS
 	${mcrecover_MOC_H}
 	${mcrecover_WINDOW_MOC_H}
 	${mcrecover_WIDGET_MOC_H}
+	${mcrecover_CARD_MOC_H}
 	${mcrecover_SEKRIT_MOC_H}
 	)
 
@@ -285,10 +292,11 @@ QT4_ADD_RESOURCES(
 # to disable the command prompt window.
 ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_SRCS}
-	${mcrecover_OS_SRCS}
 	${mcrecover_WINDOW_SRCS}
 	${mcrecover_WIDGET_SRCS}
+	${mcrecover_CARD_SRCS}
 	${mcrecover_SEKRIT_SRCS}
+	${mcrecover_OS_SRCS}
 	${mcrecover_MOC_SRCS}
 	${mcrecover_UIS_H}
 	${mcrecover_RCC_O}

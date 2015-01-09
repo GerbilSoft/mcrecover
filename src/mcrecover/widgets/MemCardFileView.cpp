@@ -21,7 +21,7 @@
 
 #include "MemCardFileView.hpp"
 
-#include "MemCardFile.hpp"
+#include "card/MemCardFile.hpp"
 #include "IconAnimHelper.hpp"
 
 // XML template dialog.

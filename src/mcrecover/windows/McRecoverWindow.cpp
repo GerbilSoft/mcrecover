@@ -30,11 +30,11 @@
 #include "PcreRegex.hpp"
 
 // MemCard classes.
-#include "MemCard.hpp"
-#include "MemCardFile.hpp"
-#include "MemCardModel.hpp"
-#include "MemCardItemDelegate.hpp"
-#include "MemCardSortFilterProxyModel.hpp"
+#include "card/MemCard.hpp"
+#include "card/MemCardFile.hpp"
+#include "card/MemCardModel.hpp"
+#include "card/MemCardItemDelegate.hpp"
+#include "card/MemCardSortFilterProxyModel.hpp"
 
 // File database.
 #include "GcnMcFileDb.hpp"

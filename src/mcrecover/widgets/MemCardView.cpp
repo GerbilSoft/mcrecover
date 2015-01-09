@@ -21,7 +21,7 @@
 
 #include "MemCardView.hpp"
 
-#include "MemCard.hpp"
+#include "card/MemCard.hpp"
 #include "Checksum.hpp"
 #include "McRecoverQApplication.hpp"
 
