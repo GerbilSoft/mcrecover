@@ -84,7 +84,7 @@ void IconAnimHelperPrivate::reset(void)
 	delayCnt = 0;
 	direction = false;
 
-	if (!file || file->numIcons() <= 1) {
+	if (!file || file->iconCount() <= 1) {
 		// No file specified, or icon is not animated.
 		enabled = false;
 		frameHasIcon = 0;

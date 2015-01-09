@@ -22,24 +22,15 @@
 #ifndef __MCRECOVER_CARD_GCNFILE_HPP__
 #define __MCRECOVER_CARD_GCNFILE_HPP__
 
+#include "File.hpp"
+// TODO: Remove card.h from here.
 #include "card.h"
 
-// C++ includes.
-#include <vector>
-
 // Qt includes.
-#include <QtCore/QObject>
-#include <QtCore/QString>
-#include <QtCore/QVector>
-#include <QtGui/QPixmap>
 class QIODevice;
-
-// GcnDateTime: QDateTime wrapper.
-#include "GcnDateTime.hpp"
 
 // Checksum algorithm class.
 #include "Checksum.hpp"
-
 // GcImage
 class GcImage;
 #include "GcImageWriter.hpp"
@@ -47,26 +38,10 @@ class GcImage;
 class GcnCard;
 
 class GcnFilePrivate;
-class GcnFile : public QObject
+class GcnFile : public File
 {
 	Q_OBJECT
 
-	Q_PROPERTY(QString id6 READ id6)
-	Q_PROPERTY(QString id4 READ id4)
-	Q_PROPERTY(QString id3 READ id3)
-	Q_PROPERTY(QString company READ company)
-	Q_PROPERTY(QString filename READ filename)
-	Q_PROPERTY(GcnDateTime lastModified READ lastModified)
-	Q_PROPERTY(QString gameDesc READ gameDesc)
-	Q_PROPERTY(QString fileDesc READ fileDesc)
-	Q_PROPERTY(uint8_t permission READ permission)
-	Q_PROPERTY(uint16_t size READ size)
-	Q_PROPERTY(QPixmap banner READ banner)
-	Q_PROPERTY(int numIcons READ numIcons)
-	// TODO: Icon array?
-	Q_PROPERTY(int iconAnimMode READ iconAnimMode)
-	Q_PROPERTY(bool lostFile READ isLostFile)
-	Q_PROPERTY(QVector<uint16_t> fatEntries READ fatEntries)
 	/* TODO: Register Checksum metatypes?
 	Q_PROPERTY(QVector<Checksum::ChecksumDef> checksumDefs READ checksumDefs WRITE setChecksumDefs)
 	Q_PROPERTY(QVector<Checksum::ChecksumValue> checksumValues READ checksumValues WRITE setChecksumValues)
@@ -74,149 +49,54 @@ class GcnFile : public QObject
 	Q_PROPERTY(Checksum::ChkStatus checksumStatus READ checksumStatus)
 	// TODO: checksumValuesFormatted?
 	*/
-	Q_PROPERTY(QString defaultGciFilename READ defaultGciFilename STORED false)
 
 	public:
 		/**
 		 * Create a GcnFile for a GcnCard.
 		 * This constructor is for valid files.
-		 * @param card MemCard.
-		 * @param fileIdx File index in GcnCard.
-		 * @param dat Directory table.
-		 * @param bat Block allocation table.
+		 * @param card GcnCard.
+		 * @param direntry Directory Entry pointer.
+		 * @param mc_bat Block table.
 		 */
-		GcnFile(GcnCard *card, const int fileIdx,
-				const card_dat *dat, const card_bat *bat);
+		GcnFile(GcnCard *card,
+			const card_direntry *dirEntry,
+			const card_bat *mc_bat);
 
 		/**
 		 * Create a GcnFile for a GcnCard.
-		 * This constructor is for "lost" files.
+		 * This constructor is for lost files.
 		 * @param card GcnCard.
-		 * @param dirEntry Constructed directory entry.
+		 * @param direntry Directory Entry pointer.
 		 * @param fatEntries FAT entries.
 		 */
 		GcnFile(GcnCard *card,
-				const card_direntry *dirEntry,
-				const QVector<uint16_t> &fatEntries);
+			const card_direntry *dirEntry,
+			const QVector<uint16_t> &fatEntries);
 
-		~GcnFile();
-	
+		virtual ~GcnFile();
+
 	protected:
-		GcnFilePrivate *const d_ptr;
 		Q_DECLARE_PRIVATE(GcnFile)
 	private:
 		Q_DISABLE_COPY(GcnFile)
 
 	public:
-		/**
-		 * Get the 6-character game ID, e.g. GALE01.
-		 * @return 6-character game ID.
-		 */
-		QString id6(void) const;
+		/** TODO: Move encoding to File. **/
 
 		/**
-		 * Get the 4-character game ID, e.g. GALE.
-		 * @return 4-character game ID.
+		 * Get the text encoding ID for this file.
+		 * @return Text encoding ID.
 		 */
-		QString id4(void) const;
+		int encoding(void) const;
 
 		/**
-		 * Get the 3-character game ID, e.g. GAL.
-		 * @return 3-character game ID.
+		 * Get the file's mode as a string.
+		 * This is system-specific.
+		 * @return File mode as a string.
 		 */
-		QString id3(void) const;
+		virtual QString modeAsString(void) const override;
 
-		/**
-		 * Get the company code, e.g. 01.
-		 * @return Company code.
-		 */
-		QString company(void) const;
-
-		/**
-		 * Get the internal filename.
-		 * @return Internal filename.
-		 */
-		QString filename(void) const;
-
-		/**
-		 * Get the last modified time.
-		 * @return Last modified time.
-		 */
-		GcnDateTime lastModified(void) const;
-
-		/**
-		 * Get the game description. ("Comments" field.)
-		 * @return Game description.
-		 */
-		QString gameDesc(void) const;
-
-		/**
-		 * Get the file description. ("Comments" field.)
-		 * @return File description.
-		 */
-		QString fileDesc(void) const;
-
-		/**
-		 * Get the file permissions.
-		 * @return File permissions.
-		 */
-		uint8_t permission(void) const;
-
-		/**
-		 * Get the file permissions as a string.
-		 * @return File permission string.
-		 */
-		QString permissionAsString(void) const;
-
-		/**
-		 * Get the file size, in blocks.
-		 * @return File size, in blocks.
-		 */
-		uint16_t size(void) const;
-
-		/**
-		 * Get the banner image.
-		 * @return Banner image, or null QPixmap on error.
-		 */
-		QPixmap banner(void) const;
-
-		/**
-		 * Get the number of icons in the file.
-		 * @return Number of icons.
-		 */
-		int numIcons(void) const;
-
-		/**
-		 * Get an icon from the file.
-		 * @param idx Icon number.
-		 * @return Icon, or null QPixmap on error.
-		 */
-		QPixmap icon(int idx) const;
-
-		/**
-		 * Get the delay for a given icon.
-		 * @param idx Icon number.
-		 * @return Icon delay.
-		 */
-		int iconDelay(int idx) const;
-
-		/**
-		 * Get the icon animation mode.
-		 * @return Icon animation mode.
-		 */
-		int iconAnimMode(void) const;
-
-		/**
-		 * Is this a lost file?
-		 * @return True if lost; false if file is in the directory table.
-		 */
-		bool isLostFile(void) const;
-
-		/**
-		 * Get this file's FAT entries.
-		 * @return FAT entries.
-		 */
-		QVector<uint16_t> fatEntries(void) const;
+		/** TODO: Move checksum definitions to File. **/
 
 		/**
 		 * Get the checksum definitions.
@@ -257,39 +137,39 @@ class GcnFile : public QObject
 		 */
 		QVector<QString> checksumValuesFormatted(void) const;
 
-		/**
-		 * Get the default GCI filename.
-		 * @return Default GCI filename.
-		 */
-		QString defaultGciFilename(void) const;
+		/** Lost File information **/
 
 		/**
-		 * Get the text encoding ID for this file.
-		 * @return Text encoding ID.
+		 * Get the default export filename.
+		 * @return Default export filename.
 		 */
-		int encoding(void) const;
+		virtual QString defaultExportFilename(void) const override;
+
+		// TODO: Function to get format/extension of exported file.
 
 		/**
-		 * Save the file in GCI format.
-		 * @param filename Filename for the GCI file.
+		 * Export the file.
+		 * @param filename Filename for the exported file.
 		 * @return 0 on success; non-zero on error.
 		 * TODO: Error code constants.
 		 */
-		int saveGci(const QString &filename);
+		virtual int exportToFile(const QString &filename) override;
 
 		/**
-		 * Save the file in GCI format.
-		 * @param qioDevice QIODevice to write the GCI data to.
+		 * Export the file.
+		 * @param qioDevice QIODevice to write the data to.
 		 * @return 0 on success; non-zero on error.
 		 * TODO: Error code constants.
 		 */
-		int saveGci(QIODevice *qioDevice);
+		virtual int exportToFile(QIODevice *qioDevice) override;
 
 		/**
 		 * Get the directory entry.
 		 * @return Directory entry.
 		 */
 		const card_direntry *dirEntry(void) const;
+
+		// TODO: Move these down to File.
 
 		/**
 		 * Save the banner image.

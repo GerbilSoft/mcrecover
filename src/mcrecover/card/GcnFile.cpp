@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 #include "GcnFile.hpp"
+
 #include "card.h"
 #include "util/byteswap.h"
 
@@ -49,7 +50,8 @@ using std::vector;
 
 /** GcnFilePrivate **/
 
-class GcnFilePrivate
+#include "File_p.hpp"
+class GcnFilePrivate : public FilePrivate
 {
 	public:
 		/**
@@ -57,102 +59,51 @@ class GcnFilePrivate
 		 * This constructor is for valid files.
 		 * @param q GcnFile.
 		 * @param card GcnCard.
-		 * @param fileIdx File index in GcnCard.
-		 * @param dat Directory table.
-		 * @param bat Block allocation table.
+		 * @param direntry Directory Entry pointer.
+		 * @param mc_bat Block table.
 		 */
-		GcnFilePrivate(GcnFile *q, 
-				GcnCard *card, const int fileIdx,
-				const card_dat *dat, const card_bat *bat);
+		GcnFilePrivate(GcnFile *q, GcnCard *card,
+			const card_direntry *dirEntry,
+			const card_bat *mc_bat);
 
 		/**
 		 * Initialize the GcnFile private class.
-		 * This constructor is for "lost" files.
+		 * This constructor is for lost files.
 		 * @param q GcnFile.
 		 * @param card GcnCard.
-		 * @param dirEntry Constructed directory entry.
+		 * @param direntry Directory Entry pointer.
 		 * @param fatEntries FAT entries.
 		 */
-		GcnFilePrivate(GcnFile *q,
-				GcnCard *card,
-				const card_direntry *dirEntry,
-				const QVector<uint16_t> &fatEntries);
+		GcnFilePrivate(GcnFile *q, GcnCard *card,
+			const card_direntry *dirEntry,
+			const QVector<uint16_t> &fatEntries);
 
-		~GcnFilePrivate();
+		virtual ~GcnFilePrivate();
 
 	protected:
-		GcnFile *const q_ptr;
 		Q_DECLARE_PUBLIC(GcnFile)
 	private:
 		Q_DISABLE_COPY(GcnFilePrivate)
 
 		/**
-		* Common initialization code.
-		*/
-		void init(void);
+		 * Load the file information.
+		 */
+		void loadFileInfo(void);
 
 	public:
-		GcnCard *const card;
-
-		// Card directory information.
-		const int fileIdx;		// If -1, this is a lost file.
-		const card_dat *const dat;	// If nullptr, this is a lost file.
-		const card_bat *const bat;	// If nullptr, this is a lost file.
+		const card_bat *mc_bat;	// Block table. (TODO: Do we need to store this?)
 
 		/**
 		 * Directory entry.
-		 * This points to an entry within dat.
+		 * This points to an entry within card's Directory Table.
 		 * NOTE: If this is a lost file, this was allocated by us,
 		 * and needs to be freed in the destructor.
 		 */
 		const card_direntry *dirEntry;
 
-		// FAT entries.
-		QVector<uint16_t> fatEntries;
-
-		// File information. (Directory table.)
-		QString id6;			// 6-character game ID, e.g. GALE01
-		QString filename;		// Internal filename.
-		GcnDateTime lastModified;	// Last modified time.
-
-		// File information. (Comment, banner, icon)
-		QString gameDesc;	// Game description.
-		QString fileDesc;	// File description.
-
 		// GcImages.
 		GcImage *gcBanner;
 		QVector<GcImage*> gcIcons;
-
-		// Images.
-		QPixmap banner;
-		QVector<QPixmap> icons;
-
-		/**
-		 * Get the file size, in blocks.
-		 * @return File size, in blocks.
-		 */
-		uint16_t size(void) const;
-
-		/**
-		 * Convert a file block number to a physical block number.
-		 * @param fileBlock File block number.
-		 * @return Physical block number, or negative on error.
-		 */
-		uint16_t fileBlockAddrToPhysBlockAddr(uint16_t fileBlock);
-
-		/**
-		 * Load file data.
-		 * @return QByteArray with file data, or empty QByteArray on error.
-		 */
-		QByteArray loadFileData(void);
-
-		/**
-		 * Read the specified range from the file.
-		 * @param blockStart First block.
-		 * @param len Length, in blocks.
-		 * @return QByteArray with file data, or empty QByteArray on error.
-		 */
-		QByteArray readBlocks(uint16_t blockStart, int len);
 
 		// CI8 SHARED image struct.
 		struct CI8_SHARED_data {
@@ -185,14 +136,6 @@ class GcnFilePrivate
 		 * Calculate the file checksum.
 		 */
 		void calculateChecksum(void);
-
-		/**
-		 * Strip invalid DOS characters from a filename.
-		 * @param filename Filename.
-		 * @param replaceChar Replacement character.
-		 * @return Filename with invalid DOS characters replaced with replaceChar.
-		 */
-		static QString StripInvalidDosChars(QString filename, QChar replaceChar = QChar(L'_'));
 };
 
 /**
@@ -200,22 +143,24 @@ class GcnFilePrivate
  * This constructor is for valid files.
  * @param q GcnFile.
  * @param card GcnCard.
- * @param fileIdx File index in GcnCard.
- * @param dat Directory table.
- * @param bat Block allocation table.
+ * @param direntry Directory Entry pointer.
+ * @param mc_bat Block table.
  */
-GcnFilePrivate::GcnFilePrivate(GcnFile *q,
-		GcnCard *card, const int fileIdx,
-		const card_dat *dat, const card_bat *bat)
-	: q_ptr(q)
-	, card(card)
-	, fileIdx(fileIdx)
-	, dat(dat)
-	, bat(bat)
-	, gcBanner(nullptr)
+GcnFilePrivate::GcnFilePrivate(GcnFile *q, GcnCard *card,
+		const card_direntry *dirEntry,
+		const card_bat *mc_bat)
+	: FilePrivate(q, card)
+	, mc_bat(mc_bat)
+	, dirEntry(dirEntry)
 {
-	// Load the directory table information.
-	dirEntry = &dat->entries[fileIdx];
+	if (!dirEntry || !mc_bat) {
+		// Invalid data.
+		this->dirEntry = nullptr;
+		this->mc_bat = nullptr;
+
+		// This file is basically useless now...
+		return;
+	}
 
 	// Clamp file length to the size of the memory card.
 	// This shouldn't happen, but it's possible if either
@@ -230,14 +175,14 @@ GcnFilePrivate::GcnFilePrivate(GcnFile *q,
 	fatEntries.reserve(length);
 	uint16_t next_block = dirEntry->block;
 	if (next_block >= 5 && next_block != 0xFFFF &&
-	    next_block < (uint16_t)NUM_ELEMENTS(bat->fat)) {
+	    next_block < (uint16_t)NUM_ELEMENTS(mc_bat->fat)) {
 		fatEntries.append(next_block);
 
 		// Go through the rest of the blocks.
 		for (int i = length; i > 1; i--) {
-			next_block = bat->fat[next_block - 5];
+			next_block = mc_bat->fat[next_block - 5];
 			if (next_block == 0xFFFF || next_block < 5 ||
-			    next_block >= (uint16_t)NUM_ELEMENTS(bat->fat))
+			    next_block >= (uint16_t)NUM_ELEMENTS(mc_bat->fat))
 			{
 				// Next block is invalid.
 				break;
@@ -246,43 +191,53 @@ GcnFilePrivate::GcnFilePrivate(GcnFile *q,
 		}
 	}
 
-	// Populate the rest of the fields.
-	init();
+	// Load the file information.
+	loadFileInfo();
 }
 
 /**
  * Initialize the GcnFile private class.
- * This constructor is for "lost" files.
+ * This constructor is for lost files.
  * @param q GcnFile.
  * @param card GcnCard.
- * @param dirEntry Constructed directory entry.
+ * @param direntry Directory Entry pointer.
  * @param fatEntries FAT entries.
  */
-GcnFilePrivate::GcnFilePrivate(GcnFile *q,
-		GcnCard *card, const card_direntry *dirEntry,
+GcnFilePrivate::GcnFilePrivate(GcnFile *q, GcnCard *card,
+		const card_direntry *dirEntry,
 		const QVector<uint16_t> &fatEntries)
-	: q_ptr(q)
-	, card(card)
-	, fileIdx(-1)
-	, dat(nullptr)
-	, bat(nullptr)
-	, gcBanner(nullptr)
+	: FilePrivate(q, card)
+	, mc_bat(nullptr)
+	, dirEntry(dirEntry)
 {
-	// Take a copy of the constructed directory entry.
+	if (!dirEntry || fatEntries.isEmpty()) {
+		// Invalid data.
+		this->dirEntry = nullptr;
+		this->fatEntries.clear();
+
+		// This file is basically useless now...
+		return;
+	}
+
+	// gcc-4.9.2 doesn't like assigning variables owned by the
+	// base class in the subclass constructor.
+	// TODO: Maybe add lostFile and fatEntries to the FilePrivate constructor?
+	this->lostFile = true;
+	this->fatEntries = fatEntries;
+
+	// This is a lost file.
+	// We need to make a copy of dirEntry.
 	card_direntry *dentry = (card_direntry*)malloc(sizeof(*dirEntry));
 	memcpy(dentry, dirEntry, sizeof(*dentry));
 	this->dirEntry = dentry;
 
-	// Copy the FAT entries.
-	this->fatEntries = fatEntries;
-
-	// Populate the rest of the fields.
-	init();
+	// Load the file information.
+	loadFileInfo();
 }
 
 GcnFilePrivate::~GcnFilePrivate()
 {
-	if (fileIdx < 0) {
+	if (lostFile) {
 		// dirEntry was allocated by us.
 		// Free it.
 		free((void*)dirEntry);
@@ -295,21 +250,22 @@ GcnFilePrivate::~GcnFilePrivate()
 }
 
 /**
- * Common initialization code.
+ * Load the file information.
  */
-void GcnFilePrivate::init(void)
+void GcnFilePrivate::loadFileInfo(void)
 {
-	// ID6 is always Latin-1.
+	// Game ID is always Latin-1.
 	// NOTE: gamecode and company are right next to each other,
 	// so we can "overrun" the buffer here.
-	id6 = QString::fromLatin1(dirEntry->gamecode,
-				sizeof(dirEntry->gamecode) + sizeof(dirEntry->company));
+	gameID = QString::fromLatin1(dirEntry->gamecode,
+			sizeof(dirEntry->gamecode) + sizeof(dirEntry->company));
 
 	// Get the appropriate QTextCodec for this file.
-	const char region = (id6.size() >= 4
-				? id6.at(3).toLatin1()
+	const char region = (gameID.size() >= 4
+				? gameID.at(3).toLatin1()
 				: 0);
-	QTextCodec *textCodec = card->textCodec(region);
+	// FIXME: Unchecked cast, though card should always be GcnCard...
+	QTextCodec *textCodec = ((GcnCard*)card)->textCodec(region);
 
 	// Remove trailing NULL characters before converting to UTF-8.
 	QByteArray filenameData(dirEntry->filename, sizeof(dirEntry->filename));
@@ -328,7 +284,11 @@ void GcnFilePrivate::init(void)
 	}
 
 	// Timestamp.
-	lastModified.setGcnTimestamp(dirEntry->lastmodified);
+	mtime.setGcnTimestamp(dirEntry->lastmodified);
+
+	// Mode.
+	// TODO: Convert to system-independent value?
+	this->mode = dirEntry->permission;
 
 	// Get the block size.
 	const int blockSize = card->blockSize();
@@ -380,89 +340,6 @@ void GcnFilePrivate::init(void)
 }
 
 /**
- * Get the file size, in blocks.
- * @return File size, in blocks.
- */
-uint16_t GcnFilePrivate::size(void) const
-{
-	// NOTE: We're using fatEntries.size() instead of
-	// dirEntry.length, since the directory entry may
-	// contain invalid data.
-	return fatEntries.size();
-}
-
-/**
- * Convert a file block number to a physical block number.
- * @param fileBlock File block number.
- * @return Physical block number, or negative on error.
- */
-uint16_t GcnFilePrivate::fileBlockAddrToPhysBlockAddr(uint16_t fileBlock)
-{
-	if ((int)fileBlock >= fatEntries.size())
-		return -1;
-	return fatEntries.at((int)fileBlock);
-}
-
-/**
- * Load file data.
- * @return QByteArray with file data, or empty QByteArray on error.
- */
-QByteArray GcnFilePrivate::loadFileData(void)
-{
-	const int blockSize = card->blockSize();
-	if (this->size() > card->totalUserBlocks()) {
-		// File is larger than the card.
-		// This shouldn't happen...
-		return QByteArray();
-	}
-
-	QByteArray fileData;
-	fileData.resize(this->size() * blockSize);
-
-	uint8_t *fileDataPtr = (uint8_t*)fileData.data();
-	for (int i = 0; i < this->size(); i++, fileDataPtr += blockSize) {
-		const uint16_t physBlockAddr = fileBlockAddrToPhysBlockAddr(i);
-		card->readBlock(fileDataPtr, blockSize, physBlockAddr);
-	}
-	return fileData;
-}
-
-/**
- * Read the specified range from the file.
- * @param blockStart First block.
- * @param len Length, in blocks.
- * @return QByteArray with file data, or empty QByteArray on error.
- */
-QByteArray GcnFilePrivate::readBlocks(uint16_t blockStart, int len)
-{
-	// Check if the starting block is valid.
-	if (blockStart >= this->size()) {
-		// Starting block is larger than the filesize.
-		return QByteArray();
-	}
-
-	// Check if the length is valid.
-	uint16_t blockEnd = blockStart + len;
-	if (blockEnd > this->size()) {
-		// Reading too much data.
-		// Truncate it to the available data.
-		blockEnd = this->size();
-		len = (this->size() - blockStart);
-	}
-
-	const int blockSize = card->blockSize();
-	QByteArray blockData;
-	blockData.resize(len * blockSize);
-
-	uint8_t *blockDataPtr = (uint8_t*)blockData.data();
-	for (int i = 0; i < len; i++, blockDataPtr += blockSize) {
-		const uint16_t physBlockAddr = fileBlockAddrToPhysBlockAddr(i);
-		card->readBlock(blockDataPtr, blockSize, physBlockAddr);
-	}
-	return blockData;
-}
-
-/**
  * Load the banner image.
  * @return GcImage* containing the banner image, or nullptr on error.
  */
@@ -470,8 +347,7 @@ GcImage *GcnFilePrivate::loadBannerImage(void)
 {
 	// Determine the banner length.
 	uint32_t imgSize = 0;
-	switch (dirEntry->bannerfmt & CARD_BANNER_MASK)
-	{
+	switch (dirEntry->bannerfmt & CARD_BANNER_MASK) {
 		case CARD_BANNER_CI:
 			imgSize = (CARD_BANNER_W * CARD_BANNER_H * 1);
 			break;
@@ -520,10 +396,14 @@ GcImage *GcnFilePrivate::loadBannerImage(void)
  */
 QVector<GcImage*> GcnFilePrivate::loadIconImages(void)
 {
+	// TODO: Convert these to system-independent values.
+	// Icon animation metadata.
+	// TODO: Should be part of a struct that's returned...
+	this->iconAnimMode = (dirEntry->bannerfmt & CARD_ANIM_MASK);
+
 	// Calculate the first icon address.
 	uint32_t imgAddr = dirEntry->iconaddr;
-	switch (dirEntry->bannerfmt & CARD_BANNER_MASK)
-	{
+	switch (dirEntry->bannerfmt & CARD_BANNER_MASK) {
 		case CARD_BANNER_CI:
 			imgAddr += (CARD_BANNER_W * CARD_BANNER_H * 1);
 			imgAddr += 0x200; // palette
@@ -582,12 +462,16 @@ QVector<GcImage*> GcnFilePrivate::loadIconImages(void)
 	// Decode the icon(s).
 	QVector<CI8_SHARED_data> lst_CI8_SHARED;
 	QVector<GcImage*> gcImages;
+	// TODO: Should be part of a struct that's returned...
+	this->iconSpeed.clear();
 
 	iconfmt = dirEntry->iconfmt;
 	iconspeed = dirEntry->iconspeed;
 	for (int i = 0; i < CARD_MAXICONS; i++, iconfmt >>= 2, iconspeed >>= 2) {
 		if ((iconspeed & CARD_SPEED_MASK) == CARD_SPEED_END)
 			break;
+		// TODO: Should be part of a struct that's returned...
+		this->iconSpeed.append(iconspeed & CARD_SPEED_MASK);
 
 		switch (iconfmt & CARD_ICON_MASK) {
 			case CARD_ICON_CI_SHARED: {
@@ -808,279 +692,72 @@ void GcnFilePrivate::calculateChecksum(void)
 	}
 }
 
-/**
- * Strip invalid DOS characters from a filename.
- * @param filename Filename.
- * @param replaceChar Replacement character.
- * @return Filename with invalid DOS characters replaced with replaceChar.
- */
-QString GcnFilePrivate::StripInvalidDosChars(
-				const QString filename,
-				const QChar replaceChar)
-{
-	QString ret(filename);
-	for (int i = (ret.size() - 1); i > 0; i--) {
-		QCharRef chr = ret[i];
-
-		// Reference: http://en.wikipedia.org/wiki/8.3_filename#Directory_table
-		switch (chr.unicode()) {
-			case '"':
-			case '*':
-			case '/':
-			case ':':
-			case '<':
-			case '>':
-			case '?':
-			case '\\':
-			case '[':
-			case ']':
-			case '|':
-				// Invalid DOS character.
-				// (Technically, '[' and ']' are legal on Win32,
-				//  but we'll exclude them anyway.)
-				chr = replaceChar;
-				break;
-
-			default:
-				// Valid character.
-				break;
-		}
-	}
-
-	// Return the adjusted filename.
-	return ret;
-}
-
 /** GcnFile **/
 
 /**
  * Create a GcnFile for a GcnCard.
  * This constructor is for valid files.
+ * @param q GcnFile.
  * @param card GcnCard.
- * @param fileIdx File index in GcnCard.
- * @param dat Directory table.
- * @param bat Block allocation table.
+ * @param direntry Directory Entry pointer.
+ * @param mc_bat Block table.
  */
-GcnFile::GcnFile(GcnCard *card, const int fileIdx,
-			const card_dat *dat, const card_bat *bat)
-	: QObject(card)
-	, d_ptr(new GcnFilePrivate(this, card, fileIdx, dat, bat))
+GcnFile::GcnFile(GcnCard *card,
+		const card_direntry *dirEntry,
+		const card_bat *mc_bat)
+	: File(new GcnFilePrivate(this, card, dirEntry, mc_bat), card)
 { }
 
 /**
  * Create a GcnFile for a GcnCard.
- * This constructor is for "lost" files.
+ * This constructor is for lost files.
  * @param card GcnCard.
- * @param dirEntry Constructed directory entry.
+ * @param direntry Directory Entry pointer.
  * @param fatEntries FAT entries.
  */
 GcnFile::GcnFile(GcnCard *card,
 		const card_direntry *dirEntry,
 		const QVector<uint16_t> &fatEntries)
-	: QObject(card)
-	, d_ptr(new GcnFilePrivate(this, card, dirEntry, fatEntries))
+	: File(new GcnFilePrivate(this, card, dirEntry, fatEntries), card)
 { }
 
+// TODO: Maybe not needed?
 GcnFile::~GcnFile()
-{
-	Q_D(GcnFile);
-	delete d;
-}
+{ }
 
 /**
- * Get the 6-character game ID, e.g. GALE01.
- * @return 6-character game ID.
+ * Get the text encoding ID for this file.
+ * @return Text encoding ID.
  */
-QString GcnFile::id6(void) const
+int GcnFile::encoding(void) const
 {
 	Q_D(const GcnFile);
-	return d->id6;
+	const char region = (d->gameID.size() >= 4
+				? d->gameID.at(3).toLatin1()
+				: 0);
+	// FIXME: Unchecked cast, though card should always be GcnCard...
+	return ((GcnCard*)d->card)->encodingForRegion(region);
 }
 
 /**
- * Get the 4-character game ID, e.g. GALE.
- * @return 4-character game ID.
+ * Get the file's mode as a string.
+ * This is system-specific.
+ * @return File mode as a string.
  */
-QString GcnFile::id4(void) const
-{
-	Q_D(const GcnFile);
-	return d->id6.left(4);
-}
-
-/**
- * Get the 3-character game ID, e.g. GAL.
- * @return 3-character game ID.
- */
-QString GcnFile::id3(void) const
-{
-	Q_D(const GcnFile);
-	return d->id6.left(3);
-}
-
-/**
- * Get the company code, e.g. 01.
- * @return Company code.
- */
-QString GcnFile::company(void) const
-{
-	Q_D(const GcnFile);
-	// NOTE: Assuming id6 is always 6 characters.
-	return d->id6.right(2);
-}
-
-/**
- * Get the internal filename.
- * @return internal filename.
- */
-QString GcnFile::filename(void) const
-{
-	Q_D(const GcnFile);
-	return d->filename;
-}
-
-/**
- * Get the last modified time.
- * @return Last modified time.
- */
-GcnDateTime GcnFile::lastModified(void) const
-{
-	Q_D(const GcnFile);
-	return d->lastModified;
-}
-
-/**
- * Get the game description. ("Comments" field.)
- * @return Game description.
- */
-QString GcnFile::gameDesc(void) const
-{
-	Q_D(const GcnFile);
-	return d->gameDesc;
-}
-
-/**
- * Get the file description. ("Comments" field.)
- * @return File description.
- */
-QString GcnFile::fileDesc(void) const
-{
-	Q_D(const GcnFile);
-	return d->fileDesc;
-}
-
-/**
- * Get the file permissions.
- * @return File permissions.
- */
-uint8_t GcnFile::permission(void) const
-{
-	Q_D(const GcnFile);
-	return d->dirEntry->permission;
-}
-
-/**
- * Get the file permissions as a string.
- * @return File permission string.
- */
-QString GcnFile::permissionAsString(void) const
+QString GcnFile::modeAsString(void) const
 {
 	Q_D(const GcnFile);
 	char str[4];
 
-	uint8_t permission = d->dirEntry->permission;
-	str[0] = ((permission & CARD_ATTRIB_GLOBAL) ? 'G' : '-');
-	str[1] = ((permission & CARD_ATTRIB_NOMOVE) ? 'M' : '-');
-	str[2] = ((permission & CARD_ATTRIB_NOCOPY) ? 'C' : '-');
-	str[3] = ((permission & CARD_ATTRIB_PUBLIC) ? 'P' : '-');
+	str[0] = ((d->mode & CARD_ATTRIB_GLOBAL) ? 'G' : '-');
+	str[1] = ((d->mode & CARD_ATTRIB_NOMOVE) ? 'M' : '-');
+	str[2] = ((d->mode & CARD_ATTRIB_NOCOPY) ? 'C' : '-');
+	str[3] = ((d->mode & CARD_ATTRIB_PUBLIC) ? 'P' : '-');
 
 	return QString::fromLatin1(str, sizeof(str));
 }
 
-/**
- * Get the size, in blocks.
- * @return Size, in blocks.
- */
-uint16_t GcnFile::size(void) const
-{
-	Q_D(const GcnFile);
-	return d->size();
-}
-
-/**
- * Get the banner image.
- * @return Banner image, or null QPixmap on error.
- */
-QPixmap GcnFile::banner(void) const
-{
-	Q_D(const GcnFile);
-	return d->banner;
-}
-
-/**
- * Get the number of icons in the file.
- * @return Number of icons.
- */
-int GcnFile::numIcons(void) const
-{
-	Q_D(const GcnFile);
-	return d->icons.size();
-}
-
-/**
- * Get an icon from the file.
- * @param idx Icon number.
- * @return Icon, or null QPixmap on error.
- */
-QPixmap GcnFile::icon(int idx) const
-{
-	Q_D(const GcnFile);
-	if (idx < 0 || idx >= d->icons.size())
-		return QPixmap();
-	return d->icons.at(idx);
-}
-
-/**
- * Get the delay for a given icon.
- * @param idx Icon number.
- * @return Icon delay.
- */
-int GcnFile::iconDelay(int idx) const
-{
-	Q_D(const GcnFile);
-	if (idx < 0 || idx >= d->icons.size())
-		return CARD_SPEED_END;
-	return ((d->dirEntry->iconspeed >> (idx * 2)) & CARD_SPEED_MASK);
-}
-
-/**
- * Get the icon animation mode.
- * @return Icon animation mode.
- */
-int GcnFile::iconAnimMode(void) const
-{
-	Q_D(const GcnFile);
-	return (d->dirEntry->bannerfmt & CARD_ANIM_MASK);
-}
-
-/**
- * Is this a lost file?
- * @return True if lost; false if file is in the directory table.
- */
-bool GcnFile::isLostFile(void) const
-{
-	Q_D(const GcnFile);
-	return (d->fileIdx < 0);
-}
-
-/**
- * Get this file's FAT entries.
- * @return FAT entries.
- */
-QVector<uint16_t> GcnFile::fatEntries(void) const
-{
-	Q_D(const GcnFile);
-	return d->fatEntries;
-}
+/** TODO: Move checksum definitions to File. **/
 
 /**
  * Get the checksum definitions.
@@ -1155,10 +832,10 @@ QVector<QString> GcnFile::checksumValuesFormatted(void) const
 }
 
 /**
- * Get the default GCI filename.
- * @return Default GCI filename.
+ * Get the default export filename.
+ * @return Default export filename.
  */
-QString GcnFile::defaultGciFilename(void) const
+QString GcnFile::defaultExportFilename(void) const
 {
 	/**
 	 * Filename format:
@@ -1168,9 +845,9 @@ QString GcnFile::defaultGciFilename(void) const
 	Q_D(const GcnFile);
 
 	QString filename;
-	filename.reserve(d->id6.size() + + 1 +
+	filename.reserve(d->gameID.size() + + 1 +
 			 d->filename.size() + 1 + 6 + 4);
-	filename += d->id6 + QChar(L'_');
+	filename += d->gameID + QChar(L'_');
 	filename += d->filename + QChar(L'_');
 
 	// Convert the start address to hexadecimal.
@@ -1187,51 +864,27 @@ QString GcnFile::defaultGciFilename(void) const
 }
 
 /**
- * Get the text encoding ID for this file.
- * @return Text encoding ID.
- */
-int GcnFile::encoding(void) const
-{
-	Q_D(const GcnFile);
-	const char region = (d->id6.size() >= 4
-				? d->id6.at(3).toLatin1()
-				: 0);
-	return d->card->encodingForRegion(region);
-}
-
-/**
- * Save the file.
- * @param filename Filename for the GCI file.
+ * Export the file.
+ * @param filename Filename for the exported file.
  * @return 0 on success; non-zero on error.
  * TODO: Error code constants.
  */
-int GcnFile::saveGci(const QString &filename)
+int GcnFile::exportToFile(const QString &filename)
 {
-	QFile file(filename);
-	if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-		// Error opening the file.
-		return -1;
-	}
-
-	// Write the GCI data.
-	int ret = saveGci(&file);
-	file.close();
-
-	if (ret != 0) {
-		// Error saving the GCI file.
-		file.remove();
-	}
-
-	return ret;
+	// NOTE: This function doesn't actually do anything different
+	// from the base class function, but gcc-4.9.2 attempts to use
+	// the QIODevice version when using a GcnFile* instead of a
+	// File*. Hence, we need this virtual function.
+	return File::exportToFile(filename);
 }
 
 /**
- * Save the file.
- * @param qioDevice QIODevice to write the GCI data to.
+ * Export the file.
+ * @param qioDevice QIODevice to write the data to.
  * @return 0 on success; non-zero on error.
  * TODO: Error code constants.
  */
-int GcnFile::saveGci(QIODevice *qioDevice)
+int GcnFile::exportToFile(QIODevice *qioDevice)
 {
 	Q_D(GcnFile);
 

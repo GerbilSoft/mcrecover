@@ -137,7 +137,7 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 
 	// File permissions.
 	ui.lblModeTitle->setVisible(true);
-	ui.lblMode->setText(file->permissionAsString());
+	ui.lblMode->setText(file->modeAsString());
 	ui.lblMode->setVisible(true);
 
 	// Checksum algorithm is always visible.

@@ -218,7 +218,7 @@ void MemCardModelPrivate::initAnimState(void)
  */
 void MemCardModelPrivate::initAnimState(const GcnFile *file)
 {
-	int numIcons = file->numIcons();
+	int numIcons = file->iconCount();
 	if (numIcons <= 1) {
 		// Not an animated icon.
 		animState.remove(file);
@@ -332,11 +332,11 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 				case COL_SIZE:
 					return file->size();
 				case COL_MTIME:
-					return file->lastModified().qDateTime();
+					return file->mtime().qDateTime();
 				case COL_PERMISSION:
-					return file->permissionAsString();
+					return file->modeAsString();
 				case COL_GAMEID:
-					return file->id6();
+					return file->gameID();
 				case COL_FILENAME:
 					return file->filename();
 				default:

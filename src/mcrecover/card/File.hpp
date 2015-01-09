@@ -28,6 +28,7 @@
 // Qt includes.
 #include <QtCore/QString>
 #include <QtCore/QVector>
+#include <QtCore/QIODevice>
 #include <QtGui/QPixmap>
 
 class FilePrivate;
@@ -71,11 +72,12 @@ class File : public QObject
 		 * be subclassed by a system-specific class. The subclass
 		 * constructor must then initialize the File, including
 		 * fatEntries and other properties.
+		 * @param d FilePrivate-derived private class.
 		 * @param card Card object.
 		 */
-		File(Card *card);
+		File(FilePrivate *d, Card *card);
 	public:
-		~File();
+		virtual ~File();
 
 	protected:
 		FilePrivate *const d_ptr;
@@ -137,7 +139,7 @@ class File : public QObject
 		 * This is system-specific.
 		 * @return File mode as a string.
 		 */
-		virtual uint32_t modeAsString(void) const = 0;
+		virtual QString modeAsString(void) const = 0;
 
 		/**
 		 * Get the file size, in blocks.
@@ -205,7 +207,15 @@ class File : public QObject
 		 * @return 0 on success; non-zero on error.
 		 * TODO: Error code constants.
 		 */
-		virtual int exportToFile(const QString &filename) = 0;
+		virtual int exportToFile(const QString &filename);
+
+		/**
+		 * Export the file.
+		 * @param qioDevice QIODevice to write the data to.
+		 * @return 0 on success; non-zero on error.
+		 * TODO: Error code constants.
+		 */
+		virtual int exportToFile(QIODevice *qioDevice) = 0;
 
 		// TODO: Export banner and icon.
 };

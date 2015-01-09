@@ -86,7 +86,7 @@ void XmlTemplateDialogPrivate::updateWindowText(void)
 	if (file) {
 		//: Window title: %1 == game ID; %2 == internal filename.
 		winTitle = XmlTemplateDialog::tr("Generated XML Template: %1/%2")
-			.arg(file->id6())
+			.arg(file->gameID())
 			.arg(file->filename());
 
 		//: Template description: %1 == game ID; %2 == internal filename.
@@ -94,7 +94,7 @@ void XmlTemplateDialogPrivate::updateWindowText(void)
 			"Generated XML template for: %1/%2\n"
 			"You will need to edit gameName and fileInfo,\n"
 			"and may also need to add variable modifiers.")
-			.arg(file->id6())
+			.arg(file->gameID())
 			.arg(file->filename());
 	} else {
 		//: Window title: No file loaded.
@@ -166,8 +166,10 @@ void XmlTemplateDialogPrivate::generateXmlTemplate(void)
 	xml.writeTextElement(QLatin1String("gameName"), file->gameDesc());
 	xml.writeTextElement(QLatin1String("fileInfo"), QLatin1String("Save File"));
 	// TODO: Allow combined ID6 tag?
-	xml.writeTextElement(QLatin1String("gamecode"), file->id4());
-	xml.writeTextElement(QLatin1String("company"), file->company());
+	// TODO: Make sure gameID is 6 characters.
+	QString gameID = file->gameID();
+	xml.writeTextElement(QLatin1String("gamecode"), gameID.left(4));
+	xml.writeTextElement(QLatin1String("company"), gameID.mid(4));
 
 	// <search> block.
 	xml.writeStartElement(QLatin1String("search"));

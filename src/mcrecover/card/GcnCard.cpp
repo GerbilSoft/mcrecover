@@ -44,7 +44,7 @@ class GcnCardPrivate : public CardPrivate
 {
 	public:
 		GcnCardPrivate(GcnCard *q);
-		~GcnCardPrivate();
+		virtual ~GcnCardPrivate();
 		void init(void);
 
 	protected:
@@ -683,7 +683,7 @@ void GcnCardPrivate::loadGcnFileList(void)
 			continue;
 
 		// Valid directory entry.
-		GcnFile *mcFile = new GcnFile(q, i, mc_dat, mc_bat);
+		GcnFile *mcFile = new GcnFile(q, dirEntry, mc_bat);
 		lstGcnFile_new.append(mcFile);
 
 		// Mark the file's blocks as used.

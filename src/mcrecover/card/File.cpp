@@ -189,11 +189,12 @@ QString FilePrivate::StripInvalidDosChars(
  * be subclassed by a system-specific class. The subclass
  * constructor must then initialize the File, including
  * fatEntries and other properties.
+ * @param d FilePrivate-derived private class.
  * @param card Card object.
  */
-File::File(Card *card)
+File::File(FilePrivate *d, Card *card)
 	: QObject(card)
-	, d_ptr(new FilePrivate(this, card))
+	, d_ptr(d)
 { }
 
 File::~File()
@@ -355,4 +356,32 @@ bool File::isLostFile(void) const
 {
 	Q_D(const File);
 	return (d->lostFile);
+}
+
+/** Export **/
+
+/**
+ * Export the file.
+ * @param filename Filename for the exported file.
+ * @return 0 on success; non-zero on error.
+ * TODO: Error code constants.
+ */
+int File::exportToFile(const QString &filename)
+{
+	QFile file(filename);
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+		// Error opening the file.
+		return -1;
+	}
+
+	// Write the save data.
+	int ret = exportToFile(&file);
+	file.close();
+
+	if (ret != 0) {
+		// Error exporting the save file.
+		file.remove();
+	}
+
+	return ret;
 }

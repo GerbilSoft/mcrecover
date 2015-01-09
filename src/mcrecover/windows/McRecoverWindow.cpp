@@ -560,7 +560,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<GcnFile*> &files, QString p
 		GcnFile *file = files.at(0);
 
 		const QString defFilename = lastPath() + QChar(L'/') +
-						file->defaultGciFilename();
+						file->defaultExportFilename();
 
 		// Prompt the user for a save location.
 		filename = QFileDialog::getSaveFileName(q,
@@ -592,7 +592,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<GcnFile*> &files, QString p
 
 	foreach (GcnFile *file, files) {
 		if (!singleFile)
-			filename = path + QChar(L'/') + file->defaultGciFilename();
+			filename = path + QChar(L'/') + file->defaultExportFilename();
 		QFile qfile(filename);
 
 		// Check if the file exists.
@@ -644,7 +644,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<GcnFile*> &files, QString p
 		}
 
 		// Save the file.
-		int ret = file->saveGci(filename);
+		int ret = file->exportToFile(filename);
 		if (ret == 0) {
 			// File saved successfully.
 			filesSaved++;
@@ -663,7 +663,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<GcnFile*> &files, QString p
 		// Extract the icon.
 		if (extractIcons) {
 			// TODO: Error handling and details.
-			if (file->numIcons() >= 1) {
+			if (file->iconCount() >= 1) {
 				// File has an icon.
 				QString iconFilename = changeFileExtension(filename, extIcon);
 				file->saveIcon(iconFilename, animImgf);
@@ -1614,7 +1614,7 @@ void McRecoverWindow::lstFileList_selectionModel_currentRowChanged(
 	d->ui.mcfFileView->setFile(file);
 
 	// Shh... it's a secret to everybody.
-	d->herpDerp->setSelGameID(file ? file->id6() : QString());
+	d->herpDerp->setSelGameID(file ? file->gameID() : QString());
 }
 
 /**
