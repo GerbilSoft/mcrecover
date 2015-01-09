@@ -996,27 +996,6 @@ int GcnCard::readBlock(void *buf, int siz, uint16_t blockIdx)
 }
 
 /**
- * Get the memory card's serial number.
- * @return Memory card's serial number.
- */
-QString GcnCard::serialNumber(void) const
-{
-	// TODO: We're returning the 12-byte serial number.
-	// Should we return the 8-byte F-Zero GX / PSO serial number instead?
-	Q_D(const GcnCard);
-	QString serial_text;
-	char tmp[4];
-
-	serial_text.reserve(sizeof(d->mc_header.serial)*2);
-	for (int i = 0; i < (int)sizeof(d->mc_header.serial); i++) {
-		snprintf(tmp, sizeof(tmp), "%02X", d->mc_header.serial[i]);
-		serial_text += QLatin1String(tmp);
-	}
-
-	return serial_text;
-}
-
-/**
  * Get the memory card text encoding ID.
  * @return 0 for ANSI (ISO-8859-1); 1 for SJIS; negative on error.
  */
