@@ -175,13 +175,13 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 	// Encoding.
 	QString encoding;
 	switch (card->encoding()) {
-		case SYS_FONT_ENCODING_SJIS:
-			encoding = QLatin1String("Shift-JIS");
-			break;
-
-		case SYS_FONT_ENCODING_ANSI:
+		case Card::ENCODING_CP1252:
 		default:
 			encoding = QLatin1String("cp1252");
+			break;
+
+		case Card::ENCODING_SHIFTJIS:
+			encoding = QLatin1String("Shift-JIS");
 			break;
 	}
 	ui.lblEncoding->setText(encoding);

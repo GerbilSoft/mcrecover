@@ -1036,12 +1036,12 @@ void McRecoverWindow::openCard(const QString &filename)
 
 	// Check if any of the files are Japanese.
 	bool isJapanese = false;
-	if (d->card->encoding() == SYS_FONT_ENCODING_SJIS) {
+	if (d->card->encoding() == Card::ENCODING_SHIFTJIS) {
 		isJapanese = true;
 	} else {
 		for (int i = 0; i < d->card->numFiles(); i++) {
 			const MemCardFile *file = d->card->getFile(i);
-			if (file->encoding() == SYS_FONT_ENCODING_SJIS) {
+			if (file->encoding() == Card::ENCODING_SHIFTJIS) {
 				isJapanese = true;
 				break;
 			}
@@ -1576,7 +1576,7 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 	// Check for any Japanese files.
 	bool isJapanese = false;
 	foreach (const MemCardFile *file, files) {
-		if (file->encoding() == SYS_FONT_ENCODING_SJIS) {
+		if (file->encoding() == Card::ENCODING_SHIFTJIS) {
 			// Found a Japanese file.
 			isJapanese = true;
 			break;
@@ -1585,7 +1585,7 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 
 	// If the card encoding or any files are Japanese,
 	// show a warning if PCRE doesn't support UCP.
-	if (isJapanese || d->card->encoding() == SYS_FONT_ENCODING_SJIS)
+	if (isJapanese || d->card->encoding() == Card::ENCODING_SHIFTJIS)
 		d->showJpWarning();
 }
 
