@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * XmlTemplateDialogManager.cpp: XmlTemplateDialog Manager.                *
  *                                                                         *
- * Copyright (c) 2014 by David Korth.                                      *
+ * Copyright (c) 2014-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -22,7 +22,7 @@
 #include "XmlTemplateDialogManager.hpp"
 
 // Classes this class manages.
-#include "card/MemCardFile.hpp"
+#include "card/GcnFile.hpp"
 #include "XmlTemplateDialog.hpp"
 
 // Qt includes.
@@ -44,10 +44,10 @@ class XmlTemplateDialogManagerPrivate
 
 	public:
 		/**
-		 * Map MemCardFiles to XmlTemplateDialogs and vice-versa.
+		 * Map GcnFiles to XmlTemplateDialogs and vice-versa.
 		 */
-		QHash<const MemCardFile*, XmlTemplateDialog*> dialogHash;
-		QHash<XmlTemplateDialog*, const MemCardFile*> dialogHashRev;
+		QHash<const GcnFile*, XmlTemplateDialog*> dialogHash;
+		QHash<XmlTemplateDialog*, const GcnFile*> dialogHashRev;
 };
 
 XmlTemplateDialogManagerPrivate::XmlTemplateDialogManagerPrivate(XmlTemplateDialogManager* q)
@@ -84,14 +84,14 @@ XmlTemplateDialogManager::~XmlTemplateDialogManager()
 }
 
 /**
- * Create an XmlTemplateDialog for a given MemCardFile.
- * If a dialog exists for that MemCardFile, the existing
+ * Create an XmlTemplateDialog for a given GcnFile.
+ * If a dialog exists for that GcnFile, the existing
  * dialog will be used.
- * @param file MemCardFile.
+ * @param file GcnFile.
  * @param parent Parent.
  * @return XmlTemplateDialog;
  */
-XmlTemplateDialog *XmlTemplateDialogManager::create(const MemCardFile *file, QWidget *parent)
+XmlTemplateDialog *XmlTemplateDialogManager::create(const GcnFile *file, QWidget *parent)
 {
 	Q_D(XmlTemplateDialogManager);
 	XmlTemplateDialog *dialog = d->dialogHash.value(file);
@@ -107,7 +107,7 @@ XmlTemplateDialog *XmlTemplateDialogManager::create(const MemCardFile *file, QWi
 
 		// Make sure we know if either the file or the dialog are destroyed.
 		QObject::connect(file, SIGNAL(destroyed(QObject*)),
-				 this, SLOT(memCardFile_destroyed_slot(QObject*)));
+				 this, SLOT(file_destroyed_slot(QObject*)));
 		QObject::connect(dialog, SIGNAL(destroyed(QObject*)),
 				 this, SLOT(xmlTemplateDialog_destroyed_slot(QObject*)));
 	}
@@ -116,14 +116,14 @@ XmlTemplateDialog *XmlTemplateDialogManager::create(const MemCardFile *file, QWi
 }
 
 /**
- * A MemCardFile has been destroyed.
- * @param obj MemCardFile that was destroyed.
+ * A GcnFile has been destroyed.
+ * @param obj GcnFile that was destroyed.
  */
-void XmlTemplateDialogManager::memCardFile_destroyed_slot(QObject *obj)
+void XmlTemplateDialogManager::file_destroyed_slot(QObject *obj)
 {
-	const MemCardFile *file = reinterpret_cast<const MemCardFile*>(obj);
+	const GcnFile *file = reinterpret_cast<const GcnFile*>(obj);
 
-	// MemCardFile was destroyed.
+	// GcnFile was destroyed.
 	Q_D(XmlTemplateDialogManager);
 	XmlTemplateDialog *dialog = d->dialogHash.value(file);
 	d->dialogHash.remove(file);
@@ -143,12 +143,12 @@ void XmlTemplateDialogManager::xmlTemplateDialog_destroyed_slot(QObject *obj)
 
 	// XmlTemplateDialog was destroyed.
 	Q_D(XmlTemplateDialogManager);
-	const MemCardFile *file = d->dialogHashRev.value(dialog);
+	const GcnFile *file = d->dialogHashRev.value(dialog);
 	d->dialogHashRev.remove(dialog);
 	if (file) {
-		// We don't own the MemCardFile, so don't delete it.
+		// We don't own the GcnFile, so don't delete it.
 		QObject::disconnect(file, SIGNAL(destroyed(QObject*)),
-				    this, SLOT(memCardFile_destroyed_slot(QObject*)));
+				    this, SLOT(file_destroyed_slot(QObject*)));
 		d->dialogHash.remove(file);
 	}
 }

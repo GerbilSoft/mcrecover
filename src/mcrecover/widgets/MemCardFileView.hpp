@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * MemCardFileView.hpp: MemCardFile view widget.                           *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -24,8 +24,7 @@
 
 #include <QtGui/QWidget>
 
-// MemCardFile class.
-class MemCardFile;
+class GcnFile;
 
 class MemCardFileViewPrivate;
 
@@ -33,7 +32,7 @@ class MemCardFileView : public QWidget
 {
 	Q_OBJECT
 
-	Q_PROPERTY(const MemCardFile* file READ file WRITE setFile)
+	Q_PROPERTY(const GcnFile* file READ file WRITE setFile)
 
 	public:
 		MemCardFileView(QWidget *parent = 0);
@@ -47,16 +46,16 @@ class MemCardFileView : public QWidget
 
 	public:
 		/**
-		 * Get the MemCardFile being displayed.
-		 * @return MemCardFile.
+		 * Get the GcnFile being displayed.
+		 * @return GcnFile.
 		 */
-		const MemCardFile *file(void) const;
+		const GcnFile *file(void) const;
 
 		/**
-		 * Set the MemCardFile being displayed.
-		 * @param file MemCardFile.
+		 * Set the GcnFile being displayed.
+		 * @param file GcnFile.
 		 */
-		void setFile(const MemCardFile *file);
+		void setFile(const GcnFile *file);
 
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
@@ -64,10 +63,10 @@ class MemCardFileView : public QWidget
 
 	protected slots:
 		/**
-		 * MemCardFile object was destroyed.
+		 * GcnFile object was destroyed.
 		 * @param obj QObject that was destroyed.
 		 */
-		void memCardFile_destroyed_slot(QObject *obj = 0);
+		void file_destroyed_slot(QObject *obj = 0);
 
 		/**
 		 * Animation timer slot.

@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * XmlTemplateDialog.hpp: XML template dialog.                             *
  *                                                                         *
- * Copyright (c) 2014 by David Korth.                                      *
+ * Copyright (c) 2014-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -24,18 +24,16 @@
 
 #include <QtGui/QDialog>
 
-// MemCard classes.
-class MemCardFile;
+class GcnFile;
 
 class XmlTemplateDialogPrivate;
-
 class XmlTemplateDialog : public QDialog
 {
 	Q_OBJECT
 
 	public:
 		XmlTemplateDialog(QWidget *parent = nullptr);
-		XmlTemplateDialog(const MemCardFile *file, QWidget *parent = nullptr);
+		XmlTemplateDialog(const GcnFile *file, QWidget *parent = nullptr);
 		~XmlTemplateDialog();
 	private:
 		void init(void);

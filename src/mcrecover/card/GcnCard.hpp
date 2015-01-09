@@ -32,7 +32,7 @@ class QTextCodec;
 #include "Checksum.hpp"
 #include "SearchData.hpp"
 
-class MemCardFile;
+class GcnFile;
 
 class GcnCardPrivate;
 class GcnCard : public Card
@@ -131,11 +131,11 @@ class GcnCard : public Card
 		bool isEmpty(void) const;
 
 		/**
-		 * Get a MemCardFile object.
+		 * Get a GcnFile object.
 		 * @param idx File number.
-		 * @return MemCardFile object, or nullptr on error.
+		 * @return GcnFile object, or nullptr on error.
 		 */
-		MemCardFile *getFile(int idx);
+		GcnFile *getFile(int idx);
 
 		/**
 		 * Remove all "lost" files.
@@ -153,24 +153,24 @@ class GcnCard : public Card
 		 * Add a "lost" file.
 		 * NOTE: This is a debugging version.
 		 * Add more comprehensive versions with a block map specification.
-		 * @return MemCardFile added to the GcnCard, or nullptr on error.
+		 * @return GcnFile added to the GcnCard, or nullptr on error.
 		 */
-		MemCardFile *addLostFile(const card_direntry *dirEntry);
+		GcnFile *addLostFile(const card_direntry *dirEntry);
 
 		/**
 		 * Add a "lost" file.
 		 * @param dirEntry Directory entry.
 		 * @param fatEntries FAT entries.
-		 * @return MemCardFile added to the GcnCard, or nullptr on error.
+		 * @return GcnFile added to the GcnCard, or nullptr on error.
 		 */
-		MemCardFile *addLostFile(const card_direntry *dirEntry, const QVector<uint16_t> &fatEntries);
+		GcnFile *addLostFile(const card_direntry *dirEntry, const QVector<uint16_t> &fatEntries);
 
 		/**
 		 * Add "lost" files.
 		 * @param filesFoundList List of SearchData.
-		 * @return List of MemCardFiles added to the GcnCard, or empty list on error.
+		 * @return List of GcnFiles added to the GcnCard, or empty list on error.
 		 */
-		QList<MemCardFile*> addLostFiles(const QLinkedList<SearchData> &filesFoundList);
+		QList<GcnFile*> addLostFiles(const QLinkedList<SearchData> &filesFoundList);
 
 		/**
 		 * Get the header checksum value.

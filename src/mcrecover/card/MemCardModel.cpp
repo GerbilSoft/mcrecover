@@ -24,7 +24,7 @@
 
 // GcnCard classes.
 #include "GcnCard.hpp"
-#include "MemCardFile.hpp"
+#include "GcnFile.hpp"
 #include "McRecoverQApplication.hpp"
 
 // Icon animation helper.
@@ -63,7 +63,7 @@ class MemCardModelPrivate
 	public:
 		GcnCard *card;
 
-		QHash<const MemCardFile*, IconAnimHelper*> animState;
+		QHash<const GcnFile*, IconAnimHelper*> animState;
 
 		/**
 		 * Initialize the animation state for all files.
@@ -72,9 +72,9 @@ class MemCardModelPrivate
 
 		/**
 		 * Initialize the animation state for a given file.
-		 * @param file MemCardFile.
+		 * @param file GcnFile.
 		 */
-		void initAnimState(const MemCardFile *file);
+		void initAnimState(const GcnFile *file);
 
 		/**
 		 * Update the animation timer state.
@@ -204,7 +204,7 @@ void MemCardModelPrivate::initAnimState(void)
 
 	// Initialize the animation state.
 	for (int i = 0; i < numFiles; i++) {
-		const MemCardFile *file = card->getFile(i);
+		const GcnFile *file = card->getFile(i);
 		initAnimState(file);
 	}
 
@@ -214,9 +214,9 @@ void MemCardModelPrivate::initAnimState(void)
 
 /**
  * Initialize the animation state for a given file.
- * @param file MemCardFile.
+ * @param file GcnFile.
  */
-void MemCardModelPrivate::initAnimState(const MemCardFile *file)
+void MemCardModelPrivate::initAnimState(const GcnFile *file)
 {
 	int numIcons = file->numIcons();
 	if (numIcons <= 1) {
@@ -259,7 +259,7 @@ void MemCardModelPrivate::animTimerSlot(void)
 	// Check for icon animations.
 	Q_Q(MemCardModel);
 	for (int i = 0; i < numFiles; i++) {
-		const MemCardFile *file = card->getFile(i);
+		const GcnFile *file = card->getFile(i);
 		IconAnimHelper *helper = animState.value(file);
 		if (!helper)
 			continue;
@@ -319,7 +319,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 		return QVariant();
 
 	// Get the memory card file.
-	const MemCardFile *file = d->card->getFile(index.row());
+	const GcnFile *file = d->card->getFile(index.row());
 
 	// TODO: Move some of this to MemCardItemDelegate?
 	switch (role) {
@@ -660,7 +660,7 @@ void MemCardModel::memCard_filesInserted_slot(void)
 	// If these files have animated icons, add them.
 	if (d->insertStart >= 0 && d->insertEnd >= 0) {
 		for (int i = d->insertStart; i <= d->insertEnd; i++) {
-			const MemCardFile *file = d->card->getFile(i);
+			const GcnFile *file = d->card->getFile(i);
 			d->initAnimState(file);
 		}
 
@@ -693,7 +693,7 @@ void MemCardModel::memCard_filesAboutToBeRemoved_slot(int start, int end)
 	// Remove animation states for these files.
 	Q_D(MemCardModel);
 	for (int i = start; i <= end; i++) {
-		const MemCardFile *file = d->card->getFile(i);
+		const GcnFile *file = d->card->getFile(i);
 		d->animState.remove(file);
 	}
 }

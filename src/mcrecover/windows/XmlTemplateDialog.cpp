@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * XmlTemplateDialog.cpp: XML template dialog.                             *
  *                                                                         *
- * Copyright (c) 2014 by David Korth.                                      *
+ * Copyright (c) 2014-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -22,7 +22,7 @@
 #include "XmlTemplateDialog.hpp"
 
 // MemCard
-#include "card/MemCardFile.hpp"
+#include "card/GcnFile.hpp"
 
 // Qt includes.
 #include <QtCore/QXmlStreamWriter>
@@ -36,7 +36,7 @@
 class XmlTemplateDialogPrivate
 {
 	public:
-		XmlTemplateDialogPrivate(XmlTemplateDialog *q, const MemCardFile *file);
+		XmlTemplateDialogPrivate(XmlTemplateDialog *q, const GcnFile *file);
 
 	protected:
 		XmlTemplateDialog *const q_ptr;
@@ -47,7 +47,7 @@ class XmlTemplateDialogPrivate
 	public:
 		Ui::XmlTemplateDialog ui;
 
-		const MemCardFile *file;
+		const GcnFile *file;
 
 		// XML template.
 		QString xmlTemplate;
@@ -70,7 +70,7 @@ class XmlTemplateDialogPrivate
 		void generateXmlTemplate(void);
 };
 
-XmlTemplateDialogPrivate::XmlTemplateDialogPrivate(XmlTemplateDialog* q, const MemCardFile *file)
+XmlTemplateDialogPrivate::XmlTemplateDialogPrivate(XmlTemplateDialog* q, const GcnFile *file)
 	: q_ptr(q)
 	, file(file)
 { }
@@ -229,10 +229,10 @@ XmlTemplateDialog::XmlTemplateDialog(QWidget *parent)
 
 /**
  * Initialize the XML Template Dialog.
- * @param file MemCardFile to display.
+ * @param file GcnFile to display.
  * @param parent Parent widget.
  */
-XmlTemplateDialog::XmlTemplateDialog(const MemCardFile *file, QWidget *parent)
+XmlTemplateDialog::XmlTemplateDialog(const GcnFile *file, QWidget *parent)
 	: QDialog(parent,
 		Qt::Dialog |
 		Qt::WindowTitleHint |

@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * MemCardFile.hpp: Memory Card file entry class.                          *
+ * GcnCard.hpp: GameCube file entry class.                                 *
  *                                                                         *
  * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
@@ -19,8 +19,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MEMCARDFILE_HPP__
-#define __MCRECOVER_MEMCARDFILE_HPP__
+#ifndef __MCRECOVER_CARD_GCNFILE_HPP__
+#define __MCRECOVER_CARD_GCNFILE_HPP__
 
 #include "card.h"
 
@@ -46,9 +46,8 @@ class GcImage;
 
 class GcnCard;
 
-class MemCardFilePrivate;
-
-class MemCardFile : public QObject
+class GcnFilePrivate;
+class GcnFile : public QObject
 {
 	Q_OBJECT
 
@@ -79,34 +78,34 @@ class MemCardFile : public QObject
 
 	public:
 		/**
-		 * Create a MemCardFile for a GcnCard.
+		 * Create a GcnFile for a GcnCard.
 		 * This constructor is for valid files.
 		 * @param card MemCard.
 		 * @param fileIdx File index in GcnCard.
 		 * @param dat Directory table.
 		 * @param bat Block allocation table.
 		 */
-		MemCardFile(GcnCard *card, const int fileIdx,
+		GcnFile(GcnCard *card, const int fileIdx,
 				const card_dat *dat, const card_bat *bat);
 
 		/**
-		 * Create a MemCardFile for a GcnCard.
+		 * Create a GcnFile for a GcnCard.
 		 * This constructor is for "lost" files.
 		 * @param card GcnCard.
 		 * @param dirEntry Constructed directory entry.
 		 * @param fatEntries FAT entries.
 		 */
-		MemCardFile(GcnCard *card,
+		GcnFile(GcnCard *card,
 				const card_direntry *dirEntry,
 				const QVector<uint16_t> &fatEntries);
 
-		~MemCardFile();
+		~GcnFile();
 	
 	protected:
-		MemCardFilePrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(MemCardFile)
+		GcnFilePrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(GcnFile)
 	private:
-		Q_DISABLE_COPY(MemCardFile)
+		Q_DISABLE_COPY(GcnFile)
 
 	public:
 		/**
@@ -319,4 +318,4 @@ class MemCardFile : public QObject
 			     GcImageWriter::AnimImageFormat animImgf) const;
 };
 
-#endif /* __MCRECOVER_MEMCARDFILE_HPP__ */
+#endif /* __MCRECOVER_CARD_GCNFILE_HPP__ */

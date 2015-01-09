@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * IconAnimHelper.cpp: Icon animation helper.                              *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -22,7 +22,7 @@
 #include "IconAnimHelper.hpp"
 
 #include "card.h"
-#include "card/MemCardFile.hpp"
+#include "card/GcnFile.hpp"
 
 class IconAnimHelperPrivate
 {
@@ -36,7 +36,7 @@ class IconAnimHelperPrivate
 		Q_DISABLE_COPY(IconAnimHelperPrivate)
 
 	public:
-		const MemCardFile *file;
+		const GcnFile *file;
 
 		/**
 		 * If a file is specified and has an animated icon,
@@ -91,7 +91,7 @@ void IconAnimHelperPrivate::reset(void)
 		delayLen = 0;
 		mode = 0;
 	} else {
-		// MemCardFile is specified.
+		// GcnFile is specified.
 		// Determine the initial state.
 		enabled = true;
 		frameHasIcon = !(file->icon(frame).isNull());
@@ -180,10 +180,10 @@ IconAnimHelper::IconAnimHelper()
 	: d_ptr(new IconAnimHelperPrivate(this))
 { }
 
-IconAnimHelper::IconAnimHelper(const MemCardFile* file)
+IconAnimHelper::IconAnimHelper(const GcnFile* file)
 	: d_ptr(new IconAnimHelperPrivate(this))
 {
-	// Set the initial MemCardFile.
+	// Set the initial GcnFile.
 	setFile(file);
 }
 
@@ -193,35 +193,35 @@ IconAnimHelper::~IconAnimHelper()
 }
 
 /**
- * Get the MemCardFile this IconAnimHelper is handling.
- * @return MemCardFile.
+ * Get the GcnFile this IconAnimHelper is handling.
+ * @return GcnFile.
  */
-const MemCardFile *IconAnimHelper::file(void) const
+const GcnFile *IconAnimHelper::file(void) const
 {
 	Q_D(const IconAnimHelper);
 	return d->file;
 }
 
 /**
- * Set the MemCardFile this IconAnimHelper should handle.
- * @param file MemCardFile.
+ * Set the GcnFile this IconAnimHelper should handle.
+ * @param file GcnFile.
  */
-void IconAnimHelper::setFile(const MemCardFile *file)
+void IconAnimHelper::setFile(const GcnFile *file)
 {
 	Q_D(IconAnimHelper);
 
-	// Disconnect the MemCardFile's destroyed() signal if a MemCardFile is already set.
+	// Disconnect the GcnFile's destroyed() signal if a GcnFile is already set.
 	if (d->file) {
 		disconnect(d->file, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(memCardFile_destroyed_slot(QObject*)));
+			   this, SLOT(file_destroyed_slot(QObject*)));
 	}
 
 	d->file = file;
 
-	// Connect the MemCardFile's destroyed() signal.
+	// Connect the GcnFile's destroyed() signal.
 	if (d->file) {
 		connect(d->file, SIGNAL(destroyed(QObject*)),
-			this, SLOT(memCardFile_destroyed_slot(QObject*)));
+			this, SLOT(file_destroyed_slot(QObject*)));
 	}
 
 	// Reset the animation state.
@@ -277,15 +277,15 @@ bool IconAnimHelper::tick(void)
 /** Slots. **/
 
 /**
- * MemCardFile object was destroyed.
+ * GcnFile object was destroyed.
  * @param obj QObject that was destroyed.
  */
-void IconAnimHelper::memCardFile_destroyed_slot(QObject *obj)
+void IconAnimHelper::file_destroyed_slot(QObject *obj)
 {
 	Q_D(IconAnimHelper);
 
 	if (obj == d->file) {
-		// Our MemCardFile was destroyed.
+		// Our GcnFile was destroyed.
 		d->file = nullptr;
 		d->reset();
 	}

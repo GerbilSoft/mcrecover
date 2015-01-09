@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * MemCardFileView.cpp: MemCardFile view widget.                           *
+ * MemCardFileView.cpp: GcnFile view widget.                           *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -21,7 +21,7 @@
 
 #include "MemCardFileView.hpp"
 
-#include "card/MemCardFile.hpp"
+#include "card/GcnFile.hpp"
 #include "IconAnimHelper.hpp"
 
 // XML template dialog.
@@ -50,7 +50,7 @@ class MemCardFileViewPrivate
 		// UI
 		Ui::MemCardFileView ui;
 
-		const MemCardFile *file;
+		const GcnFile *file;
 
 		// Icon animation helper.
 		IconAnimHelper helper;
@@ -226,35 +226,35 @@ MemCardFileView::~MemCardFileView()
 }
 
 /**
- * Get the MemCardFile being displayed.
- * @return MemCardFile.
+ * Get the GcnFile being displayed.
+ * @return GcnFile.
  */
-const MemCardFile *MemCardFileView::file(void) const
+const GcnFile *MemCardFileView::file(void) const
 {
 	Q_D(const MemCardFileView);
 	return d->file;
 }
 
 /**
- * Set the MemCardFile being displayed.
- * @param file MemCardFile.
+ * Set the GcnFile being displayed.
+ * @param file GcnFile.
  */
-void MemCardFileView::setFile(const MemCardFile *file)
+void MemCardFileView::setFile(const GcnFile *file)
 {
 	Q_D(MemCardFileView);
 
-	// Disconnect the MemCardFile's destroyed() signal if a MemCardFile is already set.
+	// Disconnect the GcnFile's destroyed() signal if a GcnFile is already set.
 	if (d->file) {
 		disconnect(d->file, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(memCardFile_destroyed_slot(QObject*)));
+			   this, SLOT(file_destroyed_slot(QObject*)));
 	}
 
 	d->file = file;
 
-	// Connect the MemCardFile's destroyed() signal.
+	// Connect the GcnFile's destroyed() signal.
 	if (d->file) {
 		connect(d->file, SIGNAL(destroyed(QObject*)),
-			this, SLOT(memCardFile_destroyed_slot(QObject*)));
+			this, SLOT(file_destroyed_slot(QObject*)));
 	}
 
 	// Update the widget display.
@@ -282,15 +282,15 @@ void MemCardFileView::changeEvent(QEvent *event)
 /** Slots. **/
 
 /**
- * MemCardFile object was destroyed.
+ * GcnFile object was destroyed.
  * @param obj QObject that was destroyed.
  */
-void MemCardFileView::memCardFile_destroyed_slot(QObject *obj)
+void MemCardFileView::file_destroyed_slot(QObject *obj)
 {
 	Q_D(MemCardFileView);
 
 	if (obj == d->file) {
-		// Our MemCardFile was destroyed.
+		// Our GcnFile was destroyed.
 		d->file = nullptr;
 
 		// Update the widget display.

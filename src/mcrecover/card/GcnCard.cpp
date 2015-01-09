@@ -22,8 +22,8 @@
 #include "GcnCard.hpp"
 #include "util/byteswap.h"
 
-// MemCardFile
-#include "MemCardFile.hpp"
+// GcnFile
+#include "GcnFile.hpp"
 
 // C includes. (C++ namespace)
 #include <cstring>
@@ -95,8 +95,8 @@ class GcnCardPrivate : public CardPrivate
 		card_dat *mc_dat;
 		card_bat *mc_bat;
 
-		// MemCardFile list.
-		QVector<MemCardFile*> lstMemCardFile;
+		// GcnFile list.
+		QVector<GcnFile*> lstGcnFile;
 
 		/**
 		 * Used block map.
@@ -148,9 +148,9 @@ class GcnCardPrivate : public CardPrivate
 		int checkTables(void);
 
 		/**
-		 * Load the MemCardFile list.
+		 * Load the GcnFile list.
 		 */
-		void loadMemCardFileList(void);
+		void loadGcnFileList(void);
 };
 
 GcnCardPrivate::GcnCardPrivate(GcnCard *q)
@@ -174,9 +174,9 @@ GcnCardPrivate::GcnCardPrivate(GcnCard *q)
 
 GcnCardPrivate::~GcnCardPrivate()
 {
-	// Clear the MemCardFile list.
-	qDeleteAll(lstMemCardFile);
-	lstMemCardFile.clear();
+	// Clear the GcnFile list.
+	qDeleteAll(lstGcnFile);
+	lstGcnFile.clear();
 }
 
 /**
@@ -201,8 +201,8 @@ int GcnCardPrivate::open(const QString &filename)
 	// This includes the header, directory, and block allocation table.
 	loadSysInfo();
 
-	// Load the MemCardFile list.
-	loadMemCardFileList();
+	// Load the GcnFile list.
+	loadGcnFileList();
 
 	return 0;
 }
@@ -342,11 +342,11 @@ int GcnCardPrivate::format(const QString &filename)
 	// Check which table is active.
 	checkTables();
 
-	// Load the MemCardFile list.
+	// Load the GcnFile list.
 	// FIXME: Probably not necessary.
 	// (Was previously needed to emit blockCountChanged(),
 	//  but that's now done in checkTables() as well...)
-	loadMemCardFileList();
+	loadGcnFileList();
 
 	return 0;
 }
@@ -649,29 +649,29 @@ int GcnCardPrivate::checkTables(void)
 }
 
 /**
- * Load the MemCardFile list.
+ * Load the GcnFile list.
  */
-void GcnCardPrivate::loadMemCardFileList(void)
+void GcnCardPrivate::loadGcnFileList(void)
 {
 	if (!file)
 		return;
 
 	Q_Q(GcnCard);
 
-	// Clear the current MemCardFile list.
-	int init_size = lstMemCardFile.size();
+	// Clear the current GcnFile list.
+	int init_size = lstGcnFile.size();
 	if (init_size > 0)
 		emit q->filesAboutToBeRemoved(0, (init_size - 1));
-	qDeleteAll(lstMemCardFile);
-	lstMemCardFile.clear();
+	qDeleteAll(lstGcnFile);
+	lstGcnFile.clear();
 	if (init_size > 0)
 		emit q->filesRemoved();
 
 	// Reset the used block map.
 	resetUsedBlockMap();
 
-	QVector<MemCardFile*> lstMemCardFile_new;
-	lstMemCardFile_new.reserve(NUM_ELEMENTS(mc_dat->entries));
+	QVector<GcnFile*> lstGcnFile_new;
+	lstGcnFile_new.reserve(NUM_ELEMENTS(mc_dat->entries));
 
 	// Byteswap the directory table contents.
 	for (int i = 0; i < NUM_ELEMENTS(mc_dat->entries); i++) {
@@ -683,8 +683,8 @@ void GcnCardPrivate::loadMemCardFileList(void)
 			continue;
 
 		// Valid directory entry.
-		MemCardFile *mcFile = new MemCardFile(q, i, mc_dat, mc_bat);
-		lstMemCardFile_new.append(mcFile);
+		GcnFile *mcFile = new GcnFile(q, i, mc_dat, mc_bat);
+		lstGcnFile_new.append(mcFile);
 
 		// Mark the file's blocks as used.
 		QVector<uint16_t> fatEntries = mcFile->fatEntries();
@@ -702,11 +702,11 @@ void GcnCardPrivate::loadMemCardFileList(void)
 		}
 	}
 
-	if (!lstMemCardFile_new.isEmpty()) {
+	if (!lstGcnFile_new.isEmpty()) {
 		// Files have been added to the memory card.
-		emit q->filesAboutToBeInserted(0, (lstMemCardFile_new.size() - 1));
+		emit q->filesAboutToBeInserted(0, (lstGcnFile_new.size() - 1));
 		// NOTE: QVector::swap() was added in qt-4.8.
-		lstMemCardFile = lstMemCardFile_new;
+		lstGcnFile = lstGcnFile_new;
 		emit q->filesInserted();
 	}
 
@@ -814,7 +814,7 @@ int GcnCard::numFiles(void) const
 	if (!isOpen())
 		return -1;
 	Q_D(const GcnCard);
-	return d->lstMemCardFile.size();
+	return d->lstGcnFile.size();
 }
 
 /**
@@ -826,22 +826,22 @@ bool GcnCard::isEmpty(void) const
 	if (!isOpen())
 		return true;
 	Q_D(const GcnCard);
-	return d->lstMemCardFile.isEmpty();
+	return d->lstGcnFile.isEmpty();
 }
 
 /**
- * Get a MemCardFile object.
+ * Get a GcnFile object.
  * @param idx File number.
- * @return MemCardFile object, or nullptr on error.
+ * @return GcnFile object, or nullptr on error.
  */
-MemCardFile *GcnCard::getFile(int idx)
+GcnFile *GcnCard::getFile(int idx)
 {
 	if (!isOpen())
 		return nullptr;
 	Q_D(GcnCard);
-	if (idx < 0 || idx >= d->lstMemCardFile.size())
+	if (idx < 0 || idx >= d->lstGcnFile.size())
 		return nullptr;
-	return d->lstMemCardFile.at(idx);
+	return d->lstGcnFile.at(idx);
 }
 
 /**
@@ -863,12 +863,12 @@ QVector<uint8_t> GcnCard::usedBlockMap(void)
 void GcnCard::removeLostFiles(void)
 {
 	Q_D(GcnCard);
-	for (int i = d->lstMemCardFile.size() - 1; i >= 0; i--) {
-		const MemCardFile *mcFile = d->lstMemCardFile.at(i);
+	for (int i = d->lstGcnFile.size() - 1; i >= 0; i--) {
+		const GcnFile *mcFile = d->lstGcnFile.at(i);
 		if (mcFile->isLostFile()) {
 			// This is a "lost" file. Remove it.
 			emit filesAboutToBeRemoved(i, i);
-			d->lstMemCardFile.remove(i);
+			d->lstGcnFile.remove(i);
 			emit filesRemoved();
 		}
 	}
@@ -878,9 +878,9 @@ void GcnCard::removeLostFiles(void)
  * Add a "lost" file.
  * NOTE: This is a debugging version.
  * Add more comprehensive versions with a block map specification.
- * @return MemCardFile added to the GcnCard, or nullptr on error.
+ * @return GcnFile added to the GcnCard, or nullptr on error.
  */
-MemCardFile *GcnCard::addLostFile(const card_direntry *dirEntry)
+GcnFile *GcnCard::addLostFile(const card_direntry *dirEntry)
 {
 	if (!isOpen())
 		return nullptr;
@@ -915,18 +915,18 @@ MemCardFile *GcnCard::addLostFile(const card_direntry *dirEntry)
  * Add a "lost" file.
  * @param dirEntry Directory entry.
  * @param fatEntries FAT entries.
- * @return MemCardFile added to the GcnCard, or nullptr on error.
+ * @return GcnFile added to the GcnCard, or nullptr on error.
  */
-MemCardFile *GcnCard::addLostFile(const card_direntry *dirEntry, const QVector<uint16_t> &fatEntries)
+GcnFile *GcnCard::addLostFile(const card_direntry *dirEntry, const QVector<uint16_t> &fatEntries)
 {
 	if (!isOpen())
 		return nullptr;
 
 	Q_D(GcnCard);
-	MemCardFile *file = new MemCardFile(this, dirEntry, fatEntries);
-	int idx = d->lstMemCardFile.size();
+	GcnFile *file = new GcnFile(this, dirEntry, fatEntries);
+	int idx = d->lstGcnFile.size();
 	emit filesAboutToBeInserted(idx, idx);
-	d->lstMemCardFile.append(file);
+	d->lstGcnFile.append(file);
 	emit filesInserted();
 	return file;
 }
@@ -934,23 +934,23 @@ MemCardFile *GcnCard::addLostFile(const card_direntry *dirEntry, const QVector<u
 /**
  * Add "lost" files.
  * @param filesFoundList List of SearchData.
- * @return List of MemCardFiles added to the GcnCard, or empty list on error.
+ * @return List of GcnFiles added to the GcnCard, or empty list on error.
  */
-QList<MemCardFile*> GcnCard::addLostFiles(const QLinkedList<SearchData> &filesFoundList)
+QList<GcnFile*> GcnCard::addLostFiles(const QLinkedList<SearchData> &filesFoundList)
 {
-	QList<MemCardFile*> files;
+	QList<GcnFile*> files;
 	if (!isOpen())
 		return files;
 	if (filesFoundList.isEmpty())
 		return files;
 
 	Q_D(GcnCard);
-	const int idx = d->lstMemCardFile.size();
+	const int idx = d->lstGcnFile.size();
 	const int idxLast = idx + filesFoundList.size() - 1;
 	emit filesAboutToBeInserted(idx, idxLast);
 
 	foreach (const SearchData &searchData, filesFoundList) {
-		MemCardFile *file = new MemCardFile(this, &searchData.dirEntry, searchData.fatEntries);
+		GcnFile *file = new GcnFile(this, &searchData.dirEntry, searchData.fatEntries);
 		// NOTE: If file is nullptr, this may screw up the QTreeView
 		// due to filesAboutToBeInserted().
 
@@ -958,7 +958,7 @@ QList<MemCardFile*> GcnCard::addLostFiles(const QLinkedList<SearchData> &filesFo
 		// Alternatively, add SearchData overload?
 		if (file) {
 			files.append(file);
-			d->lstMemCardFile.append(file);
+			d->lstGcnFile.append(file);
 			file->setChecksumDefs(searchData.checksumDefs);
 		}
 	}
@@ -1003,7 +1003,7 @@ void GcnCard::setActiveDatIdx(int idx)
 	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_dat_int))
 		return;
 	d->mc_dat = &d->mc_dat_int[idx];
-	d->loadMemCardFileList();
+	d->loadGcnFileList();
 }
 
 /**
@@ -1058,7 +1058,7 @@ void GcnCard::setActiveBatIdx(int idx)
 	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_bat_int))
 		return;
 	d->mc_bat = &d->mc_bat_int[idx];
-	d->loadMemCardFileList();
+	d->loadGcnFileList();
 }
 
 /**

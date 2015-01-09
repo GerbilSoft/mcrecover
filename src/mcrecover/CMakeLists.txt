@@ -144,7 +144,7 @@ SET(mcrecover_CARD_SRCS
 	card/Card.cpp
 	card/GcnCard.cpp
 	card/File.cpp
-	card/MemCardFile.cpp
+	card/GcnFile.cpp
 	card/MemCardModel.cpp
 	card/MemCardItemDelegate.cpp
 	card/MemCardSortFilterProxyModel.cpp
@@ -197,7 +197,7 @@ SET(mcrecover_CARD_MOC_H
 	card/Card.hpp
 	card/GcnCard.hpp
 	card/File.hpp
-	card/MemCardFile.hpp
+	card/GcnFile.hpp
 	card/MemCardModel.hpp
 	card/MemCardItemDelegate.hpp
 	card/MemCardSortFilterProxyModel.hpp

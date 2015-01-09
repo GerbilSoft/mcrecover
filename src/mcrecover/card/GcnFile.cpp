@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * MemCardFile.cpp: Memory Card file entry class.                          *
+ * GcnFile.cpp: GameCube file entry class.                                 *
  *                                                                         *
  * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
@@ -19,7 +19,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#include "MemCardFile.hpp"
+#include "GcnFile.hpp"
 #include "card.h"
 #include "util/byteswap.h"
 
@@ -47,44 +47,44 @@ using std::vector;
 
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
-/** MemCardFilePrivate **/
+/** GcnFilePrivate **/
 
-class MemCardFilePrivate
+class GcnFilePrivate
 {
 	public:
 		/**
-		 * Initialize the MemCardFile private class.
+		 * Initialize the GcnFile private class.
 		 * This constructor is for valid files.
-		 * @param q MemCardFile.
+		 * @param q GcnFile.
 		 * @param card GcnCard.
 		 * @param fileIdx File index in GcnCard.
 		 * @param dat Directory table.
 		 * @param bat Block allocation table.
 		 */
-		MemCardFilePrivate(MemCardFile *q, 
+		GcnFilePrivate(GcnFile *q, 
 				GcnCard *card, const int fileIdx,
 				const card_dat *dat, const card_bat *bat);
 
 		/**
-		 * Initialize the MemCardFile private class.
+		 * Initialize the GcnFile private class.
 		 * This constructor is for "lost" files.
-		 * @param q MemCardFile.
+		 * @param q GcnFile.
 		 * @param card GcnCard.
 		 * @param dirEntry Constructed directory entry.
 		 * @param fatEntries FAT entries.
 		 */
-		MemCardFilePrivate(MemCardFile *q,
+		GcnFilePrivate(GcnFile *q,
 				GcnCard *card,
 				const card_direntry *dirEntry,
 				const QVector<uint16_t> &fatEntries);
 
-		~MemCardFilePrivate();
+		~GcnFilePrivate();
 
 	protected:
-		MemCardFile *const q_ptr;
-		Q_DECLARE_PUBLIC(MemCardFile)
+		GcnFile *const q_ptr;
+		Q_DECLARE_PUBLIC(GcnFile)
 	private:
-		Q_DISABLE_COPY(MemCardFilePrivate)
+		Q_DISABLE_COPY(GcnFilePrivate)
 
 		/**
 		* Common initialization code.
@@ -196,15 +196,15 @@ class MemCardFilePrivate
 };
 
 /**
- * Initialize the MemCardFile private class.
+ * Initialize the GcnFile private class.
  * This constructor is for valid files.
- * @param q MemCardFile.
+ * @param q GcnFile.
  * @param card GcnCard.
  * @param fileIdx File index in GcnCard.
  * @param dat Directory table.
  * @param bat Block allocation table.
  */
-MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
+GcnFilePrivate::GcnFilePrivate(GcnFile *q,
 		GcnCard *card, const int fileIdx,
 		const card_dat *dat, const card_bat *bat)
 	: q_ptr(q)
@@ -251,14 +251,14 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 }
 
 /**
- * Initialize the MemCardFile private class.
+ * Initialize the GcnFile private class.
  * This constructor is for "lost" files.
- * @param q MemCardFile.
+ * @param q GcnFile.
  * @param card GcnCard.
  * @param dirEntry Constructed directory entry.
  * @param fatEntries FAT entries.
  */
-MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
+GcnFilePrivate::GcnFilePrivate(GcnFile *q,
 		GcnCard *card, const card_direntry *dirEntry,
 		const QVector<uint16_t> &fatEntries)
 	: q_ptr(q)
@@ -280,7 +280,7 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
 	init();
 }
 
-MemCardFilePrivate::~MemCardFilePrivate()
+GcnFilePrivate::~GcnFilePrivate()
 {
 	if (fileIdx < 0) {
 		// dirEntry was allocated by us.
@@ -297,7 +297,7 @@ MemCardFilePrivate::~MemCardFilePrivate()
 /**
  * Common initialization code.
  */
-void MemCardFilePrivate::init(void)
+void GcnFilePrivate::init(void)
 {
 	// ID6 is always Latin-1.
 	// NOTE: gamecode and company are right next to each other,
@@ -383,7 +383,7 @@ void MemCardFilePrivate::init(void)
  * Get the file size, in blocks.
  * @return File size, in blocks.
  */
-uint16_t MemCardFilePrivate::size(void) const
+uint16_t GcnFilePrivate::size(void) const
 {
 	// NOTE: We're using fatEntries.size() instead of
 	// dirEntry.length, since the directory entry may
@@ -396,7 +396,7 @@ uint16_t MemCardFilePrivate::size(void) const
  * @param fileBlock File block number.
  * @return Physical block number, or negative on error.
  */
-uint16_t MemCardFilePrivate::fileBlockAddrToPhysBlockAddr(uint16_t fileBlock)
+uint16_t GcnFilePrivate::fileBlockAddrToPhysBlockAddr(uint16_t fileBlock)
 {
 	if ((int)fileBlock >= fatEntries.size())
 		return -1;
@@ -407,7 +407,7 @@ uint16_t MemCardFilePrivate::fileBlockAddrToPhysBlockAddr(uint16_t fileBlock)
  * Load file data.
  * @return QByteArray with file data, or empty QByteArray on error.
  */
-QByteArray MemCardFilePrivate::loadFileData(void)
+QByteArray GcnFilePrivate::loadFileData(void)
 {
 	const int blockSize = card->blockSize();
 	if (this->size() > card->totalUserBlocks()) {
@@ -433,7 +433,7 @@ QByteArray MemCardFilePrivate::loadFileData(void)
  * @param len Length, in blocks.
  * @return QByteArray with file data, or empty QByteArray on error.
  */
-QByteArray MemCardFilePrivate::readBlocks(uint16_t blockStart, int len)
+QByteArray GcnFilePrivate::readBlocks(uint16_t blockStart, int len)
 {
 	// Check if the starting block is valid.
 	if (blockStart >= this->size()) {
@@ -466,7 +466,7 @@ QByteArray MemCardFilePrivate::readBlocks(uint16_t blockStart, int len)
  * Load the banner image.
  * @return GcImage* containing the banner image, or nullptr on error.
  */
-GcImage *MemCardFilePrivate::loadBannerImage(void)
+GcImage *GcnFilePrivate::loadBannerImage(void)
 {
 	// Determine the banner length.
 	uint32_t imgSize = 0;
@@ -518,7 +518,7 @@ GcImage *MemCardFilePrivate::loadBannerImage(void)
  * Load the icon images.
  * @return QVector<GcImage*> containing the icon images, or empty QVector on error.
  */
-QVector<GcImage*> MemCardFilePrivate::loadIconImages(void)
+QVector<GcImage*> GcnFilePrivate::loadIconImages(void)
 {
 	// Calculate the first icon address.
 	uint32_t imgAddr = dirEntry->iconaddr;
@@ -665,7 +665,7 @@ QVector<GcImage*> MemCardFilePrivate::loadIconImages(void)
 /**
  * Load the banner and icon images.
  */
-void MemCardFilePrivate::loadImages(void)
+void GcnFilePrivate::loadImages(void)
 {
 	// Load the banner.
 	this->gcBanner = loadBannerImage();
@@ -702,7 +702,7 @@ void MemCardFilePrivate::loadImages(void)
 /**
  * Calculate the file checksum.
  */
-void MemCardFilePrivate::calculateChecksum(void)
+void GcnFilePrivate::calculateChecksum(void)
 {
 	checksumValues.clear();
 
@@ -814,7 +814,7 @@ void MemCardFilePrivate::calculateChecksum(void)
  * @param replaceChar Replacement character.
  * @return Filename with invalid DOS characters replaced with replaceChar.
  */
-QString MemCardFilePrivate::StripInvalidDosChars(
+QString GcnFilePrivate::StripInvalidDosChars(
 				const QString filename,
 				const QChar replaceChar)
 {
@@ -851,39 +851,39 @@ QString MemCardFilePrivate::StripInvalidDosChars(
 	return ret;
 }
 
-/** MemCardFile **/
+/** GcnFile **/
 
 /**
- * Create a MemCardFile for a GcnCard.
+ * Create a GcnFile for a GcnCard.
  * This constructor is for valid files.
  * @param card GcnCard.
  * @param fileIdx File index in GcnCard.
  * @param dat Directory table.
  * @param bat Block allocation table.
  */
-MemCardFile::MemCardFile(GcnCard *card, const int fileIdx,
+GcnFile::GcnFile(GcnCard *card, const int fileIdx,
 			const card_dat *dat, const card_bat *bat)
 	: QObject(card)
-	, d_ptr(new MemCardFilePrivate(this, card, fileIdx, dat, bat))
+	, d_ptr(new GcnFilePrivate(this, card, fileIdx, dat, bat))
 { }
 
 /**
- * Create a MemCardFile for a GcnCard.
+ * Create a GcnFile for a GcnCard.
  * This constructor is for "lost" files.
  * @param card GcnCard.
  * @param dirEntry Constructed directory entry.
  * @param fatEntries FAT entries.
  */
-MemCardFile::MemCardFile(GcnCard *card,
+GcnFile::GcnFile(GcnCard *card,
 		const card_direntry *dirEntry,
 		const QVector<uint16_t> &fatEntries)
 	: QObject(card)
-	, d_ptr(new MemCardFilePrivate(this, card, dirEntry, fatEntries))
+	, d_ptr(new GcnFilePrivate(this, card, dirEntry, fatEntries))
 { }
 
-MemCardFile::~MemCardFile()
+GcnFile::~GcnFile()
 {
-	Q_D(MemCardFile);
+	Q_D(GcnFile);
 	delete d;
 }
 
@@ -891,9 +891,9 @@ MemCardFile::~MemCardFile()
  * Get the 6-character game ID, e.g. GALE01.
  * @return 6-character game ID.
  */
-QString MemCardFile::id6(void) const
+QString GcnFile::id6(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return d->id6;
 }
 
@@ -901,9 +901,9 @@ QString MemCardFile::id6(void) const
  * Get the 4-character game ID, e.g. GALE.
  * @return 4-character game ID.
  */
-QString MemCardFile::id4(void) const
+QString GcnFile::id4(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return d->id6.left(4);
 }
 
@@ -911,9 +911,9 @@ QString MemCardFile::id4(void) const
  * Get the 3-character game ID, e.g. GAL.
  * @return 3-character game ID.
  */
-QString MemCardFile::id3(void) const
+QString GcnFile::id3(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return d->id6.left(3);
 }
 
@@ -921,9 +921,9 @@ QString MemCardFile::id3(void) const
  * Get the company code, e.g. 01.
  * @return Company code.
  */
-QString MemCardFile::company(void) const
+QString GcnFile::company(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	// NOTE: Assuming id6 is always 6 characters.
 	return d->id6.right(2);
 }
@@ -932,9 +932,9 @@ QString MemCardFile::company(void) const
  * Get the internal filename.
  * @return internal filename.
  */
-QString MemCardFile::filename(void) const
+QString GcnFile::filename(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return d->filename;
 }
 
@@ -942,9 +942,9 @@ QString MemCardFile::filename(void) const
  * Get the last modified time.
  * @return Last modified time.
  */
-GcnDateTime MemCardFile::lastModified(void) const
+GcnDateTime GcnFile::lastModified(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return d->lastModified;
 }
 
@@ -952,9 +952,9 @@ GcnDateTime MemCardFile::lastModified(void) const
  * Get the game description. ("Comments" field.)
  * @return Game description.
  */
-QString MemCardFile::gameDesc(void) const
+QString GcnFile::gameDesc(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return d->gameDesc;
 }
 
@@ -962,9 +962,9 @@ QString MemCardFile::gameDesc(void) const
  * Get the file description. ("Comments" field.)
  * @return File description.
  */
-QString MemCardFile::fileDesc(void) const
+QString GcnFile::fileDesc(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return d->fileDesc;
 }
 
@@ -972,9 +972,9 @@ QString MemCardFile::fileDesc(void) const
  * Get the file permissions.
  * @return File permissions.
  */
-uint8_t MemCardFile::permission(void) const
+uint8_t GcnFile::permission(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return d->dirEntry->permission;
 }
 
@@ -982,9 +982,9 @@ uint8_t MemCardFile::permission(void) const
  * Get the file permissions as a string.
  * @return File permission string.
  */
-QString MemCardFile::permissionAsString(void) const
+QString GcnFile::permissionAsString(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	char str[4];
 
 	uint8_t permission = d->dirEntry->permission;
@@ -1000,9 +1000,9 @@ QString MemCardFile::permissionAsString(void) const
  * Get the size, in blocks.
  * @return Size, in blocks.
  */
-uint16_t MemCardFile::size(void) const
+uint16_t GcnFile::size(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return d->size();
 }
 
@@ -1010,9 +1010,9 @@ uint16_t MemCardFile::size(void) const
  * Get the banner image.
  * @return Banner image, or null QPixmap on error.
  */
-QPixmap MemCardFile::banner(void) const
+QPixmap GcnFile::banner(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return d->banner;
 }
 
@@ -1020,9 +1020,9 @@ QPixmap MemCardFile::banner(void) const
  * Get the number of icons in the file.
  * @return Number of icons.
  */
-int MemCardFile::numIcons(void) const
+int GcnFile::numIcons(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return d->icons.size();
 }
 
@@ -1031,9 +1031,9 @@ int MemCardFile::numIcons(void) const
  * @param idx Icon number.
  * @return Icon, or null QPixmap on error.
  */
-QPixmap MemCardFile::icon(int idx) const
+QPixmap GcnFile::icon(int idx) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	if (idx < 0 || idx >= d->icons.size())
 		return QPixmap();
 	return d->icons.at(idx);
@@ -1044,9 +1044,9 @@ QPixmap MemCardFile::icon(int idx) const
  * @param idx Icon number.
  * @return Icon delay.
  */
-int MemCardFile::iconDelay(int idx) const
+int GcnFile::iconDelay(int idx) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	if (idx < 0 || idx >= d->icons.size())
 		return CARD_SPEED_END;
 	return ((d->dirEntry->iconspeed >> (idx * 2)) & CARD_SPEED_MASK);
@@ -1056,9 +1056,9 @@ int MemCardFile::iconDelay(int idx) const
  * Get the icon animation mode.
  * @return Icon animation mode.
  */
-int MemCardFile::iconAnimMode(void) const
+int GcnFile::iconAnimMode(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return (d->dirEntry->bannerfmt & CARD_ANIM_MASK);
 }
 
@@ -1066,9 +1066,9 @@ int MemCardFile::iconAnimMode(void) const
  * Is this a lost file?
  * @return True if lost; false if file is in the directory table.
  */
-bool MemCardFile::isLostFile(void) const
+bool GcnFile::isLostFile(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return (d->fileIdx < 0);
 }
 
@@ -1076,9 +1076,9 @@ bool MemCardFile::isLostFile(void) const
  * Get this file's FAT entries.
  * @return FAT entries.
  */
-QVector<uint16_t> MemCardFile::fatEntries(void) const
+QVector<uint16_t> GcnFile::fatEntries(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return d->fatEntries;
 }
 
@@ -1086,9 +1086,9 @@ QVector<uint16_t> MemCardFile::fatEntries(void) const
  * Get the checksum definitions.
  * @return Checksum definitions.
  */
-QVector<Checksum::ChecksumDef> MemCardFile::checksumDefs(void) const
+QVector<Checksum::ChecksumDef> GcnFile::checksumDefs(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return d->checksumDefs;
 }
 
@@ -1096,9 +1096,9 @@ QVector<Checksum::ChecksumDef> MemCardFile::checksumDefs(void) const
  * Set the checksum definitions.
  * @param checksumDefs Checksum definitions.
  */
-void MemCardFile::setChecksumDefs(const QVector<Checksum::ChecksumDef> &checksumDefs)
+void GcnFile::setChecksumDefs(const QVector<Checksum::ChecksumDef> &checksumDefs)
 {
-	Q_D(MemCardFile);
+	Q_D(GcnFile);
 	d->checksumDefs = checksumDefs;
 	d->calculateChecksum();
 }
@@ -1107,9 +1107,9 @@ void MemCardFile::setChecksumDefs(const QVector<Checksum::ChecksumDef> &checksum
  * Get the checksum values.
  * @return Checksum values, or empty QVector if no checksum definitions were set.
  */
-QVector<Checksum::ChecksumValue> MemCardFile::checksumValues(void) const
+QVector<Checksum::ChecksumValue> GcnFile::checksumValues(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return d->checksumValues;
 }
 
@@ -1118,9 +1118,9 @@ QVector<Checksum::ChecksumValue> MemCardFile::checksumValues(void) const
  * NOTE: We're assuming each file only uses one algorithm...
  * @return Checksum algorithm.
  */
-Checksum::ChkAlgorithm MemCardFile::checksumAlgorithm(void) const
+Checksum::ChkAlgorithm GcnFile::checksumAlgorithm(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	if (d->checksumDefs.isEmpty())
 		return Checksum::CHKALG_NONE;
 	return d->checksumDefs.at(0).algorithm;
@@ -1130,9 +1130,9 @@ Checksum::ChkAlgorithm MemCardFile::checksumAlgorithm(void) const
  * Get the checksum status.
  * @return Checksum status.
  */
-Checksum::ChkStatus MemCardFile::checksumStatus(void) const
+Checksum::ChkStatus GcnFile::checksumStatus(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return Checksum::ChecksumStatus(d->checksumValues.toStdVector());
 }
 
@@ -1142,9 +1142,9 @@ Checksum::ChkStatus MemCardFile::checksumStatus(void) const
  * - String 0 contains the actual checksums.
  * - String 1, if present, contains the expected checksums.
  */
-QVector<QString> MemCardFile::checksumValuesFormatted(void) const
+QVector<QString> GcnFile::checksumValuesFormatted(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	vector<string> vs = Checksum::ChecksumValuesFormatted(d->checksumValues.toStdVector());
 	QVector<QString> ret;
 	ret.reserve((int)vs.size());
@@ -1158,14 +1158,14 @@ QVector<QString> MemCardFile::checksumValuesFormatted(void) const
  * Get the default GCI filename.
  * @return Default GCI filename.
  */
-QString MemCardFile::defaultGciFilename(void) const
+QString GcnFile::defaultGciFilename(void) const
 {
 	/**
 	 * Filename format:
 	 * GALE01_SuperSmashBros0110290334_066000.gci
 	 * gamecode_filename_startaddress.gci
 	 */
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 
 	QString filename;
 	filename.reserve(d->id6.size() + + 1 +
@@ -1190,9 +1190,9 @@ QString MemCardFile::defaultGciFilename(void) const
  * Get the text encoding ID for this file.
  * @return Text encoding ID.
  */
-int MemCardFile::encoding(void) const
+int GcnFile::encoding(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	const char region = (d->id6.size() >= 4
 				? d->id6.at(3).toLatin1()
 				: 0);
@@ -1205,7 +1205,7 @@ int MemCardFile::encoding(void) const
  * @return 0 on success; non-zero on error.
  * TODO: Error code constants.
  */
-int MemCardFile::saveGci(const QString &filename)
+int GcnFile::saveGci(const QString &filename)
 {
 	QFile file(filename);
 	if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
@@ -1231,9 +1231,9 @@ int MemCardFile::saveGci(const QString &filename)
  * @return 0 on success; non-zero on error.
  * TODO: Error code constants.
  */
-int MemCardFile::saveGci(QIODevice *qioDevice)
+int GcnFile::saveGci(QIODevice *qioDevice)
 {
-	Q_D(MemCardFile);
+	Q_D(GcnFile);
 
 	// GCI header is the 64-byte directory entry.
 	// NOTE: This must be byteswapped!
@@ -1269,9 +1269,9 @@ int MemCardFile::saveGci(QIODevice *qioDevice)
  * Get the directory entry.
  * @return Directory entry.
  */
-const card_direntry *MemCardFile::dirEntry(void) const
+const card_direntry *GcnFile::dirEntry(void) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	return d->dirEntry;
 }
 
@@ -1281,9 +1281,9 @@ const card_direntry *MemCardFile::dirEntry(void) const
  * @return 0 on success; non-zero on error.
  * TODO: Error code constants.
  */
-int MemCardFile::saveBanner(const QString &filenameNoExt) const
+int GcnFile::saveBanner(const QString &filenameNoExt) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	if (!d->gcBanner)
 		return -EINVAL;
 
@@ -1318,9 +1318,9 @@ int MemCardFile::saveBanner(const QString &filenameNoExt) const
  * @return 0 on success; non-zero on error.
  * TODO: Error code constants.
  */
-int MemCardFile::saveBanner(QIODevice *qioDevice) const
+int GcnFile::saveBanner(QIODevice *qioDevice) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	if (!d->gcBanner)
 		return -EINVAL;
 
@@ -1345,10 +1345,10 @@ int MemCardFile::saveBanner(QIODevice *qioDevice) const
  * @return 0 on success; non-zero on error.
  * TODO: Error code constants.
  */
-int MemCardFile::saveIcon(const QString &filenameNoExt,
+int GcnFile::saveIcon(const QString &filenameNoExt,
 	GcImageWriter::AnimImageFormat animImgf) const
 {
-	Q_D(const MemCardFile);
+	Q_D(const GcnFile);
 	if (d->gcIcons.isEmpty())
 		return -EINVAL;
 
