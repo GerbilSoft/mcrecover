@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * MemCardFileView.cpp: GcnFile view widget.                           *
+ * FileView.cpp: File view widget.                                         *
  *                                                                         *
  * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
@@ -19,9 +19,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#include "MemCardFileView.hpp"
+#include "FileView.hpp"
 
-#include "card/GcnFile.hpp"
+#include "card/File.hpp"
+#include "card/GcnFile.hpp" /* FIXME: Remove later */
 #include "IconAnimHelper.hpp"
 
 // XML template dialog.
@@ -31,26 +32,26 @@
 // Qt includes.
 #include <QtCore/QTimer>
 
-/** MemCardFileViewPrivate **/
+/** FileViewPrivate **/
 
-#include "ui_MemCardFileView.h"
-class MemCardFileViewPrivate
+#include "ui_FileView.h"
+class FileViewPrivate
 {
 	public:
-		MemCardFileViewPrivate(MemCardFileView *q);
-		~MemCardFileViewPrivate();
+		FileViewPrivate(FileView *q);
+		~FileViewPrivate();
 
 	protected:
-		MemCardFileView *const q_ptr;
-		Q_DECLARE_PUBLIC(MemCardFileView)
+		FileView *const q_ptr;
+		Q_DECLARE_PUBLIC(FileView)
 	private:
-		Q_DISABLE_COPY(MemCardFileViewPrivate)
+		Q_DISABLE_COPY(FileViewPrivate)
 
 	public:
 		// UI
-		Ui::MemCardFileView ui;
+		Ui::FileView ui;
 
-		const GcnFile *file;
+		const File *file;
 
 		// Icon animation helper.
 		IconAnimHelper helper;
@@ -69,7 +70,7 @@ class MemCardFileViewPrivate
 		XmlTemplateDialogManager *xmlTemplateDialogManager;
 };
 
-MemCardFileViewPrivate::MemCardFileViewPrivate(MemCardFileView *q)
+FileViewPrivate::FileViewPrivate(FileView *q)
 	: q_ptr(q)
 	, file(nullptr)
 	, xmlTemplateDialogManager(new XmlTemplateDialogManager(q))
@@ -79,7 +80,7 @@ MemCardFileViewPrivate::MemCardFileViewPrivate(MemCardFileView *q)
 			 q, SLOT(animTimer_slot()));
 }
 
-MemCardFileViewPrivate::~MemCardFileViewPrivate()
+FileViewPrivate::~FileViewPrivate()
 {
 	delete xmlTemplateDialogManager;
 }
@@ -87,9 +88,9 @@ MemCardFileViewPrivate::~MemCardFileViewPrivate()
 /**
  * Update the widget display.
  */
-void MemCardFileViewPrivate::updateWidgetDisplay(void)
+void FileViewPrivate::updateWidgetDisplay(void)
 {
-	Q_Q(MemCardFileView);
+	Q_Q(FileView);
 
 	if (!file) {
 		// Clear the widget display.
@@ -140,70 +141,82 @@ void MemCardFileViewPrivate::updateWidgetDisplay(void)
 	ui.lblMode->setText(file->modeAsString());
 	ui.lblMode->setVisible(true);
 
-	// Checksum algorithm is always visible.
-	ui.lblChecksumAlgorithmTitle->setVisible(true);
-	ui.lblChecksumAlgorithm->setVisible(true);
+	// FIXME: Remove qobject_cast<> once checksum is moved to File.
+	const GcnFile *gcnFile = qobject_cast<const GcnFile*>(file);
+	if (gcnFile) {
+		// Checksum algorithm is always visible.
+		ui.lblChecksumAlgorithmTitle->setVisible(true);
+		ui.lblChecksumAlgorithm->setVisible(true);
 
-	// Is the checksum known?
-	if (file->checksumStatus() == Checksum::CHKST_UNKNOWN) {
-		// Unknown checksum.
-		ui.lblChecksumAlgorithm->setText(MemCardFileView::tr("Unknown", "checksum"));
-		ui.lblChecksumActualTitle->setVisible(false);
-		ui.lblChecksumActual->setVisible(false);
-		ui.lblChecksumExpectedTitle->setVisible(false);
-		ui.lblChecksumExpected->setVisible(false);
-		return;
-	}
+		// Is the checksum known?
+		if (gcnFile->checksumStatus() == Checksum::CHKST_UNKNOWN) {
+			// Unknown checksum.
+			ui.lblChecksumAlgorithm->setText(FileView::tr("Unknown", "checksum"));
+			ui.lblChecksumActualTitle->setVisible(false);
+			ui.lblChecksumActual->setVisible(false);
+			ui.lblChecksumExpectedTitle->setVisible(false);
+			ui.lblChecksumExpected->setVisible(false);
+			return;
+		}
 
-	// Checksum is known.
+		// Checksum is known.
 
-	// Display the algorithm.
-	// TODO: Also the polynomial / parameter?
-	Checksum::ChkAlgorithm algorithm = file->checksumAlgorithm();
-	ui.lblChecksumAlgorithm->setText(
-		QString::fromStdString(Checksum::ChkAlgorithmToStringFormatted(algorithm)));
+		// Display the algorithm.
+		// TODO: Also the polynomial / parameter?
+		Checksum::ChkAlgorithm algorithm = gcnFile->checksumAlgorithm();
+		ui.lblChecksumAlgorithm->setText(
+			QString::fromStdString(Checksum::ChkAlgorithmToStringFormatted(algorithm)));
 
-	// Show the actual checksum labels.
-	ui.lblChecksumActualTitle->setVisible(true);
-	ui.lblChecksumActual->setVisible(true);
+		// Show the actual checksum labels.
+		ui.lblChecksumActualTitle->setVisible(true);
+		ui.lblChecksumActual->setVisible(true);
 
-	// Format the checksum values.
-	QVector<QString> checksumValuesFormatted = file->checksumValuesFormatted();
-	if (checksumValuesFormatted.size() < 1) {
-		// No checksum...
-		ui.lblChecksumAlgorithm->setText(MemCardFileView::tr("Unknown", "checksum"));
-		ui.lblChecksumActualTitle->setVisible(false);
-		ui.lblChecksumActual->setVisible(false);
-		ui.lblChecksumExpectedTitle->setVisible(false);
-		ui.lblChecksumExpected->setVisible(false);
-		return;
-	}
+		// Format the checksum values.
+		QVector<QString> checksumValuesFormatted = gcnFile->checksumValuesFormatted();
+		if (checksumValuesFormatted.size() < 1) {
+			// No checksum...
+			ui.lblChecksumAlgorithm->setText(FileView::tr("Unknown", "checksum"));
+			ui.lblChecksumActualTitle->setVisible(false);
+			ui.lblChecksumActual->setVisible(false);
+			ui.lblChecksumExpectedTitle->setVisible(false);
+			ui.lblChecksumExpected->setVisible(false);
+			return;
+		}
 
-	// Set the actual checksum text.
-	ui.lblChecksumActual->setText(checksumValuesFormatted.at(0));
+		// Set the actual checksum text.
+		ui.lblChecksumActual->setText(checksumValuesFormatted.at(0));
 
-	if (checksumValuesFormatted.size() > 1) {
-		// At least one checksum is invalid.
-		// Show the expected checksum.
-		ui.lblChecksumExpectedTitle->setVisible(true);
-		ui.lblChecksumExpected->setVisible(true);
-		ui.lblChecksumExpected->setText(checksumValuesFormatted.at(1));
+		if (checksumValuesFormatted.size() > 1) {
+			// At least one checksum is invalid.
+			// Show the expected checksum.
+			ui.lblChecksumExpectedTitle->setVisible(true);
+			ui.lblChecksumExpected->setVisible(true);
+			ui.lblChecksumExpected->setText(checksumValuesFormatted.at(1));
+		} else {
+			// Checksums are all valid.
+			// Hide the expected checksum.
+			ui.lblChecksumExpectedTitle->setVisible(false);
+			ui.lblChecksumExpected->setVisible(false);
+			ui.lblChecksumExpected->clear();
+		}
 	} else {
-		// Checksums are all valid.
-		// Hide the expected checksum.
+		// Not a GCN file.
+		ui.lblChecksumAlgorithmTitle->setVisible(false);
+		ui.lblChecksumAlgorithm->setVisible(false);
+		ui.lblChecksumActualTitle->setVisible(false);
+		ui.lblChecksumActual->setVisible(false);
 		ui.lblChecksumExpectedTitle->setVisible(false);
 		ui.lblChecksumExpected->setVisible(false);
-		ui.lblChecksumExpected->clear();
 	}
 }
 
-/** MemCardFileView **/
+/** FileView **/
 
-MemCardFileView::MemCardFileView(QWidget *parent)
+FileView::FileView(QWidget *parent)
 	: QWidget(parent)
-	, d_ptr(new MemCardFileViewPrivate(this))
+	, d_ptr(new FileViewPrivate(this))
 {
-	Q_D(MemCardFileView);
+	Q_D(FileView);
 	d->ui.setupUi(this);
 
 	// Set monospace fonts.
@@ -219,31 +232,31 @@ MemCardFileView::MemCardFileView(QWidget *parent)
 	d->updateWidgetDisplay();
 }
 
-MemCardFileView::~MemCardFileView()
+FileView::~FileView()
 {
-	Q_D(MemCardFileView);
+	Q_D(FileView);
 	delete d;
 }
 
 /**
- * Get the GcnFile being displayed.
- * @return GcnFile.
+ * Get the File being displayed.
+ * @return File.
  */
-const GcnFile *MemCardFileView::file(void) const
+const File *FileView::file(void) const
 {
-	Q_D(const MemCardFileView);
+	Q_D(const FileView);
 	return d->file;
 }
 
 /**
- * Set the GcnFile being displayed.
- * @param file GcnFile.
+ * Set the File being displayed.
+ * @param file File.
  */
-void MemCardFileView::setFile(const GcnFile *file)
+void FileView::setFile(const File *file)
 {
-	Q_D(MemCardFileView);
+	Q_D(FileView);
 
-	// Disconnect the GcnFile's destroyed() signal if a GcnFile is already set.
+	// Disconnect the File's destroyed() signal if a File is already set.
 	if (d->file) {
 		disconnect(d->file, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(file_destroyed_slot(QObject*)));
@@ -251,7 +264,7 @@ void MemCardFileView::setFile(const GcnFile *file)
 
 	d->file = file;
 
-	// Connect the GcnFile's destroyed() signal.
+	// Connect the File's destroyed() signal.
 	if (d->file) {
 		connect(d->file, SIGNAL(destroyed(QObject*)),
 			this, SLOT(file_destroyed_slot(QObject*)));
@@ -266,11 +279,11 @@ void MemCardFileView::setFile(const GcnFile *file)
  * Widget state has changed.
  * @param event State change event.
  */
-void MemCardFileView::changeEvent(QEvent *event)
+void FileView::changeEvent(QEvent *event)
 {
 	if (event->type() == QEvent::LanguageChange) {
 		// Retranslate the UI.
-		Q_D(MemCardFileView);
+		Q_D(FileView);
 		d->ui.retranslateUi(this);
 		d->updateWidgetDisplay();
 	}
@@ -282,15 +295,15 @@ void MemCardFileView::changeEvent(QEvent *event)
 /** Slots. **/
 
 /**
- * GcnFile object was destroyed.
+ * File object was destroyed.
  * @param obj QObject that was destroyed.
  */
-void MemCardFileView::file_destroyed_slot(QObject *obj)
+void FileView::file_destroyed_slot(QObject *obj)
 {
-	Q_D(MemCardFileView);
+	Q_D(FileView);
 
 	if (obj == d->file) {
-		// Our GcnFile was destroyed.
+		// Our File was destroyed.
 		d->file = nullptr;
 
 		// Update the widget display.
@@ -302,9 +315,9 @@ void MemCardFileView::file_destroyed_slot(QObject *obj)
 /**
  * Animation timer slot.
  */
-void MemCardFileView::animTimer_slot(void)
+void FileView::animTimer_slot(void)
 {
-	Q_D(MemCardFileView);
+	Q_D(FileView);
 
 	if (!d->file || !d->helper.isAnimated()) {
 		// No file is loaded, or the file doesn't have an animated icon.
@@ -324,10 +337,14 @@ void MemCardFileView::animTimer_slot(void)
 /**
  * XML button was pressed.
  */
-void MemCardFileView::on_btnXML_clicked(void)
+void FileView::on_btnXML_clicked(void)
 {
-	Q_D(MemCardFileView);
-	XmlTemplateDialog *dialog = d->xmlTemplateDialogManager->create(d->file, this);
-	dialog->show();
-	dialog->activateWindow();
+	Q_D(FileView);
+	// TODO: Handle other types of files?
+	const GcnFile *gcnFile = qobject_cast<const GcnFile*>(d->file);
+	if (gcnFile) {
+		XmlTemplateDialog *dialog = d->xmlTemplateDialogManager->create(gcnFile, this);
+		dialog->show();
+		dialog->activateWindow();
+	}
 }

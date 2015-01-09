@@ -21,8 +21,9 @@
 
 #include "IconAnimHelper.hpp"
 
+// TODO: Eliminate card.h and use system-independent values.
 #include "card.h"
-#include "card/GcnFile.hpp"
+#include "card/File.hpp"
 
 class IconAnimHelperPrivate
 {
@@ -36,7 +37,7 @@ class IconAnimHelperPrivate
 		Q_DISABLE_COPY(IconAnimHelperPrivate)
 
 	public:
-		const GcnFile *file;
+		const File *file;
 
 		/**
 		 * If a file is specified and has an animated icon,
@@ -91,7 +92,7 @@ void IconAnimHelperPrivate::reset(void)
 		delayLen = 0;
 		mode = 0;
 	} else {
-		// GcnFile is specified.
+		// File is specified.
 		// Determine the initial state.
 		enabled = true;
 		frameHasIcon = !(file->icon(frame).isNull());
@@ -180,10 +181,10 @@ IconAnimHelper::IconAnimHelper()
 	: d_ptr(new IconAnimHelperPrivate(this))
 { }
 
-IconAnimHelper::IconAnimHelper(const GcnFile* file)
+IconAnimHelper::IconAnimHelper(const File* file)
 	: d_ptr(new IconAnimHelperPrivate(this))
 {
-	// Set the initial GcnFile.
+	// Set the initial File.
 	setFile(file);
 }
 
@@ -193,24 +194,24 @@ IconAnimHelper::~IconAnimHelper()
 }
 
 /**
- * Get the GcnFile this IconAnimHelper is handling.
- * @return GcnFile.
+ * Get the File this IconAnimHelper is handling.
+ * @return File.
  */
-const GcnFile *IconAnimHelper::file(void) const
+const File *IconAnimHelper::file(void) const
 {
 	Q_D(const IconAnimHelper);
 	return d->file;
 }
 
 /**
- * Set the GcnFile this IconAnimHelper should handle.
- * @param file GcnFile.
+ * Set the File this IconAnimHelper should handle.
+ * @param file File.
  */
-void IconAnimHelper::setFile(const GcnFile *file)
+void IconAnimHelper::setFile(const File *file)
 {
 	Q_D(IconAnimHelper);
 
-	// Disconnect the GcnFile's destroyed() signal if a GcnFile is already set.
+	// Disconnect the File's destroyed() signal if a File is already set.
 	if (d->file) {
 		disconnect(d->file, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(file_destroyed_slot(QObject*)));
@@ -218,7 +219,7 @@ void IconAnimHelper::setFile(const GcnFile *file)
 
 	d->file = file;
 
-	// Connect the GcnFile's destroyed() signal.
+	// Connect the File's destroyed() signal.
 	if (d->file) {
 		connect(d->file, SIGNAL(destroyed(QObject*)),
 			this, SLOT(file_destroyed_slot(QObject*)));
@@ -277,7 +278,7 @@ bool IconAnimHelper::tick(void)
 /** Slots. **/
 
 /**
- * GcnFile object was destroyed.
+ * File object was destroyed.
  * @param obj QObject that was destroyed.
  */
 void IconAnimHelper::file_destroyed_slot(QObject *obj)
@@ -285,7 +286,7 @@ void IconAnimHelper::file_destroyed_slot(QObject *obj)
 	Q_D(IconAnimHelper);
 
 	if (obj == d->file) {
-		// Our GcnFile was destroyed.
+		// Our File was destroyed.
 		d->file = nullptr;
 		d->reset();
 	}

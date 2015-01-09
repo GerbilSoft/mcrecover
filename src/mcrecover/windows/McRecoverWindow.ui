@@ -153,7 +153,7 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="MemCardFileView" name="mcfFileView" native="true">
+                <widget class="FileView" name="mcfFileView" native="true">
                  <property name="minimumSize">
                   <size>
                    <width>146</width>
@@ -508,9 +508,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>MemCardFileView</class>
+   <class>FileView</class>
    <extends>QWidget</extends>
-   <header>widgets/MemCardFileView.hpp</header>
+   <header>widgets/FileView.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>

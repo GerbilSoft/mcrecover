@@ -132,7 +132,7 @@ SET(mcrecover_WINDOW_SRCS
 	
 SET(mcrecover_WIDGET_SRCS
 	widgets/StatusBarManager.cpp
-	widgets/MemCardFileView.cpp
+	widgets/FileView.cpp
 	widgets/CardView.cpp
 	widgets/QTreeViewOpt.cpp
 	widgets/MessageWidget.cpp
@@ -185,7 +185,7 @@ SET(mcrecover_WINDOW_MOC_H
 
 SET(mcrecover_WIDGET_MOC_H
 	widgets/StatusBarManager.hpp
-	widgets/MemCardFileView.hpp
+	widgets/FileView.hpp
 	widgets/CardView.hpp
 	widgets/QTreeViewOpt.hpp
 	widgets/MessageWidget.hpp
@@ -217,7 +217,7 @@ SET(mcrecover_WINDOW_UIS
 	)
 
 SET(mcrecover_WIDGET_UIS
-	widgets/MemCardFileView.ui
+	widgets/FileView.ui
 	widgets/CardView.ui
 	widgets/TableSelect.ui
 	)

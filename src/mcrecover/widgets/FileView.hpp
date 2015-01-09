@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * MemCardFileView.hpp: MemCardFile view widget.                           *
+ * FileView.hpp: File view widget.                                         *
  *                                                                         *
  * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
@@ -19,43 +19,42 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MEMCARDFILEVIEW_HPP__
-#define __MCRECOVER_MEMCARDFILEVIEW_HPP__
+#ifndef __MCRECOVER_WIDGETS_FILEVIEW_HPP__
+#define __MCRECOVER_WIDGETS_FILEVIEW_HPP__
 
 #include <QtGui/QWidget>
 
-class GcnFile;
+class File;
 
-class MemCardFileViewPrivate;
-
-class MemCardFileView : public QWidget
+class FileViewPrivate;
+class FileView : public QWidget
 {
 	Q_OBJECT
 
-	Q_PROPERTY(const GcnFile* file READ file WRITE setFile)
+	Q_PROPERTY(const File* file READ file WRITE setFile)
 
 	public:
-		MemCardFileView(QWidget *parent = 0);
-		~MemCardFileView();
+		FileView(QWidget *parent = 0);
+		~FileView();
 
 	protected:
-		MemCardFileViewPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(MemCardFileView)
+		FileViewPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(FileView)
 	private:
-		Q_DISABLE_COPY(MemCardFileView)
+		Q_DISABLE_COPY(FileView)
 
 	public:
 		/**
-		 * Get the GcnFile being displayed.
-		 * @return GcnFile.
+		 * Get the File being displayed.
+		 * @return File.
 		 */
-		const GcnFile *file(void) const;
+		const File *file(void) const;
 
 		/**
-		 * Set the GcnFile being displayed.
-		 * @param file GcnFile.
+		 * Set the File being displayed.
+		 * @param file File.
 		 */
-		void setFile(const GcnFile *file);
+		void setFile(const File *file);
 
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
@@ -63,7 +62,7 @@ class MemCardFileView : public QWidget
 
 	protected slots:
 		/**
-		 * GcnFile object was destroyed.
+		 * File object was destroyed.
 		 * @param obj QObject that was destroyed.
 		 */
 		void file_destroyed_slot(QObject *obj = 0);
@@ -79,4 +78,4 @@ class MemCardFileView : public QWidget
 		void on_btnXML_clicked(void);
 };
 
-#endif /* __MCRECOVER_MEMCARDFILEVIEW_HPP__ */
+#endif /* __MCRECOVER_WIDGETS_FILEVIEW_HPP__ */

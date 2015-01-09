@@ -26,7 +26,7 @@
 #include <QtCore/QObject>
 #include <QtGui/QPixmap>
 
-class GcnFile;
+class File;
 
 class IconAnimHelperPrivate;
 
@@ -34,13 +34,13 @@ class IconAnimHelper : public QObject
 {
 	Q_OBJECT
 
-	Q_PROPERTY(const GcnFile* file READ file WRITE setFile)
+	Q_PROPERTY(const File* file READ file WRITE setFile)
 	Q_PROPERTY(bool animated READ isAnimated STORED false)
 	Q_PROPERTY(QPixmap icon READ icon STORED false)
 
 	public:
 		IconAnimHelper();
-		IconAnimHelper(const GcnFile *file);
+		IconAnimHelper(const File *file);
 		~IconAnimHelper();
 
 	protected:
@@ -57,16 +57,16 @@ class IconAnimHelper : public QObject
 		static const int FAST_ANIM_TIMER = 125;
 
 		/**
-		 * Get the GcnFile this IconAnimHelper is handling.
-		 * @return GcnFile.
+		 * Get the File this IconAnimHelper is handling.
+		 * @return File.
 		 */
-		const GcnFile *file(void) const;
+		const File *file(void) const;
 
 		/**
-		 * Set the GcnFile this IconAnimHelper should handle.
-		 * @param file GcnFile.
+		 * Set the File this IconAnimHelper should handle.
+		 * @param file File.
 		 */
-		void setFile(const GcnFile *file);
+		void setFile(const File *file);
 
 		/**
 		 * Reset the animation state.
@@ -93,7 +93,7 @@ class IconAnimHelper : public QObject
 
 	protected slots:
 		/**
-		 * GcnFile object was destroyed.
+		 * File object was destroyed.
 		 * @param obj QObject that was destroyed.
 		 */
 		void file_destroyed_slot(QObject *obj = 0);

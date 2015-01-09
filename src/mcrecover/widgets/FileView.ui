@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MemCardFileView</class>
- <widget class="QWidget" name="MemCardFileView">
+ <class>FileView</class>
+ <widget class="QWidget" name="FileView">
   <property name="geometry">
    <rect>
     <x>0</x>
