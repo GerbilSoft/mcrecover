@@ -27,8 +27,6 @@
 
 // Qt includes and classes.
 #include <QtCore/QObject>
-#include <QtCore/QVector>
-#include <QtCore/QLinkedList>
 
 // Card private class.
 class CardPrivate;
