@@ -33,7 +33,7 @@ class CardPrivate
 {
 	public:
 		CardPrivate(Card *q, uint32_t blockSize, int minBlocks, int maxBlocks);
-		~CardPrivate();
+		virtual ~CardPrivate();
 
 	protected:
 		Card *const q_ptr;
@@ -77,13 +77,14 @@ class CardPrivate
 		/** Convenience functions for Card subclasses. **/
 
 		/**
-		 * Open an existing Memory Card image.
-		 * File is opened in read-only mode.
-		 * Block counts are initialized after the file is opened.
+		 * Open a Memory Card image.
+		 * totalPhysBlocks is initialized after the file is opened.
+		 * totalUserBlocks and freeBlocks must be initialized by the subclass.
 		 * @param filename Memory Card image filename.
+		 * @param mode File open mode.
 		 * @return 0 on success; non-zero on error. (also check errorString)
 		 */
-		int open(const QString &filename);
+		int open(const QString &filename, QIODevice::OpenModeFlag mode);
 
 		/**
 		 * Close the currently-opened Memory Card image.

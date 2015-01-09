@@ -49,9 +49,9 @@ class Card : public QObject
 	Q_PROPERTY(int freeBlocks READ freeBlocks)
 
 	protected:
-		Card(QObject *parent = 0);
+		Card(CardPrivate *d, QObject *parent = 0);
 	public:
-		~Card();
+		virtual ~Card();
 
 	// TODO: Add an open() function that autodetects the card type?
 

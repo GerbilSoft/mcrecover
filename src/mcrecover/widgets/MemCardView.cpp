@@ -78,10 +78,10 @@ MemCardViewPrivate::~MemCardViewPrivate()
  */
 void MemCardViewPrivate::updateBlockCountDisplay(void)
 {
-	int sizeInBlocksNoSys = card->sizeInBlocksNoSys();
+	const int totalUserBlocks = card->totalUserBlocks();
 	ui.lblBlockCount->setText(
-		MemCardView::tr("%L1 block(s) (%L2 free)", "", sizeInBlocksNoSys)
-			.arg(sizeInBlocksNoSys)
+		MemCardView::tr("%L1 block(s) (%L2 free)", "", totalUserBlocks)
+			.arg(totalUserBlocks)
 			.arg(card->freeBlocks()));
 }
 
@@ -149,7 +149,7 @@ void MemCardViewPrivate::updateWidgetDisplay(void)
 
 	// Validate some other aspects of the card header.
 	if (isCardHeaderValid) {
-		if (card->freeBlocks() > card->sizeInBlocksNoSys()) {
+		if (card->freeBlocks() > card->totalUserBlocks()) {
 			// Free blocks count is wrong.
 			isCardHeaderValid = false;
 		}

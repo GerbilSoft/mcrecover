@@ -136,9 +136,12 @@ int SearchThreadWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*>
 		return -1;
 	}
 
+	// FIXME: GCN-specific assumptions used here. (first block is 5, etc)
+	// Add more information to Card to indicate the usable area.
+
 	// Block search list.
 	QVector<uint16_t> blockSearchList;
-	const int totalPhysBlocks = card->sizeInBlocks();
+	const int totalPhysBlocks = card->totalPhysBlocks();
 
 	// Used block map.
 	QVector<uint8_t> usedBlockMap;
@@ -154,7 +157,8 @@ int SearchThreadWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*>
 		}
 	} else {
 		// Search through all blocks.
-		usedBlockMap = QVector<uint8_t>(card->sizeInBlocks(), 0);
+		// TODO: Mark system blocks as used?
+		usedBlockMap = QVector<uint8_t>(totalPhysBlocks, 0);
 
 		// Put together a block search list.
 		blockSearchList.reserve(totalPhysBlocks - 5);

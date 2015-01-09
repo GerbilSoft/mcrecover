@@ -65,11 +65,14 @@ CardPrivate::~CardPrivate()
 }
 
 /**
- * Open an existing Memory Card image.
+ * Open a Memory Card image.
+ * totalPhysBlocks is initialized after the file is opened.
+ * totalUserBlocks and freeBlocks must be initialized by the subclass.
  * @param filename Memory Card image filename.
+ * @param mode File open mode.
  * @return 0 on success; non-zero on error. (also check errorString)
  */
-int CardPrivate::open(const QString &filename)
+int CardPrivate::open(const QString &filename, QIODevice::OpenModeFlag mode)
 {
 	if (file) {
 		// File is already open.
@@ -87,7 +90,7 @@ int CardPrivate::open(const QString &filename)
 	// Open the file.
 	Q_Q(Card);
 	QFile *tmp_file = new QFile(filename, q);
-	if (!tmp_file->open(QIODevice::ReadOnly)) {
+	if (!tmp_file->open(mode)) {
 		// Error opening the file.
 		// NOTE: Qt doesn't return the raw error number.
 		// QFile::error() has a useless generic error number.
@@ -98,6 +101,8 @@ int CardPrivate::open(const QString &filename)
 	}
 	this->file = tmp_file;
 	this->filename = filename;
+
+	// TODO: If formatting the card, skip all of this.
 
 	// Get the filesize.
 	this->filesize = file->size();
@@ -150,9 +155,14 @@ void CardPrivate::close(void)
 
 /** Card **/
 
-Card::Card(QObject *parent)
+/**
+ * Create a new Card object.
+ * @param d CardPrivate-derived private class.
+ * @param parent Parent object.
+ */
+Card::Card(CardPrivate *d, QObject *parent)
 	: QObject(parent)
-	, d_ptr(new CardPrivate(this, 0, 0, 0))
+	, d_ptr(d)
 { }
 
 Card::~Card()

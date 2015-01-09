@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * GcnCard.hpp: Memory Card reader class.                                  *
+ * GcnCard.hpp: GameCube memory card class.                                *
  *                                                                         *
  * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
@@ -22,12 +22,9 @@
 #ifndef __MCRECOVER_CARD_GCNCARD_HPP__
 #define __MCRECOVER_CARD_GCNCARD_HPP__
 
-// C includes.
-#include <stdint.h>
+#include "Card.hpp"
 
 // Qt includes and classes.
-#include <QtCore/QObject>
-#include <QtCore/QVector>
 #include <QtCore/QLinkedList>
 class QTextCodec;
 
@@ -35,28 +32,17 @@ class QTextCodec;
 #include "Checksum.hpp"
 #include "SearchData.hpp"
 
-// MemCardFile
 class MemCardFile;
 
 class GcnCardPrivate;
-class GcnCard : public QObject
+class GcnCard : public Card
 {
 	Q_OBJECT
 
-	Q_FLAGS(Error Errors)
-
-	Q_PROPERTY(bool open READ isOpen)
-	Q_PROPERTY(QString errorString READ errorString)
-	Q_PROPERTY(QString filename READ filename)
-	Q_PROPERTY(int filesize READ filesize);
-	Q_PROPERTY(int sizeInBlocks READ sizeInBlocks)
-	Q_PROPERTY(int sizeInBlocksNoSys READ sizeInBlocksNoSys)
-	Q_PROPERTY(int freeBlocks READ freeBlocks)
-	Q_PROPERTY(int blockSize READ blockSize)
-	Q_PROPERTY(QString serialNumber READ serialNumber)
 	Q_PROPERTY(int encoding READ encoding)
 	Q_PROPERTY(int numFiles READ numFiles)
 	Q_PROPERTY(bool empty READ isEmpty)
+
 	// TODO: Register Checksum::ChecksumValue metatype?
 	//Q_PROPERTY(Checksum::ChecksumValue headerChecksumValue READ headerChecksumValue)
 	Q_PROPERTY(int activeDatIdx READ activeDatIdx WRITE setActiveDatIdx)
@@ -68,6 +54,9 @@ class GcnCard : public QObject
 		GcnCard(QObject *parent = 0);
 	public:
 		~GcnCard();
+
+	protected:
+		Q_DECLARE_PRIVATE(GcnCard)
 
 	public:
 		/**
@@ -86,9 +75,6 @@ class GcnCard : public QObject
 		 */
 		static GcnCard *format(const QString& filename, QObject *parent);
 
-	protected:
-		GcnCardPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(GcnCard)
 	private:
 		Q_DISABLE_COPY(GcnCard)
 
@@ -117,76 +103,7 @@ class GcnCard : public QObject
 		 */
 		void filesRemoved(void);
 
-		/**
-		 * Block count has changed.
-		 * @param sizeInBlocksNoSys Size in blocks, minus the 5 reserved blocks.
-		 * @param freeBlocks Number of free blocks.
-		 */
-		void blockCountChanged(int sizeInBlocksNoSys, int freeBlocks);
-
 	public:
-		/**
-		 * Check if the memory card is open.
-		 * @return True if open; false if not.
-		 */
-		bool isOpen(void) const;
-
-		/**
-		 * Get the last error string.
-		 * Usually used for open() errors.
-		 * TODO: Change to error code constants for translation?
-		 * @return Error string.
-		 */
-		QString errorString(void) const;
-
-		/**
-		 * Get the memory card filename.
-		 * @return Memory card filename, or empty string if not open.
-		 */
-		QString filename(void) const;
-
-		/**
-		 * Get the size of the memory card image, in bytes.
-		 * This is the full size of the memory card image.
-		 * @return Size of the memory card image, in bytes. (Negative on error)
-		 */
-		quint64 filesize(void) const;
-
-		/**
-		 * Get the size of the memory card, in blocks.
-		 * NOTE: Includes the 5 reserved blocks. (e.g. MC1019 would return 1024)
-		 * @return Size of the memory card, in blocks. (Negative on error)
-		 */
-		int sizeInBlocks(void) const;
-
-		/**
-		 * Get the size of the memory card, in blocks. [minus 5 reserved blocks]
-		 * NOTE: Does NOT include the 5 reserved blocks. (e.g. MC1019 would return 1019)
-		 * @return Size of the memory card, in blocks. (Negative on error)
-		 */
-		int sizeInBlocksNoSys(void) const;
-
-		/**
-		 * Get the number of free blocks.
-		 * @return Free blocks. (Negative on error)
-		 */
-		int freeBlocks(void) const;
-
-		/**
-		 * Get the memory card block size, in bytes.
-		 * @return Memory card block size, in bytes. (Negative on error)
-		 */
-		int blockSize(void) const;
-
-		/**
-		 * Read a block.
-		 * @param buf Buffer to read the block data into.
-		 * @param siz Size of buffer.
-		 * @param blockIdx Block index.
-		 * @return Bytes read on success; negative on error.
-		 */
-		int readBlock(void *buf, int siz, uint16_t blockIdx);
-
 		/**
 		 * Get the memory card text encoding ID.
 		 * @return 0 for ANSI (ISO-8859-1); 1 for SJIS; negative on error.
@@ -319,38 +236,6 @@ class GcnCard : public QObject
 		 * @return True if valid; false if not valid or idx is invalid.
 		 */
 		bool isBatValid(int idx) const;
-
-		/**
-		 * Memory card errors.
-		 */
-		enum Error {
-			// Errors are ordered in order of severity.
-
-			// Memory card is too small. (512 KB min)
-			MCE_SZ_TOO_SMALL	= 0x01,
-			// Memory card is too big. (16 MB max)
-			MCE_SZ_TOO_BIG		= 0x02,
-			// Memory card size is not a power of two.
-			MCE_SZ_NON_POW2		= 0x04,
-
-			// Header checksum is invalid.
-			MCE_INVALID_HEADER	= 0x10,
-			// Both DATs are invalid.
-			MCE_INVALID_DATS	= 0x20,
-			// Bot BATs are invalid.
-			MCE_INVALID_BATS	= 0x40,
-
-			// TODO: File open errors?
-		};
-		Q_DECLARE_FLAGS(Errors, Error)
-
-		/**
-		 * Have any errors been detected in this Memory Card?
-		 * @return Error flags.
-		 */
-		QFlags<Error> errors(void) const;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(GcnCard::Errors);
 
 #endif /* __MCRECOVER_CARD_GCNCARD_HPP__ */

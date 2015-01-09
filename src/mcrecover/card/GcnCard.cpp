@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * GcnCard.cpp: Memory Card reader class.                                  *
+ * GcnCard.hpp: GameCube memory card class.                                *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -20,7 +20,6 @@
  ***************************************************************************/
 
 #include "GcnCard.hpp"
-#include "card.h"
 #include "util/byteswap.h"
 
 // MemCardFile
@@ -34,15 +33,14 @@
 #include <limits>
 
 // Qt includes.
-#include <QtCore/QFile>
-#include <QtCore/QVector>
 #include <QtCore/QTextCodec>
 
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 /** GcnCardPrivate **/
 
-class GcnCardPrivate
+#include "Card_p.hpp"
+class GcnCardPrivate : public CardPrivate
 {
 	public:
 		GcnCardPrivate(GcnCard *q);
@@ -50,7 +48,6 @@ class GcnCardPrivate
 		void init(void);
 
 	protected:
-		GcnCard *const q_ptr;
 		Q_DECLARE_PUBLIC(GcnCard)
 	private:
 		Q_DISABLE_COPY(GcnCardPrivate)
@@ -69,7 +66,7 @@ class GcnCardPrivate
 		 * @param filename Memory Card image filename.
 		 * @return 0 on success; non-zero on error. (also check errorString)
 		 */
-		void open(const QString &filename);
+		int open(const QString &filename);
 
 		/**
 		 * Format a new Memory Card image.
@@ -77,29 +74,9 @@ class GcnCardPrivate
 		 * TODO: Parameters.
 		 * @return 0 on success; non-zero on error. (also check errorString)
 		 */
-		void format(const QString &filename);
+		int format(const QString &filename);
 
 	public:
-		QString filename;
-		QFile *file;
-
-		// Error string.
-		QString errorString;
-
-		// Filesize.
-		quint64 filesize;
-
-		// Block size.
-		// NOTE: For GameCube, this should always be 8 KB.
-		// TODO: Optimize by making this a power of two and using shifts?
-		uint32_t blockSize;
-
-		/**
-		 * Total number of blocks in the file.
-		 * Includes the 5 reserved blocks at the beginning.
-		 */
-		int numBlocks;
-
 		// Header checksum.
 		Checksum::ChecksumValue headerChecksumValue;
 
@@ -171,17 +148,6 @@ class GcnCardPrivate
 		int loadBlockTable(card_bat *bat, uint32_t address, uint32_t *checksum);
 
 		/**
-		 * Check if a number is a power of 2.
-		 * Reference: http://stackoverflow.com/questions/108318/whats-the-simplest-way-to-test-whether-a-number-is-a-power-of-2-in-c
-		 * @param n Number.
-		 * @return True if this number is a power of 2.
-		 */
-		template<typename T>
-		static inline bool isPow2(T n) {
-			return !(n == 0) && !(n & (n - 1));
-		}
-
-		/**
 		 * Determine which tables are active.
 		 * Sets mc_dat_hdr_idx and mc_bat_hdr_idx.
 		 * NOTE: All tables must be loaded first!
@@ -193,9 +159,6 @@ class GcnCardPrivate
 		 * Load the MemCardFile list.
 		 */
 		void loadMemCardFileList(void);
-
-		// Card errors.
-		QFlags<GcnCard::Error> errors;
 };
 
 // Text codecs.
@@ -203,16 +166,11 @@ QTextCodec *GcnCardPrivate::TextCodecUS = nullptr;	// cp1252
 QTextCodec *GcnCardPrivate::TextCodecJP = nullptr;	// Shift-JIS
 
 GcnCardPrivate::GcnCardPrivate(GcnCard *q)
-	: q_ptr(q)
-	, file(nullptr)
-	, filesize(0)
-	, blockSize(8192)
-	, numBlocks(0)
+	: CardPrivate(q, 8192, 64, 2048)
 	, mc_dat_hdr_idx(-1)
 	, mc_bat_hdr_idx(-1)
 	, mc_dat(nullptr)
 	, mc_bat(nullptr)
-	, errors(0)
 {
 	// Initialize static variables.
 	StaticInit();
@@ -234,13 +192,7 @@ GcnCardPrivate::~GcnCardPrivate()
 	// Clear the MemCardFile list.
 	qDeleteAll(lstMemCardFile);
 	lstMemCardFile.clear();
-
-	if (file) {
-		file->close();
-		delete file;
-	}
 }
-
 
 /**
  * Static member initialization.
@@ -263,65 +215,18 @@ void GcnCardPrivate::StaticInit(void)
 
 /**
  * Open an existing Memory Card image.
- * NOTE: This must be called *after* GcnCard is initialized!
  * @param filename Memory Card image filename.
  * @return 0 on success; non-zero on error. (also check errorString)
  */
-void GcnCardPrivate::open(const QString &filename)
+int GcnCardPrivate::open(const QString &filename)
 {
-	if (file) {
-		// File is already open.
-		// TODO: Don't allow this, or clear all variables?
-		file->close();
-		delete file;
-		file = nullptr;
-		this->filesize = 0;
-	}
-
-	this->filename.clear();
-	if (filename.isEmpty()) {
-		// No filename specified.
-		// TODO: Translate the error message.
-		this->errorString = QLatin1String("No filename specified");
-		return;
-	}
-
-	// Open the file.
-	Q_Q(GcnCard);
-	QFile *tmp_file = new QFile(filename, q);
-	if (!tmp_file->open(QIODevice::ReadOnly)) {
+	int ret = CardPrivate::open(filename, QIODevice::ReadOnly);
+	if (ret != 0) {
 		// Error opening the file.
-		// NOTE: Qt doesn't return the raw error number.
-		// QFile::error() has a useless generic error number.
-		// TODO: Translate the error message.
-		this->errorString = tmp_file->errorString();
-		delete tmp_file;
-		return;
-	}
-	this->file = tmp_file;
-	this->filename = filename;
-
-	// Get the filesize.
-	this->filesize = file->size();
-
-	// Make sure the size isn't out of range.
-	if (this->filesize < (64 * blockSize)) {
-		// Fewer than 59 (64) blocks. Too small.
-		this->errors |= GcnCard::MCE_SZ_TOO_SMALL;
-	} else if (filesize > (2048 * blockSize)) {
-		// Larger than 16 MB. Too big.
-		// Only read the first 16 MB.
-		this->errors |= GcnCard::MCE_SZ_TOO_BIG;
-		this->filesize = (2048 * blockSize);
+		return ret;
 	}
 
-	if (!isPow2(filesize)) {
-		// Size is not a power of 2.
-		this->errors |= GcnCard::MCE_SZ_NON_POW2;
-	}
-
-	// Calculate the number of blocks.
-	numBlocks = (int)(filesize / blockSize);
+	// Load the GCN-specific data.
 
 	// Reset the used block map.
 	resetUsedBlockMap();
@@ -332,6 +237,8 @@ void GcnCardPrivate::open(const QString &filename)
 
 	// Load the MemCardFile list.
 	loadMemCardFileList();
+
+	return 0;
 }
 
 /**
@@ -340,46 +247,27 @@ void GcnCardPrivate::open(const QString &filename)
  * TODO: Parameters.
  * @return 0 on success; non-zero on error. (also check errorString)
  */
-void GcnCardPrivate::format(const QString &filename)
+int GcnCardPrivate::format(const QString &filename)
 {
-	if (file) {
-		// File is already open.
-		// TODO: Don't allow this, or clear all variables?
-		file->close();
-		delete file;
-		file = nullptr;
-		this->filesize = 0;
-	}
-
-	this->filename.clear();
-	if (filename.isEmpty()) {
-		// No filename specified.
-		// TODO: Translate the error message.
-		this->errorString = QLatin1String("No filename specified");
-		return;
-	}
-
-	// Open the file.
-	Q_Q(GcnCard);
-	QFile *tmp_file = new QFile(filename, q);
-	if (!tmp_file->open(QIODevice::ReadWrite)) {
+	int ret = CardPrivate::open(filename, QIODevice::ReadWrite);
+	if (ret != 0) {
 		// Error opening the file.
-		// NOTE: Qt doesn't return the raw error number.
-		// QFile::error() has a useless generic error number.
-		// TODO: Translate the error message.
-		this->errorString = tmp_file->errorString();
-		delete tmp_file;
-		return;
+		return ret;
 	}
-	this->file = tmp_file;
-	this->filename = filename;
+
+	// Clear errors.
+	// TODO: Separate CardPrivate::create() or format() function
+	// that doesn't check for errors?
+	errors = 0;
 
 	// Create a 251-block card.
 	// Formatting routine based on the Nintendont Loader (r254).
 	// TODO: Parameters.
-	numBlocks = 256;
-	file->resize(numBlocks * blockSize);
-	this->filesize = file->size();
+	// TODO: Separate Card::open()'s block count initialization
+	// so it can be used in this function.
+	totalPhysBlocks = 256;
+	file->resize(totalPhysBlocks * blockSize);
+	filesize = file->size();
 	// TODO: Verify that the filesize matches.
 
 	/**
@@ -404,7 +292,7 @@ void GcnCardPrivate::format(const QString &filename)
 	// Device ID. (Assume formatted in slot A.)
 	mc_header.device_id = cpu_to_be16(0);
 	// Memory Card size, in megabits.
-	mc_header.size = cpu_to_be16(numBlocks / 16);
+	mc_header.size = cpu_to_be16(totalPhysBlocks / 16);
 	// Encoding. (Assume cp1252 for now.)
 	mc_header.encoding = cpu_to_be16(SYS_FONT_ENCODING_ANSI);
 	// Calculate the header checksum.
@@ -431,8 +319,8 @@ void GcnCardPrivate::format(const QString &filename)
 	mc_bat_int[0].updated = cpu_to_be16(0);
 	mc_bat_int[1].updated = cpu_to_be16(1);
 	// Free block counter.
-	mc_bat_int[0].freeblocks = cpu_to_be16(numBlocks - 5);
-	mc_bat_int[1].freeblocks = cpu_to_be16(numBlocks - 5);
+	mc_bat_int[0].freeblocks = cpu_to_be16(freeBlocks);
+	mc_bat_int[1].freeblocks = cpu_to_be16(freeBlocks);
 	// Last allocated block.
 	mc_bat_int[0].lastalloc = cpu_to_be16(4);
 	mc_bat_int[1].lastalloc = cpu_to_be16(4);
@@ -489,7 +377,11 @@ void GcnCardPrivate::format(const QString &filename)
 
 	// Load the MemCardFile list.
 	// FIXME: Probably not necessary.
+	// (Was previously needed to emit blockCountChanged(),
+	//  but that's now done in checkTables() as well...)
 	loadMemCardFileList();
+
+	return 0;
 }
 
 /**
@@ -501,8 +393,8 @@ void GcnCardPrivate::resetUsedBlockMap(void)
 {
 	// Initialize the used block map.
 	// (The first 5 blocks are always used.)
-	usedBlockMap = QVector<uint8_t>(numBlocks, 0);
-	for (int i = 0; i < 5 && i < numBlocks; i++)
+	usedBlockMap = QVector<uint8_t>(totalPhysBlocks, 0);
+	for (int i = 0; i < 5 && i < totalPhysBlocks; i++)
 		usedBlockMap[i] = 1;
 }
 
@@ -764,6 +656,14 @@ int GcnCardPrivate::checkTables(void)
 	this->mc_bat = &mc_bat_int[tmp_idx];
 	this->mc_bat_hdr_idx = idx;
 
+	// Update block counts.
+	totalUserBlocks = (totalPhysBlocks - 5);
+	if (totalUserBlocks < 0)
+		totalUserBlocks = 0;
+	freeBlocks = this->mc_bat->freeblocks;
+	Q_Q(GcnCard);
+	emit q->blockCountChanged(totalPhysBlocks, totalUserBlocks, freeBlocks);
+
 	return 0;
 }
 
@@ -830,17 +730,19 @@ void GcnCardPrivate::loadMemCardFileList(void)
 	}
 
 	// Block count has changed.
-	emit q->blockCountChanged(
-		(this->numBlocks - 5),
-		this->mc_bat->freeblocks);
+	emit q->blockCountChanged(totalPhysBlocks, totalUserBlocks, freeBlocks);
 }
 
 /** GcnCard **/
 
 GcnCard::GcnCard(QObject *parent)
-	: QObject(parent)
-	, d_ptr(new GcnCardPrivate(this))
+	: Card(new GcnCardPrivate(this), parent)
 { }
+
+GcnCard::~GcnCard()
+{
+	// TODO: Is this needed anymore?
+}
 
 /**
  * Open an existing Memory Card image.
@@ -870,129 +772,6 @@ GcnCard *GcnCard::format(const QString& filename, QObject *parent)
 	GcnCardPrivate *const d = gcnCard->d_func();
 	d->format(filename);
 	return gcnCard;
-}
-
-GcnCard::~GcnCard()
-{
-	Q_D(GcnCard);
-	delete d;
-}
-
-/**
- * Check if the memory card is open.
- * @return True if open; false if not.
- */
-bool GcnCard::isOpen(void) const
-{
-	Q_D(const GcnCard);
-	return !!(d->file);
-}
-
-/**
- * Get the last error string.
- * Usually used for open() errors.
- * TODO: Change to error code constants for translation?
- * @return Error string.
- */
-QString GcnCard::errorString(void) const
-{
-	Q_D(const GcnCard);
-	return d->errorString;
-}
-
-/**
- * Get the memory card filename.
- * @return Memory card filename, or empty string if not open.
- */
-QString GcnCard::filename(void) const
-{
-	Q_D(const GcnCard);
-	return d->filename;
-}
-
-/**
- * Get the size of the memory card image, in bytes.
- * This is the full size of the memory card image.
- * @return Size of the memory card image, in bytes. (0 on error)
- */
-quint64 GcnCard::filesize(void) const
-{
-	if (!isOpen())
-		return 0;
-	Q_D(const GcnCard);
-	return d->file->size();
-}
-
-/**
- * Get the size of the memory card, in blocks.
- * NOTE: Includes the 5 reserved blocks. (e.g. MC1019 would return 1024)
- * @return Size of the memory card, in blocks. (Negative on error)
- */
-int GcnCard::sizeInBlocks(void) const
-{
-	if (!isOpen())
-		return -1;
-	Q_D(const GcnCard);
-	return d->numBlocks;
-}
-
-/**
- * Get the size of the memory card, in blocks. [minus 5 reserved blocks]
- * NOTE: Does NOT include the 5 reserved blocks. (e.g. MC1019 would return 1019)
- * @return Size of the memory card, in blocks. (Negative on error)
- */
-int GcnCard::sizeInBlocksNoSys(void) const
-{
-	if (!isOpen())
-		return -1;
-	Q_D(const GcnCard);
-	return (d->numBlocks > 5
-		? (d->numBlocks - 5)
-		: 0);
-}
-
-/**
- * Get the number of free blocks.
- * @return Free blocks. (Negative on error)
- */
-int GcnCard::freeBlocks(void) const
-{
-	if (!isOpen())
-		return -1;
-	Q_D(const GcnCard);
-	return d->mc_bat->freeblocks;
-}
-
-/**
- * Get the memory card block size, in bytes.
- * @return Memory card block size, in bytes. (Negative on error)
- */
-int GcnCard::blockSize(void) const
-{
-	if (!isOpen())
-		return -1;
-	Q_D(const GcnCard);
-	return d->blockSize;
-}
-
-/**
- * Read a block.
- * @param buf Buffer to read the block data into.
- * @param siz Size of buffer.
- * @param blockIdx Block index.
- * @return Bytes read on success; negative on error.
- */
-int GcnCard::readBlock(void *buf, int siz, uint16_t blockIdx)
-{
-	if (!isOpen())
-		return -1;
-	if (siz < blockSize())
-		return -2;
-	
-	// Read the specified block.
-	Q_D(GcnCard);
-	d->file->seek((int)blockIdx * blockSize());
-	return (int)d->file->read((char*)buf, blockSize());
 }
 
 /**
@@ -1140,7 +919,10 @@ MemCardFile *GcnCard::addLostFile(const card_direntry *dirEntry)
 	QVector<uint16_t> fatEntries;
 	fatEntries.reserve(dirEntry->length);
 
-	const uint16_t maxBlockNum = ((uint16_t)sizeInBlocks() - 1);
+	const uint16_t maxBlockNum = ((uint16_t)totalPhysBlocks() - 1);
+	// FIXME: <= 5? Maybe it should be < 5, but since
+	// GCN cards are supposed to be at least 59(64),
+	// this probably isn't a problem.
 	if (maxBlockNum <= 5 || maxBlockNum > 4091) {
 		// Invalid maximum block size. Don't initialize the FAT.
 		// TODO: Print an error message.
@@ -1333,16 +1115,4 @@ bool GcnCard::isBatValid(int idx) const
 	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_bat_valid))
 		return false;
 	return d->mc_bat_valid[idx];
-}
-
-/**
- * Have any errors been detected in this Memory Card?
- * @return Error flags.
- */
-QFlags<GcnCard::Error> GcnCard::errors(void) const
-{
-	Q_D(const GcnCard);
-	if (!isOpen())
-		return 0;
-	return d->errors;
 }
