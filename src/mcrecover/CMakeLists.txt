@@ -118,7 +118,6 @@ SET(mcrecover_SRCS
 	McRecoverQApplication.cpp
 	VarReplace.cpp
 	MemCardItemDelegate.cpp
-	FileComments.cpp
 	TaskbarButtonManager/TaskbarButtonManager.cpp
 	GcToolsQt.cpp
 	TranslationManager.cpp

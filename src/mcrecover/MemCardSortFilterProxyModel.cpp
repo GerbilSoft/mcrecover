@@ -21,8 +21,6 @@
 
 #include "MemCardSortFilterProxyModel.hpp"
 
-#include "FileComments.hpp"
-
 MemCardSortFilterProxyModel::MemCardSortFilterProxyModel(QObject *parent)
 	: QSortFilterProxyModel(parent)
 { }
@@ -43,18 +41,10 @@ bool MemCardSortFilterProxyModel::lessThan(const QModelIndex &left, const QModel
 	const QVariant vLeft = left.data();
 	const QVariant vRight = right.data();
 
-	// Check for FileComments.
-	if (vLeft.canConvert<FileComments>() &&
-	    vRight.canConvert<FileComments>())
-	{
-		// Compare the file comments.
-		// NOTE: Case-insensitive compare!
-		FileComments fcLeft = vLeft.value<FileComments>();
-		FileComments fcRight = vRight.value<FileComments>();
-		return (fcLeft.compare(fcRight, Qt::CaseInsensitive) < 0);
-	}
-	else if (vLeft.type() == QVariant::String &&
-		 vRight.type() == QVariant::String)
+	// FIXME: Verify that this works with embedded null characters (L'\0'),
+	// which is used to separate GameDesc from FileDesc in a single QString.
+	if (vLeft.type() == QVariant::String &&
+	    vRight.type() == QVariant::String)
 	{
 		// String. Do a case-insensitive comparison.
 		QString sLeft = vLeft.toString();

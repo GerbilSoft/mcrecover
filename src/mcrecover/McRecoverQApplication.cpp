@@ -32,7 +32,6 @@
 #include <QtGui/QStyle>
 
 // Custom types for QVariant.
-#include "FileComments.hpp"
 #include "GcnDateTime.hpp"
 
 // Translation Manager.
@@ -87,7 +86,6 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 #endif
 
 	// Register custom types for QVariant.
-	qRegisterMetaType<FileComments>("FileComments");
 	qRegisterMetaType<GcnDateTime>("GcnDateTime");
 
 	// Initialize the TranslationManager.

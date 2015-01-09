@@ -22,7 +22,6 @@
 #include "MemCardItemDelegate.hpp"
 
 #include "MemCardModel.hpp"
-#include "FileComments.hpp"
 #include "card.h"
 #include "McRecoverQApplication.hpp"
 
@@ -201,17 +200,31 @@ void MemCardItemDelegate::paint(QPainter *painter,
 			const QStyleOptionViewItem &option,
 			const QModelIndex &index) const
 {
-	if (!index.isValid() ||
-	    !index.data().canConvert<FileComments>())
-	{
-		// Index is invalid, or this isn't FileComments.
+	if (!index.isValid()) {
+		// Index is invalid.
 		// Use the default paint().
 		QStyledItemDelegate::paint(painter, option, index);
 		return;
 	}
 
-	// GCN file comments.
-	FileComments fileComments = index.data().value<FileComments>();
+	// GCN file comments: "GameDesc\0FileDesc"
+	// If no '\0' is present, assume this is regular text
+	// and use the default paint().
+	QString fileComments = index.data().toString();
+	int split = fileComments.indexOf(QChar(L'\0'));
+	if (split < 0) {
+		// No '\0' is present.
+		QSize sz = QStyledItemDelegate::sizeHint(option, index);
+		// Use the default paint().
+		QStyledItemDelegate::paint(painter, option, index);
+		return;
+	}
+
+	// TODO: Combine code with sizeHint().
+	QString gameDesc, fileDesc;
+	// TODO: Optimize with QStringRef?
+	gameDesc = fileComments.left(split);
+	fileDesc = fileComments.mid(split + 1);
 
 	// Alignment flags.
 	static const int HALIGN_FLAGS =
@@ -237,14 +250,18 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	QFont fontGameDesc = d->fontGameDesc(bgOption.widget);
 	QFont fontFileDesc = d->fontFileDesc(bgOption.widget);
 
+	// Total text height.
+	int textHeight = 0;
+
 	// Game description.
 	// NOTE: Width is decremented in order to prevent
 	// weird wordwrapping issues.
 	const QFontMetrics fmGameDesc(fontGameDesc);
 	QString gameDescElided = fmGameDesc.elidedText(
-		fileComments.gameDesc(), Qt::ElideRight, option.rect.width()-1);
+		gameDesc, Qt::ElideRight, option.rect.width()-1);
 	QRect rectGameDesc = option.rect;
 	rectGameDesc.setHeight(fmGameDesc.height());
+	textHeight += fmGameDesc.height();
 	rectGameDesc = fmGameDesc.boundingRect(
 		rectGameDesc, (textAlignment & HALIGN_FLAGS), gameDescElided);
 
@@ -252,10 +269,11 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	painter->setFont(fontFileDesc);
 	const QFontMetrics fmFileDesc(fontFileDesc);
 	QString fileDescElided = fmFileDesc.elidedText(
-		fileComments.fileDesc(), Qt::ElideRight, option.rect.width()-1);
+		fileDesc, Qt::ElideRight, option.rect.width()-1);
 	QRect rectFileDesc = option.rect;
 	rectFileDesc.setHeight(fmFileDesc.height());
-	rectFileDesc.setY(rectGameDesc.y() + rectGameDesc.height());
+	rectFileDesc.setY(rectGameDesc.y() + textHeight);
+	textHeight += fmFileDesc.height();
 	rectFileDesc = fmFileDesc.boundingRect(
 		rectFileDesc, (textAlignment & HALIGN_FLAGS), fileDescElided);
 
@@ -269,12 +287,12 @@ void MemCardItemDelegate::paint(QPainter *painter,
 
 		case Qt::AlignBottom:
 			// Bottom alignment.
-			diff = (option.rect.height() - rectGameDesc.height() - rectFileDesc.height());
+			diff = (option.rect.height() - textHeight);
 			break;
 
 		case Qt::AlignVCenter:
 			// Center alignment.
-			diff = (option.rect.height() - rectGameDesc.height() - rectFileDesc.height());
+			diff = (option.rect.height() - textHeight);
 			diff /= 2;
 			break;
 	}
@@ -334,10 +352,8 @@ void MemCardItemDelegate::paint(QPainter *painter,
 QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 				    const QModelIndex &index) const
 {
-	if (!index.isValid() ||
-	    !index.data().canConvert<FileComments>())
-	{
-		// Index is invalid, or this isn't FileComments.
+	if (!index.isValid()) {
+		// Index is invalid.
 		// Use the default sizeHint().
 		QSize sz = QStyledItemDelegate::sizeHint(option, index);
 
@@ -348,8 +364,28 @@ QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 		return sz;
 	}
 
-	// GCN file comments.
-	FileComments fileComments = index.data().value<FileComments>();
+	// GCN file comments: "GameDesc\0FileDesc"
+	// If no '\0' is present, assume this is regular text
+	// and use the default sizeHint().
+	QString fileComments = index.data().toString();
+	int split = fileComments.indexOf(QChar(L'\0'));
+	if (split < 0) {
+		// No '\0' is present.
+		// TODO: Combine with !index.isValid() case.
+		QSize sz = QStyledItemDelegate::sizeHint(option, index);
+
+		// Minimum height.
+		static const int MIN_H = (CARD_ICON_H + 4);
+		if (sz.height() < MIN_H)
+			sz.setHeight(MIN_H);
+		return sz;
+	}
+
+	// TODO: Combine code with paint().
+	QString gameDesc, fileDesc;
+	// TODO: Optimize with QStringRef?
+	gameDesc = fileComments.left(split);
+	fileDesc = fileComments.mid(split + 1);
 
 	// Get the fonts.
 	Q_D(const MemCardItemDelegate);
@@ -359,11 +395,11 @@ QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 
 	// Game description.
 	const QFontMetrics fmGameDesc(fontGameDesc);
-	QSize sz = fmGameDesc.size(0, fileComments.gameDesc());
+	QSize sz = fmGameDesc.size(0, gameDesc);
 
 	// File description.
 	const QFontMetrics fmFileDesc(fontFileDesc);
-	QSize fileSz = fmFileDesc.size(0, fileComments.fileDesc());
+	QSize fileSz = fmFileDesc.size(0, fileDesc);
 	sz.setHeight(sz.height() + fileSz.height());
 
 	if (fileSz.width() > sz.width())
