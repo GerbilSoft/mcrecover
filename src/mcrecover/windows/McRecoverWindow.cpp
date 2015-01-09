@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * McRecoverWindow.cpp: Main window.                                       *
  *                                                                         *
- * Copyright (c) 2012-2014 by David Korth.                                 *
+ * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -29,8 +29,8 @@
 // PcreRegex is needed to access pcre configuration.
 #include "PcreRegex.hpp"
 
-// MemCard classes.
-#include "card/MemCard.hpp"
+// GcnCard classes.
+#include "card/GcnCard.hpp"
 #include "card/MemCardFile.hpp"
 #include "card/MemCardModel.hpp"
 #include "card/MemCardItemDelegate.hpp"
@@ -103,7 +103,7 @@ class McRecoverWindowPrivate
 		bool scanningDisabled;
 
 		// Memory Card.
-		MemCard *card;
+		GcnCard *card;
 		MemCardModel *model;
 		MemCardSortFilterProxyModel *proxyModel;
 
@@ -1006,8 +1006,8 @@ void McRecoverWindow::openCard(const QString &filename)
 
 	// Open the specified memory card image.
 	// TODO: Set this as the last path?
-	//d->card = MemCard::open(filename, this);
-	d->card = MemCard::open(filename, this);
+	//d->card = GcnCard::open(filename, this);
+	d->card = GcnCard::open(filename, this);
 	if (!d->card || !d->card->isOpen()) {
 		// Could not open the card.
 		static const QChar chrBullet(0x2022);  // U+2022: BULLET
@@ -1015,7 +1015,7 @@ void McRecoverWindow::openCard(const QString &filename)
 		QString errMsg = tr("An error occurred while opening %1:")
 					.arg(filename_noPath) +
 				QChar(L'\n') + chrBullet + QChar(L' ') +
-				(d->card ? d->card->errorString() : tr("MemCard::open() failed."));
+				(d->card ? d->card->errorString() : tr("GcnCard::open() failed."));
 		d->ui.msgWidget->showMessage(errMsg, MessageWidget::ICON_WARNING);
 		closeCard(true);
 		return;
@@ -1030,7 +1030,7 @@ void McRecoverWindow::openCard(const QString &filename)
 	if (lastSlash >= 0)
 		d->displayFilename.remove(0, lastSlash + 1);
 
-	// Set the MemCardView's MemCard to the
+	// Set the MemCardView's GcnCard to the
 	// selected card in the QTreeView.
 	d->ui.mcCardView->setCard(d->card);
 
@@ -1056,31 +1056,31 @@ void McRecoverWindow::openCard(const QString &filename)
 	// Check for other card errors.
 	// NOTE: These aren't retranslated if the UI is retranslated.
 	QStringList sl_cardErrors;
-	QFlags<MemCard::Error> cardErrors = d->card->errors();
-	if (cardErrors & MemCard::MCE_SZ_TOO_SMALL) {
+	QFlags<GcnCard::Error> cardErrors = d->card->errors();
+	if (cardErrors & GcnCard::MCE_SZ_TOO_SMALL) {
 		sl_cardErrors +=
 			tr("The card image is too small. (Card image is %L1 bytes; should be at least 512 KB.)")
 			.arg(d->card->filesize());
 	}
-	if (cardErrors & MemCard::MCE_SZ_TOO_BIG) {
+	if (cardErrors & GcnCard::MCE_SZ_TOO_BIG) {
 		// TODO: Convert filesize to KB/MB/GB?
 		sl_cardErrors +=
 			tr("The card image is too big. (Card image is %L1 bytes; should be 16 MB or less.)")
 			.arg(d->card->filesize());
 	}
-	if (cardErrors & MemCard::MCE_SZ_NON_POW2) {
+	if (cardErrors & GcnCard::MCE_SZ_NON_POW2) {
 		// TODO: Convert filesize to KB/MB/GB?
 		sl_cardErrors +=
 			tr("The card image size is not a power of two. (Card image is %L1 bytes.)")
 			.arg(d->card->filesize());
 	}
-	if (cardErrors & MemCard::MCE_INVALID_HEADER) {
+	if (cardErrors & GcnCard::MCE_INVALID_HEADER) {
 		sl_cardErrors += tr("The header checksum is invalid.");
 	}
-	if (cardErrors & MemCard::MCE_INVALID_DATS) {
+	if (cardErrors & GcnCard::MCE_INVALID_DATS) {
 		sl_cardErrors += tr("Both directory tables are invalid.");
 	}
-	if (cardErrors & MemCard::MCE_INVALID_BATS) {
+	if (cardErrors & GcnCard::MCE_INVALID_BATS) {
 		sl_cardErrors += tr("Both block tables are invalid.");
 	}
 
@@ -1548,7 +1548,7 @@ void McRecoverWindow::memCardModel_layoutChanged(void)
 
 void McRecoverWindow::memCardModel_rowsInserted(void)
 {
-	// A new file entry was added to the MemCard.
+	// A new file entry was added to the GcnCard.
 	// Update the QTreeView columns.
 	// FIXME: This doesn't work the first time a file is added...
 	Q_D(McRecoverWindow);

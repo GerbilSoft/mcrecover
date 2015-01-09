@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * MemCardFile.hpp: Memory Card file entry class.                          *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -44,8 +44,7 @@ class QIODevice;
 class GcImage;
 #include "GcImageWriter.hpp"
 
-// MemCard class.
-class MemCard;
+class GcnCard;
 
 class MemCardFilePrivate;
 
@@ -80,24 +79,24 @@ class MemCardFile : public QObject
 
 	public:
 		/**
-		 * Create a MemCardFile for a MemCard.
+		 * Create a MemCardFile for a GcnCard.
 		 * This constructor is for valid files.
 		 * @param card MemCard.
-		 * @param fileIdx File index in MemCard.
+		 * @param fileIdx File index in GcnCard.
 		 * @param dat Directory table.
 		 * @param bat Block allocation table.
 		 */
-		MemCardFile(MemCard *card, const int fileIdx,
+		MemCardFile(GcnCard *card, const int fileIdx,
 				const card_dat *dat, const card_bat *bat);
 
 		/**
-		 * Create a MemCardFile for a MemCard.
+		 * Create a MemCardFile for a GcnCard.
 		 * This constructor is for "lost" files.
-		 * @param card MemCard.
+		 * @param card GcnCard.
 		 * @param dirEntry Constructed directory entry.
 		 * @param fatEntries FAT entries.
 		 */
-		MemCardFile(MemCard *card,
+		MemCardFile(GcnCard *card,
 				const card_direntry *dirEntry,
 				const QVector<uint16_t> &fatEntries);
 

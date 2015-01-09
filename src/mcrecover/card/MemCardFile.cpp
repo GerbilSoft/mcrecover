@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * MemCardFile.cpp: Memory Card file entry class.                          *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -23,8 +23,8 @@
 #include "card.h"
 #include "util/byteswap.h"
 
-// MemCard class.
-#include "MemCard.hpp"
+// GcnCard class.
+#include "GcnCard.hpp"
 
 // GcImage class.
 #include "GcImage.hpp"
@@ -56,25 +56,25 @@ class MemCardFilePrivate
 		 * Initialize the MemCardFile private class.
 		 * This constructor is for valid files.
 		 * @param q MemCardFile.
-		 * @param card MemCard.
-		 * @param fileIdx File index in MemCard.
+		 * @param card GcnCard.
+		 * @param fileIdx File index in GcnCard.
 		 * @param dat Directory table.
 		 * @param bat Block allocation table.
 		 */
 		MemCardFilePrivate(MemCardFile *q, 
-				MemCard *card, const int fileIdx,
+				GcnCard *card, const int fileIdx,
 				const card_dat *dat, const card_bat *bat);
 
 		/**
 		 * Initialize the MemCardFile private class.
 		 * This constructor is for "lost" files.
 		 * @param q MemCardFile.
-		 * @param card MemCard.
+		 * @param card GcnCard.
 		 * @param dirEntry Constructed directory entry.
 		 * @param fatEntries FAT entries.
 		 */
 		MemCardFilePrivate(MemCardFile *q,
-				MemCard *card,
+				GcnCard *card,
 				const card_direntry *dirEntry,
 				const QVector<uint16_t> &fatEntries);
 
@@ -92,7 +92,7 @@ class MemCardFilePrivate
 		void init(void);
 
 	public:
-		MemCard *const card;
+		GcnCard *const card;
 
 		// Card directory information.
 		const int fileIdx;		// If -1, this is a lost file.
@@ -199,13 +199,13 @@ class MemCardFilePrivate
  * Initialize the MemCardFile private class.
  * This constructor is for valid files.
  * @param q MemCardFile.
- * @param card MemCard.
- * @param fileIdx File index in MemCard.
+ * @param card GcnCard.
+ * @param fileIdx File index in GcnCard.
  * @param dat Directory table.
  * @param bat Block allocation table.
  */
 MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
-		MemCard *card, const int fileIdx,
+		GcnCard *card, const int fileIdx,
 		const card_dat *dat, const card_bat *bat)
 	: q_ptr(q)
 	, card(card)
@@ -254,12 +254,12 @@ MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
  * Initialize the MemCardFile private class.
  * This constructor is for "lost" files.
  * @param q MemCardFile.
- * @param card MemCard.
+ * @param card GcnCard.
  * @param dirEntry Constructed directory entry.
  * @param fatEntries FAT entries.
  */
 MemCardFilePrivate::MemCardFilePrivate(MemCardFile *q,
-		MemCard *card, const card_direntry *dirEntry,
+		GcnCard *card, const card_direntry *dirEntry,
 		const QVector<uint16_t> &fatEntries)
 	: q_ptr(q)
 	, card(card)
@@ -854,27 +854,27 @@ QString MemCardFilePrivate::StripInvalidDosChars(
 /** MemCardFile **/
 
 /**
- * Create a MemCardFile for a MemCard.
+ * Create a MemCardFile for a GcnCard.
  * This constructor is for valid files.
- * @param card MemCard.
- * @param fileIdx File index in MemCard.
+ * @param card GcnCard.
+ * @param fileIdx File index in GcnCard.
  * @param dat Directory table.
  * @param bat Block allocation table.
  */
-MemCardFile::MemCardFile(MemCard *card, const int fileIdx,
+MemCardFile::MemCardFile(GcnCard *card, const int fileIdx,
 			const card_dat *dat, const card_bat *bat)
 	: QObject(card)
 	, d_ptr(new MemCardFilePrivate(this, card, fileIdx, dat, bat))
 { }
 
 /**
- * Create a MemCardFile for a MemCard.
+ * Create a MemCardFile for a GcnCard.
  * This constructor is for "lost" files.
- * @param card MemCard.
+ * @param card GcnCard.
  * @param dirEntry Constructed directory entry.
  * @param fatEntries FAT entries.
  */
-MemCardFile::MemCardFile(MemCard *card,
+MemCardFile::MemCardFile(GcnCard *card,
 		const card_direntry *dirEntry,
 		const QVector<uint16_t> &fatEntries)
 	: QObject(card)

@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * MemCard.hpp: Memory Card reader class.                                  *
+ * GcnCard.hpp: Memory Card reader class.                                  *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,8 +19,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MEMCARD_HPP__
-#define __MCRECOVER_MEMCARD_HPP__
+#ifndef __MCRECOVER_CARD_GCNCARD_HPP__
+#define __MCRECOVER_CARD_GCNCARD_HPP__
 
 // C includes.
 #include <stdint.h>
@@ -38,10 +38,8 @@ class QTextCodec;
 // MemCardFile
 class MemCardFile;
 
-// MemCard private class.
-class MemCardPrivate;
-
-class MemCard : public QObject
+class GcnCardPrivate;
+class GcnCard : public QObject
 {
 	Q_OBJECT
 
@@ -67,55 +65,55 @@ class MemCard : public QObject
 	Q_PROPERTY(int activeBatHdrIdx READ activeBatHdrIdx)
 
 	protected:
-		MemCard(QObject *parent = 0);
+		GcnCard(QObject *parent = 0);
 	public:
-		~MemCard();
+		~GcnCard();
 
 	public:
 		/**
 		 * Open an existing Memory Card image.
 		 * @param filename Filename.
 		 * @param parent Parent object.
-		 * @return MemCard object, or nullptr on error.
+		 * @return GcnCard object, or nullptr on error.
 		 */
-		static MemCard *open(const QString& filename, QObject *parent);
+		static GcnCard *open(const QString& filename, QObject *parent);
 
 		/**
 		 * Format a new Memory Card image.
 		 * @param filename Filename.
 		 * @param parent Parent object.
-		 * @return MemCard object, or nullptr on error.
+		 * @return GcnCard object, or nullptr on error.
 		 */
-		static MemCard *format(const QString& filename, QObject *parent);
+		static GcnCard *format(const QString& filename, QObject *parent);
 
 	protected:
-		MemCardPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(MemCard)
+		GcnCardPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(GcnCard)
 	private:
-		Q_DISABLE_COPY(MemCard)
+		Q_DISABLE_COPY(GcnCard)
 
 	signals:
 		/**
-		 * Files are about to be added to the MemCard.
+		 * Files are about to be added to the GcnCard.
 		 * @param start First file index.
 		 * @param end Last file index.
 		 */
 		void filesAboutToBeInserted(int start, int end);
 
 		/**
-		 * Files have been added to the MemCard.
+		 * Files have been added to the GcnCard.
 		 */
 		void filesInserted(void);
 
 		/**
-		 * Files are about to be removed from the MemCard.
+		 * Files are about to be removed from the GcnCard.
 		 * @param start First file index.
 		 * @param end Last file index.
 		 */
 		void filesAboutToBeRemoved(int start, int end);
 
 		/**
-		 * Files have been removed from the MemCard.
+		 * Files have been removed from the GcnCard.
 		 */
 		void filesRemoved(void);
 
@@ -250,7 +248,7 @@ class MemCard : public QObject
 		 * Add a "lost" file.
 		 * NOTE: This is a debugging version.
 		 * Add more comprehensive versions with a block map specification.
-		 * @return MemCardFile added to the MemCard, or nullptr on error.
+		 * @return MemCardFile added to the GcnCard, or nullptr on error.
 		 */
 		MemCardFile *addLostFile(const card_direntry *dirEntry);
 
@@ -258,14 +256,14 @@ class MemCard : public QObject
 		 * Add a "lost" file.
 		 * @param dirEntry Directory entry.
 		 * @param fatEntries FAT entries.
-		 * @return MemCardFile added to the MemCard, or nullptr on error.
+		 * @return MemCardFile added to the GcnCard, or nullptr on error.
 		 */
 		MemCardFile *addLostFile(const card_direntry *dirEntry, const QVector<uint16_t> &fatEntries);
 
 		/**
 		 * Add "lost" files.
 		 * @param filesFoundList List of SearchData.
-		 * @return List of MemCardFiles added to the MemCard, or empty list on error.
+		 * @return List of MemCardFiles added to the GcnCard, or empty list on error.
 		 */
 		QList<MemCardFile*> addLostFiles(const QLinkedList<SearchData> &filesFoundList);
 
@@ -359,6 +357,6 @@ class MemCard : public QObject
 		QFlags<Error> errors(void) const;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(MemCard::Errors);
+Q_DECLARE_OPERATORS_FOR_FLAGS(GcnCard::Errors);
 
-#endif /* __MCRECOVER_MEMCARD_HPP__ */
+#endif /* __MCRECOVER_CARD_GCNCARD_HPP__ */

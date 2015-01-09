@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * MemCardView.hpp: MemCard view widget.                                   *
+ * MemCardView.hpp: GcnCard view widget.                                   *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -24,8 +24,8 @@
 
 #include <QtGui/QWidget>
 
-// MemCard class.
-class MemCard;
+// GcnCard class.
+class GcnCard;
 
 class MemCardViewPrivate;
 
@@ -33,7 +33,7 @@ class MemCardView : public QWidget
 {
 	Q_OBJECT
 
-	Q_PROPERTY(MemCard* card READ card WRITE setCard)
+	Q_PROPERTY(GcnCard* card READ card WRITE setCard)
 
 	public:
 		MemCardView(QWidget *parent = 0);
@@ -47,16 +47,16 @@ class MemCardView : public QWidget
 
 	public:
 		/**
-		 * Get the MemCard being displayed.
-		 * @return MemCard.
+		 * Get the GcnCard being displayed.
+		 * @return GcnCard.
 		 */
-		MemCard *card(void) const;
+		GcnCard *card(void) const;
 
 		/**
-		 * Set the MemCard being displayed.
-		 * @param file MemCard.
+		 * Set the GcnCard being displayed.
+		 * @param file GcnCard.
 		 */
-		void setCard(MemCard *card);
+		void setCard(GcnCard *card);
 
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
@@ -64,13 +64,13 @@ class MemCardView : public QWidget
 
 	protected slots:
 		/**
-		 * MemCard object was destroyed.
+		 * GcnCard object was destroyed.
 		 * @param obj QObject that was destroyed.
 		 */
 		void memCard_destroyed_slot(QObject *obj = 0);
 
 		/**
-		 * MemCard's block count has changed.
+		 * GcnCard's block count has changed.
 		 */
 		void memCard_blockCountChanged_slot(void);
 };

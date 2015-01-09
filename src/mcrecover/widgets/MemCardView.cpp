@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * MemCardView.hpp: MemCard view widget.                                   *
+ * MemCardView.hpp: GcnCard view widget.                                   *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -21,7 +21,7 @@
 
 #include "MemCardView.hpp"
 
-#include "card/MemCard.hpp"
+#include "card/GcnCard.hpp"
 #include "Checksum.hpp"
 #include "McRecoverQApplication.hpp"
 
@@ -52,7 +52,7 @@ class MemCardViewPrivate
 	public:
 		Ui::MemCardView ui;
 
-		MemCard *card;
+		GcnCard *card;
 
 		/**
 		 * Update the widget display.
@@ -218,24 +218,24 @@ MemCardView::~MemCardView()
 }
 
 /**
- * Get the MemCard being displayed.
- * @return MemCard.
+ * Get the GcnCard being displayed.
+ * @return GcnCard.
  */
-MemCard *MemCardView::card(void) const
+GcnCard *MemCardView::card(void) const
 {
 	Q_D(const MemCardView);
 	return d->card;
 }
 
 /**
- * Set the MemCard being displayed.
- * @param card MemCard.
+ * Set the GcnCard being displayed.
+ * @param card GcnCard.
  */
-void MemCardView::setCard(MemCard *card)
+void MemCardView::setCard(GcnCard *card)
 {
 	Q_D(MemCardView);
 
-	// Disconnect the MemCard's destroyed() signal if a MemCard is already set.
+	// Disconnect the GcnCard's destroyed() signal if a GcnCard is already set.
 	if (d->card) {
 		disconnect(d->card, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(memCard_destroyed_slot(QObject*)));
@@ -245,7 +245,7 @@ void MemCardView::setCard(MemCard *card)
 
 	d->card = card;
 
-	// Connect the MemCard's destroyed() signal.
+	// Connect the GcnCard's destroyed() signal.
 	if (d->card) {
 		connect(d->card, SIGNAL(destroyed(QObject*)),
 			this, SLOT(memCard_destroyed_slot(QObject*)));
@@ -277,7 +277,7 @@ void MemCardView::changeEvent(QEvent *event)
 /** Slots. **/
 
 /**
- * MemCard object was destroyed.
+ * GcnCard object was destroyed.
  * @param obj QObject that was destroyed.
  */
 void MemCardView::memCard_destroyed_slot(QObject *obj)
@@ -285,7 +285,7 @@ void MemCardView::memCard_destroyed_slot(QObject *obj)
 	Q_D(MemCardView);
 
 	if (obj == d->card) {
-		// Our MemCard was destroyed.
+		// Our GcnCard was destroyed.
 		d->card = nullptr;
 
 		// Update the widget display.
@@ -294,7 +294,7 @@ void MemCardView::memCard_destroyed_slot(QObject *obj)
 }
 
 /**
- * MemCard's block count has changed.
+ * GcnCard's block count has changed.
  */
 void MemCardView::memCard_blockCountChanged_slot(void)
 {

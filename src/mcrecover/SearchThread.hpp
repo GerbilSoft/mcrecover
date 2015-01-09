@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * SearchThread.hpp: "Lost" file search thread.                            *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -33,10 +33,8 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 
-// MemCard
-class MemCard;
+class GcnCard;
 
-// SearchThread private class.
 class SearchThreadPrivate;
 
 class SearchThread : public QObject
@@ -119,7 +117,7 @@ class SearchThread : public QObject
 		 * If successful, retrieve the file list using dirEntryList().
 		 * If an error occurs, check the errorString(). (TODO)
 		 */
-		int searchMemCard(MemCard *card, char preferredRegion = 0, bool searchUsedBlocks = false);
+		int searchMemCard(GcnCard *card, char preferredRegion = 0, bool searchUsedBlocks = false);
 
 		/**
 		 * Search a memory card for "lost" files.
@@ -138,7 +136,7 @@ class SearchThread : public QObject
 		 * In the case of searchFinished(), use dirEntryList() to get
 		 * the list of files.
 		 */
-		int searchMemCard_async(MemCard *card, char preferredRegion = 0, bool searchUsedBlocks = false);
+		int searchMemCard_async(GcnCard *card, char preferredRegion = 0, bool searchUsedBlocks = false);
 
 	private slots:
 		/**

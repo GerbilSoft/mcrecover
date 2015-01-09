@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * MemCardModel.cpp: QAbstractListModel for MemCard.                       *
+ * MemCardModel.cpp: QAbstractListModel for GcnCard.                       *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -22,8 +22,8 @@
 #include "MemCardModel.hpp"
 #include "McRecoverQApplication.hpp"
 
-// MemCard classes.
-#include "MemCard.hpp"
+// GcnCard classes.
+#include "GcnCard.hpp"
 #include "MemCardFile.hpp"
 #include "McRecoverQApplication.hpp"
 
@@ -61,7 +61,7 @@ class MemCardModelPrivate
 		Q_DISABLE_COPY(MemCardModelPrivate)
 
 	public:
-		MemCard *card;
+		GcnCard *card;
 
 		QHash<const MemCardFile*, IconAnimHelper*> animState;
 
@@ -113,7 +113,7 @@ class MemCardModelPrivate
 		 * Cached copy of card->numFiles().
 		 * This value is needed after the card is destroyed,
 		 * so we need to cache it here, since the destroyed()
-		 * slot might be run *after* the MemCard is deleted.
+		 * slot might be run *after* the GcnCard is deleted.
 		 */
 		int numFiles;
 
@@ -508,18 +508,18 @@ QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int 
  * Set the memory card to use in this model.
  * @param card Memory card.
  */
-void MemCardModel::setMemCard(MemCard *card)
+void MemCardModel::setMemCard(GcnCard *card)
 {
 	Q_D(MemCardModel);
 
-	// Disconnect the MemCard's changed() signal if a MemCard is already set.
+	// Disconnect the GcnCard's changed() signal if a GcnCard is already set.
 	if (d->card) {
 		// Notify the view that we're about to remove all rows.
 		d->numFiles = d->card->numFiles();
 		if (d->numFiles > 0)
 			beginRemoveRows(QModelIndex(), 0, (d->numFiles - 1));
 
-		// Disconnect the MemCard's signals.
+		// Disconnect the GcnCard's signals.
 		disconnect(d->card, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(memCard_destroyed_slot(QObject*)));
 		disconnect(d->card, SIGNAL(filesAboutToBeInserted(int,int)),
@@ -550,7 +550,7 @@ void MemCardModel::setMemCard(MemCard *card)
 		// Initialize the animation state.
 		d->initAnimState();
 
-		// Connect the MemCard's signals.
+		// Connect the GcnCard's signals.
 		connect(d->card, SIGNAL(destroyed(QObject*)),
 			this, SLOT(memCard_destroyed_slot(QObject*)));
 		connect(d->card, SIGNAL(filesAboutToBeInserted(int,int)),
@@ -615,7 +615,7 @@ void MemCardModel::animTimerSlot(void)
 }
 
 /**
- * MemCard object was destroyed.
+ * GcnCard object was destroyed.
  * @param obj QObject that was destroyed.
  */
 void MemCardModel::memCard_destroyed_slot(QObject *obj)
@@ -623,7 +623,7 @@ void MemCardModel::memCard_destroyed_slot(QObject *obj)
 	Q_D(MemCardModel);
 
 	if (obj == d->card) {
-		// Our MemCard was destroyed.
+		// Our GcnCard was destroyed.
 		int old_numFiles = d->numFiles;
 		if (old_numFiles > 0)
 			beginRemoveRows(QModelIndex(), 0, (old_numFiles - 1));
@@ -635,7 +635,7 @@ void MemCardModel::memCard_destroyed_slot(QObject *obj)
 }
 
 /**
- * Files are about to be added to the MemCard.
+ * Files are about to be added to the GcnCard.
  * @param start First file index.
  * @param end Last file index.
  */
@@ -651,7 +651,7 @@ void MemCardModel::memCard_filesAboutToBeInserted_slot(int start, int end)
 }
 
 /**
- * Files have been added to the MemCard.
+ * Files have been added to the GcnCard.
  */
 void MemCardModel::memCard_filesInserted_slot(void)
 {
@@ -681,7 +681,7 @@ void MemCardModel::memCard_filesInserted_slot(void)
 }
 
 /**
- * Files are about to be removed from the MemCard.
+ * Files are about to be removed from the GcnCard.
  * @param start First file index.
  * @param end Last file index.
  */
@@ -699,7 +699,7 @@ void MemCardModel::memCard_filesAboutToBeRemoved_slot(int start, int end)
 }
 
 /**
- * Files have been removed from the MemCard.
+ * Files have been removed from the GcnCard.
  */
 void MemCardModel::memCard_filesRemoved_slot(void)
 {

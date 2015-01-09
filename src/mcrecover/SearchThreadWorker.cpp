@@ -21,8 +21,8 @@
 
 #include "SearchThreadWorker.hpp"
 
-// MemCard
-#include "card/MemCard.hpp"
+// GcnCard
+#include "card/GcnCard.hpp"
 
 // GCN Memory Card File Database
 #include "GcnMcFileDb.hpp"
@@ -64,7 +64,7 @@ class SearchThreadWorkerPrivate
 		// searchMemCard() parameters used when this worker
 		// is called by a thread's started() signal.
 		struct {
-			MemCard *card;
+			GcnCard *card;
 			QVector<GcnMcFileDb*> dbs;
 
 			// Original thread.
@@ -123,7 +123,7 @@ QLinkedList<SearchData> SearchThreadWorker::filesFoundList(void)
  * If successful, retrieve the file list using dirEntryList().
  * If an error occurs, check the errorString(). (TODO)
  */
-int SearchThreadWorker::searchMemCard(MemCard *card, const QVector<GcnMcFileDb*> &dbs,
+int SearchThreadWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*> &dbs,
 				      char preferredRegion, bool searchUsedBlocks)
 {
 	Q_D(SearchThreadWorker);
@@ -342,7 +342,7 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const QVector<GcnMcFileDb*>
  * @param preferredRegion Preferred region.
  * @param searchUsedBlocks If true, search all blocks, not just blocks marked as empty.
  */
-void SearchThreadWorker::setThreadInfo(MemCard *card, const QVector<GcnMcFileDb*> &dbs,
+void SearchThreadWorker::setThreadInfo(GcnCard *card, const QVector<GcnMcFileDb*> &dbs,
 				       QThread *orig_thread,
 				       char preferredRegion, bool searchUsedBlocks)
 {

@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * MemCard.cpp: Memory Card reader class.                                  *
+ * GcnCard.cpp: Memory Card reader class.                                  *
  *                                                                         *
  * Copyright (c) 2012-2013 by David Korth.                                 *
  *                                                                         *
@@ -19,7 +19,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#include "MemCard.hpp"
+#include "GcnCard.hpp"
 #include "card.h"
 #include "util/byteswap.h"
 
@@ -40,20 +40,20 @@
 
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
-/** MemCardPrivate **/
+/** GcnCardPrivate **/
 
-class MemCardPrivate
+class GcnCardPrivate
 {
 	public:
-		MemCardPrivate(MemCard *q);
-		~MemCardPrivate();
+		GcnCardPrivate(GcnCard *q);
+		~GcnCardPrivate();
 		void init(void);
 
 	protected:
-		MemCard *const q_ptr;
-		Q_DECLARE_PUBLIC(MemCard)
+		GcnCard *const q_ptr;
+		Q_DECLARE_PUBLIC(GcnCard)
 	private:
-		Q_DISABLE_COPY(MemCardPrivate)
+		Q_DISABLE_COPY(GcnCardPrivate)
 
 	public:
 		// Static initialization.
@@ -195,14 +195,14 @@ class MemCardPrivate
 		void loadMemCardFileList(void);
 
 		// Card errors.
-		QFlags<MemCard::Error> errors;
+		QFlags<GcnCard::Error> errors;
 };
 
 // Text codecs.
-QTextCodec *MemCardPrivate::TextCodecUS = nullptr;	// cp1252
-QTextCodec *MemCardPrivate::TextCodecJP = nullptr;	// Shift-JIS
+QTextCodec *GcnCardPrivate::TextCodecUS = nullptr;	// cp1252
+QTextCodec *GcnCardPrivate::TextCodecJP = nullptr;	// Shift-JIS
 
-MemCardPrivate::MemCardPrivate(MemCard *q)
+GcnCardPrivate::GcnCardPrivate(GcnCard *q)
 	: q_ptr(q)
 	, file(nullptr)
 	, filesize(0)
@@ -229,7 +229,7 @@ MemCardPrivate::MemCardPrivate(MemCard *q)
 	memset(mc_bat_valid, 0, sizeof(mc_bat_valid));
 }
 
-MemCardPrivate::~MemCardPrivate()
+GcnCardPrivate::~GcnCardPrivate()
 {
 	// Clear the MemCardFile list.
 	qDeleteAll(lstMemCardFile);
@@ -245,7 +245,7 @@ MemCardPrivate::~MemCardPrivate()
 /**
  * Static member initialization.
  */
-void MemCardPrivate::StaticInit(void)
+void GcnCardPrivate::StaticInit(void)
 {
 	static bool init = false;
 	if (!init) {
@@ -263,11 +263,11 @@ void MemCardPrivate::StaticInit(void)
 
 /**
  * Open an existing Memory Card image.
- * NOTE: This must be called *after* MemCard is initialized!
+ * NOTE: This must be called *after* GcnCard is initialized!
  * @param filename Memory Card image filename.
  * @return 0 on success; non-zero on error. (also check errorString)
  */
-void MemCardPrivate::open(const QString &filename)
+void GcnCardPrivate::open(const QString &filename)
 {
 	if (file) {
 		// File is already open.
@@ -287,7 +287,7 @@ void MemCardPrivate::open(const QString &filename)
 	}
 
 	// Open the file.
-	Q_Q(MemCard);
+	Q_Q(GcnCard);
 	QFile *tmp_file = new QFile(filename, q);
 	if (!tmp_file->open(QIODevice::ReadOnly)) {
 		// Error opening the file.
@@ -307,17 +307,17 @@ void MemCardPrivate::open(const QString &filename)
 	// Make sure the size isn't out of range.
 	if (this->filesize < (64 * blockSize)) {
 		// Fewer than 59 (64) blocks. Too small.
-		this->errors |= MemCard::MCE_SZ_TOO_SMALL;
+		this->errors |= GcnCard::MCE_SZ_TOO_SMALL;
 	} else if (filesize > (2048 * blockSize)) {
 		// Larger than 16 MB. Too big.
 		// Only read the first 16 MB.
-		this->errors |= MemCard::MCE_SZ_TOO_BIG;
+		this->errors |= GcnCard::MCE_SZ_TOO_BIG;
 		this->filesize = (2048 * blockSize);
 	}
 
 	if (!isPow2(filesize)) {
 		// Size is not a power of 2.
-		this->errors |= MemCard::MCE_SZ_NON_POW2;
+		this->errors |= GcnCard::MCE_SZ_NON_POW2;
 	}
 
 	// Calculate the number of blocks.
@@ -340,7 +340,7 @@ void MemCardPrivate::open(const QString &filename)
  * TODO: Parameters.
  * @return 0 on success; non-zero on error. (also check errorString)
  */
-void MemCardPrivate::format(const QString &filename)
+void GcnCardPrivate::format(const QString &filename)
 {
 	if (file) {
 		// File is already open.
@@ -360,7 +360,7 @@ void MemCardPrivate::format(const QString &filename)
 	}
 
 	// Open the file.
-	Q_Q(MemCard);
+	Q_Q(GcnCard);
 	QFile *tmp_file = new QFile(filename, q);
 	if (!tmp_file->open(QIODevice::ReadWrite)) {
 		// Error opening the file.
@@ -497,7 +497,7 @@ void MemCardPrivate::format(const QString &filename)
  * This function should be called on initial load
  * and on directory/block table reload.
  */
-void MemCardPrivate::resetUsedBlockMap(void)
+void GcnCardPrivate::resetUsedBlockMap(void)
 {
 	// Initialize the used block map.
 	// (The first 5 blocks are always used.)
@@ -510,7 +510,7 @@ void MemCardPrivate::resetUsedBlockMap(void)
  * Load the memory card system information.
  * @return 0 on success; non-zero on error.
  */
-int MemCardPrivate::loadSysInfo(void)
+int GcnCardPrivate::loadSysInfo(void)
 {
 	if (!file)
 		return -1;
@@ -570,7 +570,7 @@ int MemCardPrivate::loadSysInfo(void)
 
 	if (headerChecksumValue.expected != headerChecksumValue.actual) {
 		// Header checksum is invalid.
-		this->errors |= MemCard::MCE_INVALID_HEADER;
+		this->errors |= GcnCard::MCE_INVALID_HEADER;
 	}
 
 	/**
@@ -635,7 +635,7 @@ int MemCardPrivate::loadSysInfo(void)
  * @param checksum	[out] Calculated checksum. (AddSubDual16)
  * @return 0 on success; non-zero on error.
  */
-int MemCardPrivate::loadDirTable(card_dat *dat, uint32_t address, uint32_t *checksum)
+int GcnCardPrivate::loadDirTable(card_dat *dat, uint32_t address, uint32_t *checksum)
 {
 	file->seek(address);
 	qint64 sz = file->read((char*)dat, sizeof(*dat));
@@ -677,7 +677,7 @@ int MemCardPrivate::loadDirTable(card_dat *dat, uint32_t address, uint32_t *chec
  * @param checksum	[out] Calculated checksum. (AddSubDual16)
  * @return 0 on success; non-zero on error.
  */
-int MemCardPrivate::loadBlockTable(card_bat *bat, uint32_t address, uint32_t *checksum)
+int GcnCardPrivate::loadBlockTable(card_bat *bat, uint32_t address, uint32_t *checksum)
 {
 	file->seek(address);
 	qint64 sz = file->read((char*)bat, sizeof(*bat));
@@ -712,7 +712,7 @@ int MemCardPrivate::loadBlockTable(card_bat *bat, uint32_t address, uint32_t *ch
  * NOTE: All tables must be loaded first!
  * @return 0 on success; non-zero on error.
  */
-int MemCardPrivate::checkTables(void)
+int GcnCardPrivate::checkTables(void)
 {
 	/**
 	 * Determine which directory table to use.
@@ -729,7 +729,7 @@ int MemCardPrivate::checkTables(void)
 		idx = !idx;
 		if (!mc_dat_valid[idx]) {
 			// Both directory tables are invalid.
-			this->errors |= MemCard::MCE_INVALID_DATS;
+			this->errors |= GcnCard::MCE_INVALID_DATS;
 			idx = -1;
 		}
 	}
@@ -754,7 +754,7 @@ int MemCardPrivate::checkTables(void)
 		idx = !idx;
 		if (!mc_bat_valid[idx]) {
 			// Both block allocation tables are invalid.
-			this->errors |= MemCard::MCE_INVALID_BATS;
+			this->errors |= GcnCard::MCE_INVALID_BATS;
 			idx = -1;
 		}
 	}
@@ -770,12 +770,12 @@ int MemCardPrivate::checkTables(void)
 /**
  * Load the MemCardFile list.
  */
-void MemCardPrivate::loadMemCardFileList(void)
+void GcnCardPrivate::loadMemCardFileList(void)
 {
 	if (!file)
 		return;
 
-	Q_Q(MemCard);
+	Q_Q(GcnCard);
 
 	// Clear the current MemCardFile list.
 	int init_size = lstMemCardFile.size();
@@ -835,46 +835,46 @@ void MemCardPrivate::loadMemCardFileList(void)
 		this->mc_bat->freeblocks);
 }
 
-/** MemCard **/
+/** GcnCard **/
 
-MemCard::MemCard(QObject *parent)
+GcnCard::GcnCard(QObject *parent)
 	: QObject(parent)
-	, d_ptr(new MemCardPrivate(this))
+	, d_ptr(new GcnCardPrivate(this))
 { }
 
 /**
  * Open an existing Memory Card image.
  * @param filename Filename.
  * @param parent Parent object.
- * @return MemCard object, or nullptr on error.
+ * @return GcnCard object, or nullptr on error.
  */
-MemCard *MemCard::open(const QString& filename, QObject *parent)
+GcnCard *GcnCard::open(const QString& filename, QObject *parent)
 {
-	MemCard *memCard = new MemCard(parent);
-	MemCardPrivate *const d = memCard->d_func();
+	GcnCard *gcnCard = new GcnCard(parent);
+	GcnCardPrivate *const d = gcnCard->d_func();
 	d->open(filename);
-	return memCard;
+	return gcnCard;
 }
 
 /**
  * Format a new Memory Card image.
  * @param filename Filename.
  * @param parent Parent object.
- * @return MemCard object, or nullptr on error.
+ * @return GcnCard object, or nullptr on error.
  */
-MemCard *MemCard::format(const QString& filename, QObject *parent)
+GcnCard *GcnCard::format(const QString& filename, QObject *parent)
 {
-	// Format a new MemCard.
+	// Format a new GcnCard.
 	// TODO: Parameters.
-	MemCard *memCard = new MemCard(parent);
-	MemCardPrivate *const d = memCard->d_func();
+	GcnCard *gcnCard = new GcnCard(parent);
+	GcnCardPrivate *const d = gcnCard->d_func();
 	d->format(filename);
-	return memCard;
+	return gcnCard;
 }
 
-MemCard::~MemCard()
+GcnCard::~GcnCard()
 {
-	Q_D(MemCard);
+	Q_D(GcnCard);
 	delete d;
 }
 
@@ -882,9 +882,9 @@ MemCard::~MemCard()
  * Check if the memory card is open.
  * @return True if open; false if not.
  */
-bool MemCard::isOpen(void) const
+bool GcnCard::isOpen(void) const
 {
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return !!(d->file);
 }
 
@@ -894,9 +894,9 @@ bool MemCard::isOpen(void) const
  * TODO: Change to error code constants for translation?
  * @return Error string.
  */
-QString MemCard::errorString(void) const
+QString GcnCard::errorString(void) const
 {
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return d->errorString;
 }
 
@@ -904,9 +904,9 @@ QString MemCard::errorString(void) const
  * Get the memory card filename.
  * @return Memory card filename, or empty string if not open.
  */
-QString MemCard::filename(void) const
+QString GcnCard::filename(void) const
 {
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return d->filename;
 }
 
@@ -915,11 +915,11 @@ QString MemCard::filename(void) const
  * This is the full size of the memory card image.
  * @return Size of the memory card image, in bytes. (0 on error)
  */
-quint64 MemCard::filesize(void) const
+quint64 GcnCard::filesize(void) const
 {
 	if (!isOpen())
 		return 0;
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return d->file->size();
 }
 
@@ -928,11 +928,11 @@ quint64 MemCard::filesize(void) const
  * NOTE: Includes the 5 reserved blocks. (e.g. MC1019 would return 1024)
  * @return Size of the memory card, in blocks. (Negative on error)
  */
-int MemCard::sizeInBlocks(void) const
+int GcnCard::sizeInBlocks(void) const
 {
 	if (!isOpen())
 		return -1;
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return d->numBlocks;
 }
 
@@ -941,11 +941,11 @@ int MemCard::sizeInBlocks(void) const
  * NOTE: Does NOT include the 5 reserved blocks. (e.g. MC1019 would return 1019)
  * @return Size of the memory card, in blocks. (Negative on error)
  */
-int MemCard::sizeInBlocksNoSys(void) const
+int GcnCard::sizeInBlocksNoSys(void) const
 {
 	if (!isOpen())
 		return -1;
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return (d->numBlocks > 5
 		? (d->numBlocks - 5)
 		: 0);
@@ -955,11 +955,11 @@ int MemCard::sizeInBlocksNoSys(void) const
  * Get the number of free blocks.
  * @return Free blocks. (Negative on error)
  */
-int MemCard::freeBlocks(void) const
+int GcnCard::freeBlocks(void) const
 {
 	if (!isOpen())
 		return -1;
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return d->mc_bat->freeblocks;
 }
 
@@ -967,11 +967,11 @@ int MemCard::freeBlocks(void) const
  * Get the memory card block size, in bytes.
  * @return Memory card block size, in bytes. (Negative on error)
  */
-int MemCard::blockSize(void) const
+int GcnCard::blockSize(void) const
 {
 	if (!isOpen())
 		return -1;
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return d->blockSize;
 }
 
@@ -982,7 +982,7 @@ int MemCard::blockSize(void) const
  * @param blockIdx Block index.
  * @return Bytes read on success; negative on error.
  */
-int MemCard::readBlock(void *buf, int siz, uint16_t blockIdx)
+int GcnCard::readBlock(void *buf, int siz, uint16_t blockIdx)
 {
 	if (!isOpen())
 		return -1;
@@ -990,7 +990,7 @@ int MemCard::readBlock(void *buf, int siz, uint16_t blockIdx)
 		return -2;
 	
 	// Read the specified block.
-	Q_D(MemCard);
+	Q_D(GcnCard);
 	d->file->seek((int)blockIdx * blockSize());
 	return (int)d->file->read((char*)buf, blockSize());
 }
@@ -999,11 +999,11 @@ int MemCard::readBlock(void *buf, int siz, uint16_t blockIdx)
  * Get the memory card's serial number.
  * @return Memory card's serial number.
  */
-QString MemCard::serialNumber(void) const
+QString GcnCard::serialNumber(void) const
 {
 	// TODO: We're returning the 12-byte serial number.
 	// Should we return the 8-byte F-Zero GX / PSO serial number instead?
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	QString serial_text;
 	char tmp[4];
 
@@ -1020,11 +1020,11 @@ QString MemCard::serialNumber(void) const
  * Get the memory card text encoding ID.
  * @return 0 for ANSI (ISO-8859-1); 1 for SJIS; negative on error.
  */
-int MemCard::encoding(void) const
+int GcnCard::encoding(void) const
 {
 	if (!isOpen())
 		return -1;
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return (d->mc_header.encoding & SYS_FONT_ENCODING_MASK);
 }
 
@@ -1033,12 +1033,12 @@ int MemCard::encoding(void) const
  * @param region Region code. (If 0, use the memory card's encoding.)
  * @return Text encoding ID.
  */
-int MemCard::encodingForRegion(char region) const
+int GcnCard::encodingForRegion(char region) const
 {
 	if (!isOpen())
 		return SYS_FONT_ENCODING_ANSI;
 
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	switch (region) {
 		case 0:
 			// Use the memory card's encoding.
@@ -1065,12 +1065,12 @@ int MemCard::encodingForRegion(char region) const
  * @param region Region code. (If 0, use the memory card's encoding.)
  * @return QTextCodec.
  */
-QTextCodec *MemCard::textCodec(char region) const
+QTextCodec *GcnCard::textCodec(char region) const
 {
 	if (!isOpen())
 		return nullptr;
 
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return (encodingForRegion(region)
 		? d->TextCodecJP
 		: d->TextCodecUS);
@@ -1080,11 +1080,11 @@ QTextCodec *MemCard::textCodec(char region) const
  * Get the number of files in the file table.
  * @return Number of files, or negative on error.
  */
-int MemCard::numFiles(void) const
+int GcnCard::numFiles(void) const
 {
 	if (!isOpen())
 		return -1;
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return d->lstMemCardFile.size();
 }
 
@@ -1092,11 +1092,11 @@ int MemCard::numFiles(void) const
  * Is the card empty?
  * @return True if empty; false if not.
  */
-bool MemCard::isEmpty(void) const
+bool GcnCard::isEmpty(void) const
 {
 	if (!isOpen())
 		return true;
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return d->lstMemCardFile.isEmpty();
 }
 
@@ -1105,11 +1105,11 @@ bool MemCard::isEmpty(void) const
  * @param idx File number.
  * @return MemCardFile object, or nullptr on error.
  */
-MemCardFile *MemCard::getFile(int idx)
+MemCardFile *GcnCard::getFile(int idx)
 {
 	if (!isOpen())
 		return nullptr;
-	Q_D(MemCard);
+	Q_D(GcnCard);
 	if (idx < 0 || idx >= d->lstMemCardFile.size())
 		return nullptr;
 	return d->lstMemCardFile.at(idx);
@@ -1120,20 +1120,20 @@ MemCardFile *MemCard::getFile(int idx)
  * NOTE: This is only valid for regular files, not "lost" files.
  * @return Used block map.
  */
-QVector<uint8_t> MemCard::usedBlockMap(void)
+QVector<uint8_t> GcnCard::usedBlockMap(void)
 {
 	if (!isOpen())
 		return QVector<uint8_t>();
-	Q_D(MemCard);
+	Q_D(GcnCard);
 	return d->usedBlockMap;
 }
 
 /**
  * Remove all "lost" files.
  */
-void MemCard::removeLostFiles(void)
+void GcnCard::removeLostFiles(void)
 {
-	Q_D(MemCard);
+	Q_D(GcnCard);
 	for (int i = d->lstMemCardFile.size() - 1; i >= 0; i--) {
 		const MemCardFile *mcFile = d->lstMemCardFile.at(i);
 		if (mcFile->isLostFile()) {
@@ -1149,9 +1149,9 @@ void MemCard::removeLostFiles(void)
  * Add a "lost" file.
  * NOTE: This is a debugging version.
  * Add more comprehensive versions with a block map specification.
- * @return MemCardFile added to the MemCard, or nullptr on error.
+ * @return MemCardFile added to the GcnCard, or nullptr on error.
  */
-MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry)
+MemCardFile *GcnCard::addLostFile(const card_direntry *dirEntry)
 {
 	if (!isOpen())
 		return nullptr;
@@ -1183,14 +1183,14 @@ MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry)
  * Add a "lost" file.
  * @param dirEntry Directory entry.
  * @param fatEntries FAT entries.
- * @return MemCardFile added to the MemCard, or nullptr on error.
+ * @return MemCardFile added to the GcnCard, or nullptr on error.
  */
-MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry, const QVector<uint16_t> &fatEntries)
+MemCardFile *GcnCard::addLostFile(const card_direntry *dirEntry, const QVector<uint16_t> &fatEntries)
 {
 	if (!isOpen())
 		return nullptr;
 
-	Q_D(MemCard);
+	Q_D(GcnCard);
 	MemCardFile *file = new MemCardFile(this, dirEntry, fatEntries);
 	int idx = d->lstMemCardFile.size();
 	emit filesAboutToBeInserted(idx, idx);
@@ -1202,9 +1202,9 @@ MemCardFile *MemCard::addLostFile(const card_direntry *dirEntry, const QVector<u
 /**
  * Add "lost" files.
  * @param filesFoundList List of SearchData.
- * @return List of MemCardFiles added to the MemCard, or empty list on error.
+ * @return List of MemCardFiles added to the GcnCard, or empty list on error.
  */
-QList<MemCardFile*> MemCard::addLostFiles(const QLinkedList<SearchData> &filesFoundList)
+QList<MemCardFile*> GcnCard::addLostFiles(const QLinkedList<SearchData> &filesFoundList)
 {
 	QList<MemCardFile*> files;
 	if (!isOpen())
@@ -1212,7 +1212,7 @@ QList<MemCardFile*> MemCard::addLostFiles(const QLinkedList<SearchData> &filesFo
 	if (filesFoundList.isEmpty())
 		return files;
 
-	Q_D(MemCard);
+	Q_D(GcnCard);
 	const int idx = d->lstMemCardFile.size();
 	const int idxLast = idx + filesFoundList.size() - 1;
 	emit filesAboutToBeInserted(idx, idxLast);
@@ -1240,9 +1240,9 @@ QList<MemCardFile*> MemCard::addLostFiles(const QLinkedList<SearchData> &filesFo
  * NOTE: Header checksum is always AddInvDual16.
  * @return Header checksum value.
  */
-Checksum::ChecksumValue MemCard::headerChecksumValue(void) const
+Checksum::ChecksumValue GcnCard::headerChecksumValue(void) const
 {
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return d->headerChecksumValue;
 }
 
@@ -1250,11 +1250,11 @@ Checksum::ChecksumValue MemCard::headerChecksumValue(void) const
  * Get the active Directory Table index.
  * @return Active Directory Table index. (0 or 1)
  */
-int MemCard::activeDatIdx(void) const
+int GcnCard::activeDatIdx(void) const
 {
 	if (!isOpen())
 		return -1;
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return (d->mc_dat == &d->mc_dat_int[1]);
 }
 
@@ -1263,11 +1263,11 @@ int MemCard::activeDatIdx(void) const
  * NOTE: This function reloads the file list, without lost files.
  * @param idx Active Directory Table index. (0 or 1)
  */
-void MemCard::setActiveDatIdx(int idx)
+void GcnCard::setActiveDatIdx(int idx)
 {
 	if (!isOpen())
 		return;
-	Q_D(MemCard);
+	Q_D(GcnCard);
 	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_dat_int))
 		return;
 	d->mc_dat = &d->mc_dat_int[idx];
@@ -1278,11 +1278,11 @@ void MemCard::setActiveDatIdx(int idx)
  * Get the active Directory Table index according to the card header.
  * @return Active Directory Table index (0 or 1), or -1 if both are invalid.
  */
-int MemCard::activeDatHdrIdx(void) const
+int GcnCard::activeDatHdrIdx(void) const
 {
 	if (!isOpen())
 		return -1;
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return d->mc_dat_hdr_idx;
 }
 
@@ -1291,11 +1291,11 @@ int MemCard::activeDatHdrIdx(void) const
  * @param idx Directory Table index. (0 or 1)
  * @return True if valid; false if not valid or idx is invalid.
  */
-bool MemCard::isDatValid(int idx) const
+bool GcnCard::isDatValid(int idx) const
 {
 	if (!isOpen())
 		return false;
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_dat_valid))
 		return false;
 	return d->mc_dat_valid[idx];
@@ -1305,11 +1305,11 @@ bool MemCard::isDatValid(int idx) const
  * Get the active Block Table index.
  * @return Active Block Table index. (0 or 1)
  */
-int MemCard::activeBatIdx(void) const
+int GcnCard::activeBatIdx(void) const
 {
 	if (!isOpen())
 		return -1;
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return (d->mc_bat == &d->mc_bat_int[1]);
 }
 
@@ -1318,11 +1318,11 @@ int MemCard::activeBatIdx(void) const
  * NOTE: This function reloads the file list, without lost files.
  * @param idx Active Block Table index. (0 or 1)
  */
-void MemCard::setActiveBatIdx(int idx)
+void GcnCard::setActiveBatIdx(int idx)
 {
 	if (!isOpen())
 		return;
-	Q_D(MemCard);
+	Q_D(GcnCard);
 	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_bat_int))
 		return;
 	d->mc_bat = &d->mc_bat_int[idx];
@@ -1333,11 +1333,11 @@ void MemCard::setActiveBatIdx(int idx)
  * Get the active Block Table index according to the card header.
  * @return Active Block Table index (0 or 1), or -1 if both are invalid.
  */
-int MemCard::activeBatHdrIdx(void) const
+int GcnCard::activeBatHdrIdx(void) const
 {
 	if (!isOpen())
 		return -1;
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	return d->mc_bat_hdr_idx;
 }
 
@@ -1346,11 +1346,11 @@ int MemCard::activeBatHdrIdx(void) const
  * @param idx Block Table index. (0 or 1)
  * @return True if valid; false if not valid or idx is invalid.
  */
-bool MemCard::isBatValid(int idx) const
+bool GcnCard::isBatValid(int idx) const
 {
 	if (!isOpen())
 		return false;
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_bat_valid))
 		return false;
 	return d->mc_bat_valid[idx];
@@ -1360,9 +1360,9 @@ bool MemCard::isBatValid(int idx) const
  * Have any errors been detected in this Memory Card?
  * @return Error flags.
  */
-QFlags<MemCard::Error> MemCard::errors(void) const
+QFlags<GcnCard::Error> GcnCard::errors(void) const
 {
-	Q_D(const MemCard);
+	Q_D(const GcnCard);
 	if (!isOpen())
 		return 0;
 	return d->errors;
