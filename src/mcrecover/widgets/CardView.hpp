@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * MemCardView.hpp: GcnCard view widget.                                   *
+ * CardView.hpp: Card view widget.                                         *
  *                                                                         *
  * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
@@ -19,44 +19,42 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MEMCARDVIEW_HPP__
-#define __MCRECOVER_MEMCARDVIEW_HPP__
+#ifndef __MCRECOVER_WIDGETS_CARDVIEW_HPP__
+#define __MCRECOVER_WIDGETS_CARDVIEW_HPP__
 
 #include <QtGui/QWidget>
 
-// GcnCard class.
-class GcnCard;
+class Card;
 
-class MemCardViewPrivate;
-
-class MemCardView : public QWidget
+class CardViewPrivate;
+class CardView : public QWidget
 {
 	Q_OBJECT
 
-	Q_PROPERTY(GcnCard* card READ card WRITE setCard)
+	Q_PROPERTY(Card* card READ card WRITE setCard)
 
 	public:
-		MemCardView(QWidget *parent = 0);
-		~MemCardView();
+		CardView(QWidget *parent = 0);
+		~CardView();
 
 	protected:
-		MemCardViewPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(MemCardView)
+		CardViewPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(CardView)
 	private:
-		Q_DISABLE_COPY(MemCardView)
+		Q_DISABLE_COPY(CardView)
 
 	public:
 		/**
-		 * Get the GcnCard being displayed.
-		 * @return GcnCard.
+		 * Get the Card being displayed.
+		 * @return Card.
 		 */
-		GcnCard *card(void) const;
+		Card *card(void) const;
 
 		/**
-		 * Set the GcnCard being displayed.
-		 * @param file GcnCard.
+		 * Set the Card being displayed.
+		 * @param file Card.
 		 */
-		void setCard(GcnCard *card);
+		void setCard(Card *card);
 
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
@@ -64,15 +62,15 @@ class MemCardView : public QWidget
 
 	protected slots:
 		/**
-		 * GcnCard object was destroyed.
+		 * Card object was destroyed.
 		 * @param obj QObject that was destroyed.
 		 */
-		void memCard_destroyed_slot(QObject *obj = 0);
+		void card_destroyed_slot(QObject *obj = 0);
 
 		/**
-		 * GcnCard's block count has changed.
+		 * Card's block count has changed.
 		 */
-		void memCard_blockCountChanged_slot(void);
+		void card_blockCountChanged_slot(void);
 };
 
-#endif /* __MCRECOVER_MEMCARDVIEW_HPP__ */
+#endif /* __MCRECOVER_WIDGETS_CARDVIEW_HPP__ */

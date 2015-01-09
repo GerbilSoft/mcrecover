@@ -103,7 +103,7 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="MemCardView" name="mcCardView" native="true">
+                <widget class="CardView" name="mcCardView" native="true">
                  <property name="minimumSize">
                   <size>
                    <width>200</width>
@@ -514,9 +514,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>MemCardView</class>
+   <class>CardView</class>
    <extends>QWidget</extends>
-   <header>widgets/MemCardView.hpp</header>
+   <header>widgets/CardView.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
