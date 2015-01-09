@@ -214,7 +214,6 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	int split = fileComments.indexOf(QChar(L'\0'));
 	if (split < 0) {
 		// No '\0' is present.
-		QSize sz = QStyledItemDelegate::sizeHint(option, index);
 		// Use the default paint().
 		QStyledItemDelegate::paint(painter, option, index);
 		return;
