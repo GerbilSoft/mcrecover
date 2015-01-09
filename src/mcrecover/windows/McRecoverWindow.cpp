@@ -161,7 +161,7 @@ class McRecoverWindowPrivate
 		 * @param files List of file(s) to save.
 		 * @param path If specified, save file(s) to path using default GCI filenames.
 		 */
-		void saveFiles(const QVector<GcnFile*> &files, QString path = QString());
+		void saveFiles(const QVector<File*> &files, QString path = QString());
 
 		// UI busy counter.
 		int uiBusyCounter;
@@ -524,7 +524,7 @@ QString McRecoverWindowPrivate::changeFileExtension(const QString &filename, con
  * @param files List of file(s) to save.
  * @param path If specified, save file(s) to path using default GCI filenames.
  */
-void McRecoverWindowPrivate::saveFiles(const QVector<GcnFile*> &files, QString path)
+void McRecoverWindowPrivate::saveFiles(const QVector<File*> &files, QString path)
 {
 	Q_Q(McRecoverWindow);
 
@@ -557,12 +557,13 @@ void McRecoverWindowPrivate::saveFiles(const QVector<GcnFile*> &files, QString p
 		// Single file, path not specified.
 		singleFile = true;
 		overwriteAll = OVERWRITEALL_YESTOALL;
-		GcnFile *file = files.at(0);
+		File *file = files.at(0);
 
 		const QString defFilename = lastPath() + QChar(L'/') +
 						file->defaultExportFilename();
 
 		// Prompt the user for a save location.
+		// FIXME: What type of file?
 		filename = QFileDialog::getSaveFileName(q,
 				McRecoverWindow::tr("Save GCN Save File %1")
 					.arg(file->filename()),	// Dialog title
@@ -590,7 +591,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<GcnFile*> &files, QString p
 	// Animted image format for icons.
 	GcImageWriter::AnimImageFormat animImgf = animIconFormat();
 
-	foreach (GcnFile *file, files) {
+	foreach (File *file, files) {
 		if (!singleFile)
 			filename = path + QChar(L'/') + file->defaultExportFilename();
 		QFile qfile(filename);
@@ -657,7 +658,8 @@ void McRecoverWindowPrivate::saveFiles(const QVector<GcnFile*> &files, QString p
 		if (extractBanners) {
 			// TODO: Error handling and details.
 			QString bannerFilename = changeFileExtension(filename, extBanner);
-			file->saveBanner(bannerFilename);
+			// FIXME: Move saveBanner to File.
+			((GcnFile*)file)->saveBanner(bannerFilename);
 		}
 
 		// Extract the icon.
@@ -666,7 +668,8 @@ void McRecoverWindowPrivate::saveFiles(const QVector<GcnFile*> &files, QString p
 			if (file->iconCount() >= 1) {
 				// File has an icon.
 				QString iconFilename = changeFileExtension(filename, extIcon);
-				file->saveIcon(iconFilename, animImgf);
+				// FIXME: Move saveIcon to File.
+				((GcnFile*)file)->saveIcon(iconFilename, animImgf);
 			}
 		}
 	}
@@ -1424,12 +1427,12 @@ void McRecoverWindow::on_actionSave_triggered(void)
 	if (selList.isEmpty())
 		return;
 
-	QVector<GcnFile*> files;
+	QVector<File*> files;
 	files.reserve(selList.size());
 
 	foreach(QModelIndex idx, selList) {
 		QModelIndex srcIdx = d->proxyModel->mapToSource(idx);
-		GcnFile *file = d->card->getFile(srcIdx.row());
+		File *file = d->card->getFile(srcIdx.row());
 		if (file != nullptr)
 			files.append(file);
 	}
@@ -1455,11 +1458,11 @@ void McRecoverWindow::on_actionSaveAll_triggered(void)
 	if (numFiles <= 0)
 		return;
 
-	QVector<GcnFile*> files;
+	QVector<File*> files;
 	files.reserve(numFiles);
 
 	for (int i = 0; i < numFiles; i++) {
-		GcnFile *file = d->card->getFile(i);
+		File *file = d->card->getFile(i);
 		if (file != nullptr)
 			files.append(file);
 	}
@@ -1575,6 +1578,7 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 
 	// Check for any Japanese files.
 	bool isJapanese = false;
+	// FIXME: Move GcnFile::encoding() to File.
 	foreach (const GcnFile *file, files) {
 		if (file->encoding() == Card::ENCODING_SHIFTJIS) {
 			// Found a Japanese file.
@@ -1608,9 +1612,9 @@ void McRecoverWindow::lstFileList_selectionModel_currentRowChanged(
 	//actionSave->setEnabled(lstFileList->selectionModel()->hasSelection());
 	d->ui.actionSave->setEnabled(srcCurrent.row() >= 0);
 
-	// Set the MemCardFileView's GcnFile to the
+	// Set the FileView's File to the
 	// selected file in the QTreeView.
-	const GcnFile *file = d->card->getFile(srcCurrent.row());
+	const File *file = d->card->getFile(srcCurrent.row());
 	d->ui.mcfFileView->setFile(file);
 
 	// Shh... it's a secret to everybody.
