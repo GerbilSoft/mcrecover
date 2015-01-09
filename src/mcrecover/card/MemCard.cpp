@@ -90,8 +90,9 @@ class MemCardPrivate
 		quint64 filesize;
 
 		// Block size.
-		// NOTE: This is always assumed to be 8 KB.
-		static const int blockSize = 8192;
+		// NOTE: For GameCube, this should always be 8 KB.
+		// TODO: Optimize by making this a power of two and using shifts?
+		uint32_t blockSize;
 
 		/**
 		 * Total number of blocks in the file.
@@ -205,6 +206,7 @@ MemCardPrivate::MemCardPrivate(MemCard *q)
 	: q_ptr(q)
 	, file(nullptr)
 	, filesize(0)
+	, blockSize(8192)
 	, numBlocks(0)
 	, mc_dat_hdr_idx(-1)
 	, mc_bat_hdr_idx(-1)
