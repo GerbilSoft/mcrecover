@@ -28,10 +28,9 @@
 // Qt includes and classes.
 #include <QtCore/QObject>
 #include <QtCore/QTextCodec>
+#include <QtGui/QColor>
 
-// Card private class.
 class CardPrivate;
-
 class Card : public QObject
 {
 	Q_OBJECT
@@ -44,6 +43,7 @@ class Card : public QObject
 	Q_PROPERTY(QString filename READ filename)
 	Q_PROPERTY(int filesize READ filesize)
 	Q_PROPERTY(int encoding READ encoding)
+	Q_PROPERTY(QColor color READ color)
 
 	// Card size.
 	Q_PROPERTY(int blockSize READ blockSize)
@@ -157,6 +157,12 @@ class Card : public QObject
 		 * @return QTextCodec.
 		 */
 		QTextCodec *textCodec(void) const;
+
+		/**
+		 * Get the card's color.
+		 * @return Color. (If not available, an invalid QColor is returned.)
+		 */
+		QColor color(void) const;
 
 		/** Card I/O **/
 

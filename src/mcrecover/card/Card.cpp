@@ -304,6 +304,18 @@ QTextCodec *Card::textCodec(Encoding encoding)
 }
 
 /**
+ * Get the card's color.
+ * @return Color. (If not available, an invalid QColor is returned.)
+ */
+QColor Card::color(void) const
+{
+	if (!isOpen())
+		return QColor();
+	Q_D(const Card);
+	return d->color;
+}
+
+/**
  * Get a QTextCodec for this memory card.
  * @return QTextCodec.
  */
