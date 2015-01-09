@@ -53,14 +53,6 @@ class GcnCardPrivate : public CardPrivate
 		Q_DISABLE_COPY(GcnCardPrivate)
 
 	public:
-		// Static initialization.
-		static void StaticInit(void);
-
-		// QTextCodec for memory card text encoding.
-		static QTextCodec *TextCodecUS;	// cp1252
-		static QTextCodec *TextCodecJP;	// Shift-JIS
-
-	public:
 		/**
 		 * Open an existing Memory Card image.
 		 * @param filename Memory Card image filename.
@@ -161,10 +153,6 @@ class GcnCardPrivate : public CardPrivate
 		void loadMemCardFileList(void);
 };
 
-// Text codecs.
-QTextCodec *GcnCardPrivate::TextCodecUS = nullptr;	// cp1252
-QTextCodec *GcnCardPrivate::TextCodecJP = nullptr;	// Shift-JIS
-
 GcnCardPrivate::GcnCardPrivate(GcnCard *q)
 	: CardPrivate(q, 8192, 64, 2048)
 	, mc_dat_hdr_idx(-1)
@@ -172,10 +160,7 @@ GcnCardPrivate::GcnCardPrivate(GcnCard *q)
 	, mc_dat(nullptr)
 	, mc_bat(nullptr)
 {
-	// Initialize static variables.
-	StaticInit();
-
-	// Cler variables.
+	// Clear variables.
 	memset(&mc_header, 0, sizeof(mc_header));
 	memset(mc_dat_int, 0, sizeof(mc_dat_int));
 	memset(mc_bat_int, 0, sizeof(mc_bat_int));
@@ -192,25 +177,6 @@ GcnCardPrivate::~GcnCardPrivate()
 	// Clear the MemCardFile list.
 	qDeleteAll(lstMemCardFile);
 	lstMemCardFile.clear();
-}
-
-/**
- * Static member initialization.
- */
-void GcnCardPrivate::StaticInit(void)
-{
-	static bool init = false;
-	if (!init) {
-		init = true;
-
-		// Text codecs.
-		TextCodecUS = QTextCodec::codecForName("cp1252");
-		TextCodecJP = QTextCodec::codecForName("Shift_JIS");
-
-		// If Shift-JIS isn't available, use cp1252.
-		if (!TextCodecJP)
-			TextCodecJP = TextCodecUS;
-	}
 }
 
 /**
@@ -295,6 +261,7 @@ int GcnCardPrivate::format(const QString &filename)
 	mc_header.size = cpu_to_be16(totalPhysBlocks / 16);
 	// Encoding. (Assume cp1252 for now.)
 	mc_header.encoding = cpu_to_be16(SYS_FONT_ENCODING_ANSI);
+	this->encoding = Card::ENCODING_CP1252;
 	// Calculate the header checksum.
 	uint32_t chksum = Checksum::AddInvDual16((uint16_t*)&mc_header, 0x1FC);
 	mc_header.chksum1 = cpu_to_be16(chksum >> 16);
@@ -438,6 +405,9 @@ int GcnCardPrivate::loadSysInfo(void)
 		mc_bat_int[1].chksum1 = 0xAA55;
 		mc_bat_int[1].chksum2 = 0xAA55;
 
+		// Use cp1252 encoding by default.
+		this->encoding = Card::ENCODING_CP1252;
+
 		// Make sure mc_dat and mc_bat are initialized.
 		checkTables();
 		return -2;
@@ -455,6 +425,17 @@ int GcnCardPrivate::loadSysInfo(void)
 	mc_header.encoding	= be16_to_cpu(mc_header.encoding);
 	mc_header.chksum1	= be16_to_cpu(mc_header.chksum1);
 	mc_header.chksum2	= be16_to_cpu(mc_header.chksum2);
+
+	// Check the encoding.
+	switch (mc_header.encoding & SYS_FONT_ENCODING_MASK) {
+		case SYS_FONT_ENCODING_ANSI:
+		default:
+			this->encoding = Card::ENCODING_CP1252;
+			break;
+		case SYS_FONT_ENCODING_SJIS:
+			this->encoding = Card::ENCODING_SHIFTJIS;
+			break;
+	}
 
 	// Get the expected header checksum.
 	headerChecksumValue.expected = (mc_header.chksum1 << 16) |
@@ -775,32 +756,21 @@ GcnCard *GcnCard::format(const QString& filename, QObject *parent)
 }
 
 /**
- * Get the memory card text encoding ID.
- * @return 0 for ANSI (ISO-8859-1); 1 for SJIS; negative on error.
- */
-int GcnCard::encoding(void) const
-{
-	if (!isOpen())
-		return -1;
-	Q_D(const GcnCard);
-	return (d->mc_header.encoding & SYS_FONT_ENCODING_MASK);
-}
-
-/**
- * Get the text encoding ID for a given region.
+ * Get the text encoding for a given region.
  * @param region Region code. (If 0, use the memory card's encoding.)
- * @return Text encoding ID.
+ * @return Text encoding.
  */
-int GcnCard::encodingForRegion(char region) const
+Card::Encoding GcnCard::encodingForRegion(char region) const
 {
+	// TODO: Return an error if not open?
 	if (!isOpen())
-		return SYS_FONT_ENCODING_ANSI;
+		return ENCODING_CP1252;
 
 	Q_D(const GcnCard);
 	switch (region) {
 		case 0:
 			// Use the memory card's encoding.
-			return (d->mc_header.encoding & SYS_FONT_ENCODING_MASK);
+			return d->encoding;
 
 		case 'J':
 		case 'S':
@@ -809,12 +779,12 @@ int GcnCard::encodingForRegion(char region) const
 			// some prototypes, including Sonic Adventure DX
 			// and Metroid Prime 3. Assume Japanese for now.
 			// TODO: Implement a Shift-JIS heuristic for 'S'.
-			return SYS_FONT_ENCODING_SJIS;
+			return ENCODING_SHIFTJIS;
 
 		default:
 			// US, Europe, Australia.
 			// TODO: Korea?
-			return SYS_FONT_ENCODING_ANSI;
+			return ENCODING_CP1252;
 	}
 }
 
@@ -829,9 +799,10 @@ QTextCodec *GcnCard::textCodec(char region) const
 		return nullptr;
 
 	Q_D(const GcnCard);
-	return (encodingForRegion(region)
-		? d->TextCodecJP
-		: d->TextCodecUS);
+	// FIXME: Calling this->textCodec() results in a stack overflow.
+	// Call the base class function directly.
+	// (Maybe it's a conflict between 'char' and enum?)
+	return Card::textCodec(encodingForRegion(region));
 }
 
 /**

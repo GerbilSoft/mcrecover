@@ -105,17 +105,11 @@ class GcnCard : public Card
 
 	public:
 		/**
-		 * Get the memory card text encoding ID.
-		 * @return 0 for ANSI (ISO-8859-1); 1 for SJIS; negative on error.
-		 */
-		int encoding(void) const;
-
-		/**
-		 * Get the text encoding ID for a given region.
+		 * Get the text encoding for a given region.
 		 * @param region Region code. (If 0, use the memory card's encoding.)
-		 * @return Text encoding ID.
+		 * @return Text encoding.
 		 */
-		int encodingForRegion(char region) const;
+		Encoding encodingForRegion(char region) const;
 
 		/**
 		 * Get the QTextCodec for a given region.

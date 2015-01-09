@@ -27,6 +27,7 @@
 
 // Qt includes and classes.
 #include <QtCore/QObject>
+#include <QtCore/QTextCodec>
 
 // Card private class.
 class CardPrivate;
@@ -35,12 +36,14 @@ class Card : public QObject
 {
 	Q_OBJECT
 
+	Q_ENUMS(Encoding)
 	Q_FLAGS(Error Errors)
 
 	Q_PROPERTY(bool open READ isOpen)
 	Q_PROPERTY(QString errorString READ errorString)
 	Q_PROPERTY(QString filename READ filename)
-	Q_PROPERTY(int filesize READ filesize);
+	Q_PROPERTY(int filesize READ filesize)
+	Q_PROPERTY(int encoding READ encoding)
 
 	// Card size.
 	Q_PROPERTY(int blockSize READ blockSize)
@@ -127,6 +130,33 @@ class Card : public QObject
 		 * @return Free blocks. (Negative on error)
 		 */
 		int freeBlocks(void) const;
+
+		/**
+		 * Text encoding enumeration.
+		 */
+		enum Encoding {
+			ENCODING_CP1252 = 0,
+			ENCODING_SHIFTJIS = 1,
+		};
+
+		/**
+		 * Get the text encoding used for filenames and descriptions.
+		 * @return Text encoding.
+		 */
+		Encoding encoding(void) const;
+
+		/**
+		 * Get a QTextCodec for the specified encoding.
+		 * @param encoding Encoding.
+		 * @return QTextCodec. (If unavailable, defaults to cp1252.)
+		 */
+		static QTextCodec *textCodec(Encoding encoding);
+
+		/**
+		 * Get a QTextCodec for this memory card.
+		 * @return QTextCodec.
+		 */
+		QTextCodec *textCodec(void) const;
 
 		/** Card I/O **/
 

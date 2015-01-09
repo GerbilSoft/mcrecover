@@ -50,6 +50,7 @@ class CardPrivate
 		QString filename;
 		QFile *file;
 		quint64 filesize;
+		Card::Encoding encoding;
 
 		// Card size information.
 		const uint32_t blockSize;	// must be a power of 2
