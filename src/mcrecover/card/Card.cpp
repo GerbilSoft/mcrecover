@@ -40,6 +40,7 @@
 
 CardPrivate::CardPrivate(Card *q, uint32_t blockSize, int minBlocks, int maxBlocks)
 	: q_ptr(q)
+	, errors(0)
 	, file(nullptr)
 	, filesize(0)
 	, blockSize(blockSize)
