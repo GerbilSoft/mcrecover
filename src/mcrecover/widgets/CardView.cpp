@@ -261,7 +261,7 @@ void CardView::setCard(Card *card)
 	if (d->card) {
 		disconnect(d->card, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(card_destroyed_slot(QObject*)));
-		disconnect(d->card, SIGNAL(blockCountChanged(int,int)),
+		disconnect(d->card, SIGNAL(blockCountChanged(int,int,int)),
 			   this, SLOT(card_blockCountChanged_slot()));
 	}
 
@@ -271,7 +271,7 @@ void CardView::setCard(Card *card)
 	if (d->card) {
 		connect(d->card, SIGNAL(destroyed(QObject*)),
 			this, SLOT(card_destroyed_slot(QObject*)));
-		connect(d->card, SIGNAL(blockCountChanged(int,int)),
+		connect(d->card, SIGNAL(blockCountChanged(int,int,int)),
 			   this, SLOT(card_blockCountChanged_slot()));
 	}
 
