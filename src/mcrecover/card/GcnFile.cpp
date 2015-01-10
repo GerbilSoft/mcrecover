@@ -152,6 +152,7 @@ GcnFilePrivate::GcnFilePrivate(GcnFile *q, GcnCard *card,
 	: FilePrivate(q, card)
 	, mc_bat(mc_bat)
 	, dirEntry(dirEntry)
+	, gcBanner(nullptr)
 {
 	if (!dirEntry || !mc_bat) {
 		// Invalid data.
@@ -209,6 +210,7 @@ GcnFilePrivate::GcnFilePrivate(GcnFile *q, GcnCard *card,
 	: FilePrivate(q, card)
 	, mc_bat(nullptr)
 	, dirEntry(dirEntry)
+	, gcBanner(nullptr)
 {
 	if (!dirEntry || fatEntries.isEmpty()) {
 		// Invalid data.
