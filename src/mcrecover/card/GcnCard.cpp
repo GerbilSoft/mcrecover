@@ -95,9 +95,6 @@ class GcnCardPrivate : public CardPrivate
 		card_dat *mc_dat;
 		card_bat *mc_bat;
 
-		// GcnFile list.
-		QVector<GcnFile*> lstGcnFile;
-
 		/**
 		 * Used block map.
 		 * NOTE: This is only valid for regular files, not "lost" files.
@@ -174,9 +171,7 @@ GcnCardPrivate::GcnCardPrivate(GcnCard *q)
 
 GcnCardPrivate::~GcnCardPrivate()
 {
-	// Clear the GcnFile list.
-	qDeleteAll(lstGcnFile);
-	lstGcnFile.clear();
+	// TODO: Remove this?
 }
 
 /**
@@ -682,19 +677,19 @@ void GcnCardPrivate::loadGcnFileList(void)
 	Q_Q(GcnCard);
 
 	// Clear the current GcnFile list.
-	int init_size = lstGcnFile.size();
+	int init_size = lstFiles.size();
 	if (init_size > 0)
 		emit q->filesAboutToBeRemoved(0, (init_size - 1));
-	qDeleteAll(lstGcnFile);
-	lstGcnFile.clear();
+	qDeleteAll(lstFiles);
+	lstFiles.clear();
 	if (init_size > 0)
 		emit q->filesRemoved();
 
 	// Reset the used block map.
 	resetUsedBlockMap();
 
-	QVector<GcnFile*> lstGcnFile_new;
-	lstGcnFile_new.reserve(NUM_ELEMENTS(mc_dat->entries));
+	QVector<File*> lstFiles_new;
+	lstFiles_new.reserve(NUM_ELEMENTS(mc_dat->entries));
 
 	// Byteswap the directory table contents.
 	for (int i = 0; i < NUM_ELEMENTS(mc_dat->entries); i++) {
@@ -707,7 +702,7 @@ void GcnCardPrivate::loadGcnFileList(void)
 
 		// Valid directory entry.
 		GcnFile *mcFile = new GcnFile(q, dirEntry, mc_bat);
-		lstGcnFile_new.append(mcFile);
+		lstFiles_new.append(mcFile);
 
 		// Mark the file's blocks as used.
 		QVector<uint16_t> fatEntries = mcFile->fatEntries();
@@ -725,11 +720,11 @@ void GcnCardPrivate::loadGcnFileList(void)
 		}
 	}
 
-	if (!lstGcnFile_new.isEmpty()) {
+	if (!lstFiles_new.isEmpty()) {
 		// Files have been added to the memory card.
-		emit q->filesAboutToBeInserted(0, (lstGcnFile_new.size() - 1));
+		emit q->filesAboutToBeInserted(0, (lstFiles_new.size() - 1));
 		// NOTE: QVector::swap() was added in qt-4.8.
-		lstGcnFile = lstGcnFile_new;
+		lstFiles = lstFiles_new;
 		emit q->filesInserted();
 	}
 
@@ -829,45 +824,6 @@ QTextCodec *GcnCard::textCodec(char region) const
 }
 
 /**
- * Get the number of files in the file table.
- * @return Number of files, or negative on error.
- */
-int GcnCard::numFiles(void) const
-{
-	if (!isOpen())
-		return -1;
-	Q_D(const GcnCard);
-	return d->lstGcnFile.size();
-}
-
-/**
- * Is the card empty?
- * @return True if empty; false if not.
- */
-bool GcnCard::isEmpty(void) const
-{
-	if (!isOpen())
-		return true;
-	Q_D(const GcnCard);
-	return d->lstGcnFile.isEmpty();
-}
-
-/**
- * Get a GcnFile object.
- * @param idx File number.
- * @return GcnFile object, or nullptr on error.
- */
-GcnFile *GcnCard::getFile(int idx)
-{
-	if (!isOpen())
-		return nullptr;
-	Q_D(GcnCard);
-	if (idx < 0 || idx >= d->lstGcnFile.size())
-		return nullptr;
-	return d->lstGcnFile.at(idx);
-}
-
-/**
  * Get the used block map.
  * NOTE: This is only valid for regular files, not "lost" files.
  * @return Used block map.
@@ -878,23 +834,6 @@ QVector<uint8_t> GcnCard::usedBlockMap(void)
 		return QVector<uint8_t>();
 	Q_D(GcnCard);
 	return d->usedBlockMap;
-}
-
-/**
- * Remove all "lost" files.
- */
-void GcnCard::removeLostFiles(void)
-{
-	Q_D(GcnCard);
-	for (int i = d->lstGcnFile.size() - 1; i >= 0; i--) {
-		const GcnFile *mcFile = d->lstGcnFile.at(i);
-		if (mcFile->isLostFile()) {
-			// This is a "lost" file. Remove it.
-			emit filesAboutToBeRemoved(i, i);
-			d->lstGcnFile.remove(i);
-			emit filesRemoved();
-		}
-	}
 }
 
 /**
@@ -947,9 +886,9 @@ GcnFile *GcnCard::addLostFile(const card_direntry *dirEntry, const QVector<uint1
 
 	Q_D(GcnCard);
 	GcnFile *file = new GcnFile(this, dirEntry, fatEntries);
-	int idx = d->lstGcnFile.size();
+	int idx = d->lstFiles.size();
 	emit filesAboutToBeInserted(idx, idx);
-	d->lstGcnFile.append(file);
+	d->lstFiles.append(file);
 	emit filesInserted();
 	return file;
 }
@@ -968,7 +907,7 @@ QList<GcnFile*> GcnCard::addLostFiles(const QLinkedList<SearchData> &filesFoundL
 		return files;
 
 	Q_D(GcnCard);
-	const int idx = d->lstGcnFile.size();
+	const int idx = d->lstFiles.size();
 	const int idxLast = idx + filesFoundList.size() - 1;
 	emit filesAboutToBeInserted(idx, idxLast);
 
@@ -981,7 +920,7 @@ QList<GcnFile*> GcnCard::addLostFiles(const QLinkedList<SearchData> &filesFoundL
 		// Alternatively, add SearchData overload?
 		if (file) {
 			files.append(file);
-			d->lstGcnFile.append(file);
+			d->lstFiles.append(file);
 			file->setChecksumDefs(searchData.checksumDefs);
 		}
 	}

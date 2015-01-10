@@ -28,6 +28,9 @@
 #include <QtCore/QFile>
 #include <QtCore/QFlags>
 #include <QtCore/QString>
+#include <QtCore/QVector>
+
+class File;
 
 class CardPrivate
 {
@@ -62,6 +65,9 @@ class CardPrivate
 		int totalPhysBlocks;	// set by open()
 		int totalUserBlocks;	// must be set by subclass
 		int freeBlocks;		// must be set by subclass
+
+		// Files.
+		QVector<File*> lstFiles;
 
 		// TODO: Move usedBlockMap here?
 

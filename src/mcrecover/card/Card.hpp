@@ -30,6 +30,8 @@
 #include <QtCore/QTextCodec>
 #include <QtGui/QColor>
 
+class File;
+
 class CardPrivate;
 class Card : public QObject
 {
@@ -50,6 +52,9 @@ class Card : public QObject
 	Q_PROPERTY(int totalPhysBlocks READ totalPhysBlocks)
 	Q_PROPERTY(int totalUserBlocks READ totalUserBlocks)
 	Q_PROPERTY(int freeBlocks READ freeBlocks)
+
+	// File management.
+	Q_PROPERTY(int fileCount READ fileCount)
 
 	protected:
 		Card(CardPrivate *d, QObject *parent = 0);
@@ -180,6 +185,57 @@ class Card : public QObject
 		 * @return Bytes read on success; negative on error.
 		 */
 		int readBlock(void *buf, int siz, uint16_t blockIdx);
+
+		/** File management **/
+	signals:
+		/**
+		 * Files are about to be added to the GcnCard.
+		 * @param start First file index.
+		 * @param end Last file index.
+		 */
+		void filesAboutToBeInserted(int start, int end);
+
+		/**
+		 * Files have been added to the GcnCard.
+		 */
+		void filesInserted(void);
+
+		/**
+		 * Files are about to be removed from the GcnCard.
+		 * @param start First file index.
+		 * @param end Last file index.
+		 */
+		void filesAboutToBeRemoved(int start, int end);
+
+		/**
+		 * Files have been removed from the GcnCard.
+		 */
+		void filesRemoved(void);
+
+	public:
+		/**
+		 * Get the number of files in the file table.
+		 * @return Number of files, or negative on error.
+		 */
+		int fileCount(void) const;
+
+		/**
+		 * Is the card empty?
+		 * @return True if empty; false if not.
+		 */
+		bool isEmpty(void) const;
+
+		/**
+		 * Get a File object.
+		 * @param idx File number.
+		 * @return File object, or nullptr on error.
+		 */
+		File *getFile(int idx);
+
+		/**
+		 * Remove all "lost" files.
+		 */
+		void removeLostFiles(void);
 
 		/** Errors **/
 

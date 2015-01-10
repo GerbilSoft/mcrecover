@@ -477,7 +477,7 @@ void McRecoverWindowPrivate::updateActionEnableStatus(void)
 			ui.actionScan->setEnabled(true);
 		ui.actionSave->setEnabled(
 			ui.lstFileList->selectionModel()->hasSelection());
-		ui.actionSaveAll->setEnabled(card->numFiles() > 0);
+		ui.actionSaveAll->setEnabled(card->fileCount() > 0);
 	}
 }
 
@@ -1039,9 +1039,10 @@ void McRecoverWindow::openCard(const QString &filename)
 	if (d->card->encoding() == Card::ENCODING_SHIFTJIS) {
 		isJapanese = true;
 	} else {
-		for (int i = 0; i < d->card->numFiles(); i++) {
-			const GcnFile *file = d->card->getFile(i);
-			if (file->encoding() == Card::ENCODING_SHIFTJIS) {
+		for (int i = 0; i < d->card->fileCount(); i++) {
+			// TODO: Move encoding() to File?
+			const GcnFile *file = qobject_cast<GcnFile*>(d->card->getFile(i));
+			if (file && file->encoding() == Card::ENCODING_SHIFTJIS) {
 				isJapanese = true;
 				break;
 			}
@@ -1451,7 +1452,7 @@ void McRecoverWindow::on_actionSaveAll_triggered(void)
 	if (!d->card)
 		return;
 
-	const int numFiles = d->card->numFiles();
+	const int numFiles = d->card->fileCount();
 	if (numFiles <= 0)
 		return;
 

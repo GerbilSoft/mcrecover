@@ -40,7 +40,6 @@ class GcnCard : public Card
 	Q_OBJECT
 
 	Q_PROPERTY(int encoding READ encoding)
-	Q_PROPERTY(int numFiles READ numFiles)
 	Q_PROPERTY(bool empty READ isEmpty)
 
 	// TODO: Register Checksum::ChecksumValue metatype?
@@ -78,31 +77,6 @@ class GcnCard : public Card
 	private:
 		Q_DISABLE_COPY(GcnCard)
 
-	signals:
-		/**
-		 * Files are about to be added to the GcnCard.
-		 * @param start First file index.
-		 * @param end Last file index.
-		 */
-		void filesAboutToBeInserted(int start, int end);
-
-		/**
-		 * Files have been added to the GcnCard.
-		 */
-		void filesInserted(void);
-
-		/**
-		 * Files are about to be removed from the GcnCard.
-		 * @param start First file index.
-		 * @param end Last file index.
-		 */
-		void filesAboutToBeRemoved(int start, int end);
-
-		/**
-		 * Files have been removed from the GcnCard.
-		 */
-		void filesRemoved(void);
-
 	public:
 		/**
 		 * Get the text encoding for a given region.
@@ -117,30 +91,6 @@ class GcnCard : public Card
 		 * @return QTextCodec.
 		 */
 		QTextCodec *textCodec(char region = 0) const;
-
-		/**
-		 * Get the number of files in the file table.
-		 * @return Number of files, or negative on error.
-		 */
-		int numFiles(void) const;
-
-		/**
-		 * Is the card empty?
-		 * @return True if empty; false if not.
-		 */
-		bool isEmpty(void) const;
-
-		/**
-		 * Get a GcnFile object.
-		 * @param idx File number.
-		 * @return GcnFile object, or nullptr on error.
-		 */
-		GcnFile *getFile(int idx);
-
-		/**
-		 * Remove all "lost" files.
-		 */
-		void removeLostFiles(void);
 
 		/**
 		 * Get the used block map.

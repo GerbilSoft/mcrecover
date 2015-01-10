@@ -24,7 +24,7 @@
 
 // GcnCard classes.
 #include "GcnCard.hpp"
-#include "GcnFile.hpp"
+#include "File.hpp"
 #include "McRecoverQApplication.hpp"
 
 // Icon animation helper.
@@ -63,7 +63,7 @@ class MemCardModelPrivate
 	public:
 		GcnCard *card;
 
-		QHash<const GcnFile*, IconAnimHelper*> animState;
+		QHash<const File*, IconAnimHelper*> animState;
 
 		/**
 		 * Initialize the animation state for all files.
@@ -72,9 +72,9 @@ class MemCardModelPrivate
 
 		/**
 		 * Initialize the animation state for a given file.
-		 * @param file GcnFile.
+		 * @param file File.
 		 */
-		void initAnimState(const GcnFile *file);
+		void initAnimState(const File *file);
 
 		/**
 		 * Update the animation timer state.
@@ -110,12 +110,12 @@ class MemCardModelPrivate
 		style_t style;
 
 		/**
-		 * Cached copy of card->numFiles().
+		 * Cached copy of card->fileCount().
 		 * This value is needed after the card is destroyed,
 		 * so we need to cache it here, since the destroyed()
 		 * slot might be run *after* the GcnCard is deleted.
 		 */
-		int numFiles;
+		int fileCount;
 
 		// Row insert start/end indexes.
 		int insertStart;
@@ -127,7 +127,7 @@ MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	, card(nullptr)
 	, animTimer(new QTimer(q))
 	, pauseCounter(0)
-	, numFiles(0)
+	, fileCount(0)
 	, insertStart(-1)
 	, insertEnd(-1)
 {
@@ -203,8 +203,8 @@ void MemCardModelPrivate::initAnimState(void)
 		return;
 
 	// Initialize the animation state.
-	for (int i = 0; i < numFiles; i++) {
-		const GcnFile *file = card->getFile(i);
+	for (int i = 0; i < fileCount; i++) {
+		const File *file = card->getFile(i);
 		initAnimState(file);
 	}
 
@@ -214,9 +214,9 @@ void MemCardModelPrivate::initAnimState(void)
 
 /**
  * Initialize the animation state for a given file.
- * @param file GcnFile.
+ * @param file File.
  */
-void MemCardModelPrivate::initAnimState(const GcnFile *file)
+void MemCardModelPrivate::initAnimState(const File *file)
 {
 	int numIcons = file->iconCount();
 	if (numIcons <= 1) {
@@ -258,8 +258,8 @@ void MemCardModelPrivate::animTimerSlot(void)
 
 	// Check for icon animations.
 	Q_Q(MemCardModel);
-	for (int i = 0; i < numFiles; i++) {
-		const GcnFile *file = card->getFile(i);
+	for (int i = 0; i < fileCount; i++) {
+		const File *file = card->getFile(i);
 		IconAnimHelper *helper = animState.value(file);
 		if (!helper)
 			continue;
@@ -301,7 +301,7 @@ int MemCardModel::rowCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
 	Q_D(const MemCardModel);
-	return (d->numFiles);
+	return (d->fileCount);
 }
 
 int MemCardModel::columnCount(const QModelIndex& parent) const
@@ -319,7 +319,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 		return QVariant();
 
 	// Get the memory card file.
-	const GcnFile *file = d->card->getFile(index.row());
+	const File *file = d->card->getFile(index.row());
 
 	// TODO: Move some of this to MemCardItemDelegate?
 	switch (role) {
@@ -515,9 +515,9 @@ void MemCardModel::setMemCard(GcnCard *card)
 	// Disconnect the GcnCard's changed() signal if a GcnCard is already set.
 	if (d->card) {
 		// Notify the view that we're about to remove all rows.
-		d->numFiles = d->card->numFiles();
-		if (d->numFiles > 0)
-			beginRemoveRows(QModelIndex(), 0, (d->numFiles - 1));
+		d->fileCount = d->card->fileCount();
+		if (d->fileCount > 0)
+			beginRemoveRows(QModelIndex(), 0, (d->fileCount - 1));
 
 		// Disconnect the GcnCard's signals.
 		disconnect(d->card, SIGNAL(destroyed(QObject*)),
@@ -534,15 +534,15 @@ void MemCardModel::setMemCard(GcnCard *card)
 		d->card = nullptr;
 
 		// Done removing rows.
-		if (d->numFiles > 0)
+		if (d->fileCount > 0)
 			endRemoveRows();
 	}
 
 	if (card) {
 		// Notify the view that we're about to add rows.
-		d->numFiles = card->numFiles();
-		if (d->numFiles > 0)
-			beginInsertRows(QModelIndex(), 0, (d->numFiles - 1));
+		d->fileCount = card->fileCount();
+		if (d->fileCount > 0)
+			beginInsertRows(QModelIndex(), 0, (d->fileCount - 1));
 
 		// Set the card.
 		d->card = card;
@@ -563,7 +563,7 @@ void MemCardModel::setMemCard(GcnCard *card)
 			this, SLOT(memCard_filesRemoved_slot()));
 
 		// Done adding rows.
-		if (d->numFiles > 0)
+		if (d->fileCount > 0)
 			endInsertRows();
 	}
 }
@@ -624,12 +624,12 @@ void MemCardModel::memCard_destroyed_slot(QObject *obj)
 
 	if (obj == d->card) {
 		// Our GcnCard was destroyed.
-		int old_numFiles = d->numFiles;
-		if (old_numFiles > 0)
-			beginRemoveRows(QModelIndex(), 0, (old_numFiles - 1));
-		d->numFiles = 0;
+		int old_fileCount = d->fileCount;
+		if (old_fileCount > 0)
+			beginRemoveRows(QModelIndex(), 0, (old_fileCount - 1));
+		d->fileCount = 0;
 		d->card = nullptr;
-		if (old_numFiles > 0)
+		if (old_fileCount > 0)
 			endRemoveRows();
 	}
 }
@@ -660,7 +660,7 @@ void MemCardModel::memCard_filesInserted_slot(void)
 	// If these files have animated icons, add them.
 	if (d->insertStart >= 0 && d->insertEnd >= 0) {
 		for (int i = d->insertStart; i <= d->insertEnd; i++) {
-			const GcnFile *file = d->card->getFile(i);
+			const File *file = d->card->getFile(i);
 			d->initAnimState(file);
 		}
 
@@ -674,7 +674,7 @@ void MemCardModel::memCard_filesInserted_slot(void)
 
 	// Update the file count.
 	if (d->card)
-		d->numFiles = d->card->numFiles();
+		d->fileCount = d->card->fileCount();
 
 	// Done adding rows.
 	endInsertRows();
@@ -693,7 +693,7 @@ void MemCardModel::memCard_filesAboutToBeRemoved_slot(int start, int end)
 	// Remove animation states for these files.
 	Q_D(MemCardModel);
 	for (int i = start; i <= end; i++) {
-		const GcnFile *file = d->card->getFile(i);
+		const File *file = d->card->getFile(i);
 		d->animState.remove(file);
 	}
 }
@@ -706,7 +706,7 @@ void MemCardModel::memCard_filesRemoved_slot(void)
 	// Update the file count.
 	Q_D(MemCardModel);
 	if (d->card)
-		d->numFiles = d->card->numFiles();
+		d->fileCount = d->card->fileCount();
 
 	// Done removing rows.
 	endRemoveRows();

@@ -21,6 +21,7 @@
 
 #include "Card.hpp"
 #include "Card_p.hpp"
+#include "File.hpp"
 
 // C includes. (C++ namespace)
 #include <cstring>
@@ -59,6 +60,10 @@ CardPrivate::CardPrivate(Card *q, uint32_t blockSize, int minBlocks, int maxBloc
 
 CardPrivate::~CardPrivate()
 {
+	// Clear the File list.
+	qDeleteAll(lstFiles);
+	lstFiles.clear();
+
 	if (file) {
 		file->close();
 		delete file;
@@ -352,6 +357,64 @@ int Card::readBlock(void *buf, int siz, uint16_t blockIdx)
 // TODO: Add a readBlocks() function?
 
 // TODO: Add basic file functions, after creating a File class.
+
+/** File management **/
+
+/**
+ * Get the number of files in the file table.
+ * @return Number of files, or negative on error.
+ */
+int Card::fileCount(void) const
+{
+	if (!isOpen())
+		return -1;
+	Q_D(const Card);
+	return d->lstFiles.size();
+}
+
+/**
+ * Is the card empty?
+ * @return True if empty; false if not.
+ */
+bool Card::isEmpty(void) const
+{
+	if (!isOpen())
+		return true;
+	Q_D(const Card);
+	return d->lstFiles.isEmpty();
+}
+
+/**
+ * Get a GcnFile object.
+ * @param idx File number.
+ * @return GcnFile object, or nullptr on error.
+ */
+File *Card::getFile(int idx)
+{
+	if (!isOpen())
+		return nullptr;
+	Q_D(Card);
+	if (idx < 0 || idx >= d->lstFiles.size())
+		return nullptr;
+	return d->lstFiles.at(idx);
+}
+
+/**
+ * Remove all "lost" files.
+ */
+void Card::removeLostFiles(void)
+{
+	Q_D(Card);
+	for (int i = d->lstFiles.size() - 1; i >= 0; i--) {
+		const File *file = d->lstFiles.at(i);
+		if (file->isLostFile()) {
+			// This is a "lost" file. Remove it.
+			emit filesAboutToBeRemoved(i, i);
+			d->lstFiles.remove(i);
+			emit filesRemoved();
+		}
+	}
+}
 
 /** Errors **/
 
