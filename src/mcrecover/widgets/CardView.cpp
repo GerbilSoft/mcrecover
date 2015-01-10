@@ -35,6 +35,9 @@
 using std::string;
 using std::vector;
 
+// Qt includes.
+#include <QtGui/QPainter>
+
 /** CardViewPrivate **/
 
 #include "ui_CardView.h"
@@ -52,8 +55,13 @@ class CardViewPrivate
 
 	public:
 		Ui::CardView ui;
+		QMargins origMargins;
 
 		Card *card;
+
+		// Card color (border).
+		QColor color;
+		int cardBorder;
 
 		/**
 		 * Update the widget display.
@@ -69,6 +77,7 @@ class CardViewPrivate
 CardViewPrivate::CardViewPrivate(CardView *q)
 	: q_ptr(q)
 	, card(nullptr)
+	, cardBorder(0)
 { }
 
 CardViewPrivate::~CardViewPrivate()
@@ -91,9 +100,12 @@ void CardViewPrivate::updateBlockCountDisplay(void)
  */
 void CardViewPrivate::updateWidgetDisplay(void)
 {
+	Q_Q(CardView);
 	if (!card) {
 		// Hide the widget display.
 		// TODO: Better method?
+		//ui.fraBorder->setStyleSheet(QString());
+		ui.formLayout->setContentsMargins(0, 0, 0, 0);
 		ui.lblBlockCount->setVisible(false);
 		ui.lblStatusIcon->setVisible(false);
 		ui.lblEncodingTitle->setVisible(false);
@@ -104,6 +116,15 @@ void CardViewPrivate::updateWidgetDisplay(void)
 		ui.lblChecksumExpected->setVisible(false);
 		ui.tableSelect->setCard(nullptr);
 		ui.tableSelect->setVisible(false);
+
+		// Update the widget.
+		// This is needed in order to clear the painted border
+		// if a card with a border color was just closed.
+		if (color.isValid()) {
+			// Clear the color and update the widget.
+			color = QColor();
+			q->update();
+		}
 		return;
 	}
 
@@ -111,6 +132,25 @@ void CardViewPrivate::updateWidgetDisplay(void)
 	ui.lblBlockCount->setVisible(true);
 	ui.lblEncodingTitle->setVisible(true);
 	ui.lblEncoding->setVisible(true);
+
+	// Check if the card's color has changed.
+	if (this->color != card->color()) {
+		// Card's color has changed.
+		this->color = card->color();
+		if (color.isValid()) {
+			// Valid color.
+			ui.formLayout->setContentsMargins(16, 16, 16, 16);
+			this->cardBorder = 12;
+		} else {
+			// Invalid color.
+			ui.formLayout->setContentsMargins(origMargins);
+			this->cardBorder = 0;
+		}
+
+		// Update the widget.
+		// This is needed in order to redraw the border color.
+		q->update();
+	}
 
 	// Update the widget display.
 	bool isCardHeaderValid = true;
@@ -222,6 +262,10 @@ CardView::CardView(QWidget *parent)
 	Q_D(CardView);
 	d->ui.setupUi(this);
 
+	// Get the original content margins.
+	// These are used when there's no card color.
+	d->origMargins = d->ui.formLayout->contentsMargins();
+
 	// Set monospace fonts.
 	QFont fntMonospace;
 	fntMonospace.setFamily(QLatin1String("Monospace"));
@@ -263,6 +307,8 @@ void CardView::setCard(Card *card)
 			   this, SLOT(card_destroyed_slot(QObject*)));
 		disconnect(d->card, SIGNAL(blockCountChanged(int,int,int)),
 			   this, SLOT(card_blockCountChanged_slot()));
+		disconnect(d->card, SIGNAL(colorChanged(QColor)),
+			   this, SLOT(card_colorChanged_slot(QColor)));
 	}
 
 	d->card = card;
@@ -273,6 +319,8 @@ void CardView::setCard(Card *card)
 			this, SLOT(card_destroyed_slot(QObject*)));
 		connect(d->card, SIGNAL(blockCountChanged(int,int,int)),
 			   this, SLOT(card_blockCountChanged_slot()));
+		connect(d->card, SIGNAL(colorChanged(QColor)),
+			   this, SLOT(card_colorChanged_slot(QColor)));
 	}
 
 	// Update the widget display.
@@ -294,6 +342,48 @@ void CardView::changeEvent(QEvent *event)
 
 	// Pass the event to the base class.
 	this->QWidget::changeEvent(event);
+}
+
+/**
+ * Paint event.
+ * @param event Paint event.
+ */
+void CardView::paintEvent(QPaintEvent *event)
+{
+	// NOTE: QWidget::paintEvent() does nothing by default.
+	// Hence, we don't have to call it.
+
+	Q_D(const CardView);
+	if (!d->card || !d->color.isValid()) {
+		// Invalid color.
+		// Don't draw a border.
+		return;
+	}
+
+	QPainter painter(this);
+	// NOTE: Not enabling antialiasing for now.
+	// (It makes the borders look weird.)
+	//painter.setRenderHint(QPainter::Antialiasing);
+
+	// Draw the filled rectangle portion.
+	painter.setPen(Qt::NoPen);
+	painter.setBrush(d->color);
+	const int w = this->width(), h = d->ui.formLayout->sizeHint().height();
+	const int border = d->cardBorder;
+	painter.drawRect(0, 0, w, border);
+	painter.drawRect(w-border, 0, border, h);
+	painter.drawRect(0, h-border, w, border);
+	painter.drawRect(0, 0, border, h-border);
+
+	// Draw the inner and outer rectangles.
+	// (Only if color isn't black, because drawing
+	// black on black is a waste of CPU time.)
+	if (d->color != Qt::black) {
+		painter.setPen(Qt::black);
+		painter.setBrush(QBrush());
+		painter.drawRect(0, 0, w-1, h-1);
+		painter.drawRect(0+border-1, 0+border-1, w-(border*2)+1, h-(border*2)+1);
+	}
 }
 
 /** Slots. **/
@@ -322,4 +412,17 @@ void CardView::card_blockCountChanged_slot(void)
 {
 	Q_D(CardView);
 	d->updateBlockCountDisplay();
+}
+
+/**
+ * Card's color has changed.
+ * @param color New color.
+ */
+void CardView::card_colorChanged_slot(const QColor &color)
+{
+	Q_D(CardView);
+	if (d->color != color) {
+		d->color = color;
+		this->update();
+	}
 }

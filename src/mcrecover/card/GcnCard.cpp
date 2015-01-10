@@ -645,6 +645,29 @@ int GcnCardPrivate::checkTables(void)
 	Q_Q(GcnCard);
 	emit q->blockCountChanged(totalPhysBlocks, totalUserBlocks, freeBlocks);
 
+	// Determine the card color based on the block count.
+	// TODO: Better colors?
+	QColor color;
+	switch (totalUserBlocks) {
+		case 59:
+			color = QColor(Qt::darkGray);
+			break;
+		case 251:
+			color = QColor(Qt::black);
+			break;
+		case 1019:
+			color = QColor(Qt::white);
+			break;
+		default:
+			color = QColor();
+			break;
+	}
+	if (this->color != color) {
+		// Color has changed.
+		this->color = color;
+		emit q->colorChanged(color);
+	}
+
 	return 0;
 }
 

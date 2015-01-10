@@ -43,7 +43,7 @@ class Card : public QObject
 	Q_PROPERTY(QString filename READ filename)
 	Q_PROPERTY(int filesize READ filesize)
 	Q_PROPERTY(int encoding READ encoding)
-	Q_PROPERTY(QColor color READ color)
+	Q_PROPERTY(QColor color READ color NOTIFY colorChanged)
 
 	// Card size.
 	Q_PROPERTY(int blockSize READ blockSize)
@@ -74,6 +74,12 @@ class Card : public QObject
 		 * @param freeBlocks Number of free blocks.
 		 */
 		void blockCountChanged(int totalPhysBlocks, int totalUserBlocks, int freeBlocks);
+
+		/**
+		 * Color has changed.
+		 * @param color New color.
+		 */
+		void colorChanged(const QColor &color);
 
 	public:
 		/**

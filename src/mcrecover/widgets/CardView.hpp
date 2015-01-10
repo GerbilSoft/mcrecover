@@ -60,6 +60,9 @@ class CardView : public QWidget
 		// State change event. (Used for switching the UI language at runtime.)
 		void changeEvent(QEvent *event);
 
+		// Paint event.
+		void paintEvent(QPaintEvent *event);
+
 	protected slots:
 		/**
 		 * Card object was destroyed.
@@ -71,6 +74,12 @@ class CardView : public QWidget
 		 * Card's block count has changed.
 		 */
 		void card_blockCountChanged_slot(void);
+
+		/**
+		 * Card's color has changed.
+		 * @param color New color.
+		 */
+		void card_colorChanged_slot(const QColor &color);
 };
 
 #endif /* __MCRECOVER_WIDGETS_CARDVIEW_HPP__ */

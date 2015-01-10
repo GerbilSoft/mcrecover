@@ -243,7 +243,7 @@ Checksum:</string>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="resources/oxygen/oxygen.qrc"/>
+  <include location="../resources/oxygen/oxygen.qrc"/>
  </resources>
  <connections/>
 </ui>
