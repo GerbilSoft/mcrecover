@@ -352,6 +352,7 @@ void CardView::paintEvent(QPaintEvent *event)
 {
 	// NOTE: QWidget::paintEvent() does nothing by default.
 	// Hence, we don't have to call it.
+	Q_UNUSED(event)
 
 	Q_D(const CardView);
 	if (!d->card || !d->color.isValid()) {
