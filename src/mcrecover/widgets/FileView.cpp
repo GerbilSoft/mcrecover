@@ -141,72 +141,60 @@ void FileViewPrivate::updateWidgetDisplay(void)
 	ui.lblMode->setText(file->modeAsString());
 	ui.lblMode->setVisible(true);
 
-	// FIXME: Remove qobject_cast<> once checksum is moved to File.
-	const GcnFile *gcnFile = qobject_cast<const GcnFile*>(file);
-	if (gcnFile) {
-		// Checksum algorithm is always visible.
-		ui.lblChecksumAlgorithmTitle->setVisible(true);
-		ui.lblChecksumAlgorithm->setVisible(true);
+	// Checksum algorithm is always visible.
+	ui.lblChecksumAlgorithmTitle->setVisible(true);
+	ui.lblChecksumAlgorithm->setVisible(true);
 
-		// Is the checksum known?
-		if (gcnFile->checksumStatus() == Checksum::CHKST_UNKNOWN) {
-			// Unknown checksum.
-			ui.lblChecksumAlgorithm->setText(FileView::tr("Unknown", "checksum"));
-			ui.lblChecksumActualTitle->setVisible(false);
-			ui.lblChecksumActual->setVisible(false);
-			ui.lblChecksumExpectedTitle->setVisible(false);
-			ui.lblChecksumExpected->setVisible(false);
-			return;
-		}
-
-		// Checksum is known.
-
-		// Display the algorithm.
-		// TODO: Also the polynomial / parameter?
-		Checksum::ChkAlgorithm algorithm = gcnFile->checksumAlgorithm();
-		ui.lblChecksumAlgorithm->setText(
-			QString::fromStdString(Checksum::ChkAlgorithmToStringFormatted(algorithm)));
-
-		// Show the actual checksum labels.
-		ui.lblChecksumActualTitle->setVisible(true);
-		ui.lblChecksumActual->setVisible(true);
-
-		// Format the checksum values.
-		QVector<QString> checksumValuesFormatted = gcnFile->checksumValuesFormatted();
-		if (checksumValuesFormatted.size() < 1) {
-			// No checksum...
-			ui.lblChecksumAlgorithm->setText(FileView::tr("Unknown", "checksum"));
-			ui.lblChecksumActualTitle->setVisible(false);
-			ui.lblChecksumActual->setVisible(false);
-			ui.lblChecksumExpectedTitle->setVisible(false);
-			ui.lblChecksumExpected->setVisible(false);
-			return;
-		}
-
-		// Set the actual checksum text.
-		ui.lblChecksumActual->setText(checksumValuesFormatted.at(0));
-
-		if (checksumValuesFormatted.size() > 1) {
-			// At least one checksum is invalid.
-			// Show the expected checksum.
-			ui.lblChecksumExpectedTitle->setVisible(true);
-			ui.lblChecksumExpected->setVisible(true);
-			ui.lblChecksumExpected->setText(checksumValuesFormatted.at(1));
-		} else {
-			// Checksums are all valid.
-			// Hide the expected checksum.
-			ui.lblChecksumExpectedTitle->setVisible(false);
-			ui.lblChecksumExpected->setVisible(false);
-			ui.lblChecksumExpected->clear();
-		}
-	} else {
-		// Not a GCN file.
-		ui.lblChecksumAlgorithmTitle->setVisible(false);
-		ui.lblChecksumAlgorithm->setVisible(false);
+	// Is the checksum known?
+	if (file->checksumStatus() == Checksum::CHKST_UNKNOWN) {
+		// Unknown checksum.
+		ui.lblChecksumAlgorithm->setText(FileView::tr("Unknown", "checksum"));
 		ui.lblChecksumActualTitle->setVisible(false);
 		ui.lblChecksumActual->setVisible(false);
 		ui.lblChecksumExpectedTitle->setVisible(false);
 		ui.lblChecksumExpected->setVisible(false);
+		return;
+	}
+
+	// Checksum is known.
+
+	// Display the algorithm.
+	// TODO: Also the polynomial / parameter?
+	Checksum::ChkAlgorithm algorithm = file->checksumAlgorithm();
+	ui.lblChecksumAlgorithm->setText(
+		QString::fromStdString(Checksum::ChkAlgorithmToStringFormatted(algorithm)));
+
+	// Show the actual checksum labels.
+	ui.lblChecksumActualTitle->setVisible(true);
+	ui.lblChecksumActual->setVisible(true);
+
+	// Format the checksum values.
+	QVector<QString> checksumValuesFormatted = file->checksumValuesFormatted();
+	if (checksumValuesFormatted.size() < 1) {
+		// No checksum...
+		ui.lblChecksumAlgorithm->setText(FileView::tr("Unknown", "checksum"));
+		ui.lblChecksumActualTitle->setVisible(false);
+		ui.lblChecksumActual->setVisible(false);
+		ui.lblChecksumExpectedTitle->setVisible(false);
+		ui.lblChecksumExpected->setVisible(false);
+		return;
+	}
+
+	// Set the actual checksum text.
+	ui.lblChecksumActual->setText(checksumValuesFormatted.at(0));
+
+	if (checksumValuesFormatted.size() > 1) {
+		// At least one checksum is invalid.
+		// Show the expected checksum.
+		ui.lblChecksumExpectedTitle->setVisible(true);
+		ui.lblChecksumExpected->setVisible(true);
+		ui.lblChecksumExpected->setText(checksumValuesFormatted.at(1));
+	} else {
+		// Checksums are all valid.
+		// Hide the expected checksum.
+		ui.lblChecksumExpectedTitle->setVisible(false);
+		ui.lblChecksumExpected->setVisible(false);
+		ui.lblChecksumExpected->clear();
 	}
 }
 

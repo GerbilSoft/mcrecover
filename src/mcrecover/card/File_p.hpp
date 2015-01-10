@@ -25,6 +25,8 @@
 #include "File.hpp"
 class Card;
 
+#include "Checksum.hpp"
+
 // C includes.
 #include <stdint.h>
 
@@ -107,6 +109,17 @@ class FilePrivate
 		 * @return Filename with invalid DOS characters replaced with replaceChar.
 		 */
 		static QString StripInvalidDosChars(const QString &filename, QChar replaceChar = QChar(L'_'));
+
+		/** Checksums **/
+
+		// Checksum data.
+		QVector<Checksum::ChecksumDef> checksumDefs;
+		QVector<Checksum::ChecksumValue> checksumValues;
+
+		/**
+		 * Calculate the file checksum.
+		 */
+		void calculateChecksum(void);
 };
 
 #endif /* __MCRECOVER_CARD_FILE_P_HPP__ */

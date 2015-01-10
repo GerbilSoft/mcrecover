@@ -28,6 +28,9 @@
 // TODO: "Generic" image writer?
 #include "GcImageWriter.hpp"
 
+// Checksums.
+#include "Checksum.hpp"
+
 // Qt includes.
 #include <QtCore/QString>
 #include <QtCore/QVector>
@@ -249,6 +252,47 @@ class File : public QObject
 		 */
 		virtual int saveIcon(const QString &filenameNoExt,
 			     GcImageWriter::AnimImageFormat animImgf) const = 0;
+
+		/** Checksums **/
+
+		/**
+		 * Get the checksum definitions.
+		 * @return Checksum definitions.
+		 */
+		QVector<Checksum::ChecksumDef> checksumDefs(void) const;
+
+		/**
+		 * Set the checksum definitions.
+		 * @param cksumDefs Checksum definitions.
+		 */
+		void setChecksumDefs(const QVector<Checksum::ChecksumDef> &checksumDefs);
+
+		/**
+		 * Get the checksum values.
+		 * @return Checksum values, or empty QVector if no checksum definitions were set.
+		 */
+		QVector<Checksum::ChecksumValue> checksumValues(void) const;
+
+		/**
+		 * Get the checksum algorithm.
+		 * NOTE: We're assuming each file only uses one algorithm...
+		 * @return Checksum algorithm.
+		 */
+		Checksum::ChkAlgorithm checksumAlgorithm(void) const;
+
+		/**
+		 * Get the checksum status.
+		 * @return Checksum status.
+		 */
+		Checksum::ChkStatus checksumStatus(void) const;
+
+		/**
+		 * Format checksum values as HTML for display purposes.
+		 * @return QVector containing one or two HTML strings.
+		 * - String 0 contains the actual checksums.
+		 * - String 1, if present, contains the expected checksums.
+		 */
+		QVector<QString> checksumValuesFormatted(void) const;
 };
 
 #endif /* __MCRECOVER_CARD_FILE_HPP__ */
