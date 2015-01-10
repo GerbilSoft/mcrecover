@@ -932,43 +932,6 @@ const card_direntry *GcnFile::dirEntry(void) const
 
 /**
  * Save the banner image.
- * @param filenameNoExt Filename for the GCI file, sans extension.
- * @return 0 on success; non-zero on error.
- * TODO: Error code constants.
- */
-int GcnFile::saveBanner(const QString &filenameNoExt) const
-{
-	Q_D(const GcnFile);
-	if (!d->gcBanner)
-		return -EINVAL;
-
-	// Append the correct extension.
-	QString filename = filenameNoExt;
-	const char *ext = GcImageWriter::extForImageFormat(GcImageWriter::IMGF_PNG);
-	if (ext)
-		filename += QChar(L'.') + QLatin1String(ext);
-
-	QFile file(filename);
-	if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-		// Error opening the file.
-		// TODO: Convert QFileError to a POSIX error code.
-		return -EIO;
-	}
-
-	// Write the banner image.
-	int ret = saveBanner(&file);
-	file.close();
-
-	if (ret != 0) {
-		// Error saving the banner image.
-		file.remove();
-	}
-
-	return ret;
-}
-
-/**
- * Save the banner image.
  * @param qioDevice QIODevice to write the banner image to.
  * @return 0 on success; non-zero on error.
  * TODO: Error code constants.

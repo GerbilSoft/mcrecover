@@ -25,6 +25,9 @@
 #include "Card.hpp"
 #include "GcnDateTime.hpp"
 
+// TODO: "Generic" image writer?
+#include "GcImageWriter.hpp"
+
 // Qt includes.
 #include <QtCore/QString>
 #include <QtCore/QVector>
@@ -217,7 +220,35 @@ class File : public QObject
 		 */
 		virtual int exportToFile(QIODevice *qioDevice) = 0;
 
-		// TODO: Export banner and icon.
+		/** Images **/
+
+		/**
+		 * Save the banner image.
+		 * @param filenameNoExt Filename for the banner image, sans extension.
+		 * @return 0 on success; non-zero on error.
+		 * TODO: Error code constants.
+		 */
+		int saveBanner(const QString &filenameNoExt) const;
+
+		// TODO: Implement base functions here.
+		/**
+		 * Save the banner image.
+		 * @param qioDevice QIODevice to write the banner image to.
+		 * @return 0 on success; non-zero on error.
+		 * TODO: Error code constants.
+		 */
+		virtual int saveBanner(QIODevice *qioDevice) const = 0;
+
+		// TODO: Rename GcImageWriter to "Generic" ImageWriter?
+		/**
+		 * Save the icon.
+		 * @param filenameNoExt Filename for the icon, sans extension.
+		 * @param animImgf Animated image format for animated icons.
+		 * @return 0 on success; non-zero on error.
+		 * TODO: Error code constants.
+		 */
+		virtual int saveIcon(const QString &filenameNoExt,
+			     GcImageWriter::AnimImageFormat animImgf) const = 0;
 };
 
 #endif /* __MCRECOVER_CARD_FILE_HPP__ */

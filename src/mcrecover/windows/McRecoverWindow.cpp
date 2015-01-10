@@ -658,8 +658,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<File*> &files, QString path
 		if (extractBanners) {
 			// TODO: Error handling and details.
 			QString bannerFilename = changeFileExtension(filename, extBanner);
-			// FIXME: Move saveBanner to File.
-			((GcnFile*)file)->saveBanner(bannerFilename);
+			file->saveBanner(bannerFilename);
 		}
 
 		// Extract the icon.
@@ -668,8 +667,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<File*> &files, QString path
 			if (file->iconCount() >= 1) {
 				// File has an icon.
 				QString iconFilename = changeFileExtension(filename, extIcon);
-				// FIXME: Move saveIcon to File.
-				((GcnFile*)file)->saveIcon(iconFilename, animImgf);
+				file->saveIcon(iconFilename, animImgf);
 			}
 		}
 	}
@@ -1009,7 +1007,6 @@ void McRecoverWindow::openCard(const QString &filename)
 
 	// Open the specified memory card image.
 	// TODO: Set this as the last path?
-	//d->card = GcnCard::open(filename, this);
 	d->card = GcnCard::open(filename, this);
 	if (!d->card || !d->card->isOpen()) {
 		// Could not open the card.

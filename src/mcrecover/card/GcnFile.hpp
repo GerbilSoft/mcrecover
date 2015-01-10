@@ -173,19 +173,11 @@ class GcnFile : public File
 
 		/**
 		 * Save the banner image.
-		 * @param filenameNoExt Filename for the banner image, sans extension.
-		 * @return 0 on success; non-zero on error.
-		 * TODO: Error code constants.
-		 */
-		int saveBanner(const QString &filenameNoExt) const;
-
-		/**
-		 * Save the banner image.
 		 * @param qioDevice QIODevice to write the banner image to.
 		 * @return 0 on success; non-zero on error.
 		 * TODO: Error code constants.
 		 */
-		int saveBanner(QIODevice *qioDevice) const;
+		virtual int saveBanner(QIODevice *qioDevice) const override;
 
 		/**
 		 * Save the icon.
@@ -194,8 +186,8 @@ class GcnFile : public File
 		 * @return 0 on success; non-zero on error.
 		 * TODO: Error code constants.
 		 */
-		int saveIcon(const QString &filenameNoExt,
-			     GcImageWriter::AnimImageFormat animImgf) const;
+		virtual int saveIcon(const QString &filenameNoExt,
+			     GcImageWriter::AnimImageFormat animImgf) const override;
 };
 
 #endif /* __MCRECOVER_CARD_GCNFILE_HPP__ */
