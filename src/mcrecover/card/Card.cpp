@@ -55,7 +55,7 @@ CardPrivate::CardPrivate(Card *q, uint32_t blockSize, int minBlocks, int maxBloc
 	assert(isPow2(blockSize));
 	assert(blockSize > 0);
 	assert(minBlocks > 0);
-	assert(maxBlocks > minBlocks);
+	assert(maxBlocks >= minBlocks);
 }
 
 CardPrivate::~CardPrivate()
