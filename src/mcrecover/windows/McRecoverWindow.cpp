@@ -36,6 +36,9 @@
 #include "card/MemCardItemDelegate.hpp"
 #include "card/MemCardSortFilterProxyModel.hpp"
 
+// VmuCard
+#include "card/VmuCard.hpp"
+
 // File database.
 #include "GcnMcFileDb.hpp"
 
@@ -103,7 +106,7 @@ class McRecoverWindowPrivate
 		bool scanningDisabled;
 
 		// Memory Card.
-		GcnCard *card;
+		Card *card;
 		MemCardModel *model;
 		MemCardSortFilterProxyModel *proxyModel;
 
@@ -1007,7 +1010,7 @@ void McRecoverWindow::openCard(const QString &filename)
 
 	// Open the specified memory card image.
 	// TODO: Set this as the last path?
-	d->card = GcnCard::open(filename, this);
+	d->card = VmuCard::open(filename, this);
 	if (!d->card || !d->card->isOpen()) {
 		// Could not open the card.
 		static const QChar chrBullet(0x2022);  // U+2022: BULLET
@@ -1022,7 +1025,8 @@ void McRecoverWindow::openCard(const QString &filename)
 	}
 
 	d->filename = filename;
-	d->model->setMemCard(d->card);
+	// TODO: Make MemCardModel take a GcnCard*.
+	d->model->setMemCard(qobject_cast<GcnCard*>(d->card));
 
 	// Extract the filename from the path.
 	d->displayFilename = filename;
@@ -1030,7 +1034,7 @@ void McRecoverWindow::openCard(const QString &filename)
 	if (lastSlash >= 0)
 		d->displayFilename.remove(0, lastSlash + 1);
 
-	// Set the MemCardView's GcnCard to the
+	// Set the CardView's Card to the
 	// selected card in the QTreeView.
 	d->ui.mcCardView->setCard(d->card);
 
@@ -1339,6 +1343,10 @@ void McRecoverWindow::on_actionScan_triggered(void)
 	Q_D(McRecoverWindow);
 	if (!d->card || d->scanningDisabled)
 		return;
+	// FIXME: Disable the button if the loaded card doesn't support scanning.
+	GcnCard *gcnCard = qobject_cast<GcnCard*>(d->card);
+	if (!gcnCard)
+		return;
 
 	// Get the database filenames.
 	QVector<QString> dbFilenames = GcnMcFileDb::GetDbFilenames();
@@ -1369,7 +1377,7 @@ void McRecoverWindow::on_actionScan_triggered(void)
 	if (ret != 0)
 		return;
 
-	// Remove lost files from the card.
+	// Remove "lost" files from the card.
 	d->card->removeLostFiles();
 
 	// Update the status bar manager.
@@ -1385,13 +1393,13 @@ void McRecoverWindow::on_actionScan_triggered(void)
 
 	// Search blocks for lost files.
 	// TODO: Handle errors.
-	ret = d->searchThread->searchMemCard_async(d->card, d->preferredRegion, searchUsedBlocks);
+	ret = d->searchThread->searchMemCard_async(gcnCard, d->preferredRegion, searchUsedBlocks);
 	if (ret < 0) {
 		// Error starting the thread.
 		// Use the synchronous version.
 		// TODO: Handle errors.
 		// NOTE: Files will be added by searchThread_searchFinished_slot().
-		ret = d->searchThread->searchMemCard(d->card, d->preferredRegion, searchUsedBlocks);
+		ret = d->searchThread->searchMemCard(gcnCard, d->preferredRegion, searchUsedBlocks);
 	}
 }
 
@@ -1565,6 +1573,11 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 	Q_UNUSED(lostFilesFound)
 	Q_D(McRecoverWindow);
 
+	// FIXME: Move "lost files" code to Card?
+	GcnCard *gcnCard = qobject_cast<GcnCard*>(d->card);
+	if (!gcnCard)
+		return;
+
 	// Remove lost files from the card.
 	d->card->removeLostFiles();
 
@@ -1572,7 +1585,7 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 	QLinkedList<SearchData> filesFoundList = d->searchThread->filesFoundList();
 
 	// Add the directory entries.
-	QList<GcnFile*> files = d->card->addLostFiles(filesFoundList);
+	QList<GcnFile*> files = gcnCard->addLostFiles(filesFoundList);
 
 	// Check for any Japanese files.
 	bool isJapanese = false;
