@@ -160,9 +160,14 @@ int VmuCardPrivate::open(const QString &filename)
 
 	// Load the memory card system information.
 	// This includes the root block, directory, and FAT.
-	loadSysInfo();
+	ret = loadSysInfo();
+	if (ret != 0) {
+		// Error loading system information.
+		return ret;
+	}
 
 	// Load the File list.
+	// TODO: Change it to return an error code?
 	loadFileList();
 
 	return 0;
@@ -199,12 +204,21 @@ int VmuCardPrivate::loadSysInfo(void)
 		// Zero the root block, directory, and FAT.
 		memset(&mc_root, 0x00, sizeof(mc_root));
 		memset(&mc_fat, 0x00, sizeof(mc_fat));
-		// TODO: Directory.
+		memset(&mc_dir, 0x00, sizeof(mc_dir));
 
 		// Use cp1252 encoding by default.
+		// TODO: "No encoding".
 		this->encoding = Card::ENCODING_CP1252;
-
 		return -2;
+	}
+
+	// The first 16 bytes should be 0x55.
+	for (int i = 0; i < NUM_ELEMENTS(mc_root.format55); i++) {
+		if (mc_root.format55[i] != 0x55) {
+			// Invalid header.
+			// TODO: Set an error flag instead of returning?
+			return -2;
+		}
 	}
 
 	// Byteswap the root block contents.
