@@ -225,9 +225,8 @@ void VmuFilePrivate::loadFileInfo(void)
 	filename = QString::fromLatin1(dirEntry->filename, sizeof(dirEntry->filename));
 
 	// Timestamp.
-	// NOTE: This might be ctime, not mtime...
-	// TODO: Convert from BCD.
-	//mtime.setGcnTimestamp(dirEntry->lastmodified);
+	// FIXME: This might be ctime, not mtime...
+	mtime.setVmuTimestamp(dirEntry->ctime);
 
 	// Mode. (TODO)
 	//this->mode = dirEntry->permission;
