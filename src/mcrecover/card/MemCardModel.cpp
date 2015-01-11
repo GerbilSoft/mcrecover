@@ -334,7 +334,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 					return file->size();
 				case COL_MTIME:
 					return file->mtime().qDateTime();
-				case COL_PERMISSION:
+				case COL_MODE:
 					return file->modeAsString();
 				case COL_GAMEID:
 					return file->gameID();
@@ -387,7 +387,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 		case Qt::TextAlignmentRole:
 			switch (index.column()) {
 				case COL_SIZE:
-				case COL_PERMISSION:
+				case COL_MODE:
 				case COL_GAMEID:
 				case COL_ISVALID:
 					// These columns should be center-aligned horizontally.
@@ -402,7 +402,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 		case Qt::FontRole:
 			switch (index.column()) {
 				case COL_SIZE:
-				case COL_PERMISSION:
+				case COL_MODE:
 				case COL_GAMEID: {
 					// These columns should be monospaced.
 					QFont fntMonospace(QLatin1String("Monospace"));
@@ -471,7 +471,7 @@ QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int 
 				case COL_SIZE:		return tr("Size");
 				case COL_MTIME:		return tr("Last Modified");
 				//: File permissions. (Known as "mode" on Unix systems.)
-				case COL_PERMISSION:	return tr("Mode");
+				case COL_MODE:		return tr("Mode");
 				//: 6-digit game ID, e.g. GALE01.
 				case COL_GAMEID:	return tr("Game ID");
 				case COL_FILENAME:	return tr("Filename");
@@ -490,7 +490,7 @@ QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int 
 			switch (section) {
 				case COL_ICON:
 				case COL_SIZE:
-				case COL_PERMISSION:
+				case COL_MODE:
 				case COL_GAMEID:
 				case COL_ISVALID:
 					// Center-align the text.

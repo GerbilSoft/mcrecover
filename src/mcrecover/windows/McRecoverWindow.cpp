@@ -975,7 +975,7 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_DESCRIPTION, false);
 	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_SIZE, false);
 	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_MTIME, false);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_PERMISSION, false);
+	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_MODE, false);
 	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_GAMEID, false);
 	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_FILENAME, true);
 
