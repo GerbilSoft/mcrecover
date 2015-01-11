@@ -271,9 +271,9 @@ typedef struct PACKED _vmu_eyecatch_palette_16
 #pragma pack(1)
 typedef struct PACKED _vmu_card_icon_header
 {
-	char desc_vmu[16];	// File description (VMU file menu) [JIS X 0201?]
-	uint32_t icon_mono;	// Offset of monochrome icon.
-	uint32_t icon_color;	// Offset of color icon. (If 0, no color icon is present.)
+	char desc_vmu[16];		// File description (VMU file menu) [JIS X 0201?]
+	uint32_t icon_mono_offset;	// Offset of monochrome icon.
+	uint32_t icon_color_offset;	// Offset of color icon. (If 0, no color icon is present.)
 } vmu_card_icon_header;
 #pragma pack()
 
