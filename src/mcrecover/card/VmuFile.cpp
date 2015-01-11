@@ -325,8 +325,46 @@ QString VmuFilePrivate::decodeText_SJISorCP1252(const char *str, int len)
  */
 GcImage *VmuFilePrivate::loadBannerImage(void)
 {
-	// TODO
-	return nullptr;
+	if (!fileHeader ||
+	    fileHeader->eyecatch_type == VMU_EYECATCH_NONE ||
+	    fileHeader->eyecatch_type > VMU_EYECATCH_PALETTE_16)
+	{
+		// No eyecatch.
+		return nullptr;
+	}
+
+	if (fileHeader->eyecatch_type != VMU_EYECATCH_PALETTE_16) {
+		// FIXME: Not supported yet.
+		return nullptr;
+	}
+
+	// Load the file into memory.
+	// TODO: Optimize by only reading in required data.
+	// TODO: Copy over the block code from GcnFile::loadIconImages(),
+	// but move the "read from X to Y" code down to File.
+	QByteArray data = this->loadFileData();
+
+	// Calculate the starting position.
+	int startPos = sizeof(*fileHeader);
+	if (fileHeader->icon_count > 0) {
+		startPos += sizeof(vmu_icon_palette);
+		startPos += (sizeof(vmu_icon_data) * fileHeader->icon_count);
+	}
+
+	// TODO: Other variants.
+	const int eyecatchSize = VMU_EYECATCH_PALETTE_16_LEN;
+	if (data.size() < (int)(startPos + eyecatchSize)) {
+		// File is too small.
+		// The eyecatch isn't actually there...
+		return nullptr;
+	}
+	
+	const vmu_eyecatch_palette_16 *eyecatch16 = (const vmu_eyecatch_palette_16*)(data.data() + startPos);
+	GcImage *gcImage = GcImage::fromDC_16color_ARGB4444(
+				VMU_EYECATCH_W, VMU_EYECATCH_H,
+				eyecatch16->eyecatch, sizeof(eyecatch16->eyecatch),
+				eyecatch16->palette, sizeof(eyecatch16->palette));
+	return gcImage;
 }
 
 /**
