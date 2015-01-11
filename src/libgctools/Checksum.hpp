@@ -56,6 +56,7 @@ class Checksum
 			CHKALG_ADDINVDUAL16,
 			CHKALG_ADDBYTES32,
 			CHKALG_SONICCHAOGARDEN,
+			CHKALG_DREAMCASTVMU,
 
 			CHKALG_MAX
 		};
@@ -161,6 +162,22 @@ class Checksum
 		 * @return Checksum.
 		 */
 		static uint32_t SonicChaoGarden(const uint8_t *buf, uint32_t siz);
+
+		/**
+		 * Dreamcast VMU algorithm.
+		 * Based on FCS-16.
+		 *
+		 * NOTE: The CRC is stored within the header.
+		 * Specify the address in crc_addr in order to
+		 * handle this properly. (Set to -1 to skip.)
+		 * The usual address is 0x46.
+		 *
+		 * @param buf Data buffer.
+		 * @param siz Length of data buffer.
+		 * @param crc_addr Address of CRC in header.
+		 * @return Checksum.
+		 */
+		static uint16_t DreamcastVMU(const uint8_t *buf, uint32_t siz, uint32_t crc_addr = -1);
 
 		/** General functions. **/
 

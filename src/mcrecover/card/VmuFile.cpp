@@ -474,7 +474,26 @@ VmuFile::VmuFile(VmuCard *card,
 		const vmu_dir_entry *dirEntry,
 		const vmu_fat *mc_fat)
 	: File(new VmuFilePrivate(this, card, dirEntry, mc_fat), card)
-{ }
+{
+	// NOTE: This can't be put in VmuFilePrivate::loadFileInfo(),
+	// since VmuCard isn't fully created at that time.
+	// TODO: Move to a separate function?
+	Q_D(VmuFile);
+	if (d->dirEntry->filetype == VMU_DIR_FILETYPE_DATA) {
+		// Data file. Verify the header's CRC.
+		Checksum::ChecksumDef checksumDef;
+		checksumDef.algorithm = Checksum::CHKALG_DREAMCASTVMU;
+		checksumDef.address = 0x46;
+		checksumDef.param = 0x46;
+		checksumDef.start = 0;
+		checksumDef.length = (this->size() * card->blockSize());
+
+		// TODO: Optimize this?
+		QVector<Checksum::ChecksumDef> checksumDefs;
+		checksumDefs.append(checksumDef);
+		setChecksumDefs(checksumDefs);
+	}
+}
 
 // TODO: Maybe not needed?
 VmuFile::~VmuFile()

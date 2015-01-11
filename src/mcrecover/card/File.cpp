@@ -267,6 +267,14 @@ void FilePrivate::calculateChecksum(void)
 				break;
 			}
 
+			case Checksum::CHKALG_DREAMCASTVMU:
+				// Dreamcast VMU.
+				// FIXME: This is little-endian.
+				// Add a byteorder flag to checksums.
+				expected = (data[checksumDef.address+0]) |
+					   (data[checksumDef.address+1] << 8);
+					   break;
+
 			case Checksum::CHKALG_NONE:
 			default:
 				// Unsupported algorithm.
