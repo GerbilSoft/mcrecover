@@ -27,6 +27,7 @@
 
 // GameCube image handlers.
 #include "GcImage.hpp"
+#include "GcImageLoader.hpp"
 #include "GcImageWriter.hpp"
 
 // C includes. (C++ namespace)
@@ -90,7 +91,7 @@ static GcImage *read_banner_WIBN_internal(const banner_wibn_t *banner, bool cryp
 {
 	// TODO: Verify magic number.
 	// Convert the image data.
-	GcImage *gcBanner = GcImage::fromRGB5A3(
+	GcImage *gcBanner = GcImageLoader::fromRGB5A3(
 				BANNER_WIBN_IMAGE_W, BANNER_WIBN_IMAGE_H,
 				banner->banner, sizeof(banner->banner));
 	if (!gcBanner) {
@@ -214,7 +215,7 @@ static int read_icon_WIBN_internal(const banner_wibn_t *banner, GcImageWriter *g
 		if (i > 0 && ((animSpeed & CARD_SPEED_MASK) == 0))
 			break;
 
-		GcImage *gcIcon = GcImage::fromRGB5A3(
+		GcImage *gcIcon = GcImageLoader::fromRGB5A3(
 				BANNER_WIBN_ICON_W, BANNER_WIBN_ICON_H,
 				banner->icon[i], sizeof(banner->icon[i]));
 		if (!gcIcon) {

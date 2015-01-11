@@ -28,6 +28,7 @@
 
 // GameCube image handlers.
 #include "GcImage.hpp"
+#include "GcImageLoader.hpp"
 #include "GcImageWriter.hpp"
 
 // C includes. (C++ namespace)
@@ -224,7 +225,7 @@ static GcImage *read_banner_BNR1(FILE *f)
 	}
 
 	// Convert the image data.
-	GcImage *gcBanner = GcImage::fromRGB5A3(
+	GcImage *gcBanner = GcImageLoader::fromRGB5A3(
 				BANNER_IMAGE_W, BANNER_IMAGE_H,
 				banner.banner, sizeof(banner.banner));
 	if (!gcBanner) {

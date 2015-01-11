@@ -30,6 +30,8 @@ SET(libgctools_SRCS
 	GcImage.cpp
 	Checksum.cpp
 	GcImageWriter.cpp
+	GcImageLoader.cpp
+	DcImageLoader.cpp
 	)
 
 # PNG-specific sources.

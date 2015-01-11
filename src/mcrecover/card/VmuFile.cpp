@@ -29,6 +29,7 @@
 
 // GcImage class.
 #include "GcImage.hpp"
+#include "DcImageLoader.hpp"
 #include "GcToolsQt.hpp"
 
 // C includes. (C++ namespace)
@@ -361,7 +362,7 @@ GcImage *VmuFilePrivate::loadBannerImage(void)
 	}
 
 	const vmu_eyecatch_palette_16 *eyecatch16 = (const vmu_eyecatch_palette_16*)(data.data() + eyecatchStart);
-	GcImage *gcImage = GcImage::fromDC_16color_ARGB4444(
+	GcImage *gcImage = DcImageLoader::fromPalette16(
 				VMU_EYECATCH_W, VMU_EYECATCH_H,
 				eyecatch16->eyecatch, sizeof(eyecatch16->eyecatch),
 				eyecatch16->palette, sizeof(eyecatch16->palette));
@@ -418,7 +419,7 @@ QVector<GcImage*> VmuFilePrivate::loadIconImages(void)
 		// TODO: Should be part of a struct that's returned...
 		// TODO: Convert DC icon speed to system-independent value.
 		this->iconSpeed.append(3);
-		GcImage *gcImage = GcImage::fromDC_16color_ARGB4444(
+		GcImage *gcImage = DcImageLoader::fromPalette16(
 					VMU_ICON_W, VMU_ICON_H,
 					iconData->icon, sizeof(iconData->icon),
 					palette->palette, sizeof(palette->palette));

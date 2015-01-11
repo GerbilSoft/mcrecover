@@ -29,6 +29,7 @@
 
 // GcImage class.
 #include "GcImage.hpp"
+#include "GcImageLoader.hpp"
 #include "GcToolsQt.hpp"
 
 // C includes. (C++ namespace)
@@ -375,13 +376,13 @@ GcImage *GcnFilePrivate::loadBannerImage(void)
 		case CARD_BANNER_CI:
 			// CI8 palette is right after the banner.
 			// (256 entries in RGB5A3 format.)
-			gcBannerImg = GcImage::fromCI8(CARD_BANNER_W, CARD_BANNER_H,
+			gcBannerImg = GcImageLoader::fromCI8(CARD_BANNER_W, CARD_BANNER_H,
 					(const uint8_t*)&imgData.constData()[imgAddr], imgSize,
 					(const uint16_t*)&imgData.constData()[imgAddr + imgSize], 0x200);
 			break;
 
 		case CARD_BANNER_RGB:
-			gcBannerImg = GcImage::fromRGB5A3(CARD_BANNER_W, CARD_BANNER_H,
+			gcBannerImg = GcImageLoader::fromRGB5A3(CARD_BANNER_W, CARD_BANNER_H,
 					(const uint16_t*)&imgData.constData()[imgAddr], imgSize);
 			break;
 
@@ -497,7 +498,7 @@ QVector<GcImage*> GcnFilePrivate::loadIconImages(void)
 				// CI8 palette is right after the icon.
 				// (256 entries in RGB5A3 format.)
 				const int imageSize = (CARD_ICON_W * CARD_ICON_H * 1);
-				GcImage *gcIcon = GcImage::fromCI8(CARD_ICON_W, CARD_ICON_H,
+				GcImage *gcIcon = GcImageLoader::fromCI8(CARD_ICON_W, CARD_ICON_H,
 						(const uint8_t*)&imgData.constData()[imgAddr], imageSize,
 						(const uint16_t*)&imgData.constData()[imgAddr + imageSize], 0x200);
 				gcImages.append(gcIcon);
@@ -507,7 +508,7 @@ QVector<GcImage*> GcnFilePrivate::loadIconImages(void)
 
 			case CARD_BANNER_RGB: {
 				const int imageSize = (CARD_ICON_W * CARD_ICON_H * 2);
-				GcImage *gcIcon = GcImage::fromRGB5A3(CARD_ICON_W, CARD_ICON_H,
+				GcImage *gcIcon = GcImageLoader::fromRGB5A3(CARD_ICON_W, CARD_ICON_H,
 						(const uint16_t*)&imgData.constData()[imgAddr], imageSize);
 				gcImages.append(gcIcon);
 				imgAddr += imageSize;
@@ -527,7 +528,7 @@ QVector<GcImage*> GcnFilePrivate::loadIconImages(void)
 		// TODO: Convert the palette once instead of every time?
 		const int imageSize = (CARD_ICON_W * CARD_ICON_H * 1);
 		foreach (const CI8_SHARED_data& data, lst_CI8_SHARED) {
-			GcImage *gcIcon = GcImage::fromCI8(CARD_ICON_W, CARD_ICON_H,
+			GcImage *gcIcon = GcImageLoader::fromCI8(CARD_ICON_W, CARD_ICON_H,
 						(const uint8_t*)&imgData.constData()[data.iconAddr], imageSize,
 						(const uint16_t*)&imgData.constData()[imgAddr], 0x200);
 			gcImages[data.iconIdx] = gcIcon;
