@@ -228,6 +228,9 @@ void VmuFilePrivate::loadFileInfo(void)
 		return;
 	}
 
+	// TODO: VMS descriptions are probably JIS X 0201, not Shift-JIS.
+	// JIS X 0201 is ASCII plus single-byte characters only.
+
 	if (filename == QLatin1String("ICONDATA_VMS")) {
 		// Icon data.
 		const vmu_card_icon_header *fileHeader = (vmu_card_icon_header*)data;
