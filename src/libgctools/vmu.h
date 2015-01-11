@@ -267,7 +267,7 @@ typedef struct PACKED _vmu_eyecatch_palette_16
  * The color icon uses the same format as VMU icons:
  * vmu_icon_palette, followed by vmu_icon_data.
  */
-#define VMU_FILE_HEADER_LEN 96
+#define VMU_ICON_DATA_HEADER_LEN 24
 #pragma pack(1)
 typedef struct PACKED _vmu_card_icon_header
 {
