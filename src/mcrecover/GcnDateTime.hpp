@@ -49,6 +49,7 @@ class GcnDateTime
 	public:
 		GcnDateTime();
 		GcnDateTime(uint32_t gcnTimestamp);
+		GcnDateTime(const _vmu_timestamp &vmuTimestamp);
 		GcnDateTime(const QDateTime &other);
 		GcnDateTime(const GcnDateTime &other);
 
@@ -76,7 +77,7 @@ class GcnDateTime
 		 * Set the QDateTime using a Dreamcast VMU timestamp.
 		 * @param vmuTimestamp VMU timestamp.
 		 */
-		void setVmuTimestamp(_vmu_timestamp vmuTimestamp);
+		void setVmuTimestamp(const _vmu_timestamp &vmuTimestamp);
 
 		/**
 		 * Get the GCN timestamp from the QDateTime.
@@ -212,6 +213,19 @@ inline GcnDateTime::GcnDateTime(uint32_t gcnTimestamp)
 
 	// Set the timestamp.
 	setGcnTimestamp(gcnTimestamp);
+}
+
+/**
+ * Create a GcnDateTime from a VMU timestamp.
+ * @param vmuTimestamp VMU timestamp.
+ */
+inline GcnDateTime::GcnDateTime(const _vmu_timestamp &vmuTimestamp)
+{
+	// GCN timestamps don't have timezones associated with them.
+	m_dateTime.setTimeSpec(Qt::UTC);
+
+	// Set the timestamp.
+	setVmuTimestamp(vmuTimestamp);
 }
 
 /**

@@ -53,7 +53,7 @@ QDebug operator<<(QDebug dbg, const GcnDateTime &date)
  * Set the QDateTime using a Dreamcast VMU timestamp.
  * @param vmuTimestamp VMU timestamp.
  */
-void GcnDateTime::setVmuTimestamp(vmu_timestamp vmuTimestamp)
+void GcnDateTime::setVmuTimestamp(const vmu_timestamp &vmuTimestamp)
 {
 	// Timestamp is stored as BCD.
 	// TODO: Better way to convert to/from BCD?
