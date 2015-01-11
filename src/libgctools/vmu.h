@@ -252,6 +252,32 @@ typedef struct PACKED _vmu_eyecatch_palette_16
 } vmu_eyecatch_palette_16;
 #pragma pack()
 
+/**
+ * VMU file header: ICONDATA_VMS
+ * Located at block 0.
+ *
+ * The color icon uses the same format as VMU icons:
+ * vmu_icon_palette, followed by vmu_icon_data.
+ */
+#define VMU_FILE_HEADER_LEN 96
+#pragma pack(1)
+typedef struct PACKED _vmu_card_icon_header
+{
+	char desc_vmu[16];	// File description (VMU file menu) [JIS X 0201?]
+	uint32_t icon_mono;	// Offset of monochrome icon.
+	uint32_t icon_color;	// Offset of color icon. (If 0, no color icon is present.)
+} vmu_card_icon_header;
+#pragma pack()
+
+// VMU card icon data: 32x32, monochrome
+#define VMU_ICON_DATA_LEN 512
+#pragma pack(1)
+typedef struct PACKED _vmu_card_icon_data
+{
+	uint8_t icon[32*32/8];
+} vmu_card_icon_data;
+#pragma pack()
+
 #ifdef __cplusplus
 }
 #endif

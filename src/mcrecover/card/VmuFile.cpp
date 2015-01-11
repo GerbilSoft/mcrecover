@@ -209,7 +209,15 @@ void VmuFilePrivate::loadFileInfo(void)
 	// TODO: Trim filenames?
 	filename = QString::fromLatin1(dirEntry->filename, sizeof(dirEntry->filename));
 
-	// Load the header.
+	// Timestamp.
+	// NOTE: This might be ctime, not mtime...
+	// TODO: Convert from BCD.
+	//mtime.setGcnTimestamp(dirEntry->lastmodified);
+
+	// Mode. (TODO)
+	//this->mode = dirEntry->permission;
+
+	// Load the block containing the file header.
 	const int blockSize = card->blockSize();
 	char *data = (char*)malloc(blockSize);
 	int ret = card->readBlock(data, blockSize, fileBlockAddrToPhysBlockAddr(dirEntry->header_addr));
@@ -219,29 +227,36 @@ void VmuFilePrivate::loadFileInfo(void)
 		free(data);
 		return;
 	}
-	const vmu_file_header *fileHeader = (vmu_file_header*)data;
 
-	// File description.
-	// TODO: Get both VMS and DC descriptions?
-	// Currently only using DC description.
-	// TODO: Heuristic to determine if the description is Japanese.
-	vmu_desc = decodeText_SJISorCP1252(fileHeader->desc_vmu, sizeof(fileHeader->desc_vmu)).trimmed();
-	dc_desc  = decodeText_SJISorCP1252(fileHeader->desc_dc,  sizeof(fileHeader->desc_dc)).trimmed();
+	if (filename == QLatin1String("ICONDATA_VMS")) {
+		// Icon data.
+		const vmu_card_icon_header *fileHeader = (vmu_card_icon_header*)data;
+		// TODO: Load icons and stuff.
 
-	// NOTE: The DC file manager shows filename and DC description,
-	// so we'll show the same thing.
-	description = filename + QChar(L'\0') + dc_desc;
+		// File description.
+		// NOTE: Only a VMU description is present, since the file
+		// isn't visible in the DC file manager.
+		vmu_desc = decodeText_SJISorCP1252(fileHeader->desc_vmu, sizeof(fileHeader->desc_vmu)).trimmed();
+		dc_desc.clear();
 
-	// Timestamp.
-	// NOTE: This might be ctime, not mtime...
-	// TODO: Convert from BCD.
-	//mtime.setGcnTimestamp(dirEntry->lastmodified);
+		// TODO: Retranslate the description on language change.
+		description = filename + QChar(L'\0') +
+			VmuFile::tr("Custom VMU icon file.");
+	} else {
+		// Regular file.
+		const vmu_file_header *fileHeader = (vmu_file_header*)data;
 
-	// Mode. (TODO)
-	//this->mode = dirEntry->permission;
+		// File description.
+		vmu_desc = decodeText_SJISorCP1252(fileHeader->desc_vmu, sizeof(fileHeader->desc_vmu)).trimmed();
+		dc_desc  = decodeText_SJISorCP1252(fileHeader->desc_dc,  sizeof(fileHeader->desc_dc)).trimmed();
 
-	// Load the banner and icon images.
-	loadImages();
+		// NOTE: The DC file manager shows filename and DC description,
+		// so we'll show the same thing.
+		description = filename + QChar(L'\0') + dc_desc;
+
+		// Load the banner and icon images.
+		loadImages();
+	}
 }
 
 /**
