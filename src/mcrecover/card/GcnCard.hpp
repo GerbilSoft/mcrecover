@@ -40,7 +40,6 @@ class GcnCard : public Card
 	Q_OBJECT
 
 	Q_PROPERTY(int encoding READ encoding)
-	Q_PROPERTY(bool empty READ isEmpty)
 
 	// TODO: Register Checksum::ChecksumValue metatype?
 	//Q_PROPERTY(Checksum::ChecksumValue headerChecksumValue READ headerChecksumValue)

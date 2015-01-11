@@ -43,20 +43,21 @@ class Card : public QObject
 	Q_PROPERTY(bool open READ isOpen)
 	Q_PROPERTY(QString errorString READ errorString)
 
-	Q_PROPERTY(QString productName READ productName)
-	Q_PROPERTY(QString filename READ filename)
-	Q_PROPERTY(int filesize READ filesize)
-	Q_PROPERTY(int encoding READ encoding)
-	Q_PROPERTY(QColor color READ color NOTIFY colorChanged)
-
 	// Card size.
 	Q_PROPERTY(int blockSize READ blockSize)
 	Q_PROPERTY(int totalPhysBlocks READ totalPhysBlocks)
 	Q_PROPERTY(int totalUserBlocks READ totalUserBlocks)
 	Q_PROPERTY(int freeBlocks READ freeBlocks)
 
+	Q_PROPERTY(QString productName READ productName)
+	Q_PROPERTY(QString filename READ filename)
+	Q_PROPERTY(int filesize READ filesize)
+	Q_PROPERTY(int encoding READ encoding)
+	Q_PROPERTY(QColor color READ color NOTIFY colorChanged)
+
 	// File management.
 	Q_PROPERTY(int fileCount READ fileCount)
+	Q_PROPERTY(bool empty READ isEmpty)
 
 	protected:
 		Card(CardPrivate *d, QObject *parent = 0);

@@ -29,8 +29,6 @@ class VmuCard : public Card
 {
 	Q_OBJECT
 
-	Q_PROPERTY(bool empty READ isEmpty)
-
 	protected:
 		VmuCard(QObject *parent = 0);
 	public:
