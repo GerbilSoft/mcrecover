@@ -105,6 +105,13 @@ class VmuFilePrivate : public FilePrivate
 		QString vmu_desc;
 		QString dc_desc;
 
+		// VMU icons. (ICONDATA_VMS)
+		// NOTE: These must NOT be the same as
+		// gcBanner or any icon in gcIcons.
+		bool isIconData;
+		GcImage *vmu_icon_mono;
+		GcImage *vmu_icon_color;
+
 		/**
 		 * Load the banner image.
 		 * @return GcImage containing the banner image, or nullptr on error.
@@ -116,6 +123,14 @@ class VmuFilePrivate : public FilePrivate
 		 * @return QVector<GcImage*> containing the icon images, or empty QVector on error.
 		 */
 		virtual QVector<GcImage*> loadIconImages(void) override;
+
+		/**
+		 * Load the icon images.
+		 * Special version for ICONDATA_VMS.
+		 * NOTE: This also sets internal variables vmu_icon_mono and vmu_icon_color.
+		 * @return QVector<GcImage*> containing the icon images, or empty QVector on error.
+		 */
+		QVector<GcImage*> loadIconImages_ICONDATA_VMS(void);
 };
 
 /**
@@ -133,6 +148,9 @@ VmuFilePrivate::VmuFilePrivate(VmuFile *q, VmuCard *card,
 	, mc_fat(mc_fat)
 	, dirEntry(dirEntry)
 	, fileHeader(nullptr)
+	, isIconData(false)
+	, vmu_icon_mono(nullptr)
+	, vmu_icon_color(nullptr)
 {
 	if (!dirEntry || !mc_fat) {
 		// Invalid data.
@@ -187,6 +205,10 @@ VmuFilePrivate::~VmuFilePrivate()
 
 	// Delete the allocated VMU file header.
 	free(fileHeader);
+
+	// Delete the VMU icons. (ICONDATA_VMS)
+	delete vmu_icon_mono;
+	delete vmu_icon_color;
 }
 
 /**
@@ -226,6 +248,8 @@ void VmuFilePrivate::loadFileInfo(void)
 
 	if (filename == QLatin1String("ICONDATA_VMS")) {
 		// Icon data.
+		// Reference: http://mc.pp.se/dc/vms/icondata.html
+		isIconData = true;
 		const vmu_card_icon_header *fileHeader = (vmu_card_icon_header*)data;
 		// TODO: Load icons and stuff.
 
@@ -240,9 +264,18 @@ void VmuFilePrivate::loadFileInfo(void)
 			VmuFile::tr("Custom VMU icon file.");
 	} else {
 		// Regular file.
+		// Reference: http://mc.pp.se/dc/vms/fileheader.html
+		isIconData = false;
 		if (!fileHeader)
 			fileHeader = (vmu_file_header*)malloc(sizeof(*fileHeader));
 		memcpy(fileHeader, data, sizeof(*fileHeader));
+
+		// Byteswap the header.
+		fileHeader->icon_count		= le16_to_cpu(fileHeader->icon_count);
+		fileHeader->icon_speed		= le16_to_cpu(fileHeader->icon_speed);
+		fileHeader->eyecatch_type	= le16_to_cpu(fileHeader->eyecatch_type);
+		fileHeader->crc			= le16_to_cpu(fileHeader->crc);
+		fileHeader->size		= le32_to_cpu(fileHeader->size);
 
 		// File description.
 		vmu_desc = decodeText_SJISorCP1252(fileHeader->desc_vmu, sizeof(fileHeader->desc_vmu)).trimmed();
@@ -251,10 +284,10 @@ void VmuFilePrivate::loadFileInfo(void)
 		// NOTE: The DC file manager shows filename and DC description,
 		// so we'll show the same thing.
 		description = filename + QChar(L'\0') + dc_desc;
-
-		// Load the banner and icon images.
-		loadImages();
 	}
+
+	// Load the banner and icon images.
+	loadImages();
 }
 
 /**
@@ -309,6 +342,11 @@ QString VmuFilePrivate::decodeText_SJISorCP1252(const char *str, int len)
  */
 GcImage *VmuFilePrivate::loadBannerImage(void)
 {
+	if (isIconData) {
+		// ICONDATA_VMS
+		return nullptr;
+	}
+
 	if (!fileHeader ||
 	    fileHeader->eyecatch_type == VMU_EYECATCH_NONE ||
 	    fileHeader->eyecatch_type > VMU_EYECATCH_PALETTE_16)
@@ -358,6 +396,11 @@ GcImage *VmuFilePrivate::loadBannerImage(void)
  */
 QVector<GcImage*> VmuFilePrivate::loadIconImages(void)
 {
+	if (isIconData) {
+		// ICONDATA_VMS
+		return loadIconImages_ICONDATA_VMS();
+	}
+
 	// DC only supports looping icon animations.
 	// TODO: Use system-independent values?
 	this->iconAnimMode = 0;
@@ -410,6 +453,80 @@ QVector<GcImage*> VmuFilePrivate::loadIconImages(void)
 	}
 
 	return gcImages;
+}
+
+/**
+ * Load the icon images.
+ * Special version for ICONDATA_VMS.
+ * NOTE: This also sets internal variables vmu_icon_mono and vmu_icon_color.
+ * @return QVector<GcImage*> containing the icon images, or empty QVector on error.
+ */
+QVector<GcImage*> VmuFilePrivate::loadIconImages_ICONDATA_VMS(void)
+{
+	// Delete any allocated VMU icons.
+	delete vmu_icon_mono;
+	vmu_icon_mono = nullptr;
+	delete vmu_icon_color;
+	vmu_icon_color = nullptr;
+
+	// DC only supports looping icon animations.
+	// TODO: Use system-independent values?
+	this->iconAnimMode = 0;
+
+	// Load the file into memory.
+	// TODO: Optimize by only reading in required data.
+	// TODO: Copy over the block code from GcnFile::loadIconImages(),
+	// but move the "read from X to Y" code down to File.
+	QByteArray data = this->loadFileData();
+
+	// Get the ICONDATA_VMS header.
+	const int headerStart = (dirEntry->header_addr * card->blockSize());
+	const int headerEnd = (headerStart + sizeof(vmu_card_icon_header));
+	if (data.size() < headerEnd) {
+		// File is too small.
+		// The icons aren't actually there...
+		return QVector<GcImage*>();
+	}
+	vmu_card_icon_header iconHeader;
+	memcpy(&iconHeader, (data.data() + headerStart), sizeof(iconHeader));
+
+	// Byteswap the icon header.
+	iconHeader.icon_mono_offset	= le32_to_cpu(iconHeader.icon_mono_offset);
+	iconHeader.icon_color_offset	= le32_to_cpu(iconHeader.icon_color_offset);
+
+	// Load the mono icon.
+	if (iconHeader.icon_mono_offset >= (uint32_t)headerEnd) {
+		int monoIconEnd = iconHeader.icon_mono_offset + sizeof(vmu_card_icon_data);
+		if (data.size() < monoIconEnd) {
+			// File is too small.
+			// The icon isn't actually here...
+			goto colorIcon;
+		}
+
+		const vmu_card_icon_data *monoIconData =
+			(const vmu_card_icon_data*)(data.data() + iconHeader.icon_mono_offset);
+		vmu_icon_mono = DcImageLoader::fromMonochrome(
+					VMU_ICON_W, VMU_ICON_H,
+					monoIconData->icon, sizeof(monoIconData->icon));
+	}
+
+colorIcon:
+	// Load the color icon. (TODO)
+
+	// Check if any icons were loaded.
+	GcImage *ret_icon = nullptr;
+	if (vmu_icon_color) {
+		// Color icon was loaded.
+		ret_icon = new GcImage(*vmu_icon_color);
+	} else if (vmu_icon_mono) {
+		// Monochrome icon was loaded.
+		ret_icon = new GcImage(*vmu_icon_mono);
+	}
+
+	QVector<GcImage*> ret;
+	if (ret_icon)
+		ret.append(ret_icon);
+	return ret;
 }
 
 /** VmuFile **/

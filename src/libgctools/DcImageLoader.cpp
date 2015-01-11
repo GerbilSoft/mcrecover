@@ -48,7 +48,7 @@ static inline uint32_t ARGB4444_to_ARGB32(uint16_t px16)
  * @param w Image width.
  * @param h Image height.
  * @param img_buf 16-color image buffer.
- * @param img_siz Size of image data. [must be >= (w*h)*2]
+ * @param img_siz Size of image data. [must be >= (w*h)/2]
  * @param pal_buf Palette buffer. (ARGB4444)
  * @param pal_siz Size of palette buffer. [must be >= 0x20]
  * @return GcImage, or nullptr on error.
@@ -114,6 +114,57 @@ GcImage *DcImageLoader::fromARGB4444(int w, int h, const uint16_t *img_buf, int 
 	uint32_t *px_dest = (uint32_t*)d->imageData;
 	for (int i = img_siz; i > 0; i--, img_buf++, px_dest++) {
 		*px_dest = ARGB4444_to_ARGB32(le16_to_cpu(*img_buf));
+	}
+
+	// Image has been converted.
+	return gcImage;
+}
+
+/**
+ * Convert a Dreamcast monochrome image to GcImage.
+ * TODO: Optional two-color palette?
+ * @param w Image width. (must be a multiple of 8)
+ * @param h Image height.
+ * @param img_buf Monochrome image buffer.
+ * @param img_siz Size of image data. [must be >= (w*h)/8]
+ * @return GcImage, or nullptr on error.
+ */
+GcImage *DcImageLoader::fromMonochrome(int w, int h,
+			const uint8_t *img_buf, int img_siz)
+{
+	// Verify parameters.
+	if (w < 0 || h < 0)
+		return nullptr;
+	if (img_siz < ((w * h) / 8))
+		return nullptr;
+
+	// Image width must be a multiple of 8.
+	if (w % 8 != 0)
+		return nullptr;
+
+	// Create a GcImage.
+	// TODO: Make an internal 2-color format?
+	GcImage *gcImage = new GcImage();
+	GcImagePrivate *const d = gcImage->d;
+	d->init(w, h, GcImage::PXFMT_CI8);
+
+	// Convert the palette.
+	// TODO: Optimize using pointers instead of indexes?
+	// TODO: Clear the top 254 entries?
+	d->palette.resize(256);
+	d->palette[0] = 0xFFFFFFFF;	// white
+	d->palette[1] = 0xFF000000;	// black
+
+	// NOTE: MSB == left-most pixel.
+	uint8_t *px_dest = (uint8_t*)d->imageData;
+	for (int i = img_siz; i > 0; i--, img_buf++) {
+		uint8_t px_src = *img_buf;
+		for (int j = 0; j < 8; j++, px_src <<= 1) {
+			// TODO: Which is faster:
+			// - !!(px_src & 0x80)
+			// - (px_src & 0x80) >> 7
+			*px_dest++ = ((px_src & 0x80) >> 7);
+		}
 	}
 
 	// Image has been converted.
