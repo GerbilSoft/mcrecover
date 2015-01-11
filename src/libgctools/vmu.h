@@ -162,7 +162,7 @@ typedef struct PACKED _vmu_dir_entry
 /**
  * VMU file header.
  * Located at block 0 in data files, and block 1 in game files.
- * Not present in ICONDATA_SYS.
+ * Not present in ICONDATA_VMS.
  *
  * NOTE: Text encodings vary depending on system region.
  * There's no way to determine the system region based on
