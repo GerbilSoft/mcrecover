@@ -24,6 +24,7 @@
 
 #include "File.hpp"
 class Card;
+class GcImage;
 
 #include "Checksum.hpp"
 
@@ -63,13 +64,17 @@ class FilePrivate
 		uint32_t mode;		// Mode. (attributes, permissions)
 		// Size is calculated using fatEntries.size().
 
-		// Images.
-		QPixmap banner;
-		QVector<QPixmap> icons;
+		// GcImages. (internal use only)
+		GcImage *gcBanner;
+		QVector<GcImage*> gcIcons;
 		// FIXME: Use system-independent values.
 		// Currently uses GCN values.
 		QVector<uint8_t> iconSpeed;
 		uint8_t iconAnimMode;
+
+		// QPixmap images.
+		QPixmap banner;
+		QVector<QPixmap> icons;
 
 		// Lost File information.
 		bool lostFile;
@@ -108,6 +113,25 @@ class FilePrivate
 		 * @return Filename with invalid DOS characters replaced with replaceChar.
 		 */
 		static QString StripInvalidDosChars(const QString &filename, QChar replaceChar = QChar(L'_'));
+
+		/** Images **/
+
+		/**
+		 * Load the banner and icon images.
+		 */
+		void loadImages(void);
+
+		/**
+		 * Load the banner image.
+		 * @return GcImage containing the banner image, or nullptr on error.
+		 */
+		virtual GcImage *loadBannerImage(void) = 0;
+
+		/**
+		 * Load the icon images.
+		 * @return QVector<GcImage*> containing the icon images, or empty QVector on error.
+		 */
+		virtual QVector<GcImage*> loadIconImages(void) = 0;
 
 		/** Checksums **/
 

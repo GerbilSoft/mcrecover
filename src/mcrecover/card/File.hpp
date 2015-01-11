@@ -235,16 +235,14 @@ class File : public QObject
 		 */
 		int saveBanner(const QString &filenameNoExt) const;
 
-		// TODO: Implement base functions here.
 		/**
 		 * Save the banner image.
 		 * @param qioDevice QIODevice to write the banner image to.
 		 * @return 0 on success; non-zero on error.
 		 * TODO: Error code constants.
 		 */
-		virtual int saveBanner(QIODevice *qioDevice) const = 0;
+		int saveBanner(QIODevice *qioDevice) const;
 
-		// TODO: Rename GcImageWriter to "Generic" ImageWriter?
 		/**
 		 * Save the icon.
 		 * @param filenameNoExt Filename for the icon, sans extension.
@@ -252,8 +250,8 @@ class File : public QObject
 		 * @return 0 on success; non-zero on error.
 		 * TODO: Error code constants.
 		 */
-		virtual int saveIcon(const QString &filenameNoExt,
-			     GcImageWriter::AnimImageFormat animImgf) const = 0;
+		int saveIcon(const QString &filenameNoExt,
+			     GcImageWriter::AnimImageFormat animImgf) const;
 
 		/** Checksums **/
 

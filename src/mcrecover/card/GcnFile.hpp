@@ -136,26 +136,6 @@ class GcnFile : public File
 		 * @return Directory entry.
 		 */
 		const card_direntry *dirEntry(void) const;
-
-		// TODO: Move these down to File.
-
-		/**
-		 * Save the banner image.
-		 * @param qioDevice QIODevice to write the banner image to.
-		 * @return 0 on success; non-zero on error.
-		 * TODO: Error code constants.
-		 */
-		virtual int saveBanner(QIODevice *qioDevice) const override;
-
-		/**
-		 * Save the icon.
-		 * @param filenameNoExt Filename for the icon, sans extension.
-		 * @param animImgf Animated image format for animated icons.
-		 * @return 0 on success; non-zero on error.
-		 * TODO: Error code constants.
-		 */
-		virtual int saveIcon(const QString &filenameNoExt,
-			     GcImageWriter::AnimImageFormat animImgf) const override;
 };
 
 #endif /* __MCRECOVER_CARD_GCNFILE_HPP__ */

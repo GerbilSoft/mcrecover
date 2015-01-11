@@ -28,9 +28,7 @@
 #include "VmuCard.hpp"
 
 // GcImage class.
-#include "GcImage.hpp"
 #include "DcImageLoader.hpp"
-#include "GcToolsQt.hpp"
 
 // C includes. (C++ namespace)
 #include <cerrno>
@@ -107,26 +105,17 @@ class VmuFilePrivate : public FilePrivate
 		QString vmu_desc;
 		QString dc_desc;
 
-		// GcImages.
-		GcImage *gcBanner;
-		QVector<GcImage*> gcIcons;
-
 		/**
 		 * Load the banner image.
 		 * @return GcImage containing the banner image, or nullptr on error.
 		 */
-		GcImage *loadBannerImage(void);
+		virtual GcImage *loadBannerImage(void) override;
 
 		/**
 		 * Load the icon images.
 		 * @return QVector<GcImage*> containing the icon images, or empty QVector on error.
 		 */
-		QVector<GcImage*> loadIconImages(void);
-
-		/**
-		 * Load the banner and icon images.
-		 */
-		void loadImages(void);
+		virtual QVector<GcImage*> loadIconImages(void) override;
 };
 
 /**
@@ -144,7 +133,6 @@ VmuFilePrivate::VmuFilePrivate(VmuFile *q, VmuCard *card,
 	, mc_fat(mc_fat)
 	, dirEntry(dirEntry)
 	, fileHeader(nullptr)
-	, gcBanner(nullptr)
 {
 	if (!dirEntry || !mc_fat) {
 		// Invalid data.
@@ -199,11 +187,6 @@ VmuFilePrivate::~VmuFilePrivate()
 
 	// Delete the allocated VMU file header.
 	free(fileHeader);
-
-	// Delete GcImages.
-	delete gcBanner;
-	qDeleteAll(gcIcons);
-	gcIcons.clear();
 }
 
 /**
@@ -429,44 +412,6 @@ QVector<GcImage*> VmuFilePrivate::loadIconImages(void)
 	return gcImages;
 }
 
-/**
- * Load the banner and icon images.
- * TODO: Move to File?
- */
-void VmuFilePrivate::loadImages(void)
-{
-	// Load the banner.
-	this->gcBanner = loadBannerImage();
-	if (gcBanner) {
-		// Set the new banner image.
-		QImage qBanner = gcImageToQImage(gcBanner);
-		if (!qBanner.isNull())
-			banner = QPixmap::fromImage(qBanner);
-		else
-			banner = QPixmap();
-	} else {
-		// No banner image.
-		banner = QPixmap();
-	}
-
-	// Load the icons.
-	this->gcIcons = loadIconImages();
-	icons.clear();
-	icons.reserve(gcIcons.size());
-	foreach (GcImage *gcIcon, gcIcons) {
-		if (gcIcon) {
-			QImage qIcon = gcImageToQImage(gcIcon);
-			if (!qIcon.isNull())
-				icons.append(QPixmap::fromImage(qIcon));
-			else
-				icons.append(QPixmap());
-		} else {
-			// No icon image.
-			icons.append(QPixmap());
-		}
-	}
-}
-
 /** VmuFile **/
 
 /**
@@ -556,137 +501,4 @@ int VmuFile::exportToFile(QIODevice *qioDevice)
 	// TODO
 	Q_UNUSED(qioDevice);
 	return -ENOSYS;
-}
-
-/**
- * Save the banner image.
- * @param qioDevice QIODevice to write the banner image to.
- * @return 0 on success; non-zero on error.
- * TODO: Error code constants.
- */
-int VmuFile::saveBanner(QIODevice *qioDevice) const
-{
-	Q_D(const VmuFile);
-	if (!d->gcBanner)
-		return -EINVAL;
-
-	GcImageWriter gcImageWriter;
-	int ret = gcImageWriter.write(d->gcBanner, GcImageWriter::IMGF_PNG);
-	if (!ret) {
-		const vector<uint8_t> *pngData = gcImageWriter.memBuffer();
-		ret = qioDevice->write(reinterpret_cast<const char*>(pngData->data()), pngData->size());
-		if (ret != (qint64)pngData->size())
-			return -EIO;
-		ret = 0;
-	}
-
-	// Saved the banner image.
-	return ret;
-}
-
-/**
- * Save the icon.
- * @param filenameNoExt Filename for the icon, sans extension.
- * @param animImgf Animated image format to use for animated icons.
- * @return 0 on success; non-zero on error.
- * TODO: Error code constants.
- */
-int VmuFile::saveIcon(const QString &filenameNoExt,
-	GcImageWriter::AnimImageFormat animImgf) const
-{
-	Q_D(const VmuFile);
-	if (d->gcIcons.isEmpty())
-		return -EINVAL;
-
-	// Append the correct extension.
-	const char *ext;
-	if (d->gcIcons.size() > 1) {
-		// Animated icon.
-		ext = GcImageWriter::extForAnimImageFormat(animImgf);
-	} else {
-		// Static icon.
-		ext = GcImageWriter::extForImageFormat(GcImageWriter::IMGF_PNG);
-	}
-
-	// NOTE: Due to PNG_FPF saving multiple files, we can't simply
-	// call a version of saveIcon() that takes a QIODevice.
-	GcImageWriter gcImageWriter;
-	int ret;
-	if (d->gcIcons.size() > 1) {
-		// Animated icon.
-		vector<const GcImage*> gcImages;
-		const int maxIcons = (d->gcIcons.size() * 2 - 2);
-		gcImages.reserve(maxIcons);
-		gcImages.resize(d->gcIcons.size());
-		for (int i = 0; i < d->gcIcons.size(); i++)
-			gcImages[i] = d->gcIcons[i];
-
-		// Icon speed.
-		vector<int> gcIconDelays;
-		gcIconDelays.reserve(maxIcons);
-		gcIconDelays.resize(d->gcIcons.size());
-		for (int i = 0; i < d->gcIcons.size(); i++)
-			gcIconDelays[i] = iconDelay(i);
-
-		if (gcImages.size() > 1 && iconAnimMode() == CARD_ANIM_BOUNCE) {
-			// BOUNCE animation.
-			int src = (gcImages.size() - 2);
-			int dest = gcImages.size();
-			gcImages.resize(maxIcons);
-			gcIconDelays.resize(maxIcons);
-			for (; src >= 1; src--, dest++) {
-				gcImages[dest] = gcImages[src];
-				gcIconDelays[dest] = gcIconDelays[src];
-			}
-		}
-
-		ret = gcImageWriter.write(&gcImages, &gcIconDelays, animImgf);
-	} else {
-		// Static icon.
-		ret = gcImageWriter.write(d->gcIcons.at(0), GcImageWriter::IMGF_PNG);
-	}
-
-	if (ret != 0) {
-		// Error writing the icon.
-		return ret;
-	}
-
-	// Icon written successfully.
-	// Save it to a file.
-	for (int i = 0; i < gcImageWriter.numFiles(); i++) {
-		QString filename = filenameNoExt;
-		if (gcImageWriter.numFiles() > 1) {
-			// Multiple files.
-			// Append the file number.
-			char tmp[8];
-			snprintf(tmp, sizeof(tmp), "%02d", i+1);
-			filename += QChar(L'.') + QLatin1String(tmp);
-		}
-
-		// Append the file extension.
-		if (ext)
-			filename += QChar(L'.') + QLatin1String(ext);
-
-		QFile file(filename);
-		if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-			// Error opening the file.
-			// TODO: Convert QFileError to a POSIX error code.
-			// TODO: Delete previous files?
-			return -EIO;
-		}
-
-		const vector<uint8_t> *pngData = gcImageWriter.memBuffer(i);
-		ret = file.write(reinterpret_cast<const char*>(pngData->data()), pngData->size());
-		file.close();
-
-		if (ret != (qint64)pngData->size()) {
-			// Error saving the icon.
-			file.remove();
-			return -EIO;
-		}
-
-		ret = 0;
-	}
-
-	return ret;
 }
