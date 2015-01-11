@@ -90,6 +90,10 @@ class VmuFilePrivate : public FilePrivate
 		 */
 		const vmu_dir_entry *dirEntry;
 
+		// File descriptions.
+		QString vmu_desc;
+		QString dc_desc;
+
 		// GcImages.
 		GcImage *gcBanner;
 		QVector<GcImage*> gcIcons;
@@ -212,7 +216,12 @@ void VmuFilePrivate::loadFileInfo(void)
 	// TODO: Get both VMS and DC descriptions?
 	// Currently only using DC description.
 	// TODO: Heuristic to determine if the description is Japanese.
-	fileDesc = QString::fromLatin1(fileHeader->desc_dc, sizeof(fileHeader->desc_dc)).trimmed();
+	vmu_desc = QString::fromLatin1(fileHeader->desc_vmu, sizeof(fileHeader->desc_vmu)).trimmed();
+	dc_desc  = QString::fromLatin1(fileHeader->desc_dc,  sizeof(fileHeader->desc_dc)).trimmed();
+
+	// NOTE: The DC file manager shows filename and DC description,
+	// so we'll show the same thing.
+	description = filename + QChar(L'\0') + dc_desc;
 
 	// Timestamp.
 	// NOTE: This might be ctime, not mtime...
@@ -350,6 +359,7 @@ int VmuFile::exportToFile(const QString &filename)
 int VmuFile::exportToFile(QIODevice *qioDevice)
 {
 	// TODO
+	Q_UNUSED(qioDevice);
 	return -ENOSYS;
 }
 

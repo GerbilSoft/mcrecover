@@ -42,6 +42,9 @@ class GcnFile : public File
 {
 	Q_OBJECT
 
+	Q_PROPERTY(QString gameDesc READ gameDesc)
+	Q_PROPERTY(QString fileDesc READ fileDesc)
+
 	public:
 		/**
 		 * Create a GcnFile for a GcnCard.
@@ -73,6 +76,20 @@ class GcnFile : public File
 		Q_DISABLE_COPY(GcnFile)
 
 	public:
+		/**
+		 * Get the game description.
+		 * This is the first half of the file's description.
+		 * @return Game description.
+		 */
+		QString gameDesc(void) const;
+
+		/**
+		 * Get the file description.
+		 * This is the second half of the file's description.
+		 * @return File description.
+		 */
+		QString fileDesc(void) const;
+
 		/** TODO: Move encoding to File. **/
 
 		/**

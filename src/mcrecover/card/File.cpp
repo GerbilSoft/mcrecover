@@ -355,23 +355,16 @@ GcnDateTime File::mtime(void) const
 }
 
 /**
- * Get the game description.
- * @return Game description.
+ * Get the file's description.
+ * This is for UI purposes only.
+ * Description may contain a '\0' to separate
+ * the main description from a sub-description.
+ * @return File's description.
  */
-QString File::gameDesc(void) const
+QString File::description(void) const
 {
 	Q_D(const File);
-	return d->gameDesc;
-}
-
-/**
- * Get the file description.
- * @return File description.
- */
-QString File::fileDesc(void) const
-{
-	Q_D(const File);
-	return d->fileDesc;
+	return d->description;
 }
 
 /**

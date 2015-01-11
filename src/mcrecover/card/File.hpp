@@ -49,8 +49,7 @@ class File : public QObject
 	// Add an attribute indicating "no timezone"?
 	Q_PROPERTY(QString gameID READ gameID)
 	Q_PROPERTY(GcnDateTime mtime READ mtime)
-	Q_PROPERTY(QString gameDesc READ gameDesc)
-	Q_PROPERTY(QString fileDesc READ fileDesc)
+	Q_PROPERTY(QString description READ description)
 	Q_PROPERTY(uint32_t mode READ mode)
 	Q_PROPERTY(int size READ size)
 
@@ -129,16 +128,11 @@ class File : public QObject
 		GcnDateTime mtime(void) const;
 
 		/**
-		 * Get the game description.
-		 * @return Game description.
+		 * Get the file's description.
+		 * This is for UI purposes only.
+		 * @return File's description.
 		 */
-		QString gameDesc(void) const;
-
-		/**
-		 * Get the file description.
-		 * @return File description.
-		 */
-		QString fileDesc(void) const;
+		QString description(void) const;
 
 		/**
 		 * Get the file's mode. (attributes, permissions)

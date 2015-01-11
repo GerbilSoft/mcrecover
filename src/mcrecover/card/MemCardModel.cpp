@@ -329,9 +329,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 		case Qt::DisplayRole:
 			switch (index.column()) {
 				case COL_DESCRIPTION:
-					// Concatenate the two descriptions together.
-					// Result: "GameDesc\0FileDesc"
-					return QString(file->gameDesc() + QChar(L'\0') + file->fileDesc());
+					return file->description();
 				case COL_SIZE:
 					return file->size();
 				case COL_MTIME:

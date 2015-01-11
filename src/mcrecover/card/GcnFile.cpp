@@ -101,6 +101,11 @@ class GcnFilePrivate : public FilePrivate
 		 */
 		const card_direntry *dirEntry;
 
+		// Game and File descriptions.
+		// TODO: Optimize by using QStringRef to description.
+		QString gameDesc;
+		QString fileDesc;
+
 		// GcImages.
 		GcImage *gcBanner;
 		QVector<GcImage*> gcIcons;
@@ -327,6 +332,10 @@ void GcnFilePrivate::loadFileInfo(void)
 		gameDesc = textCodec->toUnicode(gameDescData.constData(), gameDescData.size()).trimmed();
 		fileDesc = textCodec->toUnicode(fileDescData.constData(), fileDescData.size()).trimmed();
 	}
+
+	// TODO: Change gameDesc and fileDesc to QStringRefs
+	// pointing to description.
+	description = gameDesc + QChar(L'\0') + fileDesc;
 
 	// Load the banner and icon images.
 	loadImages();
@@ -608,6 +617,26 @@ GcnFile::GcnFile(GcnCard *card,
 // TODO: Maybe not needed?
 GcnFile::~GcnFile()
 { }
+
+/**
+ * Get the game description.
+ * @return Game description.
+ */
+QString GcnFile::gameDesc(void) const
+{
+	Q_D(const GcnFile);
+	return d->gameDesc;
+}
+
+/**
+ * Get the file description.
+ * @return File description.
+ */
+QString GcnFile::fileDesc(void) const
+{
+	Q_D(const GcnFile);
+	return d->fileDesc;
+}
 
 /**
  * Get the text encoding ID for this file.
