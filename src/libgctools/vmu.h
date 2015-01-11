@@ -174,7 +174,7 @@ typedef struct PACKED _vmu_file_header
 {
 	char desc_vmu[16];	// File description (VMU file menu) [JIS X 0201?]
 	char desc_dc[32];	// File description (DC file menu) (cp1252 or Shift-JIS)
-	char prg_name[16];	// Name of application that created the file. (cp1252?)
+	char prg_name[16];	// Name of application that created the file. (cp1252 or Shift-JIS)
 				// (NOTE: This seems to be blank in most files...)
 	uint16_t icon_count;	// Number of icons. (>1 == animated)
 	uint16_t icon_speed;	// Icon animation speed.
