@@ -344,22 +344,23 @@ GcImage *VmuFilePrivate::loadBannerImage(void)
 	// but move the "read from X to Y" code down to File.
 	QByteArray data = this->loadFileData();
 
-	// Calculate the starting position.
-	int startPos = sizeof(*fileHeader);
+	// Eyecatch start address.
+	int eyecatchStart = (dirEntry->header_addr * card->blockSize());
+	eyecatchStart += sizeof(*fileHeader);
 	if (fileHeader->icon_count > 0) {
-		startPos += sizeof(vmu_icon_palette);
-		startPos += (sizeof(vmu_icon_data) * fileHeader->icon_count);
+		eyecatchStart += sizeof(vmu_icon_palette);
+		eyecatchStart += (sizeof(vmu_icon_data) * fileHeader->icon_count);
 	}
 
 	// TODO: Other variants.
 	const int eyecatchSize = VMU_EYECATCH_PALETTE_16_LEN;
-	if (data.size() < (int)(startPos + eyecatchSize)) {
+	if (data.size() < (int)(eyecatchStart + eyecatchSize)) {
 		// File is too small.
 		// The eyecatch isn't actually there...
 		return nullptr;
 	}
-	
-	const vmu_eyecatch_palette_16 *eyecatch16 = (const vmu_eyecatch_palette_16*)(data.data() + startPos);
+
+	const vmu_eyecatch_palette_16 *eyecatch16 = (const vmu_eyecatch_palette_16*)(data.data() + eyecatchStart);
 	GcImage *gcImage = GcImage::fromDC_16color_ARGB4444(
 				VMU_EYECATCH_W, VMU_EYECATCH_H,
 				eyecatch16->eyecatch, sizeof(eyecatch16->eyecatch),
@@ -394,17 +395,22 @@ QVector<GcImage*> VmuFilePrivate::loadIconImages(void)
 	// but move the "read from X to Y" code down to File.
 	QByteArray data = this->loadFileData();
 
+	// Icon start address.
+	int iconStart = (dirEntry->header_addr * card->blockSize());
+	iconStart += sizeof(*fileHeader);
+
 	// Calculate the total icon length.
 	const int totalIconLen = sizeof(vmu_icon_palette) +
 				(sizeof(vmu_icon_data) * iconCount);
-	if (data.size() < (int)(sizeof(*fileHeader) + totalIconLen)) {
+	if (data.size() < (int)(iconStart + totalIconLen)) {
 		// File is too small.
 		// The icons aren't actually there...
 		return QVector<GcImage*>();
 	}
 
-	const vmu_icon_palette *palette = (const vmu_icon_palette*)(data.data() + sizeof(*fileHeader));
-	const vmu_icon_data *iconData = (const vmu_icon_data*)(data.data() + sizeof(*fileHeader) + sizeof(*palette));
+	const char *pIconStart = (data.data() + iconStart);
+	const vmu_icon_palette *palette = (const vmu_icon_palette*)pIconStart;
+	const vmu_icon_data *iconData = (const vmu_icon_data*)(pIconStart + sizeof(*palette));
 	QVector<GcImage*> gcImages;
 	// TODO: Should be part of a struct that's returned...
 	this->iconSpeed.clear();
