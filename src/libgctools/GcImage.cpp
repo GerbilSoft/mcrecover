@@ -108,7 +108,7 @@ GcImage::~GcImage()
 	{ delete d; }
 
 GcImage::GcImage(const GcImage &other)
-	: d(other.d)
+	: d(new GcImagePrivate(*other.d))
 { }
 
 /**
