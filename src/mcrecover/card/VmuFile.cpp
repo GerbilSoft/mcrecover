@@ -170,7 +170,9 @@ VmuFilePrivate::VmuFilePrivate(VmuFile *q, VmuCard *card,
 		// Go through the rest of the blocks.
 		for (int i = size; i > 1; i--) {
 			next_block = mc_fat->fat[next_block];
-			if (next_block < totalUserBlocks && next_block != VMU_FAT_BLOCK_LAST_IN_FILE) {
+			if (next_block >= totalUserBlocks ||
+			    next_block == VMU_FAT_BLOCK_LAST_IN_FILE)
+			{
 				// Next block is invalid.
 				break;
 			}
