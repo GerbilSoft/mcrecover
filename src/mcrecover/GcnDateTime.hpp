@@ -63,10 +63,24 @@ class GcnDateTime
 		void setGcnTimestamp(uint32_t gcnTimestamp);
 
 		/**
+		 * Set the QDateTime using a Unix timestamp.
+		 * FIXME: 64-bit timestamp?
+		 * @param gcnTimestamp GCN timestamp.
+		 */
+		void setUnixTimestamp(uint32_t unixTimestamp);
+
+		/**
 		 * Get the GCN timestamp from the QDateTime.
 		 * @return GCN timestamp.
 		 */
 		uint32_t gcnTimestamp(void) const;
+
+		/**
+		 * Get the Unix timestamp from the QDateTime.
+		 * FIXME: 64-bit timestamp?
+		 * @return Unix timestamp.
+		 */
+		uint32_t unixTimestamp(void) const;
 
 		/**
 		 * Set the QDateTime using a QDateTime.
@@ -167,8 +181,8 @@ inline GcnDateTime::GcnDateTime()
 	// GCN timestamps don't have timezones associated with them.
 	m_dateTime.setTimeSpec(Qt::UTC);
 
-	// Initialize the timestamp to 0.
-	// (2000/01/01 12:00 AM UTC)
+	// Initialize the timestamp to the Unix epoch.
+	// (1970/01/01 12:00 AM UTC)
 	setGcnTimestamp(0);
 }
 
@@ -215,11 +229,27 @@ inline void GcnDateTime::setGcnTimestamp(uint32_t gcnTimestamp)
 	{ m_dateTime.setTime_t(gcnTimestamp + GCN_EPOCH); }
 
 /**
+ * Set the GcnDateTime using a Unix timestamp.
+ * FIXME: 64-bit timestamp?
+ * @param unixTimestamp Unix timestamp.
+ */
+inline void GcnDateTime::setUnixTimestamp(uint32_t unixTimestamp)
+	{ m_dateTime.setTime_t(unixTimestamp); }
+
+/**
  * Get the GCN timestamp from the QDateTime.
  * @return GCN timestamp.
  */
 inline uint32_t GcnDateTime::gcnTimestamp(void) const
 	{ return (m_dateTime.toTime_t() - GCN_EPOCH); }
+
+/**
+ * Get the GCN timestamp from the QDateTime.
+ * FIXME: 64-bit timestamp?
+ * @return Unix timestamp.
+ */
+inline uint32_t GcnDateTime::unixTimestamp(void) const
+	{ return m_dateTime.toTime_t(); }
 
 /**
  * Set the QDateTime using a QDateTime.
