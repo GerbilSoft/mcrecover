@@ -42,6 +42,8 @@ class Card : public QObject
 
 	Q_PROPERTY(bool open READ isOpen)
 	Q_PROPERTY(QString errorString READ errorString)
+
+	Q_PROPERTY(QString productName READ productName)
 	Q_PROPERTY(QString filename READ filename)
 	Q_PROPERTY(int filesize READ filesize)
 	Q_PROPERTY(int encoding READ encoding)
@@ -102,6 +104,14 @@ class Card : public QObject
 		QString errorString(void) const;
 
 		/** Card information **/
+
+		/**
+		 * Get the product name of this memory card.
+		 * This refers to the class in general,
+		 * and does not change based on size.
+		 * @return Product name.
+		 */
+		virtual QString productName(void) const = 0;
 
 		/**
 		 * Get the memory card filename.

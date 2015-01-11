@@ -58,6 +58,15 @@ class VmuCard : public Card
 
 	private:
 		Q_DISABLE_COPY(VmuCard)
+
+	public:
+		/**
+		 * Get the product name of this memory card.
+		 * This refers to the class in general,
+		 * and does not change based on size.
+		 * @return Product name.
+		 */
+		virtual QString productName(void) const override;
 };
 
 #endif /* __MCRECOVER_CARD_VMUCARD_HPP__ */

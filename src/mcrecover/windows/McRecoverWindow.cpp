@@ -1131,7 +1131,8 @@ void McRecoverWindow::openCard(const QString &filename)
 		static const QChar chrBullet(0x2022);  // U+2022: BULLET
 		QString msg;
 		msg.reserve(2048);
-		msg += tr("Error(s) have been detected in this Memory Card image:", "", sl_cardErrors.size());
+		msg += tr("Error(s) have been detected in this %1 image:", "",
+			sl_cardErrors.size()).arg(d->card->productName());
 		foreach (const QString &str, sl_cardErrors) {
 			msg += QChar(L'\n') + chrBullet + QChar(L' ') + str;
 		}
@@ -1142,7 +1143,7 @@ void McRecoverWindow::openCard(const QString &filename)
 
 	// Update the UI.
 	d->updateLstFileList();
-	d->statusBarManager->opened(filename);
+	d->statusBarManager->opened(filename, d->card->productName());
 	d->updateWindowTitle();
 
 	// FIXME: If a file is opened from the command line,
@@ -1157,6 +1158,9 @@ void McRecoverWindow::openCard(const QString &filename)
 void McRecoverWindow::closeCard(bool noMsg)
 {
 	Q_D(McRecoverWindow);
+	QString productName;
+	if (d->card)
+		d->card->productName();
 
 	d->model->setMemCard(nullptr);
 	d->ui.mcCardView->setCard(nullptr);
@@ -1171,7 +1175,7 @@ void McRecoverWindow::closeCard(bool noMsg)
 	// Update the UI.
 	d->updateLstFileList();
 	if (!noMsg)
-		d->statusBarManager->closed();
+		d->statusBarManager->closed(productName);
 	d->updateWindowTitle();
 }
 

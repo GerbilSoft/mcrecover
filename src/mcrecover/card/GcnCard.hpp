@@ -79,6 +79,14 @@ class GcnCard : public Card
 
 	public:
 		/**
+		 * Get the product name of this memory card.
+		 * This refers to the class in general,
+		 * and does not change based on size.
+		 * @return Product name.
+		 */
+		virtual QString productName(void) const override;
+
+		/**
 		 * Get the text encoding for a given region.
 		 * @param region Region code. (If 0, use the memory card's encoding.)
 		 * @return Text encoding.

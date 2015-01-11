@@ -774,6 +774,17 @@ GcnCard *GcnCard::format(const QString& filename, QObject *parent)
 }
 
 /**
+ * Get the product name of this memory card.
+ * This refers to the class in general,
+ * and does not change based on size.
+ * @return Product name.
+ */
+QString GcnCard::productName(void) const
+{
+	return tr("GameCube memory card");
+}
+
+/**
  * Get the text encoding for a given region.
  * @param region Region code. (If 0, use the memory card's encoding.)
  * @return Text encoding.

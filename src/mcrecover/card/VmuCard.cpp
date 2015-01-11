@@ -254,3 +254,14 @@ VmuCard *VmuCard::format(const QString& filename, QObject *parent)
 	d->format(filename);
 	return vmuCard;
 }
+
+/**
+ * Get the product name of this memory card.
+ * This refers to the class in general,
+ * and does not change based on size.
+ * @return Product name.
+ */
+QString VmuCard::productName(void) const
+{
+	return tr("Dreamcast Visual Memory Unit");
+}

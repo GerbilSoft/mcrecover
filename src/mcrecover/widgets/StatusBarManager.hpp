@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * StatusBarManager.hpp: Status Bar manager                                *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,8 +19,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_STATUSBARMANAGER_HPP__
-#define __MCRECOVER_STATUSBARMANAGER_HPP__
+#ifndef __MCRECOVER_WIDGETS_STATUSBARMANAGER_HPP__
+#define __MCRECOVER_WIDGETS_STATUSBARMANAGER_HPP__
 
 // Qt includes and classes.
 #include <QtCore/QObject>
@@ -80,15 +80,17 @@ class StatusBarManager : public QObject
 
 	public slots:
 		/**
-		 * A GameCube Memory Card image was opened.
+		 * A memory card image was opened.
 		 * @param filename Filename.
+		 * @param productName Product name of the memory card.
 		 */
-		void opened(const QString &filename);
+		void opened(const QString &filename, const QString &productName);
 
 		/**
-		 * The current GameCube Memory Card image was closed.
+		 * The current memory card image was closed.
+		 * @param productName Product name of the memory card.
 		 */
-		void closed(void);
+		void closed(const QString &productName);
 
 		/**
 		 * Files were saved.
@@ -145,4 +147,4 @@ class StatusBarManager : public QObject
 		void hideProgressBar_slot(void);
 };
 
-#endif /* __MCRECOVER_STATUSBARMANAGER_HPP__ */
+#endif /* __MCRECOVER_WIDGETS_STATUSBARMANAGER_HPP__ */
