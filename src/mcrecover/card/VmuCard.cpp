@@ -77,6 +77,11 @@ class VmuCardPrivate : public CardPrivate
 		 * @return 0 on success; non-zero on error.
 		 */
 		int loadSysInfo(void);
+
+		/**
+		 * Calculate the block counts.
+		 */
+		void calcBlockCounts(void);
 };
 
 VmuCardPrivate::VmuCardPrivate(VmuCard *q)
@@ -164,9 +169,9 @@ int VmuCardPrivate::loadSysInfo(void)
 	if (sz < (qint64)sizeof(mc_root)) {
 		// Error reading the root block.
 		// Zero the root block, directory, and FAT.
-		// TODO
 		memset(&mc_root, 0x00, sizeof(mc_root));
 		memset(&mc_fat, 0x00, sizeof(mc_fat));
+		// TODO: Directory.
 
 		// Use cp1252 encoding by default.
 		this->encoding = Card::ENCODING_CP1252;
@@ -203,15 +208,64 @@ int VmuCardPrivate::loadSysInfo(void)
 
 	// TODO: Card timestamp is in BCD, so set it.
 
-	// TODO: Load the FAT and directory.
+	/** Load the FAT. **/
+	
+	// Only single-block FATs are supported right now.
+	if (mc_root.fat_size != 1) {
+		// FAT is the wrong size.
+		// TODO: Set an error flag.
+		return -3;
+	} else if (mc_root.fat_addr >= VMU_ROOT_BLOCK_ADDRESS) {
+		// FAT address is invalid.
+		return -4;
+	}
+
+	file->seek(mc_root.fat_addr * blockSize);
+	sz = file->read((char*)&mc_fat, sizeof(mc_fat));
+	if (sz != sizeof(mc_fat)) {
+		// Error reading the root block.
+		// Zero the root block, directory, and FAT.
+		memset(&mc_root, 0x00, sizeof(mc_root));
+		memset(&mc_fat, 0x00, sizeof(mc_fat));
+		// TODO: Directory.
+		return -5;
+	}
+
+	// Byteswap the FAT.
+	for (int i = (NUM_ELEMENTS(mc_fat.fat)-1); i >= 0; i--) {
+		mc_fat.fat[i] = le16_to_cpu(mc_fat.fat[i]);
+	}
+
+	// Calculate the block counts.
+	calcBlockCounts();
+
+	// TODO: Load the directory.
+	return 0;
+}
+
+/**
+ * Calculate the block counts.
+ */
+void VmuCardPrivate::calcBlockCounts(void)
+{
 	// Set the block counts.
-	// TODO: Determine free blocks by looking at the FAT.
 	// TODO: Verify that user_blocks is in range.
 	totalUserBlocks = mc_root.user_blocks;
-	freeBlocks = totalUserBlocks; // TODO
+	if (totalUserBlocks > totalPhysBlocks) {
+		// User block count is too high.
+		// TODO: Set an error.
+		totalUserBlocks = totalPhysBlocks;
+	}
+
+	int cnt = 0;
+	for (int i = (totalUserBlocks-1); i >= 0; i--) {
+		if (mc_fat.fat[i] == VMU_FAT_BLOCK_UNALLOCATED)
+			cnt++;
+	}
+	freeBlocks = cnt;
+
 	Q_Q(VmuCard);
 	emit q->blockCountChanged(totalPhysBlocks, totalUserBlocks, freeBlocks);
-	return 0;
 }
 
 /** VmuCard **/
