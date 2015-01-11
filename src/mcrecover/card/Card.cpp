@@ -236,6 +236,30 @@ int Card::blockSize(void) const
 }
 
 /**
+ * Get the minimum number of blocks allowed for this card.
+ * @return Minimum number of blocks. (Negative on error)
+ */
+int Card::minBlocks(void) const
+{
+	if (!isOpen())
+		return -1;
+	Q_D(const Card);
+	return d->minBlocks;
+}
+
+/**
+ * Get the maximum number of blocks allowed for this card.
+ * @return Maximum number of blocks. (Negative on error)
+ */
+int Card::maxBlocks(void) const
+{
+	if (!isOpen())
+		return -1;
+	Q_D(const Card);
+	return d->maxBlocks;
+}
+
+/**
  * Get the total number of physical blocks.
  * This includes reserved blocks.
  * @return Total number of physical blocks. (Negative on error)

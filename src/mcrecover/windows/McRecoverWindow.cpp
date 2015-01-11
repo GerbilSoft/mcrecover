@@ -116,6 +116,13 @@ class McRecoverWindowPrivate
 		 */
 		void showJpWarning(void);
 
+		/**
+		 * Format a file size
+		 * @param size File size.
+		 * @return Formatted file size.
+		 */
+		static QString formatFileSize(quint64 size);
+
 		// Filename.
 		QString filename;
 		QString displayFilename;	// filename without subdirectories
@@ -333,6 +340,30 @@ void McRecoverWindowPrivate::showJpWarning(void)
 #endif /* PCRE_STATIC */
 		ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING);
 	}
+}
+
+/**
+ * Format a file size
+ * @param size File size.
+ * @return Formatted file size.
+ */
+QString McRecoverWindowPrivate::formatFileSize(quint64 size)
+{
+	// TODO: Optimize this?
+	if (size < (2ULL << 10))
+		return McRecoverWindow::tr("%Ln byte(s)", "", (int)size).arg(size);
+	else if (size < (2ULL << 20))
+		return McRecoverWindow::tr("%L1 KB").arg(size >> 10);
+	else if (size < (2ULL << 30))
+		return McRecoverWindow::tr("%L1 MB").arg(size >> 20);
+	else if (size < (2ULL << 40))
+		return McRecoverWindow::tr("%L1 GB").arg(size >> 30);
+	else if (size < (2ULL << 50))
+		return McRecoverWindow::tr("%L1 TB").arg(size >> 40);
+	else if (size < (2ULL << 60))
+		return McRecoverWindow::tr("%L1 PB").arg(size >> 50);
+	else /*if (size < (2ULL << 70))*/
+		return McRecoverWindow::tr("%L1 EB").arg(size >> 60);
 }
 
 /**
@@ -571,6 +602,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<File*> &files, QString path
 				McRecoverWindow::tr("Save GCN Save File %1")
 					.arg(file->filename()),	// Dialog title
 				defFilename,			// Default filename
+				// TODO: Remove extra space from the filename filter?
 				McRecoverWindow::tr("GameCube Save Files") + QLatin1String(" (*.gci);;") +
 				McRecoverWindow::tr("All Files") + QLatin1String(" (*)"));
 		if (filename.isEmpty())
@@ -1062,22 +1094,27 @@ void McRecoverWindow::openCard(const QString &filename)
 	// NOTE: These aren't retranslated if the UI is retranslated.
 	QStringList sl_cardErrors;
 	QFlags<GcnCard::Error> cardErrors = d->card->errors();
+	QString cardSz = d->formatFileSize(d->card->filesize());
 	if (cardErrors & GcnCard::MCE_SZ_TOO_SMALL) {
+		QString minSz = d->formatFileSize(d->card->minBlocks() * d->card->blockSize());
+		//: %1 and %2 are both formatted sizes, e.g. "100 bytes" or "2 MB".
 		sl_cardErrors +=
-			tr("The card image is too small. (Card image is %L1 bytes; should be at least 512 KB.)")
-			.arg(d->card->filesize());
+			tr("The card image is too small. (Card image is %1; should be at least %2.)")
+			.arg(cardSz).arg(minSz);
 	}
 	if (cardErrors & GcnCard::MCE_SZ_TOO_BIG) {
-		// TODO: Convert filesize to KB/MB/GB?
+		//: %1 and %2 are both formatted sizes, e.g. "100 bytes" or "2 MB".
+		QString maxSz = d->formatFileSize(d->card->maxBlocks() * d->card->blockSize());
 		sl_cardErrors +=
-			tr("The card image is too big. (Card image is %L1 bytes; should be 16 MB or less.)")
-			.arg(d->card->filesize());
+			tr("The card image is too big. (Card image is %1; should be %2 or less.)")
+			.arg(cardSz).arg(maxSz);
 	}
 	if (cardErrors & GcnCard::MCE_SZ_NON_POW2) {
 		// TODO: Convert filesize to KB/MB/GB?
+		//: %1 is a formatted size, e.g. "100 bytes" or "2 MB".
 		sl_cardErrors +=
-			tr("The card image size is not a power of two. (Card image is %L1 bytes.)")
-			.arg(d->card->filesize());
+			tr("The card image size is not a power of two. (Card image is %1.)")
+			.arg(cardSz);
 	}
 	if (cardErrors & GcnCard::MCE_INVALID_HEADER) {
 		sl_cardErrors += tr("The header checksum is invalid.");

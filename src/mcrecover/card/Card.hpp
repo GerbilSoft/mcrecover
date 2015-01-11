@@ -123,6 +123,18 @@ class Card : public QObject
 		int blockSize(void) const;
 
 		/**
+		 * Get the minimum number of blocks allowed for this card.
+		 * @return Minimum number of blocks. (Negative on error)
+		 */
+		int minBlocks(void) const;
+
+		/**
+		 * Get the maximum number of blocks allowed for this card.
+		 * @return Maximum number of blocks. (Negative on error)
+		 */
+		int maxBlocks(void) const;
+
+		/**
 		 * Get the total number of physical blocks.
 		 * This includes reserved blocks.
 		 * @return Total number of physical blocks. (Negative on error)
