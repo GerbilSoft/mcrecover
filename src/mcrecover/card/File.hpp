@@ -71,6 +71,14 @@ class File : public QObject
 	// Should be customized per card type.
 	Q_PROPERTY(QString defaultExportFilename READ defaultExportFilename STORED false)
 
+	/* TODO: Register Checksum metatypes?
+	Q_PROPERTY(QVector<Checksum::ChecksumDef> checksumDefs READ checksumDefs WRITE setChecksumDefs)
+	Q_PROPERTY(QVector<Checksum::ChecksumValue> checksumValues READ checksumValues WRITE setChecksumValues)
+	Q_PROPERTY(Checksum::ChkAlgorithm checksumAlgorithm READ checksumAlgorithm)
+	Q_PROPERTY(Checksum::ChkStatus checksumStatus READ checksumStatus)
+	// TODO: checksumValuesFormatted?
+	*/
+
 	protected:
 		/**
 		 * Create a File for a Card.

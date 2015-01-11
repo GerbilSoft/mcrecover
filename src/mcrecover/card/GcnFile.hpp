@@ -42,14 +42,6 @@ class GcnFile : public File
 {
 	Q_OBJECT
 
-	/* TODO: Register Checksum metatypes?
-	Q_PROPERTY(QVector<Checksum::ChecksumDef> checksumDefs READ checksumDefs WRITE setChecksumDefs)
-	Q_PROPERTY(QVector<Checksum::ChecksumValue> checksumValues READ checksumValues WRITE setChecksumValues)
-	Q_PROPERTY(Checksum::ChkAlgorithm checksumAlgorithm READ checksumAlgorithm)
-	Q_PROPERTY(Checksum::ChkStatus checksumStatus READ checksumStatus)
-	// TODO: checksumValuesFormatted?
-	*/
-
 	public:
 		/**
 		 * Create a GcnFile for a GcnCard.
