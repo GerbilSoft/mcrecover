@@ -278,7 +278,7 @@ typedef struct PACKED _vmu_card_icon_header
 #pragma pack()
 
 // VMU card icon data: 32x32, monochrome
-#define VMU_ICON_DATA_LEN 512
+#define VMU_ICON_DATA_LEN 128
 #pragma pack(1)
 typedef struct PACKED _vmu_card_icon_data
 {
