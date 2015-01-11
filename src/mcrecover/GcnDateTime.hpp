@@ -41,6 +41,9 @@
 #endif
 #endif /* QT_NO_DATASTREAM */
 
+// from vmu.h
+extern "C" struct _vmu_timestamp;
+
 class GcnDateTime
 {
 	public:
@@ -70,6 +73,12 @@ class GcnDateTime
 		void setUnixTimestamp(uint32_t unixTimestamp);
 
 		/**
+		 * Set the QDateTime using a Dreamcast VMU timestamp.
+		 * @param vmuTimestamp VMU timestamp.
+		 */
+		void setVmuTimestamp(_vmu_timestamp vmuTimestamp);
+
+		/**
 		 * Get the GCN timestamp from the QDateTime.
 		 * @return GCN timestamp.
 		 */
@@ -81,6 +90,12 @@ class GcnDateTime
 		 * @return Unix timestamp.
 		 */
 		uint32_t unixTimestamp(void) const;
+
+		/**
+		 * Get the VMU timestamp from the QDateTime.
+		 * @return VMU timestamp.
+		 */
+		_vmu_timestamp vmuTimestamp(void) const;
 
 		/**
 		 * Set the QDateTime using a QDateTime.
