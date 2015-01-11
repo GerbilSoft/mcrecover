@@ -335,7 +335,8 @@ GcImage *VmuFilePrivate::loadBannerImage(void)
  */
 QVector<GcImage*> VmuFilePrivate::loadIconImages(void)
 {
-	// TODO: Icon animation mode.
+	// DC only supports looping icon animations.
+	// TODO: Use system-independent values?
 	this->iconAnimMode = 0;
 
 	if (!fileHeader || fileHeader->icon_count == 0) {
@@ -344,6 +345,11 @@ QVector<GcImage*> VmuFilePrivate::loadIconImages(void)
 		return QVector<GcImage*>();
 	}
 
+	// Sanity check: Clamp to 8 icons maximum.
+	int iconCount = fileHeader->icon_count;
+	if (iconCount > 8)
+		iconCount = 8;
+
 	// Load the file into memory.
 	// TODO: Optimize by only reading in required data.
 	// TODO: Copy over the block code from GcnFile::loadIconImages(),
@@ -351,7 +357,8 @@ QVector<GcImage*> VmuFilePrivate::loadIconImages(void)
 	QByteArray data = this->loadFileData();
 
 	// Load only the first icon for now.
-	int totalIconLen = sizeof(vmu_icon_palette) + sizeof(vmu_icon_data);
+	const int totalIconLen = sizeof(vmu_icon_palette) +
+				(sizeof(vmu_icon_data) * iconCount);
 	if (data.size() < (int)(sizeof(*fileHeader) + totalIconLen)) {
 		// File is too small.
 		// The icons aren't actually there...
@@ -360,14 +367,20 @@ QVector<GcImage*> VmuFilePrivate::loadIconImages(void)
 
 	const vmu_icon_palette *palette = (const vmu_icon_palette*)(data.data() + sizeof(*fileHeader));
 	const vmu_icon_data *iconData = (const vmu_icon_data*)(data.data() + sizeof(*fileHeader) + sizeof(*palette));
-	GcImage *gcImage = GcImage::fromDC_16color_ARGB4444(
+	QVector<GcImage*> gcImages;
+	// TODO: Should be part of a struct that's returned...
+	this->iconSpeed.clear();
+	for (int i = 0; i < iconCount; i++, iconData++) {
+		// TODO: Should be part of a struct that's returned...
+		// TODO: Convert DC icon speed to system-independent value.
+		this->iconSpeed.append(3);
+		GcImage *gcImage = GcImage::fromDC_16color_ARGB4444(
 					VMU_ICON_W, VMU_ICON_H,
 					(const uint8_t*)iconData, sizeof(*iconData),
 					(const uint16_t*)palette, sizeof(*palette));
+		gcImages.append(gcImage);
+	}
 
-	// TODO: Animated icons.
-	QVector<GcImage*> gcImages;
-	gcImages.append(gcImage);
 	return gcImages;
 }
 
