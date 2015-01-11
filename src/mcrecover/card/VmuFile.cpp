@@ -487,6 +487,7 @@ VmuFile::VmuFile(VmuCard *card,
 		checksumDef.param = 0x46;
 		checksumDef.start = 0;
 		checksumDef.length = (this->size() * card->blockSize());
+		checksumDef.endian = Checksum::CHKENDIAN_LITTLE;
 
 		// TODO: Optimize this?
 		QVector<Checksum::ChecksumDef> checksumDefs;

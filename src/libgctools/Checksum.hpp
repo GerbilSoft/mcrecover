@@ -70,6 +70,14 @@ class Checksum
 			CHKST_GOOD		// Checksum is good.
 		};
 
+		/**
+		 * Checksum data endianness.
+		 */
+		enum ChkEndian {
+			CHKENDIAN_BIG = 0,	// Big-endian (PowerPC, etc.)
+			CHKENDIAN_LITTLE = 1,	// Little-endian (x86, SH-4, etc.)
+		};
+
 		// Checksum definition struct.
 		struct ChecksumDef {
 			ChkAlgorithm algorithm;
@@ -77,6 +85,7 @@ class Checksum
 			uint32_t param;		// Algorithm parameter, e.g. "poly" or "sum".
 			uint32_t start;		// Checksummed area: start.
 			uint32_t length;	// Checksummed area: length.
+			ChkEndian endian;	// Endianness.
 
 			ChecksumDef()
 				{ clear(); }
@@ -87,6 +96,7 @@ class Checksum
 				param = 0;
 				start = 0;
 				length = 0;
+				endian = CHKENDIAN_BIG;
 			}
 		};
 
@@ -142,9 +152,10 @@ class Checksum
 		 * If either word equals 0xFFFF, it's changed to 0.
 		 * @param buf Data buffer.
 		 * @param siz Length of data buffer.
+		 * @param endian Endianness of the data.
 		 * @return Checksum.
 		 */
-		static uint32_t AddInvDual16(const uint16_t *buf, uint32_t siz);
+		static uint32_t AddInvDual16(const uint16_t *buf, uint32_t siz, ChkEndian endian);
 
 		/**
 		 * AddBytes32 algorithm.
@@ -186,10 +197,11 @@ class Checksum
 		 * @param algorithm Checksum algorithm.
 		 * @param buf Data buffer.
 		 * @param siz Length of data buffer.
+		 * @param endian Endianness of the data.
 		 * @param param Algorithm parameter, e.g. polynomial or sum.
 		 * @return Checksum.
 		 */
-		static uint32_t Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, uint32_t param = 0);
+		static uint32_t Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, ChkEndian endian, uint32_t param = 0);
 
 		/**
 		 * Get a ChkAlgorithm from a checksum algorithm name.

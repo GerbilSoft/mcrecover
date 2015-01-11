@@ -234,17 +234,34 @@ void FilePrivate::calculateChecksum(void)
 
 		switch (checksumDef.algorithm) {
 			case Checksum::CHKALG_CRC16:
-				expected = (data[checksumDef.address+0] << 8) |
-					   (data[checksumDef.address+1]);
+			case Checksum::CHKALG_DREAMCASTVMU:
+				if (checksumDef.endian != Checksum::CHKENDIAN_LITTLE) {
+					// Big-endian.
+					expected = (data[checksumDef.address+0] << 8) |
+						   (data[checksumDef.address+1]);
+				} else {
+					// Little-endian.
+					expected = (data[checksumDef.address+1] << 8) |
+						   (data[checksumDef.address+0]);
+				}
 				break;
 
 			case Checksum::CHKALG_CRC32:
 			case Checksum::CHKALG_ADDINVDUAL16:
 			case Checksum::CHKALG_ADDBYTES32:
-				expected = (data[checksumDef.address+0] << 24) |
-					   (data[checksumDef.address+1] << 16) |
-					   (data[checksumDef.address+2] << 8) |
-					   (data[checksumDef.address+3]);
+				if (checksumDef.endian != Checksum::CHKENDIAN_LITTLE) {
+					// Big-endian.
+					expected = (data[checksumDef.address+0] << 24) |
+						   (data[checksumDef.address+1] << 16) |
+						   (data[checksumDef.address+2] << 8) |
+						   (data[checksumDef.address+3]);
+				} else {
+					// Little-endian.
+					expected = (data[checksumDef.address+3] << 24) |
+						   (data[checksumDef.address+2] << 16) |
+						   (data[checksumDef.address+1] << 8) |
+						   (data[checksumDef.address+0]);
+				}
 				break;
 
 			case Checksum::CHKALG_SONICCHAOGARDEN: {
@@ -252,10 +269,20 @@ void FilePrivate::calculateChecksum(void)
 
 				// Temporary working copy.
 				Checksum::ChaoGardenChecksumData chaoChk = chaoChk_orig;
-				expected = (chaoChk.checksum_3 << 24) |
-					   (chaoChk.checksum_2 << 16) |
-					   (chaoChk.checksum_1 << 8) |
-					   (chaoChk.checksum_0);
+				if (checksumDef.endian != Checksum::CHKENDIAN_LITTLE) {
+					// Big-endian.
+					expected = (chaoChk.checksum_3 << 24) |
+						   (chaoChk.checksum_2 << 16) |
+						   (chaoChk.checksum_1 << 8) |
+						   (chaoChk.checksum_0);
+				} else {
+					// Little-endian.
+					// TODO: Is this correct?
+					expected = (chaoChk.checksum_0 << 24) |
+						   (chaoChk.checksum_1 << 16) |
+						   (chaoChk.checksum_2 << 8) |
+						   (chaoChk.checksum_3);
+				}
 
 				// Clear some fields that must be 0 when calculating the checksum.
 				chaoChk.checksum_3 = 0;
@@ -267,14 +294,6 @@ void FilePrivate::calculateChecksum(void)
 				break;
 			}
 
-			case Checksum::CHKALG_DREAMCASTVMU:
-				// Dreamcast VMU.
-				// FIXME: This is little-endian.
-				// Add a byteorder flag to checksums.
-				expected = (data[checksumDef.address+0]) |
-					   (data[checksumDef.address+1] << 8);
-					   break;
-
 			case Checksum::CHKALG_NONE:
 			default:
 				// Unsupported algorithm.
@@ -285,7 +304,7 @@ void FilePrivate::calculateChecksum(void)
 		// Calculate the checksum.
 		const char *const start = (fileData.constData() + checksumDef.start);
 		uint32_t actual = Checksum::Exec(checksumDef.algorithm,
-				start, checksumDef.length, checksumDef.param);
+				start, checksumDef.length, checksumDef.endian, checksumDef.param);
 
 		if (checksumDef.algorithm == Checksum::CHKALG_SONICCHAOGARDEN) {
 			// Restore the Chao Garden checksum data.

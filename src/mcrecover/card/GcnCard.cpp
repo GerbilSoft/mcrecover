@@ -258,7 +258,7 @@ int GcnCardPrivate::format(const QString &filename)
 	mc_header.encoding = cpu_to_be16(SYS_FONT_ENCODING_ANSI);
 	this->encoding = Card::ENCODING_CP1252;
 	// Calculate the header checksum.
-	uint32_t chksum = Checksum::AddInvDual16((uint16_t*)&mc_header, 0x1FC);
+	uint32_t chksum = Checksum::AddInvDual16((uint16_t*)&mc_header, 0x1FC, Checksum::CHKENDIAN_BIG);
 	mc_header.chksum1 = cpu_to_be16(chksum >> 16);
 	mc_header.chksum2 = cpu_to_be16(chksum & 0xFFFF);
 
@@ -269,7 +269,7 @@ int GcnCardPrivate::format(const QString &filename)
 	mc_dat_int[1].dircntrl.updated = cpu_to_be16(1);
 	// Calculate the directory checksums.
 	for (int i = 0; i < 2; i++) {
-		mc_dat_chk_actual[i] = Checksum::AddInvDual16((uint16_t*)&mc_dat_int[i], 0x1FFC);
+		mc_dat_chk_actual[i] = Checksum::AddInvDual16((uint16_t*)&mc_dat_int[i], 0x1FFC, Checksum::CHKENDIAN_BIG);
 		mc_dat_chk_expected[i] = mc_dat_chk_actual[i];
 		mc_dat_int[i].dircntrl.chksum1 = cpu_to_be16(mc_dat_chk_actual[i] >> 16);
 		mc_dat_int[i].dircntrl.chksum2 = cpu_to_be16(mc_dat_chk_actual[i] & 0xFFFF);
@@ -288,7 +288,7 @@ int GcnCardPrivate::format(const QString &filename)
 	mc_bat_int[1].lastalloc = cpu_to_be16(4);
 	// Calculate the block table checksums.
 	for (int i = 0; i < 2; i++) {
-		mc_bat_chk_actual[i] = Checksum::AddInvDual16((uint16_t*)&mc_bat_int[i], 0x1FFC);
+		mc_bat_chk_actual[i] = Checksum::AddInvDual16((uint16_t*)&mc_bat_int[i], 0x1FFC, Checksum::CHKENDIAN_BIG);
 		mc_bat_chk_expected[i] = mc_bat_chk_actual[i];
 		mc_bat_int[i].chksum1 = cpu_to_be16(mc_bat_chk_actual[i] >> 16);
 		mc_bat_int[i].chksum2 = cpu_to_be16(mc_bat_chk_actual[i] & 0xFFFF);
@@ -382,7 +382,7 @@ int GcnCardPrivate::loadSysInfo(void)
 		mc_header.chksum2 = 0xAA55;
 
 		// Header checksum.
-		headerChecksumValue.actual = Checksum::AddInvDual16((uint16_t*)&mc_header, 0x1FC);
+		headerChecksumValue.actual = Checksum::AddInvDual16((uint16_t*)&mc_header, 0x1FC, Checksum::CHKENDIAN_BIG);
 		headerChecksumValue.expected = (mc_header.chksum1 << 16) |
 					       (mc_header.chksum2);
 
@@ -409,7 +409,7 @@ int GcnCardPrivate::loadSysInfo(void)
 	}
 
 	// Calculate the header checksum.
-	headerChecksumValue.actual = Checksum::AddInvDual16((uint16_t*)&mc_header, 0x1FC);
+	headerChecksumValue.actual = Checksum::AddInvDual16((uint16_t*)&mc_header, 0x1FC, Checksum::CHKENDIAN_BIG);
 
 	// Byteswap the header contents.
 	mc_header.formatTime	= be64_to_cpu(mc_header.formatTime);
@@ -516,7 +516,8 @@ int GcnCardPrivate::loadDirTable(card_dat *dat, uint32_t address, uint32_t *chec
 	if (checksum != nullptr) {
 		*checksum = Checksum::AddInvDual16(
 			reinterpret_cast<const uint16_t*>(dat),
-			(uint32_t)(sizeof(*dat) - 4));
+			(uint32_t)(sizeof(*dat) - 4),
+			Checksum::CHKENDIAN_BIG);
 	}
 
 	// Byteswap the directory table contents.
@@ -558,7 +559,8 @@ int GcnCardPrivate::loadBlockTable(card_bat *bat, uint32_t address, uint32_t *ch
 	if (checksum != nullptr) {
 		*checksum = Checksum::AddInvDual16(
 			(reinterpret_cast<const uint16_t*>(bat) + 2),
-			(uint32_t)(sizeof(*bat) - 4));
+			(uint32_t)(sizeof(*bat) - 4),
+			Checksum::CHKENDIAN_BIG);
 	}
 
 	// Byteswap the block allocation table contents.

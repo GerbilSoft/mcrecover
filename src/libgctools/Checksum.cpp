@@ -69,9 +69,10 @@ uint16_t Checksum::Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly)
  * If either word equals 0xFFFF, it's changed to 0.
  * @param buf Data buffer.
  * @param siz Length of data buffer.
+ * @param endian Endianness of the data.
  * @return Checksum.
  */
-uint32_t Checksum::AddInvDual16(const uint16_t *buf, uint32_t siz)
+uint32_t Checksum::AddInvDual16(const uint16_t *buf, uint32_t siz, ChkEndian endian)
 {
 	// NOTE: Integer overflow/underflow is expected here.
 	uint16_t chk1 = 0;
@@ -81,19 +82,38 @@ uint32_t Checksum::AddInvDual16(const uint16_t *buf, uint32_t siz)
 	// siz is in bytes, so we have to divide it by two.
 	siz /= 2;
 
-	// Do four words at a time.
-	// TODO: Optimize byteswapping?
-	for (; siz > 4; siz -= 4, buf += 4) {
-		chk1 += be16_to_cpu(buf[0]); chk2 += (be16_to_cpu(buf[0]) ^ 0xFFFF);
-		chk1 += be16_to_cpu(buf[1]); chk2 += (be16_to_cpu(buf[1]) ^ 0xFFFF);
-		chk1 += be16_to_cpu(buf[2]); chk2 += (be16_to_cpu(buf[2]) ^ 0xFFFF);
-		chk1 += be16_to_cpu(buf[3]); chk2 += (be16_to_cpu(buf[3]) ^ 0xFFFF);
-	}
+	if (endian != CHKENDIAN_LITTLE) {
+		// Big-endian system. (PowerPC, etc.)
+		// Do four words at a time.
+		// TODO: Optimize byteswapping?
+		for (; siz > 4; siz -= 4, buf += 4) {
+			chk1 += be16_to_cpu(buf[0]); chk2 += (be16_to_cpu(buf[0]) ^ 0xFFFF);
+			chk1 += be16_to_cpu(buf[1]); chk2 += (be16_to_cpu(buf[1]) ^ 0xFFFF);
+			chk1 += be16_to_cpu(buf[2]); chk2 += (be16_to_cpu(buf[2]) ^ 0xFFFF);
+			chk1 += be16_to_cpu(buf[3]); chk2 += (be16_to_cpu(buf[3]) ^ 0xFFFF);
+		}
 
-	// Remaining words.
-	for (; siz != 0; siz--, buf++) {
-		chk1 += be16_to_cpu(*buf);
-		chk2 += (be16_to_cpu(*buf) ^ 0xFFFF);
+		// Remaining words.
+		for (; siz != 0; siz--, buf++) {
+			chk1 += be16_to_cpu(*buf);
+			chk2 += (be16_to_cpu(*buf) ^ 0xFFFF);
+		}
+	} else {
+		// Little-endian system. (x86, SH-4, etc.)
+		// Do four words at a time.
+		// TODO: Optimize byteswapping?
+		for (; siz > 4; siz -= 4, buf += 4) {
+			chk1 += le16_to_cpu(buf[0]); chk2 += (le16_to_cpu(buf[0]) ^ 0xFFFF);
+			chk1 += le16_to_cpu(buf[1]); chk2 += (le16_to_cpu(buf[1]) ^ 0xFFFF);
+			chk1 += le16_to_cpu(buf[2]); chk2 += (le16_to_cpu(buf[2]) ^ 0xFFFF);
+			chk1 += le16_to_cpu(buf[3]); chk2 += (le16_to_cpu(buf[3]) ^ 0xFFFF);
+		}
+
+		// Remaining words.
+		for (; siz != 0; siz--, buf++) {
+			chk1 += le16_to_cpu(*buf);
+			chk2 += (le16_to_cpu(*buf) ^ 0xFFFF);
+		}
 	}
 
 	// 0xFFFF is an invalid checksum value.
@@ -198,10 +218,11 @@ uint16_t Checksum::DreamcastVMU(const uint8_t *buf, uint32_t siz, uint32_t crc_a
  * @param algorithm Checksum algorithm.
  * @param buf Data buffer.
  * @param siz Length of data buffer.
+ * @param endian Endianness of the data.
  * @param param Algorithm parameter, e.g. polynomial or sum.
  * @return Checksum.
  */
-uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, uint32_t param)
+uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, ChkEndian endian, uint32_t param)
 {
 	switch (algorithm) {
 		case CHKALG_CRC16:
@@ -211,7 +232,7 @@ uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, u
 				     siz, (uint16_t)(param & 0xFFFF));
 
 		case CHKALG_ADDINVDUAL16:
-			return AddInvDual16(reinterpret_cast<const uint16_t*>(buf), siz);
+			return AddInvDual16(reinterpret_cast<const uint16_t*>(buf), siz, endian);
 
 		case CHKALG_ADDBYTES32:
 			return AddBytes32(reinterpret_cast<const uint8_t*>(buf), siz);
