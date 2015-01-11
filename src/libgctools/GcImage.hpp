@@ -72,6 +72,30 @@ class GcImage
 		static GcImage *fromRGB5A3(int w, int h, const uint16_t *img_buf, int img_siz);
 
 		/**
+		 * Convert a Dreamcast 16-color image to GcImage.
+		 * @param w Image width.
+		 * @param h Image height.
+		 * @param img_buf 16-color image buffer.
+		 * @param img_siz Size of image data. [must be >= (w*h)*2]
+		 * @param pal_buf Palette buffer. (ARGB4444)
+		 * @param pal_siz Size of palette buffer. [must be >= 0x20]
+		 * @return GcImage, or nullptr on error.
+		 */
+		static GcImage *fromDC_16color_ARGB4444(int w, int h,
+					const uint8_t *img_buf, int img_siz,
+					const uint16_t *pal_buf, int pal_siz);
+
+		/**
+		 * Convert a Dreamcast ARGB4444 image to GcImage.
+		 * @param w Image width.
+		 * @param h Image height.
+		 * @param img_buf ARGB4444 image buffer.
+		 * @param img_siz Size of image data. [must be >= (w*h)*2]
+		 * @return GcImage, or nullptr on error.
+		 */
+		static GcImage *fromARGB4444(int w, int h, const uint16_t *img_buf, int img_siz);
+
+		/**
 		 * Convert this GcImage to RGB5A3.
 		 * Caller must delete the returned GcImage.
 		 * @return New GcImage in RGB5A3.

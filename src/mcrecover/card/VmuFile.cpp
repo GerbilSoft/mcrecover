@@ -99,6 +99,9 @@ class VmuFilePrivate : public FilePrivate
 		 */
 		const vmu_dir_entry *dirEntry;
 
+		// VMU file header.
+		vmu_file_header *fileHeader;
+
 		// File descriptions.
 		QString vmu_desc;
 		QString dc_desc;
@@ -139,6 +142,7 @@ VmuFilePrivate::VmuFilePrivate(VmuFile *q, VmuCard *card,
 	: FilePrivate(q, card)
 	, mc_fat(mc_fat)
 	, dirEntry(dirEntry)
+	, fileHeader(nullptr)
 	, gcBanner(nullptr)
 {
 	if (!dirEntry || !mc_fat) {
@@ -191,6 +195,9 @@ VmuFilePrivate::~VmuFilePrivate()
 		// Free it.
 		free((void*)dirEntry);
 	}
+
+	// Delete the allocated VMU file header.
+	free(fileHeader);
 
 	// Delete GcImages.
 	delete gcBanner;
@@ -249,7 +256,9 @@ void VmuFilePrivate::loadFileInfo(void)
 			VmuFile::tr("Custom VMU icon file.");
 	} else {
 		// Regular file.
-		const vmu_file_header *fileHeader = (vmu_file_header*)data;
+		if (!fileHeader)
+			fileHeader = (vmu_file_header*)malloc(sizeof(*fileHeader));
+		memcpy(fileHeader, data, sizeof(*fileHeader));
 
 		// File description.
 		vmu_desc = decodeText_SJISorCP1252(fileHeader->desc_vmu, sizeof(fileHeader->desc_vmu)).trimmed();
@@ -326,12 +335,45 @@ GcImage *VmuFilePrivate::loadBannerImage(void)
  */
 QVector<GcImage*> VmuFilePrivate::loadIconImages(void)
 {
-	// TODO
-	return QVector<GcImage*>();
+	// TODO: Icon animation mode.
+	this->iconAnimMode = 0;
+
+	if (!fileHeader || fileHeader->icon_count == 0) {
+		// No file header or icons.
+		// TODO: Handle ICONDATA_VMS.
+		return QVector<GcImage*>();
+	}
+
+	// Load the file into memory.
+	// TODO: Optimize by only reading in required data.
+	// TODO: Copy over the block code from GcnFile::loadIconImages(),
+	// but move the "read from X to Y" code down to File.
+	QByteArray data = this->loadFileData();
+
+	// Load only the first icon for now.
+	int totalIconLen = sizeof(vmu_icon_palette) + sizeof(vmu_icon_data);
+	if (data.size() < (int)(sizeof(*fileHeader) + totalIconLen)) {
+		// File is too small.
+		// The icons aren't actually there...
+		return QVector<GcImage*>();
+	}
+
+	const vmu_icon_palette *palette = (const vmu_icon_palette*)(data.data() + sizeof(*fileHeader));
+	const vmu_icon_data *iconData = (const vmu_icon_data*)(data.data() + sizeof(*fileHeader) + sizeof(*palette));
+	GcImage *gcImage = GcImage::fromDC_16color_ARGB4444(
+					VMU_ICON_W, VMU_ICON_H,
+					(const uint8_t*)iconData, sizeof(*iconData),
+					(const uint16_t*)palette, sizeof(*palette));
+
+	// TODO: Animated icons.
+	QVector<GcImage*> gcImages;
+	gcImages.append(gcImage);
+	return gcImages;
 }
 
 /**
  * Load the banner and icon images.
+ * TODO: Move to File?
  */
 void VmuFilePrivate::loadImages(void)
 {

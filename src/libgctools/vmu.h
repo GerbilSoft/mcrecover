@@ -189,6 +189,10 @@ typedef struct PACKED _vmu_file_header
 // If icons are present, the file header is immediately followed by
 // a 16-color ARGB4444 palette and the icons.
 
+// Icon size.
+#define VMU_ICON_W	32
+#define VMU_ICON_H	32
+
 // VMU icon palette: 16 colors, ARGB4444
 #define VMU_ICON_PALETTE_LEN 32
 #pragma pack(1)
@@ -210,6 +214,10 @@ typedef struct PACKED _vmu_icon_data
 
 // If an eyecatch is present, it follows the icons.
 // All colors are ARGB4444
+
+// VMU eyecatch size.
+#define VMU_EYECATCH_W	72
+#define VMU_EYECATCH_H	56
 
 // VMU eyecatch types.
 #define VMU_FILE_EYECATCH_NONE		0
