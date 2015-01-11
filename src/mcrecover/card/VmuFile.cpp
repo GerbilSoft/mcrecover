@@ -356,7 +356,7 @@ QVector<GcImage*> VmuFilePrivate::loadIconImages(void)
 	// but move the "read from X to Y" code down to File.
 	QByteArray data = this->loadFileData();
 
-	// Load only the first icon for now.
+	// Calculate the total icon length.
 	const int totalIconLen = sizeof(vmu_icon_palette) +
 				(sizeof(vmu_icon_data) * iconCount);
 	if (data.size() < (int)(sizeof(*fileHeader) + totalIconLen)) {
@@ -376,8 +376,8 @@ QVector<GcImage*> VmuFilePrivate::loadIconImages(void)
 		this->iconSpeed.append(3);
 		GcImage *gcImage = GcImage::fromDC_16color_ARGB4444(
 					VMU_ICON_W, VMU_ICON_H,
-					(const uint8_t*)iconData, sizeof(*iconData),
-					(const uint16_t*)palette, sizeof(*palette));
+					iconData->icon, sizeof(iconData->icon),
+					palette->palette, sizeof(palette->palette));
 		gcImages.append(gcImage);
 	}
 
