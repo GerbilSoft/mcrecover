@@ -220,10 +220,10 @@ typedef struct PACKED _vmu_icon_data
 #define VMU_EYECATCH_H	56
 
 // VMU eyecatch types.
-#define VMU_FILE_EYECATCH_NONE		0
-#define VMU_FILE_EYECATCH_TRUECOLOR	1
-#define VMU_FILE_EYECATCH_PALETTE_256	2
-#define VMU_FILE_EYECATCH_PALETTE_16	3
+#define VMU_EYECATCH_NONE		0
+#define VMU_EYECATCH_TRUECOLOR		1
+#define VMU_EYECATCH_PALETTE_256	2
+#define VMU_EYECATCH_PALETTE_16		3
 
 // If eyecatch is "none", then there's no data.
 #define VMU_EYECATCH_NONE_LEN 0
