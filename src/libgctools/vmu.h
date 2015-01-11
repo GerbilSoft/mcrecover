@@ -134,9 +134,9 @@ typedef struct PACKED _vmu_fat
 // Block 253 is dir block 0, block 252 is dir block 1, etc.
 
 // Filetype
-#define VMU_DIR_FILETYPE_NONE 0x00
-#define VMU_DIR_FILETYPE_DATA 0x33
-#define VMU_DIR_FILETYPE_GAME 0x33
+#define VMU_DIR_FILETYPE_NONE	0x00
+#define VMU_DIR_FILETYPE_DATA	0x33
+#define VMU_DIR_FILETYPE_GAME	0xCC
 
 // Copy-protected
 #define VMU_DIR_COPY_OK		0x00
