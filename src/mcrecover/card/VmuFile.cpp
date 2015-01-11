@@ -407,7 +407,6 @@ QVector<GcImage*> VmuFilePrivate::loadIconImages(void)
 
 	if (!fileHeader || fileHeader->icon_count == 0) {
 		// No file header or icons.
-		// TODO: Handle ICONDATA_VMS.
 		return QVector<GcImage*>();
 	}
 
@@ -495,24 +494,42 @@ QVector<GcImage*> VmuFilePrivate::loadIconImages_ICONDATA_VMS(void)
 	iconHeader.icon_color_offset	= le32_to_cpu(iconHeader.icon_color_offset);
 
 	// Load the mono icon.
+	// TODO: Only check for offset != 0?
 	if (iconHeader.icon_mono_offset >= (uint32_t)headerEnd) {
-		int monoIconEnd = iconHeader.icon_mono_offset + sizeof(vmu_card_icon_data);
+		int monoIconEnd = iconHeader.icon_mono_offset + sizeof(vmu_card_icon_mono_data);
 		if (data.size() < monoIconEnd) {
 			// File is too small.
 			// The icon isn't actually here...
 			goto colorIcon;
 		}
 
-		const vmu_card_icon_data *monoIconData =
-			(const vmu_card_icon_data*)(data.data() + iconHeader.icon_mono_offset);
+		const vmu_card_icon_mono_data *monoIconData =
+			(const vmu_card_icon_mono_data*)(data.data() + iconHeader.icon_mono_offset);
 		vmu_icon_mono = DcImageLoader::fromMonochrome(
 					VMU_ICON_W, VMU_ICON_H,
 					monoIconData->icon, sizeof(monoIconData->icon));
 	}
 
 colorIcon:
-	// Load the color icon. (TODO)
+	// Load the color icon.
+	// TODO: Only check for offset != 0?
+	if (iconHeader.icon_color_offset >= (uint32_t)headerEnd) {
+		int colorIconEnd = iconHeader.icon_color_offset + sizeof(vmu_card_icon_color_data);
+		if (data.size() < colorIconEnd) {
+			// File is too small.
+			// The icon isn't actually here...
+			goto doneLoadingIcons;
+		}
 
+		const vmu_card_icon_color_data *colorIconData =
+			(const vmu_card_icon_color_data*)(data.data() + iconHeader.icon_color_offset);
+		vmu_icon_color = DcImageLoader::fromPalette16(
+					VMU_ICON_W, VMU_ICON_H,
+					colorIconData->icon, sizeof(colorIconData->icon),
+					colorIconData->palette, sizeof(colorIconData->palette));
+	}
+
+doneLoadingIcons:
 	// Check if any icons were loaded.
 	GcImage *ret_icon = nullptr;
 	if (vmu_icon_color) {

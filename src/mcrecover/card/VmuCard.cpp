@@ -134,8 +134,10 @@ VmuCardPrivate::VmuCardPrivate(VmuCard *q)
 	static_assert(sizeof(vmu_eyecatch_palette_16) == VMU_EYECATCH_PALETTE_16_LEN, "vmu_eyecatch_palette_16 has the wrong size");
 	static_assert(VMU_CARD_ICON_DATA_HEADER_LEN == 24, "VMU_CARD_ICON_DATA_HEADER_LEN is incorrect");
 	static_assert(sizeof(vmu_card_icon_header) == VMU_CARD_ICON_DATA_HEADER_LEN, "vmu_card_icon_header has the wrong size");
-	static_assert(VMU_CARD_ICON_DATA_LEN == 128, "VMU_CARD_ICON_DATA_LEN is incorrect");
-	static_assert(sizeof(vmu_card_icon_data) == VMU_CARD_ICON_DATA_LEN, "vmu_card_icon_data has the wrong size");
+	static_assert(VMU_CARD_ICON_MONO_DATA_LEN == 128, "VMU_CARD_ICON_MONO_DATA_LEN is incorrect");
+	static_assert(sizeof(vmu_card_icon_mono_data) == VMU_CARD_ICON_MONO_DATA_LEN, "vmu_card_icon_mono_data has the wrong size");
+	static_assert(VMU_CARD_ICON_COLOR_DATA_LEN == 544, "VMU_CARD_ICON_COLOR_DATA_LEN is incorrect");
+	static_assert(sizeof(vmu_card_icon_color_data) == VMU_CARD_ICON_COLOR_DATA_LEN, "vmu_card_icon_color_data has the wrong size");
 
 	// Clear variables.
 	memset(&mc_root, 0, sizeof(mc_root));

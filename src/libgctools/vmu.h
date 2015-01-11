@@ -278,12 +278,23 @@ typedef struct PACKED _vmu_card_icon_header
 #pragma pack()
 
 // VMU card icon data: 32x32, monochrome
-#define VMU_CARD_ICON_DATA_LEN 128
+#define VMU_CARD_ICON_MONO_DATA_LEN 128
 #pragma pack(1)
-typedef struct PACKED _vmu_card_icon_data
+typedef struct PACKED _vmu_card_icon_mono_data
 {
 	uint8_t icon[32*32/8];
-} vmu_card_icon_data;
+} vmu_card_icon_mono_data;
+#pragma pack()
+
+// VMU card icon data: 32x32, 16-color
+#define VMU_CARD_ICON_COLOR_DATA_LEN 544
+#pragma pack(1)
+typedef struct PACKED _vmu_card_icon_color_data
+{
+	// Alpha: 0 == transparent, 15 == opaque
+	uint16_t palette[16];	// ARGB4444
+	uint8_t icon[32*32/2];
+} vmu_card_icon_color_data;
 #pragma pack()
 
 #ifdef __cplusplus
