@@ -345,6 +345,18 @@ QColor Card::color(void) const
 }
 
 /**
+ * Get the card's format time.
+ * @return Format time. (If not available, will return Unix epoch.)
+ */
+GcnDateTime Card::formatTime(void) const
+{
+	if (!isOpen())
+		return GcnDateTime();
+	Q_D(const Card);
+	return d->formatTime;
+}
+
+/**
  * Get a QTextCodec for this memory card.
  * @return QTextCodec.
  */

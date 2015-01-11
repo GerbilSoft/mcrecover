@@ -254,7 +254,8 @@ int VmuCardPrivate::loadSysInfo(void)
 		this->color = QColor();
 	}
 
-	// TODO: Card timestamp is in BCD, so set it.
+	// Set the format time.
+	this->formatTime.setVmuTimestamp(mc_root.timestamp);
 
 	// Load the FAT.
 	int ret = loadFat();

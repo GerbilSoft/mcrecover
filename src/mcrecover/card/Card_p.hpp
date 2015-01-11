@@ -55,6 +55,7 @@ class CardPrivate
 		quint64 filesize;
 		Card::Encoding encoding;
 		QColor color;
+		GcnDateTime formatTime;
 
 		// Card size information.
 		const uint32_t blockSize;	// must be a power of 2

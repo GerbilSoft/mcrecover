@@ -20,11 +20,12 @@
  ***************************************************************************/
 
 #include "CardView.hpp"
+#include "McRecoverQApplication.hpp"
 
 #include "card/Card.hpp"
 #include "card/GcnCard.hpp"
+#include "GcnDateTime.hpp"
 #include "Checksum.hpp"
-#include "McRecoverQApplication.hpp"
 
 // C includes.
 #include <stdlib.h>
@@ -59,6 +60,8 @@ class CardViewPrivate
 
 		Card *card;
 
+		// Format time.
+		GcnDateTime formatTime;
 		// Card color (border).
 		QColor color;
 		int cardBorder;
@@ -108,6 +111,8 @@ void CardViewPrivate::updateWidgetDisplay(void)
 		ui.formLayout->setContentsMargins(0, 0, 0, 0);
 		ui.lblBlockCount->setVisible(false);
 		ui.lblStatusIcon->setVisible(false);
+		ui.lblFormatTimeTitle->setVisible(false);
+		ui.lblFormatTime->setVisible(false);
 		ui.lblEncodingTitle->setVisible(false);
 		ui.lblEncoding->setVisible(false);
 		ui.lblChecksumActualTitle->setVisible(false);
@@ -130,6 +135,25 @@ void CardViewPrivate::updateWidgetDisplay(void)
 
 	// Show the widget display.
 	ui.lblBlockCount->setVisible(true);
+
+	// Update the format time.
+	if (this->formatTime != card->formatTime()) {
+		// Card's format time has changed.
+		this->formatTime = card->formatTime();
+
+		if (formatTime.unixTimestamp() == 0) {
+			// Invalid format time.
+			ui.lblFormatTimeTitle->setVisible(false);
+			ui.lblFormatTime->setVisible(false);
+		} else {
+			// Format time is valid.
+			ui.lblFormatTimeTitle->setVisible(true);
+			ui.lblFormatTime->setVisible(true);
+			ui.lblFormatTime->setText(formatTime.toString(Qt::DefaultLocaleShortDate));
+		}
+	}
+
+	// TODO: Hide encoding if the card doesn't have it.
 	ui.lblEncodingTitle->setVisible(true);
 	ui.lblEncoding->setVisible(true);
 
