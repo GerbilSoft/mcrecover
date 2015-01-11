@@ -398,7 +398,6 @@ void VmuCardPrivate::loadFileList(void)
 			continue;
 
 		// Valid directory entry.
-		printf("Loading file %d: type == %02X\n", i, dirEntry->filetype);
 		VmuFile *mcFile = new VmuFile(q, dirEntry, &mc_fat);
 		lstFiles_new.append(mcFile);
 
