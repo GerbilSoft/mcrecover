@@ -1034,7 +1034,7 @@ void McRecoverWindow::openCard(const QString &filename)
 	Q_D(McRecoverWindow);
 
 	if (d->card) {
-		d->model->setMemCard(nullptr);
+		d->model->setCard(nullptr);
 		d->ui.mcCardView->setCard(nullptr);
 		d->ui.mcfFileView->setFile(nullptr);
 		delete d->card;
@@ -1057,8 +1057,7 @@ void McRecoverWindow::openCard(const QString &filename)
 	}
 
 	d->filename = filename;
-	// TODO: Make MemCardModel take a GcnCard*.
-	d->model->setMemCard(qobject_cast<GcnCard*>(d->card));
+	d->model->setCard(d->card);
 
 	// Extract the filename from the path.
 	d->displayFilename = filename;
@@ -1162,7 +1161,7 @@ void McRecoverWindow::closeCard(bool noMsg)
 	if (d->card)
 		d->card->productName();
 
-	d->model->setMemCard(nullptr);
+	d->model->setCard(nullptr);
 	d->ui.mcCardView->setCard(nullptr);
 	d->ui.mcfFileView->setFile(nullptr);
 	delete d->card;

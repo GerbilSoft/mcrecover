@@ -149,6 +149,7 @@ SET(mcrecover_CARD_SRCS
 	card/MemCardItemDelegate.cpp
 	card/MemCardSortFilterProxyModel.cpp
 	card/VmuCard.cpp
+	card/VmuFile.cpp
 	)
 
 # Shh... it's a secret to everybody.
@@ -203,6 +204,7 @@ SET(mcrecover_CARD_MOC_H
 	card/MemCardItemDelegate.hpp
 	card/MemCardSortFilterProxyModel.hpp
 	card/VmuCard.hpp
+	card/VmuFile.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H

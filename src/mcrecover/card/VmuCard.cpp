@@ -22,6 +22,9 @@
 #include "VmuCard.hpp"
 #include "util/byteswap.h"
 
+// VmuFile
+#include "VmuFile.hpp"
+
 // C includes. (C++ namespace)
 #include <cstring>
 #include <cstdio>
@@ -69,7 +72,12 @@ class VmuCardPrivate : public CardPrivate
 	public:
 		vmu_root_block mc_root;
 		vmu_fat mc_fat; // TODO: Multi-block FATs?
-		// TODO: Directory.
+
+		// Directory. (Assuming it's always 13 blocks.)
+		// TODO: Variable-length?
+		#define VMU_DIR_LEN 13
+		#define VMU_DIR_ENTRIES (VMU_BLOCK_SIZE * VMU_DIR_LEN / sizeof(vmu_dir_entry))
+		vmu_dir_entry mc_dir[VMU_DIR_ENTRIES];
 
 	private:
 		/**
@@ -79,9 +87,26 @@ class VmuCardPrivate : public CardPrivate
 		int loadSysInfo(void);
 
 		/**
+		 * Load the FAT.
+		 * @return 0 on success; non-zero on error.
+		 */
+		int loadFat(void);
+
+		/**
 		 * Calculate the block counts.
 		 */
 		void calcBlockCounts(void);
+
+		/**
+		 * Load the directory.
+		 * @return 0 on success; non-zero on error.
+		 */
+		int loadDir(void);
+
+		/**
+		 * Load the File list.
+		 */
+		void loadFileList(void);
 };
 
 VmuCardPrivate::VmuCardPrivate(VmuCard *q)
@@ -136,6 +161,9 @@ int VmuCardPrivate::open(const QString &filename)
 	// Load the memory card system information.
 	// This includes the root block, directory, and FAT.
 	loadSysInfo();
+
+	// Load the File list.
+	loadFileList();
 
 	return 0;
 }
@@ -208,27 +236,52 @@ int VmuCardPrivate::loadSysInfo(void)
 
 	// TODO: Card timestamp is in BCD, so set it.
 
-	/** Load the FAT. **/
-	
+	// Load the FAT.
+	int ret = loadFat();
+	if (ret != 0) {
+		// Error loading the FAT.
+		// Zero the root block, directory, and FAT.
+		memset(&mc_root, 0x00, sizeof(mc_root));
+		memset(&mc_fat, 0x00, sizeof(mc_fat));
+		memset(&mc_dir, 0x00, sizeof(mc_dir));
+		return -3;
+	}
+
+	// Load the directory.
+	ret = loadDir();
+	if (ret != 0) {
+		// Error loading the directory.
+		// Zero the root block, directory, and FAT.
+		memset(&mc_root, 0x00, sizeof(mc_root));
+		memset(&mc_fat, 0x00, sizeof(mc_fat));
+		memset(&mc_dir, 0x00, sizeof(mc_dir));
+		return -4;
+	}
+
+	return 0;
+}
+
+/**
+ * Load the FAT.
+ * @return 0 on success; non-zero on error.
+ */
+int VmuCardPrivate::loadFat(void)
+{
 	// Only single-block FATs are supported right now.
 	if (mc_root.fat_size != 1) {
 		// FAT is the wrong size.
 		// TODO: Set an error flag.
-		return -3;
+		return -1;
 	} else if (mc_root.fat_addr >= VMU_ROOT_BLOCK_ADDRESS) {
 		// FAT address is invalid.
-		return -4;
+		return -2;
 	}
 
 	file->seek(mc_root.fat_addr * blockSize);
-	sz = file->read((char*)&mc_fat, sizeof(mc_fat));
+	quint64 sz = file->read((char*)&mc_fat, sizeof(mc_fat));
 	if (sz != sizeof(mc_fat)) {
-		// Error reading the root block.
-		// Zero the root block, directory, and FAT.
-		memset(&mc_root, 0x00, sizeof(mc_root));
-		memset(&mc_fat, 0x00, sizeof(mc_fat));
-		// TODO: Directory.
-		return -5;
+		// Error reading the FAT.
+		return -3;
 	}
 
 	// Byteswap the FAT.
@@ -239,7 +292,6 @@ int VmuCardPrivate::loadSysInfo(void)
 	// Calculate the block counts.
 	calcBlockCounts();
 
-	// TODO: Load the directory.
 	return 0;
 }
 
@@ -249,7 +301,6 @@ int VmuCardPrivate::loadSysInfo(void)
 void VmuCardPrivate::calcBlockCounts(void)
 {
 	// Set the block counts.
-	// TODO: Verify that user_blocks is in range.
 	totalUserBlocks = mc_root.user_blocks;
 	if (totalUserBlocks > totalPhysBlocks) {
 		// User block count is too high.
@@ -265,6 +316,120 @@ void VmuCardPrivate::calcBlockCounts(void)
 	freeBlocks = cnt;
 
 	Q_Q(VmuCard);
+	emit q->blockCountChanged(totalPhysBlocks, totalUserBlocks, freeBlocks);
+}
+
+/**
+ * Load the directory.
+ * @return 0 on success; non-zero on error.
+ */
+int VmuCardPrivate::loadDir(void)
+{
+	// Only 13-block directories are supported right now.
+	if (mc_root.dir_size != VMU_DIR_LEN) {
+		// Directory is the wrong size.
+		// TODO: Set an error flag.
+		return -1;
+	} else if (mc_root.dir_addr >= VMU_ROOT_BLOCK_ADDRESS) {
+		// Directory address is invalid.
+		return -2;
+	}
+
+	// Read the directory.
+	// NOTE: The VMS file system likes to store files backwards.
+	// Block 253 is the first block of directory;
+	// Block 252 is the second block, etc.
+	const int lastBlock = (mc_root.dir_addr - mc_root.dir_size + 1);
+	vmu_dir_entry *dir = mc_dir;
+	for (int block = mc_root.dir_addr; block >= lastBlock;
+	     block--, dir += (VMU_BLOCK_SIZE / sizeof(*dir))) {
+		const int address = (block * blockSize);
+		file->seek(address);
+		qint64 sz = file->read((char*)dir, VMU_BLOCK_SIZE);
+		if (sz < (qint64)VMU_BLOCK_SIZE) {
+			// Error reading the directory table.
+			return -3;
+		}
+	}
+
+	// Byteswap the directory table contents.
+	for (int i = 0; i < NUM_ELEMENTS(mc_dir); i++) {
+		vmu_dir_entry *dirEntry	= &mc_dir[i];
+		dirEntry->address	= le16_to_cpu(dirEntry->address);
+		dirEntry->size		= le16_to_cpu(dirEntry->size);
+		dirEntry->header_addr	= le16_to_cpu(dirEntry->header_addr);
+	}
+
+	return 0;
+}
+
+/**
+ * Load the File list.
+ */
+void VmuCardPrivate::loadFileList(void)
+{
+	if (!file)
+		return;
+
+	Q_Q(VmuCard);
+
+	// Clear the current File list.
+	int init_size = lstFiles.size();
+	if (init_size > 0)
+		emit q->filesAboutToBeRemoved(0, (init_size - 1));
+	qDeleteAll(lstFiles);
+	lstFiles.clear();
+	if (init_size > 0)
+		emit q->filesRemoved();
+
+	// Reset the used block map.
+	// TODO
+	//resetUsedBlockMap();
+
+	QVector<File*> lstFiles_new;
+	lstFiles_new.reserve(NUM_ELEMENTS(mc_dir));
+
+	// Byteswap the directory table contents.
+	for (int i = 0; i < NUM_ELEMENTS(mc_dir); i++) {
+		const vmu_dir_entry *dirEntry = &mc_dir[i];
+
+		// If the filetype is 0x00, the file is empty.
+		if (dirEntry->filetype == 0x00)
+			continue;
+
+		// Valid directory entry.
+		printf("Loading file %d: type == %02X\n", i, dirEntry->filetype);
+		VmuFile *mcFile = new VmuFile(q, dirEntry, &mc_fat);
+		lstFiles_new.append(mcFile);
+
+		// Mark the file's blocks as used.
+		// TODO
+		/*
+		QVector<uint16_t> fatEntries = mcFile->fatEntries();
+		foreach (uint16_t block, fatEntries) {
+			if (block >= 5 && block < usedBlockMap.size()) {
+				// Valid block.
+				// Increment its entry in the usedBlockMap.
+				if (usedBlockMap[block] < std::numeric_limits<uint8_t>::max())
+					usedBlockMap[block]++;
+			} else {
+				// Invalid block.
+				// TODO: Store an error value somewhere.
+				fprintf(stderr, "WARNING: File %d has invalid FAT entry 0x%04X.\n", i, block);
+			}
+		}
+		*/
+	}
+
+	if (!lstFiles_new.isEmpty()) {
+		// Files have been added to the memory card.
+		emit q->filesAboutToBeInserted(0, (lstFiles_new.size() - 1));
+		// NOTE: QVector::swap() was added in qt-4.8.
+		lstFiles = lstFiles_new;
+		emit q->filesInserted();
+	}
+
+	// Block count has changed.
 	emit q->blockCountChanged(totalPhysBlocks, totalUserBlocks, freeBlocks);
 }
 

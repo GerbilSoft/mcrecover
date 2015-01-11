@@ -22,10 +22,13 @@
 #include "MemCardModel.hpp"
 #include "McRecoverQApplication.hpp"
 
-// GcnCard classes.
-#include "GcnCard.hpp"
+// Card classes.
+#include "Card.hpp"
 #include "File.hpp"
 #include "McRecoverQApplication.hpp"
+
+// TODO: Get correct icon size from the Card object.
+#include "card.h"
 
 // Icon animation helper.
 #include "IconAnimHelper.hpp"
@@ -61,7 +64,7 @@ class MemCardModelPrivate
 		Q_DISABLE_COPY(MemCardModelPrivate)
 
 	public:
-		GcnCard *card;
+		Card *card;
 
 		QHash<const File*, IconAnimHelper*> animState;
 
@@ -113,7 +116,7 @@ class MemCardModelPrivate
 		 * Cached copy of card->fileCount().
 		 * This value is needed after the card is destroyed,
 		 * so we need to cache it here, since the destroyed()
-		 * slot might be run *after* the GcnCard is deleted.
+		 * slot might be run *after* the Card is deleted.
 		 */
 		int fileCount;
 
@@ -429,6 +432,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 			// Increase row height by 4px.
 			// HACK: Increase icon/banner width on Windows.
 			// Figure out a better method later.
+			// TODO: Get correct icon size from the Card object.
 		#ifdef Q_OS_WIN
 			static const int iconWadj = 8;
 		#else
@@ -508,28 +512,28 @@ QVariant MemCardModel::headerData(int section, Qt::Orientation orientation, int 
  * Set the memory card to use in this model.
  * @param card Memory card.
  */
-void MemCardModel::setMemCard(GcnCard *card)
+void MemCardModel::setCard(Card *card)
 {
 	Q_D(MemCardModel);
 
-	// Disconnect the GcnCard's changed() signal if a GcnCard is already set.
+	// Disconnect the Card's changed() signal if a Card is already set.
 	if (d->card) {
 		// Notify the view that we're about to remove all rows.
 		d->fileCount = d->card->fileCount();
 		if (d->fileCount > 0)
 			beginRemoveRows(QModelIndex(), 0, (d->fileCount - 1));
 
-		// Disconnect the GcnCard's signals.
+		// Disconnect the Card's signals.
 		disconnect(d->card, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(memCard_destroyed_slot(QObject*)));
+			   this, SLOT(card_destroyed_slot(QObject*)));
 		disconnect(d->card, SIGNAL(filesAboutToBeInserted(int,int)),
-			   this, SLOT(memCard_filesAboutToBeInserted_slot(int,int)));
+			   this, SLOT(card_filesAboutToBeInserted_slot(int,int)));
 		disconnect(d->card, SIGNAL(filesInserted()),
-			   this, SLOT(memCard_filesInserted_slot()));
+			   this, SLOT(card_filesInserted_slot()));
 		disconnect(d->card, SIGNAL(filesAboutToBeRemoved(int,int)),
-			   this, SLOT(memCard_filesAboutToBeRemoved_slot(int,int)));
+			   this, SLOT(card_filesAboutToBeRemoved_slot(int,int)));
 		disconnect(d->card, SIGNAL(filesRemoved()),
-			   this, SLOT(memCard_filesRemoved_slot()));
+			   this, SLOT(card_filesRemoved_slot()));
 
 		d->card = nullptr;
 
@@ -550,17 +554,17 @@ void MemCardModel::setMemCard(GcnCard *card)
 		// Initialize the animation state.
 		d->initAnimState();
 
-		// Connect the GcnCard's signals.
+		// Connect the Card's signals.
 		connect(d->card, SIGNAL(destroyed(QObject*)),
-			this, SLOT(memCard_destroyed_slot(QObject*)));
+			this, SLOT(card_destroyed_slot(QObject*)));
 		connect(d->card, SIGNAL(filesAboutToBeInserted(int,int)),
-			this, SLOT(memCard_filesAboutToBeInserted_slot(int,int)));
+			this, SLOT(card_filesAboutToBeInserted_slot(int,int)));
 		connect(d->card, SIGNAL(filesInserted()),
-			this, SLOT(memCard_filesInserted_slot()));
+			this, SLOT(card_filesInserted_slot()));
 		connect(d->card, SIGNAL(filesAboutToBeRemoved(int,int)),
-			this, SLOT(memCard_filesAboutToBeRemoved_slot(int,int)));
+			this, SLOT(card_filesAboutToBeRemoved_slot(int,int)));
 		connect(d->card, SIGNAL(filesRemoved()),
-			this, SLOT(memCard_filesRemoved_slot()));
+			this, SLOT(card_filesRemoved_slot()));
 
 		// Done adding rows.
 		if (d->fileCount > 0)
@@ -615,15 +619,15 @@ void MemCardModel::animTimerSlot(void)
 }
 
 /**
- * GcnCard object was destroyed.
+ * Card object was destroyed.
  * @param obj QObject that was destroyed.
  */
-void MemCardModel::memCard_destroyed_slot(QObject *obj)
+void MemCardModel::card_destroyed_slot(QObject *obj)
 {
 	Q_D(MemCardModel);
 
 	if (obj == d->card) {
-		// Our GcnCard was destroyed.
+		// Our Card was destroyed.
 		int old_fileCount = d->fileCount;
 		if (old_fileCount > 0)
 			beginRemoveRows(QModelIndex(), 0, (old_fileCount - 1));
@@ -635,11 +639,11 @@ void MemCardModel::memCard_destroyed_slot(QObject *obj)
 }
 
 /**
- * Files are about to be added to the GcnCard.
+ * Files are about to be added to the Card.
  * @param start First file index.
  * @param end Last file index.
  */
-void MemCardModel::memCard_filesAboutToBeInserted_slot(int start, int end)
+void MemCardModel::card_filesAboutToBeInserted_slot(int start, int end)
 {
 	// Start adding rows.
 	beginInsertRows(QModelIndex(), start, end);
@@ -651,9 +655,9 @@ void MemCardModel::memCard_filesAboutToBeInserted_slot(int start, int end)
 }
 
 /**
- * Files have been added to the GcnCard.
+ * Files have been added to the Card.
  */
-void MemCardModel::memCard_filesInserted_slot(void)
+void MemCardModel::card_filesInserted_slot(void)
 {
 	Q_D(MemCardModel);
 
@@ -681,11 +685,11 @@ void MemCardModel::memCard_filesInserted_slot(void)
 }
 
 /**
- * Files are about to be removed from the GcnCard.
+ * Files are about to be removed from the Card.
  * @param start First file index.
  * @param end Last file index.
  */
-void MemCardModel::memCard_filesAboutToBeRemoved_slot(int start, int end)
+void MemCardModel::card_filesAboutToBeRemoved_slot(int start, int end)
 {
 	// Start removing rows.
 	beginRemoveRows(QModelIndex(), start, end);
@@ -699,9 +703,9 @@ void MemCardModel::memCard_filesAboutToBeRemoved_slot(int start, int end)
 }
 
 /**
- * Files have been removed from the GcnCard.
+ * Files have been removed from the Card.
  */
-void MemCardModel::memCard_filesRemoved_slot(void)
+void MemCardModel::card_filesRemoved_slot(void)
 {
 	// Update the file count.
 	Q_D(MemCardModel);

@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * MemCardModel.hpp: QAbstractListModel for GcnCard.                       *
+ * MemCardModel.hpp: QAbstractListModel for Card.                          *
  *                                                                         *
  * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_MEMCARDMODEL_HPP__
 #define __MCRECOVER_MEMCARDMODEL_HPP__
 
-class GcnCard;
+class Card;
 
 // Qt includes.
 #include <QtCore/QAbstractListModel>
@@ -69,7 +69,7 @@ class MemCardModel : public QAbstractListModel
 		 * Set the memory card to use in this model.
 		 * @param card Memory card.
 		 */
-		void setMemCard(GcnCard *card);
+		void setCard(Card *card);
 
 	public slots:
 		/**
@@ -96,34 +96,34 @@ class MemCardModel : public QAbstractListModel
 		void animTimerSlot(void);
 
 		/**
-		 * GcnCard object was destroyed.
+		 * Card object was destroyed.
 		 * @param obj QObject that was destroyed.
 		 */
-		void memCard_destroyed_slot(QObject *obj = 0);
+		void card_destroyed_slot(QObject *obj = 0);
 
 		/**
-		 * Files are about to be added to the GcnCard.
+		 * Files are about to be added to the Card.
 		 * @param start First file index.
 		 * @param end Last file index.
 		 */
-		void memCard_filesAboutToBeInserted_slot(int start, int end);
+		void card_filesAboutToBeInserted_slot(int start, int end);
 
 		/**
-		 * Files have been added to the GcnCard.
+		 * Files have been added to the Card.
 		 */
-		void memCard_filesInserted_slot(void);
+		void card_filesInserted_slot(void);
 
 		/**
-		 * Files are about to be removed from the GcnCard.
+		 * Files are about to be removed from the Card.
 		 * @param start First file index.
 		 * @param end Last file index.
 		 */
-		void memCard_filesAboutToBeRemoved_slot(int start, int end);
+		void card_filesAboutToBeRemoved_slot(int start, int end);
 
 		/**
-		 * Files have been removed from the GcnCard.
+		 * Files have been removed from the Card.
 		 */
-		void memCard_filesRemoved_slot(void);
+		void card_filesRemoved_slot(void);
 
 		/**
 		 * The system theme has changed.
