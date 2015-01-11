@@ -599,37 +599,37 @@ Alternatively, you can place your own version in ~/.config/mcrecover/data/</sour
     </message>
 </context>
 <context>
-    <name>MemCardFileView</name>
+    <name>FileView</name>
     <message>
-        <location filename="../widgets/MemCardFileView.ui" line="137"/>
+        <location filename="../widgets/FileView.ui" line="137"/>
         <source>&amp;Mode:</source>
         <extracomment>File permissions. (Known as &quot;mode&quot; on Unix systems.)</extracomment>
         <translation>&amp;m0d3:</translation>
     </message>
     <message>
-        <location filename="../widgets/MemCardFileView.ui" line="168"/>
+        <location filename="../widgets/FileView.ui" line="168"/>
         <source>Checksum
 &amp;Algorithm:</source>
         <translation>ch3ck5um
 &amp;4l60r17hm:</translation>
     </message>
     <message>
-        <location filename="../widgets/MemCardFileView.ui" line="207"/>
+        <location filename="../widgets/FileView.ui" line="207"/>
         <source>&amp;Calculated
 Checksum:</source>
         <translation>&amp;c4lcul473d
 ch3ck5um:</translation>
     </message>
     <message>
-        <location filename="../widgets/MemCardFileView.ui" line="253"/>
+        <location filename="../widgets/FileView.ui" line="253"/>
         <source>E&amp;xpected
 Checksum:</source>
         <translation>3&amp;xp3c73d
 ch3ck5um:</translation>
     </message>
     <message>
-        <location filename="../widgets/MemCardFileView.cpp" line="150"/>
-        <location filename="../widgets/MemCardFileView.cpp" line="174"/>
+        <location filename="../widgets/FileView.cpp" line="150"/>
+        <location filename="../widgets/FileView.cpp" line="174"/>
         <source>Unknown</source>
         <comment>checksum</comment>
         <translation>unkn0wn</translation>
@@ -681,34 +681,34 @@ ch3ck5um:</translation>
     </message>
 </context>
 <context>
-    <name>MemCardView</name>
+    <name>CardView</name>
     <message>
-        <location filename="../widgets/MemCardView.ui" line="88"/>
+        <location filename="../widgets/CardView.ui" line="88"/>
         <source>&amp;Encoding:</source>
         <translation>&amp;3nc0d1n6:</translation>
     </message>
     <message>
-        <location filename="../widgets/MemCardView.ui" line="120"/>
+        <location filename="../widgets/CardView.ui" line="120"/>
         <source>&amp;Calculated
 Checksum:</source>
         <translation>&amp;c4lcul473d
 ch3ck5um:</translation>
     </message>
     <message>
-        <location filename="../widgets/MemCardView.ui" line="166"/>
+        <location filename="../widgets/CardView.ui" line="166"/>
         <source>E&amp;xpected
 Checksum:</source>
         <translation>3&amp;xp3c73d
 ch3ck5um:</translation>
     </message>
     <message>
-        <location filename="../widgets/MemCardView.cpp" line="125"/>
+        <location filename="../widgets/CardView.cpp" line="125"/>
         <source>Unknown</source>
         <comment>checksum</comment>
         <translation>unkn0wn</translation>
     </message>
     <message numerus="yes">
-        <location filename="../widgets/MemCardView.cpp" line="83"/>
+        <location filename="../widgets/CardView.cpp" line="83"/>
         <source>%L1 block(s) (%L2 free)</source>
         <translation>
             <numerusform>%L1 bl0ck (%L2 fr33)</numerusform>
@@ -716,7 +716,7 @@ ch3ck5um:</translation>
         </translation>
     </message>
     <message>
-        <location filename="../widgets/MemCardView.cpp" line="171"/>
+        <location filename="../widgets/CardView.cpp" line="171"/>
         <source>Memory card header is corrupted.</source>
         <translation>m3m0ry c4rd h34d3r 15 c0rrup73d.</translation>
     </message>
