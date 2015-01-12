@@ -94,6 +94,11 @@ class SALevelStatsPrivate
 		sa_weights weights;
 		sa_rings rings;
 
+		// Emblems.
+		// NOTE: There's only 130 emblems, but there's enough
+		// space for 136, so we have to allocate the entire area.
+		bool emblems[136];
+
 		/** Static read-only data **/
 
 		// Level names. (ASCII, untranslated)
@@ -192,6 +197,7 @@ SALevelStatsPrivate::SALevelStatsPrivate(SALevelStats *q)
 	memset(&times, 0, sizeof(times));
 	memset(&weights, 0, sizeof(weights));
 	memset(&rings, 0, sizeof(rings));
+	memset(&emblems, 0, sizeof(emblems));
 }
 
 SALevelStatsPrivate::~SALevelStatsPrivate()
@@ -366,6 +372,16 @@ void SALevelStatsPrivate::updateDisplay(void)
 
 		// Rings
 		levels[i].spnMostRings->setValue(rings.all[saveIdx]);
+
+		/**
+		 * Level emblems:
+		 * - A: saveIdx + 0
+		 * - B: saveIdx + 32
+		 * - C: saveIdx + 64
+		 */
+		levels[i].chkEmblems[0]->setChecked(emblems[saveIdx+0]);
+		levels[i].chkEmblems[1]->setChecked(emblems[saveIdx+32]);
+		levels[i].chkEmblems[2]->setChecked(emblems[saveIdx+64]);
 	}
 }
 
@@ -443,6 +459,16 @@ int SALevelStats::loadSaveData(const _sa_save_file *sa_save)
 	memcpy(&d->times,   &sa_save->times,   sizeof(d->times));
 	memcpy(&d->weights, &sa_save->weights, sizeof(d->weights));
 	memcpy(&d->rings,   &sa_save->rings,   sizeof(d->rings));
+
+	// Emblems are stored as a bitmask. (LSB is emblem 0.)
+	// Convert to a bool array to make it easier to access.
+	bool *emblem = &d->emblems[0];
+	for (int i = 0; i < NUM_ELEMENTS(sa_save->emblems); i++) {
+		uint8_t bits = sa_save->emblems[i];
+		for (int j = 0; j < 8; j++, bits >>= 1) {
+			*emblem++ = !!(bits & 1);
+		}
+	}
 
 	// Byteswap everything.
 	// NOTE: sa_times doesn't require byteswapping.

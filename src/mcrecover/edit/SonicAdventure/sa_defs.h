@@ -25,6 +25,7 @@
  *
  * Additional references:
  * - http://rnhart.net/articles/sa-savefile.htm
+ * - http://info.sonicretro.org/SCHG:Sonic_Adventure/Main_Save_File
  */
 
 // All structs are packed little-endian.
@@ -180,8 +181,8 @@ typedef struct PACKED _sa_save_file
 		} bossTimes;
 	};
 
-	// unknown
-	uint8_t reserved2[17];
+	// Emblems.
+	uint8_t emblems[17];
 
 	// Options: Choose the feature you want to edit.
 	uint8_t options;
