@@ -70,19 +70,18 @@ class SALevelStatsPrivate
 			QHBoxLayout *hboxBestTime;
 			QSpinBox *spnMostRings;
 		} levels[MAX_LEVELS];
-		int levelsInUse;
-
-		/**
-		 * Clear all level widgets.
-		 */
-		void clearLevels(void);
 
 		/**
 		 * Initialize level widgets.
+		 */
+		void initLevels(void);
+
+		/**
+		 * Switch levels to another character.
 		 * This funciton automatically calls updateDisplay().
 		 * @param character Character ID.
 		 */
-		void initLevels(int character);
+		void switchLevels(int character);
 
 		/**
 		 * Update the widgets with the loaded data.
@@ -179,9 +178,6 @@ SALevelStatsPrivate::SALevelStatsPrivate(SALevelStats *q)
 	static_assert(SA_SAVE_FILE_LEN == 1184, "SA_SAVE_FILE_LEN is incorrect");
 	static_assert(sizeof(sa_save_file) == SA_SAVE_FILE_LEN, "sa_save_file has the wrong size");
 
-	// No levels are allocated initially.
-	levelsInUse = 0;
-
 	// Zero out the data.
 	memset(&scores, 0, sizeof(scores));
 	memset(&times, 0, sizeof(times));
@@ -192,15 +188,7 @@ SALevelStatsPrivate::~SALevelStatsPrivate()
 	// TODO: Is this needed?
 	// The level widgets are owned by this widget, so they
 	// should be automatically deleted...
-	clearLevels();
-}
-
-/**
- * Clear all level widgets.
- */
-void SALevelStatsPrivate::clearLevels(void)
-{
-	for (int i = 0; i < levelsInUse; i++) {
+	for (int i = 0; i < MAX_LEVELS; i++) {
 		for (int j = 0; j < 3; j++) {
 			delete levels[i].chkEmblems[j];
 			delete levels[i].spnBestTime[j];
@@ -211,46 +199,22 @@ void SALevelStatsPrivate::clearLevels(void)
 		delete levels[i].hboxBestTime;
 		delete levels[i].spnMostRings;
 	}
-
-	// All done.
-	// TODO: Take a copy of levelsInUse, then
-	// clear it before deleting anything?
-	// Probably not needed...
-	levelsInUse = 0;
 }
 
 /**
  * Initialize level widgets.
- * @param character Character ID.
  */
-void SALevelStatsPrivate::initLevels(int character)
+void SALevelStatsPrivate::initLevels(void)
 {
-	// FIXME: Character enums or something.
-	if (character < 0 || character > 5)
-		return;
-
-	const int8_t *levelID = &levelMap[character][0];
+	// Create widgets for all levels, and hide them initially.
 	Q_Q(SALevelStats);
-
-	// Create widgets for levels that aren't already displayed.
-	int i = 0;
-	for (; i < MAX_LEVELS && *levelID != -1; i++, levelID++) {
-		if (i < levelsInUse) {
-			// Widgets already exist.
-			// Only update the level name.
-			// TODO: Change Big's Time widgets to Weight.
-			levels[i].lblLevel->setText(QLatin1String(levelNames[*levelID]));
-			continue;
-		}
-
-		// Create new widgets.
-
+	for (int i = 0; i < MAX_LEVELS; i++) {
 		// Level name.
 		levels[i].lblLevel = new QLabel(q);
-		levels[i].lblLevel->setText(QLatin1String(levelNames[*levelID]));
 
 		// High score.
 		levels[i].spnHighScore = new QSpinBox(q);
+		levels[i].spnHighScore->hide();
 		// TODO: Actual maximum?
 		levels[i].spnHighScore->setRange(0, 0x7FFFFFFF);
 		levels[i].spnHighScore->setSingleStep(1);
@@ -261,6 +225,7 @@ void SALevelStatsPrivate::initLevels(int character)
 		levels[i].hboxEmblems->setContentsMargins(0, 0, 0, 0);
 		for (int j = 0; j < 3; j++) {
 			levels[i].chkEmblems[j] = new QCheckBox(q);
+			levels[i].chkEmblems[j]->hide();
 			levels[i].hboxEmblems->addWidget(levels[i].chkEmblems[j]);
 			// FIXME: Improve alignment.
 			levels[i].hboxEmblems->setAlignment(levels[i].chkEmblems[j], Qt::AlignLeft);
@@ -272,13 +237,17 @@ void SALevelStatsPrivate::initLevels(int character)
 		levels[i].hboxBestTime->setContentsMargins(0, 0, 0, 0);
 		for (int j = 0; j < 3; j++) {
 			levels[i].spnBestTime[j] = new QSpinBox(q);
+			levels[i].spnBestTime[j]->hide();
 			levels[i].spnBestTime[j]->setRange(0, (j == 1 ? 59 : 99));
 			levels[i].spnBestTime[j]->setSingleStep(1);
 			levels[i].hboxBestTime->addWidget(levels[i].spnBestTime[j]);
 		}
 
+		// TODO: Big has weights, not times.
+
 		// Most rings.
 		levels[i].spnMostRings = new QSpinBox(q);
+		levels[i].spnMostRings->hide();
 		// TODO: Actual maximum?
 		levels[i].spnMostRings->setRange(0, 0x7FFF);
 		levels[i].spnMostRings->setSingleStep(1);
@@ -289,22 +258,48 @@ void SALevelStatsPrivate::initLevels(int character)
 		ui.gridLevels->addLayout(levels[i].hboxBestTime, i+1, 3, Qt::AlignTop);
 		ui.gridLevels->addWidget(levels[i].spnMostRings, i+1, 4, Qt::AlignTop);
 	}
+}
 
-	// Delete any level widgets that are no longer in use.
-	for (int j = i; j < levelsInUse; j++) {
-		for (int k = 0; k < 3; k++) {
-			delete levels[j].chkEmblems[k];
-			delete levels[j].spnBestTime[k];
+/**
+ * Switch levels to another character.
+ * This funciton automatically calls updateDisplay().
+ * @param character Character ID.
+ */
+void SALevelStatsPrivate::switchLevels(int character)
+{
+	// FIXME: Character enums or something.
+	if (character < 0 || character > 5)
+		return;
+
+	const int8_t *levelID = &levelMap[character][0];
+
+	// Show widgets that are needed.
+	int i = 0;
+	for (; i < MAX_LEVELS && *levelID != -1; i++, levelID++) {
+		levels[i].lblLevel->setText(QLatin1String(levelNames[*levelID]));
+		levels[i].lblLevel->show();
+		levels[i].spnHighScore->show();
+		levels[i].spnMostRings->show();
+
+		// FIXME: Weights for Big?
+		for (int j = 0; j < 3; j++) {
+			levels[i].chkEmblems[j]->show();
+			levels[i].spnBestTime[j]->show();
 		}
-		delete levels[j].lblLevel;
-		delete levels[j].spnHighScore;
-		delete levels[j].hboxEmblems;
-		delete levels[j].hboxBestTime;
-		delete levels[j].spnMostRings;
 	}
 
-	// Store the new number of levels in use.
-	this->levelsInUse = i;
+	// Hide widgets that aren't needed.
+	for (int j = i; j < MAX_LEVELS; j++) {
+		levels[j].lblLevel->hide();
+		levels[j].spnHighScore->hide();
+		levels[j].spnMostRings->hide();
+
+		// FIXME: Weights for Big?
+		for (int k = 0; k < 3; k++) {
+			levels[j].chkEmblems[k]->hide();
+			levels[j].spnBestTime[k]->hide();
+		}
+	}
 
 	// Update the display.
 	updateDisplay();
@@ -321,7 +316,7 @@ void SALevelStatsPrivate::updateDisplay(void)
 	if (character < 0 || character > 5)
 		return;
 
-	for (int i = 0; i < levelsInUse; i++) {
+	for (int i = 0; i < MAX_LEVELS; i++) {
 		int8_t saveIdx = saveMap[character][i];
 		if (saveIdx < 0 || saveIdx >= NUM_ELEMENTS(scores.all))
 			break;
@@ -356,7 +351,8 @@ SALevelStats::SALevelStats(QWidget *parent)
 	d->ui.gridLevels->setAlignment(d->ui.lblMostRings, Qt::AlignTop);
 
 	// Initialize the level listing.
-	d->initLevels(d->ui.cboCharacter->currentIndex());
+	d->initLevels();
+	d->switchLevels(d->ui.cboCharacter->currentIndex());
 }
 
 SALevelStats::~SALevelStats()
@@ -394,7 +390,7 @@ void SALevelStats::on_cboCharacter_currentIndexChanged(int index)
 	// Reinitialize the level grid with the correct
 	// set of levels for the selected character.
 	Q_D(SALevelStats);
-	d->initLevels(index);
+	d->switchLevels(index);
 }
 
 /** Public functions. **/
