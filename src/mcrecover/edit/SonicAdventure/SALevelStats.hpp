@@ -48,6 +48,15 @@ class SALevelStats : public QWidget
 	protected slots:
 		// Character was changed.
 		void on_cboCharacter_currentIndexChanged(int index);
+
+	public:
+		/**
+		 * Load data from Sonic Adventure save data.
+		 * TODO: Big Endian / Little Endian switch?
+		 * @param sa_save Sonic Adventure save data.
+		 * @return 0 on success; non-zero on error.
+		 */
+		int loadSaveData(const _sa_save_file *sa_save);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SALEVELSTATS_HPP__ */

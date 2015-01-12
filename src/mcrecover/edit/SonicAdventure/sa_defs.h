@@ -64,6 +64,22 @@ typedef struct PACKED _sa_time_code
 } sa_time_code;
 #pragma pack()
 
+// Score data.
+#define SA_SCORES_LEN 128
+#pragma pack(1)
+typedef union PACKED _sa_scores {
+	uint32_t all[32];
+	struct {
+		uint32_t sonic[10];
+		uint32_t tails[5];
+		uint32_t knuckles[5];
+		uint32_t amy[3];
+		uint32_t gamma[5];
+		uint32_t big[4];
+	};
+} sa_scores;
+#pragma pack()
+
 // Save file data.
 #define SA_SAVE_FILE_LEN 1184
 #pragma pack(1)
@@ -73,17 +89,7 @@ typedef struct PACKED _sa_save_file
 	uint32_t playTime;	// Play time (1/60ths of a second)
 
 	// Best scores.
-	union {
-		uint32_t bestScores[32];
-		struct {
-			uint32_t sonic[10];
-			uint32_t tails[5];
-			uint32_t knuckles[5];
-			uint32_t amy[3];
-			uint32_t gamma[5];
-			uint32_t big[4];
-		} scores;
-	};
+	sa_scores scores;
 
 	// Best times.
 	// NOTE: Big does not have times.

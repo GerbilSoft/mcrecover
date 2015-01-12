@@ -35,6 +35,10 @@
 
 // Sonic Adventure save file definitions.
 #include "sa_defs.h"
+#include "util/byteswap.h"
+
+// TODO: Put this in a common header file somewhere.
+#define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 /** SALevelStatsPrivate **/
 
@@ -75,9 +79,20 @@ class SALevelStatsPrivate
 
 		/**
 		 * Initialize level widgets.
+		 * This funciton automatically calls updateDisplay().
 		 * @param character Character ID.
 		 */
 		void initLevels(int character);
+
+		/**
+		 * Update the widgets with the loaded data.
+		 */
+		void updateDisplay(void);
+
+		// Save file data.
+		sa_scores scores;
+
+		/** Static read-only data **/
 
 		// Level names. (ASCII, untranslated)
 		static const char *levelNames[11];
@@ -88,6 +103,14 @@ class SALevelStatsPrivate
 		 * -1 == end of list
 		 */
 		static const int8_t levelMap[6][MAX_LEVELS];
+
+		/**
+		 * Save file level mapping.
+		 * Index == display level ID
+		 * Value == save index (e.g. scores.all[x])
+		 * A value of -1 indicates an invalid entry.
+		 */
+		static const int8_t saveMap[6][MAX_LEVELS];
 };
 
 // Level names. (ASCII, untranslated)
@@ -125,15 +148,42 @@ const int8_t SALevelStatsPrivate::levelMap[6][MAX_LEVELS] = {
 	{4, 3, 0, 10, -1, -1, -1, -1, -1, -1},
 };
 
+/**
+ * Save file level mapping.
+ * Index == display level ID
+ * Value == save index (e.g. scores.all[x])
+ * A value of -1 indicates an invalid entry.
+ */
+const int8_t SALevelStatsPrivate::saveMap[6][MAX_LEVELS] = {
+	// Sonic (starts at 0)
+	{0, 1, 8, 7, 2, 3, 4, 5, 6, 9},
+	// Tails (starts at 10)
+	{10, 14, 13, 12, 11, -1, -1, -1, -1, -1},
+	// Knuckles (starts at 15)
+	{15, 19, 16, 18, 17, -1, -1, -1, -1, -1},
+	// Amy (starts at 20)
+	{20, 22, 21, -1, -1, -1, -1, -1, -1 ,-1},
+	// Gamma (starts at 23)
+	{24, 25, 26, 23, 27, -1, -1, -1, -1, -1},
+	// Big (starts at 28)
+	{30, 28, 29, 31, -1, -1, -1, -1, -1, -1},
+};
+
 SALevelStatsPrivate::SALevelStatsPrivate(SALevelStats *q)
 	: q_ptr(q)
 {
 	// Make sure sa_defs.h is correct.
+	static_assert(SA_SCORES_LEN == 128, "SA_SCORES_LEN is incorrect");
+	static_assert(sizeof(sa_scores) == SA_SCORES_LEN, "sa_scores has the wrong size");
 	static_assert(SA_SAVE_FILE_LEN == 1184, "SA_SAVE_FILE_LEN is incorrect");
 	static_assert(sizeof(sa_save_file) == SA_SAVE_FILE_LEN, "sa_save_file has the wrong size");
 
 	// No levels are allocated initially.
 	levelsInUse = 0;
+
+	// Zero out the scores.
+	// TODO: Rest of SA data.
+	memset(&scores, 0, sizeof(scores));
 }
 
 SALevelStatsPrivate::~SALevelStatsPrivate()
@@ -232,10 +282,35 @@ void SALevelStatsPrivate::initLevels(int character)
 
 	// Store the number of levels in use.
 	this->levelsInUse = i;
+
+	// Update the display.
+	updateDisplay();
+}
+
+/**
+ * Update the widgets with the loaded data.
+ */
+void SALevelStatsPrivate::updateDisplay(void)
+{
+	// TODO: Make character a parameter, or not?
+	// FIXME: Character enums or something.
+	int character = ui.cboCharacter->currentIndex();
+	if (character < 0 || character > 5)
+		return;
+
+	// Display the scores for the selected character.
+	for (int i = 0; i < levelsInUse; i++) {
+		int8_t saveIdx = saveMap[character][i];
+		if (saveIdx < 0 || saveIdx >= NUM_ELEMENTS(scores.all))
+			break;
+
+		levels[i].spnHighScore->setValue(scores.all[saveIdx]);
+	}
 }
 
 /** SALevelStats **/
 
+#include <stdio.h>
 SALevelStats::SALevelStats(QWidget *parent)
 	: QWidget(parent)
 	, d_ptr(new SALevelStatsPrivate(this))
@@ -290,4 +365,29 @@ void SALevelStats::on_cboCharacter_currentIndexChanged(int index)
 	// set of levels for the selected character.
 	Q_D(SALevelStats);
 	d->initLevels(index);
+}
+
+/** Public functions. **/
+
+/**
+ * Load data from Sonic Adventure save data.
+ * TODO: Big Endian / Little Endian switch?
+ * @param sa_save Sonic Adventure save data.
+ * @return 0 on success; non-zero on error.
+ */
+int SALevelStats::loadSaveData(const _sa_save_file *sa_save)
+{
+	Q_D(SALevelStats);
+	// FIXME: Add endianness settings somewhere.
+
+	// Load the scores.
+	memcpy(&d->scores, &sa_save->scores, sizeof(d->scores));
+	for (int i = 0; i < NUM_ELEMENTS(d->scores.all); i++) {
+		d->scores.all[i] = be32_to_cpu(d->scores.all[i]);
+	}
+
+	// Update the display.
+	d->updateDisplay();
+
+	return 0;
 }
