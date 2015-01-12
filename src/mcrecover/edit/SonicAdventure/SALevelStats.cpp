@@ -92,6 +92,7 @@ class SALevelStatsPrivate
 		sa_scores scores;
 		sa_times times;
 		sa_weights weights;
+		sa_rings rings;
 
 		/** Static read-only data **/
 
@@ -180,6 +181,9 @@ SALevelStatsPrivate::SALevelStatsPrivate(SALevelStats *q)
 	static_assert(sizeof(sa_times) == SA_TIMES_LEN, "sa_times has the wrong size");
 	static_assert(SA_WEIGHTS_LEN == 24, "SA_WEIGHTS_LEN is incorrect");
 	static_assert(sizeof(sa_weights) == SA_WEIGHTS_LEN, "sa_weights has the wrong size");
+	static_assert(SA_RINGS_LEN == 64, "SA_RINGS_LEN is incorrect");
+	static_assert(sizeof(sa_rings) == SA_RINGS_LEN, "sa_rings has the wrong size");
+
 	static_assert(SA_SAVE_FILE_LEN == 1184, "SA_SAVE_FILE_LEN is incorrect");
 	static_assert(sizeof(sa_save_file) == SA_SAVE_FILE_LEN, "sa_save_file has the wrong size");
 
@@ -187,6 +191,7 @@ SALevelStatsPrivate::SALevelStatsPrivate(SALevelStats *q)
 	memset(&scores, 0, sizeof(scores));
 	memset(&times, 0, sizeof(times));
 	memset(&weights, 0, sizeof(weights));
+	memset(&rings, 0, sizeof(rings));
 }
 
 SALevelStatsPrivate::~SALevelStatsPrivate()
@@ -358,6 +363,9 @@ void SALevelStatsPrivate::updateDisplay(void)
 				levels[i].spnBestTime[j]->setValue(weight);
 			}
 		}
+
+		// Rings
+		levels[i].spnMostRings->setValue(rings.all[saveIdx]);
 	}
 }
 
@@ -431,9 +439,10 @@ void SALevelStats::on_cboCharacter_currentIndexChanged(int index)
 int SALevelStats::loadSaveData(const _sa_save_file *sa_save)
 {
 	Q_D(SALevelStats);
-	memcpy(&d->scores, &sa_save->scores, sizeof(d->scores));
-	memcpy(&d->times, &sa_save->times, sizeof(d->times));
+	memcpy(&d->scores,  &sa_save->scores,  sizeof(d->scores));
+	memcpy(&d->times,   &sa_save->times,   sizeof(d->times));
 	memcpy(&d->weights, &sa_save->weights, sizeof(d->weights));
+	memcpy(&d->rings,   &sa_save->rings,   sizeof(d->rings));
 
 	// Byteswap everything.
 	// NOTE: sa_times doesn't require byteswapping.
@@ -445,12 +454,18 @@ int SALevelStats::loadSaveData(const _sa_save_file *sa_save)
 		for (int i = 0; i < NUM_ELEMENTS(d->weights.all); i++) {
 			d->weights.all[i] = be16_to_cpu(d->weights.all[i]);
 		}
+		for (int i = 0; i < NUM_ELEMENTS(d->rings.all); i++) {
+			d->rings.all[i] = be16_to_cpu(d->rings.all[i]);
+		}
 	} else /* little-endian */ {
 		for (int i = 0; i < NUM_ELEMENTS(d->scores.all); i++) {
 			d->scores.all[i] = le32_to_cpu(d->scores.all[i]);
 		}
 		for (int i = 0; i < NUM_ELEMENTS(d->weights.all); i++) {
 			d->weights.all[i] = le16_to_cpu(d->weights.all[i]);
+		}
+		for (int i = 0; i < NUM_ELEMENTS(d->rings.all); i++) {
+			d->rings.all[i] = le16_to_cpu(d->rings.all[i]);
 		}
 	}
 

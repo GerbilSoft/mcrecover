@@ -113,6 +113,22 @@ typedef union PACKED _sa_weights {
 } sa_weights;
 #pragma pack()
 
+// Best rings.
+#define SA_RINGS_LEN 64
+#pragma pack(1)
+typedef union PACKED _sa_rings {
+	uint16_t all[32];
+	struct {
+		uint16_t sonic[10];
+		uint16_t tails[5];
+		uint16_t knuckles[5];
+		uint16_t amy[3];
+		uint16_t gamma[5];
+		uint16_t big[4];
+	};
+} sa_rings;
+#pragma pack()
+
 // Save file data.
 #define SA_SAVE_FILE_LEN 1184
 #pragma pack(1)
@@ -124,22 +140,8 @@ typedef struct PACKED _sa_save_file
 	sa_scores scores;	// Best scores.
 	sa_times times;		// Best times. (Does NOT include Big.)
 	sa_weights weights;	// Best weights. (Big only)
-
-	// unknown
-	uint8_t reserved1[16];
-
-	// Best rings.
-	union {
-		uint16_t bestRings[32];
-		struct {
-			uint16_t sonic[10];
-			uint16_t tails[5];
-			uint16_t knuckles[5];
-			uint16_t amy[3];
-			uint16_t gamma[5];
-			uint16_t big[4];
-		} rings;
-	};
+	uint8_t reserved1[16];	// unknown
+	sa_rings rings;		// Best rings.
 
 	// Mini-Game: Best scores.
 	// Three scores per mini-game.
