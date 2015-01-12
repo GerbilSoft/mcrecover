@@ -85,6 +85,22 @@ typedef union PACKED _sa_scores {
 } sa_scores;
 #pragma pack()
 
+// Time data.
+#define SA_TIME_LEN 84
+#pragma pack(1)
+typedef union PACKED _sa_times {
+	// NOTE: Big does not have times.
+	sa_time_code all[28];
+	struct {
+		sa_time_code sonic[10];
+		sa_time_code tails[5];
+		sa_time_code knuckles[5];
+		sa_time_code amy[3];
+		sa_time_code gamma[5];
+	} times;
+} sa_times;
+#pragma pack()
+
 // Save file data.
 #define SA_SAVE_FILE_LEN 1184
 #pragma pack(1)
@@ -93,21 +109,8 @@ typedef struct PACKED _sa_save_file
 	uint32_t crc;		// CRC (only low 16 bits are used)
 	uint32_t playTime;	// Play time (1/60ths of a second)
 
-	// Best scores.
-	sa_scores scores;
-
-	// Best times.
-	// NOTE: Big does not have times.
-	union {
-		sa_time_code bestTimes[28];
-		struct {
-			sa_time_code sonic[10];
-			sa_time_code tails[5];
-			sa_time_code knuckles[5];
-			sa_time_code amy[3];
-			sa_time_code gamma[5];
-		} times;
-	};
+	sa_scores scores;	// Best scores.
+	sa_times times;		// Best times. (Does NOT include Big.)
 
 	// Best weights. (Big only)
 	// Measured in 10s of grams.

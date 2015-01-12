@@ -91,6 +91,7 @@ class SALevelStatsPrivate
 
 		// Save file data.
 		sa_scores scores;
+		sa_times times;
 
 		/** Static read-only data **/
 
@@ -298,19 +299,26 @@ void SALevelStatsPrivate::updateDisplay(void)
 	if (character < 0 || character > 5)
 		return;
 
-	// Display the scores for the selected character.
 	for (int i = 0; i < levelsInUse; i++) {
 		int8_t saveIdx = saveMap[character][i];
 		if (saveIdx < 0 || saveIdx >= NUM_ELEMENTS(scores.all))
 			break;
 
+		// Score
 		levels[i].spnHighScore->setValue(scores.all[saveIdx]);
+
+		// Time (except for Big)
+		if (character != 5) {
+			levels[i].spnBestTime[0]->setValue(times.all[saveIdx].minutes);
+			levels[i].spnBestTime[1]->setValue(times.all[saveIdx].seconds);
+			// FIXME: Stored as 1/60th seconds; convert to 1/100th.
+			levels[i].spnBestTime[2]->setValue(times.all[saveIdx].frames);
+		}
 	}
 }
 
 /** SALevelStats **/
 
-#include <stdio.h>
 SALevelStats::SALevelStats(QWidget *parent)
 	: QWidget(parent)
 	, d_ptr(new SALevelStatsPrivate(this))
@@ -385,6 +393,10 @@ int SALevelStats::loadSaveData(const _sa_save_file *sa_save)
 	for (int i = 0; i < NUM_ELEMENTS(d->scores.all); i++) {
 		d->scores.all[i] = be32_to_cpu(d->scores.all[i]);
 	}
+
+	// Load the times.
+	// NOTE: This doesn't require byteswapping.
+	memcpy(&d->times, &sa_save->times, sizeof(d->times));
 
 	// Update the display.
 	d->updateDisplay();
