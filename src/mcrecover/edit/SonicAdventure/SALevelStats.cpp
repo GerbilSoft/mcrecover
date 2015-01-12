@@ -431,22 +431,27 @@ void SALevelStats::on_cboCharacter_currentIndexChanged(int index)
 int SALevelStats::loadSaveData(const _sa_save_file *sa_save)
 {
 	Q_D(SALevelStats);
-	// FIXME: Add endianness settings somewhere.
-
-	// Load the scores.
 	memcpy(&d->scores, &sa_save->scores, sizeof(d->scores));
-	for (int i = 0; i < NUM_ELEMENTS(d->scores.all); i++) {
-		d->scores.all[i] = be32_to_cpu(d->scores.all[i]);
-	}
-
-	// Load the times.
-	// NOTE: This doesn't require byteswapping.
 	memcpy(&d->times, &sa_save->times, sizeof(d->times));
-
-	// Load the weights.
 	memcpy(&d->weights, &sa_save->weights, sizeof(d->weights));
-	for (int i = 0; i < NUM_ELEMENTS(d->weights.all); i++) {
-		d->weights.all[i] = be16_to_cpu(d->weights.all[i]);
+
+	// Byteswap everything.
+	// NOTE: sa_times doesn't require byteswapping.
+	// FIXME: Add endianness settings somewhere.
+	if (/*big-endian)*/ 1) {
+		for (int i = 0; i < NUM_ELEMENTS(d->scores.all); i++) {
+			d->scores.all[i] = be32_to_cpu(d->scores.all[i]);
+		}
+		for (int i = 0; i < NUM_ELEMENTS(d->weights.all); i++) {
+			d->weights.all[i] = be16_to_cpu(d->weights.all[i]);
+		}
+	} else /* little-endian */ {
+		for (int i = 0; i < NUM_ELEMENTS(d->scores.all); i++) {
+			d->scores.all[i] = le32_to_cpu(d->scores.all[i]);
+		}
+		for (int i = 0; i < NUM_ELEMENTS(d->weights.all); i++) {
+			d->weights.all[i] = le16_to_cpu(d->weights.all[i]);
+		}
 	}
 
 	// Update the display.
