@@ -47,6 +47,11 @@
 extern "C" {
 #endif
 
+// Sonic Adventure DX (GameCube)
+// Starting address of the save file within the data area.
+// This does NOT include the GCI header. (0x40 bytes)
+#define SA_SAVE_ADDRESS_GCN 0x1440
+
 // TODO: Byteswapping for unions with structs?
 
 // 3-byte timecode.
