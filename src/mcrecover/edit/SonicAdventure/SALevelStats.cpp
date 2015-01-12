@@ -182,9 +182,9 @@ SALevelStatsPrivate::SALevelStatsPrivate(SALevelStats *q)
 	// No levels are allocated initially.
 	levelsInUse = 0;
 
-	// Zero out the scores.
-	// TODO: Rest of SA data.
+	// Zero out the data.
 	memset(&scores, 0, sizeof(scores));
+	memset(&times, 0, sizeof(times));
 }
 
 SALevelStatsPrivate::~SALevelStatsPrivate()
