@@ -152,6 +152,12 @@ SET(mcrecover_CARD_SRCS
 	card/VmuFile.cpp
 	)
 
+# File edtors.
+SET(mcrecover_EDIT_SRCS
+	edit/SonicAdventure/SAEditor.cpp
+	edit/SonicAdventure/SALevelStats.cpp
+	)
+
 # Shh... it's a secret to everybody.
 SET(mcrecover_SEKRIT_SRCS
 	sekrit/HerpDerpEggListener.cpp
@@ -207,6 +213,12 @@ SET(mcrecover_CARD_MOC_H
 	card/VmuFile.hpp
 	)
 
+# File edtors.
+SET(mcrecover_EDIT_MOC_H
+	edit/SonicAdventure/SAEditor.hpp
+	edit/SonicAdventure/SALevelStats.hpp
+	)
+
 SET(mcrecover_SEKRIT_MOC_H
 	sekrit/HerpDerpEggListener.hpp
 	sekrit/HackDetection.hpp
@@ -226,10 +238,16 @@ SET(mcrecover_WIDGET_UIS
 	widgets/TableSelect.ui
 	)
 
+# File edtors.
+SET(mcrecover_EDIT_UIS
+	edit/SonicAdventure/SAEditor.ui
+	)
+
 # Generate the header files from the UI files.
 QT4_WRAP_UI(mcrecover_UIS_H
 	${mcrecover_WINDOW_UIS}
 	${mcrecover_WIDGET_UIS}
+	${mcrecover_EDIT_UIS}
 	)
 
 # Create MOC source files for classes that need them.
@@ -238,6 +256,7 @@ QT4_WRAP_CPP(mcrecover_MOC_SRCS
 	${mcrecover_WINDOW_MOC_H}
 	${mcrecover_WIDGET_MOC_H}
 	${mcrecover_CARD_MOC_H}
+	${mcrecover_EDIT_MOC_H}
 	${mcrecover_SEKRIT_MOC_H}
 	)
 
@@ -303,6 +322,7 @@ ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_WINDOW_SRCS}
 	${mcrecover_WIDGET_SRCS}
 	${mcrecover_CARD_SRCS}
+	${mcrecover_EDIT_SRCS}
 	${mcrecover_SEKRIT_SRCS}
 	${mcrecover_OS_SRCS}
 	${mcrecover_MOC_SRCS}

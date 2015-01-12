@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SAEditor</class>
+ <widget class="QWidget" name="SAEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>642</width>
+    <height>485</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="vboxMain">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>2</number>
+     </property>
+     <widget class="QWidget" name="tabGeneral">
+      <attribute name="title">
+       <string>&amp;General</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tabAdventure">
+      <attribute name="title">
+       <string>A&amp;dventure</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tabActionStages">
+      <attribute name="title">
+       <string>&amp;Action Stages</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="SALevelStats" name="saLevelStats" native="true"/>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SALevelStats</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/SALevelStats.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

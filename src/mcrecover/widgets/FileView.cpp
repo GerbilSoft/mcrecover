@@ -29,6 +29,9 @@
 #include "../windows/XmlTemplateDialog.hpp"
 #include "../windows/XmlTemplateDialogManager.hpp"
 
+// Testing...
+#include "../edit/SonicAdventure/SAEditor.hpp"
+
 // Qt includes.
 #include <QtCore/QTimer>
 
@@ -328,6 +331,11 @@ void FileView::animTimer_slot(void)
 void FileView::on_btnXML_clicked(void)
 {
 	Q_D(FileView);
+	// Testing...
+	SAEditor *saEditor = new SAEditor();
+	saEditor->exec();
+	delete saEditor;
+#if 0
 	// TODO: Handle other types of files?
 	const GcnFile *gcnFile = qobject_cast<const GcnFile*>(d->file);
 	if (gcnFile) {
@@ -335,4 +343,5 @@ void FileView::on_btnXML_clicked(void)
 		dialog->show();
 		dialog->activateWindow();
 	}
+#endif
 }
