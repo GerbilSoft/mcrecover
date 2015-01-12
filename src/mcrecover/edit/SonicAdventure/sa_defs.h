@@ -86,7 +86,7 @@ typedef union PACKED _sa_scores {
 #pragma pack()
 
 // Time data.
-#define SA_TIME_LEN 84
+#define SA_TIMES_LEN 84
 #pragma pack(1)
 typedef union PACKED _sa_times {
 	// NOTE: Big does not have times.
@@ -101,6 +101,18 @@ typedef union PACKED _sa_times {
 } sa_times;
 #pragma pack()
 
+// Best weights. (Big only)
+// Measured in 10s of grams.
+// Three weights are stored per level.
+#define SA_WEIGHTS_LEN 24
+#pragma pack(1)
+typedef union PACKED _sa_weights {
+	// NOTE: Big does not have times.
+	uint16_t all[12];
+	uint16_t levels[4][3];
+} sa_weights;
+#pragma pack()
+
 // Save file data.
 #define SA_SAVE_FILE_LEN 1184
 #pragma pack(1)
@@ -111,11 +123,7 @@ typedef struct PACKED _sa_save_file
 
 	sa_scores scores;	// Best scores.
 	sa_times times;		// Best times. (Does NOT include Big.)
-
-	// Best weights. (Big only)
-	// Measured in 10s of grams.
-	// Three weights are stored per level.
-	uint16_t bestWeights[4][3];
+	sa_weights weights;	// Best weights. (Big only)
 
 	// unknown
 	uint8_t reserved1[16];

@@ -91,6 +91,7 @@ class SALevelStatsPrivate
 		// Save file data.
 		sa_scores scores;
 		sa_times times;
+		sa_weights weights;
 
 		/** Static read-only data **/
 
@@ -175,12 +176,17 @@ SALevelStatsPrivate::SALevelStatsPrivate(SALevelStats *q)
 	// Make sure sa_defs.h is correct.
 	static_assert(SA_SCORES_LEN == 128, "SA_SCORES_LEN is incorrect");
 	static_assert(sizeof(sa_scores) == SA_SCORES_LEN, "sa_scores has the wrong size");
+	static_assert(SA_TIMES_LEN == 84, "SA_TIMES_LEN is incorrect");
+	static_assert(sizeof(sa_times) == SA_TIMES_LEN, "sa_times has the wrong size");
+	static_assert(SA_WEIGHTS_LEN == 24, "SA_WEIGHTS_LEN is incorrect");
+	static_assert(sizeof(sa_weights) == SA_WEIGHTS_LEN, "sa_weights has the wrong size");
 	static_assert(SA_SAVE_FILE_LEN == 1184, "SA_SAVE_FILE_LEN is incorrect");
 	static_assert(sizeof(sa_save_file) == SA_SAVE_FILE_LEN, "sa_save_file has the wrong size");
 
 	// Zero out the data.
 	memset(&scores, 0, sizeof(scores));
 	memset(&times, 0, sizeof(times));
+	memset(&weights, 0, sizeof(weights));
 }
 
 SALevelStatsPrivate::~SALevelStatsPrivate()
@@ -238,8 +244,7 @@ void SALevelStatsPrivate::initLevels(void)
 		for (int j = 0; j < 3; j++) {
 			levels[i].spnBestTime[j] = new QSpinBox(q);
 			levels[i].spnBestTime[j]->hide();
-			levels[i].spnBestTime[j]->setRange(0, (j == 1 ? 59 : 99));
-			levels[i].spnBestTime[j]->setSingleStep(1);
+			// Other parameters are set in switchLevels().
 			levels[i].hboxBestTime->addWidget(levels[i].spnBestTime[j]);
 		}
 
@@ -285,6 +290,20 @@ void SALevelStatsPrivate::switchLevels(int character)
 		for (int j = 0; j < 3; j++) {
 			levels[i].chkEmblems[j]->show();
 			levels[i].spnBestTime[j]->show();
+
+			if (character == 5) {
+				// Big. Change times to weights.
+				ui.lblBestTime->setText(SALevelStats::tr("Best Weight:"));
+				levels[i].spnBestTime[j]->setRange(0, 655350);
+				levels[i].spnBestTime[j]->setSingleStep(10);
+				levels[i].spnBestTime[j]->setSuffix(QLatin1String("g"));
+			} else {
+				// Other character. Back to times.
+				ui.lblBestTime->setText(SALevelStats::tr("Best Time:"));
+				levels[i].spnBestTime[j]->setRange(0, (j == 1 ? 59 : 99));
+				levels[i].spnBestTime[j]->setSingleStep(1);
+				levels[i].spnBestTime[j]->setSuffix(QString());
+			}	
 		}
 	}
 
@@ -317,19 +336,27 @@ void SALevelStatsPrivate::updateDisplay(void)
 		return;
 
 	for (int i = 0; i < MAX_LEVELS; i++) {
-		int8_t saveIdx = saveMap[character][i];
+		const int8_t saveIdx = saveMap[character][i];
 		if (saveIdx < 0 || saveIdx >= NUM_ELEMENTS(scores.all))
 			break;
 
 		// Score
 		levels[i].spnHighScore->setValue(scores.all[saveIdx]);
 
-		// Time (except for Big)
+		// Time / Weight
 		if (character != 5) {
+			// Time (not Big)
 			levels[i].spnBestTime[0]->setValue(times.all[saveIdx].minutes);
 			levels[i].spnBestTime[1]->setValue(times.all[saveIdx].seconds);
 			// FIXME: Stored as 1/60th seconds; convert to 1/100th.
 			levels[i].spnBestTime[2]->setValue(times.all[saveIdx].frames);
+		} else {
+			// Weight (Big)
+			const int8_t bigSaveIdx = (saveIdx - 28);
+			for (int j = 0; j < 3; j++) {
+				const int weight = (weights.levels[bigSaveIdx][j] * 10);
+				levels[i].spnBestTime[j]->setValue(weight);
+			}
 		}
 	}
 }
@@ -415,6 +442,12 @@ int SALevelStats::loadSaveData(const _sa_save_file *sa_save)
 	// Load the times.
 	// NOTE: This doesn't require byteswapping.
 	memcpy(&d->times, &sa_save->times, sizeof(d->times));
+
+	// Load the weights.
+	memcpy(&d->weights, &sa_save->weights, sizeof(d->weights));
+	for (int i = 0; i < NUM_ELEMENTS(d->weights.all); i++) {
+		d->weights.all[i] = be16_to_cpu(d->weights.all[i]);
+	}
 
 	// Update the display.
 	d->updateDisplay();
