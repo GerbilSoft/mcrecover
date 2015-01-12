@@ -33,8 +33,8 @@
 #include <QtGui/QSpinBox>
 #include <QtGui/QCheckBox>
 
-// Qt animation includes.
-#include <QtCore/QTimeLine>
+// Sonic Adventure save file definitions.
+#include "sa_defs.h"
 
 /** SALevelStatsPrivate **/
 
@@ -128,6 +128,10 @@ const int8_t SALevelStatsPrivate::levelMap[6][MAX_LEVELS] = {
 SALevelStatsPrivate::SALevelStatsPrivate(SALevelStats *q)
 	: q_ptr(q)
 {
+	// Make sure sa_defs.h is correct.
+	static_assert(SA_SAVE_FILE_LEN == 1184, "SA_SAVE_FILE_LEN is incorrect");
+	static_assert(sizeof(sa_save_file) == SA_SAVE_FILE_LEN, "sa_save_file has the wrong size");
+
 	// No levels are allocated initially.
 	levelsInUse = 0;
 }

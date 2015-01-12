@@ -24,8 +24,9 @@
 
 #include <QtGui/QWidget>
 
-class SALevelStatsPrivate;
+struct _sa_save_file;
 
+class SALevelStatsPrivate;
 class SALevelStats : public QWidget
 {
 	Q_OBJECT
