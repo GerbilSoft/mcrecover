@@ -225,17 +225,26 @@ void SALevelStatsPrivate::clearLevels(void)
  */
 void SALevelStatsPrivate::initLevels(int character)
 {
-	// Clear everything first so we have a clean slate.
-	clearLevels();
-
 	// FIXME: Character enums or something.
 	if (character < 0 || character > 5)
 		return;
 
 	const int8_t *levelID = &levelMap[character][0];
 	Q_Q(SALevelStats);
+
+	// Create widgets for levels that aren't already displayed.
 	int i = 0;
 	for (; i < MAX_LEVELS && *levelID != -1; i++, levelID++) {
+		if (i < levelsInUse) {
+			// Widgets already exist.
+			// Only update the level name.
+			// TODO: Change Big's Time widgets to Weight.
+			levels[i].lblLevel->setText(QLatin1String(levelNames[*levelID]));
+			continue;
+		}
+
+		// Create new widgets.
+
 		// Level name.
 		levels[i].lblLevel = new QLabel(q);
 		levels[i].lblLevel->setText(QLatin1String(levelNames[*levelID]));
@@ -281,7 +290,20 @@ void SALevelStatsPrivate::initLevels(int character)
 		ui.gridLevels->addWidget(levels[i].spnMostRings, i+1, 4, Qt::AlignTop);
 	}
 
-	// Store the number of levels in use.
+	// Delete any level widgets that are no longer in use.
+	for (int j = i; j < levelsInUse; j++) {
+		for (int k = 0; k < 3; k++) {
+			delete levels[j].chkEmblems[k];
+			delete levels[j].spnBestTime[k];
+		}
+		delete levels[j].lblLevel;
+		delete levels[j].spnHighScore;
+		delete levels[j].hboxEmblems;
+		delete levels[j].hboxBestTime;
+		delete levels[j].spnMostRings;
+	}
+
+	// Store the new number of levels in use.
 	this->levelsInUse = i;
 
 	// Update the display.
