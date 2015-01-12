@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>150</width>
-    <height>182</height>
+    <width>200</width>
+    <height>202</height>
    </rect>
   </property>
   <layout class="QFormLayout" name="formLayout">
@@ -101,11 +101,25 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="btnXML">
-       <property name="text">
-        <string notr="true">&amp;XML</string>
+      <layout class="QVBoxLayout" name="vboxBtns">
+       <property name="spacing">
+        <number>0</number>
        </property>
-      </widget>
+       <item>
+        <widget class="QPushButton" name="btnXML">
+         <property name="text">
+          <string notr="true">&amp;XML</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnEdit">
+         <property name="text">
+          <string notr="true">&amp;Edit</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>

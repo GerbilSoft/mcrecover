@@ -210,6 +210,10 @@ FileView::FileView(QWidget *parent)
 	Q_D(FileView);
 	d->ui.setupUi(this);
 
+	// Fix alignment of the images.
+	d->ui.hboxFileImages->setAlignment(d->ui.lblFileIcon, Qt::AlignTop);
+	d->ui.hboxFileImages->setAlignment(d->ui.lblFileBanner, Qt::AlignTop);
+
 	// Set monospace fonts.
 	QFont fntMonospace;
 	fntMonospace.setFamily(QLatin1String("Monospace"));
@@ -330,18 +334,24 @@ void FileView::animTimer_slot(void)
  */
 void FileView::on_btnXML_clicked(void)
 {
-	Q_D(FileView);
-	// Testing...
-	SAEditor *saEditor = new SAEditor();
-	saEditor->exec();
-	delete saEditor;
-#if 0
 	// TODO: Handle other types of files?
+	Q_D(FileView);
 	const GcnFile *gcnFile = qobject_cast<const GcnFile*>(d->file);
 	if (gcnFile) {
 		XmlTemplateDialog *dialog = d->xmlTemplateDialogManager->create(gcnFile, this);
 		dialog->show();
 		dialog->activateWindow();
 	}
-#endif
+}
+
+/**
+ * Edit button was pressed.
+ */
+void FileView::on_btnEdit_clicked(void)
+{
+	// Testing...
+	Q_D(FileView);
+	SAEditor *saEditor = new SAEditor();
+	saEditor->exec();
+	delete saEditor;
 }

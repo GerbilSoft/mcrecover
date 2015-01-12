@@ -76,6 +76,11 @@ class FileView : public QWidget
 		 * XML button was pressed.
 		 */
 		void on_btnXML_clicked(void);
+
+		/**
+		 * Edit button was pressed.
+		 */
+		void on_btnEdit_clicked(void);
 };
 
 #endif /* __MCRECOVER_WIDGETS_FILEVIEW_HPP__ */
