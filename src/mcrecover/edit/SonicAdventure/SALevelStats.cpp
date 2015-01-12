@@ -164,9 +164,9 @@ const int8_t SALevelStatsPrivate::saveMap[6][MAX_LEVELS] = {
 	// Amy (starts at 20)
 	{20, 22, 21, -1, -1, -1, -1, -1, -1 ,-1},
 	// Gamma (starts at 23)
-	{24, 25, 26, 23, 27, -1, -1, -1, -1, -1},
+	{26, 23, 24, 25, 27, -1, -1, -1, -1, -1},
 	// Big (starts at 28)
-	{30, 28, 29, 31, -1, -1, -1, -1, -1, -1},
+	{29, 30, 28, 31, -1, -1, -1, -1, -1, -1},
 };
 
 SALevelStatsPrivate::SALevelStatsPrivate(SALevelStats *q)
