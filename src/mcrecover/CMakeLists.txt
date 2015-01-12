@@ -241,6 +241,7 @@ SET(mcrecover_WIDGET_UIS
 # File edtors.
 SET(mcrecover_EDIT_UIS
 	edit/SonicAdventure/SAEditor.ui
+	edit/SonicAdventure/SALevelStats.ui
 	)
 
 # Generate the header files from the UI files.

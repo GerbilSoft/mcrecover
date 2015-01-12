@@ -38,6 +38,7 @@
 
 /** SALevelStatsPrivate **/
 
+#include "ui_SALevelStats.h"
 class SALevelStatsPrivate
 {
 	public:
@@ -51,34 +52,20 @@ class SALevelStatsPrivate
 		Q_DISABLE_COPY(SALevelStatsPrivate)
 
 	public:
-		struct Ui_SALevelStats {
-			QVBoxLayout *vboxMain;
-			QGridLayout *gridLevels;
-
-			// Grid labels.
-			QLabel *lblLevelName;
-			QLabel *lblHighScore;
-			QLabel *lblEmblems;
-			QLabel *lblBestTime;
-			QLabel *lblMostRings;
-
-			#define MAX_LEVELS 11
-			// Level widgets.
-			struct {
-				QLabel *lblLevel;
-				QSpinBox *spnHighScore;
-				QCheckBox *chkEmblems[3];
-				QHBoxLayout *hboxEmblems;
-				QSpinBox *spnBestTime[3];
-				QHBoxLayout *hboxBestTime;
-				QSpinBox *spnMostRings;
-			} levels[MAX_LEVELS];
-			int levelsInUse;
-
-			void setupUi(QWidget *SALevelStats);
-			void retranslateUi(QWidget *SALevelStats);
-		};
 		Ui_SALevelStats ui;
+
+		#define MAX_LEVELS 11
+		// Level widgets.
+		struct {
+			QLabel *lblLevel;
+			QSpinBox *spnHighScore;
+			QCheckBox *chkEmblems[3];
+			QHBoxLayout *hboxEmblems;
+			QSpinBox *spnBestTime[3];
+			QHBoxLayout *hboxBestTime;
+			QSpinBox *spnMostRings;
+		} levels[MAX_LEVELS];
+		int levelsInUse;
 
 		/**
 		 * Clear all level widgets.
@@ -114,7 +101,7 @@ SALevelStatsPrivate::SALevelStatsPrivate(SALevelStats *q)
 	: q_ptr(q)
 {
 	// No levels are allocated initially.
-	ui.levelsInUse = 0;
+	levelsInUse = 0;
 }
 
 SALevelStatsPrivate::~SALevelStatsPrivate()
@@ -126,85 +113,25 @@ SALevelStatsPrivate::~SALevelStatsPrivate()
 }
 
 /**
- * Initialize the UI.
- * @param SALevelStats SALevelStats.
- */
-void SALevelStatsPrivate::Ui_SALevelStats::setupUi(QWidget *SALevelStats)
-{
-	if (SALevelStats->objectName().isEmpty())
-		SALevelStats->setObjectName(QLatin1String("SALevelStats"));
-
-	vboxMain = new QVBoxLayout(SALevelStats);
-	vboxMain->setContentsMargins(0, 0, 0, 0);
-	vboxMain->setObjectName(QLatin1String("vboxMain"));
-
-	// FIXME: Possible memory leak? (does gridLevels get deleted?)
-	gridLevels = new QGridLayout();
-	gridLevels->setContentsMargins(0, 0, 0, 0);
-	gridLevels->setObjectName(QLatin1String("gridLevels"));
-	vboxMain->addLayout(gridLevels);
-	vboxMain->setAlignment(gridLevels, Qt::AlignTop);
-
-	// Grid labels.
-	lblLevelName = new QLabel(SALevelStats);
-	lblLevelName->setObjectName(QLatin1String("lblLevelName"));
-	gridLevels->addWidget(lblLevelName, 0, 0);
-
-	lblHighScore = new QLabel(SALevelStats);
-	lblHighScore->setObjectName(QLatin1String("lblHighScore"));
-	gridLevels->addWidget(lblHighScore, 0, 1);
-
-	lblEmblems = new QLabel(SALevelStats);
-	lblEmblems->setObjectName(QLatin1String("lblEmblems"));
-	gridLevels->addWidget(lblEmblems, 0, 2);
-
-	lblBestTime = new QLabel(SALevelStats);
-	lblBestTime->setObjectName(QLatin1String("lblBestTime"));
-	gridLevels->addWidget(lblBestTime, 0, 3);
-
-	lblMostRings = new QLabel(SALevelStats);
-	lblMostRings->setObjectName(QLatin1String("lblMostRings"));
-	gridLevels->addWidget(lblMostRings, 0, 4);
-
-	retranslateUi(SALevelStats);
-
-	QMetaObject::connectSlotsByName(SALevelStats);
-}
-
-/**
- * Retranslate the UI.
- * @param SALevelStats SALevelStats.
- */
-void SALevelStatsPrivate::Ui_SALevelStats::retranslateUi(QWidget *SALevelStats)
-{
-	lblLevelName->setText(SALevelStats::tr("Level:"));
-	lblHighScore->setText(SALevelStats::tr("High Score:"));
-	lblEmblems->setText(SALevelStats::tr("Emblems:"));
-	lblBestTime->setText(SALevelStats::tr("Best Time:"));
-	lblMostRings->setText(SALevelStats::tr("Most Rings:"));
-	Q_UNUSED(SALevelStats);
-}
-
-/**
  * Clear all level widgets.
  */
 void SALevelStatsPrivate::clearLevels(void)
 {
-	for (int i = 0; i < ui.levelsInUse; i++) {
-		delete ui.levels[i].lblLevel;
-		delete ui.levels[i].spnHighScore;
-		delete ui.levels[i].chkEmblems[3];
-		delete ui.levels[i].hboxEmblems;
-		delete ui.levels[i].spnBestTime[3];
-		delete ui.levels[i].hboxBestTime;
-		delete ui.levels[i].spnMostRings;
+	for (int i = 0; i < levelsInUse; i++) {
+		delete levels[i].lblLevel;
+		delete levels[i].spnHighScore;
+		delete levels[i].chkEmblems[3];
+		delete levels[i].hboxEmblems;
+		delete levels[i].spnBestTime[3];
+		delete levels[i].hboxBestTime;
+		delete levels[i].spnMostRings;
 	}
 
 	// All done.
 	// TODO: Take a copy of levelsInUse, then
 	// clear it before deleting anything?
 	// Probably not needed...
-	ui.levelsInUse = 0;
+	levelsInUse = 0;
 }
 
 /**
@@ -221,46 +148,46 @@ void SALevelStatsPrivate::initLevels(void)
 	Q_Q(SALevelStats);
 	for (int i = 0; i < MAX_LEVELS; i++) {
 		// Level name.
-		ui.levels[i].lblLevel = new QLabel(q);
-		ui.levels[i].lblLevel->setText(QLatin1String(levelNames[i]));
+		levels[i].lblLevel = new QLabel(q);
+		levels[i].lblLevel->setText(QLatin1String(levelNames[i]));
 
 		// High score.
-		ui.levels[i].spnHighScore = new QSpinBox(q);
+		levels[i].spnHighScore = new QSpinBox(q);
 		// TODO: Actual maximum?
-		ui.levels[i].spnHighScore->setRange(0, 0x7FFFFFFF);
-		ui.levels[i].spnHighScore->setSingleStep(1);
+		levels[i].spnHighScore->setRange(0, 0x7FFFFFFF);
+		levels[i].spnHighScore->setSingleStep(1);
 
 		// Emblems.
 		// FIXME: Possible memory leak? (does hboxEmblems get deleted?)
-		ui.levels[i].hboxEmblems = new QHBoxLayout();
-		ui.levels[i].hboxEmblems->setContentsMargins(0, 0, 0, 0);
+		levels[i].hboxEmblems = new QHBoxLayout();
+		levels[i].hboxEmblems->setContentsMargins(0, 0, 0, 0);
 		for (int j = 0; j < 3; j++) {
-			ui.levels[i].chkEmblems[j] = new QCheckBox(q);
-			ui.levels[i].hboxEmblems->addWidget(ui.levels[i].chkEmblems[j]);
+			levels[i].chkEmblems[j] = new QCheckBox(q);
+			levels[i].hboxEmblems->addWidget(levels[i].chkEmblems[j]);
 		}
 
 		// Best time.
 		// FIXME: Possible memory leak? (does hboxBestTime get deleted?)
-		ui.levels[i].hboxBestTime = new QHBoxLayout();
-		ui.levels[i].hboxBestTime->setContentsMargins(0, 0, 0, 0);
+		levels[i].hboxBestTime = new QHBoxLayout();
+		levels[i].hboxBestTime->setContentsMargins(0, 0, 0, 0);
 		for (int j = 0; j < 3; j++) {
-			ui.levels[i].spnBestTime[j] = new QSpinBox(q);
-			ui.levels[i].spnBestTime[j]->setRange(0, (j == 1 ? 59 : 99));
-			ui.levels[i].spnBestTime[j]->setSingleStep(1);
-			ui.levels[i].hboxBestTime->addWidget(ui.levels[i].spnBestTime[j]);
+			levels[i].spnBestTime[j] = new QSpinBox(q);
+			levels[i].spnBestTime[j]->setRange(0, (j == 1 ? 59 : 99));
+			levels[i].spnBestTime[j]->setSingleStep(1);
+			levels[i].hboxBestTime->addWidget(levels[i].spnBestTime[j]);
 		}
 
 		// Most rings.
-		ui.levels[i].spnMostRings = new QSpinBox(q);
+		levels[i].spnMostRings = new QSpinBox(q);
 		// TODO: Actual maximum?
-		ui.levels[i].spnMostRings->setRange(0, 0x7FFF);
-		ui.levels[i].spnMostRings->setSingleStep(1);
+		levels[i].spnMostRings->setRange(0, 0x7FFF);
+		levels[i].spnMostRings->setSingleStep(1);
 
-		ui.gridLevels->addWidget(ui.levels[i].lblLevel, i+1, 0);
-		ui.gridLevels->addWidget(ui.levels[i].spnHighScore, i+1, 1);
-		ui.gridLevels->addLayout(ui.levels[i].hboxEmblems, i+1, 2);
-		ui.gridLevels->addLayout(ui.levels[i].hboxBestTime, i+1, 3);
-		ui.gridLevels->addWidget(ui.levels[i].spnMostRings, i+1, 4);
+		ui.gridLayout->addWidget(levels[i].lblLevel,     i+1, 0, Qt::AlignTop);
+		ui.gridLayout->addWidget(levels[i].spnHighScore, i+1, 1, Qt::AlignTop);
+		ui.gridLayout->addLayout(levels[i].hboxEmblems,  i+1, 2, Qt::AlignTop);
+		ui.gridLayout->addLayout(levels[i].hboxBestTime, i+1, 3, Qt::AlignTop);
+		ui.gridLayout->addWidget(levels[i].spnMostRings, i+1, 4, Qt::AlignTop);
 	}
 }
 
@@ -272,6 +199,13 @@ SALevelStats::SALevelStats(QWidget *parent)
 {
 	Q_D(SALevelStats);
 	d->ui.setupUi(this);
+
+	// Fix alignment of the header labels.
+	d->ui.gridLayout->setAlignment(d->ui.lblLevelName, Qt::AlignTop);
+	d->ui.gridLayout->setAlignment(d->ui.lblHighScore, Qt::AlignTop);
+	d->ui.gridLayout->setAlignment(d->ui.lblEmblems, Qt::AlignTop);
+	d->ui.gridLayout->setAlignment(d->ui.lblBestTime, Qt::AlignTop);
+	d->ui.gridLayout->setAlignment(d->ui.lblMostRings, Qt::AlignTop);
 
 	d->initLevels();
 }
