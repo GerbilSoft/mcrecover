@@ -6,73 +6,144 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>374</width>
-    <height>28</height>
+    <width>376</width>
+    <height>61</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="1">
-    <widget class="QLabel" name="lblHighScore">
-     <property name="text">
-      <string>High Score:</string>
-     </property>
-     <property name="textFormat">
-      <enum>Qt::PlainText</enum>
-     </property>
-    </widget>
+  <layout class="QVBoxLayout" name="vboxMain">
+   <item>
+    <layout class="QHBoxLayout" name="hboxCharacter">
+     <item>
+      <widget class="QLabel" name="lblCharacter">
+       <property name="text">
+        <string>&amp;Character:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+       <property name="buddy">
+        <cstring>cboCharacter</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cboCharacter">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>Sonic</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Tails</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Knuckles</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Amy</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Gamma</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Big</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <spacer name="hspcCharacter">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
-   <item row="0" column="4">
-    <widget class="QLabel" name="lblMostRings">
-     <property name="text">
-      <string>Most Rings:</string>
-     </property>
-     <property name="textFormat">
-      <enum>Qt::PlainText</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="lblLevelName">
-     <property name="text">
-      <string>Level:</string>
-     </property>
-     <property name="textFormat">
-      <enum>Qt::PlainText</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2">
-    <widget class="QLabel" name="lblEmblems">
-     <property name="text">
-      <string>Emblems:</string>
-     </property>
-     <property name="textFormat">
-      <enum>Qt::PlainText</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="3">
-    <widget class="QLabel" name="lblBestTime">
-     <property name="text">
-      <string>Best Time:</string>
-     </property>
-     <property name="textFormat">
-      <enum>Qt::PlainText</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="99" column="0" colspan="5">
-    <spacer name="vspcSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
+   <item>
+    <layout class="QGridLayout" name="gridLevels">
+     <item row="0" column="0">
+      <widget class="QLabel" name="lblLevelName">
+       <property name="text">
+        <string>Level:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="lblHighScore">
+       <property name="text">
+        <string>High Score:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="lblEmblems">
+       <property name="text">
+        <string>Emblems:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLabel" name="lblBestTime">
+       <property name="text">
+        <string>Best Time:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QLabel" name="lblMostRings">
+       <property name="text">
+        <string>Most Rings:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="20" column="0" colspan="5">
+      <spacer name="vspcSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

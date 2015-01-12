@@ -43,6 +43,10 @@ class SALevelStats : public QWidget
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
 		void changeEvent(QEvent *event);
+
+	protected slots:
+		// Character was changed.
+		void on_cboCharacter_currentIndexChanged(int index);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SALEVELSTATS_HPP__ */

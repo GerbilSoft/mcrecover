@@ -54,7 +54,8 @@ class SALevelStatsPrivate
 	public:
 		Ui_SALevelStats ui;
 
-		#define MAX_LEVELS 11
+		// Up to 10 levels can be onscreen at once.
+		#define MAX_LEVELS 10
 		// Level widgets.
 		struct {
 			QLabel *lblLevel;
@@ -74,27 +75,54 @@ class SALevelStatsPrivate
 
 		/**
 		 * Initialize level widgets.
-		 * TODO: Specify a character.
+		 * @param character Character ID.
 		 */
-		void initLevels(void);
+		void initLevels(int character);
 
 		// Level names. (ASCII, untranslated)
-		static const char *levelNames[MAX_LEVELS];
+		static const char *levelNames[11];
+
+		/**
+		 * Character level mapping.
+		 * Corresponds to levelNames[] entries.
+		 * -1 == end of list
+		 */
+		static const int8_t levelMap[6][MAX_LEVELS];
 };
 
 // Level names. (ASCII, untranslated)
-const char *SALevelStatsPrivate::levelNames[MAX_LEVELS] = {
-	"Emerald Coast",
-	"Windy Valley",
-	"Casinopolis",
-	"Ice Cap",
-	"Twinkle Park",
-	"Speed Highway",
-	"Red Mountain",
-	"Sky Deck",
-	"Lost World",
-	"Final Egg",
-	"Hot Shelter"
+const char *SALevelStatsPrivate::levelNames[11] = {
+	"Emerald Coast",	// 0
+	"Windy Valley",		// 1
+	"Casinopolis",		// 2
+	"Ice Cap",		// 3
+	"Twinkle Park",		// 4
+	"Speed Highway",	// 5
+	"Red Mountain",		// 6
+	"Sky Deck",		// 7
+	"Lost World",		// 8
+	"Final Egg",		// 9
+	"Hot Shelter"		// 10
+};
+
+/**
+ * Character level mapping.
+ * Corresponds to levelNames[] entries.
+ * -1 == end of list
+ */
+const int8_t SALevelStatsPrivate::levelMap[6][MAX_LEVELS] = {
+	// Sonic
+	{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
+	// Tails
+	{1, 2, 3, 7, 5, -1, -1, -1, -1, -1},
+	// Knuckles
+	{5, 2, 6, 8, 7, -1, -1, -1, -1, -1},
+	// Amy
+	{4, 10, 9, -1, -1, -1, -1, -1 ,-1 -1},
+	// Gamma
+	{9, 0, 1, 6, 10, -1, -1, -1, -1, -1},
+	// Big
+	{4, 3, 0, 10, -1, -1, -1, -1, -1, -1},
 };
 
 SALevelStatsPrivate::SALevelStatsPrivate(SALevelStats *q)
@@ -118,11 +146,13 @@ SALevelStatsPrivate::~SALevelStatsPrivate()
 void SALevelStatsPrivate::clearLevels(void)
 {
 	for (int i = 0; i < levelsInUse; i++) {
+		for (int j = 0; j < 3; j++) {
+			delete levels[i].chkEmblems[j];
+			delete levels[i].spnBestTime[j];
+		}
 		delete levels[i].lblLevel;
 		delete levels[i].spnHighScore;
-		delete levels[i].chkEmblems[3];
 		delete levels[i].hboxEmblems;
-		delete levels[i].spnBestTime[3];
 		delete levels[i].hboxBestTime;
 		delete levels[i].spnMostRings;
 	}
@@ -136,20 +166,24 @@ void SALevelStatsPrivate::clearLevels(void)
 
 /**
  * Initialize level widgets.
- * TODO: Specify a character.
+ * @param character Character ID.
  */
-void SALevelStatsPrivate::initLevels(void)
+void SALevelStatsPrivate::initLevels(int character)
 {
 	// Clear everything first so we have a clean slate.
 	clearLevels();
 
-	// TODO: Use a character ID to determine how many levels
-	// and which levels to use.
+	// FIXME: Character enums or something.
+	if (character < 0 || character > 5)
+		return;
+
+	const int8_t *levelID = &levelMap[character][0];
 	Q_Q(SALevelStats);
-	for (int i = 0; i < MAX_LEVELS; i++) {
+	int i = 0;
+	for (; i < MAX_LEVELS && *levelID != -1; i++, levelID++) {
 		// Level name.
 		levels[i].lblLevel = new QLabel(q);
-		levels[i].lblLevel->setText(QLatin1String(levelNames[i]));
+		levels[i].lblLevel->setText(QLatin1String(levelNames[*levelID]));
 
 		// High score.
 		levels[i].spnHighScore = new QSpinBox(q);
@@ -164,6 +198,8 @@ void SALevelStatsPrivate::initLevels(void)
 		for (int j = 0; j < 3; j++) {
 			levels[i].chkEmblems[j] = new QCheckBox(q);
 			levels[i].hboxEmblems->addWidget(levels[i].chkEmblems[j]);
+			// FIXME: Improve alignment.
+			levels[i].hboxEmblems->setAlignment(levels[i].chkEmblems[j], Qt::AlignLeft);
 		}
 
 		// Best time.
@@ -183,12 +219,15 @@ void SALevelStatsPrivate::initLevels(void)
 		levels[i].spnMostRings->setRange(0, 0x7FFF);
 		levels[i].spnMostRings->setSingleStep(1);
 
-		ui.gridLayout->addWidget(levels[i].lblLevel,     i+1, 0, Qt::AlignTop);
-		ui.gridLayout->addWidget(levels[i].spnHighScore, i+1, 1, Qt::AlignTop);
-		ui.gridLayout->addLayout(levels[i].hboxEmblems,  i+1, 2, Qt::AlignTop);
-		ui.gridLayout->addLayout(levels[i].hboxBestTime, i+1, 3, Qt::AlignTop);
-		ui.gridLayout->addWidget(levels[i].spnMostRings, i+1, 4, Qt::AlignTop);
+		ui.gridLevels->addWidget(levels[i].lblLevel,     i+1, 0, Qt::AlignTop);
+		ui.gridLevels->addWidget(levels[i].spnHighScore, i+1, 1, Qt::AlignTop);
+		ui.gridLevels->addLayout(levels[i].hboxEmblems,  i+1, 2, Qt::AlignTop);
+		ui.gridLevels->addLayout(levels[i].hboxBestTime, i+1, 3, Qt::AlignTop);
+		ui.gridLevels->addWidget(levels[i].spnMostRings, i+1, 4, Qt::AlignTop);
 	}
+
+	// Store the number of levels in use.
+	this->levelsInUse = i;
 }
 
 /** SALevelStats **/
@@ -201,13 +240,14 @@ SALevelStats::SALevelStats(QWidget *parent)
 	d->ui.setupUi(this);
 
 	// Fix alignment of the header labels.
-	d->ui.gridLayout->setAlignment(d->ui.lblLevelName, Qt::AlignTop);
-	d->ui.gridLayout->setAlignment(d->ui.lblHighScore, Qt::AlignTop);
-	d->ui.gridLayout->setAlignment(d->ui.lblEmblems, Qt::AlignTop);
-	d->ui.gridLayout->setAlignment(d->ui.lblBestTime, Qt::AlignTop);
-	d->ui.gridLayout->setAlignment(d->ui.lblMostRings, Qt::AlignTop);
+	d->ui.gridLevels->setAlignment(d->ui.lblLevelName, Qt::AlignTop);
+	d->ui.gridLevels->setAlignment(d->ui.lblHighScore, Qt::AlignTop);
+	d->ui.gridLevels->setAlignment(d->ui.lblEmblems, Qt::AlignTop);
+	d->ui.gridLevels->setAlignment(d->ui.lblBestTime, Qt::AlignTop);
+	d->ui.gridLevels->setAlignment(d->ui.lblMostRings, Qt::AlignTop);
 
-	d->initLevels();
+	// Initialize the level listing.
+	d->initLevels(d->ui.cboCharacter->currentIndex());
 }
 
 SALevelStats::~SALevelStats()
@@ -232,4 +272,18 @@ void SALevelStats::changeEvent(QEvent *event)
 
 	// Pass the event to the base class.
 	this->QWidget::changeEvent(event);
+}
+
+/** UI widget slots. **/
+
+/**
+ * Character was changed.
+ * @param index New character ID.
+ */
+void SALevelStats::on_cboCharacter_currentIndexChanged(int index)
+{
+	// Reinitialize the level grid with the correct
+	// set of levels for the selected character.
+	Q_D(SALevelStats);
+	d->initLevels(index);
 }
