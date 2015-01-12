@@ -143,6 +143,7 @@ void EditorWindow::changeEvent(QEvent *event)
 
 /**
  * Edit a GcnFile.
+ * TODO: Combine with editVmuFile.
  * @param gcnFile GcnFile to edit.
  * @return Editor dialog for the GcnFile. (nullptr if the file cannot be edited)
  */
@@ -162,6 +163,34 @@ EditorWindow *EditorWindow::editGcnFile(GcnFile *gcnFile)
 	EditorWindow *editor = new EditorWindow();
 	SAEditor *saEditor = new SAEditor();
 	saEditor->setFile(gcnFile);
+	editor->d_func()->setEditorWidget(saEditor);
+	return editor;
+}
+
+/**
+ * Edit a VmuFile.
+ * TODO: Combine with editGcnFile.
+ * @param vmuFile VmuFile to edit.
+ * @return Editor dialog for the VmuFile. (nullptr if the file cannot be edited)
+ */
+EditorWindow *EditorWindow::editVmuFile(VmuFile *vmuFile)
+{
+	// TODO: Connect the 'destroyed' signal and
+	// close the editor if the file is destroyed.
+
+	// TODO: Check for editors that support this file.
+	// For now, only allow SA1.
+	if (vmuFile->filename() != QLatin1String("SONICADV_SYS") &&
+	    vmuFile->filename() != QLatin1String("SONICADV_INT"))
+	{
+		// Not SA1.
+		return nullptr;
+	}
+
+	// Create an SAEditor.
+	EditorWindow *editor = new EditorWindow();
+	SAEditor *saEditor = new SAEditor();
+	saEditor->setFile(vmuFile);
 	editor->d_func()->setEditorWidget(saEditor);
 	return editor;
 }

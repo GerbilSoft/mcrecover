@@ -448,11 +448,12 @@ void SALevelStats::on_cboCharacter_currentIndexChanged(int index)
 
 /**
  * Load data from Sonic Adventure save data.
- * TODO: Big Endian / Little Endian switch?
  * @param sa_save Sonic Adventure save data.
+ * @param littleEndian If true, file is little-endian.
+ * TODO: Byteswap the data in SAEditor, not here.
  * @return 0 on success; non-zero on error.
  */
-int SALevelStats::loadSaveData(const _sa_save_file *sa_save)
+int SALevelStats::loadSaveData(const _sa_save_file *sa_save, bool littleEndian)
 {
 	Q_D(SALevelStats);
 	memcpy(&d->scores,  &sa_save->scores,  sizeof(d->scores));
@@ -472,8 +473,9 @@ int SALevelStats::loadSaveData(const _sa_save_file *sa_save)
 
 	// Byteswap everything.
 	// NOTE: sa_times doesn't require byteswapping.
-	// FIXME: Add endianness settings somewhere.
-	if (/*big-endian)*/ 1) {
+	// TODO: Byteswap the data in SAEditor, not here.
+	if (!littleEndian) {
+		// Big-endian.
 		for (int i = 0; i < NUM_ELEMENTS(d->scores.all); i++) {
 			d->scores.all[i] = be32_to_cpu(d->scores.all[i]);
 		}
@@ -483,7 +485,8 @@ int SALevelStats::loadSaveData(const _sa_save_file *sa_save)
 		for (int i = 0; i < NUM_ELEMENTS(d->rings.all); i++) {
 			d->rings.all[i] = be16_to_cpu(d->rings.all[i]);
 		}
-	} else /* little-endian */ {
+	} else {
+		// Little-endian.
 		for (int i = 0; i < NUM_ELEMENTS(d->scores.all); i++) {
 			d->scores.all[i] = le32_to_cpu(d->scores.all[i]);
 		}

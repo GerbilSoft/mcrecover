@@ -48,6 +48,12 @@
 extern "C" {
 #endif
 
+// Sonic Adventure (Dreamcast)
+// Starting address of the save files within the data area.
+#define SA_SAVE_ADDRESS_DC_0 0x0480
+#define SA_SAVE_ADDRESS_DC_1 0x0920
+#define SA_SAVE_ADDRESS_DC_2 0x0DC0
+
 // Sonic Adventure DX (GameCube)
 // Starting address of the save file within the data area.
 // This does NOT include the GCI header. (0x40 bytes)

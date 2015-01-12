@@ -1042,7 +1042,7 @@ void McRecoverWindow::openCard(const QString &filename)
 
 	// Open the specified memory card image.
 	// TODO: Set this as the last path?
-	d->card = GcnCard::open(filename, this);
+	d->card = VmuCard::open(filename, this);
 	if (!d->card || !d->card->isOpen()) {
 		// Could not open the card.
 		static const QChar chrBullet(0x2022);  // U+2022: BULLET

@@ -25,6 +25,7 @@
 #include <QtGui/QDialog>
 
 class GcnFile;
+class VmuFile;
 
 class EditorWindowPrivate;
 class EditorWindow : public QDialog
@@ -51,10 +52,19 @@ class EditorWindow : public QDialog
 	public:
 		/**
 		 * Edit a GcnFile.
+		 * TODO: Combine with editVmuFile.
 		 * @param gcnFile GcnFile to edit.
 		 * @return Editor window for the GcnFile. (nullptr if the file cannot be edited)
 		 */
 		static EditorWindow *editGcnFile(GcnFile *gcnFile);
+
+		/**
+		 * Edit a VmuFile.
+		 * TODO: Combine with editGcnFile.
+		 * @param vmuFile VmuFile to edit.
+		 * @return Editor dialog for the VmuFile. (nullptr if the file cannot be edited)
+		 */
+		static EditorWindow *editVmuFile(VmuFile *VmuFile);
 };
 
 #endif /* __MCRECOVER_EDIT_EDITORWINDOW_HPP__ */

@@ -23,6 +23,7 @@
 
 #include "card/File.hpp"
 #include "card/GcnFile.hpp" /* FIXME: Remove later */
+#include "card/VmuFile.hpp" /* FIXME: Remove later */
 #include "IconAnimHelper.hpp"
 
 // XML template dialog.
@@ -358,6 +359,18 @@ void FileView::on_btnEdit_clicked(void)
 		if (editor) {
 			editor->exec();
 			delete editor;
+		}
+	} else {
+		// Check for a VmuFile.
+		// TODO: Make an EditorWindow::editFile()?
+		const VmuFile *vmuFile = qobject_cast<const VmuFile*>(d->file);
+		if (vmuFile) {
+			// FIXME: File has to be changed to non-const...
+			EditorWindow *editor = EditorWindow::editVmuFile((VmuFile*)vmuFile);
+			if (editor) {
+				editor->exec();
+				delete editor;
+			}
 		}
 	}
 }

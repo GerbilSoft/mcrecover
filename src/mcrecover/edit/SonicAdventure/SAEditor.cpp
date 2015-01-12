@@ -97,12 +97,26 @@ void SAEditor::changeEvent(QEvent *event)
  */
 void SAEditor::setFile(File *file)
 {
-	// TODO: Save the GcnFile.
-	// TODO: Verify that this is an SADX file.
-	QByteArray data = file->loadFileData();
-	if (data.size() < (SA_SAVE_ADDRESS_GCN + SA_SAVE_FILE_LEN))
-		return;
-
 	Q_D(SAEditor);
-	d->ui.saLevelStats->loadSaveData((const sa_save_file*)(data.data() + SA_SAVE_ADDRESS_GCN));
+
+	if (file->filename() == QLatin1String("SONICADV_SYS") ||
+	    file->filename() == QLatin1String("SONICADV_INT"))
+	{
+		// DC version.
+		// TODO: Show a slot selector.
+		QByteArray data = file->loadFileData();
+		if (data.size() < (SA_SAVE_ADDRESS_DC_0 + SA_SAVE_FILE_LEN))
+			return;
+
+		d->ui.saLevelStats->loadSaveData((const sa_save_file*)(data.data() + SA_SAVE_ADDRESS_DC_0), true);
+	} else {
+		// GameCube verison.
+		// TODO: Save the GcnFile.
+		// TODO: Verify that this is an SADX file.
+		QByteArray data = file->loadFileData();
+		if (data.size() < (SA_SAVE_ADDRESS_GCN + SA_SAVE_FILE_LEN))
+			return;
+
+		d->ui.saLevelStats->loadSaveData((const sa_save_file*)(data.data() + SA_SAVE_ADDRESS_GCN), false);
+	}
 }
