@@ -28,8 +28,8 @@
 
 // All structs are packed little-endian.
 
-#ifndef __MCRECOVER_LIBGCTOOLS_VMU_H__
-#define __MCRECOVER_LIBGCTOOLS_VMU_H__
+#ifndef __LIBGCTOOLS_VMU_H__
+#define __LIBGCTOOLS_VMU_H__
 
 #include <stdint.h>
 
@@ -301,4 +301,4 @@ typedef struct PACKED _vmu_card_icon_color_data
 }
 #endif
 
-#endif /* __MCRECOVER_LIBGCTOOLS_VMU_H__ */
+#endif /* __LIBGCTOOLS_VMU_H__ */
