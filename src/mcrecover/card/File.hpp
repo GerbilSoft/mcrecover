@@ -113,6 +113,12 @@ class File : public QObject
 		 */
 		QVector<uint16_t> fatEntries(void) const;
 
+		/**
+		 * Load the file data.
+		 * @return QByteArray with file data, or empty QByteArray on error.
+		 */
+		QByteArray loadFileData(void);
+
 		/** TODO: Add a QFlags indicating which fields are valid. **/
 
 		/**

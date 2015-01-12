@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SAEditor.hpp: Sonic Adventure - save file editor.           *
+ * Editor.hpp: Save file editor.                                           *
  *                                                                         *
  * Copyright (c) 2015 by David Korth.                                      *
  *                                                                         *
@@ -19,27 +19,28 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__
-#define __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__
+#ifndef __MCRECOVER_EDIT_EDITORWINDOW_HPP__
+#define __MCRECOVER_EDIT_EDITORWINDOW_HPP__
 
 #include <QtGui/QDialog>
 
-class File;
+class GcnFile;
 
-class SAEditorPrivate;
-class SAEditor : public QWidget
+class EditorWindowPrivate;
+class EditorWindow : public QDialog
 {
 	Q_OBJECT
 
+	protected:
+		EditorWindow(QWidget *parent = nullptr);
 	public:
-		SAEditor(QWidget *parent = nullptr);
-		~SAEditor();
+		~EditorWindow();
 
 	protected:
-		SAEditorPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(SAEditor)
+		EditorWindowPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(EditorWindow)
 	private:
-		Q_DISABLE_COPY(SAEditor)
+		Q_DISABLE_COPY(EditorWindow)
 
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
@@ -49,12 +50,11 @@ class SAEditor : public QWidget
 
 	public:
 		/**
-		 * Set the File to edit.
-		 * @param file File to edit.
+		 * Edit a GcnFile.
+		 * @param gcnFile GcnFile to edit.
+		 * @return Editor window for the GcnFile. (nullptr if the file cannot be edited)
 		 */
-		void setFile(File *file);
-
-		// TODO: file()
+		static EditorWindow *editGcnFile(GcnFile *gcnFile);
 };
 
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__ */
+#endif /* __MCRECOVER_EDIT_EDITORWINDOW_HPP__ */

@@ -93,7 +93,7 @@ class FilePrivate
 		uint16_t fileBlockAddrToPhysBlockAddr(uint16_t fileBlock) const;
 
 		/**
-		 * Load file data.
+		 * Load the file data.
 		 * @return QByteArray with file data, or empty QByteArray on error.
 		 */
 		QByteArray loadFileData(void);

@@ -95,7 +95,7 @@ uint16_t FilePrivate::fileBlockAddrToPhysBlockAddr(uint16_t fileBlock) const
 }
 
 /**
- * Load file data.
+ * Load the file data.
  * @return QByteArray with file data, or empty QByteArray on error.
  */
 QByteArray FilePrivate::loadFileData(void)
@@ -409,6 +409,16 @@ QVector<uint16_t> File::fatEntries(void) const
 {
 	Q_D(const File);
 	return d->fatEntries;
+}
+
+/**
+ * Load the file data.
+ * @return QByteArray with file data, or empty QByteArray on error.
+ */
+QByteArray File::loadFileData(void)
+{
+	Q_D(File);
+	return d->loadFileData();
 }
 
 /**

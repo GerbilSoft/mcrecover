@@ -30,7 +30,7 @@
 #include "../windows/XmlTemplateDialogManager.hpp"
 
 // Testing...
-#include "../edit/SonicAdventure/SAEditor.hpp"
+#include "../edit/EditorWindow.hpp"
 
 // Qt includes.
 #include <QtCore/QTimer>
@@ -351,7 +351,13 @@ void FileView::on_btnEdit_clicked(void)
 {
 	// Testing...
 	Q_D(FileView);
-	SAEditor *saEditor = new SAEditor();
-	saEditor->exec();
-	delete saEditor;
+	const GcnFile *gcnFile = qobject_cast<const GcnFile*>(d->file);
+	if (gcnFile) {
+		// FIXME: File has to be changed to non-const...
+		EditorWindow *editor = EditorWindow::editGcnFile((GcnFile*)gcnFile);
+		if (editor) {
+			editor->exec();
+			delete editor;
+		}
+	}
 }

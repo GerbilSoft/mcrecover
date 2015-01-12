@@ -24,6 +24,11 @@
 // Qt includes.
 #include <QtCore/QEvent>
 
+// Files.
+#include "card/File.hpp"
+
+#include "sa_defs.h"
+
 /** SAEditorPrivate **/
 
 #include "ui_SAEditor.h"
@@ -53,26 +58,11 @@ SAEditorPrivate::SAEditorPrivate(SAEditor* q)
  * @param parent Parent widget.
  */
 SAEditor::SAEditor(QWidget *parent)
-	: QDialog(parent,
-		Qt::Dialog |
-		Qt::CustomizeWindowHint |
-		Qt::WindowTitleHint |
-		Qt::WindowSystemMenuHint |
-		Qt::WindowCloseButtonHint)
+	: QWidget(parent)
 	, d_ptr(new SAEditorPrivate(this))
 {
 	Q_D(SAEditor);
 	d->ui.setupUi(this);
-
-	// NOTE: This window should NOT be deleted on close,
-	// because the owner needs to retrieve the modified.
-	// save file data.
-	//this->setAttribute(Qt::WA_DeleteOnClose, true);
-
-#ifdef Q_OS_MAC
-	// Remove the window icon. (Mac "proxy icon")
-	this->setWindowIcon(QIcon());
-#endif
 }
 
 /**
@@ -96,5 +86,23 @@ void SAEditor::changeEvent(QEvent *event)
 	}
 
 	// Pass the event to the base class.
-	this->QDialog::changeEvent(event);
+	this->QWidget::changeEvent(event);
+}
+
+/** Public functions. **/
+
+/**
+ * Set the File to edit.
+ * @param file File to edit.
+ */
+void SAEditor::setFile(File *file)
+{
+	// TODO: Save the GcnFile.
+	// TODO: Verify that this is an SADX file.
+	QByteArray data = file->loadFileData();
+	if (data.size() < (SA_SAVE_ADDRESS_GCN + SA_SAVE_FILE_LEN))
+		return;
+
+	Q_D(SAEditor);
+	d->ui.saLevelStats->loadSaveData((const sa_save_file*)(data.data() + SA_SAVE_ADDRESS_GCN));
 }
