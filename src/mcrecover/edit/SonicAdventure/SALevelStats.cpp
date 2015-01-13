@@ -21,14 +21,8 @@
 
 #include "SALevelStats.hpp"
 
-// Qt includes.
-#include <QtCore/QTimer>
-#include <QtGui/QPaintEvent>
-#include <QtGui/QPainter>
-
 // Qt widgets.
 #include <QtGui/QHBoxLayout>
-#include <QtGui/QVBoxLayout>
 #include <QtGui/QLabel>
 #include <QtGui/QSpinBox>
 #include <QtGui/QCheckBox>
