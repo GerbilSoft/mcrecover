@@ -76,7 +76,20 @@ class SAEditorPrivate
 SAEditorPrivate::SAEditorPrivate(SAEditor* q)
 	: q_ptr(q)
 	, slot(-1)
-{ }
+{
+	// Make sure sa_defs.h is correct.
+	static_assert(SA_SCORES_LEN == 128, "SA_SCORES_LEN is incorrect");
+	static_assert(sizeof(sa_scores) == SA_SCORES_LEN, "sa_scores has the wrong size");
+	static_assert(SA_TIMES_LEN == 84, "SA_TIMES_LEN is incorrect");
+	static_assert(sizeof(sa_times) == SA_TIMES_LEN, "sa_times has the wrong size");
+	static_assert(SA_WEIGHTS_LEN == 24, "SA_WEIGHTS_LEN is incorrect");
+	static_assert(sizeof(sa_weights) == SA_WEIGHTS_LEN, "sa_weights has the wrong size");
+	static_assert(SA_RINGS_LEN == 64, "SA_RINGS_LEN is incorrect");
+	static_assert(sizeof(sa_rings) == SA_RINGS_LEN, "sa_rings has the wrong size");
+
+	static_assert(SA_SAVE_SLOT_LEN == 1184, "SA_SAVE_SLOT_LEN is incorrect");
+	static_assert(sizeof(sa_save_slot) == SA_SAVE_SLOT_LEN, "sa_save_file has the wrong size");
+}
 
 SAEditorPrivate::~SAEditorPrivate()
 {
