@@ -27,7 +27,11 @@
 // Files.
 #include "card/File.hpp"
 
+#include "util/byteswap.h"
 #include "sa_defs.h"
+
+// TODO: Put this in a common header file somewhere.
+#define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 /** SAEditorPrivate **/
 
@@ -99,24 +103,64 @@ void SAEditor::setFile(File *file)
 {
 	Q_D(SAEditor);
 
+	QByteArray data = file->loadFileData();
+	sa_save_file *sa_save;
 	if (file->filename() == QLatin1String("SONICADV_SYS") ||
 	    file->filename() == QLatin1String("SONICADV_INT"))
 	{
 		// DC version.
+		// TODO: Verify that this is an SA1 file.
 		// TODO: Show a slot selector.
-		QByteArray data = file->loadFileData();
-		if (data.size() < (SA_SAVE_ADDRESS_DC_0 + SA_SAVE_FILE_LEN))
+		if (data.size() < (SA_SAVE_ADDRESS_DC_0 + SA_SAVE_FILE_LEN)) {
+			// TODO: Show an error.
 			return;
+		}
 
-		d->ui.saLevelStats->loadSaveData((const sa_save_file*)(data.data() + SA_SAVE_ADDRESS_DC_0), true);
-	} else {
+		sa_save = (sa_save_file*)(data.data() + SA_SAVE_ADDRESS_DC_0);
+
+#if MCRECOVER_BYTEORDER == MCRECOVER_BIG_ENDIAN
+		// Byteswap the data.
+		// Dreamcast's SH-4 is little-endian.
+		for (int i = 0; i < NUM_ELEMENTS(sa_save->scores.all); i++) {
+			sa_save->scores.all[i] = le32_to_cpu(sa_save->scores.all[i]);
+		}
+		for (int i = 0; i < NUM_ELEMENTS(sa_save->weights.all); i++) {
+			sa_save->weights.all[i] = le16_to_cpu(sa_save->weights.all[i]);
+		}
+		for (int i = 0; i < NUM_ELEMENTS(sa_save->rings.all); i++) {
+			sa_save->rings.all[i] = le16_to_cpu(sa_save->rings.all[i]);
+		}
+#endif
+	} else if (file->filename().startsWith(QLatin1String("SONICADVENTURE_DX_PLAYRECORD_"))) {
 		// GameCube verison.
-		// TODO: Save the GcnFile.
 		// TODO: Verify that this is an SADX file.
-		QByteArray data = file->loadFileData();
-		if (data.size() < (SA_SAVE_ADDRESS_GCN + SA_SAVE_FILE_LEN))
+		if (data.size() < (SA_SAVE_ADDRESS_GCN + SA_SAVE_FILE_LEN)) {
+			// TODO: Show an error.
 			return;
+		}
 
-		d->ui.saLevelStats->loadSaveData((const sa_save_file*)(data.data() + SA_SAVE_ADDRESS_GCN), false);
+		sa_save = (sa_save_file*)(data.data() + SA_SAVE_ADDRESS_GCN);
+
+#if MCRECOVER_BYTEORDER == MCRECOVER_LIL_ENDIAN
+		// Byteswap the data.
+		// GameCube's PowerPC 750CL is big-endian.
+		for (int i = 0; i < NUM_ELEMENTS(sa_save->scores.all); i++) {
+			sa_save->scores.all[i] = be32_to_cpu(sa_save->scores.all[i]);
+		}
+		for (int i = 0; i < NUM_ELEMENTS(sa_save->weights.all); i++) {
+			sa_save->weights.all[i] = be16_to_cpu(sa_save->weights.all[i]);
+		}
+		for (int i = 0; i < NUM_ELEMENTS(sa_save->rings.all); i++) {
+			sa_save->rings.all[i] = be16_to_cpu(sa_save->rings.all[i]);
+		}
+#endif
+	} else {
+		// Unsupported file.
+		// TODO: Show an error.
+		return;
 	}
+
+	// TODO: Save the sa_save internally.
+	// Show the save data.
+	d->ui.saLevelStats->loadSaveData(sa_save);
 }

@@ -53,11 +53,10 @@ class SALevelStats : public QWidget
 		/**
 		 * Load data from Sonic Adventure save data.
 		 * @param sa_save Sonic Adventure save data.
-		 * @param littleEndian If true, file is little-endian.
-		 * TODO: Byteswap the data in SAEditor, not here.
+		 * The data must have already been byteswapped to host-endian.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int loadSaveData(const _sa_save_file *sa_save, bool littleEndian);
+		int loadSaveData(const _sa_save_file *sa_save);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SALEVELSTATS_HPP__ */
