@@ -189,8 +189,8 @@ SALevelStatsPrivate::SALevelStatsPrivate(SALevelStats *q)
 	static_assert(SA_RINGS_LEN == 64, "SA_RINGS_LEN is incorrect");
 	static_assert(sizeof(sa_rings) == SA_RINGS_LEN, "sa_rings has the wrong size");
 
-	static_assert(SA_SAVE_FILE_LEN == 1184, "SA_SAVE_FILE_LEN is incorrect");
-	static_assert(sizeof(sa_save_file) == SA_SAVE_FILE_LEN, "sa_save_file has the wrong size");
+	static_assert(SA_SAVE_SLOT_LEN == 1184, "SA_SAVE_SLOT_LEN is incorrect");
+	static_assert(sizeof(sa_save_slot) == SA_SAVE_SLOT_LEN, "sa_save_file has the wrong size");
 
 	// Zero out the data.
 	memset(&scores, 0, sizeof(scores));
@@ -447,12 +447,12 @@ void SALevelStats::on_cboCharacter_currentIndexChanged(int index)
 /** Public functions. **/
 
 /**
- * Load data from Sonic Adventure save data.
- * @param sa_save Sonic Adventure save data.
+ * Load data from Sonic Adventure save slot.
+ * @param sa_save Sonic Adventure save slot.
  * The data must have already been byteswapped to host-endian.
  * @return 0 on success; non-zero on error.
  */
-int SALevelStats::loadSaveData(const _sa_save_file *sa_save)
+int SALevelStats::load(const sa_save_slot *sa_save)
 {
 	Q_D(SALevelStats);
 	memcpy(&d->scores,  &sa_save->scores,  sizeof(d->scores));
@@ -472,6 +472,5 @@ int SALevelStats::loadSaveData(const _sa_save_file *sa_save)
 
 	// Update the display.
 	d->updateDisplay();
-
 	return 0;
 }

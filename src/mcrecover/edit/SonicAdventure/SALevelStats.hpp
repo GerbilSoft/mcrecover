@@ -24,7 +24,7 @@
 
 #include <QtGui/QWidget>
 
-struct _sa_save_file;
+struct _sa_save_slot;
 
 class SALevelStatsPrivate;
 class SALevelStats : public QWidget
@@ -51,12 +51,12 @@ class SALevelStats : public QWidget
 
 	public:
 		/**
-		 * Load data from Sonic Adventure save data.
-		 * @param sa_save Sonic Adventure save data.
+		 * Load data from a Sonic Adventure save slot.
+		 * @param sa_save Sonic Adventure save slot.
 		 * The data must have already been byteswapped to host-endian.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int loadSaveData(const _sa_save_file *sa_save);
+		int load(const _sa_save_slot *sa_save);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SALEVELSTATS_HPP__ */

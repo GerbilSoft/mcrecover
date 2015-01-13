@@ -58,12 +58,12 @@ class SAEditorPrivate
 		// TODO: EditorManager to handle File being destroyed.
 		File *file;
 
-		// sa_save_file structs.
-		QVector<sa_save_file*> data;
+		// sa_save_slot structs.
+		QVector<sa_save_slot*> data;
 		int slot; // active slot (-1 for none)
 
 		/**
-		 * Clear the sa_save_file structs.
+		 * Clear the sa_save_slot structs.
 		 */
 		void clearData(void);
 
@@ -84,13 +84,13 @@ SAEditorPrivate::~SAEditorPrivate()
 }
 
 /**
- * Clear the sa_save_file structs.
+ * Clear the sa_save_slot structs.
  */
 void SAEditorPrivate::clearData(void)
 {
 	// Delete all loaded sa_save structs.
-	// NOTE: sa_save_file is a C struct, so use free().
-	foreach (sa_save_file *sa_save, data) {
+	// NOTE: sa_save_slot is a C struct, so use free().
+	foreach (sa_save_slot *sa_save, data) {
 		free(sa_save);
 	}
 	data.clear();
@@ -113,8 +113,8 @@ void SAEditorPrivate::updateDisplay(void)
 	}
 
 	// Display the data.
-	sa_save_file *sa_save = data.at(slot);
-	ui.saLevelStats->loadSaveData(sa_save);
+	sa_save_slot *sa_save = data.at(slot);
+	ui.saLevelStats->load(sa_save);
 }
 
 /** SAEditor **/
@@ -174,16 +174,16 @@ void SAEditor::setFile(File *file)
 		// DC version.
 		// TODO: Verify that this is an SA1 file.
 		// TODO: Show a slot selector.
-		if (data.size() < (SA_SAVE_ADDRESS_DC_0 + (SA_SAVE_FILE_LEN * 3))) {
+		if (data.size() < (SA_SAVE_ADDRESS_DC_0 + (SA_SAVE_SLOT_LEN * 3))) {
 			// TODO: Show an error.
 			return;
 		}
 
 		// Three, count 'em, *three* save slots!
 		const char *src = (data.data() + SA_SAVE_ADDRESS_DC_0);
-		for (int i = 0; i < 3; i++, src += SA_SAVE_FILE_LEN) {
-			sa_save_file *sa_save = (sa_save_file*)malloc(sizeof(*sa_save));
-			memcpy(sa_save, src, SA_SAVE_FILE_LEN);
+		for (int i = 0; i < 3; i++, src += SA_SAVE_SLOT_LEN) {
+			sa_save_slot *sa_save = (sa_save_slot*)malloc(sizeof(*sa_save));
+			memcpy(sa_save, src, SA_SAVE_SLOT_LEN);
 			d->data.append(sa_save);
 
 #if MCRECOVER_BYTEORDER == MCRECOVER_BIG_ENDIAN
@@ -203,14 +203,14 @@ void SAEditor::setFile(File *file)
 	} else if (file->filename().startsWith(QLatin1String("SONICADVENTURE_DX_PLAYRECORD_"))) {
 		// GameCube verison.
 		// TODO: Verify that this is an SADX file.
-		if (data.size() < (SA_SAVE_ADDRESS_GCN + SA_SAVE_FILE_LEN)) {
+		if (data.size() < (SA_SAVE_ADDRESS_GCN + SA_SAVE_SLOT_LEN)) {
 			// TODO: Show an error.
 			return;
 		}
 
 		// Only one save slot.
-		sa_save_file *sa_save = (sa_save_file*)malloc(sizeof(*sa_save));
-		memcpy(sa_save, (data.data() + SA_SAVE_ADDRESS_GCN), SA_SAVE_FILE_LEN);
+		sa_save_slot *sa_save = (sa_save_slot*)malloc(sizeof(*sa_save));
+		memcpy(sa_save, (data.data() + SA_SAVE_ADDRESS_GCN), SA_SAVE_SLOT_LEN);
 		d->data.append(sa_save);
 
 #if MCRECOVER_BYTEORDER == MCRECOVER_LIL_ENDIAN

@@ -136,10 +136,12 @@ typedef union PACKED _sa_rings {
 } sa_rings;
 #pragma pack()
 
-// Save file data.
-#define SA_SAVE_FILE_LEN 1184
+// Save slot.
+// GCN files have a single slot.
+// Dreamcast files have three slots.
+#define SA_SAVE_SLOT_LEN 1184
 #pragma pack(1)
-typedef struct PACKED _sa_save_file
+typedef struct PACKED _sa_save_slot
 {
 	uint32_t crc;		// CRC (only low 16 bits are used)
 	uint32_t playTime;	// Play time (1/60ths of a second)
@@ -198,7 +200,7 @@ typedef struct PACKED _sa_save_file
 
 	// unknown
 	uint8_t reserved3[584];
-} sa_save_file;
+} sa_save_slot;
 #pragma pack()
 	
 #ifdef __cplusplus
