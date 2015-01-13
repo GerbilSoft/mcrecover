@@ -71,6 +71,23 @@ class SALevelStatsPrivate
 			QSpinBox *spnMostRings;
 		} levels[MAX_LEVELS];
 
+		// Save file data.
+		sa_scores scores;
+		sa_times times;
+		sa_weights weights;
+		sa_rings rings;
+
+		// Emblems.
+		// NOTE: There's only 130 emblems, but there's enough
+		// space for 136, so we have to allocate the entire area.
+		bool emblems[136];
+
+		/**
+		 * Clear the loaded data.
+		 * This does NOT automatically update the UI.
+		 */
+		void clear(void);
+
 		/**
 		 * Initialize level widgets.
 		 */
@@ -87,17 +104,6 @@ class SALevelStatsPrivate
 		 * Update the widgets with the loaded data.
 		 */
 		void updateDisplay(void);
-
-		// Save file data.
-		sa_scores scores;
-		sa_times times;
-		sa_weights weights;
-		sa_rings rings;
-
-		// Emblems.
-		// NOTE: There's only 130 emblems, but there's enough
-		// space for 136, so we have to allocate the entire area.
-		bool emblems[136];
 
 		/** Static read-only data **/
 
@@ -192,12 +198,8 @@ SALevelStatsPrivate::SALevelStatsPrivate(SALevelStats *q)
 	static_assert(SA_SAVE_SLOT_LEN == 1184, "SA_SAVE_SLOT_LEN is incorrect");
 	static_assert(sizeof(sa_save_slot) == SA_SAVE_SLOT_LEN, "sa_save_file has the wrong size");
 
-	// Zero out the data.
-	memset(&scores, 0, sizeof(scores));
-	memset(&times, 0, sizeof(times));
-	memset(&weights, 0, sizeof(weights));
-	memset(&rings, 0, sizeof(rings));
-	memset(&emblems, 0, sizeof(emblems));
+	// Clear the data.
+	clear();
 }
 
 SALevelStatsPrivate::~SALevelStatsPrivate()
@@ -216,6 +218,19 @@ SALevelStatsPrivate::~SALevelStatsPrivate()
 		delete levels[i].hboxBestTime;
 		delete levels[i].spnMostRings;
 	}
+}
+
+/**
+ * Clear the loaded data.
+ * This does NOT automatically update the UI.
+ */
+void SALevelStatsPrivate::clear(void)
+{
+	memset(&scores, 0, sizeof(scores));
+	memset(&times, 0, sizeof(times));
+	memset(&weights, 0, sizeof(weights));
+	memset(&rings, 0, sizeof(rings));
+	memset(&emblems, 0, sizeof(emblems));
 }
 
 /**
@@ -473,4 +488,14 @@ int SALevelStats::load(const sa_save_slot *sa_save)
 	// Update the display.
 	d->updateDisplay();
 	return 0;
+}
+
+/**
+ * Clear the loaded data.
+ */
+void SALevelStats::clear(void)
+{
+	Q_D(SALevelStats);
+	d->clear();
+	d->updateDisplay();
 }

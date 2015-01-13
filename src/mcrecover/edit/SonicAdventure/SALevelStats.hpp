@@ -57,6 +57,11 @@ class SALevelStats : public QWidget
 		 * @return 0 on success; non-zero on error.
 		 */
 		int load(const _sa_save_slot *sa_save);
+
+		/**
+		 * Clear the loaded data.
+		 */
+		void clear(void);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SALEVELSTATS_HPP__ */

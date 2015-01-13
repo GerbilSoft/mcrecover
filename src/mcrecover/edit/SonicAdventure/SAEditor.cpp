@@ -108,7 +108,7 @@ void SAEditorPrivate::updateDisplay(void)
 
 	if (slot < 0 || slot >= data.size()) {
 		// Invalid slot number.
-		// TODO: Clear the displays.
+		ui.saLevelStats->clear();
 		return;
 	}
 
@@ -176,7 +176,7 @@ void SAEditor::setFile(File *file)
 		// TODO: Show a slot selector.
 		if (data.size() < (SA_SAVE_ADDRESS_DC_0 + (SA_SAVE_SLOT_LEN * 3))) {
 			// TODO: Show an error.
-			return;
+			goto end;
 		}
 
 		// Three, count 'em, *three* save slots!
@@ -205,7 +205,7 @@ void SAEditor::setFile(File *file)
 		// TODO: Verify that this is an SADX file.
 		if (data.size() < (SA_SAVE_ADDRESS_GCN + SA_SAVE_SLOT_LEN)) {
 			// TODO: Show an error.
-			return;
+			goto end;
 		}
 
 		// Only one save slot.
@@ -230,9 +230,10 @@ void SAEditor::setFile(File *file)
 		// Unsupported file.
 		// TODO: Show an error.
 		d->file = nullptr;
-		return;
+		goto end;
 	}
 
+end:
 	// Update the display.
 	// TODO: Slot selection.
 	d->slot = 0;
