@@ -158,14 +158,27 @@ void SAEditor::changeEvent(QEvent *event)
 /** Public functions. **/
 
 /**
+ * Get the file currently being edited.
+ * @return File being edited, or nullptr if none.
+ */
+File *SAEditor::file(void) const
+{
+	Q_D(const SAEditor);
+	return d->file;
+}
+
+/**
  * Set the File to edit.
  * @param file File to edit.
+ * @return 0 on success; non-zero on error (and file will not be set).
+ * TODO: Error code constants?
  */
-void SAEditor::setFile(File *file)
+int SAEditor::setFile(File *file)
 {
 	Q_D(SAEditor);
 	d->clearData();
 	d->file = file;
+	int ret = -1;
 
 	QByteArray data = file->loadFileData();
 	if (file->filename() == QLatin1String("SONICADV_SYS") ||
@@ -175,7 +188,7 @@ void SAEditor::setFile(File *file)
 		// TODO: Verify that this is an SA1 file.
 		// TODO: Show a slot selector.
 		if (data.size() < (SA_SAVE_ADDRESS_DC_0 + (SA_SAVE_SLOT_LEN * 3))) {
-			// TODO: Show an error.
+			ret = -1;
 			goto end;
 		}
 
@@ -199,12 +212,15 @@ void SAEditor::setFile(File *file)
 				sa_save->rings.all[i] = le16_to_cpu(sa_save->rings.all[i]);
 			}
 #endif
+
+			// Loaded successfully.
+			ret = 0;
 		}
 	} else if (file->filename().startsWith(QLatin1String("SONICADVENTURE_DX_PLAYRECORD_"))) {
 		// GameCube verison.
 		// TODO: Verify that this is an SADX file.
 		if (data.size() < (SA_SAVE_ADDRESS_GCN + SA_SAVE_SLOT_LEN)) {
-			// TODO: Show an error.
+			ret = -1;
 			goto end;
 		}
 
@@ -226,9 +242,12 @@ void SAEditor::setFile(File *file)
 			sa_save->rings.all[i] = be16_to_cpu(sa_save->rings.all[i]);
 		}
 #endif
+
+		// Loaded successfully.
+		ret = 0;
 	} else {
 		// Unsupported file.
-		// TODO: Show an error.
+		ret = -2;
 		d->file = nullptr;
 		goto end;
 	}
@@ -238,4 +257,5 @@ end:
 	// TODO: Slot selection.
 	d->slot = 0;
 	d->updateDisplay();
+	return ret;
 }

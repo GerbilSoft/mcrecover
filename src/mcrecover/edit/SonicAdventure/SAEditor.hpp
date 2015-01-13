@@ -31,6 +31,8 @@ class SAEditor : public QWidget
 {
 	Q_OBJECT
 
+	Q_PROPERTY(File* file READ file WRITE setFile)
+
 	public:
 		SAEditor(QWidget *parent = nullptr);
 		~SAEditor();
@@ -49,12 +51,18 @@ class SAEditor : public QWidget
 
 	public:
 		/**
+		 * Get the file currently being edited.
+		 * @return File being edited, or nullptr if none.
+		 */
+		File *file(void) const;
+
+		/**
 		 * Set the File to edit.
 		 * @param file File to edit.
+		 * If the file isn't valid, it won't be set;
+		 * check file() afterwards to verify.
 		 */
-		void setFile(File *file);
-
-		// TODO: file()
+		int setFile(File *file);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__ */

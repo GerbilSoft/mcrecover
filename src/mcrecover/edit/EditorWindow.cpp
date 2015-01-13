@@ -162,7 +162,12 @@ EditorWindow *EditorWindow::editGcnFile(GcnFile *gcnFile)
 	// Create an SAEditor.
 	EditorWindow *editor = new EditorWindow();
 	SAEditor *saEditor = new SAEditor();
-	saEditor->setFile(gcnFile);
+	int ret = saEditor->setFile(gcnFile);
+	if (ret != 0) {
+		// Editor does not support this file.
+		delete saEditor;
+		return 0;
+	}
 	editor->d_func()->setEditorWidget(saEditor);
 	return editor;
 }
@@ -190,7 +195,12 @@ EditorWindow *EditorWindow::editVmuFile(VmuFile *vmuFile)
 	// Create an SAEditor.
 	EditorWindow *editor = new EditorWindow();
 	SAEditor *saEditor = new SAEditor();
-	saEditor->setFile(vmuFile);
+	int ret = saEditor->setFile(vmuFile);
+	if (ret != 0) {
+		// Editor does not support this file.
+		delete saEditor;
+		return 0;
+	}
 	editor->d_func()->setEditorWidget(saEditor);
 	return editor;
 }
