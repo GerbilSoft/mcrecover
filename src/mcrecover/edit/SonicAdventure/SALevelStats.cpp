@@ -254,8 +254,6 @@ void SALevelStatsPrivate::initLevels(void)
 			levels[i].hboxBestTime->addWidget(levels[i].spnBestTime[j]);
 		}
 
-		// TODO: Big has weights, not times.
-
 		// Most rings.
 		levels[i].spnMostRings = new QSpinBox(q);
 		levels[i].spnMostRings->hide();
