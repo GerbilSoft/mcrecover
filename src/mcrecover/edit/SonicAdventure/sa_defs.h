@@ -136,6 +136,49 @@ typedef union PACKED _sa_rings {
 } sa_rings;
 #pragma pack()
 
+/**
+ * Last character / menu voice.
+ * Voice is indicated by V*.
+ */
+typedef enum {
+	SA_LAST_CHAR_SONIC		= 0,
+	SA_LAST_CHAR_SONIC_VDEFAULT	= 1,
+	SA_LAST_CHAR_TAILS		= 2,
+	SA_LAST_CHAR_KNUCKLES		= 3,
+	SA_LAST_CHAR_SONIC_VDEFAULT2	= 4,
+	SA_LAST_CHAR_AMY		= 5,
+	SA_LAST_CHAR_GAMMA		= 6,
+	SA_LAST_CHAR_BIG		= 7,
+	SA_LAST_CHAR_SONIC_VEGGMAN	= 8,
+	SA_LAST_CHAR_SONIC_VTIKAL	= 9,
+} sa_last_char;
+
+// Adventure Mode data.
+#define SA_ADVENTURE_MODE_LEN 96
+#pragma pack(1)
+typedef struct PACKED _sa_adventure_mode {
+	// One set per character.
+	struct {
+		uint8_t time_of_day;
+		uint8_t unused;
+		uint16_t unknown1;
+		uint16_t unknown2;
+		uint16_t start_entrance;
+		uint16_t start_level_and_act;
+		uint16_t unknown3;
+	} chr[8];
+} sa_adventure_mode;
+#pragma pack()
+
+// Level clear count.
+#define SA_LEVEL_CLEAR_COUNT_LEN 344
+#pragma pack(1)
+typedef struct PACKED _sa_level_clear_count {
+	// All levels are available for all characters.
+	uint8_t clear[8][43];
+} sa_level_clear_count;
+#pragma pack()
+
 // Save slot.
 // GCN files have a single slot.
 // Dreamcast files have three slots.
@@ -146,17 +189,17 @@ typedef struct PACKED _sa_save_slot
 	uint32_t crc;		// CRC (only low 16 bits are used)
 	uint32_t playTime;	// Play time (1/60ths of a second)
 
-	sa_scores scores;	// Best scores.
-	sa_times times;		// Best times. (Does NOT include Big.)
-	sa_weights weights;	// Best weights. (Big only)
-	uint8_t reserved1[16];	// unknown
-	sa_rings rings;		// Best rings.
+	sa_scores scores;	// [0x008] Best scores.
+	sa_times times;		// [0x088] Best times. (Does NOT include Big.)
+	sa_weights weights;	// [0x0DC] Best weights. (Big only)
+	uint8_t reserved1[16];	// [0x0F4] unknown
+	sa_rings rings;		// [0x104] Best rings.
 
-	// Mini-Game: Best scores.
+	// [0x144] Mini-Game: Best scores.
 	// Three scores per mini-game.
 	uint32_t miniGameScores[9][3];
 
-	// Mini-Game: Best times. (Twinkle Circuit)
+	// [0x1B0] Mini-Game: Best times. (Twinkle Circuit)
 	// Five times are stored per character:
 	// - Best Time 1
 	// - Best Time 2
@@ -175,7 +218,7 @@ typedef struct PACKED _sa_save_slot
 		} twinkleCircuitTimes;
 	};
 
-	// Mini-Game: Best times. (Boss)
+	// [0x20A] Mini-Game: Best times. (Boss)
 	// Thre times are stored per character.
 	union {
 		sa_time_code bossBestTimes[18];
@@ -189,17 +232,32 @@ typedef struct PACKED _sa_save_slot
 		} bossTimes;
 	};
 
-	// Emblems.
+	// [0x240] Emblems. (bitfield)
 	uint8_t emblems[17];
 
-	// Options: Choose the feature you want to edit.
+	// [0x251] Options: Choose the feature you want to edit.
 	uint8_t options;
 
-	// Lives. (1 entry per character)
-	uint8_t lives[6];
+	// [0x252] Lives. (1 entry per character)
+	// Order: Sonic, Tails, Knuckles, Amy, Gamma, Big, Super Sonic
+	uint8_t lives[7];
 
-	// unknown
-	uint8_t reserved3[584];
+	uint8_t last_char;	// [0x259] Last character / menu voice.
+	uint8_t rumble;		// [0x25A] Rumble feature
+	uint8_t reserved3;	// [0x25B] unknown
+	uint16_t last_level;	// [0x25C] Last completed level. (100 == none)
+	uint8_t reserved4[2];	// [0x25E] unknown
+
+	uint8_t events[64];	// [0x260] Event flags. (bitfield)
+	uint8_t npc_flags[64];	// [0x2A0] NPC flags. (bitfield)
+
+	uint8_t reserved5[8];	// [0x2E0] unknown
+
+	// [0x2E8] Adventure mode data. (one per character)
+	sa_adventure_mode adventure_mode;
+
+	// [0x348] Level clear count.
+	sa_level_clear_count clear_count;
 } sa_save_slot;
 #pragma pack()
 	
