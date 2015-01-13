@@ -33,7 +33,7 @@
 
 /** EditorWindowPrivate **/
 
-#include "ui_Editor.h"
+#include "ui_EditorWindow.h"
 class EditorWindowPrivate
 {
 	public:
@@ -46,7 +46,7 @@ class EditorWindowPrivate
 		Q_DISABLE_COPY(EditorWindowPrivate)
 
 	public:
-		Ui::Editor ui;
+		Ui::EditorWindow ui;
 
 		// Editor widget.
 		// TODO: EditorWidget base class?
