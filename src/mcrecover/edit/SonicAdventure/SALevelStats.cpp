@@ -187,16 +187,16 @@ SALevelStatsPrivate::~SALevelStatsPrivate()
 	// TODO: Is this needed?
 	// The level widgets are owned by this widget, so they
 	// should be automatically deleted...
-	for (int i = 0; i < MAX_LEVELS; i++) {
+	for (int level = 0; level < MAX_LEVELS; level++) {
 		for (int j = 0; j < 3; j++) {
-			delete levels[i].chkEmblems[j];
-			delete levels[i].spnBestTime[j];
+			delete levels[level].chkEmblems[j];
+			delete levels[level].spnBestTime[j];
 		}
-		delete levels[i].lblLevel;
-		delete levels[i].spnHighScore;
-		delete levels[i].hboxEmblems;
-		delete levels[i].hboxBestTime;
-		delete levels[i].spnMostRings;
+		delete levels[level].lblLevel;
+		delete levels[level].spnHighScore;
+		delete levels[level].hboxEmblems;
+		delete levels[level].hboxBestTime;
+		delete levels[level].spnMostRings;
 	}
 }
 
@@ -220,52 +220,52 @@ void SALevelStatsPrivate::initLevels(void)
 {
 	// Create widgets for all levels, and hide them initially.
 	Q_Q(SALevelStats);
-	for (int i = 0; i < MAX_LEVELS; i++) {
+	for (int level = 0; level < MAX_LEVELS; level++) {
 		// Level name.
-		levels[i].lblLevel = new QLabel(q);
+		levels[level].lblLevel = new QLabel(q);
 
 		// High score.
-		levels[i].spnHighScore = new QSpinBox(q);
-		levels[i].spnHighScore->hide();
+		levels[level].spnHighScore = new QSpinBox(q);
+		levels[level].spnHighScore->hide();
 		// TODO: Actual maximum?
-		levels[i].spnHighScore->setRange(0, 0x7FFFFFFF);
-		levels[i].spnHighScore->setSingleStep(1);
+		levels[level].spnHighScore->setRange(0, 0x7FFFFFFF);
+		levels[level].spnHighScore->setSingleStep(1);
 
 		// Emblems.
 		// FIXME: Possible memory leak? (does hboxEmblems get deleted?)
-		levels[i].hboxEmblems = new QHBoxLayout();
-		levels[i].hboxEmblems->setContentsMargins(0, 0, 0, 0);
+		levels[level].hboxEmblems = new QHBoxLayout();
+		levels[level].hboxEmblems->setContentsMargins(0, 0, 0, 0);
 		for (int j = 0; j < 3; j++) {
-			levels[i].chkEmblems[j] = new QCheckBox(q);
-			levels[i].chkEmblems[j]->hide();
-			levels[i].hboxEmblems->addWidget(levels[i].chkEmblems[j]);
+			levels[level].chkEmblems[j] = new QCheckBox(q);
+			levels[level].chkEmblems[j]->hide();
+			levels[level].hboxEmblems->addWidget(levels[level].chkEmblems[j]);
 			// FIXME: Improve alignment.
-			levels[i].hboxEmblems->setAlignment(levels[i].chkEmblems[j], Qt::AlignLeft);
+			levels[level].hboxEmblems->setAlignment(levels[level].chkEmblems[j], Qt::AlignLeft);
 		}
 
 		// Best time.
 		// FIXME: Possible memory leak? (does hboxBestTime get deleted?)
-		levels[i].hboxBestTime = new QHBoxLayout();
-		levels[i].hboxBestTime->setContentsMargins(0, 0, 0, 0);
+		levels[level].hboxBestTime = new QHBoxLayout();
+		levels[level].hboxBestTime->setContentsMargins(0, 0, 0, 0);
 		for (int j = 0; j < 3; j++) {
-			levels[i].spnBestTime[j] = new QSpinBox(q);
-			levels[i].spnBestTime[j]->hide();
+			levels[level].spnBestTime[j] = new QSpinBox(q);
+			levels[level].spnBestTime[j]->hide();
 			// Other parameters are set in switchLevels().
-			levels[i].hboxBestTime->addWidget(levels[i].spnBestTime[j]);
+			levels[level].hboxBestTime->addWidget(levels[level].spnBestTime[j]);
 		}
 
 		// Most rings.
-		levels[i].spnMostRings = new QSpinBox(q);
-		levels[i].spnMostRings->hide();
+		levels[level].spnMostRings = new QSpinBox(q);
+		levels[level].spnMostRings->hide();
 		// TODO: Actual maximum?
-		levels[i].spnMostRings->setRange(0, 0x7FFF);
-		levels[i].spnMostRings->setSingleStep(1);
+		levels[level].spnMostRings->setRange(0, 0x7FFF);
+		levels[level].spnMostRings->setSingleStep(1);
 
-		ui.gridLevels->addWidget(levels[i].lblLevel,     i+1, 0, Qt::AlignTop);
-		ui.gridLevels->addWidget(levels[i].spnHighScore, i+1, 1, Qt::AlignTop);
-		ui.gridLevels->addLayout(levels[i].hboxEmblems,  i+1, 2, Qt::AlignTop);
-		ui.gridLevels->addLayout(levels[i].hboxBestTime, i+1, 3, Qt::AlignTop);
-		ui.gridLevels->addWidget(levels[i].spnMostRings, i+1, 4, Qt::AlignTop);
+		ui.gridLevels->addWidget(levels[level].lblLevel,     level+1, 0, Qt::AlignTop);
+		ui.gridLevels->addWidget(levels[level].spnHighScore, level+1, 1, Qt::AlignTop);
+		ui.gridLevels->addLayout(levels[level].hboxEmblems,  level+1, 2, Qt::AlignTop);
+		ui.gridLevels->addLayout(levels[level].hboxBestTime, level+1, 3, Qt::AlignTop);
+		ui.gridLevels->addWidget(levels[level].spnMostRings, level+1, 4, Qt::AlignTop);
 	}
 }
 
@@ -339,32 +339,32 @@ void SALevelStatsPrivate::updateDisplay(void)
 	if (character < 0 || character > 5)
 		return;
 
-	for (int i = 0; i < MAX_LEVELS; i++) {
-		const int8_t saveIdx = saveMap[character][i];
+	for (int level = 0; level < MAX_LEVELS; level++) {
+		const int8_t saveIdx = saveMap[character][level];
 		if (saveIdx < 0 || saveIdx >= NUM_ELEMENTS(scores.all))
 			break;
 
 		// Score
-		levels[i].spnHighScore->setValue(scores.all[saveIdx]);
+		levels[level].spnHighScore->setValue(scores.all[saveIdx]);
 
 		// Time / Weight
 		if (character != 5) {
 			// Time (not Big)
-			levels[i].spnBestTime[0]->setValue(times.all[saveIdx].minutes);
-			levels[i].spnBestTime[1]->setValue(times.all[saveIdx].seconds);
+			levels[level].spnBestTime[0]->setValue(times.all[saveIdx].minutes);
+			levels[level].spnBestTime[1]->setValue(times.all[saveIdx].seconds);
 			// FIXME: Stored as 1/60th seconds; convert to 1/100th.
-			levels[i].spnBestTime[2]->setValue(times.all[saveIdx].frames);
+			levels[level].spnBestTime[2]->setValue(times.all[saveIdx].frames);
 		} else {
 			// Weight (Big)
 			const int8_t bigSaveIdx = (saveIdx - 28);
 			for (int j = 0; j < 3; j++) {
 				const int weight = (weights.levels[bigSaveIdx][j] * 10);
-				levels[i].spnBestTime[j]->setValue(weight);
+				levels[level].spnBestTime[j]->setValue(weight);
 			}
 		}
 
 		// Rings
-		levels[i].spnMostRings->setValue(rings.all[saveIdx]);
+		levels[level].spnMostRings->setValue(rings.all[saveIdx]);
 
 		/**
 		 * Level emblems:
@@ -372,9 +372,9 @@ void SALevelStatsPrivate::updateDisplay(void)
 		 * - B: saveIdx + 32
 		 * - C: saveIdx + 64
 		 */
-		levels[i].chkEmblems[0]->setChecked(emblems[saveIdx+0]);
-		levels[i].chkEmblems[1]->setChecked(emblems[saveIdx+32]);
-		levels[i].chkEmblems[2]->setChecked(emblems[saveIdx+64]);
+		levels[level].chkEmblems[0]->setChecked(emblems[saveIdx+0]);
+		levels[level].chkEmblems[1]->setChecked(emblems[saveIdx+32]);
+		levels[level].chkEmblems[2]->setChecked(emblems[saveIdx+64]);
 	}
 }
 
