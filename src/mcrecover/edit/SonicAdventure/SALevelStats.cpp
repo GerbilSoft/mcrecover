@@ -29,7 +29,6 @@
 
 // Sonic Adventure save file definitions.
 #include "sa_defs.h"
-#include "util/byteswap.h"
 
 // TODO: Put this in a common header file somewhere.
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
