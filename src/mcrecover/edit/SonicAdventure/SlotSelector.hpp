@@ -83,7 +83,7 @@ class SlotSelector : public QWidget
 		void setSlot(int slot);
 
 	protected slots:
-		/** Widget slots. **/
+		/** UI widget slots. **/
 
 		/**
 		 * SignalMapper mapped() signal for slot buttons.

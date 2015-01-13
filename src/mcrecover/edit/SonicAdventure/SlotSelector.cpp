@@ -234,7 +234,7 @@ void SlotSelector::setSlot(int slot)
 	emit slotChanged(slot);
 }
 
-/** Widget slots. **/
+/** UI widget slots. **/
 
 /**
  * SignalMapper mapped() signal for slot buttons.
