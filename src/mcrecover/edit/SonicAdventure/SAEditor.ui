@@ -37,7 +37,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -53,9 +53,50 @@
       <attribute name="title">
        <string>&amp;Action Stages</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="vboxActionStages">
        <item>
         <widget class="SALevelStats" name="saLevelStats" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabLevelClearCount">
+      <attribute name="title">
+       <string>Level &amp;Clear Count</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="vboxLevelClearCount">
+       <item>
+        <widget class="QScrollArea" name="scrlLevelClearCount">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+         <widget class="QWidget" name="scrlLevelClearCountContent">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>626</width>
+            <height>420</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="vboxLevelClearCountContent">
+           <property name="margin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="SALevelClearCount" name="saLevelClearCount" native="true"/>
+           </item>
+          </layout>
+         </widget>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -74,6 +115,12 @@
    <class>SlotSelector</class>
    <extends>QWidget</extends>
    <header>edit/SonicAdventure/SlotSelector.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SALevelClearCount</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/SALevelClearCount.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

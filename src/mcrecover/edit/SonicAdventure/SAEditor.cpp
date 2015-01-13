@@ -136,6 +136,7 @@ void SAEditorPrivate::updateDisplay(void)
 	// Display the data.
 	sa_save_slot *sa_save = data.at(slot);
 	ui.saLevelStats->load(sa_save);
+	ui.saLevelClearCount->load(sa_save);
 }
 
 /** SAEditor **/
@@ -150,6 +151,12 @@ SAEditor::SAEditor(QWidget *parent)
 {
 	Q_D(SAEditor);
 	d->ui.setupUi(this);
+
+	// Attempt to fix the scroll area's minimum width.
+	// TODO: On theme change also?
+	int w = d->ui.saLevelClearCount->sizeHint().width();
+	w += qApp->style()->pixelMetric(QStyle::PM_ScrollBarExtent);
+	d->ui.scrlLevelClearCount->setMinimumWidth(w);
 }
 
 /**
