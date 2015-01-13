@@ -101,12 +101,16 @@ void SAEditorPrivate::clearData(void)
  */
 void SAEditorPrivate::updateDisplay(void)
 {
+	const int slotCount = data.size();
 	if (slot < 0)
 		slot = 0;
-	if (slot >= data.size())
-		slot = (data.size() - 1);
+	if (slot >= slotCount)
+		slot = (slotCount - 1);
 
-	if (slot < 0 || slot >= data.size()) {
+	// Show the slot selector if we have more than one slot.
+	ui.slotSelector->setVisible(slotCount > 1);
+
+	if (slot < 0 || slot >= slotCount) {
 		// Invalid slot number.
 		ui.saLevelStats->clear();
 		return;
@@ -254,8 +258,35 @@ int SAEditor::setFile(File *file)
 
 end:
 	// Update the display.
-	// TODO: Slot selection.
-	d->slot = 0;
+	// TODO: Connect slotCountChanged()?
+	const int slotCount = d->data.size();
+	d->ui.slotSelector->setSlotCount(slotCount);
+	d->ui.slotSelector->setSlot(0);
 	d->updateDisplay();
 	return ret;
+}
+
+/** Widget slots. **/
+
+/**
+ * Slot selector's slot has changed.
+ * @param slot New slot.
+ */
+void SAEditor::on_slotSelector_slotChanged(int slot)
+{
+	Q_D(SAEditor);
+	const int slotCount = d->data.size();
+	if (slot < 0)
+		slot = 0;
+	if (slot >= slotCount)
+		slot = (slotCount - 1);
+
+	if (slot < 0 || slot >= slotCount) {
+		// Invalid slot number.
+		return;
+	}
+
+	// TODO: Save data for the current slot.
+	d->slot = slot;
+	d->updateDisplay();
 }

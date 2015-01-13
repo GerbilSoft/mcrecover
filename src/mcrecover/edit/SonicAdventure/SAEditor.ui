@@ -15,6 +15,26 @@
     <number>0</number>
    </property>
    <item>
+    <layout class="QHBoxLayout" name="hboxControls">
+     <item>
+      <widget class="SlotSelector" name="slotSelector" native="true"/>
+     </item>
+     <item>
+      <spacer name="hspcControls">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>2</number>
@@ -48,6 +68,12 @@
    <class>SALevelStats</class>
    <extends>QWidget</extends>
    <header>edit/SonicAdventure/SALevelStats.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SlotSelector</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/SlotSelector.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -157,6 +157,7 @@ SET(mcrecover_EDIT_SRCS
 	edit/EditorWindow.cpp
 	edit/SonicAdventure/SAEditor.cpp
 	edit/SonicAdventure/SALevelStats.cpp
+	edit/SonicAdventure/SlotSelector.cpp
 	)
 
 # Shh... it's a secret to everybody.
@@ -219,6 +220,7 @@ SET(mcrecover_EDIT_MOC_H
 	edit/EditorWindow.hpp
 	edit/SonicAdventure/SAEditor.hpp
 	edit/SonicAdventure/SALevelStats.hpp
+	edit/SonicAdventure/SlotSelector.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H

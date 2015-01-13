@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SAEditor.hpp: Sonic Adventure - save file editor.           *
+ * SlotSelector.hpp: Slot selection widget.                                *
  *                                                                         *
  * Copyright (c) 2015 by David Korth.                                      *
  *                                                                         *
@@ -19,59 +19,77 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__
-#define __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__
+#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SLOTSELECTOR_HPP__
+#define __MCRECOVER_EDIT_SONICADVENTURE_SLOTSELECTOR_HPP__
 
-#include <QtGui/QDialog>
+#include <QtGui/QWidget>
 
-class File;
-
-class SAEditorPrivate;
-class SAEditor : public QWidget
+class SlotSelectorPrivate;
+class SlotSelector : public QWidget
 {
 	Q_OBJECT
 
-	Q_PROPERTY(File* file READ file WRITE setFile)
+	Q_PROPERTY(int slotCount READ slotCount WRITE setSlotCount NOTIFY slotCountChanged)
+	Q_PROPERTY(int slot READ slot WRITE setSlot NOTIFY slotChanged)
 
 	public:
-		SAEditor(QWidget *parent = nullptr);
-		~SAEditor();
+		SlotSelector(QWidget *parent = 0);
+		~SlotSelector();
 
 	protected:
-		SAEditorPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(SAEditor)
+		SlotSelectorPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(SlotSelector)
 	private:
-		Q_DISABLE_COPY(SAEditor)
+		Q_DISABLE_COPY(SlotSelector)
 
-	protected:
-		// State change event. (Used for switching the UI language at runtime.)
-		void changeEvent(QEvent *event);
+	signals:
+		/**
+		 * Slot count has changed.
+		 * @param slotCount New slot count.
+		 */
+		void slotCountChanged(int slotCount);
+
+		/**
+		 * Selected slot has changed.
+		 * @param slot New slot.
+		 */
+		void slotChanged(int slot);
 
 	public:
 		/** Public functions. **/
 
 		/**
-		 * Get the file currently being edited.
-		 * @return File being edited, or nullptr if none.
+		 * Get the number of slots.
+		 * @return Number of slots.
 		 */
-		File *file(void) const;
+		int slotCount(void) const;
 
 		/**
-		 * Set the File to edit.
-		 * @param file File to edit.
-		 * If the file isn't valid, it won't be set;
-		 * check file() afterwards to verify.
+		 * Set the number of slots.
+		 * @param slotCount Number of slots.
 		 */
-		int setFile(File *file);
+		void setSlotCount(int slotCount);
+
+		/**
+		 * Get the current slot.
+		 * @return Current slot.
+		 */
+		int slot(void) const;
+
+		/**
+		 * Set the current slot.
+		 * @param slot Current slot.
+		 */
+		void setSlot(int slot);
 
 	protected slots:
 		/** Widget slots. **/
 
 		/**
-		 * Slot selector's slot has changed.
+		 * SignalMapper mapped() signal for slot buttons.
 		 * @param slot New slot.
 		 */
-		void on_slotSelector_slotChanged(int slot);
+		void on_signalMapper_mapped(int slot);
 };
 
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__ */
+#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SLOTSELECTOR_HPP__ */
