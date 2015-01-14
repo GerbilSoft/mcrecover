@@ -377,11 +377,17 @@ QString AboutDialogPrivate::GetLibraries(void)
 	if (pcre_space > 0)
 		pcreVersion.resize(pcre_space);
 	pcreVersion.prepend(QLatin1String("PCRE "));
+	// Indicate 8-bit or 16-bit.
+#ifdef HAVE_PCRE16
+	pcreVersion.append(QLatin1String(" (UTF-16)"));
+#else /* !HAVE_PCRE16 */
+	pcreVersion.append(QLatin1String(" (UTF-8)"));
+#endif /* HAVE_PCRE16 */
 
 	// TODO: USE_INTERNAL_PCRE?
 #ifdef PCRE_STATIC
 	sLibraries += sIntCopyOf.arg(pcreVersion) + QChar(L'\n');
-#else
+#else /* !PCRE_STATIC */
 	// TODO: Handle PCRE_PRERELEASE. (It's defined, but empty!)
 	QString pcreVersionCompiled = QLatin1String("PCRE %1.%2");
 	pcreVersionCompiled = pcreVersionCompiled
@@ -408,7 +414,7 @@ QString AboutDialogPrivate::GetLibraries(void)
 
 #ifdef USE_INTERNAL_ZLIB
 	sLibraries += sIntCopyOf.arg(sZlibVersion) + QChar(L'\n');
-#else
+#else /* !USE_INTERNAL_ZLIB */
 	QString sZlibVersionCompiled = QLatin1String("zlib " ZLIB_VERSION);
 	sLibraries += sCompiledWith.arg(sZlibVersionCompiled) + QChar(L'\n');
 	sLibraries += sUsingDll.arg(sZlibVersion) + QChar(L'\n');
@@ -438,7 +444,7 @@ QString AboutDialogPrivate::GetLibraries(void)
 
 #ifdef USE_INTERNAL_PNG
 	sLibraries += sIntCopyOf.arg(pngVersion);
-#else
+#else /* !USE_INTERNAL_PNG */
 	QString pngVersionCompiled = QLatin1String("libpng " PNG_LIBPNG_VER_STRING);
 	pngVersionCompiled += pngAPngSuffix;
 	sLibraries += sCompiledWith.arg(pngVersionCompiled) + QChar(L'\n');
