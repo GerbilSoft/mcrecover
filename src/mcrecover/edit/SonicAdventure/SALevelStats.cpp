@@ -228,6 +228,12 @@ void SALevelStatsPrivate::initLevels(void)
 		"}\n"
 		"QCheckBox::indicator:unchecked {\n"
 		"\timage: url(:/sonic/noemblem.png);\n"
+		"}\n"
+		"QCheckBox::indicator:checked:hover {\n"
+		"\timage: url(:/sonic/emblem.highlight.png);\n"
+		"}\n"
+		"QCheckBox::indicator:unchecked:hover {\n"
+		"\timage: url(:/sonic/noemblem.highlight.png);\n"
 		"}\n";
 	QString qsCssCheckBox = QLatin1String(cssCheckBox);
 

@@ -1,6 +1,8 @@
 <RCC>
   <qresource prefix="sonic">
     <file>emblem.png</file>
+    <file>emblem.highlight.png</file>
     <file>noemblem.png</file>
+    <file>noemblem.highlight.png</file>
   </qresource>
 </RCC>
