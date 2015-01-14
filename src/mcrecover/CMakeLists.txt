@@ -306,9 +306,15 @@ TARGET_LINK_LIBRARIES(mcrecover gctools)
 SET(MCRECOVER_EXTLIB
 	${PNG_LIBRARY}	# Required for libpng info in AboutDialog.
 	${ZLIB_LIBRARY}	# Required for zlib info in AboutDialog.
-	${PCRE_PCRE_LIBRARY}
 	)
 TARGET_LINK_LIBRARIES(mcrecover ${MCRECOVER_EXTLIB})
+
+# PCRE
+IF(HAVE_PCRE16)
+	TARGET_LINK_LIBRARIES(mcrecover ${PCRE_PCRE16_LIBRARY})
+ELSE(HAVE_PCRE16)
+	TARGET_LINK_LIBRARIES(mcrecover ${PCRE_PCRE_LIBRARY})
+ENDIF(HAVE_PCRE16)
 
 # Qt libraries
 # NOTE: Libraries have to be linked in reverse order.

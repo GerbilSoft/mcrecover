@@ -41,6 +41,10 @@
 // Third-party libraries.
 #include <pcre.h>
 #include "PcreRegex.hpp"
+// TODO: Move pcre_version() to PcreRegex() as a wrapper?
+#ifdef HAVE_PCRE16
+#define pcre_version() pcre16_version()
+#endif
 
 #ifdef HAVE_ZLIB
 #include <zlib.h>
@@ -387,8 +391,9 @@ QString AboutDialogPrivate::GetLibraries(void)
 #endif /* PCRE_STATIC */
 	// Check PCRE properties.
 	// TODO: Show all PCRE properties as "flags".
-	if (!PcreRegex::PCRE_has_UTF8())
-		sLibraries += AboutDialog::tr("WARNING: PCRE does not have UTF-8 support.") + QChar(L'\n');
+	if (!PcreRegex::PCRE_has_Unicode())
+		sLibraries += AboutDialog::tr("WARNING: PCRE does not have Unicode support.") + QChar(L'\n');
+	// TODO: Don't show this warning if we already displayed the Unicode warning?
 	if (!PcreRegex::PCRE_has_UCP())
 		sLibraries += AboutDialog::tr("WARNING: PCRE does not have Unicode character properties support.") + QChar(L'\n');
 	// PCRE copyright and license.

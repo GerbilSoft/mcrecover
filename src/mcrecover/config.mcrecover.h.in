@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * config.mcrecover.h.in: GCN MemCard Recover configuration. (source file) *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -52,6 +52,9 @@
 
 /* Define to 1 if we're using our own zlib. */
 #cmakedefine USE_INTERNAL_ZLIB 1
+
+/* Define to 1 if we have pcre16. */
+#cmakedefine HAVE_PCRE16 1
 
 /* Data directory. */
 #define MCRECOVER_DATA_DIRECTORY "@MCRECOVER_DATA_DIRECTORY@"

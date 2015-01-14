@@ -22,9 +22,10 @@
 #ifndef __MCRECOVER_PCREREGEX_HPP__
 #define __MCRECOVER_PCREREGEX_HPP__
 
-// libpcre
-struct real_pcre;
-typedef struct real_pcre pcre;
+// FIXME: Split config, or do we even want to include this here?
+// Maybe we should just allow automatic conversion even though
+// it reduces performance?
+#include "config.mcrecover.h"
 
 // Qt includes.
 #include <QtCore/QByteArray>
@@ -58,6 +59,7 @@ class PcreRegex
 		bool isRegexSet(void) const
 			{ return (m_regex != nullptr); }
 
+#if !defined(HAVE_PCRE16)
 		/**
 		 * Execute a regular expression.
 		 * @param subjectUtf8	[in] Subject to match against, encoded in UTF-8.
@@ -65,19 +67,32 @@ class PcreRegex
 		 * @return Number of substring matches on success, or PCRE_ERROR_* value (negative number) on error.
 		 */
 		int exec(const QByteArray &subjectUtf8, QVector<QString> *outVector = nullptr) const;
+#endif /* !HAVE_PCRE16 */
+
+#if defined(HAVE_PCRE16)
+		/**
+		 * Execute a regular expression.
+		 * @param subjectUtf16	[in] Subject to match against, encoded in UTF-16.
+		 * @param outVector	[out, opt] Output vector for substring matches.
+		 * @return Number of substring matches on success, or PCRE_ERROR_* value (negative number) on error.
+		 */
+		int exec(const QString &subjectUtf16, QVector<QString> *outVector = nullptr) const;
+#endif /* HAVE_PCRE16 */
 
 	protected:
 		// Compiled PCRE regular expression.
-		pcre *m_regex;
+		// NOTE: void* - may be either pcre* or pcre16*.
+		void *m_regex;
 
 	public:
 		/** PCRE feature queries. **/
 
 		/**
-		 * Does PCRE support UTF-8?
-		 * @return True if UTF is supported; false if not.
+		 * Does PCRE support Unicode?
+		 * (UTF-8 for pcre; UTF-16 for pcre16)
+		 * @return True if Unicode is supported; false if not.
 		 */
-		static bool PCRE_has_UTF8(void);
+		static bool PCRE_has_Unicode(void);
 
 		/**
 		 * Does PCRE support Unicode character properties?
@@ -90,18 +105,6 @@ class PcreRegex
 		 * @return True if JIT is supported; false if not.
 		 */
 		static bool PCRE_has_JIT(void);
-
-		/**
-		 * Does PCRE support UTF-16?
-		 * @return True if UTF-16 is supported; false if not.
-		 */
-		static bool PCRE_has_UTF16(void);
-
-		/**
-		 * Does PCRE support UTF-32?
-		 * @return True if UTF-32 is supported; false if not.
-		 */
-		static bool PCRE_has_UTF32(void);
 };
 
 #endif /* __MCRECOVER_PCREREGEX_HPP__ */

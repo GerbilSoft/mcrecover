@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * PcreRegex.cpp: PCRE regular expression wrapper class.                   *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -18,6 +18,9 @@
  * with this program; if not, write to the Free Software Foundation, Inc., *
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
+
+// TODO: Split up the config file to reduce rebuilds?
+#include "config.mcrecover.h"
 
 #include "PcreRegex.hpp"
 #include "util/array_size.h"
@@ -42,6 +45,15 @@
 #endif
 #ifndef PCRE_CONFIG_UTF32
 #define PCRE_CONFIG_UTF32 12
+#endif
+
+// Regex type.
+#ifdef HAVE_PCRE16
+#define REGEX_CAST(x) ((pcre16*)x)
+#define pcre_config(what, where) pcre16_config(what, where)
+#define pcre_free(ptr) pcre16_free(ptr)
+#else /* !HAVE_PCRE16 */
+#define REGEX_CAST(x) ((pcre*)x)
 #endif
 
 PcreRegex::PcreRegex()
@@ -80,20 +92,30 @@ int PcreRegex::setRegex(const QString &regex, int *errOffset)
 		return -1; // NOTE: Not an actual pcre_compile2() error code...
 	}
 
-	// Convert the regex to UTF-8.
-	QByteArray regex_utf8 = regex.toUtf8();
-
-	// Attempt to compile the regex.
 	const char *error;
 	int erroffset;
 	int errorcode;
-	m_regex = pcre_compile2(
+
+#ifdef HAVE_PCRE16
+	// pcre16: Use the UTF-16 as-is.
+	m_regex = (void*)pcre16_compile2(
+		regex.utf16(),		// pattern
+		PCRE_UTF16,		// options
+		&errorcode,		// error code
+		&error,			// error message
+		&erroffset,		// error offset
+		nullptr);		// use default character tables
+#else
+	// pcre: Convert the regex to UTF-8.
+	QByteArray regex_utf8 = regex.toUtf8();
+	m_regex = (void*)pcre_compile2(
 		regex_utf8.constData(),	// pattern
 		PCRE_UTF8,		// options
 		&errorcode,		// error code
 		&error,			// error message
 		&erroffset,		// error offset
 		nullptr);		// use default character tables
+#endif
 
 	if (!m_regex) {
 		// Regex compilation failed.
@@ -106,6 +128,11 @@ int PcreRegex::setRegex(const QString &regex, int *errOffset)
 	return 0;
 }
 
+// NOTE: When compiling with pcre16, the UTF-8 function is unavailable.
+// Similarly, when compiling with regular pcre, the UTF-16 function is unavailable.
+// This improves performance, since converting between encodings adds overhead.
+
+#if !defined(HAVE_PCRE16)
 /**
  * Execute a regular expression.
  * @param subjectUtf8	[in] Subject to match against, encoded in UTF-8.
@@ -123,7 +150,7 @@ int PcreRegex::exec(const QByteArray &subjectUtf8, QVector<QString> *outVector) 
 	int ovector[MAX_SUBSTRINGS*3];
 
 	int rc = pcre_exec(
-		m_regex,			// compiled regex
+		REGEX_CAST(m_regex),		// compiled regex
 		nullptr,			// pattern not studied
 		subjectUtf8.constData(),	// subject string
 		subjectUtf8.size(),		// size of subject string
@@ -165,17 +192,88 @@ int PcreRegex::exec(const QByteArray &subjectUtf8, QVector<QString> *outVector) 
 
 	return rc;
 }
+#endif /* !HAVE_PCRE16 */
+
+#if defined(HAVE_PCRE16)
+/**
+ * Execute a regular expression.
+ * @param subjectUtf16	[in] Subject to match against, encoded in UTF-16.
+ * @param outVector	[out, opt] Output vector for substring matches.
+ * @return Number of substring matches on success, or PCRE_ERROR_* value (negative number) on error.
+ */
+int PcreRegex::exec(const QString &subjectUtf16, QVector<QString> *outVector) const
+{
+	if (!m_regex)
+		return PCRE_ERROR_NOMATCH;
+
+	// Output vector.
+	// Supports up to 20 substring matches.
+	static const int MAX_SUBSTRINGS = 20;
+	int ovector[MAX_SUBSTRINGS*3];
+
+	int rc = pcre16_exec(
+		REGEX_CAST(m_regex),		// compiled regex
+		nullptr,			// pattern not studied
+		subjectUtf16.utf16(),		// subject string
+		subjectUtf16.size(),		// size of subject string
+		0,				// start at offset 0 in the subject
+		0,				// default options
+		ovector,			// vector of integers for substring information
+		ARRAY_SIZE(ovector));		// number of elements in ovector
+
+	if (rc >= 0 && outVector) {
+		// Substring matches found.
+		// Store the substrings in the specified QVector.
+		outVector->clear();
+
+		// Substring count.
+		// rc == 0: we ran out of space; use MAX_SUBSTRINGS.
+		// rc > 0: rc is number of substrings.
+		const int count = (rc > 0 ? rc : MAX_SUBSTRINGS);
+		outVector->reserve(count);
+
+		// Get the substrings.
+		// TODO: Verify that count == number of substrings?
+		// NOTE: PCRE_SPTR16 has a const qualifier.
+		PCRE_SPTR16 *listptr;
+		int rc_get = pcre16_get_substring_list(
+			subjectUtf16.utf16(),
+			ovector, count, &listptr);
+		if (rc_get != 0) {
+			// pcre16_get_substring_list() failed.
+			return rc_get;
+		}
+
+		// Convert the list of strings to QVector<QString>.
+		for (PCRE_SPTR16 *listiter = listptr;
+		     *listiter != nullptr; listiter++)
+		{
+			QString str = QString::fromUtf16(*listiter);
+			outVector->append(str);
+		}
+
+		pcre_free(listptr);
+	}
+
+	return rc;
+}
+#endif /* HAVE_PCRE16 */
 
 /** PCRE feature queries. **/
 
 /**
- * Does PCRE support UTF-8?
- * @return True if UTF-8 is supported; false if not.
+ * Does PCRE support Unicode?
+ * (UTF-8 for pcre; UTF-16 for pcre16)
+ * @return True if Unicode is supported; false if not.
  */
-bool PcreRegex::PCRE_has_UTF8(void)
+bool PcreRegex::PCRE_has_Unicode(void)
 {
 	int ret, val;
+#if !defined(HAVE_PCRE16)
 	ret = pcre_config(PCRE_CONFIG_UTF8, &val);
+#else
+	ret = pcre16_config(PCRE_CONFIG_UTF16, &val);
+#endif
 	return (ret == 0 && val == 1);
 }
 
@@ -198,27 +296,5 @@ bool PcreRegex::PCRE_has_JIT(void)
 {
 	int ret, val;
 	ret = pcre_config(PCRE_CONFIG_JIT, &val);
-	return (ret == 0 && val == 1);
-}
-
-/**
- * Does PCRE support UTF-16?
- * @return True if UTF-16 is supported; false if not.
- */
-bool PcreRegex::PCRE_has_UTF16(void)
-{
-	int ret, val;
-	ret = pcre_config(PCRE_CONFIG_UTF16, &val);
-	return (ret == 0 && val == 1);
-}
-
-/**
- * Does PCRE support UTF-32?
- * @return True if UTF-32 is supported; false if not.
- */
-bool PcreRegex::PCRE_has_UTF32(void)
-{
-	int ret, val;
-	ret = pcre_config(PCRE_CONFIG_UTF32, &val);
 	return (ret == 0 && val == 1);
 }

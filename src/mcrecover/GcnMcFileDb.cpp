@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnMcFileDb.cpp: GCN Memory Card File Database class.                   *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -112,10 +112,20 @@ class GcnMcFileDbPrivate
 		QTextCodec *const textCodecUS;
 
 		/**
+		 * Get a comment from the GCN comment block, converted to UTF-16.
+		 * @param buf Comment block.
+		 * @param siz Size of comment block. (usually 32)
+		 * @param textCodec QTextCodec. (If nullptr, use latin1.)
+		 * @return GCN comment block, converted to UTF-16.
+		 */
+		static QString GetGcnCommentUtf16(const char *buf, int siz, QTextCodec *textCodec);
+
+		/**
 		 * Get a comment from the GCN comment block, converted to UTF-8.
 		 * @param buf Comment block.
 		 * @param siz Size of comment block. (usually 32)
 		 * @param textCodec QTextCodec. (If nullptr, use latin1.)
+		 * @return GCN comment block, converted to UTF-8.
 		 */
 		static QByteArray GetGcnCommentUtf8(const char *buf, int siz, QTextCodec *textCodec);
 
@@ -746,21 +756,21 @@ void GcnMcFileDbPrivate::parseXml_file_variable(QXmlStreamReader& xml, GcnMcFile
 		gcnMcFileDef->varModifiers.insert(id, varModifierDef);
 }
 
-
 /**
- * Get a comment from the GCN comment block, converted to UTF-8.
+ * Get a comment from the GCN comment block, converted to UTF-16.
  * @param buf Comment block.
  * @param siz Size of comment block. (usually 32)
  * @param textCodec QTextCodec. (If nullptr, use latin1.)
+ * @return GCN comment block, converted to UTF-16.
  */
-QByteArray GcnMcFileDbPrivate::GetGcnCommentUtf8(const char *buf, int siz, QTextCodec *textCodec)
+QString GcnMcFileDbPrivate::GetGcnCommentUtf16(const char *buf, int siz, QTextCodec *textCodec)
 {
-	// Remove trialing NULL characters before converting to UTF-8.
+	// Remove trailing NULL characters before converting to UTF-8.
 	const char *p_nullChr = (const char*)memchr(buf, 0x00, siz);
 	if (p_nullChr) {
 		// Found a NULL character.
 		if (p_nullChr == buf)
-			return QByteArray();
+			return QString();
 		siz = (p_nullChr - buf);
 	}
 
@@ -776,10 +786,22 @@ QByteArray GcnMcFileDbPrivate::GetGcnCommentUtf8(const char *buf, int siz, QText
 		comment = textCodec->toUnicode(buf, siz).trimmed();
 	}
 
-	// Convert the comment to UTF-8.
-	return comment.toUtf8();
+	// Comment converted to UTF-16.
+	return comment;
 }
 
+/**
+ * Get a comment from the GCN comment block, converted to UTF-8.
+ * @param buf Comment block.
+ * @param siz Size of comment block. (usually 32)
+ * @param textCodec QTextCodec. (If nullptr, use latin1.)
+ * @return GCN comment block, converted to UTF-8.
+ */
+QByteArray GcnMcFileDbPrivate::GetGcnCommentUtf8(const char *buf, int siz, QTextCodec *textCodec)
+{
+	// This is now a wrapper around GetGcnCommentUtf16().
+	return GetGcnCommentUtf16(buf, siz, textCodec).toUtf8();
+}
 
 /**
  * Construct a SearchData entry.
@@ -915,10 +937,24 @@ QVector<SearchData> GcnMcFileDb::checkBlock(const void *buf, int siz) const
 
 		// Get the game description and file description.
 		const char *commentData = ((const char*)buf + address);
-		QByteArray gameDescUS = d->GetGcnCommentUtf8(commentData, 32, d->textCodecUS);
-		QByteArray gameDescJP = d->GetGcnCommentUtf8(commentData, 32, d->textCodecJP);
-		QByteArray fileDescUS = d->GetGcnCommentUtf8(commentData+32, 32, d->textCodecUS);
-		QByteArray fileDescJP = d->GetGcnCommentUtf8(commentData+32, 32, d->textCodecJP);
+		QString gameDescUS = d->GetGcnCommentUtf16(commentData, 32, d->textCodecUS);
+		QString gameDescJP = d->GetGcnCommentUtf16(commentData, 32, d->textCodecJP);
+		QString fileDescUS = d->GetGcnCommentUtf16(commentData+32, 32, d->textCodecUS);
+		QString fileDescJP = d->GetGcnCommentUtf16(commentData+32, 32, d->textCodecJP);
+#if !defined(HAVE_PCRE16)
+		// Convert to UTF-8.
+		QByteArray pcreGameDescUS = gameDescUS.toUtf8();
+		QByteArray pcreGameDescJP = gameDescJP.toUtf8();
+		QByteArray pcreFileDescUS = fileDescUS.toUtf8();
+		QByteArray pcreFileDescJP = fileDescJP.toUtf8();
+#else /* defined(HAVE_PCRE16) */
+		// Use the UTF-16 as-is.
+		// TODO: Better option than #define?
+		#define pcreGameDescUS gameDescUS
+		#define pcreGameDescJP gameDescJP
+		#define pcreFileDescUS fileDescUS
+		#define pcreFileDescJP fileDescJP
+#endif
 
 		QVector<GcnMcFileDef*> *vec = d->addr_file_defs.value(address);
 		foreach (const GcnMcFileDef *gcnMcFileDef, *vec) {
@@ -930,23 +966,23 @@ QVector<SearchData> GcnMcFileDb::checkBlock(const void *buf, int siz) const
 			QVector<QString> gameDescVars, fileDescVars;
 
 			// Check if the Game Description (US) matches.
-			rc = gcnMcFileDef->search.gameDesc_regex.exec(gameDescUS, &gameDescVars);
+			rc = gcnMcFileDef->search.gameDesc_regex.exec(pcreGameDescUS, &gameDescVars);
 			if (rc > 0) {
 				gameDescMatch = true;
 			} else {
 				// Check if the Game Description (JP) matches.
-				rc = gcnMcFileDef->search.gameDesc_regex.exec(gameDescJP, &gameDescVars);
+				rc = gcnMcFileDef->search.gameDesc_regex.exec(pcreGameDescJP, &gameDescVars);
 				if (rc > 0)
 					gameDescMatch = true;
 			}
 
 			// Check if the File Description (US) matches.
-			rc = gcnMcFileDef->search.fileDesc_regex.exec(fileDescUS, &fileDescVars);
+			rc = gcnMcFileDef->search.fileDesc_regex.exec(pcreFileDescUS, &fileDescVars);
 			if (rc > 0) {
 				fileDescMatch = true;
 			} else {
 				// Check if the File Description (JP) matches.
-				rc = gcnMcFileDef->search.fileDesc_regex.exec(fileDescJP, &fileDescVars);
+				rc = gcnMcFileDef->search.fileDesc_regex.exec(pcreFileDescJP, &fileDescVars);
 				if (rc > 0)
 					fileDescMatch = true;
 			}

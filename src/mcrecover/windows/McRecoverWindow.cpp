@@ -954,9 +954,11 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	d->statusBarManager = new StatusBarManager(d->ui.statusBar, this);
 	d->updateWindowTitle();
 
-	// Check if PCRE supports UTF-8.
-	if (!PcreRegex::PCRE_has_UTF8()) {
-		// UTF-8 is not supported. Disable scanning.
+	// Check if PCRE supports Unicode.
+	// This means UTF-8 for regular pcre,
+	// and UTF-16 for pcre16.
+	if (!PcreRegex::PCRE_has_Unicode()) {
+		// Unicode is not supported. Disable scanning.
 		d->scanningDisabled = true;
 		d->ui.actionScan->setEnabled(false);
 
@@ -964,11 +966,11 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 		// FIXME: Mac OS X will use a dylib in the application framework.
 #ifdef PCRE_STATIC
 		//: Statically-linked PCRE is missing UTF-8 support.
-		QString msg = tr("The internal PCRE library was not compiled with UTF-8 support.\n"
+		QString msg = tr("The internal PCRE library was not compiled with Unicode support.\n"
 				"Scanning for lost files will not work.");
 #else /* !PCRE_STATIC */
 		//: Dynamically-linked PCRE is missing UTF-8 support.
-		QString msg = tr("The system PCRE library was not compiled with UTF-8 support.\n"
+		QString msg = tr("The system PCRE library was not compiled with Unicode support.\n"
 				"Scanning for lost files will not work.");
 #endif /* PCRE_STATIC */
 		d->ui.msgWidget->showMessage(msg, MessageWidget::ICON_CRITICAL);
