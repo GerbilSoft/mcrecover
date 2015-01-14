@@ -218,6 +218,19 @@ void SALevelStatsPrivate::clear(void)
  */
 void SALevelStatsPrivate::initLevels(void)
 {
+	static const char cssCheckBox[] =
+		"QCheckBox::indicator {\n"
+		"\twidth: 28px;\n"
+		"\theight: 20px;\n"
+		"}\n"
+		"QCheckBox::indicator:checked {\n"
+		"\timage: url(:/sonic/emblem.png);\n"
+		"}\n"
+		"QCheckBox::indicator:unchecked {\n"
+		"\timage: url(:/sonic/noemblem.png);\n"
+		"}\n";
+	QString qsCssCheckBox = QLatin1String(cssCheckBox);
+
 	// Create widgets for all levels, and hide them initially.
 	Q_Q(SALevelStats);
 	for (int level = 0; level < MAX_LEVELS; level++) {
@@ -238,6 +251,7 @@ void SALevelStatsPrivate::initLevels(void)
 		for (int j = 0; j < 3; j++) {
 			levels[level].chkEmblems[j] = new QCheckBox(q);
 			levels[level].chkEmblems[j]->hide();
+			levels[level].chkEmblems[j]->setStyleSheet(qsCssCheckBox);
 			levels[level].hboxEmblems->addWidget(levels[level].chkEmblems[j]);
 			// FIXME: Improve alignment.
 			levels[level].hboxEmblems->setAlignment(levels[level].chkEmblems[j], Qt::AlignLeft);
