@@ -139,6 +139,7 @@ void SAEditorPrivate::updateDisplay(void)
 	sa_save_slot *sa_save = data.at(slot);
 	ui.saLevelStats->load(sa_save);
 	ui.saLevelClearCount->load(sa_save);
+	ui.saEventFlagsView->load(sa_save);
 }
 
 /** SAEditor **/
