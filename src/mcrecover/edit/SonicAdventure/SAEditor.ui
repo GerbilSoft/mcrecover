@@ -37,7 +37,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -100,6 +100,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabEventFlags">
+      <attribute name="title">
+       <string>&amp;Event Flags</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="vboxEventFlags">
+       <item>
+        <widget class="SAEventFlagsView" name="saEventFlagsView" native="true"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -121,6 +131,12 @@
    <class>SALevelClearCount</class>
    <extends>QWidget</extends>
    <header>edit/SonicAdventure/SALevelClearCount.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SAEventFlagsView</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/SAEventFlagsView.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

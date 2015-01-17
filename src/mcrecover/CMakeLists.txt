@@ -159,6 +159,9 @@ SET(mcrecover_EDIT_SRCS
 	edit/SonicAdventure/SALevelStats.cpp
 	edit/SonicAdventure/SlotSelector.cpp
 	edit/SonicAdventure/SALevelClearCount.cpp
+	edit/SonicAdventure/SAEventFlags.cpp
+	edit/SonicAdventure/SAEventFlagsModel.cpp
+	edit/SonicAdventure/SAEventFlagsView.cpp
 	)
 
 # Shh... it's a secret to everybody.
@@ -223,6 +226,9 @@ SET(mcrecover_EDIT_MOC_H
 	edit/SonicAdventure/SALevelStats.hpp
 	edit/SonicAdventure/SlotSelector.hpp
 	edit/SonicAdventure/SALevelClearCount.hpp
+	edit/SonicAdventure/SAEventFlags.hpp
+	edit/SonicAdventure/SAEventFlagsModel.hpp
+	edit/SonicAdventure/SAEventFlagsView.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H
@@ -250,6 +256,7 @@ SET(mcrecover_EDIT_UIS
 	edit/SonicAdventure/SAEditor.ui
 	edit/SonicAdventure/SALevelStats.ui
 	edit/SonicAdventure/SALevelClearCount.ui
+	edit/SonicAdventure/SAEventFlagsView.ui
 	)
 
 # Generate the header files from the UI files.
