@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SAEventFlagsView.hpp: Sonic Adventure - Event Flags editor.             *
+ * PageFilterModel.hpp: Filter a QAbstractItemModel by pages.              *
  *                                                                         *
  * Copyright (c) 2015 by David Korth.                                      *
  *                                                                         *
@@ -19,55 +19,66 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGSVIEW_HPP__
-#define __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGSVIEW_HPP__
+// TODO: Move to edit/common/?
 
-#include <QtGui/QWidget>
+#ifndef __MCRECOVER_EDIT_SONICADVENTURE_PAGEFILTERMODEL_HPP__
+#define __MCRECOVER_EDIT_SONICADVENTURE_PAGEFILTERMODEL_HPP__
 
-struct _sa_save_slot;
+// Qt includes.
+#include <QtGui/QSortFilterProxyModel>
 
-class SAEventFlagsViewPrivate;
-class SAEventFlagsView : public QWidget
+class PageFilterModelPrivate;
+class PageFilterModel : public QSortFilterProxyModel
 {
 	Q_OBJECT
 
+	// TODO: Add signals?
+	Q_PROPERTY(int currentPage READ currentPage WRITE setCurrentPage)
+	Q_PROPERTY(int pageSize READ pageSize WRITE setPageSize)
+
 	public:
-		SAEventFlagsView(QWidget *parent = 0);
-		~SAEventFlagsView();
+		PageFilterModel(QObject *parent);
+		virtual ~PageFilterModel();
 
 	protected:
-		SAEventFlagsViewPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(SAEventFlagsView)
+		PageFilterModelPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(PageFilterModel)
 	private:
-		Q_DISABLE_COPY(SAEventFlagsView)
+		Q_DISABLE_COPY(PageFilterModel)
+
+	public:
+		/** Qt Model/View interface. **/
+		virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
+		virtual void setSourceModel(QAbstractItemModel *sourceModel) override;
 
 	public:
 		/** Data access. **/
 
 		/**
-		 * Load data from a Sonic Adventure save slot.
-		 * @param sa_save Sonic Adventure save slot.
-		 * The data must have already been byteswapped to host-endian.
-		 * @return 0 on success; non-zero on error.
+		 * Get the current page.
+		 * @return Current page.
 		 */
-		int load(const _sa_save_slot *sa_save);
+		int currentPage(void) const;
 
 		/**
-		 * Save data to a Sonic Adventure save slot.
-		 * @param sa_save Sonic Adventure save slot.
-		 * The data will be in host-endian format.
-		 * @return 0 on success; non-zero on error.
+		 * Set the current page.
+		 * @param page Page to set as current.
 		 */
-		int save(_sa_save_slot *sa_save) const;
+		void setCurrentPage(int page);
 
-	protected slots:
-		/** UI widget slots. **/
+		// TODO: "Number of pages" accessor?
 
 		/**
-		 * Current tab has changed.
-		 * @param index Tab index.
+		 * Get the page size.
+		 * @return Page size.
 		 */
-		void on_tabBar_currentChanged(int index);
+		int pageSize(void) const;
+
+		/**
+		 * Set the page size.
+		 * @param pageSize Page size.
+		 */
+		void setPageSize(int pageSize);
 };
 
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGSVIEW_HPP__ */
+#endif /* __MCRECOVER_EDIT_SONICADVENTURE_PAGEFILTERMODEL_HPP__ */

@@ -23,6 +23,7 @@
 
 #include "SAEventFlags.hpp"
 #include "SAEventFlagsModel.hpp"
+#include "PageFilterModel.hpp"
 
 // C includes. (C++ namespace)
 #include <cassert>
@@ -52,6 +53,7 @@ class SAEventFlagsViewPrivate
 
 		// Event Flags model.
 		SAEventFlagsModel *eventFlagsModel;
+		PageFilterModel *pageFilterModel;
 
 		// Event Flags data.
 		SAEventFlags eventFlags;
@@ -73,7 +75,31 @@ SAEventFlagsView::SAEventFlagsView(QWidget *parent)
 	// Initialize the event flags.
 	d->eventFlagsModel = new SAEventFlagsModel(this);
 	d->eventFlagsModel->setEventFlags(&d->eventFlags);
-	d->ui.lstEventFlags->setModel(d->eventFlagsModel);
+	// Page filter.
+	// TODO: Add page size to the constructor?
+	d->pageFilterModel = new PageFilterModel(this);
+	d->pageFilterModel->setSourceModel(d->eventFlagsModel);
+	//d->pageFilterModel->setPageSize(64);
+	d->ui.lstEventFlags->setModel(d->pageFilterModel);
+
+	// NOTE: QTabBar is initialized after the model is set to prevent
+	// signals from being triggered before pageFilterModel is valid.
+
+	// Qt Designer doesn't have QTabBar, so we have to set it up manually.
+	// Disable expanding so the tabs look like normal tabs.
+	// Disable drawBase because the tabs are right above the QTreeView.
+	// (FIXME: With drawBase disabled, there's a 1px empty space for unselected tabs on Win7...)
+	// TODO: Retranslate the tabs on language change.
+	d->ui.tabBar->setExpanding(false);
+	d->ui.tabBar->setDrawBase(true);
+	d->ui.tabBar->addTab(tr("Unused?"));
+	d->ui.tabBar->addTab(tr("General"));
+	d->ui.tabBar->addTab(tr("Sonic"));
+	d->ui.tabBar->addTab(tr("Tails"));
+	d->ui.tabBar->addTab(tr("Knuckles"));
+	d->ui.tabBar->addTab(tr("Amy"));
+	d->ui.tabBar->addTab(tr("Gamma"));
+	d->ui.tabBar->addTab(tr("Big"));
 }
 
 SAEventFlagsView::~SAEventFlagsView()
@@ -139,4 +165,16 @@ int SAEventFlagsView::save(_sa_save_slot *sa_save) const
 	}
 
 	return 0;
+}
+
+/** UI widget slots. **/
+
+/**
+ * Current tab has changed.
+ * @param index Tab index.
+ */
+void SAEventFlagsView::on_tabBar_currentChanged(int index)
+{
+	Q_D(SAEventFlagsView);
+	d->pageFilterModel->setCurrentPage(index);
 }

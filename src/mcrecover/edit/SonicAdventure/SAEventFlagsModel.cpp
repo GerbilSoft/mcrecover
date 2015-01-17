@@ -74,9 +74,8 @@ SAEventFlagsModel::~SAEventFlagsModel()
 
 int SAEventFlagsModel::rowCount(const QModelIndex& parent) const
 {
-	Q_UNUSED(parent);
+	Q_UNUSED(parent)
 	Q_D(const SAEventFlagsModel);
-	// TODO: Bitmask.
 	return (d->eventFlags ? d->eventFlags->count() : 0);
 }
 
@@ -101,16 +100,13 @@ QVariant SAEventFlagsModel::data(const QModelIndex& index, int role) const
 	if (index.column() != 0)
 		return QVariant();
 
-	// TODO: Map the row number to the currently displayed list.
-	const int event = index.row();
-
 	switch (role) {
 		case Qt::DisplayRole:
-			return d->eventFlags->description(event);
+			return d->eventFlags->description(index.row());
 
 		case Qt::CheckStateRole:
 			// TODO
-			return (d->eventFlags->flag(event) ? Qt::Checked : Qt::Unchecked);
+			return (d->eventFlags->flag(index.row()) ? Qt::Checked : Qt::Unchecked);
 
 		default:
 			break;
@@ -158,23 +154,21 @@ Qt::ItemFlags SAEventFlagsModel::flags(const QModelIndex &index) const
 
 bool SAEventFlagsModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
+	Q_D(SAEventFlagsModel);
+	if (!d->eventFlags)
+		return false;
 	if (!index.isValid())
 		return false;
-	const int row = index.row();
-	if (row < 0 || row >= rowCount())
+	if (index.row() < 0 || index.row() >= rowCount())
 		return false;
 	if (index.column() != 0)
 		return false;
-
-	// TODO: Map the row number to the currently displayed list.
-	Q_D(SAEventFlagsModel);
-	const int event = row;
 
 	switch (role) {
 		case Qt::CheckStateRole:
 			// Event flag value has changed.
 			// TODO: Map row to event ID.
-			d->eventFlags->setFlag(event, (value.toUInt() == Qt::Checked));
+			d->eventFlags->setFlag(index.row(), (value.toUInt() == Qt::Checked));
 			break;
 
 		default:
