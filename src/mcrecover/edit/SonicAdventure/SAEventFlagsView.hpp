@@ -59,15 +59,6 @@ class SAEventFlagsView : public QWidget
 		 * @return 0 on success; non-zero on error.
 		 */
 		int save(_sa_save_slot *sa_save) const;
-
-	protected slots:
-		/** UI widget slots. **/
-
-		/**
-		 * Current tab has changed.
-		 * @param index Tab index.
-		 */
-		void on_tabBar_currentChanged(int index);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGSVIEW_HPP__ */

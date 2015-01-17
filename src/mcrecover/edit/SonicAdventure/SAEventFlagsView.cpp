@@ -100,6 +100,10 @@ SAEventFlagsView::SAEventFlagsView(QWidget *parent)
 	d->ui.tabBar->addTab(tr("Amy"));
 	d->ui.tabBar->addTab(tr("Gamma"));
 	d->ui.tabBar->addTab(tr("Big"));
+
+	// Connect tabBar's signals.
+	connect(d->ui.tabBar, SIGNAL(currentChanged(int)),
+		d->pageFilterModel, SLOT(setCurrentPage(int)));
 }
 
 SAEventFlagsView::~SAEventFlagsView()
@@ -165,16 +169,4 @@ int SAEventFlagsView::save(_sa_save_slot *sa_save) const
 	}
 
 	return 0;
-}
-
-/** UI widget slots. **/
-
-/**
- * Current tab has changed.
- * @param index Tab index.
- */
-void SAEventFlagsView::on_tabBar_currentChanged(int index)
-{
-	Q_D(SAEventFlagsView);
-	d->pageFilterModel->setCurrentPage(index);
 }

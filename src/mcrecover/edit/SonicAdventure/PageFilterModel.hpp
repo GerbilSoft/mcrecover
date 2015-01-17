@@ -60,12 +60,6 @@ class PageFilterModel : public QSortFilterProxyModel
 		 */
 		int currentPage(void) const;
 
-		/**
-		 * Set the current page.
-		 * @param page Page to set as current.
-		 */
-		void setCurrentPage(int page);
-
 		// TODO: "Number of pages" accessor?
 
 		/**
@@ -79,6 +73,13 @@ class PageFilterModel : public QSortFilterProxyModel
 		 * @param pageSize Page size.
 		 */
 		void setPageSize(int pageSize);
+
+	public slots:
+		/**
+		 * Set the current page.
+		 * @param page Page to set as current.
+		 */
+		void setCurrentPage(int page);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_PAGEFILTERMODEL_HPP__ */
