@@ -24,7 +24,7 @@
 
 #include <QtGui/QWidget>
 
-struct _sa_event_flags;
+struct _sa_save_slot;
 
 class SAEventFlagsViewPrivate;
 class SAEventFlagsView : public QWidget
@@ -45,18 +45,20 @@ class SAEventFlagsView : public QWidget
 		/** Data access. **/
 
 		/**
-		 * Get the event flags from the widget.
-		 * Flags are copied from the widget.
-		 * @param eventFlags sa_event_flags to store the event flags in.
+		 * Load data from a Sonic Adventure save slot.
+		 * @param sa_save Sonic Adventure save slot.
+		 * The data must have already been byteswapped to host-endian.
+		 * @return 0 on success; non-zero on error.
 		 */
-		void eventFlags(_sa_event_flags *eventFlags) const;
+		int load(const _sa_save_slot *sa_save);
 
 		/**
-		 * Set the event flags for the widget.
-		 * Flags are copied into the widget.
-		 * @param eventFlags sa_event_flags to store in the widget.
+		 * Save data to a Sonic Adventure save slot.
+		 * @param sa_save Sonic Adventure save slot.
+		 * The data will be in host-endian format.
+		 * @return 0 on success; non-zero on error.
 		 */
-		void setEventFlags(const _sa_event_flags *eventFlags);
+		int save(_sa_save_slot *sa_save) const;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGSVIEW_HPP__ */

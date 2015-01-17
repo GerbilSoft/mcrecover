@@ -85,15 +85,44 @@ SAEventFlagsView::~SAEventFlagsView()
 /** Data access. **/
 
 /**
- * Get the event flags from the widget.
- * Flags are copied from the widget.
- * @param eventFlags sa_event_flags to store the event flags in.
+ * Load data from a Sonic Adventure save slot.
+ * @param sa_save Sonic Adventure save slot.
+ * The data must have already been byteswapped to host-endian.
+ * @return 0 on success; non-zero on error.
  */
-void SAEventFlagsView::eventFlags(sa_event_flags *eventFlags) const
+int SAEventFlagsView::load(const _sa_save_slot *sa_save)
+{
+	Q_D(SAEventFlagsView);
+	const uint8_t *flagByte = &sa_save->events.all[0];
+	assert(d->eventFlags.count() == (NUM_ELEMENTS(sa_save->events.all) * 8));
+
+	// TODO: Make sure this isn't backwards.
+	uint8_t curByte = 0;
+	for (int i = 0; i < d->eventFlags.count(); i++) {
+		if (i % 8 == 0) {
+			// New byte.
+			curByte = *flagByte++;
+		}
+
+		// Set this flag.
+		d->eventFlags.setFlag(i, !!(curByte & 0x80));
+		curByte >>= 1;
+	}
+
+	return 0;
+}
+
+/**
+ * Save data to a Sonic Adventure save slot.
+ * @param sa_save Sonic Adventure save slot.
+ * The data will be in host-endian format.
+ * @return 0 on success; non-zero on error.
+ */
+int SAEventFlagsView::save(_sa_save_slot *sa_save) const
 {
 	Q_D(const SAEventFlagsView);
-	uint8_t *flagByte = &eventFlags->all[0];
-	assert(d->eventFlags.count() == (NUM_ELEMENTS(eventFlags->all) * 8));
+	uint8_t *flagByte = &sa_save->events.all[0];
+	assert(d->eventFlags.count() == (NUM_ELEMENTS(sa_save->events.all) * 8));
 
 	// TODO: Make sure this isn't backwards.
 	for (int i = 0; i < d->eventFlags.count(); i++) {
@@ -108,29 +137,6 @@ void SAEventFlagsView::eventFlags(sa_event_flags *eventFlags) const
 		// Get this flag.
 		*flagByte |= !!(d->eventFlags.flag(i));
 	}
-}
 
-/**
- * Set the event flags for the widget.
- * Flags are copied into the widget.
- * @param eventFlags sa_event_flags to store in the widget.
- */
-void SAEventFlagsView::setEventFlags(const _sa_event_flags *eventFlags)
-{
-	Q_D(SAEventFlagsView);
-	const uint8_t *flagByte = &eventFlags->all[0];
-	assert(d->eventFlags.count() == (NUM_ELEMENTS(eventFlags->all) * 8));
-
-	// TODO: Make sure this isn't backwards.
-	uint8_t curByte = 0;
-	for (int i = 0; i < d->eventFlags.count(); i++) {
-		if (i % 8 == 0) {
-			// New byte.
-			curByte = *flagByte++;
-		}
-
-		// Set this flag.
-		d->eventFlags.setFlag(i, !!(curByte & 0x80));
-		curByte >>= 1;
-	}
+	return 0;
 }
