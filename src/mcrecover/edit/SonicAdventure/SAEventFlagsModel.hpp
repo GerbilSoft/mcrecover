@@ -25,11 +25,15 @@
 // Qt includes.
 #include <QtCore/QAbstractListModel>
 
+class SAEventFlags;
+
 class SAEventFlagsModelPrivate;
 class SAEventFlagsModel : public QAbstractListModel
 {
 	Q_OBJECT
-	
+
+	// TODO: Q_PROPERTY() for eventFlags.
+
 	public:
 		SAEventFlagsModel(QObject *parent = 0);
 		virtual ~SAEventFlagsModel();
@@ -41,7 +45,7 @@ class SAEventFlagsModel : public QAbstractListModel
 		Q_DISABLE_COPY(SAEventFlagsModel)
 
 	public:
-		// Qt Model/View interface.
+		/** Qt Model/View interface. **/
 		int rowCount(const QModelIndex& parent = QModelIndex()) const;
 		int columnCount(const QModelIndex& parent = QModelIndex()) const;
 
@@ -50,6 +54,21 @@ class SAEventFlagsModel : public QAbstractListModel
 		Qt::ItemFlags flags(const QModelIndex &index) const;
 
 		bool setData(const QModelIndex &index, const QVariant &value, int role);
+
+	public:
+		/** Data access. **/
+
+		/**
+		 * Get the event flags this model is showing.
+		 * @return SAEventFlags this model is showing.
+		 */
+		SAEventFlags *eventFlags(void) const;
+
+		/**
+		 * Set the event flags for this model to show.
+		 * @param eventFlags SAEventFlags to show.
+		 */
+		void setEventFlags(SAEventFlags *eventFlags);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGSMODEL_HPP__ */

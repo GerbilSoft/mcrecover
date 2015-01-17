@@ -22,7 +22,7 @@
 // Reference: http://programmingexamples.net/wiki/Qt/ModelView/AbstractListModelCheckable
 
 #include "SAEventFlagsModel.hpp"
-#include "McRecoverQApplication.hpp"
+#include "sa_defs.h"
 
 // C includes.
 #include <limits.h>
@@ -48,12 +48,13 @@ class SAEventFlagsModelPrivate
 
 	public:
 		// Sonic Adeventure event flags.
-		// TODO: Allow the user to set it.
-		SAEventFlags eventFlags;
+		// TODO: Signals for data changes?
+		SAEventFlags *eventFlags;
 };
 
 SAEventFlagsModelPrivate::SAEventFlagsModelPrivate(SAEventFlagsModel *q)
 	: q_ptr(q)
+	, eventFlags(nullptr)
 { }
 
 /** SAEventFlagsModel **/
@@ -69,44 +70,47 @@ SAEventFlagsModel::~SAEventFlagsModel()
 	delete d;
 }
 
+/** Qt Model/View interface. **/
+
 int SAEventFlagsModel::rowCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
 	Q_D(const SAEventFlagsModel);
-
 	// TODO: Bitmask.
-	return d->eventFlags.count();
+	return (d->eventFlags ? d->eventFlags->count() : 0);
 }
 
 int SAEventFlagsModel::columnCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
+	Q_D(const SAEventFlagsModel);
 	// Only one column: Event name.
-	return 1;
+	return (d->eventFlags ? 1 : 0);
 }
 
 // FIXME: Backport some stuff to MemCardModel.
 QVariant SAEventFlagsModel::data(const QModelIndex& index, int role) const
 {
+	Q_D(const SAEventFlagsModel);
+	if (!d->eventFlags)
+		return QVariant();
 	if (!index.isValid())
 		return QVariant();
-	const int row = index.row();
-	if (row < 0 || row >= rowCount())
+	if (index.row() < 0 || index.row() >= rowCount())
 		return QVariant();
 	if (index.column() != 0)
 		return QVariant();
 
 	// TODO: Map the row number to the currently displayed list.
-	Q_D(const SAEventFlagsModel);
-	const int event = row;
+	const int event = index.row();
 
 	switch (role) {
 		case Qt::DisplayRole:
-			return d->eventFlags.description(event);
+			return d->eventFlags->description(event);
 
 		case Qt::CheckStateRole:
 			// TODO
-			return (d->eventFlags.flag(event) ? Qt::Checked : Qt::Unchecked);
+			return (d->eventFlags->flag(event) ? Qt::Checked : Qt::Unchecked);
 
 		default:
 			break;
@@ -119,6 +123,9 @@ QVariant SAEventFlagsModel::data(const QModelIndex& index, int role) const
 QVariant SAEventFlagsModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	Q_UNUSED(orientation);
+	Q_D(const SAEventFlagsModel);
+	if (!d->eventFlags)
+		return QVariant();
 	if (section != 0)
 		return QVariant();
 
@@ -138,10 +145,12 @@ QVariant SAEventFlagsModel::headerData(int section, Qt::Orientation orientation,
 
 Qt::ItemFlags SAEventFlagsModel::flags(const QModelIndex &index) const
 {
+	Q_D(const SAEventFlagsModel);
+	if (!d->eventFlags)
+		return Qt::NoItemFlags;
 	if (!index.isValid())
 		return Qt::NoItemFlags;
-	const int row = index.row();
-	if (row < 0 || row >= rowCount())
+	if (index.row() < 0 || index.row() >= rowCount())
 		return Qt::NoItemFlags;
 
 	return (Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
@@ -165,7 +174,7 @@ bool SAEventFlagsModel::setData(const QModelIndex &index, const QVariant &value,
 		case Qt::CheckStateRole:
 			// Event flag value has changed.
 			// TODO: Map row to event ID.
-			d->eventFlags.setFlag(event, (value.toUInt() == Qt::Checked));
+			d->eventFlags->setFlag(event, (value.toUInt() == Qt::Checked));
 			break;
 
 		default:
@@ -176,4 +185,29 @@ bool SAEventFlagsModel::setData(const QModelIndex &index, const QVariant &value,
 	// Data has changed.
 	emit dataChanged(index, index);
 	return true;
+}
+
+/** Data access. **/
+
+/**
+ * Get the SAEventFlags this model is showing.
+ * @return SAEventFlags this model is showing.
+ */
+SAEventFlags *SAEventFlagsModel::eventFlags(void) const
+{
+	Q_D(const SAEventFlagsModel);
+	return d->eventFlags;
+}
+
+/**
+ * Set the SAEventFlags for this model to show.
+ * @param eventFlags SAEventFlags to show.
+ */
+void SAEventFlagsModel::setEventFlags(SAEventFlags *eventFlags)
+{
+	Q_D(SAEventFlagsModel);
+	// TODO: Better signals?
+	emit layoutAboutToBeChanged();
+	d->eventFlags = eventFlags;
+	emit layoutChanged();
 }

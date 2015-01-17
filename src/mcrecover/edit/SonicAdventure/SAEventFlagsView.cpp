@@ -21,8 +21,17 @@
 
 #include "SAEventFlagsView.hpp"
 
-//#include "SAEventFlags.hpp" // TODO
+#include "SAEventFlags.hpp"
 #include "SAEventFlagsModel.hpp"
+
+// C includes. (C++ namespace)
+#include <cassert>
+
+// Sonic Adventure save file definitions.
+#include "sa_defs.h"
+
+// TODO: Put this in a common header file somewhere.
+#define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 /** SAEventFlagsViewPrivate **/
 
@@ -43,6 +52,9 @@ class SAEventFlagsViewPrivate
 
 		// Event Flags model.
 		SAEventFlagsModel *eventFlagsModel;
+
+		// Event Flags data.
+		SAEventFlags eventFlags;
 };
 
 SAEventFlagsViewPrivate::SAEventFlagsViewPrivate(SAEventFlagsView *q)
@@ -60,6 +72,7 @@ SAEventFlagsView::SAEventFlagsView(QWidget *parent)
 
 	// Initialize the event flags.
 	d->eventFlagsModel = new SAEventFlagsModel(this);
+	d->eventFlagsModel->setEventFlags(&d->eventFlags);
 	d->ui.lstEventFlags->setModel(d->eventFlagsModel);
 }
 
@@ -67,4 +80,57 @@ SAEventFlagsView::~SAEventFlagsView()
 {
 	Q_D(SAEventFlagsView);
 	delete d;
+}
+
+/** Data access. **/
+
+/**
+ * Get the event flags from the widget.
+ * Flags are copied from the widget.
+ * @param eventFlags sa_event_flags to store the event flags in.
+ */
+void SAEventFlagsView::eventFlags(sa_event_flags *eventFlags) const
+{
+	Q_D(const SAEventFlagsView);
+	uint8_t *flagByte = &eventFlags->all[0];
+	assert(d->eventFlags.count() == (NUM_ELEMENTS(eventFlags->all) * 8));
+
+	// TODO: Make sure this isn't backwards.
+	for (int i = 0; i < d->eventFlags.count(); i++) {
+		if (i % 8 == 0) {
+			// New byte.
+			// TODO: Optimize this?
+			if (i > 0)
+				flagByte++;
+			*flagByte = 0;
+		}
+
+		// Get this flag.
+		*flagByte |= !!(d->eventFlags.flag(i));
+	}
+}
+
+/**
+ * Set the event flags for the widget.
+ * Flags are copied into the widget.
+ * @param eventFlags sa_event_flags to store in the widget.
+ */
+void SAEventFlagsView::setEventFlags(const _sa_event_flags *eventFlags)
+{
+	Q_D(SAEventFlagsView);
+	const uint8_t *flagByte = &eventFlags->all[0];
+	assert(d->eventFlags.count() == (NUM_ELEMENTS(eventFlags->all) * 8));
+
+	// TODO: Make sure this isn't backwards.
+	uint8_t curByte = 0;
+	for (int i = 0; i < d->eventFlags.count(); i++) {
+		if (i % 8 == 0) {
+			// New byte.
+			curByte = *flagByte++;
+		}
+
+		// Set this flag.
+		d->eventFlags.setFlag(i, !!(curByte & 0x80));
+		curByte >>= 1;
+	}
 }

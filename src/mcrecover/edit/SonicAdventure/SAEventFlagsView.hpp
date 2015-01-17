@@ -24,6 +24,8 @@
 
 #include <QtGui/QWidget>
 
+struct _sa_event_flags;
+
 class SAEventFlagsViewPrivate;
 class SAEventFlagsView : public QWidget
 {
@@ -38,6 +40,23 @@ class SAEventFlagsView : public QWidget
 		Q_DECLARE_PRIVATE(SAEventFlagsView)
 	private:
 		Q_DISABLE_COPY(SAEventFlagsView)
+
+	public:
+		/** Data access. **/
+
+		/**
+		 * Get the event flags from the widget.
+		 * Flags are copied from the widget.
+		 * @param eventFlags sa_event_flags to store the event flags in.
+		 */
+		void eventFlags(_sa_event_flags *eventFlags) const;
+
+		/**
+		 * Set the event flags for the widget.
+		 * Flags are copied into the widget.
+		 * @param eventFlags sa_event_flags to store in the widget.
+		 */
+		void setEventFlags(const _sa_event_flags *eventFlags);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGSVIEW_HPP__ */
