@@ -52,7 +52,9 @@ class SALevelClearCountPrivate
 		Ui_SALevelClearCount ui;
 
 		// Total of 43 levels.
-		#define TOTAL_LEVELS NUM_ELEMENTS(sa_level_clear_count::clear[0])
+		// FIXME: sizeof(sa_level_clear_counts::clear[0]) works in gcc,
+		// but fails in MSVC 2010 with C2597.
+		#define TOTAL_LEVELS 43
 		// Level widgets.
 		struct {
 			QLabel *lblLevel;
