@@ -153,6 +153,28 @@ typedef enum {
 	SA_LAST_CHAR_SONIC_VTIKAL	= 9,
 } sa_last_char;
 
+// Event Flags.
+#define SA_EVENT_FLAGS_LEN 64
+#define SA_EVENT_FLAGS_SECTIONS 8
+#pragma pack(1)
+typedef struct PACKED _sa_event_flags {
+	union {
+		uint8_t all[64];	// all
+		uint8_t chr[8][8];	// per character
+		struct {
+			uint8_t unused[8];
+			uint8_t general[8];
+			uint8_t sonic[8];
+			uint8_t tails[8];
+			uint8_t knuckles[8];
+			uint8_t amy[8];
+			uint8_t gamma[8];
+			uint8_t big[8];
+		};
+	};
+} sa_event_flags;
+#pragma pack()
+
 // Adventure Mode data.
 #define SA_ADVENTURE_MODE_LEN 96
 #pragma pack(1)
@@ -248,8 +270,11 @@ typedef struct PACKED _sa_save_slot
 	uint16_t last_level;	// [0x25C] Last completed level. (100 == none)
 	uint8_t reserved4[2];	// [0x25E] unknown
 
-	uint8_t events[64];	// [0x260] Event flags. (bitfield)
-	uint8_t npc_flags[64];	// [0x2A0] NPC flags. (bitfield)
+	// [0x260] Event flags. (bitfield)
+	sa_event_flags events;
+
+	// [0x2A0] NPC flags. (bitfield)
+	uint8_t npc_flags[64];
 
 	uint8_t reserved5[8];	// [0x2E0] unknown
 
