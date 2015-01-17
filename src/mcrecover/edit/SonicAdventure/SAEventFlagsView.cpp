@@ -104,6 +104,8 @@ SAEventFlagsView::SAEventFlagsView(QWidget *parent)
 	// Connect tabBar's signals.
 	connect(d->ui.tabBar, SIGNAL(currentChanged(int)),
 		d->pageFilterModel, SLOT(setCurrentPage(int)));
+	connect(d->pageFilterModel, SIGNAL(currentPageChanged(int)),
+		d->ui.tabBar, SLOT(setCurrentIndex(int)));
 }
 
 SAEventFlagsView::~SAEventFlagsView()

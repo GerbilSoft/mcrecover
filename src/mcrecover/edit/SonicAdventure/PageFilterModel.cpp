@@ -22,6 +22,9 @@
 // TODO: Move to edit/common/?
 #include "PageFilterModel.hpp"
 
+// C includes. (C++ namespace)
+#include <cstdlib>
+
 /** PageFilterModelPrivate **/
 
 class PageFilterModelPrivate
@@ -38,7 +41,10 @@ class PageFilterModelPrivate
 	public:
 		int pageSize;
 
+		// TODO: Assuming itemCount never changes.
+		// Connect signals from sourceModel for row count changes.
 		int currentPage;
+		int pageCount;	// Total number of pages.
 		int itemStart;	// Index of first item currently displayed.
 		int itemEnd;	// Index of last item currently displayed.
 		int itemCount;	// Number of items currently being displayed.
@@ -53,6 +59,7 @@ PageFilterModelPrivate::PageFilterModelPrivate(PageFilterModel *q)
 	: q_ptr(q)
 	, pageSize(64)
 	, currentPage(0)
+	, pageCount(0)
 	, itemStart(0)
 	, itemEnd(0)
 	, itemCount(0)
@@ -68,12 +75,41 @@ void PageFilterModelPrivate::calcPageOffsets(void)
 				? q->sourceModel()->rowCount()
 				: 0);
 
-	if (sourceRowCount == 0 || (currentPage * pageSize) >= sourceRowCount) {
+	if (sourceRowCount == 0) {
 		// No items available.
+		currentPage = 0;	// TODO: Emit signal?
+		pageCount = 0;		// TODO: Emit signal?
 		itemStart = 0;
 		itemEnd = 0;
 		itemCount = 0;
 	} else {
+		// NOTE: pageCount can't be 0 here, since we
+		// already checked for sourceRowCount == 0.
+
+		// Calculate the total number of pages.
+		div_t pages_div = div(sourceRowCount, pageSize);
+		int tmp_pageCount = pages_div.quot;
+		tmp_pageCount += (pages_div.rem > 0);
+		if (tmp_pageCount != pageCount) {
+			// Page count has changed.
+			if (currentPage >= tmp_pageCount) {
+				// Current page will be out of range.
+				// Fix the current page first.
+				currentPage = tmp_pageCount - 1;
+				emit q->currentPageChanged(currentPage);
+			}
+			pageCount = tmp_pageCount;
+			emit q->pageCountChanged(pageCount);
+		} else {
+			// Validate the current page.
+			if (currentPage >= pageCount) {
+				// Current page is out of range.
+				currentPage = pageCount - 1;
+				emit q->currentPageChanged(currentPage);
+			}
+		}
+
+		// Calculate the start and end indexes.
 		itemStart = pageSize * currentPage;
 		itemEnd = itemStart + pageSize - 1;
 
@@ -145,11 +181,15 @@ void PageFilterModel::setCurrentPage(int page)
 	Q_D(PageFilterModel);
 	if (d->currentPage == page)
 		return;
-	// TODO: Calculate page count.
-	if (page < 0 /*|| page > maxPages*/)
+	if (page < 0 || page >= d->pageCount)
 		return;
 	d->currentPage = page;
 	d->calcPageOffsets();
+	// NOTE: calcPageOffsets() may change the page number.
+	// If it does, then it emitted currentPageChanged() itself.
+	if (d->currentPage == page)
+		emit currentPageChanged(page);
+	
 }
 
 /**
@@ -173,4 +213,14 @@ void PageFilterModel::setPageSize(int pageSize)
 		return;
 	d->pageSize = pageSize;
 	d->calcPageOffsets();
+}
+
+/**
+ * Get the page count.
+ * @return Page count.
+ */
+int PageFilterModel::pageCount(void) const
+{
+	Q_D(const PageFilterModel);
+	return d->pageCount;
 }

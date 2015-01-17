@@ -32,9 +32,10 @@ class PageFilterModel : public QSortFilterProxyModel
 {
 	Q_OBJECT
 
+	Q_PROPERTY(int currentPage READ currentPage WRITE setCurrentPage NOTIFY currentPageChanged)
 	// TODO: Add signals?
-	Q_PROPERTY(int currentPage READ currentPage WRITE setCurrentPage)
 	Q_PROPERTY(int pageSize READ pageSize WRITE setPageSize)
+	Q_PROPERTY(int pageCount READ pageCount NOTIFY pageCountChanged STORED false)
 
 	public:
 		PageFilterModel(QObject *parent);
@@ -50,6 +51,19 @@ class PageFilterModel : public QSortFilterProxyModel
 		/** Qt Model/View interface. **/
 		virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 		virtual void setSourceModel(QAbstractItemModel *sourceModel) override;
+
+	signals:
+		/**
+		 * Current page has changed.
+		 * @param page Current page.
+		 */
+		void currentPageChanged(int page);
+
+		/**
+		 * Page count has changed.
+		 * @param pageCount New page count.
+		 */
+		void pageCountChanged(int pageCount);
 
 	public:
 		/** Data access. **/
@@ -73,6 +87,12 @@ class PageFilterModel : public QSortFilterProxyModel
 		 * @param pageSize Page size.
 		 */
 		void setPageSize(int pageSize);
+
+		/**
+		 * Get the page count.
+		 * @return Page count.
+		 */
+		int pageCount(void) const;
 
 	public slots:
 		/**
