@@ -103,6 +103,11 @@ QVariant SAEventFlagsModel::data(const QModelIndex& index, int role) const
 	switch (role) {
 		case Qt::DisplayRole:
 			return d->eventFlags.description(event);
+
+		case Qt::CheckStateRole:
+			// TODO
+			return (d->eventFlags.flag(event) ? Qt::Checked : Qt::Unchecked);
+
 		default:
 			break;
 	}
@@ -129,4 +134,46 @@ QVariant SAEventFlagsModel::headerData(int section, Qt::Orientation orientation,
 
 	// Default value.
 	return QVariant();
+}
+
+Qt::ItemFlags SAEventFlagsModel::flags(const QModelIndex &index) const
+{
+	if (!index.isValid())
+		return Qt::NoItemFlags;
+	const int row = index.row();
+	if (row < 0 || row >= rowCount())
+		return Qt::NoItemFlags;
+
+	return (Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+}
+
+bool SAEventFlagsModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+	if (!index.isValid())
+		return false;
+	const int row = index.row();
+	if (row < 0 || row >= rowCount())
+		return false;
+	if (index.column() != 0)
+		return false;
+
+	// TODO: Map the row number to the currently displayed list.
+	Q_D(SAEventFlagsModel);
+	const int event = row;
+
+	switch (role) {
+		case Qt::CheckStateRole:
+			// Event flag value has changed.
+			// TODO: Map row to event ID.
+			d->eventFlags.setFlag(event, (value.toUInt() == Qt::Checked));
+			break;
+
+		default:
+			// Unsupported.
+			return false;
+	}
+
+	// Data has changed.
+	emit dataChanged(index, index);
+	return true;
 }
