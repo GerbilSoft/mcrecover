@@ -96,7 +96,6 @@ int SAEventFlagsView::load(const _sa_save_slot *sa_save)
 	const uint8_t *flagByte = &sa_save->events.all[0];
 	assert(d->eventFlags.count() == (NUM_ELEMENTS(sa_save->events.all) * 8));
 
-	// TODO: Make sure this isn't backwards.
 	uint8_t curByte = 0;
 	for (int i = 0; i < d->eventFlags.count(); i++) {
 		if (i % 8 == 0) {
@@ -105,7 +104,7 @@ int SAEventFlagsView::load(const _sa_save_slot *sa_save)
 		}
 
 		// Set this flag.
-		d->eventFlags.setFlag(i, !!(curByte & 0x80));
+		d->eventFlags.setFlag(i, (curByte & 0x01));
 		curByte >>= 1;
 	}
 
@@ -124,7 +123,7 @@ int SAEventFlagsView::save(_sa_save_slot *sa_save) const
 	uint8_t *flagByte = &sa_save->events.all[0];
 	assert(d->eventFlags.count() == (NUM_ELEMENTS(sa_save->events.all) * 8));
 
-	// TODO: Make sure this isn't backwards.
+	// TODO: Verify that this is correct.
 	for (int i = 0; i < d->eventFlags.count(); i++) {
 		if (i % 8 == 0) {
 			// New byte.
@@ -135,6 +134,7 @@ int SAEventFlagsView::save(_sa_save_slot *sa_save) const
 		}
 
 		// Get this flag.
+		*flagByte <<= 1;
 		*flagByte |= !!(d->eventFlags.flag(i));
 	}
 
