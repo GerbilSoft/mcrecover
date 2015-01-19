@@ -154,27 +154,7 @@ void SAEditorPrivate::updateDisplay(void)
 	ui.saLevelClearCount->load(sa_save);
 
 	/** Bit flags. **/
-	// FIXME: Convenience function for loading/saving bit flags.
-
-	// Event flags.
-	const uint8_t *flagByte = &sa_save->events.all[0];
-	assert(saEventFlags.count() == (NUM_ELEMENTS(sa_save->events.all) * 8));
-
-	uint8_t curByte = 0;
-	for (int i = 0; i < saEventFlags.count(); i++) {
-		if (i % 8 == 0) {
-			// New byte.
-			curByte = *flagByte++;
-		}
-
-		// Set this flag.
-		saEventFlags.setFlag(i, (curByte & 0x01));
-		curByte >>= 1;
-	}
-
-	// Set the flags in the model.
-	// TODO: BitFlags should emit a signal when data is changed.
-	ui.saEventFlagsView->setBitFlagsModel(saEventFlagsModel);
+	saEventFlags.setAllFlags(&sa_save->events.all[0], NUM_ELEMENTS(sa_save->events.all));
 }
 
 /** SAEditor **/

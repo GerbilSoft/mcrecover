@@ -123,5 +123,46 @@ void BitFlags::setFlag(int flag, bool value)
 
 	Q_D(BitFlags);
 	d->flags[flag] = value;
-	// TODO: Emit a signal?
+	emit flagChanged(flag, value);
+}
+
+/**
+ * Load an array of bit flags.
+ *
+ * If the array doesn't match the size of this BitFlags:
+ * - Too small: Array will be used for the first sz*8 flags.
+ * - Too big: Array will be used for count()*8 flags.
+ *
+ * TODO: Various bit flag encodings.
+ *
+ * @param data Bit flags.
+ * @param sz Number of bytes in data. (BYTES, not bits.)
+ * @return Number of bit flags loaded.
+ */
+int BitFlags::setAllFlags(const uint8_t *data, int sz)
+{
+	Q_D(BitFlags);
+	assert(sz > 0);
+	if (sz <= 0)
+		return 0;
+	else if (sz > d->flags.count())
+		sz = d->flags.count();
+
+	// TODO: Optimizations:
+	// - *flagBool++ = (curByte & 0x01)?
+	uint8_t curByte = 0;
+	bool *flagBool = d->flags.data();
+	for (int i = 0; i < d->flags.count(); i++, flagBool++) {
+		if (i % 8 == 0) {
+			// New byte.
+			curByte = *data++;
+		}
+
+		// Set this flag.
+		*flagBool = (curByte & 0x01);
+		curByte >>= 1;
+	}
+
+	emit flagsChanged(0, sz-1);
+	return sz;
 }

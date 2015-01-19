@@ -43,6 +43,29 @@ class BitFlags : public QObject
 	private:
 		Q_DISABLE_COPY(BitFlags)
 
+	signals:
+		/**
+		 * A flag has been changed.
+		 *
+		 * NOTE: If multiple flags are changed at once,
+		 * flagsChanged() is emitted instead.
+		 *
+		 * @param flag Flag ID.
+		 * @param value Flag value.
+		 */
+		void flagChanged(int flag, bool value);
+
+		/**
+		 * Multiple flags have been changed.
+		 *
+		 * NOTE: If a single flag is changed,
+		 * flagChanged() is emitted instead.
+		 *
+		 * @param firstFlag First flag that has changed.
+		 * @param lastFlag Last flag that has changed.
+		 */
+		void flagsChanged(int firstFlag, int lastFlag);
+
 	public:
 		/**
 		 * Get the total number of flags.
@@ -52,7 +75,7 @@ class BitFlags : public QObject
 
 		/**
 		 * Get a flag's description.
-		 * @param event Event ID.
+		 * @param flag Flag ID.
 		 * @return Description.
 		 */
 		QString description(int flag) const;
@@ -70,6 +93,21 @@ class BitFlags : public QObject
 		 * @param value New flag value.
 		 */
 		void setFlag(int flag, bool value);
+
+		/**
+		 * Load an array of bit flags.
+		 *
+		 * If the array doesn't match the size of this BitFlags:
+		 * - Too small: Array will be used for the first sz*8 flags.
+		 * - Too big: Array will be used for count()*8 flags.
+		 *
+		 * TODO: Various bit flag encodings.
+		 *
+		 * @param data Bit flags.
+		 * @param sz Number of bytes in data. (BYTES, not bits.)
+		 * @return Number of bit flags loaded.
+		 */
+		int setAllFlags(const uint8_t *data, int sz);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_FLAGS_HPP__ */

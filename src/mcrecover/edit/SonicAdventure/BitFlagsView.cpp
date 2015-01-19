@@ -135,33 +135,6 @@ void BitFlagsView::setBitFlagsModel(BitFlagsModel *bitFlagsModel)
 
 #if 0
 /**
- * Load data from a Sonic Adventure save slot.
- * @param sa_save Sonic Adventure save slot.
- * The data must have already been byteswapped to host-endian.
- * @return 0 on success; non-zero on error.
- */
-int BitFlagsView::load(const _sa_save_slot *sa_save)
-{
-	Q_D(BitFlagsView);
-	const uint8_t *flagByte = &sa_save->events.all[0];
-	assert(d->bitFlags.count() == (NUM_ELEMENTS(sa_save->events.all) * 8));
-
-	uint8_t curByte = 0;
-	for (int i = 0; i < d->bitFlags.count(); i++) {
-		if (i % 8 == 0) {
-			// New byte.
-			curByte = *flagByte++;
-		}
-
-		// Set this flag.
-		d->bitFlags.setFlag(i, (curByte & 0x01));
-		curByte >>= 1;
-	}
-
-	return 0;
-}
-
-/**
  * Save data to a Sonic Adventure save slot.
  * @param sa_save Sonic Adventure save slot.
  * The data will be in host-endian format.
