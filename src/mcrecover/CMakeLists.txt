@@ -160,8 +160,8 @@ SET(mcrecover_EDIT_SRCS
 	edit/SonicAdventure/SlotSelector.cpp
 	edit/SonicAdventure/SALevelClearCount.cpp
 	edit/SonicAdventure/SAEventFlags.cpp
-	edit/SonicAdventure/SAEventFlagsModel.cpp
-	edit/SonicAdventure/SAEventFlagsView.cpp
+	edit/SonicAdventure/BitFlagsModel.cpp
+	edit/SonicAdventure/BitFlagsView.cpp
 	edit/SonicAdventure/PageFilterModel.cpp
 	edit/SonicAdventure/BitFlags.cpp
 	)
@@ -229,8 +229,8 @@ SET(mcrecover_EDIT_MOC_H
 	edit/SonicAdventure/SlotSelector.hpp
 	edit/SonicAdventure/SALevelClearCount.hpp
 	edit/SonicAdventure/SAEventFlags.hpp
-	edit/SonicAdventure/SAEventFlagsModel.hpp
-	edit/SonicAdventure/SAEventFlagsView.hpp
+	edit/SonicAdventure/BitFlagsModel.hpp
+	edit/SonicAdventure/BitFlagsView.hpp
 	edit/SonicAdventure/PageFilterModel.hpp
 	edit/SonicAdventure/BitFlags.hpp
 	)
@@ -260,7 +260,7 @@ SET(mcrecover_EDIT_UIS
 	edit/SonicAdventure/SAEditor.ui
 	edit/SonicAdventure/SALevelStats.ui
 	edit/SonicAdventure/SALevelClearCount.ui
-	edit/SonicAdventure/SAEventFlagsView.ui
+	edit/SonicAdventure/BitFlagsView.ui
 	)
 
 # Generate the header files from the UI files.

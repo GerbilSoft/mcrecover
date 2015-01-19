@@ -106,7 +106,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="vboxEventFlags">
        <item>
-        <widget class="SAEventFlagsView" name="saEventFlagsView" native="true"/>
+        <widget class="BitFlagsView" name="saEventFlagsView" native="true"/>
        </item>
       </layout>
      </widget>
@@ -134,9 +134,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>SAEventFlagsView</class>
+   <class>BitFlagsView</class>
    <extends>QWidget</extends>
-   <header>edit/SonicAdventure/SAEventFlagsView.hpp</header>
+   <header>edit/SonicAdventure/BitFlagsView.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

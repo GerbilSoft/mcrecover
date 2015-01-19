@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SAEventFlagsView.hpp: Sonic Adventure - Event Flags editor.             *
+ * BitFlagsModel.hpp: QAbstractListModel for BitFlags.                     *
  *                                                                         *
  * Copyright (c) 2015 by David Korth.                                      *
  *                                                                         *
@@ -19,46 +19,56 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGSVIEW_HPP__
-#define __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGSVIEW_HPP__
+#ifndef __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSMODEL_HPP__
+#define __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSMODEL_HPP__
 
-#include <QtGui/QWidget>
+// Qt includes.
+#include <QtCore/QAbstractListModel>
 
-struct _sa_save_slot;
+class BitFlags;
 
-class SAEventFlagsViewPrivate;
-class SAEventFlagsView : public QWidget
+class BitFlagsModelPrivate;
+class BitFlagsModel : public QAbstractListModel
 {
 	Q_OBJECT
 
+	// TODO: Q_PROPERTY() for eventFlags.
+
 	public:
-		SAEventFlagsView(QWidget *parent = 0);
-		~SAEventFlagsView();
+		BitFlagsModel(QObject *parent = 0);
+		virtual ~BitFlagsModel();
 
 	protected:
-		SAEventFlagsViewPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(SAEventFlagsView)
+		BitFlagsModelPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(BitFlagsModel)
 	private:
-		Q_DISABLE_COPY(SAEventFlagsView)
+		Q_DISABLE_COPY(BitFlagsModel)
+
+	public:
+		/** Qt Model/View interface. **/
+		int rowCount(const QModelIndex& parent = QModelIndex()) const;
+		int columnCount(const QModelIndex& parent = QModelIndex()) const;
+
+		QVariant data(const QModelIndex& index, int role) const;
+		QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+		Qt::ItemFlags flags(const QModelIndex &index) const;
+
+		bool setData(const QModelIndex &index, const QVariant &value, int role);
 
 	public:
 		/** Data access. **/
 
 		/**
-		 * Load data from a Sonic Adventure save slot.
-		 * @param sa_save Sonic Adventure save slot.
-		 * The data must have already been byteswapped to host-endian.
-		 * @return 0 on success; non-zero on error.
+		 * Get the BitFlags this model is showing.
+		 * @return BitFlags this model is showing.
 		 */
-		int load(const _sa_save_slot *sa_save);
+		BitFlags *bitFlags(void) const;
 
 		/**
-		 * Save data to a Sonic Adventure save slot.
-		 * @param sa_save Sonic Adventure save slot.
-		 * The data will be in host-endian format.
-		 * @return 0 on success; non-zero on error.
+		 * Set the BitFlags for this model to show.
+		 * @param eventFlags BitFlags to show.
 		 */
-		int save(_sa_save_slot *sa_save) const;
+		void setBitFlags(BitFlags *eventFlags);
 };
 
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGSVIEW_HPP__ */
+#endif /* __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSMODEL_HPP__ */

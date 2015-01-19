@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SAEventFlagsModel.hpp: QAbstractListModel for SAEventFlags.             *
+ * BitFlagsView.hpp: Bit Flags editor.                                     *
  *                                                                         *
  * Copyright (c) 2015 by David Korth.                                      *
  *                                                                         *
@@ -19,56 +19,45 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGSMODEL_HPP__
-#define __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGSMODEL_HPP__
+#ifndef __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSVIEW_HPP__
+#define __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSVIEW_HPP__
 
-// Qt includes.
-#include <QtCore/QAbstractListModel>
+#include <QtGui/QWidget>
 
-class SAEventFlags;
+class BitFlagsModel;
 
-class SAEventFlagsModelPrivate;
-class SAEventFlagsModel : public QAbstractListModel
+class BitFlagsViewPrivate;
+class BitFlagsView : public QWidget
 {
 	Q_OBJECT
 
-	// TODO: Q_PROPERTY() for eventFlags.
+	Q_PROPERTY(BitFlagsModel* bitFlagsModel READ bitFlagsModel WRITE setBitFlagsModel)
 
 	public:
-		SAEventFlagsModel(QObject *parent = 0);
-		virtual ~SAEventFlagsModel();
+		BitFlagsView(QWidget *parent = 0);
+		~BitFlagsView();
 
 	protected:
-		SAEventFlagsModelPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(SAEventFlagsModel)
+		BitFlagsViewPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(BitFlagsView)
 	private:
-		Q_DISABLE_COPY(SAEventFlagsModel)
+		Q_DISABLE_COPY(BitFlagsView)
 
 	public:
-		/** Qt Model/View interface. **/
-		int rowCount(const QModelIndex& parent = QModelIndex()) const;
-		int columnCount(const QModelIndex& parent = QModelIndex()) const;
-
-		QVariant data(const QModelIndex& index, int role) const;
-		QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-		Qt::ItemFlags flags(const QModelIndex &index) const;
-
-		bool setData(const QModelIndex &index, const QVariant &value, int role);
-
-	public:
-		/** Data access. **/
+		/** Model access. **/
 
 		/**
-		 * Get the event flags this model is showing.
-		 * @return SAEventFlags this model is showing.
+		 * Get the BitFlagsModel this widget is editing.
+		 * @return BitFlagsModel.
 		 */
-		SAEventFlags *eventFlags(void) const;
+		BitFlagsModel *bitFlagsModel(void) const;
 
 		/**
-		 * Set the event flags for this model to show.
-		 * @param eventFlags SAEventFlags to show.
+		 * Set the BitFlagsModel to edit.
+		 * @param bitFlagsModel BitFlagsModel.
 		 */
-		void setEventFlags(SAEventFlags *eventFlags);
+		void setBitFlagsModel(BitFlagsModel *model);
 };
 
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGSMODEL_HPP__ */
+#endif /* __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSVIEW_HPP__ */
+

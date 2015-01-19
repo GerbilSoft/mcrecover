@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SAEventFlagsView.cpp: Sonic Adventure - Event Flags editor.             *
+ * BitFlagsView.hpp: Bit Flags editor.                                     *
  *                                                                         *
  * Copyright (c) 2015 by David Korth.                                      *
  *                                                                         *
@@ -19,10 +19,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#include "SAEventFlagsView.hpp"
+#include "BitFlagsView.hpp"
 
-#include "SAEventFlags.hpp"
-#include "SAEventFlagsModel.hpp"
+#include "BitFlags.hpp"
+#include "BitFlagsModel.hpp"
 #include "PageFilterModel.hpp"
 
 // C includes. (C++ namespace)
@@ -34,52 +34,52 @@
 // TODO: Put this in a common header file somewhere.
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
-/** SAEventFlagsViewPrivate **/
+/** BitFlagsViewPrivate **/
 
-#include "ui_SAEventFlagsView.h"
-class SAEventFlagsViewPrivate
+#include "ui_BitFlagsView.h"
+class BitFlagsViewPrivate
 {
 	public:
-		SAEventFlagsViewPrivate(SAEventFlagsView *q);
+		BitFlagsViewPrivate(BitFlagsView *q);
 
 	protected:
-		SAEventFlagsView *const q_ptr;
-		Q_DECLARE_PUBLIC(SAEventFlagsView)
+		BitFlagsView *const q_ptr;
+		Q_DECLARE_PUBLIC(BitFlagsView)
 	private:
-		Q_DISABLE_COPY(SAEventFlagsViewPrivate)
+		Q_DISABLE_COPY(BitFlagsViewPrivate)
 
 	public:
-		Ui_SAEventFlagsView ui;
+		Ui_BitFlagsView ui;
 
-		// Event Flags model.
-		SAEventFlagsModel *eventFlagsModel;
+		// Bit Flags model.
+		// NOT OWNED by this widget; owned by the parent.
+		BitFlagsModel *bitFlagsModel;
+
+		// Page Filter model. (owned by this widget)
 		PageFilterModel *pageFilterModel;
-
-		// Event Flags data.
-		SAEventFlags eventFlags;
 };
 
-SAEventFlagsViewPrivate::SAEventFlagsViewPrivate(SAEventFlagsView *q)
+BitFlagsViewPrivate::BitFlagsViewPrivate(BitFlagsView *q)
 	: q_ptr(q)
-{ }
-
-/** SAEventFlagsView **/
-
-SAEventFlagsView::SAEventFlagsView(QWidget *parent)
-	: QWidget(parent)
-	, d_ptr(new SAEventFlagsViewPrivate(this))
+	, bitFlagsModel(nullptr)
+	, pageFilterModel(nullptr)
 {
-	Q_D(SAEventFlagsView);
+	// Initialize the page filter model.
+	// TODO: Expose page and pageSize properties.
+	pageFilterModel = new PageFilterModel(q);
+	pageFilterModel->setPageSize(64);
+}
+
+/** BitFlagsView **/
+
+BitFlagsView::BitFlagsView(QWidget *parent)
+	: QWidget(parent)
+	, d_ptr(new BitFlagsViewPrivate(this))
+{
+	Q_D(BitFlagsView);
 	d->ui.setupUi(this);
 
-	// Initialize the event flags.
-	d->eventFlagsModel = new SAEventFlagsModel(this);
-	d->eventFlagsModel->setEventFlags(&d->eventFlags);
-	// Page filter.
-	// TODO: Add page size to the constructor?
-	d->pageFilterModel = new PageFilterModel(this);
-	d->pageFilterModel->setSourceModel(d->eventFlagsModel);
-	//d->pageFilterModel->setPageSize(64);
+	// Set lstEventFlags' model.
 	d->ui.lstEventFlags->setModel(d->pageFilterModel);
 
 	// NOTE: QTabBar is initialized after the model is set to prevent
@@ -90,6 +90,7 @@ SAEventFlagsView::SAEventFlagsView(QWidget *parent)
 	// Disable drawBase because the tabs are right above the QTreeView.
 	// (FIXME: With drawBase disabled, there's a 1px empty space for unselected tabs on Win7...)
 	// TODO: Retranslate the tabs on language change.
+	// TODO: Parent should set the tab names...
 	d->ui.tabBar->setExpanding(false);
 	d->ui.tabBar->setDrawBase(true);
 	d->ui.tabBar->addTab(tr("Unused?"));
@@ -108,35 +109,58 @@ SAEventFlagsView::SAEventFlagsView(QWidget *parent)
 		d->ui.tabBar, SLOT(setCurrentIndex(int)));
 }
 
-SAEventFlagsView::~SAEventFlagsView()
+BitFlagsView::~BitFlagsView()
 {
-	Q_D(SAEventFlagsView);
+	Q_D(BitFlagsView);
 	delete d;
 }
 
-/** Data access. **/
+/** Model access. **/
 
+/**
+ * Get the BitFlagsModel this widget is editing.
+ * @return BitFlagsModel.
+ */
+BitFlagsModel *BitFlagsView::bitFlagsModel(void) const
+{
+	Q_D(const BitFlagsView);
+	return d->bitFlagsModel;
+}
+
+/**
+ * Set the BitFlagsModel to edit.
+ * @param bitFlagsModel BitFlagsModel.
+ */
+void BitFlagsView::setBitFlagsModel(BitFlagsModel *model)
+{
+	// TODO: Connect destroyed() signal for BitFlagsModel?
+	Q_D(BitFlagsView);
+	d->bitFlagsModel = model;
+	d->pageFilterModel->setSourceModel(d->bitFlagsModel);
+}
+
+#if 0
 /**
  * Load data from a Sonic Adventure save slot.
  * @param sa_save Sonic Adventure save slot.
  * The data must have already been byteswapped to host-endian.
  * @return 0 on success; non-zero on error.
  */
-int SAEventFlagsView::load(const _sa_save_slot *sa_save)
+int BitFlagsView::load(const _sa_save_slot *sa_save)
 {
-	Q_D(SAEventFlagsView);
+	Q_D(BitFlagsView);
 	const uint8_t *flagByte = &sa_save->events.all[0];
-	assert(d->eventFlags.count() == (NUM_ELEMENTS(sa_save->events.all) * 8));
+	assert(d->bitFlags.count() == (NUM_ELEMENTS(sa_save->events.all) * 8));
 
 	uint8_t curByte = 0;
-	for (int i = 0; i < d->eventFlags.count(); i++) {
+	for (int i = 0; i < d->bitFlags.count(); i++) {
 		if (i % 8 == 0) {
 			// New byte.
 			curByte = *flagByte++;
 		}
 
 		// Set this flag.
-		d->eventFlags.setFlag(i, (curByte & 0x01));
+		d->bitFlags.setFlag(i, (curByte & 0x01));
 		curByte >>= 1;
 	}
 
@@ -149,14 +173,14 @@ int SAEventFlagsView::load(const _sa_save_slot *sa_save)
  * The data will be in host-endian format.
  * @return 0 on success; non-zero on error.
  */
-int SAEventFlagsView::save(_sa_save_slot *sa_save) const
+int BitFlagsView::save(_sa_save_slot *sa_save) const
 {
-	Q_D(const SAEventFlagsView);
+	Q_D(const BitFlagsView);
 	uint8_t *flagByte = &sa_save->events.all[0];
-	assert(d->eventFlags.count() == (NUM_ELEMENTS(sa_save->events.all) * 8));
+	assert(d->bitFlags.count() == (NUM_ELEMENTS(sa_save->events.all) * 8));
 
 	// TODO: Verify that this is correct.
-	for (int i = 0; i < d->eventFlags.count(); i++) {
+	for (int i = 0; i < d->bitFlags.count(); i++) {
 		if (i % 8 == 0) {
 			// New byte.
 			// TODO: Optimize this?
@@ -167,8 +191,9 @@ int SAEventFlagsView::save(_sa_save_slot *sa_save) const
 
 		// Get this flag.
 		*flagByte <<= 1;
-		*flagByte |= !!(d->eventFlags.flag(i));
+		*flagByte |= !!(d->bitFlags.flag(i));
 	}
 
 	return 0;
 }
+#endif

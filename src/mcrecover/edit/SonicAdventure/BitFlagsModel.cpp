@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SAEventFlagsModel.cpp: QAbstractListModel for SAEventFlags.             *
+ * BitFlagsModel.cpp: QAbstractListModel for BitFlags.                     *
  *                                                                         *
  * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
@@ -21,7 +21,7 @@
 
 // Reference: http://programmingexamples.net/wiki/Qt/ModelView/AbstractListModelCheckable
 
-#include "SAEventFlagsModel.hpp"
+#include "BitFlagsModel.hpp"
 #include "sa_defs.h"
 
 // C includes.
@@ -31,67 +31,67 @@
 #include <QtCore/QHash>
 
 // Event flags.
-#include "SAEventFlags.hpp"
+#include "BitFlags.hpp"
 
-/** SAEventFlagsModelPrivate **/
+/** BitFlagsModelPrivate **/
 
-class SAEventFlagsModelPrivate
+class BitFlagsModelPrivate
 {
 	public:
-		SAEventFlagsModelPrivate(SAEventFlagsModel *q);
+		BitFlagsModelPrivate(BitFlagsModel *q);
 
 	protected:
-		SAEventFlagsModel *const q_ptr;
-		Q_DECLARE_PUBLIC(SAEventFlagsModel)
+		BitFlagsModel *const q_ptr;
+		Q_DECLARE_PUBLIC(BitFlagsModel)
 	private:
-		Q_DISABLE_COPY(SAEventFlagsModelPrivate)
+		Q_DISABLE_COPY(BitFlagsModelPrivate)
 
 	public:
-		// Sonic Adeventure event flags.
+		// BitFlags.
 		// TODO: Signals for data changes?
-		SAEventFlags *eventFlags;
+		BitFlags *bitFlags;
 };
 
-SAEventFlagsModelPrivate::SAEventFlagsModelPrivate(SAEventFlagsModel *q)
+BitFlagsModelPrivate::BitFlagsModelPrivate(BitFlagsModel *q)
 	: q_ptr(q)
-	, eventFlags(nullptr)
+	, bitFlags(nullptr)
 { }
 
-/** SAEventFlagsModel **/
+/** BitFlagsModel **/
 
-SAEventFlagsModel::SAEventFlagsModel(QObject *parent)
+BitFlagsModel::BitFlagsModel(QObject *parent)
 	: QAbstractListModel(parent)
-	, d_ptr(new SAEventFlagsModelPrivate(this))
+	, d_ptr(new BitFlagsModelPrivate(this))
 { }
 
-SAEventFlagsModel::~SAEventFlagsModel()
+BitFlagsModel::~BitFlagsModel()
 {
-	Q_D(SAEventFlagsModel);
+	Q_D(BitFlagsModel);
 	delete d;
 }
 
 /** Qt Model/View interface. **/
 
-int SAEventFlagsModel::rowCount(const QModelIndex& parent) const
+int BitFlagsModel::rowCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent)
-	Q_D(const SAEventFlagsModel);
-	return (d->eventFlags ? d->eventFlags->count() : 0);
+	Q_D(const BitFlagsModel);
+	return (d->bitFlags ? d->bitFlags->count() : 0);
 }
 
-int SAEventFlagsModel::columnCount(const QModelIndex& parent) const
+int BitFlagsModel::columnCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
-	Q_D(const SAEventFlagsModel);
+	Q_D(const BitFlagsModel);
 	// Only one column: Event name.
-	return (d->eventFlags ? 1 : 0);
+	return (d->bitFlags ? 1 : 0);
 }
 
 // FIXME: Backport some stuff to MemCardModel.
-QVariant SAEventFlagsModel::data(const QModelIndex& index, int role) const
+QVariant BitFlagsModel::data(const QModelIndex& index, int role) const
 {
-	Q_D(const SAEventFlagsModel);
-	if (!d->eventFlags)
+	Q_D(const BitFlagsModel);
+	if (!d->bitFlags)
 		return QVariant();
 	if (!index.isValid())
 		return QVariant();
@@ -102,11 +102,11 @@ QVariant SAEventFlagsModel::data(const QModelIndex& index, int role) const
 
 	switch (role) {
 		case Qt::DisplayRole:
-			return d->eventFlags->description(index.row());
+			return d->bitFlags->description(index.row());
 
 		case Qt::CheckStateRole:
 			// TODO
-			return (d->eventFlags->flag(index.row()) ? Qt::Checked : Qt::Unchecked);
+			return (d->bitFlags->flag(index.row()) ? Qt::Checked : Qt::Unchecked);
 
 		default:
 			break;
@@ -116,11 +116,11 @@ QVariant SAEventFlagsModel::data(const QModelIndex& index, int role) const
 	return QVariant();
 }
 
-QVariant SAEventFlagsModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant BitFlagsModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	Q_UNUSED(orientation);
-	Q_D(const SAEventFlagsModel);
-	if (!d->eventFlags)
+	Q_D(const BitFlagsModel);
+	if (!d->bitFlags)
 		return QVariant();
 	if (section != 0)
 		return QVariant();
@@ -139,10 +139,10 @@ QVariant SAEventFlagsModel::headerData(int section, Qt::Orientation orientation,
 	return QVariant();
 }
 
-Qt::ItemFlags SAEventFlagsModel::flags(const QModelIndex &index) const
+Qt::ItemFlags BitFlagsModel::flags(const QModelIndex &index) const
 {
-	Q_D(const SAEventFlagsModel);
-	if (!d->eventFlags)
+	Q_D(const BitFlagsModel);
+	if (!d->bitFlags)
 		return Qt::NoItemFlags;
 	if (!index.isValid())
 		return Qt::NoItemFlags;
@@ -152,10 +152,10 @@ Qt::ItemFlags SAEventFlagsModel::flags(const QModelIndex &index) const
 	return (Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 }
 
-bool SAEventFlagsModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool BitFlagsModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-	Q_D(SAEventFlagsModel);
-	if (!d->eventFlags)
+	Q_D(BitFlagsModel);
+	if (!d->bitFlags)
 		return false;
 	if (!index.isValid())
 		return false;
@@ -168,7 +168,7 @@ bool SAEventFlagsModel::setData(const QModelIndex &index, const QVariant &value,
 		case Qt::CheckStateRole:
 			// Event flag value has changed.
 			// TODO: Map row to event ID.
-			d->eventFlags->setFlag(index.row(), (value.toUInt() == Qt::Checked));
+			d->bitFlags->setFlag(index.row(), (value.toUInt() == Qt::Checked));
 			break;
 
 		default:
@@ -184,24 +184,24 @@ bool SAEventFlagsModel::setData(const QModelIndex &index, const QVariant &value,
 /** Data access. **/
 
 /**
- * Get the SAEventFlags this model is showing.
- * @return SAEventFlags this model is showing.
+ * Get the BitFlags this model is showing.
+ * @return BitFlags this model is showing.
  */
-SAEventFlags *SAEventFlagsModel::eventFlags(void) const
+BitFlags *BitFlagsModel::bitFlags(void) const
 {
-	Q_D(const SAEventFlagsModel);
-	return d->eventFlags;
+	Q_D(const BitFlagsModel);
+	return d->bitFlags;
 }
 
 /**
- * Set the SAEventFlags for this model to show.
- * @param eventFlags SAEventFlags to show.
+ * Set the BitFlags for this model to show.
+ * @param bitFlags BitFlags to show.
  */
-void SAEventFlagsModel::setEventFlags(SAEventFlags *eventFlags)
+void BitFlagsModel::setBitFlags(BitFlags *bitFlags)
 {
-	Q_D(SAEventFlagsModel);
+	Q_D(BitFlagsModel);
 	// TODO: Better signals?
 	emit layoutAboutToBeChanged();
-	d->eventFlags = eventFlags;
+	d->bitFlags = bitFlags;
 	emit layoutChanged();
 }

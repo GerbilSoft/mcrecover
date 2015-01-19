@@ -23,6 +23,7 @@
 
 // C includes. (C++ namespace)
 #include <cstdlib>
+#include <cassert>
 
 // Qt includes.
 #include <QtCore/QEvent>
@@ -32,6 +33,10 @@
 
 #include "util/byteswap.h"
 #include "sa_defs.h"
+
+// BitFlags
+#include "BitFlagsModel.hpp"
+#include "SAEventFlags.hpp"
 
 // TODO: Put this in a common header file somewhere.
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
@@ -61,6 +66,14 @@ class SAEditorPrivate
 		// sa_save_slot structs.
 		QVector<sa_save_slot*> data;
 		int slot; // active slot (-1 for none)
+
+		// BitFlagsModel objects.
+		// Used for event flags, NPC flags, etc.
+		// Since BitFlagsView uses a QTreeView with a list model
+		// directly, we're storing the data here instead of
+		// having BitFlagsView store the data.
+		SAEventFlags saEventFlags;
+		BitFlagsModel *saEventFlagsModel;
 
 		/**
 		 * Clear the sa_save_slot structs.
@@ -139,7 +152,29 @@ void SAEditorPrivate::updateDisplay(void)
 	sa_save_slot *sa_save = data.at(slot);
 	ui.saLevelStats->load(sa_save);
 	ui.saLevelClearCount->load(sa_save);
-	ui.saEventFlagsView->load(sa_save);
+
+	/** Bit flags. **/
+	// FIXME: Convenience function for loading/saving bit flags.
+
+	// Event flags.
+	const uint8_t *flagByte = &sa_save->events.all[0];
+	assert(saEventFlags.count() == (NUM_ELEMENTS(sa_save->events.all) * 8));
+
+	uint8_t curByte = 0;
+	for (int i = 0; i < saEventFlags.count(); i++) {
+		if (i % 8 == 0) {
+			// New byte.
+			curByte = *flagByte++;
+		}
+
+		// Set this flag.
+		saEventFlags.setFlag(i, (curByte & 0x01));
+		curByte >>= 1;
+	}
+
+	// Set the flags in the model.
+	// TODO: BitFlags should emit a signal when data is changed.
+	ui.saEventFlagsView->setBitFlagsModel(saEventFlagsModel);
 }
 
 /** SAEditor **/
@@ -154,6 +189,11 @@ SAEditor::SAEditor(QWidget *parent)
 {
 	Q_D(SAEditor);
 	d->ui.setupUi(this);
+
+	// Initialize the BitFlagModels.
+	d->saEventFlagsModel = new BitFlagsModel(this);
+	d->saEventFlagsModel->setBitFlags(&d->saEventFlags);
+	d->ui.saEventFlagsView->setBitFlagsModel(d->saEventFlagsModel);
 
 	// Attempt to fix the scroll area's minimum width.
 	// TODO: On theme change also?
