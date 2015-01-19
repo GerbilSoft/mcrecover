@@ -95,7 +95,22 @@ class BitFlags : public QObject
 		void setFlag(int flag, bool value);
 
 		/**
-		 * Load an array of bit flags.
+		 * Get the bit flags as an array of bitfield data.
+		 *
+		 * If the array doesn't match the size of this BitFlags:
+		 * - Too small: Array will be used for the first sz*8 flags.
+		 * - Too big: Array will be used for count()*8 flags.
+		 *
+		 * TODO: Various bit flag encodings.
+		 *
+		 * @param data Bit flags.
+		 * @param sz Number of bytes in data. (BYTES, not bits.)
+		 * @return Number of bit flags retrieved.
+		 */
+		int allFlags(uint8_t *data, int sz) const;
+
+		/**
+		 * Set the bit flags from an array of bitfield data.
 		 *
 		 * If the array doesn't match the size of this BitFlags:
 		 * - Too small: Array will be used for the first sz*8 flags.

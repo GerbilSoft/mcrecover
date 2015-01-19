@@ -206,35 +206,3 @@ void BitFlagsView::setPageSize(int pageSize)
 
 // TODO: Page count?
 // TODO: Set tab names.
-
-#if 0
-/**
- * Save data to a Sonic Adventure save slot.
- * @param sa_save Sonic Adventure save slot.
- * The data will be in host-endian format.
- * @return 0 on success; non-zero on error.
- */
-int BitFlagsView::save(_sa_save_slot *sa_save) const
-{
-	Q_D(const BitFlagsView);
-	uint8_t *flagByte = &sa_save->events.all[0];
-	assert(d->bitFlags.count() == (NUM_ELEMENTS(sa_save->events.all) * 8));
-
-	// TODO: Verify that this is correct.
-	for (int i = 0; i < d->bitFlags.count(); i++) {
-		if (i % 8 == 0) {
-			// New byte.
-			// TODO: Optimize this?
-			if (i > 0)
-				flagByte++;
-			*flagByte = 0;
-		}
-
-		// Get this flag.
-		*flagByte <<= 1;
-		*flagByte |= !!(d->bitFlags.flag(i));
-	}
-
-	return 0;
-}
-#endif

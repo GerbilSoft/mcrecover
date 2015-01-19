@@ -127,7 +127,7 @@ void BitFlags::setFlag(int flag, bool value)
 }
 
 /**
- * Load an array of bit flags.
+ * Get all of the bit flags.
  *
  * If the array doesn't match the size of this BitFlags:
  * - Too small: Array will be used for the first sz*8 flags.
@@ -137,7 +137,51 @@ void BitFlags::setFlag(int flag, bool value)
  *
  * @param data Bit flags.
  * @param sz Number of bytes in data. (BYTES, not bits.)
- * @return Number of bit flags loaded.
+ * @return Number of bit flags retrieved.
+ */
+int BitFlags::allFlags(uint8_t *data, int sz) const
+{
+	Q_D(const BitFlags);
+	assert(sz > 0);
+	if (sz <= 0)
+		return 0;
+
+	// Convert to bits.
+	int bits = sz * 8;
+	if (bits > d->flags.count())
+		bits = d->flags.count();
+
+	// TODO: Verify that this is correct.
+	const bool *flagBool = d->flags.data();
+	for (int i = 0; i < bits; i++, flagBool++) {
+		if (i % 8 == 0) {
+			// New byte.
+			// TODO: Optimize this?
+			if (i > 0)
+				data++;
+			*data = 0;
+		}
+
+		// Get this flag.
+		*data <<= 1;
+		*data |= !!(*flagBool);
+	}
+
+	return bits;
+}
+
+/**
+ * Set the bit flags from an array of bitfield data.
+ *
+ * If the array doesn't match the size of this BitFlags:
+ * - Too small: Array will be used for the first sz*8 flags.
+ * - Too big: Array will be used for count()*8 flags.
+ *
+ * TODO: Various bit flag encodings.
+ *
+ * @param data Bit flags.
+ * @param sz Number of bytes in data. (BYTES, not bits.)
+ * @return Number of bit flags set.
  */
 int BitFlags::setAllFlags(const uint8_t *data, int sz)
 {
