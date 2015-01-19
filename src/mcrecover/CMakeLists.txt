@@ -163,6 +163,7 @@ SET(mcrecover_EDIT_SRCS
 	edit/SonicAdventure/SAEventFlagsModel.cpp
 	edit/SonicAdventure/SAEventFlagsView.cpp
 	edit/SonicAdventure/PageFilterModel.cpp
+	edit/SonicAdventure/BitFlags.cpp
 	)
 
 # Shh... it's a secret to everybody.
@@ -231,6 +232,7 @@ SET(mcrecover_EDIT_MOC_H
 	edit/SonicAdventure/SAEventFlagsModel.hpp
 	edit/SonicAdventure/SAEventFlagsView.hpp
 	edit/SonicAdventure/PageFilterModel.hpp
+	edit/SonicAdventure/BitFlags.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H

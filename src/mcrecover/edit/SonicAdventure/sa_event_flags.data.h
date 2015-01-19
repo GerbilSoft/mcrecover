@@ -8,10 +8,9 @@
 // NOTE: Many of the event flags are unused, so instead of using
 // an array, we're using a struct of event flags.
 // FIXME: Alignment on 64-bit?
-struct {
-	int event;
-	const char *description;
-} sa_event_flags_desc[] = {
+#include "bit_flag.h"
+
+bit_flag_t sa_event_flags_desc[] = {
 	{65, "Sonic Unlocked in Adventure"},
 	{66, "Tails Unlocked in Adventure"},
 	{67, "Knuckles Unlocked in Adventure"},
