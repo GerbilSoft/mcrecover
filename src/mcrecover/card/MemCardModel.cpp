@@ -517,6 +517,7 @@ void MemCardModel::setCard(Card *card)
 	// Disconnect the Card's changed() signal if a Card is already set.
 	if (d->card) {
 		// Notify the view that we're about to remove all rows.
+		// TODO: fileCount should already be cached...
 		d->fileCount = d->card->fileCount();
 		if (d->fileCount > 0)
 			beginRemoveRows(QModelIndex(), 0, (d->fileCount - 1));
