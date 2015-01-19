@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SAEventFlags.cpp: Sonic Adventure event flags.                          *
+ * SAEventFlags.cpp: Sonic Adventure - Event flags.                        *
  *                                                                         *
  * Copyright (c) 2015 by David Korth.                                      *
  *                                                                         *
