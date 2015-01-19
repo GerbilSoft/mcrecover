@@ -145,14 +145,17 @@ int BitFlags::setAllFlags(const uint8_t *data, int sz)
 	assert(sz > 0);
 	if (sz <= 0)
 		return 0;
-	else if (sz > d->flags.count())
-		sz = d->flags.count();
+
+	// Convert to bits.
+	int bits = sz * 8;
+	if (bits > d->flags.count())
+		bits = d->flags.count();
 
 	// TODO: Optimizations:
 	// - *flagBool++ = (curByte & 0x01)?
 	uint8_t curByte = 0;
 	bool *flagBool = d->flags.data();
-	for (int i = 0; i < d->flags.count(); i++, flagBool++) {
+	for (int i = 0; i < bits; i++, flagBool++) {
 		if (i % 8 == 0) {
 			// New byte.
 			curByte = *data++;
@@ -163,6 +166,6 @@ int BitFlags::setAllFlags(const uint8_t *data, int sz)
 		curByte >>= 1;
 	}
 
-	emit flagsChanged(0, sz-1);
-	return sz;
+	emit flagsChanged(0, bits-1);
+	return bits;
 }
