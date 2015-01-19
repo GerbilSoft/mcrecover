@@ -51,17 +51,12 @@ class BitFlagsViewPrivate
 	public:
 		Ui_BitFlagsView ui;
 
-		// Bit Flags model.
-		// NOT OWNED by this widget; owned by the parent.
-		BitFlagsModel *bitFlagsModel;
-
 		// Page Filter model. (owned by this widget)
 		PageFilterModel *pageFilterModel;
 };
 
 BitFlagsViewPrivate::BitFlagsViewPrivate(BitFlagsView *q)
 	: q_ptr(q)
-	, bitFlagsModel(nullptr)
 	, pageFilterModel(nullptr)
 {
 	// Initialize the page filter model.
@@ -124,19 +119,18 @@ BitFlagsView::~BitFlagsView()
 BitFlagsModel *BitFlagsView::bitFlagsModel(void) const
 {
 	Q_D(const BitFlagsView);
-	return d->bitFlagsModel;
+	return qobject_cast<BitFlagsModel*>(d->pageFilterModel->sourceModel());
 }
 
 /**
  * Set the BitFlagsModel to edit.
  * @param bitFlagsModel BitFlagsModel.
  */
-void BitFlagsView::setBitFlagsModel(BitFlagsModel *model)
+void BitFlagsView::setBitFlagsModel(BitFlagsModel *bitFlagsModel)
 {
 	// TODO: Connect destroyed() signal for BitFlagsModel?
 	Q_D(BitFlagsView);
-	d->bitFlagsModel = model;
-	d->pageFilterModel->setSourceModel(d->bitFlagsModel);
+	d->pageFilterModel->setSourceModel(bitFlagsModel);
 }
 
 #if 0
