@@ -55,6 +55,8 @@ class GcnCard : public Card
 
 	protected:
 		Q_DECLARE_PRIVATE(GcnCard)
+	private:
+		Q_DISABLE_COPY(GcnCard)
 
 	public:
 		/**
@@ -72,9 +74,6 @@ class GcnCard : public Card
 		 * @return GcnCard object, or nullptr on error.
 		 */
 		static GcnCard *format(const QString& filename, QObject *parent);
-
-	private:
-		Q_DISABLE_COPY(GcnCard)
 
 	public:
 		/**
