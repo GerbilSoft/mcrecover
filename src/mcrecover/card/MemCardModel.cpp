@@ -552,6 +552,8 @@ void MemCardModel::setCard(Card *card)
 		d->card = card;
 
 		// Initialize the animation state.
+		// NOTE: fileCount must be set here.
+		d->fileCount = fileCount;
 		d->initAnimState();
 
 		// Connect the Card's signals.
@@ -567,10 +569,8 @@ void MemCardModel::setCard(Card *card)
 			this, SLOT(card_filesRemoved_slot()));
 
 		// Done adding rows.
-		if (fileCount > 0) {
-			d->fileCount = fileCount;
+		if (fileCount > 0)
 			endInsertRows();
-		}
 	}
 }
 
