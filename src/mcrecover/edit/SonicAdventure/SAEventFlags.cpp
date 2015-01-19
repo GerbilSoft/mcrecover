@@ -22,10 +22,6 @@
 #include "SAEventFlags.hpp"
 #include "sa_event_flags.data.h"
 
-// Qt includes.
-#include <QtCore/QHash>
-#include <QtCore/QString>
-
 // TODO: Put this in a common header file somewhere.
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
