@@ -518,9 +518,9 @@ void MemCardModel::setCard(Card *card)
 	if (d->card) {
 		// Notify the view that we're about to remove all rows.
 		// TODO: fileCount should already be cached...
-		d->fileCount = d->card->fileCount();
-		if (d->fileCount > 0)
-			beginRemoveRows(QModelIndex(), 0, (d->fileCount - 1));
+		const int fileCount = d->card->fileCount();
+		if (fileCount > 0)
+			beginRemoveRows(QModelIndex(), 0, (fileCount - 1));
 
 		// Disconnect the Card's signals.
 		disconnect(d->card, SIGNAL(destroyed(QObject*)),
@@ -537,17 +537,16 @@ void MemCardModel::setCard(Card *card)
 		d->card = nullptr;
 
 		// Done removing rows.
-		if (d->fileCount > 0) {
-			d->fileCount = 0;
+		d->fileCount = 0;
+		if (fileCount > 0)
 			endRemoveRows();
-		}
 	}
 
 	if (card) {
 		// Notify the view that we're about to add rows.
-		d->fileCount = card->fileCount();
-		if (d->fileCount > 0)
-			beginInsertRows(QModelIndex(), 0, (d->fileCount - 1));
+		const int fileCount = card->fileCount();
+		if (fileCount > 0)
+			beginInsertRows(QModelIndex(), 0, (fileCount - 1));
 
 		// Set the card.
 		d->card = card;
@@ -568,8 +567,10 @@ void MemCardModel::setCard(Card *card)
 			this, SLOT(card_filesRemoved_slot()));
 
 		// Done adding rows.
-		if (d->fileCount > 0)
+		if (fileCount > 0) {
+			d->fileCount = fileCount;
 			endInsertRows();
+		}
 	}
 }
 
