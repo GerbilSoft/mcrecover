@@ -37,9 +37,11 @@ class BitFlags : public QObject
 	public:
 		virtual ~BitFlags();
 
-	private:
+	protected:
 		BitFlagsPrivate *d_ptr;
-		Q_DECLARE_PRIVATE(BitFlags);
+		Q_DECLARE_PRIVATE(BitFlags)
+	private:
+		Q_DISABLE_COPY(BitFlags)
 
 	public:
 		/**
