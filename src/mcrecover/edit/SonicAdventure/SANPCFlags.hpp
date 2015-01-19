@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SAEditor.hpp: Sonic Adventure - save file editor.                       *
+ * SANPCFlags.hpp: Sonic Adventure - NPC flags.                            *
  *                                                                         *
  * Copyright (c) 2015 by David Korth.                                      *
  *                                                                         *
@@ -19,59 +19,24 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__
-#define __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__
+#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SANPCFLAGS_HPP__
+#define __MCRECOVER_EDIT_SONICADVENTURE_SANPCFLAGS_HPP__
 
-#include <QtGui/QDialog>
+#include "BitFlags.hpp"
 
-class File;
-
-class SAEditorPrivate;
-class SAEditor : public QWidget
+class SANPCFlagsPrivate;
+class SANPCFlags : public BitFlags
 {
+	// TODO: Should this actually inherit from QObject?
 	Q_OBJECT
 
-	Q_PROPERTY(File* file READ file WRITE setFile)
-
 	public:
-		SAEditor(QWidget *parent = nullptr);
-		~SAEditor();
+		SANPCFlags(QObject *parent = 0);
 
 	protected:
-		SAEditorPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(SAEditor)
+		Q_DECLARE_PRIVATE(SANPCFlags)
 	private:
-		Q_DISABLE_COPY(SAEditor)
-
-	protected:
-		// State change event. (Used for switching the UI language at runtime.)
-		void changeEvent(QEvent *event);
-
-	public:
-		/** Public functions. **/
-
-		/**
-		 * Get the file currently being edited.
-		 * @return File being edited, or nullptr if none.
-		 */
-		File *file(void) const;
-
-		/**
-		 * Set the File to edit.
-		 * @param file File to edit.
-		 * If the file isn't valid, it won't be set;
-		 * check file() afterwards to verify.
-		 */
-		int setFile(File *file);
-
-	protected slots:
-		/** Widget slots. **/
-
-		/**
-		 * Slot selector's slot has changed.
-		 * @param slot New slot.
-		 */
-		void on_slotSelector_slotChanged(int slot);
+		Q_DISABLE_COPY(SANPCFlags)
 };
 
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__ */
+#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SANPCFLAGS_HPP__ */

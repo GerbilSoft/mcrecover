@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SAEditor.cpp: Sonic Adventure - save file editor.           *
+ * SAEditor.cpp: Sonic Adventure - save file editor.                       *
  *                                                                         *
  * Copyright (c) 2015 by David Korth.                                      *
  *                                                                         *
@@ -37,6 +37,7 @@
 // BitFlags
 #include "BitFlagsModel.hpp"
 #include "SAEventFlags.hpp"
+#include "SANPCFlags.hpp"
 
 // TODO: Put this in a common header file somewhere.
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
@@ -73,7 +74,9 @@ class SAEditorPrivate
 		// directly, we're storing the data here instead of
 		// having BitFlagsView store the data.
 		SAEventFlags saEventFlags;
+		SANPCFlags saNPCFlags;
 		BitFlagsModel *saEventFlagsModel;
+		BitFlagsModel *saNPCFlagsModel;
 
 		/**
 		 * Clear the sa_save_slot structs.
@@ -89,6 +92,8 @@ class SAEditorPrivate
 SAEditorPrivate::SAEditorPrivate(SAEditor* q)
 	: q_ptr(q)
 	, slot(-1)
+	, saEventFlagsModel(nullptr)
+	, saNPCFlagsModel(nullptr)
 {
 	// Make sure sa_defs.h is correct.
 	static_assert(SA_SCORES_LEN == 128, "SA_SCORES_LEN is incorrect");
@@ -155,6 +160,7 @@ void SAEditorPrivate::updateDisplay(void)
 
 	/** Bit flags. **/
 	saEventFlags.setAllFlags(&sa_save->events.all[0], NUM_ELEMENTS(sa_save->events.all));
+	saNPCFlags.setAllFlags(&sa_save->npc.all[0], NUM_ELEMENTS(sa_save->npc.all));
 }
 
 /** SAEditor **/
@@ -174,6 +180,9 @@ SAEditor::SAEditor(QWidget *parent)
 	d->saEventFlagsModel = new BitFlagsModel(this);
 	d->saEventFlagsModel->setBitFlags(&d->saEventFlags);
 	d->ui.saEventFlagsView->setBitFlagsModel(d->saEventFlagsModel);
+	d->saNPCFlagsModel = new BitFlagsModel(this);
+	d->saNPCFlagsModel->setBitFlags(&d->saNPCFlags);
+	d->ui.saNPCFlagsView->setBitFlagsModel(d->saNPCFlagsModel);
 
 	// Attempt to fix the scroll area's minimum width.
 	// TODO: On theme change also?

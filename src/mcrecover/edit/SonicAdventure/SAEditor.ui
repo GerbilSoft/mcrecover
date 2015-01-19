@@ -37,7 +37,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>4</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -107,6 +107,16 @@
       <layout class="QVBoxLayout" name="vboxEventFlags">
        <item>
         <widget class="BitFlagsView" name="saEventFlagsView" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabNPCFlags">
+      <attribute name="title">
+       <string>&amp;NPC Flags</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="vboxNPCFlags">
+       <item>
+        <widget class="BitFlagsView" name="saNPCFlagsView" native="true"/>
        </item>
       </layout>
      </widget>

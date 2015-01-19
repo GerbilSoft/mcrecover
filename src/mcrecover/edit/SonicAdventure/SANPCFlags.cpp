@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SAEditor.hpp: Sonic Adventure - save file editor.                       *
+ * SANPCFlags.cpp: Sonic Adventure - Event flags.                        *
  *                                                                         *
  * Copyright (c) 2015 by David Korth.                                      *
  *                                                                         *
@@ -19,59 +19,32 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__
-#define __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__
+#include "SANPCFlags.hpp"
 
-#include <QtGui/QDialog>
+// TODO: Put this in a common header file somewhere.
+#define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
-class File;
-
-class SAEditorPrivate;
-class SAEditor : public QWidget
+/** SANPCFlagsPrivate **/
+#include "BitFlags_p.hpp"
+class SANPCFlagsPrivate : public BitFlagsPrivate
 {
-	Q_OBJECT
-
-	Q_PROPERTY(File* file READ file WRITE setFile)
-
 	public:
-		SAEditor(QWidget *parent = nullptr);
-		~SAEditor();
+		SANPCFlagsPrivate();
 
-	protected:
-		SAEditorPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(SAEditor)
 	private:
-		Q_DISABLE_COPY(SAEditor)
-
-	protected:
-		// State change event. (Used for switching the UI language at runtime.)
-		void changeEvent(QEvent *event);
+		Q_DISABLE_COPY(SANPCFlagsPrivate)
 
 	public:
-		/** Public functions. **/
-
-		/**
-		 * Get the file currently being edited.
-		 * @return File being edited, or nullptr if none.
-		 */
-		File *file(void) const;
-
-		/**
-		 * Set the File to edit.
-		 * @param file File to edit.
-		 * If the file isn't valid, it won't be set;
-		 * check file() afterwards to verify.
-		 */
-		int setFile(File *file);
-
-	protected slots:
-		/** Widget slots. **/
-
-		/**
-		 * Slot selector's slot has changed.
-		 * @param slot New slot.
-		 */
-		void on_slotSelector_slotChanged(int slot);
+		static const int flagCount = 512;
 };
 
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__ */
+// NOTE: NUM_ELEMENTS() includes the NULL-terminator.
+SANPCFlagsPrivate::SANPCFlagsPrivate()
+	: BitFlagsPrivate(512, nullptr, 0)
+{ }
+
+/** SANPCFlags **/
+
+SANPCFlags::SANPCFlags(QObject *parent)
+	: BitFlags(new SANPCFlagsPrivate(), parent)
+{ }
