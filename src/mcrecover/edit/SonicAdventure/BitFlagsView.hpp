@@ -32,6 +32,9 @@ class BitFlagsView : public QWidget
 	Q_OBJECT
 
 	Q_PROPERTY(BitFlagsModel* bitFlagsModel READ bitFlagsModel WRITE setBitFlagsModel)
+	// TODO: Function to set tab titles.
+	// TODO: Signal for pageSizeChanged()?
+	Q_PROPERTY(int pageSize READ pageSize WRITE setPageSize)
 
 	public:
 		BitFlagsView(QWidget *parent = 0);
@@ -57,7 +60,23 @@ class BitFlagsView : public QWidget
 		 * @param bitFlagsModel BitFlagsModel.
 		 */
 		void setBitFlagsModel(BitFlagsModel *model);
+
+		/** Data access. **/
+
+		/**
+		 * Get the page size.
+		 * @return Page size.
+		 */
+		int pageSize(void) const;
+
+		/**
+		 * Set the page size.
+		 * @param pageSize Page size.
+		 */
+		void setPageSize(int pageSize);
+
+		// TODO: Page count?
+		// TODO: Set tab names.
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSVIEW_HPP__ */
-

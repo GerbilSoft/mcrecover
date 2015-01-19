@@ -53,6 +53,14 @@ class BitFlagsViewPrivate
 
 		// Page Filter model. (owned by this widget)
 		PageFilterModel *pageFilterModel;
+
+		// Default page size.
+		static const int defaultPageSize = 64;
+
+		/**
+		 * Update the QTabBar.
+		 */
+		void updateTabBar(void);
 };
 
 BitFlagsViewPrivate::BitFlagsViewPrivate(BitFlagsView *q)
@@ -60,9 +68,18 @@ BitFlagsViewPrivate::BitFlagsViewPrivate(BitFlagsView *q)
 	, pageFilterModel(nullptr)
 {
 	// Initialize the page filter model.
-	// TODO: Expose page and pageSize properties.
 	pageFilterModel = new PageFilterModel(q);
-	pageFilterModel->setPageSize(64);
+	pageFilterModel->setPageSize(defaultPageSize);
+}
+
+/**
+ * Update the QTabBar.
+ */
+void BitFlagsViewPrivate::updateTabBar(void)
+{
+	// TODO: Add/remove tabs as necessary.
+	// For now, just hide the entire tab bar if it's a single page.
+	ui.tabBar->setVisible(pageFilterModel->pageCount() > 1);
 }
 
 /** BitFlagsView **/
@@ -96,6 +113,9 @@ BitFlagsView::BitFlagsView(QWidget *parent)
 	d->ui.tabBar->addTab(tr("Amy"));
 	d->ui.tabBar->addTab(tr("Gamma"));
 	d->ui.tabBar->addTab(tr("Big"));
+
+	// Update the QTabBar.
+	d->updateTabBar();
 
 	// Connect tabBar's signals.
 	connect(d->ui.tabBar, SIGNAL(currentChanged(int)),
@@ -131,7 +151,39 @@ void BitFlagsView::setBitFlagsModel(BitFlagsModel *bitFlagsModel)
 	// TODO: Connect destroyed() signal for BitFlagsModel?
 	Q_D(BitFlagsView);
 	d->pageFilterModel->setSourceModel(bitFlagsModel);
+
+	// Update the QTabBar.
+	d->updateTabBar();
 }
+
+/** Data access. **/
+
+/**
+ * Get the page size.
+ * @return Page size.
+ */
+int BitFlagsView::pageSize(void) const
+{
+	Q_D(const BitFlagsView);
+	return d->pageFilterModel->pageSize();
+}
+
+/**
+ * Set the page size.
+ * @param pageSize Page size.
+ */
+void BitFlagsView::setPageSize(int pageSize)
+{
+	Q_D(BitFlagsView);
+	// TODO: Signal from pageFilterModel to adjust tabs?
+	d->pageFilterModel->setPageSize(pageSize);
+
+	// Update the QTabBar.
+	d->updateTabBar();
+}
+
+// TODO: Page count?
+// TODO: Set tab names.
 
 #if 0
 /**

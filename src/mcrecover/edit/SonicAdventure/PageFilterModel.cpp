@@ -87,9 +87,16 @@ void PageFilterModelPrivate::calcPageOffsets(void)
 		// already checked for sourceRowCount == 0.
 
 		// Calculate the total number of pages.
-		div_t pages_div = div(sourceRowCount, pageSize);
-		int tmp_pageCount = pages_div.quot;
-		tmp_pageCount += (pages_div.rem > 0);
+		int tmp_pageCount;
+		if (pageSize > 0) {
+			div_t pages_div = div(sourceRowCount, pageSize);
+			tmp_pageCount = pages_div.quot;
+			tmp_pageCount += (pages_div.rem > 0);
+		} else {
+			// Single page.
+			tmp_pageCount = 1;
+		}
+
 		if (tmp_pageCount != pageCount) {
 			// Page count has changed.
 			if (currentPage >= tmp_pageCount) {
@@ -110,17 +117,24 @@ void PageFilterModelPrivate::calcPageOffsets(void)
 		}
 
 		// Calculate the start and end indexes.
-		itemStart = pageSize * currentPage;
-		itemEnd = itemStart + pageSize - 1;
+		if (pageSize > 0) {
+			itemStart = pageSize * currentPage;
+			itemEnd = itemStart + pageSize - 1;
 
-		// Validate things.
-		if (itemStart >= sourceRowCount)
-			itemStart = sourceRowCount - 1;
-		if (itemEnd >= sourceRowCount)
+			// Validate things.
+			if (itemStart >= sourceRowCount)
+				itemStart = sourceRowCount - 1;
+			if (itemEnd >= sourceRowCount)
+				itemEnd = sourceRowCount - 1;
+
+			// Item count.
+			itemCount = itemEnd - itemStart + 1;
+		} else {
+			// Single page.
+			itemStart = 0;
 			itemEnd = sourceRowCount - 1;
-
-		// Item count.
-		itemCount = itemEnd - itemStart + 1;
+			itemCount = sourceRowCount;
+		}
 	}
 
 	// TODO: Only invalidate the filter if the offsets changed.
@@ -204,12 +218,13 @@ int PageFilterModel::pageSize(void) const
 
 /**
  * Set the page size.
+ * If 0, a single page will be used. (effectively a no-op)
  * @param pageSize Page size.
  */
 void PageFilterModel::setPageSize(int pageSize)
 {
 	Q_D(PageFilterModel);
-	if (d->pageSize == pageSize)
+	if (d->pageSize == pageSize || pageSize < 0)
 		return;
 	d->pageSize = pageSize;
 	d->calcPageOffsets();

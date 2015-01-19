@@ -33,7 +33,7 @@ class PageFilterModel : public QSortFilterProxyModel
 	Q_OBJECT
 
 	Q_PROPERTY(int currentPage READ currentPage WRITE setCurrentPage NOTIFY currentPageChanged)
-	// TODO: Add signals?
+	// TODO: Add signal for pageSizeChanged()
 	Q_PROPERTY(int pageSize READ pageSize WRITE setPageSize)
 	Q_PROPERTY(int pageCount READ pageCount NOTIFY pageCountChanged STORED false)
 
@@ -74,8 +74,6 @@ class PageFilterModel : public QSortFilterProxyModel
 		 */
 		int currentPage(void) const;
 
-		// TODO: "Number of pages" accessor?
-
 		/**
 		 * Get the page size.
 		 * @return Page size.
@@ -84,6 +82,7 @@ class PageFilterModel : public QSortFilterProxyModel
 
 		/**
 		 * Set the page size.
+		 * If 0, a single page will be used. (effectively a no-op)
 		 * @param pageSize Page size.
 		 */
 		void setPageSize(int pageSize);
