@@ -58,9 +58,9 @@ class BitFlagsViewPrivate
 		static const int defaultPageSize = 64;
 
 		/**
-		 * Update the QTabBar.
+		 * Update the display.
 		 */
-		void updateTabBar(void);
+		void updateDisplay(void);
 };
 
 BitFlagsViewPrivate::BitFlagsViewPrivate(BitFlagsView *q)
@@ -73,13 +73,35 @@ BitFlagsViewPrivate::BitFlagsViewPrivate(BitFlagsView *q)
 }
 
 /**
- * Update the QTabBar.
+ * Update the display.
  */
-void BitFlagsViewPrivate::updateTabBar(void)
+void BitFlagsViewPrivate::updateDisplay(void)
 {
+	QAbstractItemModel *const model = pageFilterModel->sourceModel();
+	if (!model) {
+		// No model is set.
+		// TODO: Keep tabs visible?
+		ui.tabBar->setVisible(false);
+		return;
+	}
+
 	// TODO: Add/remove tabs as necessary.
 	// For now, just hide the entire tab bar if it's a single page.
 	ui.tabBar->setVisible(pageFilterModel->pageCount() > 1);
+
+	// Resize the columns to fit the contents.
+	// TODO: On theme change, pageSize change...?
+	ui.lstEventFlags->resizeColumnToContents(BitFlagsModel::COL_CHECKBOX);
+	// ID should be as wide as the largest ID number.
+	QFontMetrics fm = ui.lstEventFlags->fontMetrics();
+	int id_width = fm.width(QString::number(model->rowCount()-1));
+	// FIXME: Add text margins. For now, just add width of 'W'.
+	id_width += fm.width(QChar(L'W'));
+	ui.lstEventFlags->setColumnWidth(BitFlagsModel::COL_ID, id_width+1);
+	
+	// Event Description and overall width.
+	ui.lstEventFlags->resizeColumnToContents(BitFlagsModel::COL_DESCRIPTION);
+	ui.lstEventFlags->resizeColumnToContents(model->columnCount());
 }
 
 /** BitFlagsView **/
@@ -114,8 +136,8 @@ BitFlagsView::BitFlagsView(QWidget *parent)
 	d->ui.tabBar->addTab(tr("Gamma"));
 	d->ui.tabBar->addTab(tr("Big"));
 
-	// Update the QTabBar.
-	d->updateTabBar();
+	// Update the display.
+	d->updateDisplay();
 
 	// Connect tabBar's signals.
 	connect(d->ui.tabBar, SIGNAL(currentChanged(int)),
@@ -153,7 +175,7 @@ void BitFlagsView::setBitFlagsModel(BitFlagsModel *bitFlagsModel)
 	d->pageFilterModel->setSourceModel(bitFlagsModel);
 
 	// Update the QTabBar.
-	d->updateTabBar();
+	d->updateDisplay();
 }
 
 /** Data access. **/
@@ -178,8 +200,8 @@ void BitFlagsView::setPageSize(int pageSize)
 	// TODO: Signal from pageFilterModel to adjust tabs?
 	d->pageFilterModel->setPageSize(pageSize);
 
-	// Update the QTabBar.
-	d->updateTabBar();
+	// Update the display.
+	d->updateDisplay();
 }
 
 // TODO: Page count?

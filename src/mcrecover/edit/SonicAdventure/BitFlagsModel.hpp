@@ -55,6 +55,15 @@ class BitFlagsModel : public QAbstractListModel
 
 		bool setData(const QModelIndex &index, const QVariant &value, int role);
 
+		// Columns.
+		enum Column {
+			COL_CHECKBOX,		// Checkbox
+			COL_ID,			// Flag ID
+			COL_DESCRIPTION,	// Description
+
+			COL_MAX
+		};
+
 	public:
 		/** Data access. **/
 

@@ -92,8 +92,13 @@ int BitFlagsModel::columnCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
 	Q_D(const BitFlagsModel);
-	// Only one column: Event name.
-	return (d->bitFlags ? 1 : 0);
+
+	/**
+	 * Two columns:
+	 * - ID
+	 * - Flag
+	 */
+	return (d->bitFlags ? COL_MAX : 0);
 }
 
 // FIXME: Backport some stuff to MemCardModel.
@@ -106,16 +111,23 @@ QVariant BitFlagsModel::data(const QModelIndex& index, int role) const
 		return QVariant();
 	if (index.row() < 0 || index.row() >= rowCount())
 		return QVariant();
-	if (index.column() != 0)
-		return QVariant();
 
 	switch (role) {
 		case Qt::DisplayRole:
-			return d->bitFlags->description(index.row());
+			switch (index.column()) {
+				case COL_ID:
+					return index.row();
+				case COL_DESCRIPTION:
+					return d->bitFlags->description(index.row());
+				default:
+					break;
+			}
+			break;
 
 		case Qt::CheckStateRole:
-			// TODO
-			return (d->bitFlags->flag(index.row()) ? Qt::Checked : Qt::Unchecked);
+			if (index.column() == COL_CHECKBOX)
+				return (d->bitFlags->flag(index.row()) ? Qt::Checked : Qt::Unchecked);
+			break;
 
 		default:
 			break;
@@ -131,13 +143,17 @@ QVariant BitFlagsModel::headerData(int section, Qt::Orientation orientation, int
 	Q_D(const BitFlagsModel);
 	if (!d->bitFlags)
 		return QVariant();
-	if (section != 0)
-		return QVariant();
 
 	switch (role) {
 		case Qt::DisplayRole:
-			if (section == 0)
-				return tr("Event");
+			switch (section) {
+				case COL_ID:
+					return tr("ID");
+				case COL_DESCRIPTION:
+					return d->bitFlags->flagType();
+				default:
+					break;
+			}
 			break;
 
 		default:
@@ -153,12 +169,17 @@ Qt::ItemFlags BitFlagsModel::flags(const QModelIndex &index) const
 	Q_D(const BitFlagsModel);
 	if (!d->bitFlags)
 		return Qt::NoItemFlags;
-	if (!index.isValid())
+	else if (!index.isValid())
 		return Qt::NoItemFlags;
-	if (index.row() < 0 || index.row() >= rowCount())
+	else if (index.row() < 0 || index.row() >= rowCount())
 		return Qt::NoItemFlags;
 
-	return (Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+	switch (index.column()) {
+		case COL_CHECKBOX:
+			return Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
+		default:
+			return Qt::ItemIsEnabled;
+	}
 }
 
 bool BitFlagsModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -293,8 +314,9 @@ void BitFlagsModel::bitFlags_flagChanged_slot(int flag)
 		return;
 	else if (flag < 0 || flag >= d->bitFlags->count())
 		return;
-	// TODO: All columns, or just 0 (which has the checkbox)?
-	emit dataChanged(createIndex(flag, 0), createIndex(flag, columnCount()));
+
+	// NOTE: Only COL_CHECKBOX has a checkbox.
+	emit dataChanged(createIndex(flag, COL_CHECKBOX), createIndex(flag, COL_CHECKBOX));
 }
 
 /**
@@ -311,6 +333,7 @@ void BitFlagsModel::bitFlags_flagsChanged_slot(int firstFlag, int lastFlag)
 		return;
 	else if (lastFlag < 0 || lastFlag >= d->bitFlags->count())
 		return;
-	// TODO: All columns, or just 0 (which has the checkbox)?
-	emit dataChanged(createIndex(firstFlag, 0), createIndex(lastFlag, columnCount()));
+
+	// NOTE: Only COL_CHECKBOX has a checkbox.
+	emit dataChanged(createIndex(firstFlag, COL_CHECKBOX), createIndex(lastFlag, COL_CHECKBOX));
 }

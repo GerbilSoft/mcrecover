@@ -108,6 +108,12 @@ class BitFlags : public QObject
 		 * @return Number of bit flags loaded.
 		 */
 		int setAllFlags(const uint8_t *data, int sz);
+
+		/**
+		 * Get a description of the type of flag that is represented by the class.
+		 * @return Flag type, e.g. "Event".
+		 */
+		virtual QString flagType(void) const = 0;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_FLAGS_HPP__ */

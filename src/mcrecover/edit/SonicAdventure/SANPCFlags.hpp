@@ -37,6 +37,13 @@ class SANPCFlags : public BitFlags
 		Q_DECLARE_PRIVATE(SANPCFlags)
 	private:
 		Q_DISABLE_COPY(SANPCFlags)
+
+	public:
+		/**
+		 * Get a description of the type of flag that is represented by the class.
+		 * @return Flag type, e.g. "Event".
+		 */
+		virtual QString flagType(void) const override;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SANPCFLAGS_HPP__ */

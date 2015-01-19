@@ -48,3 +48,12 @@ SANPCFlagsPrivate::SANPCFlagsPrivate()
 SANPCFlags::SANPCFlags(QObject *parent)
 	: BitFlags(new SANPCFlagsPrivate(), parent)
 { }
+
+/**
+ * Get a description of the type of flag that is represented by the class.
+ * @return Flag type, e.g. "Event".
+ */
+QString SANPCFlags::flagType(void) const
+{
+	return tr("NPC");
+}

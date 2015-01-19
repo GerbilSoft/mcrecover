@@ -49,3 +49,12 @@ SAEventFlagsPrivate::SAEventFlagsPrivate()
 SAEventFlags::SAEventFlags(QObject *parent)
 	: BitFlags(new SAEventFlagsPrivate(), parent)
 { }
+
+/**
+ * Get a description of the type of flag that is represented by the class.
+ * @return Flag type, e.g. "Event".
+ */
+QString SAEventFlags::flagType(void) const
+{
+	return tr("Event");
+}
