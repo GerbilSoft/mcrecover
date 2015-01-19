@@ -30,106 +30,26 @@
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 /** SAEventFlagsPrivate **/
-
-class SAEventFlagsPrivate
+#include "BitFlags_p.hpp"
+class SAEventFlagsPrivate : public BitFlagsPrivate
 {
 	public:
 		SAEventFlagsPrivate();
-		~SAEventFlagsPrivate();
 
 	private:
 		Q_DISABLE_COPY(SAEventFlagsPrivate)
 
 	public:
-		// TODO: Shared copy of the hash map that's only
-		// deleted once all SAEventFlags are deleted?
-		QHash<int, QString> eventFlags_desc;
-
-		// Event flags.
-		// TODO: Use constants from sa_defs.h.
-		bool eventFlags[512];
+		static const int flagCount = 512;
 };
 
+// NOTE: NUM_ELEMENTS() includes the NULL-terminator.
 SAEventFlagsPrivate::SAEventFlagsPrivate()
-{
-	// Initialize the eventFlags hash map.
-	// NOTE: sa_event_flags is NULL-terminated.
-	eventFlags_desc.clear();
-	eventFlags_desc.reserve(NUM_ELEMENTS(sa_event_flags_desc)-1);
-	for (int i = 0; i < NUM_ELEMENTS(sa_event_flags_desc)-1; i++) {
-		eventFlags_desc.insert(sa_event_flags_desc[i].event,
-			QLatin1String(sa_event_flags_desc[i].description));
-	}
-
-	// Initialize eventFlags.
-	memset(eventFlags, 0, sizeof(eventFlags));
-}
-
-SAEventFlagsPrivate::~SAEventFlagsPrivate()
+	: BitFlagsPrivate(512, &sa_event_flags_desc[0], NUM_ELEMENTS(sa_event_flags_desc))
 { }
 
 /** SAEventFlags **/
 
 SAEventFlags::SAEventFlags(QObject *parent)
-	: QObject(parent)
-	, d_ptr(new SAEventFlagsPrivate())
+	: BitFlags(new SAEventFlagsPrivate(), parent)
 { }
-
-SAEventFlags::~SAEventFlags()
-{
-	Q_D(SAEventFlags);
-	delete d;
-}
-
-/**
- * Get the total number of event flags.
- * @return Total number of event flags.
- */
-int SAEventFlags::count(void) const
-{
-	Q_D(const SAEventFlags);
-	return NUM_ELEMENTS(d->eventFlags);
-}
-
-/**
- * Get an event flag's description.
- * @param event Event ID.
- * @return Description.
- */
-QString SAEventFlags::description(int event) const
-{
-	if (event < 0 || event >= count())
-		return tr("Invalid event ID");
-
-	Q_D(const SAEventFlags);
-	return d->eventFlags_desc.value(event, tr("Unknown"));
-}
-
-/**
- * Is an event flag set?
- * @param event Event ID.
- * @return True if set; false if not.
- */
-bool SAEventFlags::flag(int event) const
-{
-	if (event < 0 || event >= count())
-		return false;
-
-	Q_D(const SAEventFlags);
-	return d->eventFlags[event];
-}
-
-/**
- * Set an event flag.
- * @param event Event ID.
- * @param value New event flag value.
- */
-void SAEventFlags::setFlag(int event, bool value)
-{
-	if (event < 0 || event >= count())
-		return;
-
-	Q_D(SAEventFlags);
-	d->eventFlags[event] = value;
-	// TODO: Emit a signal?
-}
