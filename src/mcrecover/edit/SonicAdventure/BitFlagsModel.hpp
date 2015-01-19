@@ -76,6 +76,19 @@ class BitFlagsModel : public QAbstractListModel
 		 * @param obj QObject that was destroyed.
 		 */
 		void bitFlags_destroyed_slot(QObject *obj = 0);
+
+		/**
+		 * BitFlags: A flag has been changed.
+		 * @param flag Flag ID.
+		 */
+		void bitFlags_flagChanged_slot(int flag);
+
+		/**
+		 * BitFlags: Multiple flags have been changed.
+		 * @param firstFlag First flag that has changed.
+		 * @param lastFlag Last flag that has changed.
+		 */
+		void bitFlags_flagsChanged_slot(int firstFlag, int lastFlag);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSMODEL_HPP__ */

@@ -221,6 +221,10 @@ void BitFlagsModel::setBitFlags(BitFlags *bitFlags)
 		// Disconnect the BitFlags's signals.
 		disconnect(d->bitFlags, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(bitFlags_destroyed_slot(QObject*)));
+		disconnect(d->bitFlags, SIGNAL(flagChanged(int,bool)),
+			   this, SLOT(bitFlags_flagChanged_slot(int)));
+		disconnect(d->bitFlags, SIGNAL(flagsChanged(int,int)),
+			   this, SLOT(bitFlags_flagsChanged_slot(int,int)));
 
 		d->bitFlags = nullptr;
 
@@ -243,6 +247,10 @@ void BitFlagsModel::setBitFlags(BitFlags *bitFlags)
 		// Connect the BitFlags's signals.
 		connect(d->bitFlags, SIGNAL(destroyed(QObject*)),
 			this, SLOT(bitFlags_destroyed_slot(QObject*)));
+		connect(d->bitFlags, SIGNAL(flagChanged(int,bool)),
+			this, SLOT(bitFlags_flagChanged_slot(int)));
+		connect(d->bitFlags, SIGNAL(flagsChanged(int,int)),
+			this, SLOT(bitFlags_flagsChanged_slot(int,int)));
 
 		// Done adding rows.
 		if (flagCount > 0) {
@@ -272,4 +280,37 @@ void BitFlagsModel::bitFlags_destroyed_slot(QObject *obj)
 		if (old_flagCount > 0)
 			endRemoveRows();
 	}
+}
+
+/**
+ * BitFlags: A flag has been changed.
+ * @param flag Flag ID.
+ */
+void BitFlagsModel::bitFlags_flagChanged_slot(int flag)
+{
+	Q_D(BitFlagsModel);
+	if (!d->bitFlags)
+		return;
+	else if (flag < 0 || flag >= d->bitFlags->count())
+		return;
+	// TODO: All columns, or just 0 (which has the checkbox)?
+	emit dataChanged(createIndex(flag, 0), createIndex(flag, columnCount()));
+}
+
+/**
+ * BitFlags: Multiple flags have been changed.
+ * @param firstFlag First flag that has changed.
+ * @param lastFlag Last flag that has changed.
+ */
+void BitFlagsModel::bitFlags_flagsChanged_slot(int firstFlag, int lastFlag)
+{
+	Q_D(BitFlagsModel);
+	if (!d->bitFlags)
+		return;
+	else if (firstFlag < 0 || firstFlag >= d->bitFlags->count())
+		return;
+	else if (lastFlag < 0 || lastFlag >= d->bitFlags->count())
+		return;
+	// TODO: All columns, or just 0 (which has the checkbox)?
+	emit dataChanged(createIndex(firstFlag, 0), createIndex(lastFlag, columnCount()));
 }
