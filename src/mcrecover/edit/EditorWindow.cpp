@@ -82,7 +82,9 @@ void EditorWindowPrivate::setEditorWidget(QWidget *editorWidget)
 	this->editorWidget = editorWidget;
 	if (editorWidget != nullptr) {
 		// TODO: Connect the destroyed signal.
-		ui.vboxMain->insertWidget(0, editorWidget, 0, Qt::AlignTop);
+		// NOTE: Don't set the alignment. Setting the alignment
+		// prevents the widget from expanding vertically.
+		ui.vboxMain->insertWidget(0, editorWidget);
 	}
 }
 
