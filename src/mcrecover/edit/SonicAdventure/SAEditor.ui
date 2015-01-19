@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>642</width>
-    <height>485</height>
+    <width>800</width>
+    <height>480</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="vboxMain">
@@ -37,7 +37,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>5</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -56,6 +56,36 @@
       <layout class="QVBoxLayout" name="vboxActionStages">
        <item>
         <widget class="SALevelStats" name="saLevelStats" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabSubGames">
+      <attribute name="title">
+       <string>&amp;Sub Games</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tabExtraEmblems">
+      <attribute name="title">
+       <string>&amp;Misc Emblems</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tabEventFlags">
+      <attribute name="title">
+       <string>&amp;Event Flags</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="vboxEventFlags">
+       <item>
+        <widget class="BitFlagsView" name="saEventFlagsView" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabNPCFlags">
+      <attribute name="title">
+       <string>&amp;NPC Flags</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="vboxNPCFlags">
+       <item>
+        <widget class="BitFlagsView" name="saNPCFlagsView" native="true"/>
        </item>
       </layout>
      </widget>
@@ -83,7 +113,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>626</width>
+            <width>740</width>
             <height>420</height>
            </rect>
           </property>
@@ -100,25 +130,10 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabEventFlags">
+     <widget class="QWidget" name="tabSADXExtras">
       <attribute name="title">
-       <string>&amp;Event Flags</string>
+       <string>SAD&amp;X Extras</string>
       </attribute>
-      <layout class="QVBoxLayout" name="vboxEventFlags">
-       <item>
-        <widget class="BitFlagsView" name="saEventFlagsView" native="true"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tabNPCFlags">
-      <attribute name="title">
-       <string>&amp;NPC Flags</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="vboxNPCFlags">
-       <item>
-        <widget class="BitFlagsView" name="saNPCFlagsView" native="true"/>
-       </item>
-      </layout>
      </widget>
     </widget>
    </item>
