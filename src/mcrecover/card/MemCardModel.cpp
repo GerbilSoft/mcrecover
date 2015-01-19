@@ -536,8 +536,10 @@ void MemCardModel::setCard(Card *card)
 		d->card = nullptr;
 
 		// Done removing rows.
-		if (d->fileCount > 0)
+		if (d->fileCount > 0) {
+			d->fileCount = 0;
 			endRemoveRows();
+		}
 	}
 
 	if (card) {
