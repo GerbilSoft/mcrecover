@@ -630,11 +630,11 @@ void MemCardModel::card_destroyed_slot(QObject *obj)
 
 	if (obj == d->card) {
 		// Our Card was destroyed.
+		d->card = nullptr;
 		int old_fileCount = d->fileCount;
 		if (old_fileCount > 0)
 			beginRemoveRows(QModelIndex(), 0, (old_fileCount - 1));
 		d->fileCount = 0;
-		d->card = nullptr;
 		if (old_fileCount > 0)
 			endRemoveRows();
 	}
