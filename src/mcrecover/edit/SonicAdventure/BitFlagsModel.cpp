@@ -50,11 +50,20 @@ class BitFlagsModelPrivate
 		// BitFlags.
 		// TODO: Signals for data changes?
 		BitFlags *bitFlags;
+
+		/**
+		 * Cached copy of bitFlags->count().
+		 * This value is needed after the card is destroyed,
+		 * so we need to cache it here, since the destroyed()
+		 * slot might be run *after* the Card is deleted.
+		 */
+		int flagCount;
 };
 
 BitFlagsModelPrivate::BitFlagsModelPrivate(BitFlagsModel *q)
 	: q_ptr(q)
 	, bitFlags(nullptr)
+	, flagCount(0)
 { }
 
 /** BitFlagsModel **/
@@ -200,8 +209,67 @@ BitFlags *BitFlagsModel::bitFlags(void) const
 void BitFlagsModel::setBitFlags(BitFlags *bitFlags)
 {
 	Q_D(BitFlagsModel);
-	// TODO: Better signals?
-	emit layoutAboutToBeChanged();
-	d->bitFlags = bitFlags;
-	emit layoutChanged();
+
+	// Disconnect the BitFlags's destroyed() signal if BitFlags is already set.
+	if (d->bitFlags) {
+		// Notify the view that we're about to remove all rows.
+		// TODO: flagCount should already be cached...
+		const int flagCount = d->bitFlags->count();
+		if (flagCount > 0)
+			beginRemoveRows(QModelIndex(), 0, (flagCount - 1));
+
+		// Disconnect the BitFlags's signals.
+		disconnect(d->bitFlags, SIGNAL(destroyed(QObject*)),
+			   this, SLOT(bitFlags_destroyed_slot(QObject*)));
+
+		d->bitFlags = nullptr;
+
+		// Done removing rows.
+		d->flagCount = 0;
+		if (flagCount > 0)
+			endRemoveRows();
+	}
+
+	// Connect the bitFlags's destroyed() signal.
+	if (bitFlags) {
+		// Notify the view that we're about to add rows.
+		const int flagCount = bitFlags->count();
+		if (flagCount > 0)
+			beginInsertRows(QModelIndex(), 0, (flagCount - 1));
+
+		// Set the BitFlags.
+		d->bitFlags = bitFlags;
+
+		// Connect the BitFlags's signals.
+		connect(d->bitFlags, SIGNAL(destroyed(QObject*)),
+			this, SLOT(bitFlags_destroyed_slot(QObject*)));
+
+		// Done adding rows.
+		if (flagCount > 0) {
+			d->flagCount = flagCount;
+			endInsertRows();
+		}
+	}
+}
+
+/** Slots. **/
+
+/**
+ * BitFlags object was destroyed.
+ * @param obj QObject that was destroyed.
+ */
+void BitFlagsModel::bitFlags_destroyed_slot(QObject *obj)
+{
+	Q_D(BitFlagsModel);
+
+	if (obj == d->bitFlags) {
+		// Our Card was destroyed.
+		d->bitFlags = nullptr;
+		int old_flagCount = d->flagCount;
+		if (old_flagCount > 0)
+			beginRemoveRows(QModelIndex(), 0, (old_flagCount - 1));
+		d->flagCount = 0;
+		if (old_flagCount > 0)
+			endRemoveRows();
+	}
 }

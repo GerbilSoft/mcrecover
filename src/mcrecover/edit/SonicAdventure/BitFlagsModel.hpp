@@ -66,9 +66,16 @@ class BitFlagsModel : public QAbstractListModel
 
 		/**
 		 * Set the BitFlags for this model to show.
-		 * @param eventFlags BitFlags to show.
+		 * @param bitFlags BitFlags to show.
 		 */
-		void setBitFlags(BitFlags *eventFlags);
+		void setBitFlags(BitFlags *bitFlags);
+
+	protected slots:
+		/**
+		 * BitFlags object was destroyed.
+		 * @param obj QObject that was destroyed.
+		 */
+		void bitFlags_destroyed_slot(QObject *obj = 0);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSMODEL_HPP__ */
