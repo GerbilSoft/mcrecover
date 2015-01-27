@@ -10,7 +10,7 @@
 // FIXME: Alignment on 64-bit?
 #include "bit_flag.h"
 
-bit_flag_t sa_event_flags_desc[] = {
+static bit_flag_t sa_event_flags_desc[] = {
 	{65, "Sonic Unlocked in Adventure"},
 	{66, "Tails Unlocked in Adventure"},
 	{67, "Knuckles Unlocked in Adventure"},
