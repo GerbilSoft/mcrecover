@@ -65,7 +65,8 @@ class SAEditorPrivate
 		File *file;
 
 		// sa_save_slot structs.
-		QVector<sa_save_slot*> data;
+		QVector<sa_save_slot*> data_main;
+		QVector<sadx_extra_save_slot*> data_sadx;
 		int slot; // active slot (-1 for none)
 
 		// BitFlagsModel objects.
@@ -115,6 +116,9 @@ SAEditorPrivate::SAEditorPrivate(SAEditor* q)
 
 	static_assert(SA_SAVE_SLOT_LEN == 1184, "SA_SAVE_SLOT_LEN is incorrect");
 	static_assert(sizeof(sa_save_slot) == SA_SAVE_SLOT_LEN, "sa_save_file has the wrong size");
+
+	static_assert(SADX_EXTRA_SAVE_SLOT_LEN == 208, "SADX_EXTRA_SAVE_SLOT_LEN is incorrect");
+	static_assert(sizeof(sadx_extra_save_slot) == SADX_EXTRA_SAVE_SLOT_LEN, "sadx_extra_save_slot has the wrong size");
 }
 
 SAEditorPrivate::~SAEditorPrivate()
@@ -127,12 +131,19 @@ SAEditorPrivate::~SAEditorPrivate()
  */
 void SAEditorPrivate::clearData(void)
 {
-	// Delete all loaded sa_save structs.
+	// Delete all loaded sa_save_slot structs.
 	// NOTE: sa_save_slot is a C struct, so use free().
-	foreach (sa_save_slot *sa_save, data) {
+	foreach (sa_save_slot *sa_save, data_main) {
 		free(sa_save);
 	}
-	data.clear();
+	data_main.clear();
+
+	// Delete loaded SADX extra save structs.
+	// NOTE: sadx_extra_save_slot is a C struct, so use free().
+	foreach (sadx_extra_save_slot *sadx_extra_save, data_sadx) {
+		free(sadx_extra_save);
+	}
+	data_sadx.clear();
 }
 
 /**
@@ -140,7 +151,7 @@ void SAEditorPrivate::clearData(void)
  */
 void SAEditorPrivate::updateDisplay(void)
 {
-	const int slotCount = data.size();
+	const int slotCount = data_main.size();
 	if (slot < 0)
 		slot = 0;
 	if (slot >= slotCount)
@@ -156,13 +167,46 @@ void SAEditorPrivate::updateDisplay(void)
 	}
 
 	// Display the data.
-	sa_save_slot *sa_save = data.at(slot);
+	const sa_save_slot *sa_save = data_main.at(slot);
 	ui.saLevelStats->load(sa_save);
 	ui.saLevelClearCount->load(sa_save);
 
-	/** Bit flags. **/
+	// Bit flags.
 	saEventFlags.setAllFlags(&sa_save->events.all[0], NUM_ELEMENTS(sa_save->events.all));
 	saNPCFlags.setAllFlags(&sa_save->npc.all[0], NUM_ELEMENTS(sa_save->npc.all));
+
+	// SADX-specific data.
+	// NOTE: There's no way to hide specific tabs without removing them
+	// from QTabWidget entirely. There is a stylesheet hack to hide
+	// disabled tabs, but it didn't work for me.
+	// http://qt-project.org/forums/viewthread/24364
+	Q_Q(SAEditor);
+	const int sadx_tab_idx = ui.tabWidget->indexOf(ui.tabSADXExtras);
+	const sadx_extra_save_slot *sadx_extra_save = nullptr;
+	if (slot <= data_sadx.size())
+		sadx_extra_save = data_sadx.at(slot);
+	if (sadx_extra_save) {
+		// SADX extra data found. Load it.
+
+		// Missions.
+		ui.sadxMissions->load(sadx_extra_save);
+
+		if (sadx_tab_idx < 0) {
+			// Show the "SADX Extras" tab.
+			ui.tabWidget->insertTab(ui.tabWidget->indexOf(ui.tabLevelClearCount), ui.tabSADXExtras, SAEditor::tr("SAD&X Extras"));
+			ui.tabSADXExtras->show();
+		}
+	} else {
+		// No SADX extra data.
+		if (sadx_tab_idx >= 0) {
+			// Hide the "SADX Extras" tab.
+			// TODO: Verify that taking ownership ensures the object
+			// is deleted properly and there are no memory leaks.
+			ui.tabWidget->removeTab(sadx_tab_idx);
+			ui.tabSADXExtras->hide();
+			ui.tabSADXExtras->setParent(q);
+		}
+	}
 }
 
 /** SAEditor **/
@@ -263,7 +307,8 @@ int SAEditor::setFile(File *file)
 		for (int i = 0; i < 3; i++, src += SA_SAVE_SLOT_LEN) {
 			sa_save_slot *sa_save = (sa_save_slot*)malloc(sizeof(*sa_save));
 			memcpy(sa_save, src, SA_SAVE_SLOT_LEN);
-			d->data.append(sa_save);
+			d->data_main.append(sa_save);
+			d->data_sadx.append(nullptr);	// DC version - no SADX extras.
 
 #if MCRECOVER_BYTEORDER == MCRECOVER_BIG_ENDIAN
 			// Byteswap the data.
@@ -293,7 +338,7 @@ int SAEditor::setFile(File *file)
 		// Only one save slot.
 		sa_save_slot *sa_save = (sa_save_slot*)malloc(sizeof(*sa_save));
 		memcpy(sa_save, (data.data() + SA_SAVE_ADDRESS_GCN), SA_SAVE_SLOT_LEN);
-		d->data.append(sa_save);
+		d->data_main.append(sa_save);
 
 #if MCRECOVER_BYTEORDER == MCRECOVER_LIL_ENDIAN
 		// Byteswap the data.
@@ -309,6 +354,19 @@ int SAEditor::setFile(File *file)
 		}
 #endif
 
+		// Check for SADX extras.
+		if (data.size() >= (SA_SAVE_ADDRESS_GCN + SA_SAVE_SLOT_LEN + SADX_EXTRA_SAVE_SLOT_LEN)) {
+			// Found SADX extras.
+			sadx_extra_save_slot *sadx_extra_save = (sadx_extra_save_slot*)malloc(sizeof(*sadx_extra_save));
+			memcpy(sadx_extra_save, (data.data() + SA_SAVE_ADDRESS_GCN + SA_SAVE_SLOT_LEN), SADX_EXTRA_SAVE_SLOT_LEN);
+			d->data_sadx.append(sadx_extra_save);
+
+			// TODO: Byteswapping.
+		} else {
+			// No SADX extras.
+			d->data_sadx.append(nullptr);
+		}
+
 		// Loaded successfully.
 		ret = 0;
 	} else {
@@ -321,7 +379,7 @@ int SAEditor::setFile(File *file)
 end:
 	// Update the display.
 	// TODO: Connect slotCountChanged()?
-	const int slotCount = d->data.size();
+	const int slotCount = d->data_main.size();
 	d->ui.slotSelector->setSlotCount(slotCount);
 	d->ui.slotSelector->setSlot(0);
 	d->updateDisplay();
@@ -337,7 +395,7 @@ end:
 void SAEditor::on_slotSelector_slotChanged(int slot)
 {
 	Q_D(SAEditor);
-	const int slotCount = d->data.size();
+	const int slotCount = d->data_main.size();
 	if (slot < 0)
 		slot = 0;
 	if (slot >= slotCount)

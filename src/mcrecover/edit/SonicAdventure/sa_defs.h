@@ -213,7 +213,7 @@ typedef struct PACKED _sa_level_clear_count {
 } sa_level_clear_count;
 #pragma pack()
 
-// Save slot.
+// Save slot. (SA1/SADX common data)
 // GCN files have a single slot.
 // Dreamcast files have three slots.
 #define SA_SAVE_SLOT_LEN 1184
@@ -297,7 +297,43 @@ typedef struct PACKED _sa_save_slot
 	sa_level_clear_count clear_count;
 } sa_save_slot;
 #pragma pack()
-	
+
+/** SADX-specific data **/
+
+// Missions.
+#define SADX_MISSIONS_LEN 60
+// 60 missions; each byte is interpreted as a bitfield.
+#define SADX_MISSION_ACTIVE	(1 << 0)	/* Mission started. */
+#define SADX_MISSION_UNLOCKED	(1 << 6)	/* Mission card found. */
+#define SADX_MISSION_COMPLETED	(1 << 7)	/* Mission completed. */
+
+// Save slot. (SADX-specific data)
+#define SADX_EXTRA_SAVE_SLOT_LEN 208
+#pragma pack(1)
+typedef struct PACKED _sadx_extra_save_slot
+{
+	// NOTE: Offsets are relative to the main save file.
+
+	// [0x4A0] Mission data.
+	uint8_t missions[60];
+
+	uint32_t rings_black_market;	// [0x4DC] Black Market rings.
+
+	uint32_t scores_metal[10];	// [0x4E0] Scores (Metal Sonic)
+	sa_time_code times_metal[10];	// [0x508] Best Times (Metal Sonic)
+	uint16_t rings_metal[10];	// [0x526] Most Rings (Metal Sonic)
+	uint16_t reserved1;		// [0x43A] unknown
+
+	// TODO: Mini-games.
+	uint32_t minigame_scores_metal[6];	// 0x53C
+	sa_time_code minigame_times_metal[5];	// 0x554
+	sa_time_code boss_times_metal[3];	// 0x563
+
+	// [0x56C] Metal Sonic emblems. (bitfield)
+	uint32_t emblems_metal;
+} sadx_extra_save_slot;
+#pragma pack()
+
 #ifdef __cplusplus
 }
 #endif

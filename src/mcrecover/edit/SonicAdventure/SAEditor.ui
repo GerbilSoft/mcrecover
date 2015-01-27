@@ -37,7 +37,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>8</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -96,6 +96,9 @@
       <layout class="QVBoxLayout" name="vboxLevelClearCount">
        <item>
         <widget class="QScrollArea" name="scrlLevelClearCount">
+         <property name="styleSheet">
+          <string notr="true">#scrlLevelClearCount { background-color: transparent; } #scrlLevelClearCountContent { background-color: transparent; }</string>
+         </property>
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
@@ -113,8 +116,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>740</width>
-            <height>420</height>
+            <width>776</width>
+            <height>408</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="vboxLevelClearCountContent">
@@ -134,6 +137,69 @@
       <attribute name="title">
        <string>SAD&amp;X Extras</string>
       </attribute>
+      <layout class="QVBoxLayout" name="vboxSADXExtras">
+       <item>
+        <widget class="QTabWidget" name="tabWidgetSADXExtras">
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <widget class="QWidget" name="tabSADXGeneral">
+          <attribute name="title">
+           <string>General</string>
+          </attribute>
+         </widget>
+         <widget class="QWidget" name="tabMissions">
+          <attribute name="title">
+           <string>Missions</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="vboxSADXMissions">
+           <item>
+            <widget class="QScrollArea" name="scrlSADXMissions">
+             <property name="styleSheet">
+              <string notr="true">#scrlSADXMissions { background-color: transparent; } #scrlSADXMissionsContent { background-color: transparent; }</string>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="horizontalScrollBarPolicy">
+              <enum>Qt::ScrollBarAlwaysOff</enum>
+             </property>
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             </property>
+             <widget class="QWidget" name="scrlSADXMissionsContent">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>752</width>
+                <height>364</height>
+               </rect>
+              </property>
+              <layout class="QVBoxLayout" name="vboxSADXMissionsContent">
+               <property name="margin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="SADXMissions" name="sadxMissions" native="true"/>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tabSADXMetalSonic">
+          <attribute name="title">
+           <string>Metal Sonic</string>
+          </attribute>
+         </widget>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
@@ -162,6 +228,12 @@
    <class>BitFlagsView</class>
    <extends>QWidget</extends>
    <header>edit/SonicAdventure/BitFlagsView.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SADXMissions</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/SADXMissions.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
