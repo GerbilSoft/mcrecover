@@ -152,7 +152,7 @@ int BitFlags::allFlags(uint8_t *data, int sz) const
 		bits = d->flags.count();
 
 	// TODO: Verify that this is correct.
-	const bool *flagBool = d->flags.data();
+	const bool *flagBool = d->flags.constData();
 	for (int i = 0; i < bits; i++, flagBool++) {
 		if (i % 8 == 0) {
 			// New byte.
