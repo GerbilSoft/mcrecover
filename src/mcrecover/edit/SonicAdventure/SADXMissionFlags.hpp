@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SADXMissions.hpp: Sonic Adventure DX - Mission editor.                  *
+ * SADXMissionFlags.hpp: Sonic Adventure DX - Mission flags.               *
  *                                                                         *
  * Copyright (c) 2015 by David Korth.                                      *
  *                                                                         *
@@ -19,45 +19,37 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SADXMISSIONS_HPP__
-#define __MCRECOVER_EDIT_SONICADVENTURE_SADXMISSIONS_HPP__
+#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SADXMISSIONFLAGS_HPP__
+#define __MCRECOVER_EDIT_SONICADVENTURE_SADXMISSIONFLAGS_HPP__
 
-#include <QtGui/QWidget>
-
-struct _sadx_extra_save_slot;
-
-class SADXMissionsPrivate;
-class SADXMissions : public QWidget
+#include "ByteFlags.hpp"
+class SADXMissionFlagsPrivate;
+class SADXMissionFlags : public ByteFlags
 {
+	// TODO: Should this actually inherit from QObject?
 	Q_OBJECT
 
 	public:
-		SADXMissions(QWidget *parent = 0);
-		~SADXMissions();
+		SADXMissionFlags(QObject *parent = 0);
 
 	protected:
-		SADXMissionsPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(SADXMissions)
+		Q_DECLARE_PRIVATE(SADXMissionFlags)
 	private:
-		Q_DISABLE_COPY(SADXMissions)
-
-	protected:
-		// State change event. (Used for switching the UI language at runtime.)
-		void changeEvent(QEvent *event);
+		Q_DISABLE_COPY(SADXMissionFlags)
 
 	public:
 		/**
-		 * Load data from an SADX extra save slot.
-		 * @param sadx_extra_save SADX extra save slot.
-		 * The data must have already been byteswapped to host-endian.
-		 * @return 0 on success; non-zero on error.
+		 * Get a description of the type of object that is represented by the class.
+		 * @return Flag type, e.g. "Mission".
 		 */
-		int load(const _sadx_extra_save_slot *sadx_extra_save);
+		virtual QString objectType(void) const override;
 
 		/**
-		 * Clear the loaded data.
+		 * Get a description of the type of flag represented by a given bit.
+		 * @param bit Bit index. (LSB == 0)
+		 * @return Flag type, e.g. "Completed". (If bit is unused, empty QString is returned.)
 		 */
-		void clear(void);
+		virtual QString flagType(int bit) const override;
 };
 
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SADXMISSIONS_HPP__ */
+#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SADXMISSIONFLAGS_HPP__ */

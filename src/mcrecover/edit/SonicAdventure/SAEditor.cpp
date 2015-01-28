@@ -39,6 +39,10 @@
 #include "SAEventFlags.hpp"
 #include "SANPCFlags.hpp"
 
+// ByteFlags
+#include "ByteFlagsModel.hpp"
+#include "SADXMissionFlags.hpp"
+
 // TODO: Put this in a common header file somewhere.
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
@@ -79,6 +83,10 @@ class SAEditorPrivate
 		BitFlagsModel *saEventFlagsModel;
 		BitFlagsModel *saNPCFlagsModel;
 
+		// ByteFlagsModel objects.
+		SADXMissionFlags sadxMissionFlags;
+		ByteFlagsModel *sadxMissionFlagsModel;
+
 		/**
 		 * Clear the sa_save_slot structs.
 		 */
@@ -95,6 +103,7 @@ SAEditorPrivate::SAEditorPrivate(SAEditor* q)
 	, slot(-1)
 	, saEventFlagsModel(nullptr)
 	, saNPCFlagsModel(nullptr)
+	, sadxMissionFlags(nullptr)
 {
 	// Make sure sa_defs.h is correct.
 	static_assert(SA_SCORES_LEN == 128, "SA_SCORES_LEN is incorrect");
@@ -189,7 +198,8 @@ void SAEditorPrivate::updateDisplay(void)
 		// SADX extra data found. Load it.
 
 		// Missions.
-		ui.sadxMissions->load(sadx_extra_save);
+		sadxMissionFlags.setAllFlags(&sadx_extra_save->missions[0],
+				NUM_ELEMENTS(sadx_extra_save->missions));
 
 		if (sadx_tab_idx < 0) {
 			// Show the "SADX Extras" tab.
@@ -233,6 +243,12 @@ SAEditor::SAEditor(QWidget *parent)
 	d->saNPCFlagsModel->setBitFlags(&d->saNPCFlags);
 	d->ui.saNPCFlagsView->setPageSize(0);
 	d->ui.saNPCFlagsView->setBitFlagsModel(d->saNPCFlagsModel);
+
+	// SADXMissionFlags model and widget.
+	d->sadxMissionFlagsModel = new ByteFlagsModel(this);
+	d->sadxMissionFlagsModel->setByteFlags(&d->sadxMissionFlags);
+	d->ui.sadxMissionFlagsView->setPageSize(0);
+	d->ui.sadxMissionFlagsView->setByteFlagsModel(d->sadxMissionFlagsModel);
 
 	// Attempt to fix the scroll area's minimum width.
 	// TODO: On theme change also?

@@ -165,7 +165,11 @@ SET(mcrecover_EDIT_SRCS
 	edit/SonicAdventure/PageFilterModel.cpp
 	edit/SonicAdventure/BitFlags.cpp
 	edit/SonicAdventure/SANPCFlags.cpp
-	edit/SonicAdventure/SADXMissions.cpp
+	edit/SonicAdventure/ByteFlags.cpp
+	edit/SonicAdventure/SADXMissionFlags.cpp
+	edit/SonicAdventure/ByteFlagsModel.cpp
+	edit/SonicAdventure/ByteFlagsView.cpp
+	edit/SonicAdventure/CenteredCheckBoxDelegate.cpp
 	)
 
 # Shh... it's a secret to everybody.
@@ -236,7 +240,11 @@ SET(mcrecover_EDIT_MOC_H
 	edit/SonicAdventure/PageFilterModel.hpp
 	edit/SonicAdventure/BitFlags.hpp
 	edit/SonicAdventure/SANPCFlags.hpp
-	edit/SonicAdventure/SADXMissions.hpp
+	edit/SonicAdventure/ByteFlags.hpp
+	edit/SonicAdventure/SADXMissionFlags.hpp
+	edit/SonicAdventure/ByteFlagsModel.hpp
+	edit/SonicAdventure/ByteFlagsView.hpp
+	edit/SonicAdventure/CenteredCheckBoxDelegate.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H
@@ -265,7 +273,7 @@ SET(mcrecover_EDIT_UIS
 	edit/SonicAdventure/SALevelStats.ui
 	edit/SonicAdventure/SALevelClearCount.ui
 	edit/SonicAdventure/BitFlagsView.ui
-	edit/SonicAdventure/SADXMissions.ui
+	edit/SonicAdventure/ByteFlagsView.ui
 	)
 
 # Generate the header files from the UI files.
