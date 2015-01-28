@@ -112,7 +112,8 @@ QVariant ByteFlagsModel::data(const QModelIndex& index, int role) const
 		case Qt::DisplayRole:
 			switch (index.column()) {
 				case COL_ID:
-					return index.row();
+					// TODO: Customizable ID base.
+					return (index.row() + 1);
 				case COL_DESCRIPTION:
 					return d->byteFlags->description(index.row());
 				default:
