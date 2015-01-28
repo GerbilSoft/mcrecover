@@ -102,10 +102,6 @@ void ByteFlagsViewPrivate::updateDisplay(void)
 	// FIXME: Add text margins. For now, just add width of 'W'.
 	id_width += fm.width(QChar(L'W'));
 	ui.lstEventFlags->setColumnWidth(ByteFlagsModel::COL_ID, id_width+1);
-	
-	// Event Description and overall width.
-	//ui.lstEventFlags->resizeColumnToContents(ByteFlagsModel::COL_DESCRIPTION);
-	ui.lstEventFlags->resizeColumnToContents(model->columnCount());
 }
 
 /** ByteFlagsView **/
@@ -122,7 +118,6 @@ ByteFlagsView::ByteFlagsView(QWidget *parent)
 
 	// Set up a CentereCheckBoxDelegate.
 	d->ui.lstEventFlags->setItemDelegate(new CenteredCheckBoxDelegate(this));
-	d->ui.lstEventFlags->header()->setStretchLastSection(false);
 
 	// NOTE: QTabBar is initialized after the model is set to prevent
 	// signals from being triggered before pageFilterModel is valid.

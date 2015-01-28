@@ -56,12 +56,18 @@ class ByteFlagsModel : public QAbstractListModel
 
 		// Columns.
 		enum Column {
-			COL_ID,			// Flag ID
-			COL_DESCRIPTION,	// Description
+			// Object ID
+			COL_ID,
 
 			// Bits
 			COL_BIT0, COL_BIT1, COL_BIT2, COL_BIT3,
 			COL_BIT4, COL_BIT5, COL_BIT6, COL_BIT7,
+
+			// Description.
+			// Needs to go after the bitflags because
+			// Qt doesn't like making anything but the
+			// final column an expanding column.
+			COL_DESCRIPTION,
 
 			COL_MAX
 		};
