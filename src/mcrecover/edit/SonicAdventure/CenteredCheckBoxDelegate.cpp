@@ -24,6 +24,7 @@ void CenteredCheckBoxDelegate::paint(QPainter *painter,
 	}
 
 	// This is a checkbox.
+	// TODO: Verify that "pressed" works correctly?
 
 	// Draw the ItemView background.
 	QStyleOptionViewItemV4 viewItemOption(option);
@@ -41,6 +42,7 @@ void CenteredCheckBoxDelegate::paint(QPainter *painter,
 	// Center the checkbox horizontally.
 	opt.rect = QRect(0, 0, style->pixelMetric(QStyle::PM_IndicatorWidth), option.rect.height());
 	opt.rect.moveCenter(option.rect.center());
+	opt.rect.setHeight(style->pixelMetric(QStyle::PM_IndicatorHeight));
 	style->drawControl(QStyle::CE_CheckBox, &opt, painter, viewItemOption.widget);
 }
  
@@ -61,13 +63,16 @@ bool CenteredCheckBoxDelegate::editorEvent(QEvent *event,
 	if (!value.isValid())
 		return false;
 	// make sure that we have the right event type
+	// TODO: Verify that "pressed" works correctly?
 	if (event->type() == QEvent::MouseButtonRelease) {
-		const int textMargin = QApplication::style()->pixelMetric(QStyle::PM_FocusFrameHMargin) + 1;
-		QRect checkRect = QStyle::alignedRect(option.direction, Qt::AlignCenter,
-						option.decorationSize,
-						QRect(option.rect.x() + (2 * textMargin), option.rect.y(),
-							option.rect.width() - (2 * textMargin),
-							option.rect.height()));
+		QStyleOptionViewItemV4 viewItemOption(option);
+		QStyle *style = viewItemOption.widget ? viewItemOption.widget->style() : QApplication::style();
+
+		// Calculate the checkbox rectangle.
+		QRect checkRect(0, 0, style->pixelMetric(QStyle::PM_IndicatorWidth), option.rect.height());
+		checkRect.moveCenter(option.rect.center());
+		checkRect.setHeight(style->pixelMetric(QStyle::PM_IndicatorHeight));
+
 		if (!checkRect.contains(static_cast<QMouseEvent*>(event)->pos()))
 			return false;
 	} else if (event->type() == QEvent::KeyPress) {
