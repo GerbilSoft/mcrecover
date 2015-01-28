@@ -31,7 +31,7 @@ class ByteFlagsView : public QWidget
 {
 	Q_OBJECT
 
-	Q_PROPERTY(ByteFlagsModel* bitFlagsModel READ bitFlagsModel WRITE setByteFlagsModel)
+	Q_PROPERTY(ByteFlagsModel* byteFlagsModel READ byteFlagsModel WRITE setByteFlagsModel)
 	// TODO: Function to set tab titles.
 	// TODO: Signal for pageSizeChanged()?
 	Q_PROPERTY(int pageSize READ pageSize WRITE setPageSize)
@@ -53,11 +53,11 @@ class ByteFlagsView : public QWidget
 		 * Get the ByteFlagsModel this widget is editing.
 		 * @return ByteFlagsModel.
 		 */
-		ByteFlagsModel *bitFlagsModel(void) const;
+		ByteFlagsModel *byteFlagsModel(void) const;
 
 		/**
 		 * Set the ByteFlagsModel to edit.
-		 * @param bitFlagsModel ByteFlagsModel.
+		 * @param byteFlagsModel ByteFlagsModel.
 		 */
 		void setByteFlagsModel(ByteFlagsModel *model);
 

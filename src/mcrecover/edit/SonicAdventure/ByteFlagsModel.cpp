@@ -122,10 +122,15 @@ QVariant ByteFlagsModel::data(const QModelIndex& index, int role) const
 
 		case Qt::CheckStateRole:
 			if (index.column() >= COL_BIT0 && index.column() <= COL_BIT7) {
-				int bit = (index.column() - COL_BIT0);
-				return ((d->byteFlags->flag(index.row()) & (1 << bit))
-					? Qt::Checked
-					: Qt::Unchecked);
+				const int bit = (index.column() - COL_BIT0);
+				if (!d->byteFlags->flagType(bit).isEmpty()) {
+					return ((d->byteFlags->flag(index.row()) & (1 << bit))
+						? Qt::Checked
+						: Qt::Unchecked);
+				} else {
+					// Not a valid bit.
+					break;
+				}
 			}
 			break;
 
@@ -170,7 +175,10 @@ QVariant ByteFlagsModel::headerData(int section, Qt::Orientation orientation, in
 				// Bits
 				case COL_BIT0: case COL_BIT1: case COL_BIT2: case COL_BIT3:
 				case COL_BIT4: case COL_BIT5: case COL_BIT6: case COL_BIT7:
-					return d->byteFlags->flagType(section - COL_BIT0);
+				{
+					const int bit = (section - COL_BIT0);
+					return d->byteFlags->flagType(bit);
+				}
 
 				default:
 					break;
@@ -203,8 +211,18 @@ Qt::ItemFlags ByteFlagsModel::flags(const QModelIndex &index) const
 		return Qt::NoItemFlags;
 
 	if (index.column() >= COL_BIT0 && index.column() <= COL_BIT7) {
-		return Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
+		// Check if this bit is valid.
+		const int bit = (index.column() - COL_BIT0);
+		if (!d->byteFlags->flagType(bit).isEmpty()) {
+			// Flag has a defined type.
+			return Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
+		} else {
+			// Flag is not defined.
+			return Qt::NoItemFlags;
+		}
 	}
+
+	// Items are enabled by default.
 	return Qt::ItemIsEnabled;
 }
 

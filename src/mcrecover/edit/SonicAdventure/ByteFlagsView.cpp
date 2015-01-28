@@ -161,7 +161,7 @@ ByteFlagsView::~ByteFlagsView()
  * Get the ByteFlagsModel this widget is editing.
  * @return ByteFlagsModel.
  */
-ByteFlagsModel *ByteFlagsView::bitFlagsModel(void) const
+ByteFlagsModel *ByteFlagsView::byteFlagsModel(void) const
 {
 	Q_D(const ByteFlagsView);
 	return qobject_cast<ByteFlagsModel*>(d->pageFilterModel->sourceModel());
@@ -169,13 +169,23 @@ ByteFlagsModel *ByteFlagsView::bitFlagsModel(void) const
 
 /**
  * Set the ByteFlagsModel to edit.
- * @param bitFlagsModel ByteFlagsModel.
+ * @param byteFlagsModel ByteFlagsModel.
  */
-void ByteFlagsView::setByteFlagsModel(ByteFlagsModel *bitFlagsModel)
+void ByteFlagsView::setByteFlagsModel(ByteFlagsModel *byteFlagsModel)
 {
 	// TODO: Connect destroyed() signal for ByteFlagsModel?
 	Q_D(ByteFlagsView);
-	d->pageFilterModel->setSourceModel(bitFlagsModel);
+	d->pageFilterModel->setSourceModel(byteFlagsModel);
+
+	// Hide undefined bits.
+	// TODO: When byteFlagsModel's byteFlags changes?
+	const ByteFlags *byteFlags = byteFlagsModel->byteFlags();
+	for (int i = 0; i < 8; i++) {
+		const bool isHidden = byteFlags->flagType(i).isEmpty();
+		const int col = (ByteFlagsModel::COL_BIT0 + i);
+		d->ui.lstEventFlags->setColumnHidden(col, isHidden);
+		d->ui.lstEventFlags->resizeColumnToContents(col);
+	}
 
 	// Update the QTabBar.
 	d->updateDisplay();
