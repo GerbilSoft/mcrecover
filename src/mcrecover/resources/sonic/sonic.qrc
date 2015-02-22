@@ -6,5 +6,12 @@
     <file>noemblem.png</file>
     <file>noemblem.highlight.png</file>
     <file>noemblem.shadow.png</file>
+
+    <file>SA1/sonic.png</file>
+    <file>SA1/tails.png</file>
+    <file>SA1/knuckles.png</file>
+    <file>SA1/amy.png</file>
+    <file>SA1/gamma.png</file>
+    <file>SA1/big.png</file>
   </qresource>
 </RCC>
