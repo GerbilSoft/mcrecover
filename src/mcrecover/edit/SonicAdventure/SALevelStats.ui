@@ -35,30 +35,54 @@
         <property name="text">
          <string>Sonic</string>
         </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/sonic.png</normaloff>:/sonic/SA1/sonic.png</iconset>
+        </property>
        </item>
        <item>
         <property name="text">
          <string>Tails</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/tails.png</normaloff>:/sonic/SA1/tails.png</iconset>
         </property>
        </item>
        <item>
         <property name="text">
          <string>Knuckles</string>
         </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/knuckles.png</normaloff>:/sonic/SA1/knuckles.png</iconset>
+        </property>
        </item>
        <item>
         <property name="text">
          <string>Amy</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/amy.png</normaloff>:/sonic/SA1/amy.png</iconset>
         </property>
        </item>
        <item>
         <property name="text">
          <string>Gamma</string>
         </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/gamma.png</normaloff>:/sonic/SA1/gamma.png</iconset>
+        </property>
        </item>
        <item>
         <property name="text">
          <string>Big</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/big.png</normaloff>:/sonic/SA1/big.png</iconset>
         </property>
        </item>
       </widget>
@@ -147,6 +171,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../resources/sonic/sonic.qrc"/>
+ </resources>
  <connections/>
 </ui>
