@@ -37,12 +37,31 @@ class SADXMissionFlagsPrivate : public ByteFlagsPrivate
 
 	public:
 		static const int flagCount = 60;
+
+		// Pixmaps.
+		QPixmap pixmaps[6];
 };
 
 // NOTE: NUM_ELEMENTS() includes the NULL-terminator.
 SADXMissionFlagsPrivate::SADXMissionFlagsPrivate()
 	: ByteFlagsPrivate(flagCount, &sadx_mission_flags_desc[0], NUM_ELEMENTS(sadx_mission_flags_desc)-1)
-{ }
+{
+	// Load the pixmaps. (TODO: Once per class?)
+	static const char *const pixmap_filenames[NUM_ELEMENTS(pixmaps)] = {
+		":/sonic/SA1/sonic.png",
+		":/sonic/SA1/tails.png",
+		":/sonic/SA1/knuckles.png",
+		":/sonic/SA1/amy.png",
+		":/sonic/SA1/gamma.png",
+		":/sonic/SA1/big.png",
+	};
+
+	for (int i = 0; i < NUM_ELEMENTS(pixmaps); i++) {
+		QPixmap pxm = QPixmap(QLatin1String(pixmap_filenames[i]));
+		// Reduce to 16x16. [TODO: Both sizes for high-DPI?]
+		pixmaps[i] = pxm.scaled(16, 16, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	}
+}
 
 /** SADXMissionFlags **/
 
@@ -78,4 +97,19 @@ QString SADXMissionFlags::flagType(int bit) const
 	// Unused flag.
 	// Don't show it.
 	return QString();
+}
+
+/**
+ * Get a character icon representing a flag.
+ * TODO: Make this more generic?
+ * @param id Object ID.
+ * @return Character icon.
+ */
+QPixmap SADXMissionFlags::icon(int id) const
+{
+	if (id < 0 || id >= NUM_ELEMENTS(sadx_mission_flags_char))
+		return QPixmap();
+
+	Q_D(const SADXMissionFlags);
+	return d->pixmaps[sadx_mission_flags_char[id]];
 }

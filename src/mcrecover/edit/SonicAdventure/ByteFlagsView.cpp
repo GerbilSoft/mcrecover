@@ -92,6 +92,7 @@ void ByteFlagsViewPrivate::updateDisplay(void)
 
 	// Resize the columns to fit the contents.
 	// TODO: On theme change, pageSize change...?
+	ui.lstEventFlags->resizeColumnToContents(ByteFlagsModel::COL_CHARACTER);
 	for (int i = ByteFlagsModel::COL_BIT0; i < ByteFlagsModel::COL_BIT7; i++) {
 		ui.lstEventFlags->resizeColumnToContents(i);
 	}

@@ -180,3 +180,15 @@ int ByteFlags::setAllFlags(const uint8_t *data, int sz)
 	emit flagsChanged(0, sz-1);
 	return sz;
 }
+
+/**
+ * Get a character icon representing a flag.
+ * TODO: Make this more generic?
+ * @param id Object ID.
+ * @return Character icon.
+ */
+QPixmap ByteFlags::icon(int id) const
+{
+	// No icons by default...
+	return QPixmap();
+}

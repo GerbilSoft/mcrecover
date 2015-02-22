@@ -121,6 +121,11 @@ QVariant ByteFlagsModel::data(const QModelIndex& index, int role) const
 			}
 			break;
 
+		case Qt::DecorationRole:
+			if (index.column() == COL_CHARACTER)
+				return d->byteFlags->icon(index.row());
+			break;
+
 		case Qt::CheckStateRole:
 			if (index.column() >= COL_BIT0 && index.column() <= COL_BIT7) {
 				const int bit = (index.column() - COL_BIT0);
@@ -147,6 +152,16 @@ QVariant ByteFlagsModel::data(const QModelIndex& index, int role) const
 				QStyle *style = qApp->style();
 				return QSize(style->pixelMetric(QStyle::PM_IndicatorWidth),
 					     style->pixelMetric(QStyle::PM_IndicatorHeight));
+			} else if (index.column() == COL_CHARACTER) {
+				// HACK: Increase icon/banner width on Windows.
+				// Figure out a better method later.
+				// TODO: Get correct icon size from the ByteFlags object.
+				#ifdef Q_OS_WIN
+					static const int iconWadj = 8;
+				#else
+					static const int iconWadj = 0;
+				#endif
+				return QSize(16 + iconWadj, 16);
 			}
 			break;
 
@@ -172,6 +187,9 @@ QVariant ByteFlagsModel::headerData(int section, Qt::Orientation orientation, in
 					return tr("ID");
 				case COL_DESCRIPTION:
 					return d->byteFlags->objectType();
+				case COL_CHARACTER:
+					//: Abbreviation of "character".
+					return tr("Char");
 
 				// Bits
 				case COL_BIT0: case COL_BIT1: case COL_BIT2: case COL_BIT3:

@@ -50,6 +50,14 @@ class SADXMissionFlags : public ByteFlags
 		 * @return Flag type, e.g. "Completed". (If bit is unused, empty QString is returned.)
 		 */
 		virtual QString flagType(int bit) const override;
+
+		/**
+		 * Get a character icon representing a flag.
+		 * TODO: Make this more generic?
+		 * @param id Object ID.
+		 * @return Character icon.
+		 */
+		virtual QPixmap icon(int id) const;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SADXMISSIONFLAGS_HPP__ */

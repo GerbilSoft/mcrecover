@@ -57,7 +57,10 @@ class ByteFlagsModel : public QAbstractListModel
 		// Columns.
 		enum Column {
 			// Object ID
-			COL_ID,
+			COL_ID = 0,
+
+			// Character
+			COL_CHARACTER,
 
 			// Bits
 			COL_BIT0, COL_BIT1, COL_BIT2, COL_BIT3,

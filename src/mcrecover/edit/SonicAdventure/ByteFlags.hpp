@@ -26,6 +26,7 @@
 
 #include <stdint.h>
 #include <QtCore/QObject>
+#include <QtGui/QPixmap>
 class ByteFlagsPrivate;
 class ByteFlags : public QObject
 {
@@ -136,6 +137,14 @@ class ByteFlags : public QObject
 		 * @return Flag type, e.g. "Completed". (If bit is unused, empty QString is returned.)
 		 */
 		virtual QString flagType(int bit) const = 0;
+
+		/**
+		 * Get a character icon representing a flag.
+		 * TODO: Make this more generic?
+		 * @param id Object ID.
+		 * @return Character icon.
+		 */
+		virtual QPixmap icon(int id) const = 0;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_BYTEFLAGS_HPP__ */
