@@ -23,160 +23,153 @@
    <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
+   <layout class="QVBoxLayout" name="vboxMain" stretch="0,1">
     <item>
      <widget class="MessageWidgetStack" name="msgWidget" native="true"/>
     </item>
     <item>
-     <widget class="QSplitter" name="splitter">
+     <widget class="QSplitter" name="splitterMain">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
       <property name="childrenCollapsible">
        <bool>false</bool>
       </property>
-      <widget class="QWidget" name="">
-       <layout class="QVBoxLayout" name="vboxFileList">
+      <widget class="QGroupBox" name="grpFileList">
+       <property name="title">
+        <string notr="true">No memory card loaded.</string>
+       </property>
+       <layout class="QVBoxLayout" name="vboxGrpFileList">
         <item>
-         <widget class="QGroupBox" name="grpFileList">
-          <property name="title">
-           <string notr="true">No memory card loaded.</string>
+         <widget class="QTreeViewOpt" name="lstFileList">
+          <property name="alternatingRowColors">
+           <bool>true</bool>
           </property>
-          <layout class="QVBoxLayout" name="vboxGrpFileList">
-           <item>
-            <widget class="QTreeViewOpt" name="lstFileList">
-             <property name="alternatingRowColors">
-              <bool>true</bool>
-             </property>
-             <property name="selectionMode">
-              <enum>QAbstractItemView::ExtendedSelection</enum>
-             </property>
-             <property name="rootIsDecorated">
-              <bool>false</bool>
-             </property>
-             <property name="uniformRowHeights">
-              <bool>true</bool>
-             </property>
-             <property name="allColumnsShowFocus">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+          <property name="rootIsDecorated">
+           <bool>false</bool>
+          </property>
+          <property name="uniformRowHeights">
+           <bool>true</bool>
+          </property>
+          <property name="allColumnsShowFocus">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
-       <layout class="QVBoxLayout" name="vboxCardFileInfo">
-        <property name="spacing">
-         <number>8</number>
+      <widget class="QSplitter" name="splitterInfo">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="childrenCollapsible">
+        <bool>false</bool>
+       </property>
+       <widget class="QGroupBox" name="grpMemCardInfo">
+        <property name="title">
+         <string>Memory Card Details</string>
         </property>
-        <item>
-         <widget class="QGroupBox" name="grpMemCardInfo">
-          <property name="title">
-           <string>Memory Card Details</string>
-          </property>
-          <layout class="QVBoxLayout" name="vboxMemCardInfo">
-           <item>
-            <widget class="QScrollArea" name="scrlMemCardInfo">
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
+        <layout class="QVBoxLayout" name="vboxMemCardInfo">
+         <item>
+          <widget class="QScrollArea" name="scrlMemCardInfo">
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="horizontalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOff</enum>
+           </property>
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="scrlMemCardInfoWidget">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>375</width>
+              <height>183</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="vboxScrlMemCardInfo">
+             <property name="margin">
+              <number>0</number>
              </property>
-             <property name="horizontalScrollBarPolicy">
-              <enum>Qt::ScrollBarAlwaysOff</enum>
-             </property>
-             <property name="widgetResizable">
-              <bool>true</bool>
-             </property>
-             <widget class="QWidget" name="scrlMemCardInfoWidget">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>373</width>
-                <height>180</height>
-               </rect>
-              </property>
-              <layout class="QVBoxLayout" name="vboxScrlMemCardInfo">
-               <property name="margin">
-                <number>0</number>
+             <item>
+              <widget class="CardView" name="mcCardView" native="true">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>32</height>
+                </size>
                </property>
-               <item>
-                <widget class="CardView" name="mcCardView" native="true">
-                 <property name="minimumSize">
-                  <size>
-                   <width>200</width>
-                   <height>32</height>
-                  </size>
-                 </property>
-                 <property name="focusPolicy">
-                  <enum>Qt::TabFocus</enum>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="grpFileInfo">
-          <property name="title">
-           <string>File Information</string>
-          </property>
-          <layout class="QVBoxLayout" name="vboxFileInfo">
-           <item>
-            <widget class="QScrollArea" name="scrlFileInfo">
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-             <property name="horizontalScrollBarPolicy">
-              <enum>Qt::ScrollBarAlwaysOff</enum>
-             </property>
-             <property name="widgetResizable">
-              <bool>true</bool>
-             </property>
-             <widget class="QWidget" name="scrlFileInfoWidget">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>373</width>
-                <height>179</height>
-               </rect>
-              </property>
-              <layout class="QVBoxLayout" name="vboxScrlFileInfo">
-               <property name="margin">
-                <number>0</number>
+               <property name="focusPolicy">
+                <enum>Qt::TabFocus</enum>
                </property>
-               <item>
-                <widget class="FileView" name="mcfFileView" native="true">
-                 <property name="minimumSize">
-                  <size>
-                   <width>146</width>
-                   <height>32</height>
-                  </size>
-                 </property>
-                 <property name="focusPolicy">
-                  <enum>Qt::TabFocus</enum>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QGroupBox" name="grpFileInfo">
+        <property name="title">
+         <string>File Information</string>
+        </property>
+        <layout class="QVBoxLayout" name="vboxFileInfo">
+         <item>
+          <widget class="QScrollArea" name="scrlFileInfo">
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="horizontalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOff</enum>
+           </property>
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="scrlFileInfoWidget">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>375</width>
+              <height>183</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="vboxScrlFileInfo">
+             <property name="margin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="FileView" name="mcfFileView" native="true">
+               <property name="minimumSize">
+                <size>
+                 <width>146</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::TabFocus</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </widget>
     </item>
    </layout>
+   <zorder>splitterMain</zorder>
+   <zorder>msgWidget</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

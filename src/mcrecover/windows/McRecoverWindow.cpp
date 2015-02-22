@@ -937,19 +937,19 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 #endif
 #endif
 
-	// Set up the QSplitter sizes.
+	// Set up the main splitter sizes.
 	// We want the card info panel to be 160px wide at startup.
 	// TODO: Save positioning settings somewhere?
 	static const int MemCardInfoPanelWidth = 256;
 	QList<int> sizes;
 	sizes.append(this->width() - MemCardInfoPanelWidth);
 	sizes.append(MemCardInfoPanelWidth);
-	d->ui.splitter->setSizes(sizes);
+	d->ui.splitterMain->setSizes(sizes);
 
-	// Set the splitter stretch factors.
+	// Set the main splitter stretch factors.
 	// We want the QTreeView to stretch, but not the card info panel.
-	d->ui.splitter->setStretchFactor(0, 1);
-	d->ui.splitter->setStretchFactor(1, 0);
+	d->ui.splitterMain->setStretchFactor(0, 1);
+	d->ui.splitterMain->setStretchFactor(1, 0);
 
 	// Initialize lstFileList's item delegate.
 	d->ui.lstFileList->setItemDelegate(new MemCardItemDelegate(this));
