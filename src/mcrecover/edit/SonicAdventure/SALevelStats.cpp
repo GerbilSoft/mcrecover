@@ -75,6 +75,9 @@ class SALevelStatsPrivate
 		// space for 136, so we have to allocate the entire area.
 		bool emblems[136];
 
+		// Current character being displayed.
+		int character;
+
 		/**
 		 * Clear the loaded data.
 		 * This does NOT automatically update the UI.
@@ -94,9 +97,14 @@ class SALevelStatsPrivate
 		void switchLevels(int character);
 
 		/**
-		 * Update the widgets with the loaded data.
+		 * Update the widgets for the selected character.
 		 */
 		void updateDisplay(void);
+
+		/**
+		 * Save the current character's stats.
+		 */
+		void saveCurrentStats(void);
 
 		/** Static read-only data **/
 
@@ -177,6 +185,7 @@ const int8_t SALevelStatsPrivate::saveMap[6][MAX_LEVELS] = {
 
 SALevelStatsPrivate::SALevelStatsPrivate(SALevelStats *q)
 	: q_ptr(q)
+	, character(0)
 {
 	// Clear the data.
 	clear();
@@ -206,6 +215,7 @@ SALevelStatsPrivate::~SALevelStatsPrivate()
  */
 void SALevelStatsPrivate::clear(void)
 {
+	character = 0;
 	memset(&scores, 0, sizeof(scores));
 	memset(&times, 0, sizeof(times));
 	memset(&weights, 0, sizeof(weights));
@@ -307,7 +317,11 @@ void SALevelStatsPrivate::switchLevels(int character)
 	if (character < 0 || character > 5)
 		return;
 
+	// Save the current character's stats.
+	saveCurrentStats();
+
 	const int8_t *levelID = &levelMap[character][0];
+	this->character = character;
 
 	// Show widgets that are needed.
 	int i = 0;
@@ -356,13 +370,12 @@ void SALevelStatsPrivate::switchLevels(int character)
 }
 
 /**
- * Update the widgets with the loaded data.
+ * Update the widgets for the selected character.
  */
 void SALevelStatsPrivate::updateDisplay(void)
 {
 	// TODO: Make character a parameter, or not?
 	// FIXME: Character enums or something.
-	int character = ui.cboCharacter->currentIndex();
 	if (character < 0 || character > 5)
 		return;
 
@@ -402,6 +415,56 @@ void SALevelStatsPrivate::updateDisplay(void)
 		levels[level].chkEmblems[0]->setChecked(emblems[saveIdx+0]);
 		levels[level].chkEmblems[1]->setChecked(emblems[saveIdx+32]);
 		levels[level].chkEmblems[2]->setChecked(emblems[saveIdx+64]);
+	}
+}
+
+/**
+ * Save the current character's stats.
+ */
+void SALevelStatsPrivate::saveCurrentStats(void)
+{
+	// TODO: Make character a parameter, or not?
+	// FIXME: Character enums or something.
+	if (character < 0 || character > 5)
+		return;
+
+	for (int level = 0; level < MAX_LEVELS; level++) {
+		const int8_t saveIdx = saveMap[character][level];
+		if (saveIdx < 0 || saveIdx >= NUM_ELEMENTS(scores.all))
+			break;
+
+		// Score
+		scores.all[saveIdx] = levels[level].spnHighScore->value();
+
+		// Time / Weight
+		if (character != 5) {
+			// TODO: Constrain bounds?
+			// Time (not Big)
+			times.all[saveIdx].minutes = levels[level].spnBestTime[0]->value();
+			times.all[saveIdx].seconds = levels[level].spnBestTime[1]->value();
+			// FIXME: Stored as 1/60th seconds; convert to 1/100th.
+			times.all[saveIdx].frames = levels[level].spnBestTime[2]->value();
+		} else {
+			// Weight (Big)
+			const int8_t bigSaveIdx = (saveIdx - 28);
+			for (int j = 0; j < 3; j++) {
+				const int weight = levels[level].spnBestTime[j]->value();
+				weights.levels[bigSaveIdx][j] = (weight / 10);
+			}
+		}
+
+		// Rings
+		rings.all[saveIdx] = levels[level].spnMostRings->value();
+
+		/**
+		 * Level emblems:
+		 * - A: saveIdx + 0
+		 * - B: saveIdx + 32
+		 * - C: saveIdx + 64
+		 */
+		emblems[saveIdx+0 ] = levels[level].chkEmblems[0]->isChecked();
+		emblems[saveIdx+32] = levels[level].chkEmblems[1]->isChecked();
+		emblems[saveIdx+64] = levels[level].chkEmblems[2]->isChecked();
 	}
 }
 
@@ -467,7 +530,7 @@ void SALevelStats::on_cboCharacter_currentIndexChanged(int index)
 /** Public functions. **/
 
 /**
- * Load data from Sonic Adventure save slot.
+ * Load data from a Sonic Adventure save slot.
  * @param sa_save Sonic Adventure save slot.
  * The data must have already been byteswapped to host-endian.
  * @return 0 on success; non-zero on error.
@@ -492,6 +555,40 @@ int SALevelStats::load(const sa_save_slot *sa_save)
 
 	// Update the display.
 	d->updateDisplay();
+	return 0;
+}
+
+/**
+ * Save data to a Sonic Adventure save slot.
+ * @param sa_save Sonic Adventure save slot.
+ * The data will be in host-endian format.
+ * @return 0 on success; non-zero on error.
+ */
+int SALevelStats::save(sa_save_slot *sa_save)
+{
+	Q_D(SALevelStats);
+	// Save the current character's stats.
+	// TODO: Use modification signals to make this unnecessary,
+	// and mark this function as const?
+	d->saveCurrentStats();
+
+	memcpy(&sa_save->scores,  &d->scores,  sizeof(sa_save->scores));
+	memcpy(&sa_save->times,   &d->times,   sizeof(sa_save->times));
+	memcpy(&sa_save->weights, &d->weights, sizeof(sa_save->weights));
+	memcpy(&sa_save->rings,   &d->rings,   sizeof(sa_save->rings));
+
+	// Emblems are stored as a bitmask. (LSB is emblem 0.)
+	// We're using a bool array internally.
+	const bool *emblem = &d->emblems[0];
+	for (int i = 0; i < NUM_ELEMENTS(sa_save->emblems); i++) {
+		uint8_t bits = 0;
+		for (int j = 0; j < 8; j++) {
+			bits >>= 1;
+			bits |= (*emblem++ ? 0x80 : 0);
+		}
+		sa_save->emblems[i] = bits;
+	}
+
 	return 0;
 }
 

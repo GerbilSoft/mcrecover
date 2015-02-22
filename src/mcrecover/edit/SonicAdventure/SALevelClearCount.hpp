@@ -55,9 +55,24 @@ class SALevelClearCount : public QWidget
 		int load(const _sa_save_slot *sa_save);
 
 		/**
+		 * Save data to a Sonic Adventure save slot.
+		 * @param sa_save Sonic Adventure save slot.
+		 * The data will be in host-endian format.
+		 * @return 0 on success; non-zero on error.
+		 */
+		int save(_sa_save_slot *sa_save) const;
+
+		/**
 		 * Clear the loaded data.
 		 */
 		void clear(void);
+
+	protected slots:
+		/**
+		 * spnCount signal mapper.
+		 * @param spnId Spinbox ID. (0xAABB; AA == level, BB == character)
+		 */
+		void spnCount_mapped_slot(int spnId);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SALEVELCLEARCOUNT_HPP__ */

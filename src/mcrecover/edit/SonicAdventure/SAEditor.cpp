@@ -96,6 +96,11 @@ class SAEditorPrivate
 		 * Update the display.
 		 */
 		void updateDisplay(void);
+
+		/**
+		 * Save data for the current slot.
+		 */
+		void saveCurrentSlot(void);
 };
 
 SAEditorPrivate::SAEditorPrivate(SAEditor* q)
@@ -217,6 +222,27 @@ void SAEditorPrivate::updateDisplay(void)
 			ui.tabSADXExtras->setParent(q);
 		}
 	}
+}
+
+/**
+ * Save data for the current slot.
+ */
+void SAEditorPrivate::saveCurrentSlot(void)
+{
+	const int slotCount = data_main.size();
+	if (slot < 0 || slot >= slotCount) {
+		// Invalid slot number.
+		return;
+	}
+
+	// Save the data.
+	sa_save_slot *sa_save = data_main.at(slot);
+	ui.saLevelStats->save(sa_save);
+	ui.saLevelClearCount->save(sa_save);
+
+	// Bit flags.
+	saEventFlags.allFlags(&sa_save->events.all[0], NUM_ELEMENTS(sa_save->events.all));
+	saNPCFlags.allFlags(&sa_save->npc.all[0], NUM_ELEMENTS(sa_save->npc.all));
 }
 
 /** SAEditor **/
@@ -422,7 +448,7 @@ void SAEditor::on_slotSelector_slotChanged(int slot)
 		return;
 	}
 
-	// TODO: Save data for the current slot.
+	d->saveCurrentSlot();
 	d->slot = slot;
 	d->updateDisplay();
 }

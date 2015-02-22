@@ -59,6 +59,14 @@ class SALevelStats : public QWidget
 		int load(const _sa_save_slot *sa_save);
 
 		/**
+		 * Save data from a Sonic Adventure save slot.
+		 * @param sa_save Sonic Adventure save slot.
+		 * The data will be in host-endian format.
+		 * @return 0 on success; non-zero on error.
+		 */
+		int save(_sa_save_slot *sa_save);
+
+		/**
 		 * Clear the loaded data.
 		 */
 		void clear(void);

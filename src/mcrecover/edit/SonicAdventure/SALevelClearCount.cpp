@@ -21,6 +21,9 @@
 
 #include "SALevelClearCount.hpp"
 
+// Qt includes.
+#include <QtCore/QSignalMapper>
+
 // Qt widgets.
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QLabel>
@@ -60,6 +63,9 @@ class SALevelClearCountPrivate
 			QLabel *lblLevel;
 			QSpinBox *spnCount[8];
 		} levels[TOTAL_LEVELS];
+
+		// Signal mapper for QSpinBox modifications.
+		QSignalMapper *mapperSpinBox;
 
 		// Save file data.
 		sa_level_clear_count clear_count;
@@ -103,9 +109,14 @@ const char *SALevelClearCountPrivate::levelNames[TOTAL_LEVELS] = {
 
 SALevelClearCountPrivate::SALevelClearCountPrivate(SALevelClearCount *q)
 	: q_ptr(q)
+	, mapperSpinBox(new QSignalMapper(q))
 {
 	// Clear the data.
 	clear();
+
+	// Connect the QSignalMapper slots.
+	QObject::connect(mapperSpinBox, SIGNAL(mapped(int)),
+			 q, SLOT(spnCount_mapped_slot(int)));
 }
 
 SALevelClearCountPrivate::~SALevelClearCountPrivate()
@@ -153,6 +164,12 @@ void SALevelClearCountPrivate::initLevels(void)
 			levels[level].spnCount[chr]->setSingleStep(1);
 			levels[level].spnCount[chr]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 			ui.gridLevels->addWidget(levels[level].spnCount[chr], level+1, chr+1, Qt::AlignTop);
+
+			// Connect the valueChanged() signal.
+			QObject::connect(levels[level].spnCount[chr], SIGNAL(valueChanged(int)),
+					 mapperSpinBox, SLOT(map()));
+			mapperSpinBox->setMapping(levels[level].spnCount[chr],
+						((level << 8) | chr));
 		}
 	}
 }
@@ -162,12 +179,22 @@ void SALevelClearCountPrivate::initLevels(void)
  */
 void SALevelClearCountPrivate::updateDisplay(void)
 {
+	// Temporarily disconnect the signal mapper.
+	// TODO: Mutex?
+	Q_Q(SALevelClearCount);
+	QObject::disconnect(mapperSpinBox, SIGNAL(mapped(int)),
+			    q, SLOT(spnCount_mapped_slot(int)));
+
 	// NOTE: Outer loop is the character due to cache locality.
 	for (int chr = 0; chr < NUM_ELEMENTS(levels[0].spnCount); chr++) {
 		for (int level = 0; level < NUM_ELEMENTS(levels); level++) {
 			levels[level].spnCount[chr]->setValue(clear_count.clear[chr][level]);
 		}
 	}
+
+	// Reconnect the signal mapper.
+	QObject::connect(mapperSpinBox, SIGNAL(mapped(int)),
+			 q, SLOT(spnCount_mapped_slot(int)));
 }
 
 /** SALevelClearCount **/
@@ -221,7 +248,7 @@ void SALevelClearCount::changeEvent(QEvent *event)
 /** Public functions. **/
 
 /**
- * Load data from Sonic Adventure save slot.
+ * Load data from a Sonic Adventure save slot.
  * @param sa_save Sonic Adventure save slot.
  * The data must have already been byteswapped to host-endian.
  * @return 0 on success; non-zero on error.
@@ -237,6 +264,19 @@ int SALevelClearCount::load(const sa_save_slot *sa_save)
 }
 
 /**
+ * Save data to a Sonic Adventure save slot.
+ * @param sa_save Sonic Adventure save slot.
+ * The data will be in host-endian format.
+ * @return 0 on success; non-zero on error.
+ */
+int SALevelClearCount::save(sa_save_slot *sa_save) const
+{
+	Q_D(const SALevelClearCount);
+	memcpy(&sa_save->clear_count, &d->clear_count, sizeof(sa_save->clear_count));
+	return 0;
+}
+
+/**
  * Clear the loaded data.
  */
 void SALevelClearCount::clear(void)
@@ -244,4 +284,22 @@ void SALevelClearCount::clear(void)
 	Q_D(SALevelClearCount);
 	d->clear();
 	d->updateDisplay();
+}
+
+/** Slots. **/
+
+/**
+ * spnCount signal mapper.
+ * @param spnId Spinbox ID. (0xAABB; AA == level, BB == character)
+ */
+void SALevelClearCount::spnCount_mapped_slot(int spnId)
+{
+	// Save the data for the spinbox.
+	const int chr = (spnId & 0xFF);
+	const int level = (spnId >> 8);
+	if (chr < 0 || chr >= 8 || level < 0 || level >= TOTAL_LEVELS)
+		return;
+
+	Q_D(SALevelClearCount);
+	d->clear_count.clear[chr][level] = d->levels[level].spnCount[chr]->value();
 }
