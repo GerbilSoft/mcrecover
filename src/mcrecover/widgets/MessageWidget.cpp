@@ -325,8 +325,9 @@ void MessageWidget::showEvent(QShowEvent *event)
  * @param msg Message text. (supports Qt RichText formatting)
  * @param icon Icon.
  * @param timeout Timeout, in milliseconds. (0 for no timeout)
+ * @param closeOnDestroy Close the message when the specified QObject is destroyed.
  */
-void MessageWidget::showMessage(const QString &msg, MsgIcon icon, int timeout)
+void MessageWidget::showMessage(const QString &msg, MsgIcon icon, int timeout, QObject *closeOnDestroy)
 {
 	Q_D(MessageWidget);
 	d->ui.lblMessage->setText(msg);
@@ -335,6 +336,13 @@ void MessageWidget::showMessage(const QString &msg, MsgIcon icon, int timeout)
 	// Set up the timer.
 	d->tmrTimeout->stop();
 	d->tmrTimeout->setInterval(timeout);
+
+	// Close the widget when the specified QObject is destroyed.
+	if (closeOnDestroy) {
+		connect(closeOnDestroy, SIGNAL(destroyed()),
+			this, SLOT(on_btnDismiss_clicked()),
+			Qt::UniqueConnection);
+	}
 
 	// If the widget is already visible, just update it.
 	if (this->isVisible()) {

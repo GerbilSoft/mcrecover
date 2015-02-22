@@ -338,7 +338,7 @@ void McRecoverWindowPrivate::showJpWarning(void)
 				"The system PCRE library was not compiled with Unicode character properties support.\n"
 				"Some files with Japanese descriptions might not be found when scanning.");
 #endif /* PCRE_STATIC */
-		ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING);
+		ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING, 0, card);
 	}
 }
 
@@ -1144,7 +1144,7 @@ void McRecoverWindow::openCard(const QString &filename)
 		}
 
 		// Show a warning message.
-		d->ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING);
+		d->ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING, 0, d->card);
 	}
 
 	// Update the UI.
