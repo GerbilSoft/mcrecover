@@ -32,9 +32,6 @@
 // C++ includes.
 #include <limits>
 
-// Qt includes.
-#include <QtCore/QTextCodec>
-
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 /** GcnCardPrivate **/
@@ -784,56 +781,6 @@ GcnCard *GcnCard::format(const QString& filename, QObject *parent)
 QString GcnCard::productName(void) const
 {
 	return tr("GameCube memory card");
-}
-
-/**
- * Get the text encoding for a given region.
- * @param region Region code. (If 0, use the memory card's encoding.)
- * @return Text encoding.
- */
-Card::Encoding GcnCard::encodingForRegion(char region) const
-{
-	// TODO: Return an error if not open?
-	if (!isOpen())
-		return ENCODING_CP1252;
-
-	Q_D(const GcnCard);
-	switch (region) {
-		case 0:
-			// Use the memory card's encoding.
-			return d->encoding;
-
-		case 'J':
-		case 'S':
-			// Japanese.
-			// NOTE: 'S' appears in RELSAB, which is used for
-			// some prototypes, including Sonic Adventure DX
-			// and Metroid Prime 3. Assume Japanese for now.
-			// TODO: Implement a Shift-JIS heuristic for 'S'.
-			return ENCODING_SHIFTJIS;
-
-		default:
-			// US, Europe, Australia.
-			// TODO: Korea?
-			return ENCODING_CP1252;
-	}
-}
-
-/**
- * Get the QTextCodec for a given region.
- * @param region Region code. (If 0, use the memory card's encoding.)
- * @return QTextCodec.
- */
-QTextCodec *GcnCard::textCodec(char region) const
-{
-	if (!isOpen())
-		return nullptr;
-
-	Q_D(const GcnCard);
-	// FIXME: Calling this->textCodec() results in a stack overflow.
-	// Call the base class function directly.
-	// (Maybe it's a conflict between 'char' and enum?)
-	return Card::textCodec(encodingForRegion(region));
 }
 
 /**

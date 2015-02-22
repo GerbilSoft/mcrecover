@@ -26,7 +26,6 @@
 
 // Qt includes and classes.
 #include <QtCore/QLinkedList>
-class QTextCodec;
 
 #include "card.h"
 #include "Checksum.hpp"
@@ -83,20 +82,6 @@ class GcnCard : public Card
 		 * @return Product name.
 		 */
 		virtual QString productName(void) const override;
-
-		/**
-		 * Get the text encoding for a given region.
-		 * @param region Region code. (If 0, use the memory card's encoding.)
-		 * @return Text encoding.
-		 */
-		Encoding encodingForRegion(char region) const;
-
-		/**
-		 * Get the QTextCodec for a given region.
-		 * @param region Region code. (If 0, use the memory card's encoding.)
-		 * @return QTextCodec.
-		 */
-		QTextCodec *textCodec(char region = 0) const;
 
 		/**
 		 * Get the used block map.

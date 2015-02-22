@@ -90,14 +90,6 @@ class GcnFile : public File
 		 */
 		QString fileDesc(void) const;
 
-		/** TODO: Move encoding to File. **/
-
-		/**
-		 * Get the text encoding ID for this file.
-		 * @return Text encoding ID.
-		 */
-		int encoding(void) const;
-
 		/**
 		 * Get the file's mode as a string.
 		 * This is system-specific.

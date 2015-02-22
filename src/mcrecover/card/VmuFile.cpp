@@ -78,15 +78,6 @@ class VmuFilePrivate : public FilePrivate
 		 */
 		void loadFileInfo(void);
 
-		/**
-		 * Attempt to decode text as Shift-JIS.
-		 * If that fails, use cp1252.
-		 * @param str Text data.
-		 * @param len Length of str.
-		 * @return Unicode QString.
-		 */
-		static QString decodeText_SJISorCP1252(const char *str, int len);
-
 	public:
 		const vmu_fat *mc_fat;	// VMU FAT. (TODO: Do we need to store this?)
 
@@ -287,52 +278,6 @@ void VmuFilePrivate::loadFileInfo(void)
 
 	// Load the banner and icon images.
 	loadImages();
-}
-
-/**
- * Attempt to decode text as Shift-JIS.
- * If that fails, use cp1252.
- * @param str Text data.
- * @param len Length of str.
- * @return Unicode QString.
- */
-QString VmuFilePrivate::decodeText_SJISorCP1252(const char *str, int len)
-{
-	// Static codec initialization.
-	// NOTE: Assuming cp1252 always works.
-	static QTextCodec *shiftJis = QTextCodec::codecForName("Shift_JIS");
-	static QTextCodec *cp1252 = QTextCodec::codecForName("cp1252");
-
-	if (!shiftJis) {
-		// Shift-JIS isn't available.
-		// Always use cp1252.
-		if (!cp1252) {
-			// Should not happen...
-			return QString::fromLatin1(str, len);
-		}
-		return cp1252->toUnicode(str, len);
-	}
-
-	// Attempt to decode as Shift-JIS.
-	// TODO: There should be a faster way to check if the text isn't valid...
-	// (iconv can return an error if an invalid character is encountered.)
-	QTextCodec::ConverterState state(QTextCodec::ConvertInvalidToNull);
-	QString text = shiftJis->toUnicode(str, len);
-	// U+FFFD: REPLACEMENT CHARACTER
-	// QTextCodec uses this if it encounters
-	// an invalid Shift-JIS sequence.
-	if (text.contains(QChar(0xFFFD))) {
-		// Invalid characters detected.
-		// Use cp1252 instead.
-		if (!cp1252) {
-			// Should not happen...
-			return QString::fromLatin1(str, len);
-		}
-		return cp1252->toUnicode(str, len);
-	}
-
-	// Text decoded as Shift-JIS.
-	return text;
 }
 
 /**

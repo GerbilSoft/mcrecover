@@ -56,7 +56,7 @@ class Card : public QObject
 	Q_PROPERTY(QString productName READ productName)
 	Q_PROPERTY(QString filename READ filename)
 	Q_PROPERTY(int filesize READ filesize)
-	Q_PROPERTY(int encoding READ encoding)
+	Q_PROPERTY(Encoding encoding READ encoding)
 	Q_PROPERTY(QColor color READ color NOTIFY colorChanged)
 	Q_PROPERTY(GcnDateTime formatTime READ formatTime)
 
@@ -174,28 +174,20 @@ class Card : public QObject
 		 * Text encoding enumeration.
 		 */
 		enum Encoding {
-			ENCODING_CP1252 = 0,
-			ENCODING_SHIFTJIS = 1,
+			ENCODING_UNKNOWN = 0,	// Unknown
+			ENCODING_CP1252,	// cp1252
+			ENCODING_SHIFTJIS,	// Shift-JIS
+
+			ENCODING_MAX
 		};
 
 		/**
 		 * Get the text encoding used for filenames and descriptions.
+		 * Indicated by the card header.
+		 * If not present, returns ENCODING_UNKNOWN.
 		 * @return Text encoding.
 		 */
 		Encoding encoding(void) const;
-
-		/**
-		 * Get a QTextCodec for the specified encoding.
-		 * @param encoding Encoding.
-		 * @return QTextCodec. (If unavailable, defaults to cp1252.)
-		 */
-		static QTextCodec *textCodec(Encoding encoding);
-
-		/**
-		 * Get a QTextCodec for this memory card.
-		 * @return QTextCodec.
-		 */
-		QTextCodec *textCodec(void) const;
 
 		/**
 		 * Get the card's color.

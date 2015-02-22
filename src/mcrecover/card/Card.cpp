@@ -44,7 +44,7 @@ CardPrivate::CardPrivate(Card *q, uint32_t blockSize, int minBlocks, int maxBloc
 	, errors(0)
 	, file(nullptr)
 	, filesize(0)
-	, encoding(Card::ENCODING_CP1252)
+	, encoding(Card::ENCODING_UNKNOWN)
 	, blockSize(blockSize)
 	, minBlocks(minBlocks)
 	, maxBlocks(maxBlocks)
@@ -303,33 +303,10 @@ int Card::freeBlocks(void) const
  */
 Card::Encoding Card::encoding(void) const
 {
-	// TODO: Return an error if not open?
 	if (!isOpen())
-		return Card::ENCODING_CP1252;
+		return Card::ENCODING_UNKNOWN;
 	Q_D(const Card);
 	return d->encoding;
-}
-
-/**
- * Get a QTextCodec for the specified encoding.
- * @param encoding Encoding.
- * @return QTextCodec. (If unavailable, defaults to cp1252.)
- */
-QTextCodec *Card::textCodec(Encoding encoding)
-{
-	// Static codec initialization.
-	// NOTE: Assuming cp1252 always works.
-	static QTextCodec *cp1252 = QTextCodec::codecForName("cp1252");
-	static QTextCodec *shiftJis = QTextCodec::codecForName("Shift_JIS");
-
-	switch (encoding) {
-		case ENCODING_CP1252:
-		default:
-			return cp1252;
-
-		case ENCODING_SHIFTJIS:
-			return (shiftJis ? shiftJis : cp1252);
-	}
 }
 
 /**
@@ -354,18 +331,6 @@ GcnDateTime Card::formatTime(void) const
 		return GcnDateTime();
 	Q_D(const Card);
 	return d->formatTime;
-}
-
-/**
- * Get a QTextCodec for this memory card.
- * @return QTextCodec.
- */
-QTextCodec *Card::textCodec(void) const
-{
-	if (!isOpen())
-		return nullptr;
-	Q_D(const Card);
-	return textCodec(d->encoding);
 }
 
 /** Card I/O **/

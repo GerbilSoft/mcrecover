@@ -114,6 +114,15 @@ class FilePrivate
 		 */
 		static QString StripInvalidDosChars(const QString &filename, QChar replaceChar = QChar(L'_'));
 
+		/**
+		 * Attempt to decode text as Shift-JIS.
+		 * If that fails, use cp1252.
+		 * @param str Text data.
+		 * @param len Length of str.
+		 * @return Unicode QString.
+		 */
+		static QString decodeText_SJISorCP1252(const char *str, int len);
+
 		/** Images **/
 
 		/**

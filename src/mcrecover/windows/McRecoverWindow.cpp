@@ -1074,14 +1074,21 @@ void McRecoverWindow::openCard(const QString &filename)
 	if (d->card->encoding() == Card::ENCODING_SHIFTJIS) {
 		isJapanese = true;
 	} else {
+		// TODO: Add a "hasJapaneseCharacters" function.
+		// Files don't have an inherent encoding, and we're
+		// not simply going to check the region value, since
+		// that's GameCube-specific.
+		// Also, optimize this by skipping the whole thing if
+		// PCRE does support UCP.
+#if 0
 		for (int i = 0; i < d->card->fileCount(); i++) {
-			// TODO: Move encoding() to File?
 			const GcnFile *file = qobject_cast<GcnFile*>(d->card->getFile(i));
 			if (file && file->encoding() == Card::ENCODING_SHIFTJIS) {
 				isJapanese = true;
 				break;
 			}
 		}
+#endif
 	}
 
 	// If the card encoding or any files are Japanese,
@@ -1627,9 +1634,15 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 	// Add the directory entries.
 	QList<GcnFile*> files = gcnCard->addLostFiles(filesFoundList);
 
+	// TODO: Add a "hasJapaneseCharacters" function.
+	// Files don't have an inherent encoding, and we're
+	// not simply going to check the region value, since
+	// that's GameCube-specific.
+	// Also, optimize this by skipping the whole thing if
+	// PCRE does support UCP.
+#if 0
 	// Check for any Japanese files.
 	bool isJapanese = false;
-	// FIXME: Move GcnFile::encoding() to File.
 	foreach (const GcnFile *file, files) {
 		if (file->encoding() == Card::ENCODING_SHIFTJIS) {
 			// Found a Japanese file.
@@ -1642,6 +1655,7 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 	// show a warning if PCRE doesn't support UCP.
 	if (isJapanese || d->card->encoding() == Card::ENCODING_SHIFTJIS)
 		d->showJpWarning();
+#endif
 }
 
 /**

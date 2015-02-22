@@ -33,6 +33,7 @@
 
 // C includes. (C++ namespace)
 #include <cerrno>
+#include <cassert>
 
 // C++ includes.
 #include <string>
@@ -84,6 +85,13 @@ class GcnFilePrivate : public FilePrivate
 		Q_DECLARE_PUBLIC(GcnFile)
 	private:
 		Q_DISABLE_COPY(GcnFilePrivate)
+
+		/**
+		 * Get a QTextCodec for a given region.
+		 * @param region Region code. (If 0, use the memory card's encoding.)
+		 * @return QTextCodec.
+		 */
+		QTextCodec *textCodecForRegion(char region) const;
 
 		/**
 		 * Load the file information.
@@ -226,6 +234,52 @@ GcnFilePrivate::~GcnFilePrivate()
 }
 
 /**
+ * Get a QTextCodec for a given region.
+ * @param region Region code. (If 0, use the memory card's encoding.)
+ * @return QTextCodec.
+ */
+QTextCodec *GcnFilePrivate::textCodecForRegion(char region) const
+{
+	static QTextCodec *shiftJis = QTextCodec::codecForName("Shift_JIS");
+	static QTextCodec *cp1252 = QTextCodec::codecForName("cp1252");
+
+	if (!shiftJis) {
+		// Shift-JIS isn't available.
+		// Always use cp1252.
+		assert(cp1252 != nullptr);
+		return cp1252;
+	}
+
+	Card::Encoding encoding = Card::ENCODING_UNKNOWN;
+	switch (region) {
+		case 0:
+			// Use the memory card's encoding.
+			encoding = card->encoding();
+			break;
+
+		case 'J':
+		case 'S':
+			// Japanese.
+			// NOTE: 'S' appears in RELSAB, which is used for
+			// some prototypes, including Sonic Adventure DX
+			// and Metroid Prime 3. Assume Japanese for now.
+			// TODO: Implement a Shift-JIS heuristic for 'S'.
+			encoding = Card::ENCODING_SHIFTJIS;
+			break;
+
+		default:
+			// US, Europe, Australia.
+			// TODO: Korea?
+			encoding = Card::ENCODING_CP1252;
+			break;
+	}
+
+	if (encoding == Card::ENCODING_SHIFTJIS)
+		return shiftJis;
+	return cp1252;
+}
+
+/**
  * Load the file information.
  */
 void GcnFilePrivate::loadFileInfo(void)
@@ -236,12 +290,12 @@ void GcnFilePrivate::loadFileInfo(void)
 	gameID = QString::fromLatin1(dirEntry->gamecode,
 			sizeof(dirEntry->gamecode) + sizeof(dirEntry->company));
 
+	// TODO: Use decodeText_SJISorCP1252() instead?
 	// Get the appropriate QTextCodec for this file.
 	const char region = (gameID.size() >= 4
 				? gameID.at(3).toLatin1()
 				: 0);
-	// FIXME: Unchecked cast, though card should always be GcnCard...
-	QTextCodec *textCodec = ((GcnCard*)card)->textCodec(region);
+	QTextCodec *textCodec = textCodecForRegion(region);
 
 	// Remove trailing NULL characters before converting to UTF-8.
 	QByteArray filenameData(dirEntry->filename, sizeof(dirEntry->filename));
@@ -583,20 +637,6 @@ QString GcnFile::fileDesc(void) const
 {
 	Q_D(const GcnFile);
 	return d->fileDesc;
-}
-
-/**
- * Get the text encoding ID for this file.
- * @return Text encoding ID.
- */
-int GcnFile::encoding(void) const
-{
-	Q_D(const GcnFile);
-	const char region = (d->gameID.size() >= 4
-				? d->gameID.at(3).toLatin1()
-				: 0);
-	// FIXME: Unchecked cast, though card should always be GcnCard...
-	return ((GcnCard*)d->card)->encodingForRegion(region);
 }
 
 /**
