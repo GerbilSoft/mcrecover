@@ -91,7 +91,7 @@ static bit_flag_t sadx_mission_flags_desc[] = {
  * 0 == Sonic, 1 == Tails, 2 == Knuckles,
  * 3 == Amy, 4 == Gamma, 5 == Big
  */
-static uint8_t sadx_mission_flags_chr[60] = {
+static uint8_t sadx_mission_flags_char[60] = {
 	0, 0, 0, 1, 2, 3, 4, 5, 0, 1,	// Missions  1-10
 	0, 2, 0, 5, 0, 1, 0, 3, 3, 0,	// Missions 11-20
 	4, 5, 0, 1, 2, 2, 0, 0, 5, 0,	// Missions 21-30
