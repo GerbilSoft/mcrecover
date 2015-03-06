@@ -22,7 +22,6 @@
 // Reference: http://programmingexamples.net/wiki/Qt/ModelView/AbstractListModelCheckable
 
 #include "BitFlagsModel.hpp"
-#include "sa_defs.h"
 
 // C includes.
 #include <limits.h>
