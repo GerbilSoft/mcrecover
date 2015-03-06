@@ -101,6 +101,12 @@ class SAEditorPrivate
 		 * Save data for the current slot.
 		 */
 		void saveCurrentSlot(void);
+
+		/**
+		 * Byteswap an sa_save_slot.
+		 * @param sa_save sa_save_slot.
+		 */
+		static void byteswap_sa_save_slot(sa_save_slot *sa_save);
 };
 
 SAEditorPrivate::SAEditorPrivate(SAEditor* q)
@@ -182,6 +188,7 @@ void SAEditorPrivate::updateDisplay(void)
 
 	// Display the data.
 	const sa_save_slot *sa_save = data_main.at(slot);
+	ui.saGeneral->load(sa_save);
 	ui.saLevelStats->load(sa_save);
 	ui.saLevelClearCount->load(sa_save);
 
@@ -237,12 +244,34 @@ void SAEditorPrivate::saveCurrentSlot(void)
 
 	// Save the data.
 	sa_save_slot *sa_save = data_main.at(slot);
+	ui.saGeneral->save(sa_save);
 	ui.saLevelStats->save(sa_save);
 	ui.saLevelClearCount->save(sa_save);
 
 	// Bit flags.
 	saEventFlags.allFlags(&sa_save->events.all[0], NUM_ELEMENTS(sa_save->events.all));
 	saNPCFlags.allFlags(&sa_save->npc.all[0], NUM_ELEMENTS(sa_save->npc.all));
+}
+
+/**
+ * Byteswap an sa_save_slot.
+ * @param sa_save sa_save_slot.
+ */
+void SAEditorPrivate::byteswap_sa_save_slot(sa_save_slot *sa_save)
+{
+	sa_save->playTime = __swab32(sa_save->playTime);
+
+	for (int i = 0; i < NUM_ELEMENTS(sa_save->scores.all); i++) {
+		sa_save->scores.all[i] = __swab32(sa_save->scores.all[i]);
+	}
+	for (int i = 0; i < NUM_ELEMENTS(sa_save->weights.all); i++) {
+		sa_save->weights.all[i] = __swab16(sa_save->weights.all[i]);
+	}
+	for (int i = 0; i < NUM_ELEMENTS(sa_save->rings.all); i++) {
+		sa_save->rings.all[i] = __swab16(sa_save->rings.all[i]);
+	}
+
+	sa_save->last_level = __swab16(sa_save->last_level);
 }
 
 /** SAEditor **/
@@ -355,15 +384,7 @@ int SAEditor::setFile(File *file)
 #if MCRECOVER_BYTEORDER == MCRECOVER_BIG_ENDIAN
 			// Byteswap the data.
 			// Dreamcast's SH-4 is little-endian.
-			for (int i = 0; i < NUM_ELEMENTS(sa_save->scores.all); i++) {
-				sa_save->scores.all[i] = le32_to_cpu(sa_save->scores.all[i]);
-			}
-			for (int i = 0; i < NUM_ELEMENTS(sa_save->weights.all); i++) {
-				sa_save->weights.all[i] = le16_to_cpu(sa_save->weights.all[i]);
-			}
-			for (int i = 0; i < NUM_ELEMENTS(sa_save->rings.all); i++) {
-				sa_save->rings.all[i] = le16_to_cpu(sa_save->rings.all[i]);
-			}
+			d->byteswap_sa_save_slot(sa_save);
 #endif
 
 			// Loaded successfully.
@@ -385,15 +406,7 @@ int SAEditor::setFile(File *file)
 #if MCRECOVER_BYTEORDER == MCRECOVER_LIL_ENDIAN
 		// Byteswap the data.
 		// GameCube's PowerPC 750CL is big-endian.
-		for (int i = 0; i < NUM_ELEMENTS(sa_save->scores.all); i++) {
-			sa_save->scores.all[i] = be32_to_cpu(sa_save->scores.all[i]);
-		}
-		for (int i = 0; i < NUM_ELEMENTS(sa_save->weights.all); i++) {
-			sa_save->weights.all[i] = be16_to_cpu(sa_save->weights.all[i]);
-		}
-		for (int i = 0; i < NUM_ELEMENTS(sa_save->rings.all); i++) {
-			sa_save->rings.all[i] = be16_to_cpu(sa_save->rings.all[i]);
-		}
+		d->byteswap_sa_save_slot(sa_save);
 #endif
 
 		// Check for SADX extras.

@@ -136,6 +136,31 @@ typedef union PACKED _sa_rings {
 } sa_rings;
 #pragma pack()
 
+// [0x251] Options: Choose the feature you want to edit.
+#define SA_OPTIONS_MSG_VOICE_AND_TEXT	0x00
+#define SA_OPTIONS_MSG_VOICE_ONLY	0x02
+#define SA_OPTIONS_MSG_MASK		0x02
+#define SA_OPTIONS_MSG_VALUE(x)		((x & SA_OPTIONS_MSG_MASK) >> 1)
+#define SA_OPTIONS_VOICE_LANG_DEFAULT	0x00
+#define SA_OPTIONS_VOICE_LANG_JP	0x04
+#define SA_OPTIONS_VOICE_LANG_EN	0x08
+#define SA_OPTIONS_VOICE_LANG_MASK	0x0C
+#define SA_OPTIONS_VOICE_LANG_VALUE(x)	((x & SA_OPTIONS_VOICE_LANG_MASK) >> 2)
+#define SA_OPTIONS_TEXT_LANG_DEFAULT	0x00
+#define SA_OPTIONS_TEXT_LANG_JP		0x10
+#define SA_OPTIONS_TEXT_LANG_EN		0x20
+#define SA_OPTIONS_TEXT_LANG_FR		0x30
+#define SA_OPTIONS_TEXT_LANG_ES		0x40
+#define SA_OPTIONS_TEXT_LANG_DE		0x50
+#define SA_OPTIONS_TEXT_LANG_MASK	0x70
+#define SA_OPTIONS_TEXT_LANG_VALUE(x)	((x & SA_OPTIONS_TEXT_LANG_MASK) >> 4)
+
+// [0x25A] Rumble feature.
+#define SA_RUMBLE_FEATURE_OFF		0x00
+#define SA_RUMBLE_FEATURE_ON		0x01
+#define SA_RUMBLE_FEATURE_MASK		0x01
+#define SA_RUMBLE_FEATURE_VALUE(x)	(x & SA_RUMBLE_FEATURE_MASK)
+
 /**
  * Last character / menu voice.
  * Voice is indicated by V*.

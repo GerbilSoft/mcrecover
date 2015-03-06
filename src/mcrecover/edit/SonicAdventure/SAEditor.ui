@@ -37,12 +37,17 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>8</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
        <string>&amp;General</string>
       </attribute>
+      <layout class="QVBoxLayout" name="vboxGeneral">
+       <item>
+        <widget class="SAGeneral" name="saGeneral" native="true"/>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tabAdventure">
       <attribute name="title">
@@ -234,6 +239,12 @@
    <class>ByteFlagsView</class>
    <extends>QWidget</extends>
    <header>edit/SonicAdventure/ByteFlagsView.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SAGeneral</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/SAGeneral.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SAGeneral</class>
+ <widget class="QWidget" name="SAGeneral">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>391</width>
+    <height>200</height>
+   </rect>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="lblPlayTime">
+     <property name="text">
+      <string>Play Time:</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <layout class="QHBoxLayout" name="hboxPlayTime">
+     <item>
+      <widget class="QSpinBox" name="spnPlayTimeHours">
+       <property name="maximum">
+        <number>11930</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spnPlayTimeMinutes">
+       <property name="maximum">
+        <number>59</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spnPlayTimeSeconds">
+       <property name="maximum">
+        <number>59</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spnPlayTimeFrames">
+       <property name="maximum">
+        <number>59</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="hspcPlayTime">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="lblMessages">
+     <property name="text">
+      <string>Messages:</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="cboMessages">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <item>
+      <property name="text">
+       <string>Voice and Text</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Voice Only</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="lblVoiceLanguage">
+     <property name="text">
+      <string>Voice Language:</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QComboBox" name="cboVoiceLanguage">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <item>
+      <property name="text">
+       <string>Default</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Japanese</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/flags/flags.qrc">
+        <normaloff>:/flags/flag-jp.png</normaloff>:/flags/flag-jp.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>English</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/flags/flags.qrc">
+        <normaloff>:/flags/flag-us.png</normaloff>:/flags/flag-us.png</iconset>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="lblTextLanguage">
+     <property name="text">
+      <string>Text Language:</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QComboBox" name="cboTextLanguage">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <item>
+      <property name="text">
+       <string>Default</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Japanese</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/flags/flags.qrc">
+        <normaloff>:/flags/flag-jp.png</normaloff>:/flags/flag-jp.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>English</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/flags/flags.qrc">
+        <normaloff>:/flags/flag-us.png</normaloff>:/flags/flag-us.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>French</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/flags/flags.qrc">
+        <normaloff>:/flags/flag-fr.png</normaloff>:/flags/flag-fr.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Spanish</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/flags/flags.qrc">
+        <normaloff>:/flags/flag-es.png</normaloff>:/flags/flag-es.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>German</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/flags/flags.qrc">
+        <normaloff>:/flags/flag-de.png</normaloff>:/flags/flag-de.png</iconset>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="lblRumble">
+     <property name="text">
+      <string>Rumble:</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QCheckBox" name="chkRumble"/>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="lblLastCharacter">
+     <property name="text">
+      <string>Last Character:</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QComboBox" name="cboLastCharacter">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <item>
+      <property name="text">
+       <string>Sonic</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/sonic.png</normaloff>:/sonic/SA1/sonic.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Sonic (Default voice)</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/sonic.png</normaloff>:/sonic/SA1/sonic.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Tails</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/tails.png</normaloff>:/sonic/SA1/tails.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Knuckles</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/knuckles.png</normaloff>:/sonic/SA1/knuckles.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Sonic (Default voice)</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/sonic.png</normaloff>:/sonic/SA1/sonic.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Amy</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/amy.png</normaloff>:/sonic/SA1/amy.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Gamma</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/gamma.png</normaloff>:/sonic/SA1/gamma.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Big</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/big.png</normaloff>:/sonic/SA1/big.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Sonic (Eggman's voice)</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/sonic.png</normaloff>:/sonic/SA1/sonic.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Sonic (Tikal's voice)</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/sonic.png</normaloff>:/sonic/SA1/sonic.png</iconset>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="lblLastLevel">
+     <property name="text">
+      <string>Last Level:</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="QComboBox" name="cboLastLevel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <item>
+      <property name="text">
+       <string>None</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Hedgehog Hammer</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Emerald Coast</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Windy Valley</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Twinkle Park</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Speed Highway</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Red Mountain</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Sky Deck</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Lost World</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ice Cap</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Casinopolis</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Final Egg</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Mystic Ruins</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Hot Shelter</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Mystic Ruins</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Mystic Ruins</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Chaos 0</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Chaos 2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Chaos 4</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Chaos 6</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Perfect Chaos</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Egg Hornet</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Egg Walker</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Egg Viper</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>ZERO</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>E-101 Beta</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>E-101mkII</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Station Square</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Station Square</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Station Square</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Egg Carrier</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Egg Carrier</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Egg Carrier</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Egg Carrier</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Mystic Ruins</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Mystic Ruins</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Twinkle Circuit</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Sky Chase Act 1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Sky Chase Act 2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Sand Hill</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../../resources/flags/flags.qrc"/>
+  <include location="../../resources/sonic/sonic.qrc"/>
+ </resources>
+ <connections/>
+</ui>
