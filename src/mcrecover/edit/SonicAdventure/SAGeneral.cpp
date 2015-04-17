@@ -142,7 +142,34 @@ int SAGeneral::load(const sa_save_slot *sa_save)
 int SAGeneral::save(sa_save_slot *sa_save) const
 {
 	Q_D(const SAGeneral);
-	// TODO
+
+	// Play time.
+	// Stored in NTSC frames. (1/60th of a second)
+	// TODO: Verify for PAL?
+	// TODO: Convert frames from 1/100th of seconds.
+	uint32_t playTime =
+		((uint32_t)d->ui.spnPlayTimeHours->value() * 60 * 60 * 60) +
+		(d->ui.spnPlayTimeMinutes->value() * 60 * 60) +
+		(d->ui.spnPlayTimeSeconds->value() * 60) +
+		(d->ui.spnPlayTimeSeconds->value());
+
+	// Options byte.
+	// TODO: Bit-shifting macros like SA_OPTIONS_*_VALUE()?
+	uint8_t options = 0;
+	if (d->ui.cboMessages->currentIndex() >= 0)
+		options |= (d->ui.cboMessages->currentIndex() << 1);
+	if (d->ui.cboVoiceLanguage->currentIndex() >= 0)
+		options |= (d->ui.cboVoiceLanguage->currentIndex() << 2);
+	if (d->ui.cboTextLanguage->currentIndex() >= 0)
+		options |= (d->ui.cboTextLanguage->currentIndex() << 4);
+	sa_save->options = options;
+
+	// Last character and level.
+	if (d->ui.cboLastCharacter->currentIndex() >= 0)
+		sa_save->last_char = d->ui.cboLastCharacter->currentIndex();
+	if (d->ui.cboLastLevel->currentIndex() >= 0)
+		sa_save->last_level = d->ui.cboLastLevel->currentIndex();
+
 	return 0;
 }
 
