@@ -33,6 +33,9 @@
 // Sonic Adventure save file definitions.
 #include "sa_defs.h"
 
+// Common data.
+#include "SAData.h"
+
 // TODO: Put this in a common header file somewhere.
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
@@ -85,26 +88,6 @@ class SALevelClearCountPrivate
 		 * Update the widgets with the loaded data.
 		 */
 		void updateDisplay(void);
-
-		/** Static read-only data **/
-
-		// Level names. (ASCII, untranslated)
-		static const char *levelNames[TOTAL_LEVELS];
-};
-
-// Level names. (ASCII, untranslated)
-const char *SALevelClearCountPrivate::levelNames[TOTAL_LEVELS] = {
-	"Hedgehog Hammer", "Emerald Coast", "Windy Valley", "Twinkle Park",	// 0-3
-	"Speed Highway", "Red Mountain", "Sky Deck", "Lost World",		// 4-7
-	"Ice Cap", "Casinopolis", "Final Egg", "Unused (11)",			// 8-11
-	"Hot Shelter", "Unused (13)", "Unused (14)", "Chaos 0",			// 12-15
-	"Chaos 2", "Chaos 4", "Chaos 6", "Perfect Chaos",			// 16-19
-	"Egg Hornet", "Egg Walker", "Egg Viper", "ZERO",			// 20-23
-	"E-101 Beta", "E-101 mkII", "Station Square", "Unused (27)",		// 24-27
-	"Unused (28)", "Egg Carrier (Outside)", "Unused (30)", "Unused (31)",	// 28-31
-	"Egg Carrier (Inside)", "Mystic Ruins", "The Past", "Twinkle Circuit",	// 32-35
-	"Sky Chase Act 1", "Sky Chase Act 2", "Sand Hill", "Station Square\nChao Garden", // 36-39
-	"Egg Carrier\nChao Garden", "Mystic Ruins\nChao Garden", "Chao Race",	// 40-42
 };
 
 SALevelClearCountPrivate::SALevelClearCountPrivate(SALevelClearCount *q)
@@ -153,7 +136,7 @@ void SALevelClearCountPrivate::initLevels(void)
 	for (int level = 0; level < TOTAL_LEVELS; level++) {
 		// Level name.
 		levels[level].lblLevel = new QLabel(q);
-		levels[level].lblLevel->setText(QLatin1String(levelNames[level]));
+		levels[level].lblLevel->setText(QLatin1String(sa_level_names_all[level]));
 		levels[level].lblLevel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 		ui.gridLevels->addWidget(levels[level].lblLevel, level+1, 0, Qt::AlignTop);
 

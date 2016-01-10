@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SAData.h: Sonic Adventure - Miscellaneous data.                         *
+ * SADataLevels.c: Sonic Adventure - Level data.                           *
  *                                                                         *
  * Copyright (c) 2015-2016 by David Korth.                                 *
  * Original data from SASave by MainMemory.                                *
@@ -20,41 +20,88 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SADATA_H__
-#define __MCRECOVER_EDIT_SONICADVENTURE_SADATA_H__
+#include "SAData.h"
 
 // NOTE: Many of the event flags are unused, so instead of using
 // an array, we're using a struct of event flags.
 // FIXME: Alignment on 64-bit?
 #include "bit_flag.h"
 
-#define SA_EVENT_FLAGS_COUNT 127
-extern const bit_flag_t sa_event_flags_desc[SA_EVENT_FLAGS_COUNT+1];
-
-#define SADX_MISSION_FLAGS_COUNT 60
-extern const bit_flag_t sadx_mission_flags_desc[SADX_MISSION_FLAGS_COUNT+1];
-
-/**
- * Character mapping for missions.
- * 0 == Sonic, 1 == Tails, 2 == Knuckles,
- * 3 == Amy, 4 == Gamma, 5 == Big
- */
-extern const uint8_t sadx_mission_flags_char[SADX_MISSION_FLAGS_COUNT];
-
 /**
  * Level names. (ASCII, untranslated)
  * Contains Action Stages only, in the order of Sonic's story,
  * with "Hot Shelter" afterwards.
  */
-#define SA_LEVEL_NAMES_ACTION_COUNT 11
-extern const char *const sa_level_names_action[SA_LEVEL_NAMES_ACTION_COUNT];
+const char *const sa_level_names_action[SA_LEVEL_NAMES_ACTION_COUNT] = {
+	"Emerald Coast",	// 0
+	"Windy Valley",		// 1
+	"Casinopolis",		// 2
+	"Ice Cap",		// 3
+	"Twinkle Park",		// 4
+	"Speed Highway",	// 5
+	"Red Mountain",		// 6
+	"Sky Deck",		// 7
+	"Lost World",		// 8
+	"Final Egg",		// 9
+	"Hot Shelter"		// 10
+};
 
 /**
  * Level names. (ASCII, untranslated)
  * Contains all levels, not just Action Stages.
  * NOTE: Chao Gardens have line breaks for formatting purposes.
  */
-#define SA_LEVEL_NAMES_ALL_COUNT 43
-extern const char *const sa_level_names_all[SA_LEVEL_NAMES_ALL_COUNT];
+const char *const sa_level_names_all[SA_LEVEL_NAMES_ALL_COUNT] = {
+	// 0-9
+	"Hedgehog Hammer",
+	"Emerald Coast",
+	"Windy Valley",
+	"Twinkle Park",
+	"Speed Highway",
+	"Red Mountain",
+	"Sky Deck",
+	"Lost World",
+	"Ice Cap",
+	"Casinopolis",
 
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SADATA_H__ */
+	// 10-19
+	"Final Egg",
+	"Unused (11)",
+	"Hot Shelter",
+	"Unused (13)",
+	"Unused (14)",
+	"Chaos 0",
+	"Chaos 2",
+	"Chaos 4",
+	"Chaos 6",
+	"Perfect Chaos",
+
+	// 20-29
+	"Egg Hornet",
+	"Egg Walker",
+	"Egg Viper",
+	"ZERO",
+	"E-101 Beta",
+	"E-101 mkII",
+	"Station Square",
+	"Unused (27)",
+	"Unused (28)",
+	"Egg Carrier (Outside)",
+
+	// 30-39
+	"Unused (30)",
+	"Unused (31)",
+	"Egg Carrier (Inside)",
+	"Mystic Ruins",
+	"The Past",
+	"Twinkle Circuit",
+	"Sky Chase Act 1",
+	"Sky Chase Act 2",
+	"Sand Hill",
+	"Station Square\nChao Garden",
+
+	// 40-42
+	"Egg Carrier\nChao Garden",
+	"Mystic Ruins\nChao Garden",
+	"Chao Race",
+};

@@ -30,6 +30,9 @@
 // Sonic Adventure save file definitions.
 #include "sa_defs.h"
 
+// Common data.
+#include "SAData.h"
+
 // TODO: Put this in a common header file somewhere.
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
@@ -108,12 +111,9 @@ class SALevelStatsPrivate
 
 		/** Static read-only data **/
 
-		// Level names. (ASCII, untranslated)
-		static const char *levelNames[11];
-
 		/**
 		 * Character level mapping.
-		 * Corresponds to levelNames[] entries.
+		 * Corresponds to sa_level_names_action[] entries.
 		 * -1 == end of list
 		 */
 		static const int8_t levelMap[6][MAX_LEVELS];
@@ -127,24 +127,9 @@ class SALevelStatsPrivate
 		static const int8_t saveMap[6][MAX_LEVELS];
 };
 
-// Level names. (ASCII, untranslated)
-const char *SALevelStatsPrivate::levelNames[11] = {
-	"Emerald Coast",	// 0
-	"Windy Valley",		// 1
-	"Casinopolis",		// 2
-	"Ice Cap",		// 3
-	"Twinkle Park",		// 4
-	"Speed Highway",	// 5
-	"Red Mountain",		// 6
-	"Sky Deck",		// 7
-	"Lost World",		// 8
-	"Final Egg",		// 9
-	"Hot Shelter"		// 10
-};
-
 /**
  * Character level mapping.
- * Corresponds to levelNames[] entries.
+ * Corresponds to sa_level_names_action[] entries.
  * -1 == end of list
  */
 const int8_t SALevelStatsPrivate::levelMap[6][MAX_LEVELS] = {
@@ -326,7 +311,7 @@ void SALevelStatsPrivate::switchLevels(int character)
 	// Show widgets that are needed.
 	int i = 0;
 	for (; i < MAX_LEVELS && *levelID != -1; i++, levelID++) {
-		levels[i].lblLevel->setText(QLatin1String(levelNames[*levelID]));
+		levels[i].lblLevel->setText(QLatin1String(sa_level_names_action[*levelID]));
 		levels[i].lblLevel->show();
 		levels[i].spnHighScore->show();
 		levels[i].spnMostRings->show();

@@ -173,6 +173,7 @@ SET(mcrecover_EDIT_SRCS
 	edit/SonicAdventure/SAGeneral.cpp
 	edit/SonicAdventure/SADataEvents.c
 	edit/SonicAdventure/SADXDataMissions.c
+	edit/SonicAdventure/SADataLevels.c
 	)
 SET(mcrecover_EDIT_H
 	edit/SonicAdventure/SAData.h
