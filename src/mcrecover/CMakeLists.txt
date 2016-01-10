@@ -171,6 +171,11 @@ SET(mcrecover_EDIT_SRCS
 	edit/SonicAdventure/ByteFlagsView.cpp
 	edit/SonicAdventure/CenteredCheckBoxDelegate.cpp
 	edit/SonicAdventure/SAGeneral.cpp
+	edit/SonicAdventure/SADataEvents.c
+	edit/SonicAdventure/SADXDataMissions.c
+	)
+SET(mcrecover_EDIT_H
+	edit/SonicAdventure/SAData.h
 	)
 
 # Shh... it's a secret to everybody.
@@ -359,7 +364,7 @@ ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_WINDOW_SRCS}
 	${mcrecover_WIDGET_SRCS}
 	${mcrecover_CARD_SRCS}
-	${mcrecover_EDIT_SRCS}
+	${mcrecover_EDIT_SRCS} ${mcrecover_EDIT_H}
 	${mcrecover_SEKRIT_SRCS}
 	${mcrecover_OS_SRCS}
 	${mcrecover_MOC_SRCS}

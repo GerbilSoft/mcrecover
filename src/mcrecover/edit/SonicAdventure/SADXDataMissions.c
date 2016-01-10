@@ -1,15 +1,29 @@
-// Sonic Adventure DX mission flags data.
-// TODO: Auto-generate a .h file from a text file?
+/***************************************************************************
+ * GameCube Memory Card Recovery Program.                                  *
+ * SADXDataMissions.c: Sonic Adventure - Missions data.                    *
+ *                                                                         *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
+ * Original data from SASave by MainMemory.                                *
+ *                                                                         *
+ * This program is free software; you can redistribute it and/or modify it *
+ * under the terms of the GNU General Public License as published by the   *
+ * Free Software Foundation; either version 2 of the License, or (at your  *
+ * option) any later version.                                              *
+ *                                                                         *
+ * This program is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ * GNU General Public License for more details.                            *
+ *                                                                         *
+ * You should have received a copy of the GNU General Public License along *
+ * with this program; if not, write to the Free Software Foundation, Inc., *
+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SADX_MISSION_FLAGS_DATA_H__
-#define __MCRECOVER_EDIT_SONICADVENTURE_SADX_MISSION_FLAGS_DATA_H__
+#include "SAData.h"
 
-// NOTE: All mission flags are unused, but for compatibility
-// with other things, we're using bit_flag_t.
-// FIXME: Alignment on 64-bit?
-#include "bit_flag.h"
-
-static bit_flag_t sadx_mission_flags_desc[] = {
+// Mission flags.
+const bit_flag_t sadx_mission_flags_desc[SADX_MISSION_FLAGS_COUNT+1] = {
 	// Missions 1-10
 	{0, "Bring the man who is standing in front of the hamburger shop!"},
 	{1, "Get the balloon in the skies of the Mystic Ruins!"},
@@ -87,11 +101,11 @@ static bit_flag_t sadx_mission_flags_desc[] = {
 };
 
 /**
- * Character mapping.
+ * Character mapping for missions.
  * 0 == Sonic, 1 == Tails, 2 == Knuckles,
  * 3 == Amy, 4 == Gamma, 5 == Big
  */
-static uint8_t sadx_mission_flags_char[60] = {
+const uint8_t sadx_mission_flags_char[SADX_MISSION_FLAGS_COUNT] = {
 	0, 0, 0, 1, 2, 3, 4, 5, 0, 1,	// Missions  1-10
 	0, 2, 0, 5, 0, 1, 0, 3, 3, 0,	// Missions 11-20
 	4, 5, 0, 1, 2, 2, 0, 0, 5, 0,	// Missions 21-30
@@ -99,5 +113,3 @@ static uint8_t sadx_mission_flags_char[60] = {
 	0, 4, 3, 5, 0, 0, 1, 2, 0, 3,	// Missions 41-50
 	4, 5, 0, 1, 0, 2, 0, 0, 2, 5,	// Missions 51-60
 };
-
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SADX_MISSION_FLAGS_DATA_H__ */

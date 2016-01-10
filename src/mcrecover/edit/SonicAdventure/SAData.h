@@ -1,8 +1,9 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SAEventFlags.cpp: Sonic Adventure - Event flags.                        *
+ * SAData.h: Sonic Adventure - Miscellaneous data.                         *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
+ * Original data from SASave by MainMemory.                                *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,42 +20,25 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#include "SAEventFlags.hpp"
-#include "SAData.h"
+#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SADATA_H__
+#define __MCRECOVER_EDIT_SONICADVENTURE_SADATA_H__
 
-// TODO: Put this in a common header file somewhere.
-#define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
+// NOTE: Many of the event flags are unused, so instead of using
+// an array, we're using a struct of event flags.
+// FIXME: Alignment on 64-bit?
+#include "bit_flag.h"
 
-/** SAEventFlagsPrivate **/
-#include "BitFlags_p.hpp"
-class SAEventFlagsPrivate : public BitFlagsPrivate
-{
-	public:
-		SAEventFlagsPrivate();
+#define SA_EVENT_FLAGS_COUNT 127
+extern const bit_flag_t sa_event_flags_desc[SA_EVENT_FLAGS_COUNT+1];
 
-	private:
-		Q_DISABLE_COPY(SAEventFlagsPrivate)
-
-	public:
-		static const int flagCount = 512;
-};
-
-// NOTE: NUM_ELEMENTS() includes the NULL-terminator.
-SAEventFlagsPrivate::SAEventFlagsPrivate()
-	: BitFlagsPrivate(512, &sa_event_flags_desc[0], NUM_ELEMENTS(sa_event_flags_desc))
-{ }
-
-/** SAEventFlags **/
-
-SAEventFlags::SAEventFlags(QObject *parent)
-	: BitFlags(new SAEventFlagsPrivate(), parent)
-{ }
+#define SADX_MISSION_FLAGS_COUNT 60
+extern const bit_flag_t sadx_mission_flags_desc[SADX_MISSION_FLAGS_COUNT+1];
 
 /**
- * Get a description of the type of flag that is represented by the class.
- * @return Flag type, e.g. "Event".
+ * Character mapping for missions.
+ * 0 == Sonic, 1 == Tails, 2 == Knuckles,
+ * 3 == Amy, 4 == Gamma, 5 == Big
  */
-QString SAEventFlags::flagType(void) const
-{
-	return tr("Event");
-}
+extern const uint8_t sadx_mission_flags_char[SADX_MISSION_FLAGS_COUNT];
+
+#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SADATA_H__ */

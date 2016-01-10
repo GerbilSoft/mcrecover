@@ -20,7 +20,7 @@
  ***************************************************************************/
 
 #include "SADXMissionFlags.hpp"
-#include "sadx_mission_flags.data.h"
+#include "SAData.h"
 
 // TODO: Put this in a common header file somewhere.
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))

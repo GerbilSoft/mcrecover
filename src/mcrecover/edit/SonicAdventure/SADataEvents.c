@@ -1,16 +1,36 @@
-// Sonic Adventure event flags data.
-// Borrowed from SASave.
-// TODO: Auto-generate a .h file from SASave's Events.ini?
+/***************************************************************************
+ * GameCube Memory Card Recovery Program.                                  *
+ * SADataEvents.c: Sonic Adventure - Events data.                          *
+ *                                                                         *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
+ * Original data from SASave by MainMemory.                                *
+ *                                                                         *
+ * This program is free software; you can redistribute it and/or modify it *
+ * under the terms of the GNU General Public License as published by the   *
+ * Free Software Foundation; either version 2 of the License, or (at your  *
+ * option) any later version.                                              *
+ *                                                                         *
+ * This program is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ * GNU General Public License for more details.                            *
+ *                                                                         *
+ * You should have received a copy of the GNU General Public License along *
+ * with this program; if not, write to the Free Software Foundation, Inc., *
+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SA_EVENT_FLAGS_DATA_H__
-#define __MCRECOVER_EDIT_SONICADVENTURE_SA_EVENT_FLAGS_DATA_H__
+#include "SAData.h"
 
 // NOTE: Many of the event flags are unused, so instead of using
 // an array, we're using a struct of event flags.
 // FIXME: Alignment on 64-bit?
 #include "bit_flag.h"
 
-static bit_flag_t sa_event_flags_desc[] = {
+// Sonic Adventure event flags data.
+// Borrowed from SASave.
+// TODO: Auto-generate a .h file from SASave's Events.ini?
+const bit_flag_t sa_event_flags_desc[SA_EVENT_FLAGS_COUNT+1] = {
 	{65, "Sonic Unlocked in Adventure"},
 	{66, "Tails Unlocked in Adventure"},
 	{67, "Knuckles Unlocked in Adventure"},
@@ -141,5 +161,3 @@ static bit_flag_t sa_event_flags_desc[] = {
 	// End of list.
 	{-1, nullptr}
 };
-
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SA_EVENT_FLAGS_DATA_H__ */
