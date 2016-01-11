@@ -66,7 +66,7 @@ class SAAdventurePrivate
 
 		// Total of 8 characters.
 		#define TOTAL_CHARACTERS 8
-		// Level widgets.
+		// Character widgets.
 		struct {
 			QLabel *lblCharacter;
 			QSpinBox *spnLives;		// [0, 127]
@@ -82,7 +82,7 @@ class SAAdventurePrivate
 		} characters[TOTAL_CHARACTERS];
 
 		/**
-		 * Initialize level widgets.
+		 * Initialize character widgets.
 		 */
 		void initCharacters(void);
 
@@ -140,7 +140,7 @@ SAAdventurePrivate::SAAdventurePrivate(SAAdventure *q)
 SAAdventurePrivate::~SAAdventurePrivate()
 {
 	// TODO: Is this needed?
-	// The level widgets are owned by this widget, so they
+	// The character widgets are owned by this widget, so they
 	// should be automatically deleted...
 	for (int i = 0; i < TOTAL_CHARACTERS; i++) {
 		delete characters[i].lblCharacter;
