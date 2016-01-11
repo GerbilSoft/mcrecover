@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TimeCodeEdit</class>
+ <widget class="QWidget" name="TimeCodeEdit">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>265</width>
+    <height>24</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <layout class="QHBoxLayout" name="hboxTimeCode">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QSpinBox" name="spnHours">
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>11930</number>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSpinBox" name="spnMinutes">
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>99</number>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSpinBox" name="spnSeconds">
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>59</number>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSpinBox" name="spnFrames">
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>59</number>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>spnMinutes</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>TimeCodeEdit</receiver>
+   <slot>spinMSFChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>91</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>93</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spnSeconds</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>TimeCodeEdit</receiver>
+   <slot>spinMSFChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>158</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>158</x>
+     <y>31</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spnFrames</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>TimeCodeEdit</receiver>
+   <slot>spinMSFChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>225</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>225</x>
+     <y>31</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spnHours</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>TimeCodeEdit</receiver>
+   <slot>spinHoursChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>33</x>
+     <y>15</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>129</x>
+     <y>15</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <signal>valueChanged(int,int,int)</signal>
+  <signal>valueChangedHours(int)</signal>
+  <slot>setValue(int,int,int)</slot>
+  <slot>setValueHours(int)</slot>
+  <slot>spinMSFChanged()</slot>
+  <slot>spinHoursChanged()</slot>
+ </slots>
+</ui>
