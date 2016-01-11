@@ -49,23 +49,107 @@ class TimeCodeEditPrivate
 	public:
 		Ui_TimeCodeEdit ui;
 
-		// NOTE: spnHours->isVisible() doesn't work if the
-		// window isn't visible, so we're storing the
-		// hours visibility property here.
+		/**
+		 * Are we showing the hours field?
+		 * NOTE: spnHours->isVisible() doesn't work if the
+		 * window isn't visible, so we're storing the
+		 * hours visibility property here.
+		 */
 		bool showHours;
+
+		/**
+		 * Are we showing weights for Big the Cat?
+		 * If we are, the MSF fields will show "grams",
+		 * and the hours field will always be hidden.
+		 */
+		bool showWeight;
 
 		// Suppress signals when modifying the QSpinBoxes.
 		bool suppressSignals;
+
+		/**
+		 * Update the display mode.
+		 */
+		void updateDisplayMode(void);
 };
 
 TimeCodeEditPrivate::TimeCodeEditPrivate(TimeCodeEdit *q)
 	: q_ptr(q)
 	, showHours(false)
+	, showWeight(false)
 	, suppressSignals(false)
 { }
 
 TimeCodeEditPrivate::~TimeCodeEditPrivate()
 { }
+
+/**
+ * Update the display mode.
+ */
+void TimeCodeEditPrivate::updateDisplayMode(void)
+{
+	suppressSignals = true;
+
+	if (showWeight) {
+		// Weight mode.
+
+		// Hours is always hidden here.
+		ui.spnHours->hide();
+
+		// Adjust the MSF spinboxes to show weight.
+		QString suffix = QLatin1String("g");
+		ui.spnMinutes->setRange(0, 655350);
+		ui.spnMinutes->setSingleStep(10);
+		ui.spnMinutes->setSuffix(suffix);
+		ui.spnSeconds->setRange(0, 655350);
+		ui.spnSeconds->setSingleStep(10);
+		ui.spnSeconds->setSuffix(suffix);
+		ui.spnFrames->setRange(0, 655350);
+		ui.spnFrames->setSingleStep(10);
+		ui.spnFrames->setSuffix(suffix);
+	} else {
+		// Time mode.
+		// NOTE: If weight mode was previously set,
+		// switching to time mode will result in
+		// the display showing weird data.
+		ui.spnFrames->setRange(0, 59);
+		ui.spnFrames->setSingleStep(1);
+		ui.spnFrames->setSuffix(QString());
+		ui.spnSeconds->setRange(0, 59);
+		ui.spnSeconds->setSingleStep(1);
+		ui.spnSeconds->setSuffix(QString());
+		// spnMinutes's maximum value is set below.
+		ui.spnMinutes->setSingleStep(1);
+		ui.spnMinutes->setSuffix(QString());
+		ui.spnHours->setRange(0, 11930);
+		ui.spnHours->setSingleStep(1);
+		ui.spnHours->setSuffix(QString());
+
+		if (showHours) {
+			// Show the hours field.
+			int minutes = ui.spnMinutes->value();
+			if (minutes > 59) {
+				ui.spnHours->setValue(minutes % 60);
+				ui.spnMinutes->setValue(minutes / 60);
+				ui.spnMinutes->setMaximum(59);
+				// TODO: Emit valueChanged()?
+			}
+			ui.spnHours->show();
+		} else {
+			// Hide the hours field.
+			ui.spnMinutes->setMaximum(99);
+			int hours = ui.spnHours->value();
+			if (hours > 0) {
+				int minutes = ui.spnMinutes->value();
+				minutes += (hours * 60);
+				ui.spnMinutes->setValue(minutes);
+			}
+			ui.spnHours->hide();
+		}
+	}
+
+	suppressSignals = false;
+}
 
 /** TimeCodeEdit **/
 
@@ -112,6 +196,10 @@ TimeCodeEdit::~TimeCodeEdit()
 void TimeCodeEdit::setValue(const sa_time_code *time_code)
 {
 	Q_D(TimeCodeEdit);
+	if (d->showWeight) {
+		// Display is in weight mode.
+		return;
+	}
 
 	// Validate the time code first.
 	if (time_code->seconds > 59 || time_code->frames > 59) {
@@ -148,6 +236,11 @@ void TimeCodeEdit::setValue(const sa_time_code *time_code)
 void TimeCodeEdit::value(sa_time_code *time_code) const
 {
 	Q_D(const TimeCodeEdit);
+	if (d->showWeight) {
+		// Display is in weight mode.
+		// TODO: Error code?
+		return;
+	}
 
 	time_code->minutes = d->ui.spnMinutes->value();
 	if (d->showHours) {
@@ -160,12 +253,67 @@ void TimeCodeEdit::value(sa_time_code *time_code) const
 }
 
 /**
+ * Set the three weights.
+ *
+ * The three values are the weight divided by 10.
+ * Range: [0, 65535]
+ *
+ * If the display mode is time, this function will do nothing.
+ *
+ * TODO: Pass an array instead of individual weights?
+ * @param weights Array of 3 uint16_t weight values.
+ */
+void TimeCodeEdit::setValue(const uint16_t weights[3])
+{
+	Q_D(TimeCodeEdit);
+	if (!d->showWeight) {
+		// Display is in time mode.
+		return;
+	}
+
+	// NOTE: Suppressing signals this way is not thread-safe.
+	d->suppressSignals = true;
+
+	// Set the weights.
+	// TODO: Is the casting required?
+	d->ui.spnMinutes->setValue((uint32_t)weights[0] * 10);
+	d->ui.spnSeconds->setValue((uint32_t)weights[1] * 10);
+	d->ui.spnFrames->setValue((uint32_t)weights[2] * 10);
+
+	d->suppressSignals = false;
+}
+
+/**
+ * Get the three weights.
+ * @param weights Array of 3 uint16_t to put the weights in.
+ */
+void TimeCodeEdit::value(uint16_t weights[3]) const
+{
+	Q_D(const TimeCodeEdit);
+	if (!d->showWeight) {
+		// Display is in time mode.
+		// TODO: Error code?
+		return;
+	}
+
+	// Get the weights.
+	weights[0] = d->ui.spnMinutes->value() / 10;
+	weights[1] = d->ui.spnSeconds->value() / 10;
+	weights[2] = d->ui.spnFrames->value() / 10;
+}
+
+/**
  * Set the time in NTSC frames. (1/60th of a second)
  * @param ntscFrames Time in NTSC frames.
  */
 void TimeCodeEdit::setValueInNtscFrames(uint32_t ntscFrames)
 {
 	Q_D(TimeCodeEdit);
+	if (d->showWeight) {
+		// Display is in weight mode.
+		// TODO: Error code?
+		return;
+	}
 
 	d->suppressSignals = true;
 	d->ui.spnFrames->setValue(ntscFrames % 60);
@@ -194,6 +342,11 @@ void TimeCodeEdit::setValueInNtscFrames(uint32_t ntscFrames)
 uint32_t TimeCodeEdit::valueInNtscFrames(void) const
 {
 	Q_D(const TimeCodeEdit);
+	if (d->showWeight) {
+		// Display is in weight mode.
+		// TODO: Error code?
+		return 0;
+	}
 
 	uint32_t ntscFrames;
 	ntscFrames  =  d->ui.spnFrames->value();
@@ -214,7 +367,7 @@ uint32_t TimeCodeEdit::valueInNtscFrames(void) const
 int TimeCodeEdit::hours(void) const
 {
 	Q_D(const TimeCodeEdit);
-	if (d->showHours) {
+	if (d->showHours && !d->showWeight) {
 		return d->ui.spnHours->value();
 	}
 	return 0;
@@ -227,7 +380,10 @@ int TimeCodeEdit::hours(void) const
 int TimeCodeEdit::minutes(void) const
 {
 	Q_D(const TimeCodeEdit);
-	return d->ui.spnMinutes->value();
+	if (!d->showWeight) {
+		return d->ui.spnMinutes->value();
+	}
+	return 0;
 }
 
 /**
@@ -237,7 +393,10 @@ int TimeCodeEdit::minutes(void) const
 int TimeCodeEdit::seconds(void) const
 {
 	Q_D(const TimeCodeEdit);
-	return d->ui.spnSeconds->value();
+	if (!d->showWeight) {
+		return d->ui.spnSeconds->value();
+	}
+	return 0;
 }
 
 /**
@@ -247,7 +406,10 @@ int TimeCodeEdit::seconds(void) const
 int TimeCodeEdit::frames(void) const
 {
 	Q_D(const TimeCodeEdit);
-	return d->ui.spnFrames->value();
+	if (!d->showWeight) {
+		return d->ui.spnFrames->value();
+	}
+	return 0;
 }
 
 /**
@@ -260,30 +422,7 @@ void TimeCodeEdit::setShowHours(bool showHours)
 	if (d->showHours == showHours)
 		return;
 	d->showHours = showHours;
-
-	d->suppressSignals = true;
-	if (showHours) {
-		// Show the hours field.
-		int minutes = d->ui.spnMinutes->value();
-		if (minutes > 59) {
-			d->ui.spnHours->setValue(minutes % 60);
-			d->ui.spnMinutes->setValue(minutes / 60);
-			d->ui.spnMinutes->setMaximum(59);
-			// TODO: Emit valueChanged()?
-		}
-		d->ui.spnHours->show();
-	} else {
-		// Hide the hours field.
-		d->ui.spnMinutes->setMaximum(99);
-		int hours = d->ui.spnHours->value();
-		if (hours > 0) {
-			int minutes = d->ui.spnMinutes->value();
-			minutes += (hours * 60);
-			d->ui.spnMinutes->setValue(minutes);
-		}
-		d->ui.spnHours->hide();
-	}
-	d->suppressSignals = false;
+	d->updateDisplayMode();
 }
 
 /**
@@ -294,6 +433,29 @@ bool TimeCodeEdit::isShowHours(void) const
 {
 	Q_D(const TimeCodeEdit);
 	return d->showHours;
+}
+
+/**
+ * Set the time/weight mode.
+ * @param showWeight If true, show weights; otherwise, show time.
+ */
+void TimeCodeEdit::setShowWeight(bool showWeight)
+{
+	Q_D(TimeCodeEdit);
+	if (d->showWeight == showWeight)
+		return;
+	d->showWeight = showWeight;
+	d->updateDisplayMode();
+}
+
+/**
+ * Are we showing time or weights?
+ * @return True if showing weights; false if showing time.
+ */
+bool TimeCodeEdit::isShowWeight(void) const
+{
+	Q_D(const TimeCodeEdit);
+	return d->showWeight;
 }
 
 /** Public slots. **/
@@ -331,7 +493,7 @@ void TimeCodeEdit::setValue(int minutes, int seconds, int frames)
 void TimeCodeEdit::setValueHours(int hours)
 {
 	Q_D(TimeCodeEdit);
-	if (!d->showHours)
+	if (!d->showHours || d->showWeight)
 		return;
 
 	d->suppressSignals = true;
@@ -348,9 +510,12 @@ void TimeCodeEdit::spinMSFChanged(void)
 {
 	Q_D(const TimeCodeEdit);
 	if (!d->suppressSignals) {
-		emit valueChanged(d->ui.spnMinutes->value(),
-				  d->ui.spnSeconds->value(),
-				  d->ui.spnFrames->value());
+		// TODO: Weight version?
+		if (!d->showWeight) {
+			emit valueChanged(d->ui.spnMinutes->value(),
+					  d->ui.spnSeconds->value(),
+					  d->ui.spnFrames->value());
+		}
 	}
 }
 
@@ -361,6 +526,9 @@ void TimeCodeEdit::spinHoursChanged(void)
 {
 	Q_D(const TimeCodeEdit);
 	if (!d->suppressSignals) {
-		emit valueChangedHours(d->ui.spnHours->value());
+		// TODO: Weight version?
+		if (!d->showWeight) {
+			emit valueChangedHours(d->ui.spnHours->value());
+		}
 	}
 }

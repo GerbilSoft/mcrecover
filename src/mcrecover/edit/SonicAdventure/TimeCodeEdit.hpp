@@ -75,15 +75,39 @@ class TimeCodeEdit : public QWidget
 		 * If hours are not visible, and minutes is larger than 99,
 		 * minutes will be clamped to 99.
 		 *
+		 * If the display mode is weight, this function will do nothing.
+		 *
 		 * @param time_code [in] sa_time_code.
 		 */
 		void setValue(const _sa_time_code *time_code);
 
 		/**
 		 * Get the minutes/seconds/frames as an sa_time_code.
+		 *
+		 * If the display mode is weight, this function will do nothing.
+		 *
 		 * @param time_code [out] sa_time_code.
 		 */
 		void value(_sa_time_code *time_code) const;
+
+		/**
+		 * Set the three weights.
+		 *
+		 * The three values are the weight divided by 10.
+		 * Range: [0, 65535]
+		 *
+		 * If the display mode is time, this function will do nothing.
+		 *
+		 * TODO: Pass an array instead of individual weights?
+		 * @param weights Array of 3 uint16_t weight values.
+		 */
+		void setValue(const uint16_t weights[3]);
+
+		/**
+		 * Get the three weights.
+		 * @param weights Array of 3 uint16_t to put the weights in.
+		 */
+		void value(uint16_t weights[3]) const;
 
 		/**
 		 * Set the time in NTSC frames. (1/60th of a second)
@@ -132,6 +156,18 @@ class TimeCodeEdit : public QWidget
 		 * @return True if it is; false if it isn't.
 		 */
 		bool isShowHours(void) const;
+
+		/**
+		 * Set the time/weight mode.
+		 * @param showWeight If true, show weights; otherwise, show time.
+		 */
+		void setShowWeight(bool showWeight);
+
+		/**
+		 * Are we showing time or weights?
+		 * @return True if showing weights; false if showing time.
+		 */
+		bool isShowWeight(void) const;
 
 	public slots:
 		/** Public slots. **/
