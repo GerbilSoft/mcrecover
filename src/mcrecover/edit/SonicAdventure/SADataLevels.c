@@ -66,7 +66,7 @@ const char *const sa_level_names_all[SA_LEVEL_NAMES_ALL_COUNT] = {
 
 	// 10-19
 	"Final Egg",
-	"Mystic Ruins",
+	"Mystic Ruins (11)",
 	"Hot Shelter",
 	"Mystic Ruins (13)",
 	"Mystic Ruins (14)",
@@ -83,7 +83,7 @@ const char *const sa_level_names_all[SA_LEVEL_NAMES_ALL_COUNT] = {
 	"ZERO",
 	"E-101 Beta",
 	"E-101 mkII",
-	"Station Square",
+	"Station Square (26)",
 	"Station Square (27)",
 	"Station Square (28)",
 	"Egg Carrier (Outside)",

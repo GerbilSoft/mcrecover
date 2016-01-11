@@ -191,14 +191,7 @@ void SAAdventurePrivate::initCharacters(void)
 	// and memory usage.
 	QString levelNames[SA_LEVEL_NAMES_ALL_COUNT];
 	for (int i = 0; i < SA_LEVEL_NAMES_ALL_COUNT; i++) {
-		if (i == 34 /* The Past */ ||
-		    strchr(sa_level_names_all[i], '('))
-		{
-			// Level name is unused here.
-			levelNames[i] = SAAdventure::tr("Unused (%1)").arg(i+1);
-		} else {
-			levelNames[i] = QLatin1String(sa_level_names_all[i]);
-		}
+		levelNames[i] = QLatin1String(sa_level_names_all[i]);
 	}
 
 	QString qsCssCheckBox = QLatin1String(sa_ui_css_emblem_checkbox);
@@ -226,23 +219,25 @@ void SAAdventurePrivate::initCharacters(void)
 		// We should use Qt::AlignVCenter.
 		// TODO: Use a 16x16 character icon instead?
 
-		// Number of lives.
 		if (charIdx != 1) {
+			// Number of lives.
 			characters[chr].spnLives = new QSpinBox(q);
 			characters[chr].spnLives->setRange(0, 127);
 			characters[chr].spnLives->setSingleStep(1);
 			characters[chr].spnLives->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 			ui.gridLevels->addWidget(characters[chr].spnLives, chr+1, 1, Qt::AlignVCenter);
-		} else {
-			// "Unused" character doesn't have a life counter.
-			characters[chr].spnLives = nullptr;
-		}
 
-		// Completed?
-		characters[chr].chkCompleted = new QCheckBox(q);
-		characters[chr].chkCompleted->setStyleSheet(qsCssCheckBox);
-		characters[chr].chkCompleted->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-		ui.gridLevels->addWidget(characters[chr].chkCompleted, chr+1, 2, Qt::AlignCenter | Qt::AlignVCenter);
+			// Completed?
+			characters[chr].chkCompleted = new QCheckBox(q);
+			characters[chr].chkCompleted->setStyleSheet(qsCssCheckBox);
+			characters[chr].chkCompleted->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+			ui.gridLevels->addWidget(characters[chr].chkCompleted, chr+1, 2, Qt::AlignCenter | Qt::AlignVCenter);
+		} else {
+			// "Unused" character doesn't have a life counter
+			// or "completed" emblem.
+			characters[chr].spnLives = nullptr;
+			characters[chr].chkCompleted = nullptr;
+		}
 
 		// Time of day.
 		characters[chr].cboTimeOfDay = new QComboBox(q);
@@ -357,7 +352,7 @@ int SAAdventure::load(const sa_save_slot *sa_save)
 {
 	Q_D(SAAdventure);
 
-	// Lives.
+	// Life counter.
 	for (int i = 0; i < TOTAL_CHARACTERS; i++) {
 		const int lifeIdx = d->mapRowsToLifeIdx[i];
 		if (lifeIdx < 0) {
@@ -368,6 +363,37 @@ int SAAdventure::load(const sa_save_slot *sa_save)
 		// NOTE: Valid range for the life counter is [0, 127].
 		// Values higher than 127 will be reduced to 127.
 		d->characters[i].spnLives->setValue(sa_save->lives[lifeIdx]);
+	}
+
+	// Completed?
+	// These are part of the "emblems" bitfield.
+	// TODO: Helper function to get emblem by index.
+	d->characters[0].chkCompleted->setChecked(!!(sa_save->emblems[14] & 0x80));
+	d->characters[1].chkCompleted->setChecked(!!(sa_save->emblems[15] & 0x01));
+	d->characters[2].chkCompleted->setChecked(!!(sa_save->emblems[15] & 0x02));
+	d->characters[3].chkCompleted->setChecked(!!(sa_save->emblems[15] & 0x04));
+	d->characters[4].chkCompleted->setChecked(!!(sa_save->emblems[15] & 0x08));
+	d->characters[5].chkCompleted->setChecked(!!(sa_save->emblems[15] & 0x10));
+	d->characters[6].chkCompleted->setChecked(!!(sa_save->emblems[15] & 0x20));
+
+	// Adventure mode.
+	for (int i = 0; i < 8; i++) {
+		// TODO: Validate the data.
+		d->characters[i].cboTimeOfDay->setCurrentIndex(
+			sa_save->adventure_mode.chr[i].time_of_day);
+		d->characters[i].spnEntrance->setValue(
+			sa_save->adventure_mode.chr[i].start_entrance);
+		d->characters[i].cboLevelName->setCurrentIndex(
+			sa_save->adventure_mode.chr[i].start_level_and_act >> 8);
+		d->characters[i].spnLevelAct->setValue(
+			sa_save->adventure_mode.chr[i].start_level_and_act & 0xFF);
+
+#ifndef DONT_SHOW_UNKNOWN
+		// "Unknown" values.
+		d->characters[i].spnUnknown[0]->setValue(sa_save->adventure_mode.chr[i].unknown1);
+		d->characters[i].spnUnknown[1]->setValue(sa_save->adventure_mode.chr[i].unknown2);
+		d->characters[i].spnUnknown[2]->setValue(sa_save->adventure_mode.chr[i].unknown3);
+#endif
 	}
 
 	// TODO: Rest of load().

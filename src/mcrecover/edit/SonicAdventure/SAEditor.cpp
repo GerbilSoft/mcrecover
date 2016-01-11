@@ -274,6 +274,24 @@ void SAEditorPrivate::byteswap_sa_save_slot(sa_save_slot *sa_save)
 	}
 
 	sa_save->last_level = __swab16(sa_save->last_level);
+
+	// Adventure mode.
+	for (int i = 0; i < NUM_ELEMENTS(sa_save->adventure_mode.chr); i++) {
+		// NOTE: We can't use __swab16() to byteswap
+		// int16_t due to sign extension.
+		// TODO: Move to byteswap.h?
+		#define signed_swab16(x) ((((x) >> 8) & 0xFF) | (((x) & 0xFF) << 8))
+		sa_save->adventure_mode.chr[i].unknown1 =
+			signed_swab16(sa_save->adventure_mode.chr[i].unknown1);
+		sa_save->adventure_mode.chr[i].unknown2 =
+			signed_swab16(sa_save->adventure_mode.chr[i].unknown2);
+		sa_save->adventure_mode.chr[i].start_entrance =
+			__swab16(sa_save->adventure_mode.chr[i].start_entrance);
+		sa_save->adventure_mode.chr[i].start_level_and_act =
+			__swab16(sa_save->adventure_mode.chr[i].start_level_and_act);
+		sa_save->adventure_mode.chr[i].unknown3 =
+			signed_swab16(sa_save->adventure_mode.chr[i].unknown3);
+	}
 }
 
 /** SAEditor **/

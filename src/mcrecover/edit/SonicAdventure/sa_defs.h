@@ -217,14 +217,16 @@ typedef struct PACKED _sa_npc_flags {
 #pragma pack(1)
 typedef struct PACKED _sa_adventure_mode {
 	// One set per character.
+	// NOTE: Using int16_t for the unknown values,
+	// since that matches MainMemory's SASave.
 	struct {
 		uint8_t time_of_day;
 		uint8_t unused;
-		uint16_t unknown1;
-		uint16_t unknown2;
+		int16_t unknown1;
+		int16_t unknown2;
 		uint16_t start_entrance;
 		uint16_t start_level_and_act;
-		uint16_t unknown3;
+		int16_t unknown3;
 	} chr[8];
 } sa_adventure_mode;
 #pragma pack()
