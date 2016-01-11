@@ -156,13 +156,8 @@
        <item>
         <widget class="QTabWidget" name="tabWidgetSADXExtras">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
-         <widget class="QWidget" name="tabSADXGeneral">
-          <attribute name="title">
-           <string>General</string>
-          </attribute>
-         </widget>
          <widget class="QWidget" name="tabMissions">
           <attribute name="title">
            <string>Missions</string>

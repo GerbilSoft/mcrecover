@@ -217,8 +217,7 @@ void SAEditorPrivate::updateDisplay(void)
 	}
 	if (sadx_extra_save) {
 		// SADX extra data found. Load it.
-
-		// Metal Sonic's level stats.
+		ui.saGeneral->loadDX(sadx_extra_save);
 		ui.saLevelStats->loadDX(sadx_extra_save);
 
 		// Missions.
@@ -273,8 +272,7 @@ void SAEditorPrivate::saveCurrentSlot(void)
 	}
 	if (sadx_extra_save) {
 		// SADX extra data found. Save it.
-
-		// Metal Sonic's level stats.
+		ui.saGeneral->saveDX(sadx_extra_save);
 		ui.saLevelStats->saveDX(sadx_extra_save);
 
 		// Missions.

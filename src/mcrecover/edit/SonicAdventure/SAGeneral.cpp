@@ -69,6 +69,11 @@ SAGeneral::SAGeneral(QWidget *parent)
 	for (int i = 0; i < SA_LEVEL_NAMES_ALL_COUNT-4; i++) {
 		d->ui.cboLastLevel->addItem(QLatin1String(sa_level_names_all[i]));
 	}
+
+	// Hide the "Black Market Rings" widgets for now.
+	// It'll be shown again if an SADX save is loaded.
+	d->ui.lblBlackMarketRings->hide();
+	d->ui.spnBlackMarketRings->hide();
 }
 
 SAGeneral::~SAGeneral()
@@ -179,6 +184,44 @@ int SAGeneral::save(sa_save_slot *sa_save) const
 		sa_save->last_char = d->ui.cboLastCharacter->currentIndex();
 	if (d->ui.cboLastLevel->currentIndex() >= 0)
 		sa_save->last_level = d->ui.cboLastLevel->currentIndex();
+
+	return 0;
+}
+
+/**
+ * Load data from a Sonic Adventure DX extra save slot.
+ * @param sadx_extra_save Sonic Adventure DX extra save slot.
+ * The data will be in host-endian format.
+ * @return 0 on success; non-zero on error.
+ */
+int SAGeneral::loadDX(const sadx_extra_save_slot *sadx_extra_save)
+{
+	Q_D(SAGeneral);
+
+	// The only SADX information here is the "Black Market Rings".
+	// TODO: Validate the value?
+	d->ui.spnBlackMarketRings->setValue(sadx_extra_save->rings_black_market);
+
+	// Make sure the "Black Market Rings" widgets are visible.
+	d->ui.lblBlackMarketRings->show();
+	d->ui.spnBlackMarketRings->show();
+
+	return 0;
+}
+
+/**
+ * Save data to a Sonic Adventure DX extra save slot.
+ * @param sadx_extra_save Sonic Adventure DX extra save slot.
+ * The data will be in host-endian format.
+ * @return 0 on success; non-zero on error.
+ */
+int SAGeneral::saveDX(sadx_extra_save_slot *sadx_extra_save)
+{
+	Q_D(const SAGeneral);
+
+	// The only SADX information here is the "Black Market Rings".
+	// TODO: Validate the value?
+	sadx_extra_save->rings_black_market = d->ui.spnBlackMarketRings->value();
 
 	return 0;
 }
