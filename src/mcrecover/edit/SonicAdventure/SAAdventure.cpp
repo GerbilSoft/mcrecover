@@ -85,6 +85,52 @@ class SAAdventurePrivate
 		 * Initialize level widgets.
 		 */
 		void initCharacters(void);
+
+		/**
+		 * Map onscreen rows to internal character values.
+		 * This moves "Super Sonic" and "Unused" to the
+		 * end of the list.
+		 */
+		static const uint8_t mapRowsToCharIdx[8];
+
+		/**
+		 * Map row numbers to life counter indexes in the save file.
+		 * -1 indicates no life counter.
+		 * NOTE: May not be needed; it matches the row order.
+		 */
+		static const int8_t mapRowsToLifeIdx[8];
+};
+
+/**
+ * Map onscreen rows to internal character values.
+ * This moves "Super Sonic" and "Unused" to the
+ * end of the list.
+ */
+const uint8_t SAAdventurePrivate::mapRowsToCharIdx[8] = {
+	0,	// Sonic
+	2,	// Tails
+	3,	// Knuckles
+	5,	// Amy
+	6,	// Gamma
+	7,	// Big
+	4,	// Super Sonic
+	1,	// Unused
+};
+
+/**
+ * Map row numbers to life counter indexes in the save file.
+ * -1 indicates no life counter.
+ * NOTE: May not be needed; it matches the row order.
+ */
+const int8_t SAAdventurePrivate::mapRowsToLifeIdx[8] = {
+	0,	// Sonic
+	1,	// Tails
+	2,	// Knuckles
+	3,	// Amy
+	4,	// Gamma
+	5,	// Big
+	6,	// Super Sonic
+	-1,	// Unused
 };
 
 SAAdventurePrivate::SAAdventurePrivate(SAAdventure *q)
@@ -157,16 +203,19 @@ void SAAdventurePrivate::initCharacters(void)
 
 	QString qsCssCheckBox = QLatin1String(sa_ui_css_emblem_checkbox);
 	for (int chr = 0; chr < TOTAL_CHARACTERS; chr++) {
+		// Map the row number to the character index.
+		const int charIdx = mapRowsToCharIdx[chr];
+
 		// Character icon.
 		characters[chr].lblCharacter = new QLabel(q);
-		if (sa_ui_char_icons_super[chr] && sa_ui_char_icons_super[chr][0] != 0) {
+		if (sa_ui_char_icons_super[charIdx] && sa_ui_char_icons_super[charIdx][0] != 0) {
 			// Icon is available.
-			characters[chr].lblCharacter->setPixmap(QPixmap(QLatin1String(sa_ui_char_icons_super[chr])));
-			characters[chr].lblCharacter->setToolTip(QLatin1String(sa_ui_char_names_super[chr]));
+			characters[chr].lblCharacter->setPixmap(QPixmap(QLatin1String(sa_ui_char_icons_super[charIdx])));
+			characters[chr].lblCharacter->setToolTip(QLatin1String(sa_ui_char_names_super[charIdx]));
 		} else {
 			// No icon. Use text instead.
 			characters[chr].lblCharacter->setTextFormat(Qt::PlainText);
-			characters[chr].lblCharacter->setText(QLatin1String(sa_ui_char_names_super[chr]));
+			characters[chr].lblCharacter->setText(QLatin1String(sa_ui_char_names_super[charIdx]));
 			// TODO: Make it the same height as [0] if this isn't [0]?
 			// Or, add a dummy "unused" icon.
 		}
@@ -178,11 +227,16 @@ void SAAdventurePrivate::initCharacters(void)
 		// TODO: Use a 16x16 character icon instead?
 
 		// Number of lives.
-		characters[chr].spnLives = new QSpinBox(q);
-		characters[chr].spnLives->setRange(0, 127);
-		characters[chr].spnLives->setSingleStep(1);
-		characters[chr].spnLives->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-		ui.gridLevels->addWidget(characters[chr].spnLives, chr+1, 1, Qt::AlignVCenter);
+		if (charIdx != 1) {
+			characters[chr].spnLives = new QSpinBox(q);
+			characters[chr].spnLives->setRange(0, 127);
+			characters[chr].spnLives->setSingleStep(1);
+			characters[chr].spnLives->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+			ui.gridLevels->addWidget(characters[chr].spnLives, chr+1, 1, Qt::AlignVCenter);
+		} else {
+			// "Unused" character doesn't have a life counter.
+			characters[chr].spnLives = nullptr;
+		}
 
 		// Completed?
 		characters[chr].chkCompleted = new QCheckBox(q);
@@ -238,29 +292,6 @@ void SAAdventurePrivate::initCharacters(void)
 			characters[chr].spnUnknown[i]->setSingleStep(1);
 			characters[chr].spnUnknown[i]->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 			ui.gridLevels->addWidget(characters[chr].spnUnknown[i], chr+1, (i >= 2 ? i+7 : i+4), Qt::AlignVCenter);
-		}
-#endif
-
-		// Spacers to reduce 
-#if 0		
-		levels[level].lblLevel = new QLabel(q);
-		levels[level].lblLevel->setText(QLatin1String(levelNames[level]));
-		levels[level].lblLevel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-		ui.gridLevels->addWidget(levels[level].lblLevel, level+1, 0, Qt::AlignTop);
-
-		// Spinbox for each character.
-		for (int chr = 0; chr < NUM_ELEMENTS(levels[level].spnCount); chr++) {
-			levels[level].spnCount[chr] = new QSpinBox(q);
-			levels[level].spnCount[chr]->setRange(0, 255);
-			levels[level].spnCount[chr]->setSingleStep(1);
-			levels[level].spnCount[chr]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-			ui.gridLevels->addWidget(levels[level].spnCount[chr], level+1, chr+1, Qt::AlignTop);
-
-			// Connect the valueChanged() signal.
-			QObject::connect(levels[level].spnCount[chr], SIGNAL(valueChanged(int)),
-					 mapperSpinBox, SLOT(map()));
-			mapperSpinBox->setMapping(levels[level].spnCount[chr],
-						((level << 8) | chr));
 		}
 #endif
 	}
@@ -325,12 +356,21 @@ void SAAdventure::changeEvent(QEvent *event)
 int SAAdventure::load(const sa_save_slot *sa_save)
 {
 	Q_D(SAAdventure);
-#if 0
-	memcpy(&d->clear_count, &sa_save->clear_count, sizeof(d->clear_count));
 
-	// Update the display.
-	d->updateDisplay();
-#endif
+	// Lives.
+	for (int i = 0; i < TOTAL_CHARACTERS; i++) {
+		const int lifeIdx = d->mapRowsToLifeIdx[i];
+		if (lifeIdx < 0) {
+			// "Unused" character doesn't have a life counter.
+			continue;
+		}
+
+		// NOTE: Valid range for the life counter is [0, 127].
+		// Values higher than 127 will be reduced to 127.
+		d->characters[i].spnLives->setValue(sa_save->lives[lifeIdx]);
+	}
+
+	// TODO: Rest of load().
 	return 0;
 }
 
