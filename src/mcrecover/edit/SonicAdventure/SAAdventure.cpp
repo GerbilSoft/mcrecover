@@ -213,7 +213,7 @@ void SAAdventurePrivate::initCharacters(void)
 			// Or, add a dummy "unused" icon.
 		}
 		characters[chr].lblCharacter->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-		ui.gridLevels->addWidget(characters[chr].lblCharacter, chr+1, 0, Qt::AlignCenter | Qt::AlignVCenter);
+		ui.gridLevels->addWidget(characters[chr].lblCharacter, chr+1, 0, Qt::AlignCenter);
 
 		// NOTE: The character icon is taller than the various widgets.
 		// We should use Qt::AlignVCenter.
@@ -231,7 +231,7 @@ void SAAdventurePrivate::initCharacters(void)
 			characters[chr].chkCompleted = new QCheckBox(q);
 			characters[chr].chkCompleted->setStyleSheet(qsCssCheckBox);
 			characters[chr].chkCompleted->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-			ui.gridLevels->addWidget(characters[chr].chkCompleted, chr+1, 2, Qt::AlignCenter | Qt::AlignVCenter);
+			ui.gridLevels->addWidget(characters[chr].chkCompleted, chr+1, 2, Qt::AlignCenter);
 		} else {
 			// "Unused" character doesn't have a life counter
 			// or "completed" emblem.
