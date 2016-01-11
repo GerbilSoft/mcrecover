@@ -161,6 +161,7 @@ int SAGeneral::save(sa_save_slot *sa_save) const
 		(d->ui.spnPlayTimeMinutes->value() * 60 * 60) +
 		(d->ui.spnPlayTimeSeconds->value() * 60) +
 		(d->ui.spnPlayTimeSeconds->value());
+	sa_save->playTime = playTime;
 
 	// Options byte.
 	// TODO: Bit-shifting macros like SA_OPTIONS_*_VALUE()?
