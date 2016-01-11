@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SAAdventure.hpp: Sonic Adventure - Adventure Mode status editor.        *
+ * SAAdventure.cpp: Sonic Adventure - Adventure Mode status editor.        *
  *                                                                         *
  * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
