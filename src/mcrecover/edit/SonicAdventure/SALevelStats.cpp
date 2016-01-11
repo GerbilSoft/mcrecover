@@ -89,6 +89,9 @@ class SALevelStatsPrivate
 		// Current character being displayed.
 		int character;
 
+		// Cached level names.
+		QString actionStageNameCache[SA_LEVEL_NAMES_ACTION_COUNT];
+
 		/**
 		 * Clear the loaded data.
 		 * This does NOT automatically update the UI.
@@ -186,6 +189,11 @@ SALevelStatsPrivate::SALevelStatsPrivate(SALevelStats *q)
 {
 	// Clear the data.
 	clear();
+
+	// Cache level names as QStrings.
+	for (int i = 0; i < NUM_ELEMENTS(actionStageNameCache); i++) {
+		actionStageNameCache[i] = QLatin1String(sa_level_names_action[i]);
+	}
 }
 
 SALevelStatsPrivate::~SALevelStatsPrivate()
@@ -310,7 +318,7 @@ void SALevelStatsPrivate::switchLevels(int character)
 	int i = 0;
 	for (; i < MAX_LEVELS && *levelID != -1; i++, levelID++) {
 		// TODO: Cache the level name QStrings.
-		levels[i].lblLevel->setText(QLatin1String(sa_level_names_action[*levelID]));
+		levels[i].lblLevel->setText(actionStageNameCache[i]);
 		levels[i].lblLevel->show();
 		levels[i].spnHighScore->show();
 		levels[i].spnMostRings->show();
