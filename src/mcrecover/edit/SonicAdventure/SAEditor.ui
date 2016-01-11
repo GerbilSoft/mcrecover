@@ -53,6 +53,11 @@
       <attribute name="title">
        <string>A&amp;dventure</string>
       </attribute>
+      <layout class="QVBoxLayout" name="vboxAdventure">
+       <item>
+        <widget class="SAAdventure" name="saAdventure" native="true"/>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tabActionStages">
       <attribute name="title">
@@ -121,8 +126,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>784</width>
-            <height>415</height>
+            <width>92</width>
+            <height>22</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="vboxLevelClearCountContent">
@@ -180,8 +185,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>768</width>
-                <height>376</height>
+                <width>92</width>
+                <height>22</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="vboxSADXMissionsContent">
@@ -245,6 +250,12 @@
    <class>SAGeneral</class>
    <extends>QWidget</extends>
    <header>edit/SonicAdventure/SAGeneral.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SAAdventure</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/SAAdventure.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

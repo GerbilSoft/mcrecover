@@ -213,31 +213,7 @@ void SALevelStatsPrivate::clear(void)
  */
 void SALevelStatsPrivate::initLevels(void)
 {
-	// Reference: http://stackoverflow.com/questions/5962503/qt-checkbox-toolbutton-with-custom-distinct-check-unchecked-icons
-	static const char cssCheckBox[] =
-		"QCheckBox::indicator {\n"
-		"\twidth: 28px;\n"
-		"\theight: 20px;\n"
-		"}\n"
-		"QCheckBox::indicator:checked {\n"
-		"\timage: url(:/sonic/emblem.png);\n"
-		"}\n"
-		"QCheckBox::indicator:unchecked {\n"
-		"\timage: url(:/sonic/noemblem.png);\n"
-		"}\n"
-		"QCheckBox::indicator:checked:hover {\n"
-		"\timage: url(:/sonic/emblem.highlight.png);\n"
-		"}\n"
-		"QCheckBox::indicator:unchecked:hover {\n"
-		"\timage: url(:/sonic/noemblem.highlight.png);\n"
-		"}\n"
-		"QCheckBox::indicator:checked:pressed {\n"
-		"\timage: url(:/sonic/emblem.shadow.png);\n"
-		"}\n"
-		"QCheckBox::indicator:unchecked:pressed {\n"
-		"\timage: url(:/sonic/noemblem.shadow.png);\n"
-		"}\n";
-	QString qsCssCheckBox = QLatin1String(cssCheckBox);
+	QString qsCssCheckBox = QLatin1String(sa_ui_css_emblem_checkbox);
 
 	// Create widgets for all levels, and hide them initially.
 	Q_Q(SALevelStats);

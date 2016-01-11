@@ -47,17 +47,9 @@ SADXMissionFlagsPrivate::SADXMissionFlagsPrivate()
 	: ByteFlagsPrivate(flagCount, &sadx_mission_flags_desc[0], NUM_ELEMENTS(sadx_mission_flags_desc)-1)
 {
 	// Load the pixmaps. (TODO: Once per class?)
-	static const char *const pixmap_filenames[NUM_ELEMENTS(pixmaps)] = {
-		":/sonic/SA1/sonic.png",
-		":/sonic/SA1/tails.png",
-		":/sonic/SA1/knuckles.png",
-		":/sonic/SA1/amy.png",
-		":/sonic/SA1/gamma.png",
-		":/sonic/SA1/big.png",
-	};
-
 	for (int i = 0; i < NUM_ELEMENTS(pixmaps); i++) {
-		QPixmap pxm = QPixmap(QLatin1String(pixmap_filenames[i]));
+		// TODO: Character name as tooltip?
+		QPixmap pxm = QPixmap(QLatin1String(sa_ui_char_icons[i]));
 		// Reduce to 16x16. [TODO: Both sizes for high-DPI?]
 		pixmaps[i] = pxm.scaled(16, 16, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 	}

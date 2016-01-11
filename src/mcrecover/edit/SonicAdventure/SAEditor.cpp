@@ -189,6 +189,7 @@ void SAEditorPrivate::updateDisplay(void)
 	// Display the data.
 	const sa_save_slot *sa_save = data_main.at(slot);
 	ui.saGeneral->load(sa_save);
+	ui.saAdventure->load(sa_save);
 	ui.saLevelStats->load(sa_save);
 	ui.saLevelClearCount->load(sa_save);
 
@@ -245,6 +246,7 @@ void SAEditorPrivate::saveCurrentSlot(void)
 	// Save the data.
 	sa_save_slot *sa_save = data_main.at(slot);
 	ui.saGeneral->save(sa_save);
+	ui.saAdventure->load(sa_save);
 	ui.saLevelStats->save(sa_save);
 	ui.saLevelClearCount->save(sa_save);
 
