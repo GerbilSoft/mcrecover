@@ -139,13 +139,17 @@ void SALevelClearCountPrivate::initLevels(void)
 	for (int level = 0; level < TOTAL_LEVELS; level++) {
 		// Get the level name.
 		QString levelName;
-		if (level == 34 /* The Past */ ||
-		    strchr(sa_level_names_all[level], '('))
-		{
-			// Level name is unused here.
-			levelName = SALevelClearCount::tr("Unused (%1)").arg(level+1);
-		} else {
-			levelName = QLatin1String(sa_level_names_all[level]);
+		// These level slots are marked as unused in SASave.
+		switch (level) {
+			case 11: case 13: case 14: case 27:
+			case 28: case 30: case 31:
+				// Level name is unused here.
+				levelName = SALevelClearCount::tr("Unused (%1)").arg(level);
+				break;
+			default:
+				// Use the level name.
+				levelName = QLatin1String(sa_level_names_all[level]);
+				break;
 		}
 
 		// Level name.
