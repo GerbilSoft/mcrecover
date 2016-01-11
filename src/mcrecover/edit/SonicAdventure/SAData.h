@@ -28,6 +28,10 @@
 // FIXME: Alignment on 64-bit?
 #include "bit_flag.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define SA_EVENT_FLAGS_COUNT 127
 extern const bit_flag_t sa_event_flags_desc[SA_EVENT_FLAGS_COUNT+1];
 
@@ -90,5 +94,9 @@ extern const char *const sa_ui_char_names_super[SA_UI_CHAR_NAMES_SUPER_COUNT];
  * Reference: http://stackoverflow.com/questions/5962503/qt-checkbox-toolbutton-with-custom-distinct-check-unchecked-icons
  */
 extern const char sa_ui_css_emblem_checkbox[];
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SADATA_H__ */
