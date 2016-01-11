@@ -191,6 +191,7 @@ void SAEditorPrivate::updateDisplay(void)
 	ui.saGeneral->load(sa_save);
 	ui.saAdventure->load(sa_save);
 	ui.saLevelStats->load(sa_save);
+	ui.saMiscEmblems->load(sa_save);
 	ui.saLevelClearCount->load(sa_save);
 
 	// Bit flags.
@@ -248,6 +249,7 @@ void SAEditorPrivate::saveCurrentSlot(void)
 	ui.saGeneral->save(sa_save);
 	ui.saAdventure->load(sa_save);
 	ui.saLevelStats->save(sa_save);
+	ui.saMiscEmblems->save(sa_save);
 	ui.saLevelClearCount->save(sa_save);
 
 	// Bit flags.

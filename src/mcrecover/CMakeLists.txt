@@ -176,6 +176,7 @@ SET(mcrecover_EDIT_SRCS
 	edit/SonicAdventure/SADataLevels.c
 	edit/SonicAdventure/SADataUI.c
 	edit/SonicAdventure/SAAdventure.cpp
+	edit/SonicAdventure/SAMiscEmblems.cpp
 	)
 SET(mcrecover_EDIT_H
 	edit/SonicAdventure/SAData.h
@@ -256,6 +257,7 @@ SET(mcrecover_EDIT_MOC_H
 	edit/SonicAdventure/CenteredCheckBoxDelegate.hpp
 	edit/SonicAdventure/SAGeneral.hpp
 	edit/SonicAdventure/SAAdventure.hpp
+	edit/SonicAdventure/SAMiscEmblems.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H
@@ -287,6 +289,7 @@ SET(mcrecover_EDIT_UIS
 	edit/SonicAdventure/ByteFlagsView.ui
 	edit/SonicAdventure/SAGeneral.ui
 	edit/SonicAdventure/SAAdventure.ui
+	edit/SonicAdventure/SAMiscEmblems.ui
 	)
 
 # Generate the header files from the UI files.

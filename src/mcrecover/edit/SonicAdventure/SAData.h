@@ -95,6 +95,12 @@ extern const char *const sa_ui_char_names_super[SA_UI_CHAR_NAMES_SUPER_COUNT];
  */
 extern const char sa_ui_css_emblem_checkbox[];
 
+/**
+ * Qt CSS for Emblem checkboxes. (large size)
+ * Reference: http://stackoverflow.com/questions/5962503/qt-checkbox-toolbutton-with-custom-distinct-check-unchecked-icons
+ */
+extern const char sa_ui_css_emblem_checkbox_large[];
+
 #ifdef __cplusplus
 }
 #endif

@@ -92,3 +92,31 @@ const char sa_ui_css_emblem_checkbox[] =
 	"QCheckBox::indicator:unchecked:pressed {\n"
 	"\timage: url(:/sonic/noemblem.shadow.png);\n"
 	"}\n";
+
+/**
+ * Qt CSS for Emblem checkboxes. (large size)
+ * Reference: http://stackoverflow.com/questions/5962503/qt-checkbox-toolbutton-with-custom-distinct-check-unchecked-icons
+ */
+const char sa_ui_css_emblem_checkbox_large[] =
+	"QCheckBox::indicator {\n"
+	"\twidth: 51px;\n"
+	"\theight: 36px;\n"
+	"}\n"
+	"QCheckBox::indicator:checked {\n"
+	"\timage: url(:/sonic/emblem.png);\n"
+	"}\n"
+	"QCheckBox::indicator:unchecked {\n"
+	"\timage: url(:/sonic/noemblem.png);\n"
+	"}\n"
+	"QCheckBox::indicator:checked:hover {\n"
+	"\timage: url(:/sonic/emblem.highlight.png);\n"
+	"}\n"
+	"QCheckBox::indicator:unchecked:hover {\n"
+	"\timage: url(:/sonic/noemblem.highlight.png);\n"
+	"}\n"
+	"QCheckBox::indicator:checked:pressed {\n"
+	"\timage: url(:/sonic/emblem.shadow.png);\n"
+	"}\n"
+	"QCheckBox::indicator:unchecked:pressed {\n"
+	"\timage: url(:/sonic/noemblem.shadow.png);\n"
+	"}\n";
