@@ -236,9 +236,8 @@ void SALevelStatsPrivate::initLevels(void)
 			levels[level].chkEmblems[j] = new QCheckBox(q);
 			levels[level].chkEmblems[j]->hide();
 			levels[level].chkEmblems[j]->setStyleSheet(qsCssCheckBox);
-			levels[level].hboxEmblems->addWidget(levels[level].chkEmblems[j]);
-			// FIXME: Improve alignment.
-			levels[level].hboxEmblems->setAlignment(levels[level].chkEmblems[j], Qt::AlignLeft);
+			levels[level].chkEmblems[j]->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+			levels[level].hboxEmblems->addWidget(levels[level].chkEmblems[j], 0, Qt::AlignLeft);
 		}
 
 		// Best time.
