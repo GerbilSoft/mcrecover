@@ -73,6 +73,14 @@ class SALevelStatsPrivate
 		sa_weights weights;
 		sa_rings rings;
 
+		// Save file data. (Metal Sonic)
+		struct {
+			uint32_t scores[10];
+			sa_time_code times[10];
+			uint16_t rings[10];
+			bool emblems[30];
+		} metal_sonic;
+
 		// Emblems.
 		// NOTE: There's only 130 emblems, but there's enough
 		// space for 136, so we have to allocate the entire area.
@@ -115,6 +123,8 @@ class SALevelStatsPrivate
 		 * Character level mapping.
 		 * Corresponds to sa_level_names_action[] entries.
 		 * -1 == end of list
+		 *
+		 * NOTE: Metal Sonic is not included here.
 		 */
 		static const int8_t levelMap[6][MAX_LEVELS];
 
@@ -123,6 +133,8 @@ class SALevelStatsPrivate
 		 * Index == display level ID
 		 * Value == save index (e.g. scores.all[x])
 		 * A value of -1 indicates an invalid entry.
+		 *
+		 * NOTE: Metal Sonic is not included here.
 		 */
 		static const int8_t saveMap[6][MAX_LEVELS];
 };
@@ -206,6 +218,8 @@ void SALevelStatsPrivate::clear(void)
 	memset(&weights, 0, sizeof(weights));
 	memset(&rings, 0, sizeof(rings));
 	memset(&emblems, 0, sizeof(emblems));
+
+	// TODO: Remove Metal Sonic if he's in the Characters box?
 }
 
 /**
@@ -274,18 +288,28 @@ void SALevelStatsPrivate::initLevels(void)
 void SALevelStatsPrivate::switchLevels(int character)
 {
 	// FIXME: Character enums or something.
-	if (character < 0 || character > 5)
+	if (character < 0 || character > 6)
 		return;
 
 	// Save the current character's stats.
 	saveCurrentStats();
 
-	const int8_t *levelID = &levelMap[character][0];
+	// Save the new character index.
 	this->character = character;
+
+	if (character == 6) {
+		// Metal Sonic uses the same level map as Sonic.
+		// Run the rest of the function as if Sonic is selected.
+		character = 0;
+	}
+
+	// Get the level map for the selected character.
+	const int8_t *levelID = &levelMap[character][0];
 
 	// Show widgets that are needed.
 	int i = 0;
 	for (; i < MAX_LEVELS && *levelID != -1; i++, levelID++) {
+		// TODO: Cache the level name QStrings.
 		levels[i].lblLevel->setText(QLatin1String(sa_level_names_action[*levelID]));
 		levels[i].lblLevel->show();
 		levels[i].spnHighScore->show();
@@ -336,45 +360,73 @@ void SALevelStatsPrivate::updateDisplay(void)
 {
 	// TODO: Make character a parameter, or not?
 	// FIXME: Character enums or something.
-	if (character < 0 || character > 5)
-		return;
+	if (character >= 0 && character <= 5) {
+		// Standard SA1 character.
+		for (int level = 0; level < MAX_LEVELS; level++) {
+			const int8_t saveIdx = saveMap[character][level];
+			if (saveIdx < 0 || saveIdx >= NUM_ELEMENTS(scores.all))
+				break;
 
-	for (int level = 0; level < MAX_LEVELS; level++) {
-		const int8_t saveIdx = saveMap[character][level];
-		if (saveIdx < 0 || saveIdx >= NUM_ELEMENTS(scores.all))
-			break;
+			// Score
+			levels[level].spnHighScore->setValue(scores.all[saveIdx]);
 
-		// Score
-		levels[level].spnHighScore->setValue(scores.all[saveIdx]);
-
-		// Time / Weight
-		if (character != 5) {
-			// Time (not Big)
-			levels[level].spnBestTime[0]->setValue(times.all[saveIdx].minutes);
-			levels[level].spnBestTime[1]->setValue(times.all[saveIdx].seconds);
-			// FIXME: Stored as 1/60th seconds; convert to 1/100th.
-			levels[level].spnBestTime[2]->setValue(times.all[saveIdx].frames);
-		} else {
-			// Weight (Big)
-			const int8_t bigSaveIdx = (saveIdx - 28);
-			for (int j = 0; j < 3; j++) {
-				const int weight = (weights.levels[bigSaveIdx][j] * 10);
-				levels[level].spnBestTime[j]->setValue(weight);
+			// Time / Weight
+			if (character != 5) {
+				// Time (not Big)
+				levels[level].spnBestTime[0]->setValue(times.all[saveIdx].minutes);
+				levels[level].spnBestTime[1]->setValue(times.all[saveIdx].seconds);
+				// FIXME: Stored as 1/60th seconds; convert to 1/100th.
+				levels[level].spnBestTime[2]->setValue(times.all[saveIdx].frames);
+			} else {
+				// Weight (Big)
+				const int8_t bigSaveIdx = (saveIdx - 28);
+				for (int j = 0; j < 3; j++) {
+					const int weight = (weights.levels[bigSaveIdx][j] * 10);
+					levels[level].spnBestTime[j]->setValue(weight);
+				}
 			}
+
+			// Rings
+			levels[level].spnMostRings->setValue(rings.all[saveIdx]);
+
+			/**
+			 * Level emblems:
+			 * - A: saveIdx + 0
+			 * - B: saveIdx + 32
+			 * - C: saveIdx + 64
+			 */
+			levels[level].chkEmblems[0]->setChecked(emblems[saveIdx+0]);
+			levels[level].chkEmblems[1]->setChecked(emblems[saveIdx+32]);
+			levels[level].chkEmblems[2]->setChecked(emblems[saveIdx+64]);
 		}
+	} else if (character == 6) {
+		// SADX: Metal Sonic.
+		// Uses the same level map as Sonic.
+		for (int level = 0; level < MAX_LEVELS; level++) {
+			const int8_t saveIdx = saveMap[0][level];
 
-		// Rings
-		levels[level].spnMostRings->setValue(rings.all[saveIdx]);
+			// Score
+			levels[level].spnHighScore->setValue(metal_sonic.scores[level]);
 
-		/**
-		 * Level emblems:
-		 * - A: saveIdx + 0
-		 * - B: saveIdx + 32
-		 * - C: saveIdx + 64
-		 */
-		levels[level].chkEmblems[0]->setChecked(emblems[saveIdx+0]);
-		levels[level].chkEmblems[1]->setChecked(emblems[saveIdx+32]);
-		levels[level].chkEmblems[2]->setChecked(emblems[saveIdx+64]);
+			// Time
+			levels[level].spnBestTime[0]->setValue(metal_sonic.times[saveIdx].minutes);
+			levels[level].spnBestTime[1]->setValue(metal_sonic.times[saveIdx].seconds);
+			// FIXME: Stored as 1/60th seconds; convert to 1/100th.
+			levels[level].spnBestTime[2]->setValue(metal_sonic.times[saveIdx].frames);
+
+			// Rings
+			levels[level].spnMostRings->setValue(metal_sonic.rings[saveIdx]);
+
+			/**
+			 * Level emblems:
+			 * - A: (saveIdx * 3) + 0
+			 * - B: (saveIdx * 3) + 1
+			 * - C: (saveIdx * 3) + 2
+			 */
+			levels[level].chkEmblems[0]->setChecked(metal_sonic.emblems[(saveIdx*3)+0]);
+			levels[level].chkEmblems[1]->setChecked(metal_sonic.emblems[(saveIdx*3)+1]);
+			levels[level].chkEmblems[2]->setChecked(metal_sonic.emblems[(saveIdx*3)+2]);
+		}
 	}
 }
 
@@ -385,46 +437,74 @@ void SALevelStatsPrivate::saveCurrentStats(void)
 {
 	// TODO: Make character a parameter, or not?
 	// FIXME: Character enums or something.
-	if (character < 0 || character > 5)
-		return;
+	if (character >= 0 && character <= 5) {
+		// Standard SA1 character.
+		for (int level = 0; level < MAX_LEVELS; level++) {
+			const int8_t saveIdx = saveMap[character][level];
+			if (saveIdx < 0 || saveIdx >= NUM_ELEMENTS(scores.all))
+				break;
 
-	for (int level = 0; level < MAX_LEVELS; level++) {
-		const int8_t saveIdx = saveMap[character][level];
-		if (saveIdx < 0 || saveIdx >= NUM_ELEMENTS(scores.all))
-			break;
+			// Score
+			scores.all[saveIdx] = levels[level].spnHighScore->value();
 
-		// Score
-		scores.all[saveIdx] = levels[level].spnHighScore->value();
-
-		// Time / Weight
-		if (character != 5) {
-			// TODO: Constrain bounds?
-			// Time (not Big)
-			times.all[saveIdx].minutes = levels[level].spnBestTime[0]->value();
-			times.all[saveIdx].seconds = levels[level].spnBestTime[1]->value();
-			// FIXME: Stored as 1/60th seconds; convert to 1/100th.
-			times.all[saveIdx].frames = levels[level].spnBestTime[2]->value();
-		} else {
-			// Weight (Big)
-			const int8_t bigSaveIdx = (saveIdx - 28);
-			for (int j = 0; j < 3; j++) {
-				const int weight = levels[level].spnBestTime[j]->value();
-				weights.levels[bigSaveIdx][j] = (weight / 10);
+			// Time / Weight
+			if (character != 5) {
+				// TODO: Constrain bounds?
+				// Time (not Big)
+				times.all[saveIdx].minutes = levels[level].spnBestTime[0]->value();
+				times.all[saveIdx].seconds = levels[level].spnBestTime[1]->value();
+				// FIXME: Stored as 1/60th seconds; convert to 1/100th.
+				times.all[saveIdx].frames = levels[level].spnBestTime[2]->value();
+			} else {
+				// Weight (Big)
+				const int8_t bigSaveIdx = (saveIdx - 28);
+				for (int j = 0; j < 3; j++) {
+					const int weight = levels[level].spnBestTime[j]->value();
+					weights.levels[bigSaveIdx][j] = (weight / 10);
+				}
 			}
+
+			// Rings
+			rings.all[saveIdx] = levels[level].spnMostRings->value();
+
+			/**
+			* Level emblems:
+			* - A: saveIdx + 0
+			* - B: saveIdx + 32
+			* - C: saveIdx + 64
+			*/
+			emblems[saveIdx+0 ] = levels[level].chkEmblems[0]->isChecked();
+			emblems[saveIdx+32] = levels[level].chkEmblems[1]->isChecked();
+			emblems[saveIdx+64] = levels[level].chkEmblems[2]->isChecked();
 		}
+	} else if (character == 6) {
+		// SADX: Metal Sonic.
+		// Uses the same level map as Sonic.
+		for (int level = 0; level < MAX_LEVELS; level++) {
+			const int8_t saveIdx = saveMap[0][level];
 
-		// Rings
-		rings.all[saveIdx] = levels[level].spnMostRings->value();
+			// Score
+			metal_sonic.scores[level] = levels[level].spnHighScore->value();
 
-		/**
-		 * Level emblems:
-		 * - A: saveIdx + 0
-		 * - B: saveIdx + 32
-		 * - C: saveIdx + 64
-		 */
-		emblems[saveIdx+0 ] = levels[level].chkEmblems[0]->isChecked();
-		emblems[saveIdx+32] = levels[level].chkEmblems[1]->isChecked();
-		emblems[saveIdx+64] = levels[level].chkEmblems[2]->isChecked();
+			// Time
+			metal_sonic.times[saveIdx].minutes = levels[level].spnBestTime[0]->value();
+			metal_sonic.times[saveIdx].seconds = levels[level].spnBestTime[1]->value();
+			// FIXME: Stored as 1/60th seconds; convert to 1/100th.
+			metal_sonic.times[saveIdx].frames = levels[level].spnBestTime[2]->value();
+
+			// Rings
+			metal_sonic.rings[saveIdx] = levels[level].spnMostRings->value();
+
+			/**
+			 * Level emblems:
+			 * - A: (saveIdx * 3) + 0
+			 * - B: (saveIdx * 3) + 1
+			 * - C: (saveIdx * 3) + 2
+			 */
+			metal_sonic.emblems[(saveIdx*3)+0] = levels[level].chkEmblems[0]->isChecked();
+			metal_sonic.emblems[(saveIdx*3)+1] = levels[level].chkEmblems[1]->isChecked();
+			metal_sonic.emblems[(saveIdx*3)+2] = levels[level].chkEmblems[2]->isChecked();
+		}
 	}
 }
 
@@ -467,6 +547,11 @@ void SALevelStats::changeEvent(QEvent *event)
 		// Retranslate the UI.
 		Q_D(SALevelStats);
 		d->ui.retranslateUi(this);
+
+		// Manual retranslation needed for "Metal Sonic".
+		if (d->ui.cboCharacter->count() >= 7) {
+			d->ui.cboCharacter->setItemText(6, tr("Metal Sonic"));
+		}
 	}
 
 	// Pass the event to the base class.
@@ -509,6 +594,7 @@ int SALevelStats::load(const sa_save_slot *sa_save)
 	for (int i = 0; i < NUM_ELEMENTS(sa_save->emblems); i++) {
 		uint8_t bits = sa_save->emblems[i];
 		for (int j = 0; j < 8; j++, bits >>= 1) {
+			// TODO: Is the !! needed?
 			*emblem++ = !!(bits & 1);
 		}
 	}
@@ -548,6 +634,74 @@ int SALevelStats::save(sa_save_slot *sa_save)
 		}
 		sa_save->emblems[i] = bits;
 	}
+
+	return 0;
+}
+
+/**
+ * Load data from a Sonic Adventure DX extra save slot.
+ * @param sadx_extra_save Sonic Adventure DX extra save slot.
+ * The data will be in host-endian format.
+ * @return 0 on success; non-zero on error.
+ */
+int SALevelStats::loadDX(const sadx_extra_save_slot *sadx_extra_save)
+{
+	Q_D(SALevelStats);
+	memcpy(&d->metal_sonic.scores, &sadx_extra_save->scores_metal, sizeof(d->metal_sonic.scores));
+	memcpy(&d->metal_sonic.times,  &sadx_extra_save->times_metal,  sizeof(d->metal_sonic.times));
+	memcpy(&d->metal_sonic.rings,  &sadx_extra_save->rings_metal,  sizeof(d->metal_sonic.rings));
+
+	// Emblems are stored as a bitmask. (LSB is emblem 0.)
+	// We're using a bool array internally.
+	// TODO: Verify byte ordering on GCN and PC.
+	bool *emblem = &d->metal_sonic.emblems[0];
+	uint32_t metal_emblems = sadx_extra_save->emblems_metal;
+	for (int i = 0; i < NUM_ELEMENTS(d->metal_sonic.emblems); i++) {
+		// TODO: Is the !! needed?
+		*emblem++ = !!(metal_emblems & 1);
+		metal_emblems >>= 1;
+	}
+
+	// If the Characters dropdown doesn't have Metal Sonic, add him now.
+	// TODO: Remove Metal Sonic on clear()?
+	if (d->ui.cboCharacter->count() < 7) {
+		QIcon icon(QLatin1String(":/sonic/SA1/metal_sonic.png"));
+		d->ui.cboCharacter->addItem(icon, tr("Metal Sonic"));
+	}
+
+	return 0;
+}
+
+/**
+ * Save data to a Sonic Adventure DX extra save slot.
+ * @param sadx_extra_save Sonic Adventure DX extra save slot.
+ * The data will be in host-endian format.
+ * @return 0 on success; non-zero on error.
+ */
+int SALevelStats::saveDX(sadx_extra_save_slot *sadx_extra_save)
+{
+	Q_D(SALevelStats);
+	// Save the current character's stats.
+	// TODO: Use modification signals to make this unnecessary,
+	// and mark this function as const?
+	// TODO: Only do this if the current character is Metal Sonic.
+	d->saveCurrentStats();
+
+	memcpy(&sadx_extra_save->scores_metal, &d->metal_sonic.scores, sizeof(sadx_extra_save->scores_metal));
+	memcpy(&sadx_extra_save->times_metal,  &d->metal_sonic.times,  sizeof(sadx_extra_save->times_metal));
+	memcpy(&sadx_extra_save->rings_metal,  &d->metal_sonic.rings,  sizeof(sadx_extra_save->rings_metal));
+
+	// Emblems are stored as a bitmask. (LSB is emblem 0.)
+	// We're using a bool array internally.
+	// TODO: Verify byte ordering on GCN and PC.
+	const bool *emblem = &d->metal_sonic.emblems[0];
+	uint32_t metal_emblems = 0;
+	for (int i = 0; i < NUM_ELEMENTS(d->metal_sonic.emblems); i++) {
+		metal_emblems >>= 1;
+		// TODO: Test this.
+		metal_emblems |= (*emblem++ ? (1 << NUM_ELEMENTS(d->metal_sonic.emblems)) : 0);
+	}
+	sadx_extra_save->emblems_metal = metal_emblems;
 
 	return 0;
 }

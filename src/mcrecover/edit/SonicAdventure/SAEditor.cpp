@@ -107,6 +107,12 @@ class SAEditorPrivate
 		 * @param sa_save sa_save_slot.
 		 */
 		static void byteswap_sa_save_slot(sa_save_slot *sa_save);
+
+		/**
+		 * Byteswap an sadx_extra_save_slot.
+		 * @param sa_save sadx_extra_save_slot.
+		 */
+		static void byteswap_sadx_extra_save_slot(sadx_extra_save_slot *sadx_extra_save);
 };
 
 SAEditorPrivate::SAEditorPrivate(SAEditor* q)
@@ -206,10 +212,14 @@ void SAEditorPrivate::updateDisplay(void)
 	Q_Q(SAEditor);
 	const int sadx_tab_idx = ui.tabWidget->indexOf(ui.tabSADXExtras);
 	const sadx_extra_save_slot *sadx_extra_save = nullptr;
-	if (slot <= data_sadx.size())
+	if (slot <= data_sadx.size()) {
 		sadx_extra_save = data_sadx.at(slot);
+	}
 	if (sadx_extra_save) {
 		// SADX extra data found. Load it.
+
+		// Metal Sonic's level stats.
+		ui.saLevelStats->loadDX(sadx_extra_save);
 
 		// Missions.
 		sadxMissionFlags.setAllFlags(&sadx_extra_save->missions[0],
@@ -255,6 +265,22 @@ void SAEditorPrivate::saveCurrentSlot(void)
 	// Bit flags.
 	saEventFlags.allFlags(&sa_save->events.all[0], NUM_ELEMENTS(sa_save->events.all));
 	saNPCFlags.allFlags(&sa_save->npc.all[0], NUM_ELEMENTS(sa_save->npc.all));
+
+	// SADX extra data?
+	sadx_extra_save_slot *sadx_extra_save = nullptr;
+	if (slot <= data_sadx.size()) {
+		sadx_extra_save = data_sadx.at(slot);
+	}
+	if (sadx_extra_save) {
+		// SADX extra data found. Save it.
+
+		// Metal Sonic's level stats.
+		ui.saLevelStats->saveDX(sadx_extra_save);
+
+		// Missions.
+		sadxMissionFlags.allFlags(&sadx_extra_save->missions[0],
+				NUM_ELEMENTS(sadx_extra_save->missions));
+	}
 }
 
 /**
@@ -265,6 +291,7 @@ void SAEditorPrivate::byteswap_sa_save_slot(sa_save_slot *sa_save)
 {
 	sa_save->playTime = __swab32(sa_save->playTime);
 
+	// TODO: Combine a few of these loops?
 	for (int i = 0; i < NUM_ELEMENTS(sa_save->scores.all); i++) {
 		sa_save->scores.all[i] = __swab32(sa_save->scores.all[i]);
 	}
@@ -294,6 +321,30 @@ void SAEditorPrivate::byteswap_sa_save_slot(sa_save_slot *sa_save)
 		sa_save->adventure_mode.chr[i].unknown3 =
 			signed_swab16(sa_save->adventure_mode.chr[i].unknown3);
 	}
+}
+
+/**
+ * Byteswap an sadx_extra_save_slot.
+ * @param sa_save sadx_extra_save_slot.
+ */
+void SAEditorPrivate::byteswap_sadx_extra_save_slot(sadx_extra_save_slot *sadx_extra_save)
+{
+	// Black Market rings.
+	sadx_extra_save->rings_black_market = __swab32(sadx_extra_save->rings_black_market);
+
+	// Metal Sonic level stats.
+	for (int i = 0; i < 10; i++) {
+		sadx_extra_save->scores_metal[i] = __swab32(sadx_extra_save->scores_metal[i]);
+		sadx_extra_save->rings_metal[i]  = __swab16(sadx_extra_save->rings_metal[i]);
+	}
+
+	// Metal Sonic minigame scores.
+	for (int i = 0; i < NUM_ELEMENTS(sadx_extra_save->minigame_scores_metal); i++) {
+		sadx_extra_save->minigame_scores_metal[i] = __swab32(sadx_extra_save->minigame_scores_metal[i]);
+	}
+
+	// Metal Sonic emblems. (32-bit bitfield, host-endian.)
+	sadx_extra_save->emblems_metal = __swab32(sadx_extra_save->emblems_metal);
 }
 
 /** SAEditor **/
@@ -438,7 +489,11 @@ int SAEditor::setFile(File *file)
 			memcpy(sadx_extra_save, (data.data() + SA_SAVE_ADDRESS_GCN + SA_SAVE_SLOT_LEN), SADX_EXTRA_SAVE_SLOT_LEN);
 			d->data_sadx.append(sadx_extra_save);
 
-			// TODO: Byteswapping.
+#if MCRECOVER_BYTEORDER == MCRECOVER_LIL_ENDIAN
+			// Byteswap the data.
+			// GameCube's PowerPC 750CL is big-endian.
+			d->byteswap_sadx_extra_save_slot(sadx_extra_save);
+#endif
 		} else {
 			// No SADX extras.
 			d->data_sadx.append(nullptr);
@@ -448,6 +503,7 @@ int SAEditor::setFile(File *file)
 		ret = 0;
 	} else {
 		// Unsupported file.
+		// TODO: Add support for the Windows version.
 		ret = -2;
 		d->file = nullptr;
 		goto end;

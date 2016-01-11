@@ -25,6 +25,7 @@
 #include <QtGui/QWidget>
 
 struct _sa_save_slot;
+struct _sadx_extra_save_slot;
 
 class SALevelStatsPrivate;
 class SALevelStats : public QWidget
@@ -59,12 +60,28 @@ class SALevelStats : public QWidget
 		int load(const _sa_save_slot *sa_save);
 
 		/**
-		 * Save data from a Sonic Adventure save slot.
+		 * Save data to a Sonic Adventure save slot.
 		 * @param sa_save Sonic Adventure save slot.
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
 		int save(_sa_save_slot *sa_save);
+
+		/**
+		 * Load data from a Sonic Adventure DX extra save slot.
+		 * @param sadx_extra_save Sonic Adventure DX extra save slot.
+		 * The data will be in host-endian format.
+		 * @return 0 on success; non-zero on error.
+		 */
+		int loadDX(const _sadx_extra_save_slot *sadx_extra_save);
+
+		/**
+		 * Save data to a Sonic Adventure DX extra save slot.
+		 * @param sadx_extra_save Sonic Adventure DX extra save slot.
+		 * The data will be in host-endian format.
+		 * @return 0 on success; non-zero on error.
+		 */
+		int saveDX(_sadx_extra_save_slot *sadx_extra_save);
 
 		/**
 		 * Clear the loaded data.
