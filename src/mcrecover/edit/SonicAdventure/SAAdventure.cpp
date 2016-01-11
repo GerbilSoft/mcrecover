@@ -367,14 +367,13 @@ int SAAdventure::load(const sa_save_slot *sa_save)
 
 	// Completed?
 	// These are part of the "emblems" bitfield.
-	// TODO: Helper function to get emblem by index.
-	d->characters[0].chkCompleted->setChecked(!!(sa_save->emblems[14] & 0x80));
-	d->characters[1].chkCompleted->setChecked(!!(sa_save->emblems[15] & 0x01));
-	d->characters[2].chkCompleted->setChecked(!!(sa_save->emblems[15] & 0x02));
-	d->characters[3].chkCompleted->setChecked(!!(sa_save->emblems[15] & 0x04));
-	d->characters[4].chkCompleted->setChecked(!!(sa_save->emblems[15] & 0x08));
-	d->characters[5].chkCompleted->setChecked(!!(sa_save->emblems[15] & 0x10));
-	d->characters[6].chkCompleted->setChecked(!!(sa_save->emblems[15] & 0x20));
+	d->characters[0].chkCompleted->setChecked(!!(sa_save->emblems[13] & 0x80));
+	d->characters[1].chkCompleted->setChecked(!!(sa_save->emblems[14] & 0x01));
+	d->characters[2].chkCompleted->setChecked(!!(sa_save->emblems[14] & 0x02));
+	d->characters[3].chkCompleted->setChecked(!!(sa_save->emblems[14] & 0x04));
+	d->characters[4].chkCompleted->setChecked(!!(sa_save->emblems[14] & 0x08));
+	d->characters[5].chkCompleted->setChecked(!!(sa_save->emblems[14] & 0x10));
+	d->characters[6].chkCompleted->setChecked(!!(sa_save->emblems[14] & 0x20));
 
 	// Adventure mode.
 	for (int i = 0; i < 8; i++) {
@@ -428,15 +427,15 @@ int SAAdventure::save(sa_save_slot *sa_save) const
 	// Completed?
 	// These are part of the "emblems" bitfield.
 	// TODO: Helper function to get emblem by index.
-	sa_save->emblems[14] &= ~0x80;
-	sa_save->emblems[14] |= (d->characters[0].chkCompleted->isChecked() ? 0x80 : 0x00);
-	sa_save->emblems[15] &= ~0x3F;
-	sa_save->emblems[15] |= (d->characters[1].chkCompleted->isChecked() ? 0x01 : 0x00);
-	sa_save->emblems[15] |= (d->characters[2].chkCompleted->isChecked() ? 0x01 : 0x00);
-	sa_save->emblems[15] |= (d->characters[3].chkCompleted->isChecked() ? 0x01 : 0x00);
-	sa_save->emblems[15] |= (d->characters[4].chkCompleted->isChecked() ? 0x01 : 0x00);
-	sa_save->emblems[15] |= (d->characters[5].chkCompleted->isChecked() ? 0x01 : 0x00);
-	sa_save->emblems[15] |= (d->characters[6].chkCompleted->isChecked() ? 0x01 : 0x00);
+	sa_save->emblems[13] &= ~0x80;
+	sa_save->emblems[13] |= (d->characters[0].chkCompleted->isChecked() ? 0x80 : 0x00);
+	sa_save->emblems[14] &= ~0x3F;
+	sa_save->emblems[14] |= (d->characters[1].chkCompleted->isChecked() ? 0x01 : 0x00);
+	sa_save->emblems[14] |= (d->characters[2].chkCompleted->isChecked() ? 0x01 : 0x00);
+	sa_save->emblems[14] |= (d->characters[3].chkCompleted->isChecked() ? 0x01 : 0x00);
+	sa_save->emblems[14] |= (d->characters[4].chkCompleted->isChecked() ? 0x01 : 0x00);
+	sa_save->emblems[14] |= (d->characters[5].chkCompleted->isChecked() ? 0x01 : 0x00);
+	sa_save->emblems[14] |= (d->characters[6].chkCompleted->isChecked() ? 0x01 : 0x00);
 
 	// Adventure mode.
 	for (int i = 0; i < 8; i++) {
