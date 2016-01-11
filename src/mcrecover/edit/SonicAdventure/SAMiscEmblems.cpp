@@ -166,7 +166,29 @@ int SAMiscEmblems::load(const sa_save_slot *sa_save)
 {
 	Q_D(SAMiscEmblems);
 
-	// TODO
+	// Chao Race emblems.
+	// TODO: Helper function to get emblem by index.
+	d->chkChaoRace[0]->setChecked(!!(sa_save->emblems[13] & 0x04));
+	d->chkChaoRace[1]->setChecked(!!(sa_save->emblems[13] & 0x08));
+	d->chkChaoRace[2]->setChecked(!!(sa_save->emblems[13] & 0x10));
+	d->chkChaoRace[3]->setChecked(!!(sa_save->emblems[13] & 0x20));
+	d->chkChaoRace[4]->setChecked(!!(sa_save->emblems[13] & 0x40));
+
+	// Adventure Field emblems.
+	// TODO: Helper function to get emblem by index.
+	d->chkAdvField[ 0]->setChecked(!!(sa_save->emblems[14] & 0x40));
+	d->chkAdvField[ 1]->setChecked(!!(sa_save->emblems[14] & 0x80));
+	d->chkAdvField[ 2]->setChecked(!!(sa_save->emblems[15] & 0x01));
+	d->chkAdvField[ 3]->setChecked(!!(sa_save->emblems[15] & 0x02));
+	d->chkAdvField[ 4]->setChecked(!!(sa_save->emblems[15] & 0x04));
+	d->chkAdvField[ 5]->setChecked(!!(sa_save->emblems[15] & 0x08));
+	d->chkAdvField[ 6]->setChecked(!!(sa_save->emblems[15] & 0x10));
+	d->chkAdvField[ 7]->setChecked(!!(sa_save->emblems[15] & 0x20));
+	d->chkAdvField[ 8]->setChecked(!!(sa_save->emblems[15] & 0x40));
+	d->chkAdvField[ 9]->setChecked(!!(sa_save->emblems[15] & 0x80));
+	d->chkAdvField[10]->setChecked(!!(sa_save->emblems[16] & 0x01));
+	d->chkAdvField[11]->setChecked(!!(sa_save->emblems[16] & 0x02));
+
 	return 0;
 }
 
@@ -180,6 +202,32 @@ int SAMiscEmblems::save(sa_save_slot *sa_save) const
 {
 	Q_D(const SAMiscEmblems);
 
-	// TODO
+	// Chao Race emblems.
+	// TODO: Helper function to get emblem by index.
+	sa_save->emblems[13] &= ~0x7C;
+	sa_save->emblems[13] |= (d->chkChaoRace[0]->isChecked() ? 0x04 : 0x00);
+	sa_save->emblems[13] |= (d->chkChaoRace[1]->isChecked() ? 0x08 : 0x00);
+	sa_save->emblems[13] |= (d->chkChaoRace[2]->isChecked() ? 0x10 : 0x00);
+	sa_save->emblems[13] |= (d->chkChaoRace[3]->isChecked() ? 0x20 : 0x00);
+	sa_save->emblems[13] |= (d->chkChaoRace[4]->isChecked() ? 0x40 : 0x00);
+
+	// Adventure Field emblems.
+	// TODO: Helper function to get emblem by index.
+	sa_save->emblems[14] &= ~0xC0;
+	sa_save->emblems[14] |= (d->chkAdvField[ 0]->isChecked() ? 0x40 : 0x00);
+	sa_save->emblems[14] |= (d->chkAdvField[ 1]->isChecked() ? 0x80 : 0x00);
+	sa_save->emblems[15] = 0;
+	sa_save->emblems[15] |= (d->chkAdvField[ 2]->isChecked() ? 0x01 : 0x00);
+	sa_save->emblems[15] |= (d->chkAdvField[ 3]->isChecked() ? 0x02 : 0x00);
+	sa_save->emblems[15] |= (d->chkAdvField[ 4]->isChecked() ? 0x04 : 0x00);
+	sa_save->emblems[15] |= (d->chkAdvField[ 5]->isChecked() ? 0x08 : 0x00);
+	sa_save->emblems[15] |= (d->chkAdvField[ 6]->isChecked() ? 0x10 : 0x00);
+	sa_save->emblems[15] |= (d->chkAdvField[ 7]->isChecked() ? 0x20 : 0x00);
+	sa_save->emblems[15] |= (d->chkAdvField[ 8]->isChecked() ? 0x40 : 0x00);
+	sa_save->emblems[15] |= (d->chkAdvField[ 9]->isChecked() ? 0x80 : 0x00);
+	sa_save->emblems[16] &= ~0x03;
+	sa_save->emblems[16] |= (d->chkAdvField[10]->isChecked() ? 0x01 : 0x00);
+	sa_save->emblems[16] |= (d->chkAdvField[11]->isChecked() ? 0x02 : 0x00);
+
 	return 0;
 }
