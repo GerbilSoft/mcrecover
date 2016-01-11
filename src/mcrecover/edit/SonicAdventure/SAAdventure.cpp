@@ -137,6 +137,14 @@ void SAAdventurePrivate::initCharacters(void)
 	ui.gridLevels->setColumnStretch(7, 1);
 #endif
 
+	// Convert the level names to QString here
+	// to reduce the total number of conversions
+	// and memory usage.
+	QString levelNames[SA_LEVEL_NAMES_ALL_COUNT];
+	for (int i = 0; i < SA_LEVEL_NAMES_ALL_COUNT; i++) {
+		levelNames[i] = QLatin1String(sa_level_names_all[i]);
+	}
+
 	QString qsCssCheckBox = QLatin1String(sa_ui_css_emblem_checkbox);
 	for (int chr = 0; chr < TOTAL_CHARACTERS; chr++) {
 		// Character icon.
@@ -198,11 +206,9 @@ void SAAdventurePrivate::initCharacters(void)
 		// It's now in its own column with no header.
 
 		// Level name.
-		// TODO: Optimize string conversion by converting everything
-		// at the beginning of the function?
 		characters[chr].cboLevelName = new QComboBox(q);
 		for (int i = 0; i < SA_LEVEL_NAMES_ALL_COUNT; i++) {
-			characters[chr].cboLevelName->addItem(QLatin1String(sa_level_names_all[i]));
+			characters[chr].cboLevelName->addItem(levelNames[i]);
 		}
 		characters[chr].cboLevelName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 		ui.gridLevels->addWidget(characters[chr].cboLevelName, chr+1, idx+1, Qt::AlignVCenter);
