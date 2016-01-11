@@ -27,6 +27,9 @@
 // Sonic Adventure save file definitions.
 #include "sa_defs.h"
 
+// Common data.
+#include "SAData.h"
+
 // TODO: Put this in a common header file somewhere.
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
@@ -60,6 +63,12 @@ SAGeneral::SAGeneral(QWidget *parent)
 {
 	Q_D(SAGeneral);
 	d->ui.setupUi(this);
+
+	// Level names.
+	// Does NOT include Chao Gardens or Chao Race. (last 4 entries)
+	for (int i = 0; i < SA_LEVEL_NAMES_ALL_COUNT-4; i++) {
+		d->ui.cboLastLevel->addItem(QLatin1String(sa_level_names_all[i]));
+	}
 }
 
 SAGeneral::~SAGeneral()

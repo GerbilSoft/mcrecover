@@ -30,6 +30,9 @@
 #include <QtGui/QCheckBox>
 #include <QtGui/QComboBox>
 
+// C includes. (C++ namespace)
+#include <cstring>
+
 // Sonic Adventure save file definitions.
 #include "sa_defs.h"
 
@@ -142,7 +145,14 @@ void SAAdventurePrivate::initCharacters(void)
 	// and memory usage.
 	QString levelNames[SA_LEVEL_NAMES_ALL_COUNT];
 	for (int i = 0; i < SA_LEVEL_NAMES_ALL_COUNT; i++) {
-		levelNames[i] = QLatin1String(sa_level_names_all[i]);
+		if (i == 34 /* The Past */ ||
+		    strchr(sa_level_names_all[i], '('))
+		{
+			// Level name is unused here.
+			levelNames[i] = SAAdventure::tr("Unused (%1)").arg(i+1);
+		} else {
+			levelNames[i] = QLatin1String(sa_level_names_all[i]);
+		}
 	}
 
 	QString qsCssCheckBox = QLatin1String(sa_ui_css_emblem_checkbox);

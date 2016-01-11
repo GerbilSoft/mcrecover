@@ -66,10 +66,10 @@ const char *const sa_level_names_all[SA_LEVEL_NAMES_ALL_COUNT] = {
 
 	// 10-19
 	"Final Egg",
-	"Unused (11)",
+	"Mystic Ruins",
 	"Hot Shelter",
-	"Unused (13)",
-	"Unused (14)",
+	"Mystic Ruins (13)",
+	"Mystic Ruins (14)",
 	"Chaos 0",
 	"Chaos 2",
 	"Chaos 4",
@@ -84,16 +84,18 @@ const char *const sa_level_names_all[SA_LEVEL_NAMES_ALL_COUNT] = {
 	"E-101 Beta",
 	"E-101 mkII",
 	"Station Square",
-	"Unused (27)",
-	"Unused (28)",
+	"Station Square (27)",
+	"Station Square (28)",
 	"Egg Carrier (Outside)",
 
 	// 30-39
-	"Unused (30)",
-	"Unused (31)",
+	"Egg Carrier (30)",
+	"Egg Carrier (31)",
 	"Egg Carrier (Inside)",
-	"Mystic Ruins",
-	"The Past",
+	"Mystic Ruins (33)",
+	"The Past",		// NOTE: Unused in some sections.
+				// Was previously listed as "Mystic Ruins"
+				// on SAGeneral.
 	"Twinkle Circuit",
 	"Sky Chase Act 1",
 	"Sky Chase Act 2",

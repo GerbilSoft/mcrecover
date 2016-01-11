@@ -30,6 +30,9 @@
 #include <QtGui/QSpinBox>
 #include <QtGui/QCheckBox>
 
+// C includes. (C++ namespace)
+#include <cstring>
+
 // Sonic Adventure save file definitions.
 #include "sa_defs.h"
 
@@ -134,9 +137,20 @@ void SALevelClearCountPrivate::initLevels(void)
 	// TODO: Scroll area is screwing with minimum width...
 	Q_Q(SALevelClearCount);
 	for (int level = 0; level < TOTAL_LEVELS; level++) {
+		// Get the level name.
+		QString levelName;
+		if (level == 34 /* The Past */ ||
+		    strchr(sa_level_names_all[level], '('))
+		{
+			// Level name is unused here.
+			levelName = SALevelClearCount::tr("Unused (%1)").arg(level+1);
+		} else {
+			levelName = QLatin1String(sa_level_names_all[level]);
+		}
+
 		// Level name.
 		levels[level].lblLevel = new QLabel(q);
-		levels[level].lblLevel->setText(QLatin1String(sa_level_names_all[level]));
+		levels[level].lblLevel->setText(levelName);
 		levels[level].lblLevel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 		ui.gridLevels->addWidget(levels[level].lblLevel, level+1, 0, Qt::AlignTop);
 
