@@ -27,6 +27,9 @@
 #include <QtGui/QSpinBox>
 #include <QtGui/QCheckBox>
 
+// TimeCodeEdit widget.
+#include "TimeCodeEdit.hpp"
+
 // Sonic Adventure save file definitions.
 #include "sa_defs.h"
 
@@ -62,8 +65,7 @@ class SALevelStatsPrivate
 			QSpinBox *spnHighScore;
 			QCheckBox *chkEmblems[3];
 			QHBoxLayout *hboxEmblems;
-			QSpinBox *spnBestTime[3];
-			QHBoxLayout *hboxBestTime;
+			TimeCodeEdit *tceBestTime;
 			QSpinBox *spnMostRings;
 		} levels[MAX_LEVELS];
 
@@ -204,12 +206,11 @@ SALevelStatsPrivate::~SALevelStatsPrivate()
 	for (int level = 0; level < MAX_LEVELS; level++) {
 		for (int j = 0; j < 3; j++) {
 			delete levels[level].chkEmblems[j];
-			delete levels[level].spnBestTime[j];
 		}
 		delete levels[level].lblLevel;
 		delete levels[level].spnHighScore;
 		delete levels[level].hboxEmblems;
-		delete levels[level].hboxBestTime;
+		delete levels[level].tceBestTime;
 		delete levels[level].spnMostRings;
 	}
 }
@@ -263,15 +264,8 @@ void SALevelStatsPrivate::initLevels(void)
 		}
 
 		// Best time.
-		// FIXME: Possible memory leak? (does hboxBestTime get deleted?)
-		levels[level].hboxBestTime = new QHBoxLayout();
-		levels[level].hboxBestTime->setContentsMargins(0, 0, 0, 0);
-		for (int j = 0; j < 3; j++) {
-			levels[level].spnBestTime[j] = new QSpinBox(q);
-			levels[level].spnBestTime[j]->hide();
-			// Other parameters are set in switchLevels().
-			levels[level].hboxBestTime->addWidget(levels[level].spnBestTime[j]);
-		}
+		levels[level].tceBestTime = new TimeCodeEdit(q);
+		levels[level].tceBestTime->hide();
 
 		// Most rings.
 		levels[level].spnMostRings = new QSpinBox(q);
@@ -283,7 +277,7 @@ void SALevelStatsPrivate::initLevels(void)
 		ui.gridLevels->addWidget(levels[level].lblLevel,     level+1, 0, Qt::AlignTop);
 		ui.gridLevels->addWidget(levels[level].spnHighScore, level+1, 1, Qt::AlignTop);
 		ui.gridLevels->addLayout(levels[level].hboxEmblems,  level+1, 2, Qt::AlignTop);
-		ui.gridLevels->addLayout(levels[level].hboxBestTime, level+1, 3, Qt::AlignTop);
+		ui.gridLevels->addWidget(levels[level].tceBestTime,  level+1, 3, Qt::AlignTop);
 		ui.gridLevels->addWidget(levels[level].spnMostRings, level+1, 4, Qt::AlignTop);
 	}
 }
@@ -326,21 +320,17 @@ void SALevelStatsPrivate::switchLevels(int character)
 		// FIXME: Weights for Big?
 		for (int j = 0; j < 3; j++) {
 			levels[i].chkEmblems[j]->show();
-			levels[i].spnBestTime[j]->show();
+			levels[i].tceBestTime->show();
 
 			if (character == 5) {
 				// Big. Change times to weights.
 				ui.lblBestTime->setText(SALevelStats::tr("Best Weight:"));
-				levels[i].spnBestTime[j]->setRange(0, 655350);
-				levels[i].spnBestTime[j]->setSingleStep(10);
-				levels[i].spnBestTime[j]->setSuffix(QLatin1String("g"));
+				levels[i].tceBestTime->setShowWeight(true);
 			} else {
 				// Other character. Back to times.
 				ui.lblBestTime->setText(SALevelStats::tr("Best Time:"));
-				levels[i].spnBestTime[j]->setRange(0, (j == 1 ? 59 : 99));
-				levels[i].spnBestTime[j]->setSingleStep(1);
-				levels[i].spnBestTime[j]->setSuffix(QString());
-			}	
+				levels[i].tceBestTime->setShowWeight(false);
+			}
 		}
 	}
 
@@ -353,7 +343,7 @@ void SALevelStatsPrivate::switchLevels(int character)
 		// FIXME: Weights for Big?
 		for (int k = 0; k < 3; k++) {
 			levels[j].chkEmblems[k]->hide();
-			levels[j].spnBestTime[k]->hide();
+			levels[j].tceBestTime->hide();
 		}
 	}
 
@@ -381,17 +371,11 @@ void SALevelStatsPrivate::updateDisplay(void)
 			// Time / Weight
 			if (character != 5) {
 				// Time (not Big)
-				levels[level].spnBestTime[0]->setValue(times.all[saveIdx].minutes);
-				levels[level].spnBestTime[1]->setValue(times.all[saveIdx].seconds);
-				// FIXME: Stored as 1/60th seconds; convert to 1/100th.
-				levels[level].spnBestTime[2]->setValue(times.all[saveIdx].frames);
+				levels[level].tceBestTime->setValue(&times.all[saveIdx]);
 			} else {
 				// Weight (Big)
 				const int8_t bigSaveIdx = (saveIdx - 28);
-				for (int j = 0; j < 3; j++) {
-					const int weight = (weights.levels[bigSaveIdx][j] * 10);
-					levels[level].spnBestTime[j]->setValue(weight);
-				}
+				levels[level].tceBestTime->setValue(weights.levels[bigSaveIdx]);
 			}
 
 			// Rings
@@ -414,14 +398,9 @@ void SALevelStatsPrivate::updateDisplay(void)
 			const int8_t saveIdx = saveMap[0][level];
 
 			// Score
-			levels[level].spnHighScore->setValue(metal_sonic.scores[level]);
-
+			levels[level].spnHighScore->setValue(metal_sonic.scores[saveIdx]);
 			// Time
-			levels[level].spnBestTime[0]->setValue(metal_sonic.times[saveIdx].minutes);
-			levels[level].spnBestTime[1]->setValue(metal_sonic.times[saveIdx].seconds);
-			// FIXME: Stored as 1/60th seconds; convert to 1/100th.
-			levels[level].spnBestTime[2]->setValue(metal_sonic.times[saveIdx].frames);
-
+			levels[level].tceBestTime->setValue(&metal_sonic.times[saveIdx]);
 			// Rings
 			levels[level].spnMostRings->setValue(metal_sonic.rings[saveIdx]);
 
@@ -459,17 +438,11 @@ void SALevelStatsPrivate::saveCurrentStats(void)
 			if (character != 5) {
 				// TODO: Constrain bounds?
 				// Time (not Big)
-				times.all[saveIdx].minutes = levels[level].spnBestTime[0]->value();
-				times.all[saveIdx].seconds = levels[level].spnBestTime[1]->value();
-				// FIXME: Stored as 1/60th seconds; convert to 1/100th.
-				times.all[saveIdx].frames = levels[level].spnBestTime[2]->value();
+				levels[level].tceBestTime->value(&times.all[saveIdx]);
 			} else {
 				// Weight (Big)
 				const int8_t bigSaveIdx = (saveIdx - 28);
-				for (int j = 0; j < 3; j++) {
-					const int weight = levels[level].spnBestTime[j]->value();
-					weights.levels[bigSaveIdx][j] = (weight / 10);
-				}
+				levels[level].tceBestTime->value(weights.levels[bigSaveIdx]);
 			}
 
 			// Rings
@@ -492,14 +465,9 @@ void SALevelStatsPrivate::saveCurrentStats(void)
 			const int8_t saveIdx = saveMap[0][level];
 
 			// Score
-			metal_sonic.scores[level] = levels[level].spnHighScore->value();
-
+			metal_sonic.scores[saveIdx] = levels[level].spnHighScore->value();
 			// Time
-			metal_sonic.times[saveIdx].minutes = levels[level].spnBestTime[0]->value();
-			metal_sonic.times[saveIdx].seconds = levels[level].spnBestTime[1]->value();
-			// FIXME: Stored as 1/60th seconds; convert to 1/100th.
-			metal_sonic.times[saveIdx].frames = levels[level].spnBestTime[2]->value();
-
+			levels[level].tceBestTime->value(&metal_sonic.times[saveIdx]);
 			// Rings
 			metal_sonic.rings[saveIdx] = levels[level].spnMostRings->value();
 
