@@ -167,27 +167,25 @@ int SAMiscEmblems::load(const sa_save_slot *sa_save)
 	Q_D(SAMiscEmblems);
 
 	// Chao Race emblems.
-	// TODO: Helper function to get emblem by index.
-	d->chkChaoRace[0]->setChecked(!!(sa_save->emblems[13] & 0x04));
-	d->chkChaoRace[1]->setChecked(!!(sa_save->emblems[13] & 0x08));
-	d->chkChaoRace[2]->setChecked(!!(sa_save->emblems[13] & 0x10));
-	d->chkChaoRace[3]->setChecked(!!(sa_save->emblems[13] & 0x20));
-	d->chkChaoRace[4]->setChecked(!!(sa_save->emblems[13] & 0x40));
+	d->chkChaoRace[0]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 106));
+	d->chkChaoRace[1]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 107));
+	d->chkChaoRace[2]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 108));
+	d->chkChaoRace[3]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 109));
+	d->chkChaoRace[4]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 110));
 
 	// Adventure Field emblems.
-	// TODO: Helper function to get emblem by index.
-	d->chkAdvField[ 0]->setChecked(!!(sa_save->emblems[14] & 0x40));
-	d->chkAdvField[ 1]->setChecked(!!(sa_save->emblems[14] & 0x80));
-	d->chkAdvField[ 2]->setChecked(!!(sa_save->emblems[15] & 0x01));
-	d->chkAdvField[ 3]->setChecked(!!(sa_save->emblems[15] & 0x02));
-	d->chkAdvField[ 4]->setChecked(!!(sa_save->emblems[15] & 0x04));
-	d->chkAdvField[ 5]->setChecked(!!(sa_save->emblems[15] & 0x08));
-	d->chkAdvField[ 6]->setChecked(!!(sa_save->emblems[15] & 0x10));
-	d->chkAdvField[ 7]->setChecked(!!(sa_save->emblems[15] & 0x20));
-	d->chkAdvField[ 8]->setChecked(!!(sa_save->emblems[15] & 0x40));
-	d->chkAdvField[ 9]->setChecked(!!(sa_save->emblems[15] & 0x80));
-	d->chkAdvField[10]->setChecked(!!(sa_save->emblems[16] & 0x01));
-	d->chkAdvField[11]->setChecked(!!(sa_save->emblems[16] & 0x02));
+	d->chkAdvField[ 0]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 118));
+	d->chkAdvField[ 1]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 119));
+	d->chkAdvField[ 2]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 120));
+	d->chkAdvField[ 3]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 121));
+	d->chkAdvField[ 4]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 122));
+	d->chkAdvField[ 5]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 123));
+	d->chkAdvField[ 6]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 124));
+	d->chkAdvField[ 7]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 125));
+	d->chkAdvField[ 8]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 126));
+	d->chkAdvField[ 9]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 127));
+	d->chkAdvField[10]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 128));
+	d->chkAdvField[11]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 129));
 
 	return 0;
 }

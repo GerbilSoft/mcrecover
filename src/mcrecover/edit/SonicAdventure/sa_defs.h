@@ -240,6 +240,15 @@ typedef struct PACKED _sa_level_clear_count {
 } sa_level_clear_count;
 #pragma pack()
 
+/**
+ * Is the specified emblem set?
+ * @param emblems sa_save_slot.emblems[] array.
+ * @param idx Emblem index. [0, 129]
+ * @return True if the emblem is set; false if not.
+ */
+#define SA_TEST_EMBLEM(emblems, idx) \
+	(!!((emblems)[(idx)/8] & (1 << ((idx)%8))))
+
 // Save slot. (SA1/SADX common data)
 // GCN files have a single slot.
 // Dreamcast files have three slots.

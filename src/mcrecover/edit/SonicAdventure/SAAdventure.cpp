@@ -367,13 +367,13 @@ int SAAdventure::load(const sa_save_slot *sa_save)
 
 	// Completed?
 	// These are part of the "emblems" bitfield.
-	d->characters[0].chkCompleted->setChecked(!!(sa_save->emblems[13] & 0x80));
-	d->characters[1].chkCompleted->setChecked(!!(sa_save->emblems[14] & 0x01));
-	d->characters[2].chkCompleted->setChecked(!!(sa_save->emblems[14] & 0x02));
-	d->characters[3].chkCompleted->setChecked(!!(sa_save->emblems[14] & 0x04));
-	d->characters[4].chkCompleted->setChecked(!!(sa_save->emblems[14] & 0x08));
-	d->characters[5].chkCompleted->setChecked(!!(sa_save->emblems[14] & 0x10));
-	d->characters[6].chkCompleted->setChecked(!!(sa_save->emblems[14] & 0x20));
+	d->characters[0].chkCompleted->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 111));
+	d->characters[1].chkCompleted->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 112));
+	d->characters[2].chkCompleted->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 113));
+	d->characters[3].chkCompleted->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 114));
+	d->characters[4].chkCompleted->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 115));
+	d->characters[5].chkCompleted->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 116));
+	d->characters[6].chkCompleted->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 117));
 
 	// Adventure mode.
 	for (int i = 0; i < 8; i++) {
