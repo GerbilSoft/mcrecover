@@ -64,6 +64,9 @@ SAGeneral::SAGeneral(QWidget *parent)
 	Q_D(SAGeneral);
 	d->ui.setupUi(this);
 
+	// Show hours in the TimeCodeEdit.
+	d->ui.tcePlayTime->setShowHours(true);
+
 	// Level names.
 	// Does NOT include Chao Gardens or Chao Race. (last 4 entries)
 	for (int i = 0; i < SA_LEVEL_NAMES_ALL_COUNT-4; i++) {
@@ -115,17 +118,7 @@ int SAGeneral::load(const sa_save_slot *sa_save)
 	// Play time.
 	// Stored in NTSC frames. (1/60th of a second)
 	// TODO: Verify for PAL?
-	// TODO: Convert frames to 1/100th of seconds.
-	// FIXME: Find an unsigned equivalent to div().
-	uint32_t playTime = sa_save->playTime;
-	d->ui.spnPlayTimeFrames->setValue(playTime % 60);
-	playTime /= 60;
-	d->ui.spnPlayTimeSeconds->setValue(playTime % 60);
-	playTime /= 60;
-	d->ui.spnPlayTimeMinutes->setValue(playTime % 60);
-	playTime /= 60;
-	// FIXME: Value may be too large?
-	d->ui.spnPlayTimeHours->setValue(playTime);
+	d->ui.tcePlayTime->setValueInNtscFrames(sa_save->playTime);
 
 	// Options byte.
 	d->ui.cboMessages->setCurrentIndex(SA_OPTIONS_MSG_VALUE(sa_save->options));
@@ -160,13 +153,7 @@ int SAGeneral::save(sa_save_slot *sa_save) const
 	// Play time.
 	// Stored in NTSC frames. (1/60th of a second)
 	// TODO: Verify for PAL?
-	// TODO: Convert frames from 1/100th of seconds.
-	uint32_t playTime =
-		((uint32_t)d->ui.spnPlayTimeHours->value() * 60 * 60 * 60) +
-		(d->ui.spnPlayTimeMinutes->value() * 60 * 60) +
-		(d->ui.spnPlayTimeSeconds->value() * 60) +
-		(d->ui.spnPlayTimeSeconds->value());
-	sa_save->playTime = playTime;
+	sa_save->playTime = d->ui.tcePlayTime->valueInNtscFrames();
 
 	// Options byte.
 	// TODO: Bit-shifting macros like SA_OPTIONS_*_VALUE()?

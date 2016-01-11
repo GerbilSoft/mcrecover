@@ -6,11 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>391</width>
-    <height>200</height>
+    <width>414</width>
+    <height>228</height>
    </rect>
   </property>
   <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::ExpandingFieldsGrow</enum>
+   </property>
    <property name="margin">
     <number>0</number>
    </property>
@@ -23,51 +26,6 @@
       <enum>Qt::PlainText</enum>
      </property>
     </widget>
-   </item>
-   <item row="0" column="1">
-    <layout class="QHBoxLayout" name="hboxPlayTime">
-     <item>
-      <widget class="QSpinBox" name="spnPlayTimeHours">
-       <property name="maximum">
-        <number>11930</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="spnPlayTimeMinutes">
-       <property name="maximum">
-        <number>59</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="spnPlayTimeSeconds">
-       <property name="maximum">
-        <number>59</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="spnPlayTimeFrames">
-       <property name="maximum">
-        <number>59</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="hspcPlayTime">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="lblMessages">
@@ -372,8 +330,26 @@
      </property>
     </widget>
    </item>
+   <item row="0" column="1">
+    <widget class="TimeCodeEdit" name="tcePlayTime" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>16</width>
+       <height>0</height>
+      </size>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TimeCodeEdit</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/TimeCodeEdit.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../resources/flags/flags.qrc"/>
   <include location="../../resources/sonic/sonic.qrc"/>
