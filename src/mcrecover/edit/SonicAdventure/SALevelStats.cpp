@@ -312,7 +312,7 @@ void SALevelStatsPrivate::switchLevels(int character)
 	int i = 0;
 	for (; i < MAX_LEVELS && *levelID != -1; i++, levelID++) {
 		// TODO: Cache the level name QStrings.
-		levels[i].lblLevel->setText(actionStageNameCache[i]);
+		levels[i].lblLevel->setText(actionStageNameCache[*levelID]);
 		levels[i].lblLevel->show();
 		levels[i].spnHighScore->show();
 		levels[i].spnMostRings->show();
