@@ -228,7 +228,10 @@ void SALevelStatsPrivate::clear(void)
 	memset(&rings, 0, sizeof(rings));
 	memset(&emblems, 0, sizeof(emblems));
 
+	// Metal Sonic data.
+	memset(&metal_sonic, 0, sizeof(metal_sonic));
 	// TODO: Remove Metal Sonic if he's in the Characters box?
+	// Or, only do that if loadDX(nullptr) is called?
 }
 
 /**
@@ -618,32 +621,42 @@ int SALevelStats::save(sa_save_slot *sa_save)
 /**
  * Load data from a Sonic Adventure DX extra save slot.
  * @param sadx_extra_save Sonic Adventure DX extra save slot.
- * The data will be in host-endian format.
+ * The data must have already been byteswapped to host-endian.
+ * If nullptr, SADX editor components will be hidden.
  * @return 0 on success; non-zero on error.
  */
 int SALevelStats::loadDX(const sadx_extra_save_slot *sadx_extra_save)
 {
 	Q_D(SALevelStats);
-	memcpy(&d->metal_sonic.scores, &sadx_extra_save->scores_metal, sizeof(d->metal_sonic.scores));
-	memcpy(&d->metal_sonic.times,  &sadx_extra_save->times_metal,  sizeof(d->metal_sonic.times));
-	memcpy(&d->metal_sonic.rings,  &sadx_extra_save->rings_metal,  sizeof(d->metal_sonic.rings));
 
-	// Emblems are stored as a bitmask. (LSB is emblem 0.)
-	// We're using a bool array internally.
-	// TODO: Verify byte ordering on GCN and PC.
-	bool *emblem = &d->metal_sonic.emblems[0];
-	uint32_t metal_emblems = sadx_extra_save->emblems_metal;
-	for (int i = 0; i < NUM_ELEMENTS(d->metal_sonic.emblems); i++) {
-		// TODO: Is the !! needed?
-		*emblem++ = !!(metal_emblems & 1);
-		metal_emblems >>= 1;
-	}
+	if (sadx_extra_save) {
+		memcpy(&d->metal_sonic.scores, &sadx_extra_save->scores_metal, sizeof(d->metal_sonic.scores));
+		memcpy(&d->metal_sonic.times,  &sadx_extra_save->times_metal,  sizeof(d->metal_sonic.times));
+		memcpy(&d->metal_sonic.rings,  &sadx_extra_save->rings_metal,  sizeof(d->metal_sonic.rings));
 
-	// If the Characters dropdown doesn't have Metal Sonic, add him now.
-	// TODO: Remove Metal Sonic on clear()?
-	if (d->ui.cboCharacter->count() < 7) {
-		QIcon icon(QLatin1String(":/sonic/SA1/metal_sonic.png"));
-		d->ui.cboCharacter->addItem(icon, tr("Metal Sonic"));
+		// Emblems are stored as a bitmask. (LSB is emblem 0.)
+		// We're using a bool array internally.
+		// TODO: Verify byte ordering on GCN and PC.
+		bool *emblem = &d->metal_sonic.emblems[0];
+		uint32_t metal_emblems = sadx_extra_save->emblems_metal;
+		for (int i = 0; i < NUM_ELEMENTS(d->metal_sonic.emblems); i++) {
+			// TODO: Is the !! needed?
+			*emblem++ = !!(metal_emblems & 1);
+			metal_emblems >>= 1;
+		}
+
+		// If the Characters dropdown doesn't have Metal Sonic, add him now.
+		// TODO: Remove Metal Sonic on clear()?
+		if (d->ui.cboCharacter->count() < 7) {
+			QIcon icon(QLatin1String(":/sonic/SA1/metal_sonic.png"));
+			d->ui.cboCharacter->addItem(icon, tr("Metal Sonic"));
+		}
+	} else {
+		// Save file is from SA1 and doesn't have SADX extras.
+		// Remove Metal Sonic from the Characters dropdown.
+		while (d->ui.cboCharacter->count() >= 7) {
+			d->ui.cboCharacter->removeItem(6);
+		}
 	}
 
 	return 0;

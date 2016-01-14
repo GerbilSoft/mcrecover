@@ -155,6 +155,7 @@ void SASubGamesPrivate::clear(void)
 	memset(&twinkle_circuit,  0, sizeof(twinkle_circuit));
 	memset(&boss_attack,      0, sizeof(boss_attack));
 
+	// Metal Sonic data. [TODO]
 	// TODO: Remove Metal Sonic if he's in the Characters box?
 }
 
@@ -529,21 +530,34 @@ int SASubGames::save(sa_save_slot *sa_save) const
 /**
  * Load data from a Sonic Adventure DX extra save slot.
  * @param sadx_extra_save Sonic Adventure DX extra save slot.
- * The data will be in host-endian format.
+ * The data must have already been byteswapped to host-endian.
+ * If nullptr, SADX editor components will be hidden.
  * @return 0 on success; non-zero on error.
  */
 int SASubGames::loadDX(const sadx_extra_save_slot *sadx_extra_save)
 {
 	Q_D(SASubGames);
 
-	// If the Characters dropdown doesn't have Metal Sonic, add him now.
-	// TODO: Remove Metal Sonic on clear()?
-	if (d->ui.cboCharacter->count() < 7) {
-		QIcon icon(QLatin1String(":/sonic/SA1/metal_sonic.png"));
-		d->ui.cboCharacter->addItem(icon, tr("Metal Sonic"));
+	if (sadx_extra_save) {
+		// If the Characters dropdown doesn't have Metal Sonic, add him now.
+		if (d->ui.cboCharacter->count() < 7) {
+			QIcon icon(QLatin1String(":/sonic/SA1/metal_sonic.png"));
+			d->ui.cboCharacter->addItem(icon, tr("Metal Sonic"));
+		}
+	} else {
+		// Save file is from SA1 and doesn't have SADX extras.
+		// Remove Metal Sonic from the Characters dropdown.
+		while (d->ui.cboCharacter->count() >= 7) {
+			d->ui.cboCharacter->removeItem(6);
+		}
 	}
 
 	// Update the display.
+	// OPTIMIZE: If Metal Sonic was selected, and !sadx_extra_save,
+	// this will have been called already. This is an unlikely
+	// possibility, though, since the editor's file usually
+	// isn't changed after it's loaded, and all slots either
+	// have SADX extras or don't have SADX extras.
 	d->updateDisplay();
 	return 0;
 }

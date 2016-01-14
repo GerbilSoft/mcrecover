@@ -220,6 +220,11 @@ void SAEditorPrivate::updateDisplay(void)
 		}
 	} else {
 		// No SADX extra data.
+		// Make sure the SADX sections are hidden.
+		ui.saGeneral->loadDX(nullptr);
+		ui.saLevelStats->loadDX(nullptr);
+		ui.saSubGames->loadDX(nullptr);
+
 		if (missions_tab_idx >= 0) {
 			// Hide the "Missions" tab.
 			// TODO: Verify that taking ownership ensures the object

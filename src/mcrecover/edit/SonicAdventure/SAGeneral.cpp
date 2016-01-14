@@ -178,20 +178,28 @@ int SAGeneral::save(sa_save_slot *sa_save) const
 /**
  * Load data from a Sonic Adventure DX extra save slot.
  * @param sadx_extra_save Sonic Adventure DX extra save slot.
- * The data will be in host-endian format.
+ * The data must have already been byteswapped to host-endian.
+ * If nullptr, SADX editor components will be hidden.
  * @return 0 on success; non-zero on error.
  */
 int SAGeneral::loadDX(const sadx_extra_save_slot *sadx_extra_save)
 {
 	Q_D(SAGeneral);
 
-	// The only SADX information here is the "Black Market Rings".
-	// TODO: Validate the value?
-	d->ui.spnBlackMarketRings->setValue(sadx_extra_save->rings_black_market);
+	if (sadx_extra_save) {
+		// The only SADX information here is the "Black Market Rings".
+		// TODO: Validate the value?
+		d->ui.spnBlackMarketRings->setValue(sadx_extra_save->rings_black_market);
 
-	// Make sure the "Black Market Rings" widgets are visible.
-	d->ui.lblBlackMarketRings->show();
-	d->ui.spnBlackMarketRings->show();
+		// Make sure the "Black Market Rings" widgets are visible.
+		d->ui.lblBlackMarketRings->show();
+		d->ui.spnBlackMarketRings->show();
+	} else {
+		// Save file is from SA1 and doesn't have SADX extras.
+		// Hide the "Black Market Rings" widgets.
+		d->ui.lblBlackMarketRings->hide();
+		d->ui.spnBlackMarketRings->hide();
+	}
 
 	return 0;
 }

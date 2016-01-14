@@ -66,7 +66,8 @@ class SAGeneral : public QWidget
 		/**
 		 * Load data from a Sonic Adventure DX extra save slot.
 		 * @param sadx_extra_save Sonic Adventure DX extra save slot.
-		 * The data will be in host-endian format.
+		 * The data must have already been byteswapped to host-endian.
+		 * If nullptr, SADX editor components will be hidden.
 		 * @return 0 on success; non-zero on error.
 		 */
 		int loadDX(const _sadx_extra_save_slot *sadx_extra_save);
