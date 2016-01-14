@@ -386,7 +386,7 @@
           </property>
           <layout class="QGridLayout" name="gridTwinkleCircuitLaps" columnstretch="0,1">
            <item row="1" column="1">
-            <widget class="TimeCodeEdit" name="tceTwinkleCircuitLap2" native="true">
+            <widget class="TimeCodeEdit" name="tceTwinkleCircuitBestLap_2" native="true">
              <property name="minimumSize">
               <size>
                <width>16</width>
@@ -396,7 +396,7 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="TimeCodeEdit" name="tceTwinkleCircuitLap1" native="true">
+            <widget class="TimeCodeEdit" name="tceTwinkleCircuitBestLap_1" native="true">
              <property name="minimumSize">
               <size>
                <width>16</width>
@@ -406,7 +406,7 @@
             </widget>
            </item>
            <item row="0" column="0">
-            <widget class="QLabel" name="lblTwinkleCircuitLap1">
+            <widget class="QLabel" name="lblTwinkleCircuitBestLap_1">
              <property name="text">
               <string>Lap 1:</string>
              </property>
@@ -416,7 +416,7 @@
             </widget>
            </item>
            <item row="1" column="0">
-            <widget class="QLabel" name="lblTwinkleCircuitLap2">
+            <widget class="QLabel" name="lblTwinkleCircuitBestLap_2">
              <property name="text">
               <string>Lap 2:</string>
              </property>

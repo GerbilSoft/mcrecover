@@ -54,17 +54,18 @@ class SASubGamesPrivate
 		// TODO: Enum?
 		int character;
 
-		// FIXME: Mini-Game scores for Sky Chase and Sand Hill
-		// are NOT shared between characters. (Not sure about Ice Cap.)
-		// Hedgehog Hammer is shared, since only Amy has access.
-
-		// TODO: Emblems.
-
-		// Twinkle Circuit times are unique per character.
+		// Sub Game data.
+		// NOTE: Emblems are shared between all characters,
+		// so we don't need to save them here.
+		sa_mini_game_scores mini_game_scores;
 		sa_twinkle_circuit_times twinkle_circuit;
-
-		// Boss Attack times are unique per character.
 		sa_boss_attack_times boss_attack;
+
+		/**
+		 * Clear the loaded data.
+		 * This does NOT automatically update the UI.
+		 */
+		void clear(void);
 
 		/**
 		 * Switch to another character.
@@ -138,7 +139,24 @@ const uint8_t SASubGamesPrivate::subGameMap[7] = {
 SASubGamesPrivate::SASubGamesPrivate(SASubGames *q)
 	: q_ptr(q)
 	, character(0)
-{ }
+{
+	// Clear the data.
+	clear();
+}
+
+/**
+ * Clear the loaded data.
+ * This does NOT automatically update the UI.
+ */
+void SASubGamesPrivate::clear(void)
+{
+	character = 0;
+	memset(&mini_game_scores, 0, sizeof(mini_game_scores));
+	memset(&twinkle_circuit,  0, sizeof(twinkle_circuit));
+	memset(&boss_attack,      0, sizeof(boss_attack));
+
+	// TODO: Remove Metal Sonic if he's in the Characters box?
+}
 
 /**
  * Switch levels to another character.
@@ -177,68 +195,111 @@ void SASubGamesPrivate::switchCharacter(int character)
  */
 void SASubGamesPrivate::updateDisplay(void)
 {
-	// TODO
-#if 0
 	// TODO: Make character a parameter, or not?
 	// FIXME: Character enums or something.
-	if (character >= 0 && character <= 5) {
-		// Standard SA1 character.
-		for (int level = 0; level < MAX_LEVELS; level++) {
-			const int8_t saveIdx = saveMap[character][level];
-			if (saveIdx < 0 || saveIdx >= NUM_ELEMENTS(scores.all))
-				break;
+	// TODO: Optimize these?
+	const uint32_t *sky_chase_act1 = nullptr;
+	const uint32_t *sky_chase_act2 = nullptr;
+	const uint32_t *ice_cap = nullptr;
+	const uint32_t *sand_hill = nullptr;
+	const uint32_t *hedgehog_hammer = nullptr;
+	const sa_time_code *twinkle_circuit = nullptr;
+	const sa_time_code *boss_attack = nullptr;
 
-			// Score
-			levels[level].spnHighScore->setValue(scores.all[saveIdx]);
+	switch (character) {
+		case 0: // Sonic
+			sky_chase_act1	= this->mini_game_scores.sky_chase[0].sonic;
+			sky_chase_act2	= this->mini_game_scores.sky_chase[1].sonic;
+			ice_cap		= this->mini_game_scores.ice_cap.sonic;
+			sand_hill	= this->mini_game_scores.sand_hill.sonic;
+			twinkle_circuit	= this->twinkle_circuit.sonic;
+			boss_attack	= this->boss_attack.sonic;
+			break;
 
-			// Time / Weight
-			if (character != 5) {
-				// Time (not Big)
-				levels[level].tceBestTime->setValue(&times.all[saveIdx]);
-			} else {
-				// Weight (Big)
-				const int8_t bigSaveIdx = (saveIdx - 28);
-				levels[level].tceBestTime->setValue(weights.levels[bigSaveIdx]);
-			}
+		case 1: // Tails
+			sky_chase_act1	= this->mini_game_scores.sky_chase[0].tails;
+			sky_chase_act2	= this->mini_game_scores.sky_chase[1].tails;
+			ice_cap		= this->mini_game_scores.ice_cap.tails;
+			sand_hill	= this->mini_game_scores.sand_hill.tails;
+			twinkle_circuit	= this->twinkle_circuit.tails;
+			boss_attack	= this->boss_attack.tails;
+			break;
 
-			// Rings
-			levels[level].spnMostRings->setValue(rings.all[saveIdx]);
+		case 2: // Knuckles
+			twinkle_circuit	= this->twinkle_circuit.knuckles;
+			boss_attack	= this->boss_attack.knuckles;
+			break;
 
-			/**
-			 * Level emblems:
-			 * - A: saveIdx + 0
-			 * - B: saveIdx + 32
-			 * - C: saveIdx + 64
-			 */
-			levels[level].chkEmblems[0]->setChecked(emblems[saveIdx+0]);
-			levels[level].chkEmblems[1]->setChecked(emblems[saveIdx+32]);
-			levels[level].chkEmblems[2]->setChecked(emblems[saveIdx+64]);
-		}
-	} else if (character == 6) {
-		// SADX: Metal Sonic.
-		// Uses the same level map as Sonic.
-		for (int level = 0; level < MAX_LEVELS; level++) {
-			const int8_t saveIdx = saveMap[0][level];
+		case 3: // Amy
+			hedgehog_hammer	= this->mini_game_scores.hedgehog_hammer;
+			twinkle_circuit	= this->twinkle_circuit.amy;
+			boss_attack	= this->boss_attack.amy;
+			break;
 
-			// Score
-			levels[level].spnHighScore->setValue(metal_sonic.scores[saveIdx]);
-			// Time
-			levels[level].tceBestTime->setValue(&metal_sonic.times[saveIdx]);
-			// Rings
-			levels[level].spnMostRings->setValue(metal_sonic.rings[saveIdx]);
+		case 4: // Gamma
+			twinkle_circuit	= this->twinkle_circuit.gamma;
+			boss_attack	= this->boss_attack.gamma;
+			break;
 
-			/**
-			 * Level emblems:
-			 * - A: (saveIdx * 3) + 0
-			 * - B: (saveIdx * 3) + 1
-			 * - C: (saveIdx * 3) + 2
-			 */
-			levels[level].chkEmblems[0]->setChecked(metal_sonic.emblems[(saveIdx*3)+0]);
-			levels[level].chkEmblems[1]->setChecked(metal_sonic.emblems[(saveIdx*3)+1]);
-			levels[level].chkEmblems[2]->setChecked(metal_sonic.emblems[(saveIdx*3)+2]);
-		}
+		case 5: // Big
+			twinkle_circuit	= this->twinkle_circuit.big;
+			boss_attack	= this->boss_attack.big;
+			break;
+
+		case 7: // Metal Sonic
+			// TODO
+			break;
 	}
-#endif
+
+	// Sky Chase, Act 1 (Best Scores)
+	if (sky_chase_act1) {
+		ui.spnSkyChaseAct1_1->setValue(sky_chase_act1[0]);
+		ui.spnSkyChaseAct1_2->setValue(sky_chase_act1[1]);
+		ui.spnSkyChaseAct1_3->setValue(sky_chase_act1[2]);
+	}
+	// Sky Chase, Act 2 (Best Scores)
+	if (sky_chase_act2) {
+		ui.spnSkyChaseAct2_1->setValue(sky_chase_act2[0]);
+		ui.spnSkyChaseAct2_2->setValue(sky_chase_act2[1]);
+		ui.spnSkyChaseAct2_3->setValue(sky_chase_act2[2]);
+	}
+
+	// Ice Cap (Best Scores)
+	if (ice_cap) {
+		ui.spnIceCap_1->setValue(ice_cap[0]);
+		ui.spnIceCap_2->setValue(ice_cap[1]);
+		ui.spnIceCap_3->setValue(ice_cap[2]);
+	}
+
+	// Sand Hill (Best Scores)
+	if (sand_hill) {
+		ui.spnSandHill_1->setValue(sand_hill[0]);
+		ui.spnSandHill_2->setValue(sand_hill[1]);
+		ui.spnSandHill_3->setValue(sand_hill[2]);
+	}
+
+	// Hedgehog Hammer (Best Scores)
+	if (hedgehog_hammer) {
+		ui.spnHedgehogHammer_1->setValue(hedgehog_hammer[0]);
+		ui.spnHedgehogHammer_2->setValue(hedgehog_hammer[1]);
+		ui.spnHedgehogHammer_3->setValue(hedgehog_hammer[2]);
+	}
+
+	// Twinkle Circuit times.
+	if (twinkle_circuit) {
+		ui.tceTwinkleCircuitBestTimes_1->setValue(&twinkle_circuit[0]);
+		ui.tceTwinkleCircuitBestTimes_2->setValue(&twinkle_circuit[1]);
+		ui.tceTwinkleCircuitBestTimes_3->setValue(&twinkle_circuit[2]);
+		ui.tceTwinkleCircuitBestLap_1->setValue(&twinkle_circuit[3]);
+		ui.tceTwinkleCircuitBestLap_2->setValue(&twinkle_circuit[4]);
+	}
+
+	// Boss Attack times.
+	if (boss_attack) {
+		ui.tceBossAttack_1->setValue(&boss_attack[0]);
+		ui.tceBossAttack_2->setValue(&boss_attack[1]);
+		ui.tceBossAttack_3->setValue(&boss_attack[2]);
+	}
 }
 
 /**
@@ -404,10 +465,26 @@ void SASubGames::on_cboCharacter_currentIndexChanged(int index)
 int SASubGames::load(const sa_save_slot *sa_save)
 {
 	Q_D(SASubGames);
-	memcpy(&d->twinkle_circuit, &sa_save->twinkle_circuit, sizeof(d->twinkle_circuit));
-	memcpy(&d->boss_attack,     &sa_save->boss_attack,     sizeof(d->boss_attack));
+	memcpy(&d->mini_game_scores, &sa_save->mini_game_scores, sizeof(d->mini_game_scores));
+	memcpy(&d->twinkle_circuit,  &sa_save->twinkle_circuit,  sizeof(d->twinkle_circuit));
+	memcpy(&d->boss_attack,      &sa_save->boss_attack,      sizeof(d->boss_attack));
+	// TODO: Metal Sonic.
 
-	// TODO
+	// Emblems. (Yes, it's in a weird order; no, I don't know why.)
+	// TODO: Verify these. (Source: http://info.sonicretro.org/SCHG:Sonic_Adventure/Main_Save_File)
+	d->ui.chkTwinkleCircuit_2->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 96));
+	d->ui.chkSkyChaseAct1_2->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 97));
+	d->ui.chkSkyChaseAct2_2->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 98));
+	d->ui.chkSandHill_2->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 99));
+	d->ui.chkHedgehogHammer_2->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 100));
+	d->ui.chkTwinkleCircuit_1->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 101));
+	d->ui.chkSkyChaseAct1_1->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 102));
+	d->ui.chkSkyChaseAct2_1->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 103));
+	d->ui.chkSandHill_1->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 104));
+	d->ui.chkHedgehogHammer_1->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 105));
+
+	// Update the display.
+	d->updateDisplay();
 	return 0;
 }
 
@@ -422,10 +499,26 @@ int SASubGames::save(sa_save_slot *sa_save) const
 	Q_D(const SASubGames);
 	// TODO: Save the current character data.
 
-	memcpy(&sa_save->twinkle_circuit, &d->twinkle_circuit, sizeof(sa_save->twinkle_circuit));
-	memcpy(&sa_save->boss_attack,     &d->boss_attack,     sizeof(sa_save->boss_attack));
+	memcpy(&sa_save->mini_game_scores, &d->mini_game_scores, sizeof(sa_save->mini_game_scores));
+	memcpy(&sa_save->twinkle_circuit,  &d->twinkle_circuit,  sizeof(sa_save->twinkle_circuit));
+	memcpy(&sa_save->boss_attack,      &d->boss_attack,      sizeof(sa_save->boss_attack));
 
-	// TODO
+	// Emblems. (Yes, it's in a weird order; no, I don't know why.)
+	// TODO: Verify these. (Source: http://info.sonicretro.org/SCHG:Sonic_Adventure/Main_Save_File)
+	// TODO: Helper function to get emblem by index.
+	sa_save->emblems[12] = 0;
+	sa_save->emblems[12] |= (d->ui.chkTwinkleCircuit_2->isChecked() ? 0x01 : 0x00);
+	sa_save->emblems[12] |= (d->ui.chkSkyChaseAct1_2->isChecked() ? 0x02 : 0x00);
+	sa_save->emblems[12] |= (d->ui.chkSkyChaseAct2_2->isChecked() ? 0x04 : 0x00);
+	sa_save->emblems[12] |= (d->ui.chkSandHill_2->isChecked() ? 0x08 : 0x00);
+	sa_save->emblems[12] |= (d->ui.chkHedgehogHammer_2->isChecked() ? 0x10 : 0x00);
+	sa_save->emblems[12] |= (d->ui.chkTwinkleCircuit_1->isChecked() ? 0x20 : 0x00);
+	sa_save->emblems[12] |= (d->ui.chkSkyChaseAct1_1->isChecked() ? 0x40 : 0x00);
+	sa_save->emblems[12] |= (d->ui.chkSkyChaseAct2_1->isChecked() ? 0x80 : 0x00);
+	sa_save->emblems[13] &= ~0x03;
+	sa_save->emblems[13] |= (d->ui.chkSandHill_1->isChecked() ? 0x01 : 0x00);
+	sa_save->emblems[13] |= (d->ui.chkHedgehogHammer_1->isChecked() ? 0x02 : 0x00);
+
 	return 0;
 }
 
@@ -471,5 +564,6 @@ int SASubGames::saveDX(sadx_extra_save_slot *sadx_extra_save)
 void SASubGames::clear(void)
 {
 	Q_D(SASubGames);
-	// TODO
+	d->clear();
+	d->updateDisplay();
 }
