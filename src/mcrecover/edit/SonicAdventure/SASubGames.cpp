@@ -403,10 +403,14 @@ SASubGames::SASubGames(QWidget *parent)
 	d->ui.hboxTwinkleCircuitEmblems->setAlignment(d->ui.chkTwinkleCircuit_1, Qt::AlignHCenter);
 	d->ui.hboxTwinkleCircuitEmblems->setAlignment(d->ui.chkTwinkleCircuit_2, Qt::AlignHCenter);
 
-	// TODO: Add tab stops to TimeCodeEdit widgets?
+	// Twinkle Circuit uses centiseconds.
+	d->ui.tceTwinkleCircuitBestTimes_1->setDisplayMode(TimeCodeEdit::DM_MSC);
+	d->ui.tceTwinkleCircuitBestTimes_2->setDisplayMode(TimeCodeEdit::DM_MSC);
+	d->ui.tceTwinkleCircuitBestTimes_3->setDisplayMode(TimeCodeEdit::DM_MSC);
+	d->ui.tceTwinkleCircuitBestLap_1->setDisplayMode(TimeCodeEdit::DM_MSC);
+	d->ui.tceTwinkleCircuitBestLap_2->setDisplayMode(TimeCodeEdit::DM_MSC);
+
 	// TODO: Additional setup.
-	// TODO: Clicking the "Edit" button has a lot of lag if
-	// attempting to load the SADX Chao Garden. (but not SA2 files)
 
 	// Initialize the widgets.
 	d->switchCharacter(d->ui.cboCharacter->currentIndex());
