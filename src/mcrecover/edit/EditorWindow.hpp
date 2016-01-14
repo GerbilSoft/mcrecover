@@ -24,8 +24,7 @@
 
 #include <QtGui/QMainWindow>
 
-class GcnFile;
-class VmuFile;
+class File;
 
 class EditorWindowPrivate;
 class EditorWindow : public QMainWindow
@@ -52,20 +51,11 @@ class EditorWindow : public QMainWindow
 		/** Public functions. **/
 
 		/**
-		 * Edit a GcnFile.
-		 * TODO: Combine with editVmuFile.
-		 * @param gcnFile GcnFile to edit.
-		 * @return Editor window for the GcnFile. (nullptr if the file cannot be edited)
+		 * Edit a File.
+		 * @param file File to edit.
+		 * @return Editor window for the File. (nullptr if the file cannot be edited)
 		 */
-		static EditorWindow *editGcnFile(GcnFile *gcnFile);
-
-		/**
-		 * Edit a VmuFile.
-		 * TODO: Combine with editGcnFile.
-		 * @param vmuFile VmuFile to edit.
-		 * @return Editor dialog for the VmuFile. (nullptr if the file cannot be edited)
-		 */
-		static EditorWindow *editVmuFile(VmuFile *VmuFile);
+		static EditorWindow *editFile(File *file);
 
 	protected slots:
 		/** Widget slots. **/

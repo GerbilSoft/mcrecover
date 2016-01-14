@@ -158,6 +158,7 @@ SET(mcrecover_CARD_SRCS
 SET(mcrecover_EDIT_SRCS
 	edit/EditorWindow.cpp
 	edit/EditorWidget.cpp
+	edit/EditorWidgetFactory.cpp
 	edit/SonicAdventure/SAEditor.cpp
 	edit/SonicAdventure/SALevelStats.cpp
 	edit/SonicAdventure/SALevelClearCount.cpp
@@ -183,6 +184,7 @@ SET(mcrecover_EDIT_SRCS
 	edit/SonicAdventure/SASubGames.cpp
 	)
 SET(mcrecover_EDIT_H
+	edit/EditorWidgetFactory.hpp
 	edit/SonicAdventure/SAData.h
 	)
 

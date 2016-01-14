@@ -352,31 +352,13 @@ void FileView::on_btnEdit_clicked(void)
 {
 	// Testing...
 	Q_D(FileView);
-	const GcnFile *gcnFile = qobject_cast<const GcnFile*>(d->file);
-	if (gcnFile) {
-		// FIXME: File has to be changed to non-const...
-		EditorWindow *editor = EditorWindow::editGcnFile((GcnFile*)gcnFile);
-		if (editor) {
-			// NOTE: EditorWindow is no longer QDialog, so we can't make it modal.
-			// Allow multiple editors at once, and figure out how to delete
-			// the editors correctly while still being able to save.
-			editor->setAttribute(Qt::WA_DeleteOnClose, true);
-			editor->show();
-		}
-	} else {
-		// Check for a VmuFile.
-		// TODO: Make an EditorWindow::editFile()?
-		const VmuFile *vmuFile = qobject_cast<const VmuFile*>(d->file);
-		if (vmuFile) {
-			// FIXME: File has to be changed to non-const...
-			EditorWindow *editor = EditorWindow::editVmuFile((VmuFile*)vmuFile);
-			if (editor) {
-				// NOTE: EditorWindow is no longer QDialog, so we can't make it modal.
-				// Allow multiple editors at once, and figure out how to delete
-				// the editors correctly while still being able to save.
-				editor->setAttribute(Qt::WA_DeleteOnClose, true);
-				editor->show();
-			}
-		}
+	// FIXME: File has to be changed to non-const...
+	EditorWindow *editor = EditorWindow::editFile(const_cast<File*>(d->file));
+	if (editor) {
+		// NOTE: EditorWindow is no longer QDialog, so we can't make it modal.
+		// Allow multiple editors at once, and figure out how to delete
+		// the editors correctly while still being able to save.
+		editor->setAttribute(Qt::WA_DeleteOnClose, true);
+		editor->show();
 	}
 }

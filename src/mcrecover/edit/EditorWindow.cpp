@@ -29,13 +29,11 @@
 #include <QtGui/QAction>
 
 // Files.
-#include "../card/GcnFile.hpp"
-#include "../card/VmuFile.hpp"
+#include "card/File.hpp"
 
-// Editors.
-// TODO: EditorWidgetFactory?
+// EditorWidget.
 #include "EditorWidget.hpp"
-#include "SonicAdventure/SAEditor.hpp"
+#include "EditorWidgetFactory.hpp"
 
 /** EditorWindowPrivate **/
 
@@ -132,6 +130,7 @@ void EditorWindowPrivate::setEditorWidget(EditorWidget *editorWidget)
 				 q, SLOT(editorWidget_destroyed_slot(QObject*)));
 
 		// Set the central widget.
+		// QMainWindow takes ownership of the widget.
 		q->setCentralWidget(editorWidget);
 
 		// Update the save slot buttons.
@@ -310,66 +309,24 @@ void EditorWindow::changeEvent(QEvent *event)
 /** Public functions. **/
 
 /**
- * Edit a GcnFile.
- * TODO: Combine with editVmuFile.
- * @param gcnFile GcnFile to edit.
- * @return Editor dialog for the GcnFile. (nullptr if the file cannot be edited)
+ * Edit a File.
+ * @param file File to edit.
+ * @return Editor dialog for the ile. (nullptr if the file cannot be edited)
  */
-EditorWindow *EditorWindow::editGcnFile(GcnFile *gcnFile)
+EditorWindow *EditorWindow::editFile(File *file)
 {
 	// TODO: Connect the 'destroyed' signal and
 	// close the editor if the file is destroyed.
 
-	// TODO: Check for editors that support this file.
-	// For now, only allow SADX.
-	if (gcnFile->gameID().left(3) != QLatin1String("GXS")) {
-		// Not SADX.
+	EditorWidget *editorWidget = EditorWidgetFactory::createWidget(file);
+	if (!editorWidget) {
+		// No EditorWidget is available for this File.
 		return nullptr;
 	}
 
-	// Create an SAEditor.
+	// Create an EditorWindow for this EditorWidget.
 	EditorWindow *editor = new EditorWindow();
-	SAEditor *saEditor = new SAEditor();
-	int ret = saEditor->setFile(gcnFile);
-	if (ret != 0) {
-		// Editor does not support this file.
-		delete saEditor;
-		return 0;
-	}
-	editor->d_func()->setEditorWidget(saEditor);
-	return editor;
-}
-
-/**
- * Edit a VmuFile.
- * TODO: Combine with editGcnFile.
- * @param vmuFile VmuFile to edit.
- * @return Editor dialog for the VmuFile. (nullptr if the file cannot be edited)
- */
-EditorWindow *EditorWindow::editVmuFile(VmuFile *vmuFile)
-{
-	// TODO: Connect the 'destroyed' signal and
-	// close the editor if the file is destroyed.
-
-	// TODO: Check for editors that support this file.
-	// For now, only allow SA1.
-	if (vmuFile->filename() != QLatin1String("SONICADV_SYS") &&
-	    vmuFile->filename() != QLatin1String("SONICADV_INT"))
-	{
-		// Not SA1.
-		return nullptr;
-	}
-
-	// Create an SAEditor.
-	EditorWindow *editor = new EditorWindow();
-	SAEditor *saEditor = new SAEditor();
-	int ret = saEditor->setFile(vmuFile);
-	if (ret != 0) {
-		// Editor does not support this file.
-		delete saEditor;
-		return 0;
-	}
-	editor->d_func()->setEditorWidget(saEditor);
+	editor->d_func()->setEditorWidget(editorWidget);
 	return editor;
 }
 

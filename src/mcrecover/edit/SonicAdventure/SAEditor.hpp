@@ -46,6 +46,15 @@ class SAEditor : public EditorWidget
 		void changeEvent(QEvent *event);
 
 	public:
+		/** Public static functions. **/
+
+		/**
+		 * Is the specified file supported by this editor?
+		 * @return True if supported; false if not.
+		 */
+		static bool isFileSupported(File *file);
+
+	public:
 		/** Public functions. **/
 
 		/**

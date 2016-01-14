@@ -30,6 +30,8 @@
 
 // Files.
 #include "card/File.hpp"
+#include "card/GcnFile.hpp"
+#include "card/VmuFile.hpp"
 
 #include "util/byteswap.h"
 #include "sa_defs.h"
@@ -401,6 +403,47 @@ void SAEditor::changeEvent(QEvent *event)
 	this->QWidget::changeEvent(event);
 }
 
+/** Public static functions. **/
+
+/**
+ * Is the specified file supported by this editor?
+ * @return True if supported; false if not.
+ */
+bool SAEditor::isFileSupported(File *file)
+{
+	bool ret = false;
+	const QString filename = file->filename();
+	// TODO: "PC" file for SADX PC?
+	if (qobject_cast<GcnFile*>(file) != nullptr) {
+		// GameCube file. (SADX)
+		if (file->gameID().left(3) == QLatin1String("GXS") &&
+		    filename.startsWith(QLatin1String("SONICADVENTURE_DX_PLAYRECORD_"))) {
+			// Game ID and filename are both correct.
+			// Verify the length.
+			// FIXME: Add a file->sizeInBytes() function.
+			/*if (file->sizeInBytes() >= (SA_SAVE_ADDRESS_GCN + SA_SAVE_SLOT_LEN))*/ {
+				// File is valid.
+				ret = true;
+			}
+		}
+	} else if (qobject_cast<VmuFile*>(file) != nullptr) {
+		// Dreamcast file. (SA1)
+		if (filename == QLatin1String("SONICADV_SYS") ||
+		    filename == QLatin1String("SONICADV_INT"))
+		{
+			// Filename is correct.
+			// Verify the length.
+			// FIXME: Add a file->sizeInBytes() function.
+			/*if (file->sizeInBytes() >= (SA_SAVE_ADDRESS_DC_0 + (SA_SAVE_SLOT_LEN * 3)))*/ {
+				// File is valid.
+				ret = true;
+			}
+		}
+	}
+
+	return ret;
+}
+
 /** Public functions. **/
 
 /**
@@ -417,21 +460,27 @@ void SAEditor::changeEvent(QEvent *event)
 int SAEditor::setFile(File *file)
 {
 	Q_D(SAEditor);
-	d->clearData();
-	d->file = file;
-	int ret = -1;
 
+	// Make sure the file is supported before doing anything else.
+	// This also checks that the file length is correct.
+	if (!isFileSupported(file)) {
+		// Not supported.
+		return -1;
+	}
+
+	// Clear the current data.
+	// TODO: Prompt for save if modified?
+	d->file = nullptr;
+	d->clearData();
+
+	// Read the new file.
 	QByteArray data = file->loadFileData();
-	if (file->filename() == QLatin1String("SONICADV_SYS") ||
-	    file->filename() == QLatin1String("SONICADV_INT"))
-	{
+
+	// Determine which version of the game this save file is for.
+	// TODO: Test for GCN first, then DC?
+	int ret = -1;
+	if (qobject_cast<VmuFile*>(file) != nullptr) {
 		// DC version.
-		// TODO: Verify that this is an SA1 file.
-		// TODO: Show a slot selector.
-		if (data.size() < (SA_SAVE_ADDRESS_DC_0 + (SA_SAVE_SLOT_LEN * 3))) {
-			ret = -1;
-			goto end;
-		}
 
 		// Three, count 'em, *three* save slots!
 		const char *src = (data.data() + SA_SAVE_ADDRESS_DC_0);
@@ -450,13 +499,8 @@ int SAEditor::setFile(File *file)
 			// Loaded successfully.
 			ret = 0;
 		}
-	} else if (file->filename().startsWith(QLatin1String("SONICADVENTURE_DX_PLAYRECORD_"))) {
+	} else if (qobject_cast<GcnFile*>(file) != nullptr) {
 		// GameCube verison.
-		// TODO: Verify that this is an SADX file.
-		if (data.size() < (SA_SAVE_ADDRESS_GCN + SA_SAVE_SLOT_LEN)) {
-			ret = -1;
-			goto end;
-		}
 
 		// Only one save slot.
 		sa_save_slot *sa_save = (sa_save_slot*)malloc(sizeof(*sa_save));
@@ -506,11 +550,15 @@ int SAEditor::setFile(File *file)
 		// Unsupported file.
 		// TODO: Add support for the Windows version.
 		ret = -2;
-		d->file = nullptr;
 		goto end;
 	}
 
 end:
+	if (ret == 0) {
+		// File loaded successfully.
+		d->file = file;
+	}
+
 	// Update the display.
 	d->setSaveSlots(d->data_main.size());
 	d->setGeneralSettings(false);
