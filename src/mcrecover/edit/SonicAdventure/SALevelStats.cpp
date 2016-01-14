@@ -274,11 +274,12 @@ void SALevelStatsPrivate::initLevels(void)
 		levels[level].spnMostRings->setRange(0, 0x7FFF);
 		levels[level].spnMostRings->setSingleStep(1);
 
-		ui.gridLevels->addWidget(levels[level].lblLevel,     level+1, 0, Qt::AlignTop);
-		ui.gridLevels->addWidget(levels[level].spnHighScore, level+1, 1, Qt::AlignTop);
-		ui.gridLevels->addLayout(levels[level].hboxEmblems,  level+1, 2, Qt::AlignTop);
-		ui.gridLevels->addWidget(levels[level].tceBestTime,  level+1, 3, Qt::AlignTop);
-		ui.gridLevels->addWidget(levels[level].spnMostRings, level+1, 4, Qt::AlignTop);
+		// Add the widgets to the grid layout.
+		ui.gridLevels->addWidget(levels[level].lblLevel,     level+1, 0, Qt::AlignVCenter);
+		ui.gridLevels->addWidget(levels[level].spnHighScore, level+1, 1, Qt::AlignVCenter);
+		ui.gridLevels->addLayout(levels[level].hboxEmblems,  level+1, 2, Qt::AlignVCenter);
+		ui.gridLevels->addWidget(levels[level].tceBestTime,  level+1, 3, Qt::AlignVCenter);
+		ui.gridLevels->addWidget(levels[level].spnMostRings, level+1, 4, Qt::AlignVCenter);
 	}
 }
 
