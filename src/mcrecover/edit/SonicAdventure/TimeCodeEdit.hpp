@@ -23,6 +23,7 @@
 #define __MCRECOVER_EDIT_SONICADVENTURE_TIMECODEEDIT_HPP__
 
 #include <QtGui/QWidget>
+#include <QtCore/QMetaType>
 
 // C includes.
 #include <stdint.h>
@@ -34,8 +35,11 @@ class TimeCodeEdit : public QWidget
 {
 	Q_OBJECT
 
+	Q_ENUMS(DisplayMode)
+
 	// TODO: Register sa_time_code as a Qt type?
 	//Q_PROPERTY(int value READ value WRITE setValue NOTIFY valueChanged)
+	Q_PROPERTY(DisplayMode displayMode READ displayMode WRITE setDisplayMode NOTIFY displayModeChanged)
 
 	public:
 		TimeCodeEdit(QWidget *parent = 0);
@@ -233,6 +237,15 @@ class TimeCodeEdit : public QWidget
 		 * The hours spinbox has been changed.
 		 */
 		void spinHoursChanged(void);
+
+	signals:
+		/**
+		 * displayMode has changed.
+		 * @param displayMode New displayMode value.
+		 */
+		void displayModeChanged(DisplayMode displayMode);
 };
+
+Q_DECLARE_METATYPE(TimeCodeEdit::DisplayMode)
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_TIMECODEEDIT_HPP__ */

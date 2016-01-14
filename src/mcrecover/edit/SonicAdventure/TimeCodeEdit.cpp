@@ -491,6 +491,7 @@ void TimeCodeEdit::setDisplayMode(DisplayMode displayMode)
 	if (d->displayMode == displayMode)
 		return;
 	d->updateDisplayMode(displayMode);
+	emit displayModeChanged(displayMode);
 }
 
 /**
