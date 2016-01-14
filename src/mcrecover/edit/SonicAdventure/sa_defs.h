@@ -343,7 +343,7 @@ typedef struct PACKED _sa_save_slot
 	// [0x1B0] Mini-Game: Best times. (Twinkle Circuit)
 	sa_twinkle_circuit_times twinkle_circuit;
 
-	// [0x20A] Mini-Game: Best times. (Boss_attack)
+	// [0x20A] Mini-Game: Best times. (Boss Attack)
 	// Three times are stored per character.
 	sa_boss_attack_times boss_attack;
 
