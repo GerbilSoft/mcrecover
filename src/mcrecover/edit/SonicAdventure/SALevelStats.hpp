@@ -47,7 +47,10 @@ class SALevelStats : public QWidget
 		void changeEvent(QEvent *event);
 
 	protected slots:
-		// Character was changed.
+		/**
+		 * The selected character was changed.
+		 * @param index New character ID.
+		 */
 		void on_cboCharacter_currentIndexChanged(int index);
 
 	public:

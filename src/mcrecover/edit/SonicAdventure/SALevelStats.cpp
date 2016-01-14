@@ -122,7 +122,7 @@ class SALevelStatsPrivate
 		 */
 		void saveCurrentStats(void);
 
-		/** Static read-only data **/
+		/** Static read-only data. **/
 
 		/**
 		 * Character level mapping.
@@ -537,7 +537,7 @@ void SALevelStats::changeEvent(QEvent *event)
 /** UI widget slots. **/
 
 /**
- * Character was changed.
+ * The selected character was changed.
  * @param index New character ID.
  */
 void SALevelStats::on_cboCharacter_currentIndexChanged(int index)
