@@ -219,7 +219,7 @@ void SAEditorPrivate::updateDisplay(void)
 	Q_Q(SAEditor);
 	const int missions_tab_idx = ui.tabWidget->indexOf(ui.tabMissions);
 	const sadx_extra_save_slot *sadx_extra_save = nullptr;
-	if (slot <= data_sadx.size()) {
+	if (slot < data_sadx.size()) {
 		sadx_extra_save = data_sadx.at(slot);
 	}
 	if (sadx_extra_save) {
@@ -276,7 +276,7 @@ void SAEditorPrivate::saveCurrentSlot(void)
 
 	// SADX extra data?
 	sadx_extra_save_slot *sadx_extra_save = nullptr;
-	if (slot <= data_sadx.size()) {
+	if (slot < data_sadx.size()) {
 		sadx_extra_save = data_sadx.at(slot);
 	}
 	if (sadx_extra_save) {

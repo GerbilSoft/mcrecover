@@ -79,7 +79,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabExtraEmblems">
+     <widget class="QWidget" name="tabMiscEmblems">
       <attribute name="title">
        <string>&amp;Misc Emblems</string>
       </attribute>
