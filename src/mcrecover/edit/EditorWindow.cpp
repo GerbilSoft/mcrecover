@@ -91,7 +91,7 @@ EditorWindowPrivate::EditorWindowPrivate(EditorWindow* q)
 {
 	// Connect the save slot button signal mapper.
 	QObject::connect(signalMapper, SIGNAL(mapped(int)),
-			 q, SLOT(saveSlotButton_clicked(int)));
+			 q, SLOT(toolBar_saveSlotButton_clicked(int)));
 }
 
 EditorWindowPrivate::~EditorWindowPrivate()
@@ -106,7 +106,7 @@ EditorWindowPrivate::~EditorWindowPrivate()
 
 /**
  * Set the editor widget.
- * The editor widget will be owned by this EditorWindow.
+ * This EditorWindow will take ownership of the EditorWidget.
  * @param editor Editor widget.
  */
 void EditorWindowPrivate::setEditorWidget(EditorWidget *editorWidget)
@@ -120,9 +120,22 @@ void EditorWindowPrivate::setEditorWidget(EditorWidget *editorWidget)
 	// Add the new editor widget.
 	this->editorWidget = editorWidget;
 	if (editorWidget != nullptr) {
-		// TODO: Connect the destroyed signal.
+		// Connect various signals.
 		Q_Q(EditorWindow);
+		QObject::connect(editorWidget, SIGNAL(saveSlotsChanged(int)),
+				 q, SLOT(saveSlotsChanged_slot(int)));
+		QObject::connect(editorWidget, SIGNAL(generalSettingsChanged(bool)),
+				 q, SLOT(generalSettingsChanged_slot(bool)));
+		QObject::connect(editorWidget, SIGNAL(currentSaveSlotChanged(int)),
+				 q, SLOT(currentSaveSlotChanged_slot(int)));
+		QObject::connect(editorWidget, SIGNAL(destroyed(QObject*)),
+				 q, SLOT(editorWidget_destroyed_slot(QObject*)));
+
+		// Set the central widget.
 		q->setCentralWidget(editorWidget);
+
+		// Update the save slot buttons.
+		updateSaveSlotButtons();
 	}
 }
 
@@ -363,15 +376,72 @@ EditorWindow *EditorWindow::editVmuFile(VmuFile *vmuFile)
 /** Widget slots. **/
 
 /**
- * A save slot button has been clicked.
- * @param saveSlot Save slot. (-1 for "general" settings.)
+ * Number of save slots has changed.
+ * @param saveSlots New number of save slots.
  */
-void EditorWindow::saveSlotButton_clicked(int saveSlot)
+void EditorWindow::saveSlotsChanged_slot(int saveSlots)
+{
+	Q_UNUSED(saveSlots)
+
+	// TODO: Just update save slot buttons instead of the whole thing?
+	Q_D(EditorWindow);
+	d->updateSaveSlotButtons();
+}
+
+/**
+ * Status of the "general" settings section has changed.
+ * @param hasGeneralSave True if this editor has a "general" settings section.
+ */
+void EditorWindow::generalSettingsChanged_slot(bool generalSettings)
+{
+	Q_UNUSED(generalSettings)
+
+	// TODO: Just update actionGeneralSettings instead of the whole thing?
+	Q_D(EditorWindow);
+	d->updateSaveSlotButtons();
+}
+
+/**
+ * Current save slot has changed.
+ * @param saveSlot New save slot. (-1 for "general" settings)
+ */
+void EditorWindow::currentSaveSlotChanged_slot(int saveSlot)
+{
+	Q_UNUSED(saveSlot)
+
+	// Update the UI.
+	// TODO: Validate the save slot number?
+	Q_D(EditorWindow);
+	assert(saveSlot >= -1 && saveSlot < d->saveSlotButtons.size());
+	if (saveSlot < 0) {
+		d->ui.actionGeneralSettings->setChecked(true);
+	} else {
+		d->saveSlotButtons.at(saveSlot)->setChecked(true);
+	}
+}
+
+/**
+ * EditorWidget has been destroyed.
+ * @param obj QObject that was destroyed.
+ */
+void EditorWindow::editorWidget_destroyed_slot(QObject *obj)
 {
 	Q_D(EditorWindow);
-	assert(d->editorWidget != nullptr);
-	if (d->editorWidget) {
-		assert(saveSlot >= -1 && saveSlot < d->editorWidget->saveSlots());
-		d->editorWidget->setCurrentSaveSlot(saveSlot);
+	if (obj == d->editorWidget) {
+		// Our EditorWidget was destroyed.
+		// TODO: Disable the save/reload buttons?
+		d->editorWidget = nullptr;
 	}
+}
+
+/**
+ * A save slot button on the toolbar was clicked.
+ * @param saveSlot Save slot number. (-1 for "general" settings)
+ */
+void EditorWindow::toolBar_saveSlotButton_clicked(int saveSlot)
+{
+	Q_D(EditorWindow);
+	assert(d->editorWidget);
+	// TODO: More error checking?
+	d->editorWidget->setCurrentSaveSlot(saveSlot);
 }

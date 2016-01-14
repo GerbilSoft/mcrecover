@@ -48,9 +48,9 @@ class EditorWindow : public QMainWindow
 		// State change event. (Used for switching the UI language at runtime.)
 		void changeEvent(QEvent *event);
 
-	/** Public functions. **/
-
 	public:
+		/** Public functions. **/
+
 		/**
 		 * Edit a GcnFile.
 		 * TODO: Combine with editVmuFile.
@@ -71,10 +71,34 @@ class EditorWindow : public QMainWindow
 		/** Widget slots. **/
 
 		/**
-		 * A save slot button has been clicked.
-		 * @param saveSlot Save slot. (-1 for "general" settings.)
+		 * Number of save slots has changed.
+		 * @param saveSlots New number of save slots.
 		 */
-		void saveSlotButton_clicked(int saveSlot);
+		void saveSlotsChanged_slot(int saveSlots);
+
+		/**
+		 * Status of the "general" settings section has changed.
+		 * @param hasGeneralSave True if this editor has a "general" settings section.
+		 */
+		void generalSettingsChanged_slot(bool generalSettings);
+
+		/**
+		 * Current save slot has changed.
+		 * @param currentSaveSlot New save slot. (-1 for "general" settings)
+		 */
+		void currentSaveSlotChanged_slot(int currentSaveSlot);
+
+		/**
+		 * EditorWidget has been destroyed.
+		 * @param obj QObject that was destroyed.
+		 */
+		void editorWidget_destroyed_slot(QObject *obj);
+
+		/**
+		 * A save slot button on the toolbar was clicked.
+		 * @param saveSlot Save slot number. (-1 for "general" settings)
+		 */
+		void toolBar_saveSlotButton_clicked(int saveSlot);
 };
 
 #endif /* __MCRECOVER_EDIT_EDITORWINDOW_HPP__ */
