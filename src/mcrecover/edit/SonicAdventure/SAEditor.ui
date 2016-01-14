@@ -136,8 +136,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>92</width>
-            <height>22</height>
+            <width>784</width>
+            <height>415</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="vboxLevelClearCountContent">
@@ -153,64 +153,45 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabSADXExtras">
+     <widget class="QWidget" name="tabMissions">
       <attribute name="title">
-       <string>SAD&amp;X Extras</string>
+       <string>Missions</string>
       </attribute>
-      <layout class="QVBoxLayout" name="vboxSADXExtras">
+      <layout class="QVBoxLayout" name="vboxSADXMissions">
        <item>
-        <widget class="QTabWidget" name="tabWidgetSADXExtras">
-         <property name="currentIndex">
-          <number>0</number>
+        <widget class="QScrollArea" name="scrlMissions">
+         <property name="styleSheet">
+          <string notr="true">#scrlSADXMissions { background-color: transparent; } #scrlSADXMissionsContent { background-color: transparent; }</string>
          </property>
-         <widget class="QWidget" name="tabMissions">
-          <attribute name="title">
-           <string>Missions</string>
-          </attribute>
-          <layout class="QVBoxLayout" name="vboxSADXMissions">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+         <widget class="QWidget" name="scrlMissionsContent">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>784</width>
+            <height>415</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="vboxSADXMissionsContent">
+           <property name="margin">
+            <number>0</number>
+           </property>
            <item>
-            <widget class="QScrollArea" name="scrlSADXMissions">
-             <property name="styleSheet">
-              <string notr="true">#scrlSADXMissions { background-color: transparent; } #scrlSADXMissionsContent { background-color: transparent; }</string>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-             <property name="horizontalScrollBarPolicy">
-              <enum>Qt::ScrollBarAlwaysOff</enum>
-             </property>
-             <property name="widgetResizable">
-              <bool>true</bool>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-             </property>
-             <widget class="QWidget" name="scrlSADXMissionsContent">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>92</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <layout class="QVBoxLayout" name="vboxSADXMissionsContent">
-               <property name="margin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="ByteFlagsView" name="sadxMissionFlagsView" native="true"/>
-               </item>
-              </layout>
-             </widget>
-            </widget>
+            <widget class="ByteFlagsView" name="sadxMissionFlagsView" native="true"/>
            </item>
           </layout>
-         </widget>
-         <widget class="QWidget" name="tabSADXMetalSonic">
-          <attribute name="title">
-           <string>Metal Sonic</string>
-          </attribute>
          </widget>
         </widget>
        </item>

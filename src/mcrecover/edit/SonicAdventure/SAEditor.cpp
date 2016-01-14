@@ -217,7 +217,7 @@ void SAEditorPrivate::updateDisplay(void)
 	// disabled tabs, but it didn't work for me.
 	// http://qt-project.org/forums/viewthread/24364
 	Q_Q(SAEditor);
-	const int sadx_tab_idx = ui.tabWidget->indexOf(ui.tabSADXExtras);
+	const int missions_tab_idx = ui.tabWidget->indexOf(ui.tabMissions);
 	const sadx_extra_save_slot *sadx_extra_save = nullptr;
 	if (slot <= data_sadx.size()) {
 		sadx_extra_save = data_sadx.at(slot);
@@ -232,20 +232,20 @@ void SAEditorPrivate::updateDisplay(void)
 		sadxMissionFlags.setAllFlags(&sadx_extra_save->missions[0],
 				NUM_ELEMENTS(sadx_extra_save->missions));
 
-		if (sadx_tab_idx < 0) {
-			// Show the "SADX Extras" tab.
-			ui.tabWidget->insertTab(ui.tabWidget->indexOf(ui.tabLevelClearCount), ui.tabSADXExtras, SAEditor::tr("SAD&X Extras"));
-			ui.tabSADXExtras->show();
+		if (missions_tab_idx < 0) {
+			// Show the "Missions" tab.
+			ui.tabWidget->addTab(ui.tabMissions, SAEditor::tr("M&issions"));
+			ui.tabWidget->show();
 		}
 	} else {
 		// No SADX extra data.
-		if (sadx_tab_idx >= 0) {
-			// Hide the "SADX Extras" tab.
+		if (missions_tab_idx >= 0) {
+			// Hide the "Missions" tab.
 			// TODO: Verify that taking ownership ensures the object
 			// is deleted properly and there are no memory leaks.
-			ui.tabWidget->removeTab(sadx_tab_idx);
-			ui.tabSADXExtras->hide();
-			ui.tabSADXExtras->setParent(q);
+			ui.tabWidget->removeTab(missions_tab_idx);
+			ui.tabMissions->hide();
+			ui.tabMissions->setParent(q);
 		}
 	}
 }
