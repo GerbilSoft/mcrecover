@@ -357,8 +357,11 @@ void FileView::on_btnEdit_clicked(void)
 		// FIXME: File has to be changed to non-const...
 		EditorWindow *editor = EditorWindow::editGcnFile((GcnFile*)gcnFile);
 		if (editor) {
-			editor->exec();
-			delete editor;
+			// NOTE: EditorWindow is no longer QDialog, so we can't make it modal.
+			// Allow multiple editors at once, and figure out how to delete
+			// the editors correctly while still being able to save.
+			editor->setAttribute(Qt::WA_DeleteOnClose, true);
+			editor->show();
 		}
 	} else {
 		// Check for a VmuFile.
@@ -368,8 +371,11 @@ void FileView::on_btnEdit_clicked(void)
 			// FIXME: File has to be changed to non-const...
 			EditorWindow *editor = EditorWindow::editVmuFile((VmuFile*)vmuFile);
 			if (editor) {
-				editor->exec();
-				delete editor;
+				// NOTE: EditorWindow is no longer QDialog, so we can't make it modal.
+				// Allow multiple editors at once, and figure out how to delete
+				// the editors correctly while still being able to save.
+				editor->setAttribute(Qt::WA_DeleteOnClose, true);
+				editor->show();
 			}
 		}
 	}

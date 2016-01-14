@@ -55,51 +55,13 @@ class EditorWidgetPrivate
 		 * Set the number of save slots.
 		 * @param saveSlots New number of save slots. (Must be at least 1!)
 		 */
-		inline void setSaveSlots(int saveSlots);
+		void setSaveSlots(int saveSlots);
 
 		/**
 		 * Set the "general" settings status.
 		 * @param hasGeneralSettings True if this editor has a "general" settings section.
 		 */
-		inline void setGeneralSettings(bool generalSettings);
+		void setGeneralSettings(bool generalSettings);
 };
-
-/** Convenience functions for EditorWidget subclasses. **/
-
-/**
- * Set the number of save slots.
- * @param saveSlots New number of save slots. (Must be at least 1!)
- */
-inline void EditorWidgetPrivate::setSaveSlots(int saveSlots)
-{
-	assert(saveSlots >= 1);
-	if (this->saveSlots == saveSlots)
-		return;
-
-	Q_Q(EditorWidget);
-	this->saveSlots = saveSlots;
-	emit q->saveSlotsChanged(saveSlots);
-}
-
-/**
- * Set the "general" settings status.
- * @param hasGeneralSettings True if this editor has a "general" settings section.
- */
-inline void EditorWidgetPrivate::setGeneralSettings(bool generalSettings)
-{
-	if (this->generalSettings == generalSettings)
-		return;
-
-	Q_Q(EditorWidget);
-	if (!generalSettings && this->currentSaveSlot < 0) {
-		// Currently viewing the "general" settings tab,
-		// but we want to get rid of it.
-		// Switch to save slot 0.
-		q->setCurrentSaveSlot(0);
-	}
-
-	this->generalSettings = generalSettings;
-	emit q->generalSettingsChanged(generalSettings);
-}
 
 #endif /* __MCRECOVER_EDIT_EDITORWIDGET_P_HPP__ */

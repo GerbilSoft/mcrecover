@@ -30,6 +30,7 @@ class SAEditorPrivate;
 class SAEditor : public EditorWidget
 {
 	Q_OBJECT
+	typedef EditorWidget super;
 
 	public:
 		SAEditor(QWidget *parent = nullptr);
@@ -64,6 +65,15 @@ class SAEditor : public EditorWidget
 
 		/**
 		 * Set the current save slot.
+		 *
+		 * Subclasses should save their current save slot,
+		 * call EditorWidget::setCurrentSaveSlot(), and then
+		 * load the new save slot.
+		 *
+		 * The base class function call is needed in order to
+		 * update internal variables and emit signals.
+		 *
+		 * NOTE: The subclass should NOT modify d->currentSaveSlot!
 		 *
 		 * @param saveSlot New save slot. (-1 for "general" settings)
 		 * TODO: Return the selected save slot?

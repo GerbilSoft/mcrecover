@@ -40,6 +40,44 @@ EditorWidgetPrivate::~EditorWidgetPrivate()
 	// Nothing to clean up here...
 }
 
+/** Convenience functions for EditorWidget subclasses. **/
+
+/**
+ * Set the number of save slots.
+ * @param saveSlots New number of save slots. (Must be at least 1!)
+ */
+void EditorWidgetPrivate::setSaveSlots(int saveSlots)
+{
+	assert(saveSlots >= 1);
+	if (this->saveSlots == saveSlots)
+		return;
+
+	Q_Q(EditorWidget);
+	this->saveSlots = saveSlots;
+	emit q->saveSlotsChanged(saveSlots);
+}
+
+/**
+ * Set the "general" settings status.
+ * @param hasGeneralSettings True if this editor has a "general" settings section.
+ */
+void EditorWidgetPrivate::setGeneralSettings(bool generalSettings)
+{
+	if (this->generalSettings == generalSettings)
+		return;
+
+	Q_Q(EditorWidget);
+	if (!generalSettings && this->currentSaveSlot < 0) {
+		// Currently viewing the "general" settings tab,
+		// but we want to get rid of it.
+		// Switch to save slot 0.
+		q->setCurrentSaveSlot(0);
+	}
+
+	this->generalSettings = generalSettings;
+	emit q->generalSettingsChanged(generalSettings);
+}
+
 /** EditorWidget **/
 
 /**
@@ -104,4 +142,29 @@ int EditorWidget::currentSaveSlot(void) const
 {
 	Q_D(const EditorWidget);
 	return d->currentSaveSlot;
+}
+
+/**
+ * Set the current save slot.
+ *
+ * Subclasses should save their current save slot,
+ * call EditorWidget::setCurrentSaveSlot(), and then
+ * load the new save slot.
+ *
+ * The base class function call is needed in order to
+ * update internal variables and emit signals.
+ *
+ * NOTE: The subclass should NOT modify d->currentSaveSlot!
+ *
+ * @param saveSlot New save slot. (-1 for "general" settings)
+ * TODO: Return the selected save slot?
+ */
+void EditorWidget::setCurrentSaveSlot(int saveSlot)
+{
+       // TODO: Update setFile() to use a similar base class function setup.
+       Q_D(EditorWidget);
+       if (d->currentSaveSlot == saveSlot)
+               return;
+       d->currentSaveSlot = saveSlot;
+       emit currentSaveSlotChanged(saveSlot);
 }

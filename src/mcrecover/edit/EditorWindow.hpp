@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * Editor.hpp: Save file editor.                                           *
+ * EditorWindow.hpp: Save file editor.                                     *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -22,15 +22,16 @@
 #ifndef __MCRECOVER_EDIT_EDITORWINDOW_HPP__
 #define __MCRECOVER_EDIT_EDITORWINDOW_HPP__
 
-#include <QtGui/QDialog>
+#include <QtGui/QMainWindow>
 
 class GcnFile;
 class VmuFile;
 
 class EditorWindowPrivate;
-class EditorWindow : public QDialog
+class EditorWindow : public QMainWindow
 {
 	Q_OBJECT
+	typedef QMainWindow super;
 
 	protected:
 		EditorWindow(QWidget *parent = nullptr);
@@ -65,6 +66,15 @@ class EditorWindow : public QDialog
 		 * @return Editor dialog for the VmuFile. (nullptr if the file cannot be edited)
 		 */
 		static EditorWindow *editVmuFile(VmuFile *VmuFile);
+
+	protected slots:
+		/** Widget slots. **/
+
+		/**
+		 * A save slot button has been clicked.
+		 * @param saveSlot Save slot. (-1 for "general" settings.)
+		 */
+		void saveSlotButton_clicked(int saveSlot);
 };
 
 #endif /* __MCRECOVER_EDIT_EDITORWINDOW_HPP__ */

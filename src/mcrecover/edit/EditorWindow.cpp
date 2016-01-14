@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * EditorWindow.cpp: Save file editor window.                              *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -20,15 +20,21 @@
  ***************************************************************************/
 
 #include "EditorWindow.hpp"
+#include "McRecoverQApplication.hpp"
 
 // Qt includes.
 #include <QtCore/QEvent>
+#include <QtCore/QSignalMapper>
+#include <QtCore/QVector>
+#include <QtGui/QAction>
 
 // Files.
 #include "../card/GcnFile.hpp"
 #include "../card/VmuFile.hpp"
 
 // Editors.
+// TODO: EditorWidgetFactory?
+#include "EditorWidget.hpp"
 #include "SonicAdventure/SAEditor.hpp"
 
 /** EditorWindowPrivate **/
@@ -38,6 +44,7 @@ class EditorWindowPrivate
 {
 	public:
 		EditorWindowPrivate(EditorWindow *q);
+		~EditorWindowPrivate();
 
 	protected:
 		EditorWindow *const q_ptr;
@@ -49,28 +56,60 @@ class EditorWindowPrivate
 		Ui::EditorWindow ui;
 
 		// Editor widget.
-		// TODO: EditorWidget base class?
-		QWidget *editorWidget;
+		EditorWidget *editorWidget;
+
+		// Save slot buttons.
+		QVector<QAction*> saveSlotButtons;
+		QActionGroup *actgrpSaveSlots;
+		QSignalMapper *signalMapper;
+		QAction *toolBarSeparator;	// CACHED; don't delete this!
 
 		/**
 		 * Set the editor widget.
 		 * The editor widget will be owned by this EditorWindow.
 		 * @param editorWidget Editor widget.
 		 */
-		void setEditorWidget(QWidget *editorWidget);
+		void setEditorWidget(EditorWidget *editorWidget);
+
+		/**
+		 * Initialize the toolbar.
+		 */
+		void initToolbar(void);
+
+		/**
+		 * Update the save slot buttons.
+		 */
+		void updateSaveSlotButtons(void);
 };
 
 EditorWindowPrivate::EditorWindowPrivate(EditorWindow* q)
 	: q_ptr(q)
 	, editorWidget(nullptr)
-{ }
+	, actgrpSaveSlots(new QActionGroup(q))
+	, signalMapper(new QSignalMapper(q))
+	, toolBarSeparator(nullptr)
+{
+	// Connect the save slot button signal mapper.
+	QObject::connect(signalMapper, SIGNAL(mapped(int)),
+			 q, SLOT(saveSlotButton_clicked(int)));
+}
+
+EditorWindowPrivate::~EditorWindowPrivate()
+{
+	// TODO: Do we really need to delete these here?
+	// Qt should handle it automatically...
+	delete actgrpSaveSlots;
+	delete signalMapper;
+	qDeleteAll(saveSlotButtons);
+	saveSlotButtons.clear();
+}
 
 /**
  * Set the editor widget.
  * The editor widget will be owned by this EditorWindow.
  * @param editor Editor widget.
  */
-void EditorWindowPrivate::setEditorWidget(QWidget *editorWidget)
+void EditorWindowPrivate::setEditorWidget(EditorWidget *editorWidget)
 {
 	if (this->editorWidget == editorWidget)
 		return;
@@ -82,9 +121,116 @@ void EditorWindowPrivate::setEditorWidget(QWidget *editorWidget)
 	this->editorWidget = editorWidget;
 	if (editorWidget != nullptr) {
 		// TODO: Connect the destroyed signal.
-		// NOTE: Don't set the alignment. Setting the alignment
-		// prevents the widget from expanding vertically.
-		ui.vboxMain->insertWidget(0, editorWidget);
+		Q_Q(EditorWindow);
+		q->setCentralWidget(editorWidget);
+	}
+}
+
+/**
+ * Initialize the toolbar.
+ */
+void EditorWindowPrivate::initToolbar(void)
+{
+	// Set action icons.
+	ui.actionSave->setIcon(
+		McRecoverQApplication::IconFromTheme(QLatin1String("document-save")));
+	// TODO: Actual "reload" icon.
+	ui.actionReload->setIcon(
+		McRecoverQApplication::IconFromTheme(QLatin1String("edit-undo")));
+
+	// Disable save actions by default.
+	ui.actionSave->setEnabled(false);
+
+	// Cache the separator action.
+	QList<QAction*> actions = ui.toolBar->actions();
+	if (!actions.isEmpty()) {
+		// TODO: Connect the destroyed() signal?
+		toolBarSeparator = actions.at(actions.size() - 1);
+	}
+
+	// Connect the "General" settings button to the signal mapper.
+	signalMapper->setMapping(ui.actionGeneralSettings, -1);
+	QObject::connect(ui.actionGeneralSettings, SIGNAL(triggered()),
+			 signalMapper, SLOT(map()));
+
+	// Update the save slot buttons.
+	updateSaveSlotButtons();
+}
+
+/**
+ * Update the save slot buttons.
+ */
+void EditorWindowPrivate::updateSaveSlotButtons(void)
+{
+	// Add/remove save slot buttons, if necessary.
+	const int saveSlots = (editorWidget ? editorWidget->saveSlots() : 0);
+	if (!editorWidget ||
+		(saveSlots == 1 && !editorWidget->hasGeneralSettings()))
+	{
+		// Special case: Single slot, no general settings.
+		// (Or, we don't have an EditorWidget.)
+
+		// Remove all buttons and hide the separator.
+		// NOTE: For save files that are "only" general settings,
+		// the editor should indicate 1 slot and no general settings.
+		// TODO: Test this!
+		ui.actionGeneralSettings->setVisible(false);
+		qDeleteAll(saveSlotButtons);
+		saveSlotButtons.clear();
+
+		// Hide the separator.
+		toolBarSeparator->setVisible(false);
+		return;
+	}
+
+	// Make sure the separator is visible.
+	toolBarSeparator->setVisible(true);
+
+	if (saveSlots > saveSlotButtons.size()) {
+		// Add buttons.
+		Q_Q(EditorWindow);
+		for (int i = saveSlotButtons.size(); i < saveSlots; i++) {
+			QAction *action = new QAction(QString::number(i+1), q);
+			action->setToolTip(EditorWidget::tr("Save Slot %1").arg(i+1));
+			action->setCheckable(true);
+			saveSlotButtons.append(action);
+			actgrpSaveSlots->addAction(action);
+			ui.toolBar->addAction(action);
+			// Connect the signal mapper.
+			signalMapper->setMapping(action, i);
+			QObject::connect(action, SIGNAL(triggered()),
+						signalMapper, SLOT(map()));
+		}
+	} else if (saveSlots < saveSlotButtons.size()) {
+		// Remove buttons.
+		for (int i = saveSlotButtons.size() - 1; i >= saveSlots; i--) {
+			delete saveSlotButtons.at(i);
+		}
+		saveSlotButtons.resize(saveSlots);
+	}
+
+	// NOTE: We can't easily insert a QAction by index, so we'll
+	// just hide/show the action when necessary.
+	const bool generalSettings = editorWidget->hasGeneralSettings();
+	ui.actionGeneralSettings->setVisible(generalSettings);
+
+	// Check if the current save slot is invalid.
+	const int currentSaveSlot = editorWidget->currentSaveSlot();
+	if (currentSaveSlot >= saveSlotButtons.size()) {
+		// Previous save slot no longer exists.
+		// Select the next highest save slot.
+		editorWidget->setCurrentSaveSlot(saveSlotButtons.size() - 1);
+	} else if (currentSaveSlot < 0 && !generalSettings) {
+		// Previous save slot was "General" settings,
+		// but it was disabled. Select slot 0.
+		editorWidget->setCurrentSaveSlot(0);
+	} else {
+		// Save slot is valid. Simply update the UI.
+		if (currentSaveSlot < 0) {
+			ui.actionGeneralSettings->setChecked(true);
+		} else {
+			saveSlotButtons.at(currentSaveSlot)->setChecked(true);
+		}
 	}
 }
 
@@ -95,7 +241,7 @@ void EditorWindowPrivate::setEditorWidget(QWidget *editorWidget)
  * @param parent Parent widget.
  */
 EditorWindow::EditorWindow(QWidget *parent)
-	: QDialog(parent,
+	: QMainWindow(parent,
 		Qt::Dialog |
 		Qt::CustomizeWindowHint |
 		Qt::WindowTitleHint |
@@ -115,6 +261,13 @@ EditorWindow::EditorWindow(QWidget *parent)
 	// Remove the window icon. (Mac "proxy icon")
 	this->setWindowIcon(QIcon());
 #endif
+
+	// Initialize the UI.
+	d->initToolbar();
+
+	// FIXME: setFile() needs to update the status of the "Save" button,
+	// depending on whether or not the file is read-only.
+	// Also, connect the readOnlyChanged() signal.
 }
 
 /**
@@ -138,7 +291,7 @@ void EditorWindow::changeEvent(QEvent *event)
 	}
 
 	// Pass the event to the base class.
-	this->QDialog::changeEvent(event);
+	super::changeEvent(event);
 }
 
 /** Public functions. **/
@@ -205,4 +358,20 @@ EditorWindow *EditorWindow::editVmuFile(VmuFile *vmuFile)
 	}
 	editor->d_func()->setEditorWidget(saEditor);
 	return editor;
+}
+
+/** Widget slots. **/
+
+/**
+ * A save slot button has been clicked.
+ * @param saveSlot Save slot. (-1 for "general" settings.)
+ */
+void EditorWindow::saveSlotButton_clicked(int saveSlot)
+{
+	Q_D(EditorWindow);
+	assert(d->editorWidget != nullptr);
+	if (d->editorWidget) {
+		assert(saveSlot >= -1 && saveSlot < d->editorWidget->saveSlots());
+		d->editorWidget->setCurrentSaveSlot(saveSlot);
+	}
 }
