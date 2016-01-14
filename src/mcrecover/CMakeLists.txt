@@ -157,6 +157,7 @@ SET(mcrecover_CARD_SRCS
 # File edtors.
 SET(mcrecover_EDIT_SRCS
 	edit/EditorWindow.cpp
+	edit/EditorWidget.cpp
 	edit/SonicAdventure/SAEditor.cpp
 	edit/SonicAdventure/SALevelStats.cpp
 	edit/SonicAdventure/SlotSelector.cpp
@@ -244,6 +245,7 @@ SET(mcrecover_CARD_MOC_H
 # File edtors.
 SET(mcrecover_EDIT_MOC_H
 	edit/EditorWindow.hpp
+	edit/EditorWidget.hpp
 	edit/SonicAdventure/SAEditor.hpp
 	edit/SonicAdventure/SALevelStats.hpp
 	edit/SonicAdventure/SlotSelector.hpp

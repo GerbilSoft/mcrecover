@@ -49,14 +49,14 @@
 /** SAEditorPrivate **/
 
 #include "ui_SAEditor.h"
-class SAEditorPrivate
+#include "../EditorWidget_p.hpp"
+class SAEditorPrivate : public EditorWidgetPrivate
 {
 	public:
 		SAEditorPrivate(SAEditor *q);
-		~SAEditorPrivate();
+		virtual ~SAEditorPrivate();
 
 	protected:
-		SAEditor *const q_ptr;
 		Q_DECLARE_PUBLIC(SAEditor)
 	private:
 		Q_DISABLE_COPY(SAEditorPrivate)
@@ -64,14 +64,9 @@ class SAEditorPrivate
 	public:
 		Ui::SAEditor ui;
 
-		// File being edited.
-		// TODO: EditorManager to handle File being destroyed.
-		File *file;
-
 		// sa_save_slot structs.
 		QVector<sa_save_slot*> data_main;
 		QVector<sadx_extra_save_slot*> data_sadx;
-		int slot; // active slot (-1 for none)
 
 		// BitFlagsModel objects.
 		// Used for event flags, NPC flags, etc.
@@ -116,8 +111,7 @@ class SAEditorPrivate
 };
 
 SAEditorPrivate::SAEditorPrivate(SAEditor* q)
-	: q_ptr(q)
-	, slot(-1)
+	: EditorWidgetPrivate(q)
 	, saEventFlagsModel(nullptr)
 	, saNPCFlagsModel(nullptr)
 	, sadxMissionFlags(nullptr)
@@ -183,23 +177,14 @@ void SAEditorPrivate::clearData(void)
  */
 void SAEditorPrivate::updateDisplay(void)
 {
-	const int slotCount = data_main.size();
-	if (slot < 0)
-		slot = 0;
-	if (slot >= slotCount)
-		slot = (slotCount - 1);
+	assert(this->currentSaveSlot >= 0 && this->currentSaveSlot < this->saveSlots);
 
 	// Show the slot selector if we have more than one slot.
-	ui.slotSelector->setVisible(slotCount > 1);
-
-	if (slot < 0 || slot >= slotCount) {
-		// Invalid slot number.
-		ui.saLevelStats->clear();
-		return;
-	}
+	// TODO: Remove slot selector; use EditorWindow's toolbar.
+	ui.slotSelector->setVisible(this->saveSlots > 1);
 
 	// Display the data.
-	const sa_save_slot *sa_save = data_main.at(slot);
+	const sa_save_slot *sa_save = data_main.at(this->currentSaveSlot);
 	ui.saGeneral->load(sa_save);
 	ui.saAdventure->load(sa_save);
 	ui.saLevelStats->load(sa_save);
@@ -219,8 +204,8 @@ void SAEditorPrivate::updateDisplay(void)
 	Q_Q(SAEditor);
 	const int missions_tab_idx = ui.tabWidget->indexOf(ui.tabMissions);
 	const sadx_extra_save_slot *sadx_extra_save = nullptr;
-	if (slot < data_sadx.size()) {
-		sadx_extra_save = data_sadx.at(slot);
+	if (this->currentSaveSlot < data_sadx.size()) {
+		sadx_extra_save = data_sadx.at(this->currentSaveSlot);
 	}
 	if (sadx_extra_save) {
 		// SADX extra data found. Load it.
@@ -255,14 +240,10 @@ void SAEditorPrivate::updateDisplay(void)
  */
 void SAEditorPrivate::saveCurrentSlot(void)
 {
-	const int slotCount = data_main.size();
-	if (slot < 0 || slot >= slotCount) {
-		// Invalid slot number.
-		return;
-	}
+	assert(this->currentSaveSlot >= 0 && this->currentSaveSlot < this->saveSlots);
 
 	// Save the data.
-	sa_save_slot *sa_save = data_main.at(slot);
+	sa_save_slot *sa_save = data_main.at(this->currentSaveSlot);
 	ui.saGeneral->save(sa_save);
 	ui.saAdventure->save(sa_save);
 	ui.saLevelStats->save(sa_save);
@@ -276,8 +257,8 @@ void SAEditorPrivate::saveCurrentSlot(void)
 
 	// SADX extra data?
 	sadx_extra_save_slot *sadx_extra_save = nullptr;
-	if (slot < data_sadx.size()) {
-		sadx_extra_save = data_sadx.at(slot);
+	if (this->currentSaveSlot < data_sadx.size()) {
+		sadx_extra_save = data_sadx.at(this->currentSaveSlot);
 	}
 	if (sadx_extra_save) {
 		// SADX extra data found. Save it.
@@ -365,8 +346,7 @@ void SAEditorPrivate::byteswap_sadx_extra_save_slot(sadx_extra_save_slot *sadx_e
  * @param parent Parent widget.
  */
 SAEditor::SAEditor(QWidget *parent)
-	: QWidget(parent)
-	, d_ptr(new SAEditorPrivate(this))
+	: EditorWidget(new SAEditorPrivate(this), parent)
 {
 	Q_D(SAEditor);
 	d->ui.setupUi(this);
@@ -401,7 +381,7 @@ SAEditor::SAEditor(QWidget *parent)
  */
 SAEditor::~SAEditor()
 {
-	delete d_ptr;
+	// EditorWidget base class deletes d_ptr.
 }
 
 /**
@@ -423,18 +403,13 @@ void SAEditor::changeEvent(QEvent *event)
 /** Public functions. **/
 
 /**
- * Get the file currently being edited.
- * @return File being edited, or nullptr if none.
- */
-File *SAEditor::file(void) const
-{
-	Q_D(const SAEditor);
-	return d->file;
-}
-
-/**
  * Set the File to edit.
+ * This function MUST be overridden by subclasses.
+ *
  * @param file File to edit.
+ * If the file isn't valid, it won't be set;
+ * check file() afterwards to verify.
+ *
  * @return 0 on success; non-zero on error (and file will not be set).
  * TODO: Error code constants?
  */
@@ -510,6 +485,20 @@ int SAEditor::setFile(File *file)
 			d->data_sadx.append(nullptr);
 		}
 
+		// HACK: Remove before committing.
+		// Add the main save slot two more times to simulate DC.
+		// TODO: Add a way to 'hide' SADX Extras in various widgets
+		// by calling loadDX() with nullptr?
+		sa_save_slot *svx = (sa_save_slot*)malloc(sizeof(*svx));
+		memcpy(svx, sa_save, sizeof(*svx));
+		d->data_main.append(svx);
+		svx = (sa_save_slot*)malloc(sizeof(*svx));
+		memcpy(svx, sa_save, sizeof(*svx));
+		d->data_main.append(svx);
+
+		d->data_sadx.append(nullptr);
+		d->data_sadx.append(nullptr);
+
 		// Loaded successfully.
 		ret = 0;
 	} else {
@@ -522,12 +511,35 @@ int SAEditor::setFile(File *file)
 
 end:
 	// Update the display.
-	// TODO: Connect slotCountChanged()?
-	const int slotCount = d->data_main.size();
-	d->ui.slotSelector->setSlotCount(slotCount);
+	d->setSaveSlots(d->data_main.size());
+	d->setGeneralSettings(false);
+	setCurrentSaveSlot(0);
+	/** TODO: Remove slotSelector. **/
+	d->ui.slotSelector->setSlotCount(d->saveSlots);
 	d->ui.slotSelector->setSlot(0);
 	d->updateDisplay();
 	return ret;
+}
+
+/** Public slots. **/
+
+/**
+ * Set the current save slot.
+ *
+ * @param saveSlot New save slot. (-1 for "general" settings)
+ * TODO: Return the selected save slot?
+ */
+void SAEditor::setCurrentSaveSlot(int saveSlot)
+{
+	Q_D(SAEditor);
+	assert(saveSlot >= 0 && saveSlot < d->saveSlots);
+	if (d->currentSaveSlot == saveSlot)
+		return;
+
+	d->saveCurrentSlot();
+	d->currentSaveSlot = saveSlot;
+	d->updateDisplay();	// TODO: Make saveSlot a parameter of updateDisplay()?
+	emit currentSaveSlotChanged(saveSlot);
 }
 
 /** Widget slots. **/
@@ -538,19 +550,6 @@ end:
  */
 void SAEditor::on_slotSelector_slotChanged(int slot)
 {
-	Q_D(SAEditor);
-	const int slotCount = d->data_main.size();
-	if (slot < 0)
-		slot = 0;
-	if (slot >= slotCount)
-		slot = (slotCount - 1);
-
-	if (slot < 0 || slot >= slotCount) {
-		// Invalid slot number.
-		return;
-	}
-
-	d->saveCurrentSlot();
-	d->slot = slot;
-	d->updateDisplay();
+	// TODO: Remove slotSelector.
+	setCurrentSaveSlot(slot);
 }

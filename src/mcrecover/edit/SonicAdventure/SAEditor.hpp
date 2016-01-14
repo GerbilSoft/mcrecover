@@ -22,23 +22,20 @@
 #ifndef __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__
 #define __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__
 
-#include <QtGui/QDialog>
+#include "../EditorWidget.hpp"
 
 class File;
 
 class SAEditorPrivate;
-class SAEditor : public QWidget
+class SAEditor : public EditorWidget
 {
 	Q_OBJECT
 
-	Q_PROPERTY(File* file READ file WRITE setFile)
-
 	public:
 		SAEditor(QWidget *parent = nullptr);
-		~SAEditor();
+		virtual ~SAEditor();
 
 	protected:
-		SAEditorPrivate *const d_ptr;
 		Q_DECLARE_PRIVATE(SAEditor)
 	private:
 		Q_DISABLE_COPY(SAEditor)
@@ -51,19 +48,29 @@ class SAEditor : public QWidget
 		/** Public functions. **/
 
 		/**
-		 * Get the file currently being edited.
-		 * @return File being edited, or nullptr if none.
-		 */
-		File *file(void) const;
-
-		/**
 		 * Set the File to edit.
+		 *
 		 * @param file File to edit.
 		 * If the file isn't valid, it won't be set;
 		 * check file() afterwards to verify.
+		 *
+		 * @return 0 on success; non-zero on error (and file will not be set).
+		 * TODO: Error code constants?
 		 */
-		int setFile(File *file);
+		virtual int setFile(File *file) final;
 
+	public slots:
+		/** Public slots. **/
+
+		/**
+		 * Set the current save slot.
+		 *
+		 * @param saveSlot New save slot. (-1 for "general" settings)
+		 * TODO: Return the selected save slot?
+		 */
+		virtual void setCurrentSaveSlot(int saveSlot) final;
+ 
+		// TODO: Remove slotSelector.
 	protected slots:
 		/** Widget slots. **/
 
