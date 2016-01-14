@@ -160,7 +160,6 @@ SET(mcrecover_EDIT_SRCS
 	edit/EditorWidget.cpp
 	edit/SonicAdventure/SAEditor.cpp
 	edit/SonicAdventure/SALevelStats.cpp
-	edit/SonicAdventure/SlotSelector.cpp
 	edit/SonicAdventure/SALevelClearCount.cpp
 	edit/SonicAdventure/SAEventFlags.cpp
 	edit/SonicAdventure/BitFlagsModel.cpp
@@ -248,7 +247,6 @@ SET(mcrecover_EDIT_MOC_H
 	edit/EditorWidget.hpp
 	edit/SonicAdventure/SAEditor.hpp
 	edit/SonicAdventure/SALevelStats.hpp
-	edit/SonicAdventure/SlotSelector.hpp
 	edit/SonicAdventure/SALevelClearCount.hpp
 	edit/SonicAdventure/SAEventFlags.hpp
 	edit/SonicAdventure/BitFlagsModel.hpp

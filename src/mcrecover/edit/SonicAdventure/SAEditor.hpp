@@ -79,16 +79,6 @@ class SAEditor : public EditorWidget
 		 * TODO: Return the selected save slot?
 		 */
 		virtual void setCurrentSaveSlot(int saveSlot) final;
- 
-		// TODO: Remove slotSelector.
-	protected slots:
-		/** Widget slots. **/
-
-		/**
-		 * Slot selector's slot has changed.
-		 * @param slot New slot.
-		 */
-		void on_slotSelector_slotChanged(int slot);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__ */

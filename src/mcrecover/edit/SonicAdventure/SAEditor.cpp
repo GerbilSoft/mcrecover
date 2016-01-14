@@ -179,10 +179,6 @@ void SAEditorPrivate::updateDisplay(void)
 {
 	assert(this->currentSaveSlot >= 0 && this->currentSaveSlot < this->saveSlots);
 
-	// Show the slot selector if we have more than one slot.
-	// TODO: Remove slot selector; use EditorWindow's toolbar.
-	ui.slotSelector->setVisible(this->saveSlots > 1);
-
 	// Display the data.
 	const sa_save_slot *sa_save = data_main.at(this->currentSaveSlot);
 	ui.saGeneral->load(sa_save);
@@ -514,9 +510,6 @@ end:
 	d->setSaveSlots(d->data_main.size());
 	d->setGeneralSettings(false);
 	setCurrentSaveSlot(0);
-	/** TODO: Remove slotSelector. **/
-	d->ui.slotSelector->setSlotCount(d->saveSlots);
-	d->ui.slotSelector->setSlot(0);
 	d->updateDisplay();
 	return ret;
 }
@@ -548,16 +541,4 @@ void SAEditor::setCurrentSaveSlot(int saveSlot)
 	d->saveCurrentSlot();
 	super::setCurrentSaveSlot(saveSlot);
 	d->updateDisplay();	// TODO: Make saveSlot a parameter of updateDisplay()?
-}
-
-/** Widget slots. **/
-
-/**
- * Slot selector's slot has changed.
- * @param slot New slot.
- */
-void SAEditor::on_slotSelector_slotChanged(int slot)
-{
-	// TODO: Remove slotSelector.
-	setCurrentSaveSlot(slot);
 }
