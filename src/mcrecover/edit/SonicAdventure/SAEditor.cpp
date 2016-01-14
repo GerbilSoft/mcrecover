@@ -570,28 +570,28 @@ end:
 /** Public slots. **/
 
 /**
- * Set the current save slot.
+ * Set the current save slot. [INTERNAL FUNCTION]
  *
- * Subclasses should save their current save slot,
- * call EditorWidget::setCurrentSaveSlot(), and then
- * load the new save slot.
+ * This is called by the base class when the
+ * setCurrentSaveSlot() function is called.
+ * Subclasses should load the appropriate data
+ * from the specified save slot.
  *
- * The base class function call is needed in order to
- * update internal variables and emit signals.
+ * If an error occurs, the save slot will not be changed.
  *
- * NOTE: The subclass should NOT modify d->currentSaveSlot!
- *
- * @param saveSlot New save slot. (-1 for "general" settings)
- * TODO: Return the selected save slot?
+ * @return 0 on success; non-zero on error.
  */
-void SAEditor::setCurrentSaveSlot(int saveSlot)
+int SAEditor::setCurrentSaveSlot_int(int saveSlot)
 {
 	Q_D(SAEditor);
 	assert(saveSlot >= 0 && saveSlot < d->saveSlots);
 	if (d->currentSaveSlot == saveSlot)
-		return;
+		return -EINVAL;
 
 	d->saveCurrentSlot();
-	super::setCurrentSaveSlot(saveSlot);
-	d->updateDisplay();	// TODO: Make saveSlot a parameter of updateDisplay()?
+	// TODO: Make saveSlot a parameter of updateDisplay()?
+	// For now, we're updating d->currentSaveSlot directly.
+	d->currentSaveSlot = saveSlot;
+	d->updateDisplay();
+	return 0;
 }

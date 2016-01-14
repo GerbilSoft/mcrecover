@@ -105,20 +105,25 @@ class EditorWidget : public QWidget
 	public slots:
 		/**
 		 * Set the current save slot.
-		 *
-		 * Subclasses should save their current save slot,
-		 * call EditorWidget::setCurrentSaveSlot(), and then
-		 * load the new save slot.
-		 *
-		 * The base class function call is needed in order to
-		 * update internal variables and emit signals.
-		 *
-		 * NOTE: The subclass should NOT modify d->currentSaveSlot!
-		 *
 		 * @param saveSlot New save slot. (-1 for "general" settings)
 		 * TODO: Return the selected save slot?
 		 */
-		virtual void setCurrentSaveSlot(int saveSlot);
+		void setCurrentSaveSlot(int saveSlot);
+
+	protected:
+		/**
+		 * Set the current save slot. [INTERNAL FUNCTION]
+		 *
+		 * This is called by the base class when the
+		 * setCurrentSaveSlot() function is called.
+		 * Subclasses should load the appropriate data
+		 * from the specified save slot.
+		 *
+		 * If an error occurs, the save slot will not be changed.
+		 *
+		 * @return 0 on success; non-zero on error.
+		 */
+		virtual int setCurrentSaveSlot_int(int saveSlot) = 0;
 
 	signals:
 		/**

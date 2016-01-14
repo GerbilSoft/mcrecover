@@ -69,25 +69,20 @@ class SAEditor : public EditorWidget
 		 */
 		virtual int setFile(File *file) final;
 
-	public slots:
-		/** Public slots. **/
-
+	protected:
 		/**
-		 * Set the current save slot.
+		 * Set the current save slot. [INTERNAL FUNCTION]
 		 *
-		 * Subclasses should save their current save slot,
-		 * call EditorWidget::setCurrentSaveSlot(), and then
-		 * load the new save slot.
+		 * This is called by the base class when the
+		 * setCurrentSaveSlot() function is called.
+		 * Subclasses should load the appropriate data
+		 * from the specified save slot.
 		 *
-		 * The base class function call is needed in order to
-		 * update internal variables and emit signals.
+		 * If an error occurs, the save slot will not be changed.
 		 *
-		 * NOTE: The subclass should NOT modify d->currentSaveSlot!
-		 *
-		 * @param saveSlot New save slot. (-1 for "general" settings)
-		 * TODO: Return the selected save slot?
+		 * @return 0 on success; non-zero on error.
 		 */
-		virtual void setCurrentSaveSlot(int saveSlot) final;
+		virtual int setCurrentSaveSlot_int(int saveSlot) final;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__ */

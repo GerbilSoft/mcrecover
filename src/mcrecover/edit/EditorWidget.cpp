@@ -165,6 +165,20 @@ void EditorWidget::setCurrentSaveSlot(int saveSlot)
        Q_D(EditorWidget);
        if (d->currentSaveSlot == saveSlot)
                return;
-       d->currentSaveSlot = saveSlot;
-       emit currentSaveSlotChanged(saveSlot);
+
+       // Save the current save slot and restore it in case
+       // the function fails. This is needed because some
+       // editors will modify currentSaveSlot in the process
+       // of updating.
+       int prevSaveSlot = d->currentSaveSlot;
+       int ret = setCurrentSaveSlot_int(saveSlot);
+       if (ret == 0) {
+	       // Save slot set successfully.
+		d->currentSaveSlot = saveSlot;
+		emit currentSaveSlotChanged(saveSlot);
+       } else {
+	       // Setting the save slot failed.
+	       // TODO: Return an error?
+	       d->currentSaveSlot = prevSaveSlot;
+       }
 }
