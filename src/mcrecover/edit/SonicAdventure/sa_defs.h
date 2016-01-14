@@ -306,9 +306,19 @@ typedef struct PACKED _sa_adventure_mode {
 // Level clear count.
 #define SA_LEVEL_CLEAR_COUNT_LEN 344
 #pragma pack(1)
-typedef struct PACKED _sa_level_clear_count {
+typedef union PACKED _sa_level_clear_count {
 	// All levels are available for all characters.
-	uint8_t clear[8][43];
+	uint8_t all[8][43];
+	struct {
+		uint8_t sonic[43];
+		uint8_t unused1[43];
+		uint8_t tails[43];
+		uint8_t knuckles[43];
+		uint8_t unused2[43];
+		uint8_t amy[43];
+		uint8_t gamma[43];
+		uint8_t big[43];
+	};
 } sa_level_clear_count;
 #pragma pack()
 

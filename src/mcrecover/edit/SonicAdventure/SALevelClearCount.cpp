@@ -189,7 +189,7 @@ void SALevelClearCountPrivate::updateDisplay(void)
 	// NOTE: Outer loop is the character due to cache locality.
 	for (int chr = 0; chr < NUM_ELEMENTS(levels[0].spnCount); chr++) {
 		for (int level = 0; level < NUM_ELEMENTS(levels); level++) {
-			levels[level].spnCount[chr]->setValue(clear_count.clear[chr][level]);
+			levels[level].spnCount[chr]->setValue(clear_count.all[chr][level]);
 		}
 	}
 
@@ -302,5 +302,5 @@ void SALevelClearCount::spnCount_mapped_slot(int spnId)
 		return;
 
 	Q_D(SALevelClearCount);
-	d->clear_count.clear[chr][level] = d->levels[level].spnCount[chr]->value();
+	d->clear_count.all[chr][level] = d->levels[level].spnCount[chr]->value();
 }
