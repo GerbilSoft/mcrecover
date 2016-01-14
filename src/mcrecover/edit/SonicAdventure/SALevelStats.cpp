@@ -326,11 +326,11 @@ void SALevelStatsPrivate::switchLevels(int character)
 			if (character == 5) {
 				// Big. Change times to weights.
 				ui.lblBestTime->setText(SALevelStats::tr("Best Weight:"));
-				levels[i].tceBestTime->setShowWeight(true);
+				levels[i].tceBestTime->setDisplayMode(TimeCodeEdit::DM_WEIGHT);
 			} else {
 				// Other character. Back to times.
 				ui.lblBestTime->setText(SALevelStats::tr("Best Time:"));
-				levels[i].tceBestTime->setShowWeight(false);
+				levels[i].tceBestTime->setDisplayMode(TimeCodeEdit::DM_MSF);
 			}
 		}
 	}

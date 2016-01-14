@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * TimeCodeEdit.hpp: Slot selection widget.                                *
+ * TimeCodeEdit.hpp: sa_time_code editor widget.                           *
  *                                                                         *
- * Copyright (c) 2015-2016 by David Korth.                                 *
+ * Copyright (c) 2016 by David Korth.                                      *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -66,16 +66,29 @@ class TimeCodeEdit : public QWidget
 		/** Public functions. **/
 
 		/**
+		 * Display mode.
+		 */
+		enum DisplayMode {
+			DM_MSF,		// Minutes, Seconds, Frames (1/60th)
+			DM_HMSF,	// Hours, Minutes, Seconds, Frames
+			DM_WEIGHT,	// Weight (for Big the Cat)
+			DM_MSC,		// Minutes, Seconds, Centiseconds
+
+			// TODO: Scores? (show 3 scores at once)
+			// TODO: Register as a Qt enum?
+		};
+
+		/**
 		 * Set the minutes/seconds/frames using an sa_time_code.
 		 *
-		 * If hours are visible, and minutes is larger than 59,
-		 * hours will be adjusted; if hours is larger than 99,
-		 * hours will be clamped to 99.
-		 *
-		 * If hours are not visible, and minutes is larger than 99,
+		 * If DM_MSF or DM_MSC, and minutes is larger than 99,
 		 * minutes will be clamped to 99.
 		 *
-		 * If the display mode is weight, this function will do nothing.
+		 * If DM_HMSF, and minutes is larger than 59, hours will
+		 * be adjusted. If hours is larger than 99, hours will
+		 * be clamped to 99.
+		 *
+		 * If DM_WEIGHT, this function will do nothing.
 		 *
 		 * @param time_code [in] sa_time_code.
 		 */
@@ -84,7 +97,7 @@ class TimeCodeEdit : public QWidget
 		/**
 		 * Get the minutes/seconds/frames as an sa_time_code.
 		 *
-		 * If the display mode is weight, this function will do nothing.
+		 * If DM_WEIGHT, this function will do nothing.
 		 *
 		 * @param time_code [out] sa_time_code.
 		 */
@@ -96,78 +109,89 @@ class TimeCodeEdit : public QWidget
 		 * The three values are the weight divided by 10.
 		 * Range: [0, 65535]
 		 *
-		 * If the display mode is time, this function will do nothing.
+		 * If not DM_WEIGHT, this function will do nothing.
 		 *
-		 * TODO: Pass an array instead of individual weights?
-		 * @param weights Array of 3 uint16_t weight values.
+		 * @param weights [in] Array of 3 uint16_t weight values.
 		 */
 		void setValue(const uint16_t weights[3]);
 
 		/**
 		 * Get the three weights.
-		 * @param weights Array of 3 uint16_t to put the weights in.
+		 *
+		 * If not DM_WEIGHT, this function will do nothing.
+		 *
+		 * @param weights [out] Array of 3 uint16_t to put the weights in.
 		 */
 		void value(uint16_t weights[3]) const;
 
 		/**
 		 * Set the time in NTSC frames. (1/60th of a second)
+		 *
+		 * This only works in DM_MSF and DM_HMSF.
+		 * TODO: Convert to centiseconds for DM_MSC?
+		 *
 		 * @param ntscFrames Time in NTSC frames.
 		 */
 		void setValueInNtscFrames(uint32_t ntscFrames);
 
 		/**
 		 * Get the time in NTSC frames. (1/60th of a second)
+		 *
+		 * If not DM_MSF or DM_HMSF, this function will return 0.
+		 * TODO: Convert from centiseconds for DM_MSC?
+		 *
 		 * @return Time in NTSC frames.
 		 */
 		uint32_t valueInNtscFrames(void) const;
 
 		/**
 		 * Get the hours.
-		 * @return Hours. (If hours is not visible, this will return 0.)
+		 *
+		 * If not DM_HMSF, this function will return 0.
+		 *
+		 * @return Hours.
 		 */
 		int hours(void) const;
 
 		/**
 		 * Get the minutes.
+		 *
+		 * If not DM_MSF, DM_HMSF, or DM_MSC, this function will return 0.
+		 *
 		 * @return Minutes.
 		 */
 		int minutes(void) const;
 
 		/**
 		 * Get the seconds.
+		 *
+		 * If not DM_MSF, DM_HMSF, or DM_MSC, this function will return 0.
+		 *
 		 * @return Seconds.
 		 */
 		int seconds(void) const;
 
 		/**
 		 * Get the frames.
+		 *
+		 * If not DM_MSF, DM_HMSF, or DM_MSC, this function will return 0.
+		 * TODO: Convert from centiseconds for DM_MSC?
+		 *
 		 * @return Frames.
 		 */
 		int frames(void) const;
 
 		/**
-		 * Set the hours field visibility.
-		 * @param showHours If true, show hours.
+		 * Set the display mode.
+		 * @param displayMode New display mode.
 		 */
-		void setShowHours(bool showHours);
+		void setDisplayMode(DisplayMode displayMode);
 
 		/**
-		 * Is the hours field visible?
-		 * @return True if it is; false if it isn't.
+		 * Get the display mode.
+		 * @return Display mode.
 		 */
-		bool isShowHours(void) const;
-
-		/**
-		 * Set the time/weight mode.
-		 * @param showWeight If true, show weights; otherwise, show time.
-		 */
-		void setShowWeight(bool showWeight);
-
-		/**
-		 * Are we showing time or weights?
-		 * @return True if showing weights; false if showing time.
-		 */
-		bool isShowWeight(void) const;
+		DisplayMode displayMode(void) const;
 
 	public slots:
 		/** Public slots. **/
@@ -175,12 +199,14 @@ class TimeCodeEdit : public QWidget
 		/**
 		 * Set the minutes/seconds/frames.
 		 *
-		 * If hours are visible, and minutes is larger than 59,
-		 * hours will be adjusted; if hours is larger than 99,
-		 * hours will be clamped to 99.
-		 *
-		 * If hours are not visible, and minutes is larger than 99,
+		 * If DM_MSF or DM_MSC, and minutes is larger than 99,
 		 * minutes will be clamped to 99.
+		 *
+		 * If DM_HMSF, and minutes is larger than 59, hours will
+		 * be adjusted. If hours is larger than 99, hours will
+		 * be clamped to 99.
+		 *
+		 * If DM_WEIGHT, this function will do nothing.
 		 *
 		 * @param minutes [in] Minutes.
 		 * @param seconds [in] Seconds.
@@ -191,7 +217,7 @@ class TimeCodeEdit : public QWidget
 		/**
 		 * Set the hours value.
 		 *
-		 * If hours isn't visible, nothing will be done.
+		 * If not DM_HMSF, this function will do nothing
 		 *
 		 * @param hours [in] Hours.
 		 */

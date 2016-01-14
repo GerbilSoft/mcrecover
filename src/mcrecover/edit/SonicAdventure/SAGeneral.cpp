@@ -65,7 +65,7 @@ SAGeneral::SAGeneral(QWidget *parent)
 	d->ui.setupUi(this);
 
 	// Show hours in the TimeCodeEdit.
-	d->ui.tcePlayTime->setShowHours(true);
+	d->ui.tcePlayTime->setDisplayMode(TimeCodeEdit::DM_HMSF);
 
 	// Level names.
 	// Does NOT include Chao Gardens or Chao Race. (last 4 entries)
