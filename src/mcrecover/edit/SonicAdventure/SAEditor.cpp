@@ -333,9 +333,9 @@ void SAEditorPrivate::byteswap_sadx_extra_save_slot(sadx_extra_save_slot *sadx_e
 		sadx_extra_save->rings_metal[i]  = __swab16(sadx_extra_save->rings_metal[i]);
 	}
 
-	// Metal Sonic minigame scores.
-	for (int i = 0; i < NUM_ELEMENTS(sadx_extra_save->minigame_scores_metal); i++) {
-		sadx_extra_save->minigame_scores_metal[i] = __swab32(sadx_extra_save->minigame_scores_metal[i]);
+	// Metal Sonic mini-game scores.
+	for (int i = 0; i < NUM_ELEMENTS(sadx_extra_save->mini_game_scores_metal); i++) {
+		sadx_extra_save->mini_game_scores_metal[i] = __swab32(sadx_extra_save->mini_game_scores_metal[i]);
 	}
 
 	// Metal Sonic emblems. (32-bit bitfield, host-endian.)

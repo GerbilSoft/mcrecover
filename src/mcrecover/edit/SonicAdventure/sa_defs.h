@@ -406,9 +406,9 @@ typedef struct PACKED _sadx_extra_save_slot
 	uint16_t reserved1;		// [0x43A] unknown
 
 	// TODO: Mini-games.
-	uint32_t minigame_scores_metal[6];	// 0x53C
-	sa_time_code minigame_times_metal[5];	// 0x554
-	sa_time_code boss_times_metal[3];	// 0x563
+	uint32_t mini_game_scores_metal[6];	// 0x53C
+	sa_time_code twinkle_circuit_metal[5];	// 0x554
+	sa_time_code boss_attack_metal[3];	// 0x563
 
 	// [0x56C] Metal Sonic emblems. (bitfield)
 	uint32_t emblems_metal;
