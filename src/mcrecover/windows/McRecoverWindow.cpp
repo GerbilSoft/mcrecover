@@ -64,6 +64,7 @@ using std::vector;
 #include <QtCore/QFile>
 #include <QtCore/QSignalMapper>
 #include <QtCore/QLocale>
+#include <QtCore/QTextCodec>
 #include <QtGui/QAction>
 #include <QtGui/QActionGroup>
 #include <QtGui/QDragEnterEvent>
@@ -112,7 +113,8 @@ class McRecoverWindowPrivate
 
 		/**
 		 * Show a warning if the card (or files on the card) are Japanese,
-		 * but PCRE doesn't have Unicode character properties support.
+		 * but either Qt doesn't support Shift-JIS or PCRE doesn't have
+		 * Unicode character properties support.
 		 */
 		void showJpWarning(void);
 
@@ -320,25 +322,55 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 
 /**
  * Show a warning if the card (or files on the card) are Japanese,
- * but PCRE doesn't have Unicode character properties support.
+ * but either Qt doesn't support Shift-JIS or PCRE doesn't have
+ * Unicode character properties support.
  */
 void McRecoverWindowPrivate::showJpWarning(void)
 {
+	const QString prefix = QChar(0x2022) + QChar(L' ');
+	QString msg;
+	int err_count = 0;
+
+	// FIXME: MessageWidget text cannot be retranslated while it's still visible.
+	// FIXME: Mac OS X will use a dylib in the application framework.
+
+	if (!QTextCodec::codecForName("Shift-JIS")) {
+		// Qt doesn't support Shift-JIS.
+		err_count++;
+#ifdef QT_IS_STATIC
+		//: Statically-linked Qt is missing qjpcodecs.
+		msg = prefix + McRecoverWindow::tr(
+			"The internal Qt library was not compiled with Shift-JIS support.");
+#else /* !QT_IS_STATIC */
+		//: Dyanmically-linked Qt is missing qjpcodecs.
+		msg = prefix + McRecoverWindow::tr(
+			"The system Qt library was not compiled with Shift-JIS support.");
+#endif /* QT_IS_STATIC */
+	}
+
 	if (!PcreRegex::PCRE_has_UCP()) {
-		// FIXME: MessageWidget text cannot be retranslated while it's still visible.
-		// FIXME: Mac OS X will use a dylib in the application framework.
+		if (err_count > 0) {
+			msg += QChar(L'\n');
+		}
+		err_count++;
 #ifdef PCRE_STATIC
 		//: Statically-linked PCRE is missing Unicode character properties support.
-		QString msg = McRecoverWindow::tr(
-				"The internal PCRE library was not compiled with Unicode character properties support.\n"
-				"Some files with Japanese descriptions might not be found when scanning.");
+		msg += prefix + McRecoverWindow::tr(
+			"The internal PCRE library was not compiled with Unicode character properties support.");
 #else /* !PCRE_STATIC */
 		//: Dynamically-linked PCRE is missing Unicode character properties support.
-		QString msg = McRecoverWindow::tr(
-				"The system PCRE library was not compiled with Unicode character properties support.\n"
-				"Some files with Japanese descriptions might not be found when scanning.");
+		msg += prefix + McRecoverWindow::tr(
+			"The system PCRE library was not compiled with Unicode character properties support.");
 #endif /* PCRE_STATIC */
-		ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING, 0, card);
+	}
+
+	if (err_count > 0) {
+		//: Errors occurred while attempting to decode Japanese text.
+		QString osd = McRecoverWindow::tr(
+			"Error(s) occurred while attempting to decode Japanese text:\n%1\n"
+			"Some files with Japanese descriptions might not be found when scanning.", 0, err_count)
+				.arg(msg);
+		ui.msgWidget->showMessage(osd, MessageWidget::ICON_WARNING, 0, card);
 	}
 }
 
@@ -1092,9 +1124,11 @@ void McRecoverWindow::openCard(const QString &filename)
 	}
 
 	// If the card encoding or any files are Japanese,
-	// show a warning if PCRE doesn't support UCP.
-	if (isJapanese)
+	// show a warning if either Qt doesn't support Shift-JIS
+	// or if PCRE doesn't support UCP.
+	if (isJapanese) {
 		d->showJpWarning();
+	}
 
 	// Check for other card errors.
 	// NOTE: These aren't retranslated if the UI is retranslated.
