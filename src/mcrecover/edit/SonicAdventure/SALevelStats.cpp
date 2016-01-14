@@ -107,7 +107,7 @@ class SALevelStatsPrivate
 
 		/**
 		 * Switch levels to another character.
-		 * This funciton automatically calls updateDisplay().
+		 * This function automatically calls updateDisplay().
 		 * @param character Character ID.
 		 */
 		void switchLevels(int character);
@@ -284,7 +284,7 @@ void SALevelStatsPrivate::initLevels(void)
 
 /**
  * Switch levels to another character.
- * This funciton automatically calls updateDisplay().
+ * This function automatically calls updateDisplay().
  * @param character Character ID.
  */
 void SALevelStatsPrivate::switchLevels(int character)
