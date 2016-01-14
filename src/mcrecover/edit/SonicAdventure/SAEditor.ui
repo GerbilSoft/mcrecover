@@ -73,6 +73,11 @@
       <attribute name="title">
        <string>&amp;Sub Games</string>
       </attribute>
+      <layout class="QVBoxLayout" name="vboxSubGames">
+       <item>
+        <widget class="SASubGames" name="saSubGames" native="true"/>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tabExtraEmblems">
       <attribute name="title">
@@ -131,8 +136,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>784</width>
-            <height>415</height>
+            <width>92</width>
+            <height>22</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="vboxLevelClearCountContent">
@@ -185,8 +190,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>768</width>
-                <height>376</height>
+                <width>92</width>
+                <height>22</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="vboxSADXMissionsContent">
@@ -262,6 +267,12 @@
    <class>SAMiscEmblems</class>
    <extends>QWidget</extends>
    <header>edit/SonicAdventure/SAMiscEmblems.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SASubGames</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/SASubGames.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

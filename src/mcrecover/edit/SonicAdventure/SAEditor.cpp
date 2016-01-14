@@ -203,6 +203,7 @@ void SAEditorPrivate::updateDisplay(void)
 	ui.saGeneral->load(sa_save);
 	ui.saAdventure->load(sa_save);
 	ui.saLevelStats->load(sa_save);
+	ui.saSubGames->load(sa_save);
 	ui.saMiscEmblems->load(sa_save);
 	ui.saLevelClearCount->load(sa_save);
 
@@ -225,6 +226,7 @@ void SAEditorPrivate::updateDisplay(void)
 		// SADX extra data found. Load it.
 		ui.saGeneral->loadDX(sadx_extra_save);
 		ui.saLevelStats->loadDX(sadx_extra_save);
+		ui.saSubGames->loadDX(sadx_extra_save);
 
 		// Missions.
 		sadxMissionFlags.setAllFlags(&sadx_extra_save->missions[0],
@@ -264,6 +266,7 @@ void SAEditorPrivate::saveCurrentSlot(void)
 	ui.saGeneral->save(sa_save);
 	ui.saAdventure->save(sa_save);
 	ui.saLevelStats->save(sa_save);
+	ui.saSubGames->save(sa_save);
 	ui.saMiscEmblems->save(sa_save);
 	ui.saLevelClearCount->save(sa_save);
 
@@ -280,6 +283,7 @@ void SAEditorPrivate::saveCurrentSlot(void)
 		// SADX extra data found. Save it.
 		ui.saGeneral->saveDX(sadx_extra_save);
 		ui.saLevelStats->saveDX(sadx_extra_save);
+		ui.saSubGames->saveDX(sadx_extra_save);
 
 		// Missions.
 		sadxMissionFlags.allFlags(&sadx_extra_save->missions[0],
@@ -304,6 +308,9 @@ void SAEditorPrivate::byteswap_sa_save_slot(sa_save_slot *sa_save)
 	}
 	for (int i = 0; i < NUM_ELEMENTS(sa_save->rings.all); i++) {
 		sa_save->rings.all[i] = __swab16(sa_save->rings.all[i]);
+	}
+	for (int i = 0; i < NUM_ELEMENTS(sa_save->mini_game_scores.all); i++) {
+		sa_save->mini_game_scores.all[i] = __swab32(sa_save->mini_game_scores.all[i]);
 	}
 
 	sa_save->last_level = __swab16(sa_save->last_level);

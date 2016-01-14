@@ -180,6 +180,7 @@ SET(mcrecover_EDIT_SRCS
 	edit/SonicAdventure/SAAdventure.cpp
 	edit/SonicAdventure/SAMiscEmblems.cpp
 	edit/SonicAdventure/TimeCodeEdit.cpp
+	edit/SonicAdventure/SASubGames.cpp
 	)
 SET(mcrecover_EDIT_H
 	edit/SonicAdventure/SAData.h
@@ -262,6 +263,7 @@ SET(mcrecover_EDIT_MOC_H
 	edit/SonicAdventure/SAAdventure.hpp
 	edit/SonicAdventure/SAMiscEmblems.hpp
 	edit/SonicAdventure/TimeCodeEdit.hpp
+	edit/SonicAdventure/SASubGames.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H
@@ -295,6 +297,7 @@ SET(mcrecover_EDIT_UIS
 	edit/SonicAdventure/SAAdventure.ui
 	edit/SonicAdventure/SAMiscEmblems.ui
 	edit/SonicAdventure/TimeCodeEdit.ui
+	edit/SonicAdventure/SASubGames.ui
 	)
 
 # Generate the header files from the UI files.
