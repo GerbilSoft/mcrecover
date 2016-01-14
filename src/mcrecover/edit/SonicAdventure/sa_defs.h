@@ -143,8 +143,8 @@ typedef union PACKED _sa_rings {
 #define SA_MINI_GAME_SCORES_LEN 108
 #pragma pack(1)
 typedef union PACKED _sa_mini_game_scores {
-	uint32_t all[27];       // all
-	uint32_t game[9][3];    // per game
+	uint32_t all[27];	// all
+	uint32_t game[9][3];	// per game
 	struct {
 		struct {
 			uint32_t sonic[3];
@@ -175,8 +175,8 @@ typedef union PACKED _sa_mini_game_scores {
 #define SA_TWINKLE_CIRCUIT_TIMES_LEN 90
 #pragma pack(1)
 typedef union PACKED _sa_twinkle_circuit_times {
-	sa_time_code all[30];   // all
-	sa_time_code chr[6][5]; // per character
+	sa_time_code all[30];	// all
+	sa_time_code chr[6][5];	// per character
 	struct {
 		sa_time_code sonic[5];
 		sa_time_code tails[5];
@@ -195,8 +195,8 @@ typedef union PACKED _sa_twinkle_circuit_times {
 #define SA_BOSS_ATTACK_TIMES_LEN 54
 #pragma pack(1)
 typedef union PACKED _sa_boss_attack_times {
-	sa_time_code all[18];   // all
-	sa_time_code chr[6][3]; // per character
+	sa_time_code all[18];	// all
+	sa_time_code chr[6][3];	// per character
 	struct {
 		sa_time_code sonic[3];
 		sa_time_code tails[3];
