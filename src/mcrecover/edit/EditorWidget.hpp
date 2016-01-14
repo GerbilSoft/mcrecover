@@ -135,9 +135,9 @@ class EditorWidget : public QWidget
 
 		/**
 		 * Current save slot has changed.
-		 * @param currentSaveSlot New save slot. (-1 for "general" settings)
+		 * @param saveSlot New save slot. (-1 for "general" settings)
 		 */
-		void currentSaveSlotChanged(int currentSaveSlot);
+		void currentSaveSlotChanged(int saveSlot);
 };
 
 #endif /* __MCRECOVER_EDIT_EDITORWIDGET_HPP__ */
