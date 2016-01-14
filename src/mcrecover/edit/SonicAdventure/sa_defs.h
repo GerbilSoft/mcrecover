@@ -388,6 +388,22 @@ typedef struct PACKED _sa_save_slot
 #define SADX_MISSION_UNLOCKED	(1 << 6)	/* Mission card found. */
 #define SADX_MISSION_COMPLETED	(1 << 7)	/* Mission completed. */
 
+/**
+ * Mini-Game: Best scores. (Metal Sonic)
+ * Three scores are stored per mini-game.
+ */
+#define SADX_EXTRA_MINI_GAME_SCORES_METAL_LEN 24
+#pragma pack(1)
+typedef union PACKED _sadx_extra_mini_game_scores_metal {
+	uint32_t all[6];	// all
+	uint32_t game[2][3];	// per game
+	struct {
+		uint32_t ice_cap[3];
+		uint32_t sand_hill[3];
+	};
+} sadx_extra_mini_game_scores_metal;
+#pragma pack()
+
 // Save slot. (SADX-specific data)
 #define SADX_EXTRA_SAVE_SLOT_LEN 208
 #pragma pack(1)
@@ -406,9 +422,9 @@ typedef struct PACKED _sadx_extra_save_slot
 	uint16_t reserved1;		// [0x43A] unknown
 
 	// TODO: Mini-games.
-	uint32_t mini_game_scores_metal[6];	// 0x53C
-	sa_time_code twinkle_circuit_metal[5];	// 0x554
-	sa_time_code boss_attack_metal[3];	// 0x563
+	sadx_extra_mini_game_scores_metal mini_game_scores_metal;	// 0x53C
+	sa_time_code twinkle_circuit_metal[5];				// 0x554
+	sa_time_code boss_attack_metal[3];				// 0x563
 
 	// [0x56C] Metal Sonic emblems. (bitfield)
 	uint32_t emblems_metal;

@@ -145,6 +145,9 @@ SAEditorPrivate::SAEditorPrivate(SAEditor* q)
 	static_assert(SA_SAVE_SLOT_LEN == 1184, "SA_SAVE_SLOT_LEN is incorrect");
 	static_assert(sizeof(sa_save_slot) == SA_SAVE_SLOT_LEN, "sa_save_file has the wrong size");
 
+	static_assert(SADX_EXTRA_MINI_GAME_SCORES_METAL_LEN == 24, "SADX_EXTRA_MINI_GAME_SCORES_LEN is incorrect");
+	static_assert(sizeof(sadx_extra_mini_game_scores_metal) == SADX_EXTRA_MINI_GAME_SCORES_METAL_LEN, "sadx_extra_mini_game_scores_metal is the wrong size");
+
 	static_assert(SADX_EXTRA_SAVE_SLOT_LEN == 208, "SADX_EXTRA_SAVE_SLOT_LEN is incorrect");
 	static_assert(sizeof(sadx_extra_save_slot) == SADX_EXTRA_SAVE_SLOT_LEN, "sadx_extra_save_slot has the wrong size");
 }
@@ -329,13 +332,16 @@ void SAEditorPrivate::byteswap_sadx_extra_save_slot(sadx_extra_save_slot *sadx_e
 
 	// Metal Sonic level stats.
 	for (int i = 0; i < 10; i++) {
-		sadx_extra_save->scores_metal[i] = __swab32(sadx_extra_save->scores_metal[i]);
-		sadx_extra_save->rings_metal[i]  = __swab16(sadx_extra_save->rings_metal[i]);
+		sadx_extra_save->scores_metal[i] =
+			__swab32(sadx_extra_save->scores_metal[i]);
+		sadx_extra_save->rings_metal[i]  =
+			__swab16(sadx_extra_save->rings_metal[i]);
 	}
 
 	// Metal Sonic mini-game scores.
-	for (int i = 0; i < NUM_ELEMENTS(sadx_extra_save->mini_game_scores_metal); i++) {
-		sadx_extra_save->mini_game_scores_metal[i] = __swab32(sadx_extra_save->mini_game_scores_metal[i]);
+	for (int i = 0; i < NUM_ELEMENTS(sadx_extra_save->mini_game_scores_metal.all); i++) {
+		sadx_extra_save->mini_game_scores_metal.all[i] =
+			__swab32(sadx_extra_save->mini_game_scores_metal.all[i]);
 	}
 
 	// Metal Sonic emblems. (32-bit bitfield, host-endian.)
