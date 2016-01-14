@@ -308,69 +308,111 @@ void SASubGamesPrivate::updateDisplay(void)
  */
 void SASubGamesPrivate::saveCurrentStats(void)
 {
-	// TODO
-#if 0
 	// TODO: Make character a parameter, or not?
 	// FIXME: Character enums or something.
-	if (character >= 0 && character <= 5) {
-		// Standard SA1 character.
-		for (int level = 0; level < MAX_LEVELS; level++) {
-			const int8_t saveIdx = saveMap[character][level];
-			if (saveIdx < 0 || saveIdx >= NUM_ELEMENTS(scores.all))
-				break;
+	// TODO: Optimize these?
+	uint32_t *sky_chase_act1 = nullptr;
+	uint32_t *sky_chase_act2 = nullptr;
+	uint32_t *ice_cap = nullptr;
+	uint32_t *sand_hill = nullptr;
+	uint32_t *hedgehog_hammer = nullptr;
+	sa_time_code *twinkle_circuit = nullptr;
+	sa_time_code *boss_attack = nullptr;
 
-			// Score
-			scores.all[saveIdx] = levels[level].spnHighScore->value();
+	switch (character) {
+		case 0: // Sonic
+			sky_chase_act1	= this->mini_game_scores.sky_chase[0].sonic;
+			sky_chase_act2	= this->mini_game_scores.sky_chase[1].sonic;
+			ice_cap		= this->mini_game_scores.ice_cap.sonic;
+			sand_hill	= this->mini_game_scores.sand_hill.sonic;
+			twinkle_circuit	= this->twinkle_circuit.sonic;
+			boss_attack	= this->boss_attack.sonic;
+			break;
 
-			// Time / Weight
-			if (character != 5) {
-				// TODO: Constrain bounds?
-				// Time (not Big)
-				levels[level].tceBestTime->value(&times.all[saveIdx]);
-			} else {
-				// Weight (Big)
-				const int8_t bigSaveIdx = (saveIdx - 28);
-				levels[level].tceBestTime->value(weights.levels[bigSaveIdx]);
-			}
+		case 1: // Tails
+			sky_chase_act1	= this->mini_game_scores.sky_chase[0].tails;
+			sky_chase_act2	= this->mini_game_scores.sky_chase[1].tails;
+			ice_cap		= this->mini_game_scores.ice_cap.tails;
+			sand_hill	= this->mini_game_scores.sand_hill.tails;
+			twinkle_circuit	= this->twinkle_circuit.tails;
+			boss_attack	= this->boss_attack.tails;
+			break;
 
-			// Rings
-			rings.all[saveIdx] = levels[level].spnMostRings->value();
+		case 2: // Knuckles
+			twinkle_circuit	= this->twinkle_circuit.knuckles;
+			boss_attack	= this->boss_attack.knuckles;
+			break;
 
-			/**
-			* Level emblems:
-			* - A: saveIdx + 0
-			* - B: saveIdx + 32
-			* - C: saveIdx + 64
-			*/
-			emblems[saveIdx+0 ] = levels[level].chkEmblems[0]->isChecked();
-			emblems[saveIdx+32] = levels[level].chkEmblems[1]->isChecked();
-			emblems[saveIdx+64] = levels[level].chkEmblems[2]->isChecked();
-		}
-	} else if (character == 6) {
-		// SADX: Metal Sonic.
-		// Uses the same level map as Sonic.
-		for (int level = 0; level < MAX_LEVELS; level++) {
-			const int8_t saveIdx = saveMap[0][level];
+		case 3: // Amy
+			hedgehog_hammer	= this->mini_game_scores.hedgehog_hammer;
+			twinkle_circuit	= this->twinkle_circuit.amy;
+			boss_attack	= this->boss_attack.amy;
+			break;
 
-			// Score
-			metal_sonic.scores[saveIdx] = levels[level].spnHighScore->value();
-			// Time
-			levels[level].tceBestTime->value(&metal_sonic.times[saveIdx]);
-			// Rings
-			metal_sonic.rings[saveIdx] = levels[level].spnMostRings->value();
+		case 4: // Gamma
+			twinkle_circuit	= this->twinkle_circuit.gamma;
+			boss_attack	= this->boss_attack.gamma;
+			break;
 
-			/**
-			 * Level emblems:
-			 * - A: (saveIdx * 3) + 0
-			 * - B: (saveIdx * 3) + 1
-			 * - C: (saveIdx * 3) + 2
-			 */
-			metal_sonic.emblems[(saveIdx*3)+0] = levels[level].chkEmblems[0]->isChecked();
-			metal_sonic.emblems[(saveIdx*3)+1] = levels[level].chkEmblems[1]->isChecked();
-			metal_sonic.emblems[(saveIdx*3)+2] = levels[level].chkEmblems[2]->isChecked();
-		}
+		case 5: // Big
+			twinkle_circuit	= this->twinkle_circuit.big;
+			boss_attack	= this->boss_attack.big;
+			break;
+
+		case 7: // Metal Sonic
+			// TODO
+			break;
 	}
-#endif
+
+	// Sky Chase, Act 1 (Best Scores)
+	if (sky_chase_act1) {
+		sky_chase_act1[0] = ui.spnSkyChaseAct1_1->value();
+		sky_chase_act1[1] = ui.spnSkyChaseAct1_2->value();
+		sky_chase_act1[2] = ui.spnSkyChaseAct1_3->value();
+	}
+	// Sky Chase, Act 2 (Best Scores)
+	if (sky_chase_act2) {
+		sky_chase_act2[0] = ui.spnSkyChaseAct2_1->value();
+		sky_chase_act2[1] = ui.spnSkyChaseAct2_2->value();
+		sky_chase_act2[2] = ui.spnSkyChaseAct2_3->value();
+	}
+
+	// Ice Cap (Best Scores)
+	if (ice_cap) {
+		ice_cap[0] = ui.spnIceCap_1->value();
+		ice_cap[1] = ui.spnIceCap_2->value();
+		ice_cap[2] = ui.spnIceCap_3->value();
+	}
+
+	// Sand Hill (Best Scores)
+	if (sand_hill) {
+		sand_hill[0] = ui.spnSandHill_1->value();
+		sand_hill[1] = ui.spnSandHill_2->value();
+		sand_hill[2] = ui.spnSandHill_3->value();
+	}
+
+	// Hedgehog Hammer (Best Scores)
+	if (hedgehog_hammer) {
+		hedgehog_hammer[0] = ui.spnHedgehogHammer_1->value();
+		hedgehog_hammer[1] = ui.spnHedgehogHammer_2->value();
+		hedgehog_hammer[2] = ui.spnHedgehogHammer_3->value();
+	}
+
+	// Twinkle Circuit times.
+	if (twinkle_circuit) {
+		ui.tceTwinkleCircuitBestTimes_1->value(&twinkle_circuit[0]);
+		ui.tceTwinkleCircuitBestTimes_2->value(&twinkle_circuit[1]);
+		ui.tceTwinkleCircuitBestTimes_3->value(&twinkle_circuit[2]);
+		ui.tceTwinkleCircuitBestLap_1->value(&twinkle_circuit[3]);
+		ui.tceTwinkleCircuitBestLap_2->value(&twinkle_circuit[4]);
+	}
+
+	// Boss Attack times.
+	if (boss_attack) {
+		ui.tceBossAttack_1->value(&boss_attack[0]);
+		ui.tceBossAttack_2->value(&boss_attack[1]);
+		ui.tceBossAttack_3->value(&boss_attack[2]);
+	}
 }
 
 /** SASubGames **/
@@ -499,10 +541,13 @@ int SASubGames::load(const sa_save_slot *sa_save)
  * The data will be in host-endian format.
  * @return 0 on success; non-zero on error.
  */
-int SASubGames::save(sa_save_slot *sa_save) const
+int SASubGames::save(sa_save_slot *sa_save)
 {
-	Q_D(const SASubGames);
-	// TODO: Save the current character data.
+	Q_D(SASubGames);
+	// Save the current character's stats.
+	// TODO: Use modification signals to make this unnecessary,
+	// and mark this function as const?
+	d->saveCurrentStats();
 
 	memcpy(&sa_save->mini_game_scores, &d->mini_game_scores, sizeof(sa_save->mini_game_scores));
 	memcpy(&sa_save->twinkle_circuit,  &d->twinkle_circuit,  sizeof(sa_save->twinkle_circuit));

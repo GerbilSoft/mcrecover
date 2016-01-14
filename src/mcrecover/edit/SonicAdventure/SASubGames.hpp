@@ -68,7 +68,7 @@ class SASubGames : public QWidget
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int save(_sa_save_slot *sa_save) const;
+		int save(_sa_save_slot *sa_save);
 
 		/**
 		 * Load data from a Sonic Adventure DX extra save slot.
