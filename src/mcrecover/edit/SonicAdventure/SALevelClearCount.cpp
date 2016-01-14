@@ -91,6 +91,38 @@ class SALevelClearCountPrivate
 		 * Update the widgets with the loaded data.
 		 */
 		void updateDisplay(void);
+
+		/** Static read-only data. **/
+
+		/**
+		 * Character level mapping.
+		 * Each entry is a bitfield indicating if the
+		 * character is able to access the level normally.
+		 * - Index = character ID (including unused)
+		 * - Value = bitfield
+		 */
+		static const uint64_t levelMap[8];
+};
+
+/**
+ * Character level mapping.
+ * Each entry is a bitfield indicating if the
+ * character is able to access the level normally.
+ * - Index = character ID (including unused)
+ * - Value = bitfield
+ */
+const uint64_t SALevelClearCountPrivate::levelMap[8] = {
+	// These values are based on my 100% save file.
+	// NOTE: Chao Gardens are all listed as 0.
+	// FIXME: Some values may be incorrect...
+	0x00000078005E87FEULL,	// Sonic
+	0x0000000000000000ULL,	// Unused
+	0x0000007800320376ULL,	// Tails
+	0x00000008000702F0ULL,	// Knuckles
+	0x0000000000000000ULL,	// Unused
+	0x0000000900801409ULL,	// Amy
+	0x0000000803001426ULL,	// Gamma
+	0x000000080004110AULL,	// Big
 };
 
 SALevelClearCountPrivate::SALevelClearCountPrivate(SALevelClearCount *q)
@@ -132,6 +164,20 @@ void SALevelClearCountPrivate::clear(void)
  */
 void SALevelClearCountPrivate::initLevels(void)
 {
+	// Initialize the background color for unused clear counts.
+	// TODO: Character to level mapping?
+	QPalette pal = QApplication::palette("QSpinBox");
+	// Use a light pink color.
+	// TODO: Modify the existing base() color?
+	// (Manipulating HSV isn't quite reliable...)
+	// [Also, update the MemCardModel color generation.]
+	QColor bgColor_unused = QColor(255, 192, 192);
+	pal.setColor(QPalette::Base, bgColor_unused);
+
+	// Level mappings.
+	uint64_t levelMap[8];
+	memcpy(levelMap, this->levelMap, sizeof(levelMap));
+
 	// Create widgets for all levels.
 	// TODO: Top or VCenter?
 	// TODO: Scroll area is screwing with minimum width...
@@ -156,7 +202,7 @@ void SALevelClearCountPrivate::initLevels(void)
 		levels[level].lblLevel = new QLabel(q);
 		levels[level].lblLevel->setText(levelName);
 		levels[level].lblLevel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-		ui.gridLevels->addWidget(levels[level].lblLevel, level+1, 0, Qt::AlignTop);
+		ui.gridLevels->addWidget(levels[level].lblLevel, level+1, 0, Qt::AlignVCenter);
 
 		// Spinbox for each character.
 		for (int chr = 0; chr < NUM_ELEMENTS(levels[level].spnCount); chr++) {
@@ -165,6 +211,15 @@ void SALevelClearCountPrivate::initLevels(void)
 			levels[level].spnCount[chr]->setSingleStep(1);
 			levels[level].spnCount[chr]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 			ui.gridLevels->addWidget(levels[level].spnCount[chr], level+1, chr+1, Qt::AlignTop);
+
+			if (!(levelMap[chr] & 1)) {
+				// Level is not used by this character.
+				// TODO: Set a stylesheet instead of a palette color?
+				// Palette color works on Linux, but it usually causes
+				// the widget to not be themed correctly on Windows.
+				levels[level].spnCount[chr]->setPalette(pal);
+			}
+			levelMap[chr] >>= 1;
 
 			// Connect the valueChanged() signal.
 			QObject::connect(levels[level].spnCount[chr], SIGNAL(valueChanged(int)),
