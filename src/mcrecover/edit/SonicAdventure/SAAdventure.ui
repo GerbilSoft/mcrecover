@@ -16,6 +16,26 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLevels">
+     <item row="0" column="0">
+      <widget class="QLabel" name="lblCharacter">
+       <property name="text">
+        <string>Character:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="lblLives">
+       <property name="text">
+        <string>Lives:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="2">
       <widget class="QLabel" name="lblCompleted">
        <property name="text">
@@ -36,23 +56,10 @@
        </property>
       </widget>
      </item>
-     <item row="20" column="0" colspan="10">
-      <spacer name="vspcSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="lblLives">
+     <item row="0" column="4">
+      <widget class="QLabel" name="lblUnknown1">
        <property name="text">
-        <string>Lives:</string>
+        <string>Unknown:</string>
        </property>
        <property name="textFormat">
         <enum>Qt::PlainText</enum>
@@ -79,36 +86,6 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="4">
-      <widget class="QLabel" name="lblUnknown1">
-       <property name="text">
-        <string>Unknown:</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::PlainText</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="9">
-      <widget class="QLabel" name="lblUnknown3">
-       <property name="text">
-        <string>Unknown:</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::PlainText</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="lblCharacter">
-       <property name="text">
-        <string>Character:</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::PlainText</enum>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="7">
       <widget class="QLabel" name="lblLevel">
        <property name="text">
@@ -128,6 +105,29 @@
         <enum>Qt::PlainText</enum>
        </property>
       </widget>
+     </item>
+     <item row="0" column="9">
+      <widget class="QLabel" name="lblUnknown3">
+       <property name="text">
+        <string>Unknown:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="20" column="0" colspan="10">
+      <spacer name="vspcSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>

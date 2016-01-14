@@ -118,19 +118,6 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="lblSkyChaseAct2">
-        <property name="text">
-         <string>Act 2:</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::PlainText</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4">
-       <widget class="QCheckBox" name="chkSkyChaseAct1_1"/>
-      </item>
       <item row="0" column="1">
        <widget class="QSpinBox" name="spnSkyChaseAct1_1">
         <property name="minimum">
@@ -158,6 +145,22 @@
         </property>
         <property name="maximum">
          <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QCheckBox" name="chkSkyChaseAct1_1"/>
+      </item>
+      <item row="0" column="5">
+       <widget class="QCheckBox" name="chkSkyChaseAct1_2"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="lblSkyChaseAct2">
+        <property name="text">
+         <string>Act 2:</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
         </property>
        </widget>
       </item>
@@ -191,9 +194,6 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="5">
-       <widget class="QCheckBox" name="chkSkyChaseAct1_2"/>
-      </item>
       <item row="1" column="4">
        <widget class="QCheckBox" name="chkSkyChaseAct2_1"/>
       </item>
@@ -209,8 +209,8 @@
       <string>Ice Cap (Best Scores)</string>
      </property>
      <layout class="QGridLayout" name="gridIceCap">
-      <item row="0" column="2">
-       <widget class="QSpinBox" name="spnIceCap_3">
+      <item row="0" column="0">
+       <widget class="QSpinBox" name="spnIceCap_1">
         <property name="minimum">
          <number>0</number>
         </property>
@@ -229,8 +229,8 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QSpinBox" name="spnIceCap_1">
+      <item row="0" column="2">
+       <widget class="QSpinBox" name="spnIceCap_3">
         <property name="minimum">
          <number>0</number>
         </property>
@@ -248,9 +248,6 @@
       <string>Sand Hill (Best Scores)</string>
      </property>
      <layout class="QGridLayout" name="gridSandHill" columnstretch="1,1,1,0,0">
-      <item row="0" column="3">
-       <widget class="QCheckBox" name="chkSandHill_1"/>
-      </item>
       <item row="0" column="0">
        <widget class="QSpinBox" name="spnSandHill_1">
         <property name="minimum">
@@ -281,6 +278,9 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="3">
+       <widget class="QCheckBox" name="chkSandHill_1"/>
+      </item>
       <item row="0" column="4">
        <widget class="QCheckBox" name="chkSandHill_2"/>
       </item>
@@ -293,9 +293,6 @@
       <string>Hedgehog Hammer (Best Scores)</string>
      </property>
      <layout class="QGridLayout" name="gridHedgehogHammer" columnstretch="1,1,1,0,0">
-      <item row="0" column="3">
-       <widget class="QCheckBox" name="chkHedgehogHammer_1"/>
-      </item>
       <item row="0" column="0">
        <widget class="QSpinBox" name="spnHedgehogHammer_1">
         <property name="minimum">
@@ -326,6 +323,9 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="3">
+       <widget class="QCheckBox" name="chkHedgehogHammer_1"/>
+      </item>
       <item row="0" column="4">
        <widget class="QCheckBox" name="chkHedgehogHammer_2"/>
       </item>
@@ -346,16 +346,6 @@
            <string>Best Times</string>
           </property>
           <layout class="QGridLayout" name="gridBestTimes">
-           <item row="2" column="0">
-            <widget class="TimeCodeEdit" name="tceTwinkleCircuitBestTimes_3" native="true">
-             <property name="minimumSize">
-              <size>
-               <width>16</width>
-               <height>0</height>
-              </size>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="0">
             <widget class="TimeCodeEdit" name="tceTwinkleCircuitBestTimes_1" native="true">
              <property name="minimumSize">
@@ -376,6 +366,16 @@
              </property>
             </widget>
            </item>
+           <item row="2" column="0">
+            <widget class="TimeCodeEdit" name="tceTwinkleCircuitBestTimes_3" native="true">
+             <property name="minimumSize">
+              <size>
+               <width>16</width>
+               <height>0</height>
+              </size>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
@@ -385,13 +385,13 @@
            <string>Best Laps</string>
           </property>
           <layout class="QGridLayout" name="gridTwinkleCircuitLaps" columnstretch="0,1">
-           <item row="1" column="1">
-            <widget class="TimeCodeEdit" name="tceTwinkleCircuitBestLap_2" native="true">
-             <property name="minimumSize">
-              <size>
-               <width>16</width>
-               <height>0</height>
-              </size>
+           <item row="0" column="0">
+            <widget class="QLabel" name="lblTwinkleCircuitBestLap_1">
+             <property name="text">
+              <string>Lap 1:</string>
+             </property>
+             <property name="textFormat">
+              <enum>Qt::PlainText</enum>
              </property>
             </widget>
            </item>
@@ -405,16 +405,6 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="lblTwinkleCircuitBestLap_1">
-             <property name="text">
-              <string>Lap 1:</string>
-             </property>
-             <property name="textFormat">
-              <enum>Qt::PlainText</enum>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="0">
             <widget class="QLabel" name="lblTwinkleCircuitBestLap_2">
              <property name="text">
@@ -422,6 +412,16 @@
              </property>
              <property name="textFormat">
               <enum>Qt::PlainText</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="TimeCodeEdit" name="tceTwinkleCircuitBestLap_2" native="true">
+             <property name="minimumSize">
+              <size>
+               <width>16</width>
+               <height>0</height>
+              </size>
              </property>
             </widget>
            </item>
@@ -473,16 +473,6 @@
         <string>Boss Attack (Best Times)</string>
        </property>
        <layout class="QGridLayout" name="gridBossAttack">
-        <item row="2" column="0">
-         <widget class="TimeCodeEdit" name="tceBossAttack_3" native="true">
-          <property name="minimumSize">
-           <size>
-            <width>16</width>
-            <height>0</height>
-           </size>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0">
          <widget class="TimeCodeEdit" name="tceBossAttack_1" native="true">
           <property name="minimumSize">
@@ -495,6 +485,16 @@
         </item>
         <item row="1" column="0">
          <widget class="TimeCodeEdit" name="tceBossAttack_2" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="TimeCodeEdit" name="tceBossAttack_3" native="true">
           <property name="minimumSize">
            <size>
             <width>16</width>
@@ -531,34 +531,6 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>cboCharacter</tabstop>
-  <tabstop>spnSkyChaseAct1_1</tabstop>
-  <tabstop>spnSkyChaseAct1_2</tabstop>
-  <tabstop>spnSkyChaseAct1_3</tabstop>
-  <tabstop>chkSkyChaseAct1_1</tabstop>
-  <tabstop>chkSkyChaseAct1_2</tabstop>
-  <tabstop>spnSkyChaseAct2_1</tabstop>
-  <tabstop>spnSkyChaseAct2_2</tabstop>
-  <tabstop>spnSkyChaseAct2_3</tabstop>
-  <tabstop>chkSkyChaseAct2_2</tabstop>
-  <tabstop>chkSkyChaseAct2_1</tabstop>
-  <tabstop>spnIceCap_1</tabstop>
-  <tabstop>spnIceCap_2</tabstop>
-  <tabstop>spnIceCap_3</tabstop>
-  <tabstop>spnSandHill_1</tabstop>
-  <tabstop>spnSandHill_2</tabstop>
-  <tabstop>spnSandHill_3</tabstop>
-  <tabstop>chkSandHill_1</tabstop>
-  <tabstop>chkSandHill_2</tabstop>
-  <tabstop>spnHedgehogHammer_1</tabstop>
-  <tabstop>spnHedgehogHammer_2</tabstop>
-  <tabstop>spnHedgehogHammer_3</tabstop>
-  <tabstop>chkHedgehogHammer_1</tabstop>
-  <tabstop>chkHedgehogHammer_2</tabstop>
-  <tabstop>chkTwinkleCircuit_1</tabstop>
-  <tabstop>chkTwinkleCircuit_2</tabstop>
- </tabstops>
  <resources>
   <include location="../../resources/flags/flags.qrc"/>
   <include location="../../resources/sonic/sonic.qrc"/>
