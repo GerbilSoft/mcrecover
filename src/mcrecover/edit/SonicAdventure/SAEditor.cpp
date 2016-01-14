@@ -131,6 +131,12 @@ SAEditorPrivate::SAEditorPrivate(SAEditor* q)
 	static_assert(sizeof(sa_weights) == SA_WEIGHTS_LEN, "sa_weights has the wrong size");
 	static_assert(SA_RINGS_LEN == 64, "SA_RINGS_LEN is incorrect");
 	static_assert(sizeof(sa_rings) == SA_RINGS_LEN, "sa_rings has the wrong size");
+	static_assert(SA_MINI_GAME_SCORES_LEN == 108, "SA_MINI_GAME_SCORES_LEN is incorrect");
+	static_assert(sizeof(sa_mini_game_scores) == SA_MINI_GAME_SCORES_LEN, "sa_mini_game_scores has the wrong size");
+	static_assert(SA_TWINKLE_CIRCUIT_TIMES_LEN == 90, "SA_TWINKLE_CIRCUIT_TIMES_LEN is incorrect");
+	static_assert(sizeof(sa_twinkle_circuit_times) == SA_TWINKLE_CIRCUIT_TIMES_LEN, "sa_twinkle_circuit_times has the wrong size");
+	static_assert(SA_BOSS_ATTACK_TIMES_LEN == 54, "SA_BOSS_ATTACK_TIMES_LEN is incorrect");
+	static_assert(sizeof(sa_boss_attack_times) == SA_BOSS_ATTACK_TIMES_LEN, "sa_boss_attack_times is the wrong size");
 	static_assert(SA_EVENT_FLAGS_LEN == 64, "SA_EVENT_FLAGS_LEN is incorrect");
 	static_assert(sizeof(sa_event_flags) == SA_EVENT_FLAGS_LEN, "sa_event_flags has the wrong size");
 	static_assert(SA_NPC_FLAGS_LEN == 64, "SA_NPC_FLAGS_LEN is incorrect");

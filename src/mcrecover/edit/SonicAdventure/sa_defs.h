@@ -136,6 +136,78 @@ typedef union PACKED _sa_rings {
 } sa_rings;
 #pragma pack()
 
+/**
+ * [0x144] Mini-Game: Best scores.
+ * Three scores are stored per mini-game.
+ */
+#define SA_MINI_GAME_SCORES_LEN 108
+#pragma pack(1)
+typedef union PACKED _sa_mini_game_scores {
+	uint32_t all[27];       // all
+	uint32_t game[9][3];    // per game
+	struct {
+		struct {
+			uint32_t sonic[3];
+			uint32_t tails[3];
+		} sky_chase[2];
+		struct {
+			uint32_t sonic[3];
+			uint32_t tails[3];
+		} ice_cap;
+		struct {
+			uint32_t sonic[3];
+			uint32_t tails[3];
+		} sand_hill;
+		uint32_t hedgehog_hammer[3];
+	};
+} sa_mini_game_scores;
+#pragma pack()
+
+/**
+ * [0x1B0] Mini-Game: Best times. (Twinkle Circuit)
+ * Five times are stored per character:
+ * - Best Time 1
+ * - Best Time 2
+ * - Best Time 3
+ * - Lap 1 for Best Time 1
+ * - Lap 2 for Best Time 1
+ */
+#define SA_TWINKLE_CIRCUIT_TIMES_LEN 90
+#pragma pack(1)
+typedef union PACKED _sa_twinkle_circuit_times {
+	sa_time_code all[30];   // all
+	sa_time_code chr[6][5]; // per character
+	struct {
+		sa_time_code sonic[5];
+		sa_time_code tails[5];
+		sa_time_code knuckles[5];
+		sa_time_code amy[5];
+		sa_time_code gamma[5];
+		sa_time_code big[5];
+	};
+} sa_twinkle_circuit_times;
+#pragma pack()
+
+/**
+ * [0x20A] Mini-Game: Best times. (Boss Attack)
+ * Three times are stored per character.
+ */
+#define SA_BOSS_ATTACK_TIMES_LEN 54
+#pragma pack(1)
+typedef union PACKED _sa_boss_attack_times {
+	sa_time_code all[18];   // all
+	sa_time_code chr[6][3]; // per character
+	struct {
+		sa_time_code sonic[3];
+		sa_time_code tails[3];
+		sa_time_code knuckles[3];
+		sa_time_code amy[3];
+		sa_time_code gamma[3];
+		sa_time_code big[3];
+	};
+} sa_boss_attack_times;
+#pragma pack()
+
 // [0x251] Options: Choose the feature you want to edit.
 #define SA_OPTIONS_MSG_VOICE_AND_TEXT	0x00
 #define SA_OPTIONS_MSG_VOICE_ONLY	0x02
@@ -266,41 +338,14 @@ typedef struct PACKED _sa_save_slot
 	sa_rings rings;		// [0x104] Best rings.
 
 	// [0x144] Mini-Game: Best scores.
-	// Three scores per mini-game.
-	uint32_t miniGameScores[9][3];
+	sa_mini_game_scores mini_game_scores;
 
 	// [0x1B0] Mini-Game: Best times. (Twinkle Circuit)
-	// Five times are stored per character:
-	// - Best Time 1
-	// - Best Time 2
-	// - Best Time 3
-	// - Lap 1 for Best Time 1
-	// - Lap 2 for Best Time 1
-	union {
-		sa_time_code twinkleCircuitBestTimes[30];
-		struct {
-			sa_time_code sonic[5];
-			sa_time_code tails[5];
-			sa_time_code knuckles[5];
-			sa_time_code amy[5];
-			sa_time_code gamma[5];
-			sa_time_code big[5];
-		} twinkleCircuitTimes;
-	};
+	sa_twinkle_circuit_times twinkle_circuit;
 
-	// [0x20A] Mini-Game: Best times. (Boss)
-	// Thre times are stored per character.
-	union {
-		sa_time_code bossBestTimes[18];
-		struct {
-			sa_time_code sonic[3];
-			sa_time_code tails[3];
-			sa_time_code knuckles[3];
-			sa_time_code amy[3];
-			sa_time_code gamma[3];
-			sa_time_code big[3];
-		} bossTimes;
-	};
+	// [0x20A] Mini-Game: Best times. (Boss_attack)
+	// Three times are stored per character.
+	sa_boss_attack_times boss_attack;
 
 	// [0x240] Emblems. (bitfield)
 	uint8_t emblems[17];
