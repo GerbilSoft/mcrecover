@@ -222,10 +222,10 @@ SALevelStatsPrivate::~SALevelStatsPrivate()
 void SALevelStatsPrivate::clear(void)
 {
 	character = 0;
-	memset(&scores, 0, sizeof(scores));
-	memset(&times, 0, sizeof(times));
+	memset(&scores,  0, sizeof(scores));
+	memset(&times,   0, sizeof(times));
 	memset(&weights, 0, sizeof(weights));
-	memset(&rings, 0, sizeof(rings));
+	memset(&rings,   0, sizeof(rings));
 	memset(&emblems, 0, sizeof(emblems));
 
 	// Metal Sonic data.
