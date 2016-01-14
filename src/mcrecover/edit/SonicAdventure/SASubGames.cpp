@@ -23,6 +23,7 @@
 
 // C includes. (C++ namespace)
 #include <cstdlib>
+#include <cassert>
 
 // Sonic Adventure save file definitions.
 #include "sa_defs.h"
@@ -60,6 +61,13 @@ class SASubGamesPrivate
 		sa_mini_game_scores mini_game_scores;
 		sa_twinkle_circuit_times twinkle_circuit;
 		sa_boss_attack_times boss_attack;
+
+		// Save Game data. (Metal Sonic)
+		struct {
+			sadx_extra_mini_game_scores_metal mini_game_scores;
+			sa_time_code twinkle_circuit[5];
+			sa_time_code boss_attack[3];
+		} metal_sonic;
 
 		/**
 		 * Clear the loaded data.
@@ -155,8 +163,10 @@ void SASubGamesPrivate::clear(void)
 	memset(&twinkle_circuit,  0, sizeof(twinkle_circuit));
 	memset(&boss_attack,      0, sizeof(boss_attack));
 
-	// Metal Sonic data. [TODO]
+	// Metal Sonic data.
+	memset(&metal_sonic, 0, sizeof(metal_sonic));
 	// TODO: Remove Metal Sonic if he's in the Characters box?
+	// Or, only do that if loadDX(nullptr) is called?
 }
 
 /**
@@ -167,6 +177,7 @@ void SASubGamesPrivate::clear(void)
 void SASubGamesPrivate::switchCharacter(int character)
 {
 	// FIXME: Character enums or something.
+	assert(character >= 0 && character <= 6);
 	if (character < 0 || character > 6)
 		return;
 
@@ -207,6 +218,7 @@ void SASubGamesPrivate::updateDisplay(void)
 	const sa_time_code *twinkle_circuit = nullptr;
 	const sa_time_code *boss_attack = nullptr;
 
+	assert(character >= 0 && character <= 6);
 	switch (character) {
 		case 0: // Sonic
 			sky_chase_act1	= this->mini_game_scores.sky_chase[0].sonic;
@@ -247,9 +259,16 @@ void SASubGamesPrivate::updateDisplay(void)
 			boss_attack	= this->boss_attack.big;
 			break;
 
-		case 7: // Metal Sonic
-			// TODO
+		case 6: // Metal Sonic
+			ice_cap		= this->metal_sonic.mini_game_scores.ice_cap;
+			sand_hill	= this->metal_sonic.mini_game_scores.sand_hill;
+			twinkle_circuit	= this->metal_sonic.twinkle_circuit;
+			boss_attack	= this->metal_sonic.boss_attack;
 			break;
+
+		default:
+			// Invalid character.
+			return;
 	}
 
 	// Sky Chase, Act 1 (Best Scores)
@@ -319,6 +338,7 @@ void SASubGamesPrivate::saveCurrentStats(void)
 	sa_time_code *twinkle_circuit = nullptr;
 	sa_time_code *boss_attack = nullptr;
 
+	assert(character >= 0 && character <= 6);
 	switch (character) {
 		case 0: // Sonic
 			sky_chase_act1	= this->mini_game_scores.sky_chase[0].sonic;
@@ -359,9 +379,16 @@ void SASubGamesPrivate::saveCurrentStats(void)
 			boss_attack	= this->boss_attack.big;
 			break;
 
-		case 7: // Metal Sonic
-			// TODO
+		case 6: // Metal Sonic
+			ice_cap		= this->metal_sonic.mini_game_scores.ice_cap;
+			sand_hill	= this->metal_sonic.mini_game_scores.sand_hill;
+			twinkle_circuit	= this->metal_sonic.twinkle_circuit;
+			boss_attack	= this->metal_sonic.boss_attack;
 			break;
+
+		default:
+			// Invalid character.
+			return;
 	}
 
 	// Sky Chase, Act 1 (Best Scores)
@@ -584,6 +611,10 @@ int SASubGames::loadDX(const sadx_extra_save_slot *sadx_extra_save)
 	Q_D(SASubGames);
 
 	if (sadx_extra_save) {
+		memcpy(&d->metal_sonic.mini_game_scores, &sadx_extra_save->mini_game_scores_metal, sizeof(d->metal_sonic.mini_game_scores));
+		memcpy(&d->metal_sonic.twinkle_circuit,  &sadx_extra_save->twinkle_circuit_metal,  sizeof(d->metal_sonic.twinkle_circuit));
+		memcpy(&d->metal_sonic.boss_attack,      &sadx_extra_save->boss_attack_metal,      sizeof(d->metal_sonic.boss_attack));
+
 		// If the Characters dropdown doesn't have Metal Sonic, add him now.
 		if (d->ui.cboCharacter->count() < 7) {
 			QIcon icon(QLatin1String(":/sonic/SA1/metal_sonic.png"));
@@ -615,9 +646,17 @@ int SASubGames::loadDX(const sadx_extra_save_slot *sadx_extra_save)
  */
 int SASubGames::saveDX(sadx_extra_save_slot *sadx_extra_save)
 {
-	Q_D(const SASubGames);
+	Q_D(SASubGames);
+	// Save the current character's stats.
+	// TODO: Use modification signals to make this unnecessary,
+	// and mark this function as const?
+	// TODO: Only do this if the current character is Metal Sonic.
+	d->saveCurrentStats();
 
-	// TODO
+	memcpy(&sadx_extra_save->mini_game_scores_metal, &d->metal_sonic.mini_game_scores, sizeof(sadx_extra_save->mini_game_scores_metal));
+	memcpy(&sadx_extra_save->twinkle_circuit_metal,  &d->metal_sonic.twinkle_circuit,  sizeof(sadx_extra_save->twinkle_circuit_metal));
+	memcpy(&sadx_extra_save->boss_attack_metal,      &d->metal_sonic.boss_attack,      sizeof(sadx_extra_save->boss_attack_metal));
+
 	return 0;
 }
 
