@@ -262,7 +262,7 @@ void SAEditorPrivate::saveCurrentSlot(void)
 	// Save the data.
 	sa_save_slot *sa_save = data_main.at(slot);
 	ui.saGeneral->save(sa_save);
-	ui.saAdventure->load(sa_save);
+	ui.saAdventure->save(sa_save);
 	ui.saLevelStats->save(sa_save);
 	ui.saMiscEmblems->save(sa_save);
 	ui.saLevelClearCount->save(sa_save);
