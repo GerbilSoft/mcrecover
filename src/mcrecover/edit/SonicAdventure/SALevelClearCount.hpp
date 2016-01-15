@@ -73,6 +73,16 @@ class SALevelClearCount : public QWidget
 		 * @param spnId Spinbox ID. (0xAABB; AA == level, BB == character)
 		 */
 		void spnCount_mapped_slot(int spnId);
+
+	protected:
+		/**
+		 * QObject eventFilter.
+		 * Used to handle QScrollArea resize events.
+		 * @param watched Watched QObject.
+		 * @param event QEvent.
+		 * @return True to stop the event from being handled further; false to pass it down.
+		 */
+		virtual bool eventFilter(QObject *watched, QEvent *event);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SALEVELCLEARCOUNT_HPP__ */

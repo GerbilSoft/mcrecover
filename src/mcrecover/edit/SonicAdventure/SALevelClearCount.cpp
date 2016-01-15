@@ -29,6 +29,7 @@
 #include <QtGui/QLabel>
 #include <QtGui/QSpinBox>
 #include <QtGui/QCheckBox>
+#include <QtGui/QResizeEvent>
 
 // C includes. (C++ namespace)
 #include <cstring>
@@ -93,6 +94,12 @@ class SALevelClearCountPrivate
 		 * Update the widgets with the loaded data.
 		 */
 		void updateDisplay(void);
+
+		/**
+		 * QScrollArea was resized.
+		 * @param event QResizeEvent.
+		 */
+		void scrollAreaResized(QResizeEvent *event);
 
 		/** Static read-only data. **/
 
@@ -262,6 +269,24 @@ void SALevelClearCountPrivate::updateDisplay(void)
 			 q, SLOT(spnCount_mapped_slot(int)));
 }
 
+/**
+ * QScrollArea was resized.
+ */
+void SALevelClearCountPrivate::scrollAreaResized(QResizeEvent *event)
+{
+	// Set lblLevel's width to match the widest widget in column 0.
+	// NOTE: Final row is a spacer item, so ignore it.
+	int width = 0;
+	for (int i = ui.gridLevels->rowCount()-2; i >= 0; i--) {
+		QLayoutItem *item = ui.gridLevels->itemAtPosition(i, 0);
+		if (item) {
+			width = qMax(item->sizeHint().width(), width);
+		}
+	}
+
+	ui.lblLevelName->setMinimumSize(QSize(width, 0));
+}
+
 /** SALevelClearCount **/
 
 SALevelClearCount::SALevelClearCount(QWidget *parent)
@@ -273,6 +298,9 @@ SALevelClearCount::SALevelClearCount(QWidget *parent)
 
 	// Initialize the level listing.
 	d->initLevels();
+
+	// Install an event filter for the QScrollArea.
+	d->ui.scrlLevels->installEventFilter(this);
 }
 
 SALevelClearCount::~SALevelClearCount()
@@ -356,4 +384,23 @@ void SALevelClearCount::spnCount_mapped_slot(int spnId)
 
 	Q_D(SALevelClearCount);
 	d->clear_count.all[chr][level] = d->levels[level].spnCount[chr]->value();
+}
+
+/**
+ * QObject eventFilter.
+ * Used to handle QScrollArea resize events.
+ * @param watched Watched QObject.
+ * @param event QEvent.
+ * @return True to stop the event from being handled further; false to pass it down.
+ */
+bool SALevelClearCount::eventFilter(QObject *watched, QEvent *event)
+{
+	Q_D(SALevelClearCount);
+	if (watched == d->ui.scrlLevels && event->type() == QEvent::Resize) {
+		// QScrollArea resize event.
+		d->scrollAreaResized(reinterpret_cast<QResizeEvent*>(event));
+	}
+
+	// Allow event processing to continue.
+	return false;
 }
