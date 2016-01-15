@@ -241,6 +241,18 @@ class McRecoverWindowPrivate
 
 		// Shh... it's a secret to everybody.
 		HerpDerpEggListener *herpDerp;
+
+		/**
+		 * Read a memory card file and try to guess
+		 * what system it's for.
+		 *
+		 * NOTE: This function will actually just check for VMU.
+		 * If the VMU header is missing, it will assume GCN.
+		 *
+		 * @param filename Memory card filename.
+		 * @return 0 for GCN; 1 for VMU; -1 for unknown.
+		 */
+		static int checkCardType(const QString &filename);
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -941,6 +953,58 @@ GcImageWriter::AnimImageFormat McRecoverWindowPrivate::animIconFormat(void) cons
 	return animImgf;
 }
 
+/**
+ * Read a memory card file and try to guess
+ * what system it's for.
+ *
+ * NOTE: This function will actually just check for VMU.
+ * If the VMU header is missing, it will assume GCN.
+ *
+ * @param filename Memory card filename.
+ * @return 0 for GCN; 1 for VMU; -1 for unknown.
+ */
+int McRecoverWindowPrivate::checkCardType(const QString &filename)
+{
+	QFile file(filename);
+	QByteArray ba;
+
+	// Assume GCN by default.
+	int type = 0;
+
+	if (file.size() == 131072) {
+		// Possibly a Dreamcast VMU.
+		// TODO: Support for 4x cards, though
+		// 4x dumps are likely "four regular dumps".
+
+		// Check if 0x1FE00 - 0x1FE0F is all 0x55.
+		// If it is, then this is probably a VMU.
+		if (!file.open(QIODevice::ReadOnly))
+			goto not_vmu;
+		if (!file.seek(0x1FE00))
+			goto not_vmu;
+
+		// Read the data.
+		ba = file.read(16);
+		if (ba.size() != 16)
+			goto not_vmu;
+
+		// Make sure all 16 bytes are 0x55.
+		const char *data = ba.data();
+		for (int i = ba.size()-1; i >= 0; i--, data++) {
+			if (*data != 0x55) {
+				goto not_vmu;
+			}
+		}
+
+		// This is probably a VMU.
+		type = 1;
+	}
+
+not_vmu:
+	return type;
+}
+
+
 /** McRecoverWindow **/
 
 McRecoverWindow::McRecoverWindow(QWidget *parent)
@@ -1060,8 +1124,9 @@ McRecoverWindow::~McRecoverWindow()
 /**
  * Open a GameCube Memory Card image.
  * @param filename Filename.
+ * @param type Type hint from the Open dialog. (0 == GCN, 1 == VMS, other == unknown)
  */
-void McRecoverWindow::openCard(const QString &filename)
+void McRecoverWindow::openCard(const QString &filename, int type)
 {
 	Q_D(McRecoverWindow);
 
@@ -1072,9 +1137,32 @@ void McRecoverWindow::openCard(const QString &filename)
 		delete d->card;
 	}
 
+	/** TODO: CardFactory **/
+
+	// TODO: Use an enum for 'type'?
+	if (type < 0 || type > 1) {
+		// Check what type of card this is.
+		type = d->checkCardType(filename);
+		if (type < 0 || type > 1) {
+			// Still unknown.
+			// Assume GCN.
+			type = 0;
+		}
+	}
+
 	// Open the specified memory card image.
 	// TODO: Set this as the last path?
-	d->card = GcnCard::open(filename, this);
+	QString unkErrMsg;
+	if (type == 1) {
+		//: Failure message for VmuCard.
+		unkErrMsg = tr("VmuCard::open() failed.");
+		d->card = VmuCard::open(filename, this);
+	} else /*if (type == 0)*/ {
+		//: Failure message for GcnCard.
+		unkErrMsg = tr("GcnCard::open() failed.");
+		d->card = GcnCard::open(filename, this);
+	}
+
 	if (!d->card || !d->card->isOpen()) {
 		// Could not open the card.
 		static const QChar chrBullet(0x2022);  // U+2022: BULLET
@@ -1082,7 +1170,7 @@ void McRecoverWindow::openCard(const QString &filename)
 		QString errMsg = tr("An error occurred while opening %1:")
 					.arg(filename_noPath) +
 				QChar(L'\n') + chrBullet + QChar(L' ') +
-				(d->card ? d->card->errorString() : tr("GcnCard::open() failed."));
+				(d->card ? d->card->errorString() : unkErrMsg);
 		d->ui.msgWidget->showMessage(errMsg, MessageWidget::ICON_WARNING);
 		closeCard(true);
 		return;
@@ -1388,20 +1476,52 @@ void McRecoverWindow::markUiNotBusy(void)
 void McRecoverWindow::on_actionOpen_triggered(void)
 {
 	Q_D(McRecoverWindow);
-	QString filename = QFileDialog::getOpenFileName(this,
+
+	// TODO: Remove the space before the "*.raw"?
+	// On Linux, Qt shows an extra space after the filter name, since
+	// it doesn't show the extension. Not sure about Windows...
+	const QString gcnFilter = tr("GameCube Memory Card Image") + QLatin1String(" (*.raw)");
+	const QString vmuFilter = tr("Dreamcast VMU Image") + QLatin1String(" (*.bin)");
+	const QString allFilter = tr("All Files") + QLatin1String(" (*)");
+
+	QStringList filters;
+	filters.append(gcnFilter);
+	filters.append(vmuFilter);
+	filters.append(allFilter);
+
+	QString selectedFilter;
+
+	QFileDialog *dialog = new QFileDialog(this,
 			tr("Open GameCube Memory Card Image"),	// Dialog title
-			d->lastPath(),				// Default filename
-			tr("GameCube Memory Card Image") + QLatin1String(" (*.raw);;") +
-			tr("All Files") + QLatin1String(" (*)"));
+			d->lastPath());				// Default filename
+	dialog->setAcceptMode(QFileDialog::AcceptOpen);
+	dialog->setFileMode(QFileDialog::ExistingFile);
+	dialog->setNameFilters(filters);
 
-	if (filename.isEmpty())
-		return;
+	if (dialog->exec()) {
+		// Filename is selected.
+		QStringList filenames = dialog->selectedFiles();
+		if (filenames.isEmpty())
+			return;
+		QString filename = filenames.at(0);
+		if (filename.isEmpty())
+			return;
 
-	// Set the last path.
-	d->setLastPath(filename);
+		// Check the selected filename filter.
+		int type = -1;	// TODO: Enum?
+		QString selectedFilter = dialog->selectedFilter();
+		if (selectedFilter == gcnFilter) {
+			type = 0;
+		} else if (selectedFilter == vmuFilter) {
+			type = 1;
+		}
 
-	// Open the memory card file.
-	openCard(filename);
+		// Set the last path.
+		d->setLastPath(filename);
+
+		// Open the memory card file.
+		openCard(filename, type);
+	}
 }
 
 /**
