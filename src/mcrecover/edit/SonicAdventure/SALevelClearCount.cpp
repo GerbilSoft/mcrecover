@@ -64,11 +64,13 @@ class SALevelClearCountPrivate
 		// FIXME: sizeof(sa_level_clear_counts::clear[0]) works in gcc,
 		// but fails in MSVC 2010 with C2597.
 		#define TOTAL_LEVELS 43
+		#define TOTAL_CHARACTERS 8
 		// Level widgets.
 		struct {
 			QLabel *lblLevel;
-			QSpinBox *spnCount[8];
+			QSpinBox *spnCount[TOTAL_CHARACTERS];
 		} levels[TOTAL_LEVELS];
+		QSpacerItem *vspcSpacer;
 
 		// Signal mapper for QSpinBox modifications.
 		QSignalMapper *mapperSpinBox;
@@ -101,7 +103,7 @@ class SALevelClearCountPrivate
 		 * - Index = character ID (including unused)
 		 * - Value = bitfield
 		 */
-		static const uint64_t levelMap[8];
+		static const uint64_t levelMap[TOTAL_CHARACTERS];
 };
 
 /**
@@ -111,7 +113,7 @@ class SALevelClearCountPrivate
  * - Index = character ID (including unused)
  * - Value = bitfield
  */
-const uint64_t SALevelClearCountPrivate::levelMap[8] = {
+const uint64_t SALevelClearCountPrivate::levelMap[TOTAL_CHARACTERS] = {
 	// These values are based on my 100% save file.
 	// NOTE: Chao Gardens are all listed as 0.
 	// FIXME: Some values may be incorrect...
@@ -127,6 +129,7 @@ const uint64_t SALevelClearCountPrivate::levelMap[8] = {
 
 SALevelClearCountPrivate::SALevelClearCountPrivate(SALevelClearCount *q)
 	: q_ptr(q)
+	, vspcSpacer(nullptr)
 	, mapperSpinBox(new QSignalMapper(q))
 {
 	// Clear the data.
@@ -148,6 +151,7 @@ SALevelClearCountPrivate::~SALevelClearCountPrivate()
 			delete levels[i].spnCount[j];
 		}
 	}
+	delete vspcSpacer;
 }
 
 /**
@@ -175,7 +179,7 @@ void SALevelClearCountPrivate::initLevels(void)
 	pal.setColor(QPalette::Base, bgColor_unused);
 
 	// Level mappings.
-	uint64_t levelMap[8];
+	uint64_t levelMap[TOTAL_CHARACTERS];
 	memcpy(levelMap, this->levelMap, sizeof(levelMap));
 
 	// Create widgets for all levels.
@@ -210,7 +214,7 @@ void SALevelClearCountPrivate::initLevels(void)
 			levels[level].spnCount[chr]->setRange(0, 255);
 			levels[level].spnCount[chr]->setSingleStep(1);
 			levels[level].spnCount[chr]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-			ui.gridLevels->addWidget(levels[level].spnCount[chr], level, chr+1, Qt::AlignTop);
+			ui.gridLevels->addWidget(levels[level].spnCount[chr], level, chr+1, Qt::AlignCenter);
 
 			if (!(levelMap[chr] & 1)) {
 				// Level is not used by this character.
@@ -228,6 +232,11 @@ void SALevelClearCountPrivate::initLevels(void)
 						((level << 8) | chr));
 		}
 	}
+
+	// Add a spacer to make sure everything is pushed to the top
+	// if the window is expanded.
+	vspcSpacer = new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+	ui.gridLevels->addItem(vspcSpacer, TOTAL_LEVELS, 0, 1, TOTAL_CHARACTERS+1);
 }
 
 /**
@@ -342,7 +351,7 @@ void SALevelClearCount::spnCount_mapped_slot(int spnId)
 	// Save the data for the spinbox.
 	const int chr = (spnId & 0xFF);
 	const int level = (spnId >> 8);
-	if (chr < 0 || chr >= 8 || level < 0 || level >= TOTAL_LEVELS)
+	if (chr < 0 || chr >= TOTAL_CHARACTERS || level < 0 || level >= TOTAL_LEVELS)
 		return;
 
 	Q_D(SALevelClearCount);
