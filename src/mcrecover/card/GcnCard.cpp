@@ -731,8 +731,14 @@ void GcnCardPrivate::loadGcnFileList(void)
 		const card_direntry *dirEntry = &mc_dat->entries[i];
 
 		// If the game code is 0xFFFFFFFF, the entry is empty.
+		// TODO: Also skip 0x00000000? (check libogc)
 		static const uint8_t gamecode_empty[4] = {0xFF, 0xFF, 0xFF, 0xFF};
 		if (!memcmp(dirEntry->gamecode, gamecode_empty, sizeof(gamecode_empty)))
+			continue;
+
+		// If the filename starts with 0, the entry is empty.
+		// This usually happens if the card is corrupted in some way.
+		if (!dirEntry->filename[0])
 			continue;
 
 		// Valid directory entry.
