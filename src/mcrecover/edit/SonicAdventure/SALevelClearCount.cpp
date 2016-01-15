@@ -202,7 +202,7 @@ void SALevelClearCountPrivate::initLevels(void)
 		levels[level].lblLevel = new QLabel(q);
 		levels[level].lblLevel->setText(levelName);
 		levels[level].lblLevel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-		ui.gridLevels->addWidget(levels[level].lblLevel, level+1, 0, Qt::AlignVCenter);
+		ui.gridLevels->addWidget(levels[level].lblLevel, level, 0, Qt::AlignVCenter);
 
 		// Spinbox for each character.
 		for (int chr = 0; chr < NUM_ELEMENTS(levels[level].spnCount); chr++) {
@@ -210,7 +210,7 @@ void SALevelClearCountPrivate::initLevels(void)
 			levels[level].spnCount[chr]->setRange(0, 255);
 			levels[level].spnCount[chr]->setSingleStep(1);
 			levels[level].spnCount[chr]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-			ui.gridLevels->addWidget(levels[level].spnCount[chr], level+1, chr+1, Qt::AlignTop);
+			ui.gridLevels->addWidget(levels[level].spnCount[chr], level, chr+1, Qt::AlignTop);
 
 			if (!(levelMap[chr] & 1)) {
 				// Level is not used by this character.
@@ -261,17 +261,6 @@ SALevelClearCount::SALevelClearCount(QWidget *parent)
 {
 	Q_D(SALevelClearCount);
 	d->ui.setupUi(this);
-
-	// Fix alignment of the header labels.
-	d->ui.gridLevels->setAlignment(d->ui.lblLevelName, Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblSonic,     Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblUnused1,   Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblTails,     Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblKnuckles,  Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblUnused2,   Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblAmy,       Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblGamma,     Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblBig,       Qt::AlignTop);
 
 	// Initialize the level listing.
 	d->initLevels();

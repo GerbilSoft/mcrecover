@@ -95,41 +95,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="vboxLevelClearCount">
        <item>
-        <widget class="QScrollArea" name="scrlLevelClearCount">
-         <property name="styleSheet">
-          <string notr="true">#scrlLevelClearCount { background-color: transparent; } #scrlLevelClearCountContent { background-color: transparent; }</string>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
-         </property>
-         <property name="widgetResizable">
-          <bool>true</bool>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-         </property>
-         <widget class="QWidget" name="scrlLevelClearCountContent">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>100</width>
-            <height>30</height>
-           </rect>
-          </property>
-          <layout class="QVBoxLayout" name="vboxLevelClearCountContent">
-           <property name="margin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="SALevelClearCount" name="saLevelClearCount" native="true"/>
-           </item>
-          </layout>
-         </widget>
-        </widget>
+        <widget class="SALevelClearCount" name="saLevelClearCount" native="true"/>
        </item>
       </layout>
      </widget>
@@ -160,8 +126,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>100</width>
-            <height>30</height>
+            <width>784</width>
+            <height>441</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="vboxSADXMissionsContent">

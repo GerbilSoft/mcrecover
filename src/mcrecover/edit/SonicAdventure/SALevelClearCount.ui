@@ -6,18 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>470</width>
-    <height>36</height>
+    <width>462</width>
+    <height>94</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="vboxMain">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
-    <layout class="QHBoxLayout" name="hboxCharacter"/>
-   </item>
-   <item>
-    <layout class="QGridLayout" name="gridLevels">
-     <item row="0" column="0">
+    <layout class="QGridLayout" name="gridHeader">
+     <item row="0" column="0" alignment="Qt::AlignLeft|Qt::AlignTop">
       <widget class="QLabel" name="lblLevelName">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Level:</string>
        </property>
@@ -26,7 +32,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignTop">
       <widget class="QLabel" name="lblSonic">
        <property name="text">
         <string>Sonic:</string>
@@ -39,7 +45,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
+     <item row="0" column="2" alignment="Qt::AlignHCenter|Qt::AlignTop">
       <widget class="QLabel" name="lblUnused1">
        <property name="text">
         <string>Unused:</string>
@@ -52,7 +58,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="3">
+     <item row="0" column="3" alignment="Qt::AlignHCenter|Qt::AlignTop">
       <widget class="QLabel" name="lblTails">
        <property name="text">
         <string>Tails:</string>
@@ -65,7 +71,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="4">
+     <item row="0" column="4" alignment="Qt::AlignHCenter|Qt::AlignTop">
       <widget class="QLabel" name="lblKnuckles">
        <property name="text">
         <string>Knuckles:</string>
@@ -78,7 +84,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="5">
+     <item row="0" column="5" alignment="Qt::AlignHCenter|Qt::AlignTop">
       <widget class="QLabel" name="lblUnused2">
        <property name="text">
         <string>Unused:</string>
@@ -91,7 +97,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="6">
+     <item row="0" column="6" alignment="Qt::AlignHCenter|Qt::AlignTop">
       <widget class="QLabel" name="lblAmy">
        <property name="text">
         <string>Amy:</string>
@@ -104,7 +110,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="7">
+     <item row="0" column="7" alignment="Qt::AlignHCenter|Qt::AlignTop">
       <widget class="QLabel" name="lblGamma">
        <property name="text">
         <string>Gamma:</string>
@@ -117,7 +123,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="8">
+     <item row="0" column="8" alignment="Qt::AlignHCenter|Qt::AlignTop">
       <widget class="QLabel" name="lblBig">
        <property name="text">
         <string>Big:</string>
@@ -130,20 +136,39 @@
        </property>
       </widget>
      </item>
-     <item row="20" column="0" colspan="9">
-      <spacer name="vspcSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QScrollArea" name="scrlLevels">
+     <property name="styleSheet">
+      <string notr="true">#scrlLevels { background-color: transparent; }
+#scrlLevelContent { background-color: transparent; }</string>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <widget class="QWidget" name="scrlLevelsContent">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>456</width>
+        <height>66</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLevels">
+       <property name="margin">
+        <number>0</number>
+       </property>
+      </layout>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>
