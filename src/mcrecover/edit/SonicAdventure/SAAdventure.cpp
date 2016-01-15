@@ -176,8 +176,9 @@ void SAAdventurePrivate::initCharacters(void)
 	ui.lblUnknown3->hide();
 
 	// Adjust grid positions of the other labels.
-	ui.gridLevels->addWidget(ui.lblEntrance, 0, 4, Qt::AlignVCenter);
-	ui.gridLevels->addWidget(ui.lblLevel, 0, 5, Qt::AlignVCenter);
+	ui.gridLevels->addWidget(ui.lblEntrance, 0, 4, Qt::AlignTop | Qt::AlignHCenter);
+	ui.gridLevels->addWidget(ui.lblLevel, 0, 5, Qt::AlignTop | Qt::AlignLeft);
+	ui.gridLevels->addWidget(ui.lblAct, 0, 6, Qt::AlignTop | Qt::AlignLeft);
 
 	// Allow the "Level" column to stretch, but nothing else.
 	ui.gridLevels->setColumnStretch(5, 1);
@@ -225,7 +226,7 @@ void SAAdventurePrivate::initCharacters(void)
 			characters[chr].spnLives->setRange(0, 127);
 			characters[chr].spnLives->setSingleStep(1);
 			characters[chr].spnLives->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-			ui.gridLevels->addWidget(characters[chr].spnLives, chr+1, 1, Qt::AlignVCenter);
+			ui.gridLevels->addWidget(characters[chr].spnLives, chr+1, 1, Qt::AlignCenter);
 
 			// Completed?
 			characters[chr].chkCompleted = new QCheckBox(q);
@@ -245,7 +246,7 @@ void SAAdventurePrivate::initCharacters(void)
 		characters[chr].cboTimeOfDay->addItem(QLatin1String("Evening"));
 		characters[chr].cboTimeOfDay->addItem(QLatin1String("Night"));
 		characters[chr].cboTimeOfDay->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-		ui.gridLevels->addWidget(characters[chr].cboTimeOfDay, chr+1, 3, Qt::AlignVCenter);
+		ui.gridLevels->addWidget(characters[chr].cboTimeOfDay, chr+1, 3, Qt::AlignCenter);
 
 #ifdef DONT_SHOW_UNKNOWN
 		const int idx = 4;
@@ -300,17 +301,6 @@ SAAdventure::SAAdventure(QWidget *parent)
 {
 	Q_D(SAAdventure);
 	d->ui.setupUi(this);
-
-	// Fix alignment of the header labels.
-	d->ui.gridLevels->setAlignment(d->ui.lblCharacter, Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblLives,     Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblCompleted, Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblTimeOfDay, Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblUnknown1,  Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblUnknown2,  Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblEntrance,  Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblLevel,     Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblUnknown3,  Qt::AlignTop);
 
 	// Initialize the character listing.
 	d->initCharacters();
