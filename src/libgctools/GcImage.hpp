@@ -2,7 +2,7 @@
  * GameCube Tools Library.                                                 *
  * GcImage.hpp: GameCube image format handler.                             *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -29,15 +29,18 @@
 // GCN card definitions.
 #include "card.h"
 
-class GcImagePrivate;
+// Loader classes.
+class GcImageLoader;
+class DcImageLoader;
 
+class GcImagePrivate;
 class GcImage
 {
 	private:
 		GcImage();
 	public:
 		~GcImage();
-		// Copy/ constructor.
+		// Copy constructor.
 		GcImage(const GcImage &other);
 
 	private:
@@ -46,35 +49,15 @@ class GcImage
 		// Assign constructor. (TODO)
 		GcImage &operator=(const GcImage &other);
 
+		// Image loader classes.
+		friend class GcImageLoader;
+		friend class DcImageLoader;
+
 	public:
 		/**
-		 * Convert a GameCube CI8 image to GcImage.
-		 * @param w Image width.
-		 * @param h Image height.
-		 * @param img_buf CI8 image buffer.
-		 * @param img_siz Size of image data. [must be >= (w*h)]
-		 * @param pal_buf Palette buffer.
-		 * @param pal_siz Size of palette data. [must be >= 0x200]
-		 * @return GcImage, or nullptr on error.
-		 */
-		static GcImage *fromCI8(int w, int h,
-					const uint8_t *img_buf, int img_siz,
-					const uint16_t *pal_buf, int pal_siz);
-
-		/**
-		 * Convert a GameCube RGB5A3 image to GcImage.
-		 * @param w Image width.
-		 * @param h Image height.
-		 * @param img_buf CI8 image buffer.
-		 * @param img_siz Size of image data. [must be >= (w*h)*2]
-		 * @return GcImage, or nullptr on error.
-		 */
-		static GcImage *fromRGB5A3(int w, int h, const uint16_t *img_buf, int img_siz);
-
-		/**
-		 * Convert this GcImage to RGB5A3.
+		 * Convert this GcImage to ARGB32.
 		 * Caller must delete the returned GcImage.
-		 * @return New GcImage in RGB5A3.
+		 * @return New GcImage in ARGB32.
 		 */
 		GcImage *toRGB5A3(void) const;
 

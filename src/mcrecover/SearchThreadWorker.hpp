@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * SearchThreadWorker.hpp: SearchThread "worker" object.                   *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -37,7 +37,7 @@
 class QThread;
 
 // Forward declarations.
-class MemCard;
+class GcnCard;
 class GcnMcFileDb;
 
 // SearchThreadWorker private class.
@@ -109,7 +109,7 @@ class SearchThreadWorker : public QObject
 		 * If successful, retrieve the file list using dirEntryList().
 		 * If an error occurs, check the errorString(). (TODO)
 		 */
-		int searchMemCard(MemCard *card, const QVector<GcnMcFileDb*> &dbs,
+		int searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*> &dbs,
 				char preferredRegion = 0, bool searchUsedBlocks = false);
 
 		/**
@@ -123,7 +123,7 @@ class SearchThreadWorker : public QObject
 		 * @param preferredRegion Preferred region.
 		 * @param searchUsedBlocks If true, search all blocks, not just blocks marked as empty.
 		 */
-		void setThreadInfo(MemCard *card, const QVector<GcnMcFileDb*> &dbs,
+		void setThreadInfo(GcnCard *card, const QVector<GcnMcFileDb*> &dbs,
 				QThread *orig_thread,
 				char preferredRegion = 0, bool searchUsedBlocks = false);
 

@@ -58,7 +58,9 @@ IF(QT_IS_STATIC)
 	FIND_LIBRARY(QT_PLUGINS_CODECS_QJPCODECS
 		qjpcodecs${QT_PLUGINS_SUFFIX}
 		PATHS ${QT_PLUGINS_DIR}/codecs)
-	IF(NOT QT_PLUGINS_CODECS_QJPCODECS)
+	IF(QT_PLUGINS_CODECS_QJPCODECS)
+		SET(HAVE_QT_STATIC_PLUGIN_QJPCODECS 1)
+	ELSE()
 		MESSAGE(WARNING "qjpcodecs not found; Japanese text will not be decoded properly.")
 	ENDIF()
 ENDIF(QT_IS_STATIC)
@@ -106,9 +108,6 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.mcrecover.h.in" "${CMAKE_CURR
 # Sources.
 SET(mcrecover_SRCS
 	mcrecover.cpp
-	MemCard.cpp
-	MemCardFile.cpp
-	MemCardModel.cpp
 	GcnMcFileDb.cpp
 	SearchThread.cpp
 	SearchThreadWorker.cpp
@@ -117,15 +116,12 @@ SET(mcrecover_SRCS
 	IconAnimHelper.cpp
 	McRecoverQApplication.cpp
 	VarReplace.cpp
-	MemCardItemDelegate.cpp
-	FileComments.cpp
 	TaskbarButtonManager/TaskbarButtonManager.cpp
 	GcToolsQt.cpp
 	TranslationManager.cpp
 	config/ConfigStore.cpp
 	config/ConfigDefaults.cpp
 	PathFuncs.cpp
-	MemCardSortFilterProxyModel.cpp
 	)
 
 SET(mcrecover_WINDOW_SRCS
@@ -138,12 +134,58 @@ SET(mcrecover_WINDOW_SRCS
 	
 SET(mcrecover_WIDGET_SRCS
 	widgets/StatusBarManager.cpp
-	widgets/MemCardFileView.cpp
-	widgets/MemCardView.cpp
+	widgets/FileView.cpp
+	widgets/CardView.cpp
 	widgets/QTreeViewOpt.cpp
 	widgets/MessageWidget.cpp
 	widgets/TableSelect.cpp
 	widgets/MessageWidgetStack.cpp
+	)
+
+SET(mcrecover_CARD_SRCS
+	card/Card.cpp
+	card/GcnCard.cpp
+	card/File.cpp
+	card/GcnFile.cpp
+	card/MemCardModel.cpp
+	card/MemCardItemDelegate.cpp
+	card/MemCardSortFilterProxyModel.cpp
+	card/VmuCard.cpp
+	card/VmuFile.cpp
+	)
+
+# File edtors.
+SET(mcrecover_EDIT_SRCS
+	edit/EditorWindow.cpp
+	edit/EditorWidget.cpp
+	edit/EditorWidgetFactory.cpp
+	edit/SonicAdventure/SAEditor.cpp
+	edit/SonicAdventure/SALevelStats.cpp
+	edit/SonicAdventure/SALevelClearCount.cpp
+	edit/SonicAdventure/SAEventFlags.cpp
+	edit/SonicAdventure/BitFlagsModel.cpp
+	edit/SonicAdventure/BitFlagsView.cpp
+	edit/SonicAdventure/PageFilterModel.cpp
+	edit/SonicAdventure/BitFlags.cpp
+	edit/SonicAdventure/SANPCFlags.cpp
+	edit/SonicAdventure/ByteFlags.cpp
+	edit/SonicAdventure/SADXMissionFlags.cpp
+	edit/SonicAdventure/ByteFlagsModel.cpp
+	edit/SonicAdventure/ByteFlagsView.cpp
+	edit/SonicAdventure/CenteredCheckBoxDelegate.cpp
+	edit/SonicAdventure/SAGeneral.cpp
+	edit/SonicAdventure/SADataEvents.c
+	edit/SonicAdventure/SADXDataMissions.c
+	edit/SonicAdventure/SADataLevels.c
+	edit/SonicAdventure/SADataUI.c
+	edit/SonicAdventure/SAAdventure.cpp
+	edit/SonicAdventure/SAMiscEmblems.cpp
+	edit/SonicAdventure/TimeCodeEdit.cpp
+	edit/SonicAdventure/SASubGames.cpp
+	)
+SET(mcrecover_EDIT_H
+	edit/EditorWidgetFactory.hpp
+	edit/SonicAdventure/SAData.h
 	)
 
 # Shh... it's a secret to everybody.
@@ -162,18 +204,13 @@ ENDIF(WIN32)
 
 # Headers with Qt4 objects.
 SET(mcrecover_MOC_H
-	MemCard.hpp
-	MemCardFile.hpp
-	MemCardModel.hpp
 	GcnMcFileDb.hpp
 	SearchThread.hpp
 	SearchThreadWorker.hpp
 	IconAnimHelper.hpp
 	McRecoverQApplication.hpp
-	MemCardItemDelegate.hpp
 	TaskbarButtonManager/TaskbarButtonManager.hpp
 	config/ConfigStore.hpp
-	MemCardSortFilterProxyModel.hpp
 	)
 
 SET(mcrecover_WINDOW_MOC_H
@@ -186,12 +223,49 @@ SET(mcrecover_WINDOW_MOC_H
 
 SET(mcrecover_WIDGET_MOC_H
 	widgets/StatusBarManager.hpp
-	widgets/MemCardFileView.hpp
-	widgets/MemCardView.hpp
+	widgets/FileView.hpp
+	widgets/CardView.hpp
 	widgets/QTreeViewOpt.hpp
 	widgets/MessageWidget.hpp
 	widgets/TableSelect.hpp
 	widgets/MessageWidgetStack.hpp
+	)
+
+SET(mcrecover_CARD_MOC_H
+	card/Card.hpp
+	card/GcnCard.hpp
+	card/File.hpp
+	card/GcnFile.hpp
+	card/MemCardModel.hpp
+	card/MemCardItemDelegate.hpp
+	card/MemCardSortFilterProxyModel.hpp
+	card/VmuCard.hpp
+	card/VmuFile.hpp
+	)
+
+# File edtors.
+SET(mcrecover_EDIT_MOC_H
+	edit/EditorWindow.hpp
+	edit/EditorWidget.hpp
+	edit/SonicAdventure/SAEditor.hpp
+	edit/SonicAdventure/SALevelStats.hpp
+	edit/SonicAdventure/SALevelClearCount.hpp
+	edit/SonicAdventure/SAEventFlags.hpp
+	edit/SonicAdventure/BitFlagsModel.hpp
+	edit/SonicAdventure/BitFlagsView.hpp
+	edit/SonicAdventure/PageFilterModel.hpp
+	edit/SonicAdventure/BitFlags.hpp
+	edit/SonicAdventure/SANPCFlags.hpp
+	edit/SonicAdventure/ByteFlags.hpp
+	edit/SonicAdventure/SADXMissionFlags.hpp
+	edit/SonicAdventure/ByteFlagsModel.hpp
+	edit/SonicAdventure/ByteFlagsView.hpp
+	edit/SonicAdventure/CenteredCheckBoxDelegate.hpp
+	edit/SonicAdventure/SAGeneral.hpp
+	edit/SonicAdventure/SAAdventure.hpp
+	edit/SonicAdventure/SAMiscEmblems.hpp
+	edit/SonicAdventure/TimeCodeEdit.hpp
+	edit/SonicAdventure/SASubGames.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H
@@ -208,15 +282,31 @@ SET(mcrecover_WINDOW_UIS
 	)
 
 SET(mcrecover_WIDGET_UIS
-	widgets/MemCardFileView.ui
-	widgets/MemCardView.ui
+	widgets/FileView.ui
+	widgets/CardView.ui
 	widgets/TableSelect.ui
+	)
+
+# File edtors.
+SET(mcrecover_EDIT_UIS
+	edit/EditorWindow.ui
+	edit/SonicAdventure/SAEditor.ui
+	edit/SonicAdventure/SALevelStats.ui
+	edit/SonicAdventure/SALevelClearCount.ui
+	edit/SonicAdventure/BitFlagsView.ui
+	edit/SonicAdventure/ByteFlagsView.ui
+	edit/SonicAdventure/SAGeneral.ui
+	edit/SonicAdventure/SAAdventure.ui
+	edit/SonicAdventure/SAMiscEmblems.ui
+	edit/SonicAdventure/TimeCodeEdit.ui
+	edit/SonicAdventure/SASubGames.ui
 	)
 
 # Generate the header files from the UI files.
 QT4_WRAP_UI(mcrecover_UIS_H
 	${mcrecover_WINDOW_UIS}
 	${mcrecover_WIDGET_UIS}
+	${mcrecover_EDIT_UIS}
 	)
 
 # Create MOC source files for classes that need them.
@@ -224,6 +314,8 @@ QT4_WRAP_CPP(mcrecover_MOC_SRCS
 	${mcrecover_MOC_H}
 	${mcrecover_WINDOW_MOC_H}
 	${mcrecover_WIDGET_MOC_H}
+	${mcrecover_CARD_MOC_H}
+	${mcrecover_EDIT_MOC_H}
 	${mcrecover_SEKRIT_MOC_H}
 	)
 
@@ -270,6 +362,7 @@ SET(mcrecover_RCC_SRCS
 	resources/mcrecover/mcrecover.qrc
 	resources/oxygen/oxygen.qrc
 	resources/flags/flags.qrc
+	resources/sonic/sonic.qrc
 	)
 
 # Add the resource files to the project.
@@ -286,10 +379,12 @@ QT4_ADD_RESOURCES(
 # to disable the command prompt window.
 ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_SRCS}
-	${mcrecover_OS_SRCS}
 	${mcrecover_WINDOW_SRCS}
 	${mcrecover_WIDGET_SRCS}
+	${mcrecover_CARD_SRCS}
+	${mcrecover_EDIT_SRCS} ${mcrecover_EDIT_H}
 	${mcrecover_SEKRIT_SRCS}
+	${mcrecover_OS_SRCS}
 	${mcrecover_MOC_SRCS}
 	${mcrecover_UIS_H}
 	${mcrecover_RCC_O}

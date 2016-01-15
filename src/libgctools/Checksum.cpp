@@ -69,9 +69,10 @@ uint16_t Checksum::Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly)
  * If either word equals 0xFFFF, it's changed to 0.
  * @param buf Data buffer.
  * @param siz Length of data buffer.
+ * @param endian Endianness of the data.
  * @return Checksum.
  */
-uint32_t Checksum::AddInvDual16(const uint16_t *buf, uint32_t siz)
+uint32_t Checksum::AddInvDual16(const uint16_t *buf, uint32_t siz, ChkEndian endian)
 {
 	// NOTE: Integer overflow/underflow is expected here.
 	uint16_t chk1 = 0;
@@ -81,19 +82,38 @@ uint32_t Checksum::AddInvDual16(const uint16_t *buf, uint32_t siz)
 	// siz is in bytes, so we have to divide it by two.
 	siz /= 2;
 
-	// Do four words at a time.
-	// TODO: Optimize byteswapping?
-	for (; siz > 4; siz -= 4, buf += 4) {
-		chk1 += be16_to_cpu(buf[0]); chk2 += (be16_to_cpu(buf[0]) ^ 0xFFFF);
-		chk1 += be16_to_cpu(buf[1]); chk2 += (be16_to_cpu(buf[1]) ^ 0xFFFF);
-		chk1 += be16_to_cpu(buf[2]); chk2 += (be16_to_cpu(buf[2]) ^ 0xFFFF);
-		chk1 += be16_to_cpu(buf[3]); chk2 += (be16_to_cpu(buf[3]) ^ 0xFFFF);
-	}
+	if (endian != CHKENDIAN_LITTLE) {
+		// Big-endian system. (PowerPC, etc.)
+		// Do four words at a time.
+		// TODO: Optimize byteswapping?
+		for (; siz > 4; siz -= 4, buf += 4) {
+			chk1 += be16_to_cpu(buf[0]); chk2 += (be16_to_cpu(buf[0]) ^ 0xFFFF);
+			chk1 += be16_to_cpu(buf[1]); chk2 += (be16_to_cpu(buf[1]) ^ 0xFFFF);
+			chk1 += be16_to_cpu(buf[2]); chk2 += (be16_to_cpu(buf[2]) ^ 0xFFFF);
+			chk1 += be16_to_cpu(buf[3]); chk2 += (be16_to_cpu(buf[3]) ^ 0xFFFF);
+		}
 
-	// Remaining words.
-	for (; siz != 0; siz--, buf++) {
-		chk1 += be16_to_cpu(*buf);
-		chk2 += (be16_to_cpu(*buf) ^ 0xFFFF);
+		// Remaining words.
+		for (; siz != 0; siz--, buf++) {
+			chk1 += be16_to_cpu(*buf);
+			chk2 += (be16_to_cpu(*buf) ^ 0xFFFF);
+		}
+	} else {
+		// Little-endian system. (x86, SH-4, etc.)
+		// Do four words at a time.
+		// TODO: Optimize byteswapping?
+		for (; siz > 4; siz -= 4, buf += 4) {
+			chk1 += le16_to_cpu(buf[0]); chk2 += (le16_to_cpu(buf[0]) ^ 0xFFFF);
+			chk1 += le16_to_cpu(buf[1]); chk2 += (le16_to_cpu(buf[1]) ^ 0xFFFF);
+			chk1 += le16_to_cpu(buf[2]); chk2 += (le16_to_cpu(buf[2]) ^ 0xFFFF);
+			chk1 += le16_to_cpu(buf[3]); chk2 += (le16_to_cpu(buf[3]) ^ 0xFFFF);
+		}
+
+		// Remaining words.
+		for (; siz != 0; siz--, buf++) {
+			chk1 += le16_to_cpu(*buf);
+			chk2 += (le16_to_cpu(*buf) ^ 0xFFFF);
+		}
 	}
 
 	// 0xFFFF is an invalid checksum value.
@@ -153,6 +173,44 @@ uint32_t Checksum::SonicChaoGarden(const uint8_t *buf, uint32_t siz)
 	return (a4 ^ v4);
 }
 
+/**
+ * Dreamcast VMU algorithm.
+ * Based on FCS-16.
+ *
+ * NOTE: The CRC is stored within the header.
+ * Specify the address in crc_addr in order to
+ * handle this properly. (Set to -1 to skip.)
+ * The usual address is 0x46.
+ *
+ * @param buf Data buffer.
+ * @param siz Length of data buffer.
+ * @param crc_addr Address of CRC in header.
+ * @return Checksum.
+ */
+uint16_t Checksum::DreamcastVMU(const uint8_t *buf, uint32_t siz, uint32_t crc_addr)
+{
+	// TODO: Optimize this?
+	// Reference: http://mc.pp.se/dc/vms/fileheader.html
+	unsigned int n = 0;
+	for (uint32_t i = 0; i < siz; i++) {
+		uint8_t chr = buf[i];
+		if (i == crc_addr || i == (crc_addr + 1)) {
+			// CRC address. Pretend it's 0.
+			chr = 0;
+		}
+
+		n ^= (chr << 8);
+		for (int c = 0; c < 8; c++) {
+			if (n & 0x8000)
+				n = (n << 1) ^ 4129;
+			else
+				n = (n << 1);
+		}
+	}
+
+	return (n & 0xFFFF);
+}
+
 /** General functions. **/
 
 /**
@@ -160,10 +218,11 @@ uint32_t Checksum::SonicChaoGarden(const uint8_t *buf, uint32_t siz)
  * @param algorithm Checksum algorithm.
  * @param buf Data buffer.
  * @param siz Length of data buffer.
+ * @param endian Endianness of the data.
  * @param param Algorithm parameter, e.g. polynomial or sum.
  * @return Checksum.
  */
-uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, uint32_t param)
+uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, ChkEndian endian, uint32_t param)
 {
 	switch (algorithm) {
 		case CHKALG_CRC16:
@@ -173,13 +232,21 @@ uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, u
 				     siz, (uint16_t)(param & 0xFFFF));
 
 		case CHKALG_ADDINVDUAL16:
-			return AddInvDual16(reinterpret_cast<const uint16_t*>(buf), siz);
+			return AddInvDual16(reinterpret_cast<const uint16_t*>(buf), siz, endian);
 
 		case CHKALG_ADDBYTES32:
 			return AddBytes32(reinterpret_cast<const uint8_t*>(buf), siz);
 
 		case CHKALG_SONICCHAOGARDEN:
 			return SonicChaoGarden(reinterpret_cast<const uint8_t*>(buf), siz);
+
+		case CHKALG_DREAMCASTVMU:
+			// If param is 0, assume a default CRC address of 0x46.
+			// (NOTE: Headers in game files are at 0x200,
+			//  but the CRC field is unused for game files.)
+			if (param == 0)
+				param = 0x46;
+			return DreamcastVMU(reinterpret_cast<const uint8_t*>(buf), siz, param);
 
 		case CHKALG_CRC32:
 			// TODO: Implement CRC32 once I encounter a file that uses it.
@@ -200,6 +267,7 @@ uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, u
  */
 Checksum::ChkAlgorithm Checksum::ChkAlgorithmFromString(const char *algorithm)
 {
+	// FIXME: Case-insensitive comparison?
 	if (!strcmp(algorithm, "crc16") ||
 	    !strcmp(algorithm, "crc-16"))
 	{
@@ -218,6 +286,13 @@ Checksum::ChkAlgorithm Checksum::ChkAlgorithmFromString(const char *algorithm)
 		 !strcmp(algorithm, "sonic chao garden"))
 	{
 		return CHKALG_SONICCHAOGARDEN;
+	}
+	else if (!strcmp(algorithm, "dreamcastvmu") ||
+		 !strcmp(algorithm, "dreamcast vmu") ||
+		 !strcmp(algorithm, "dcvmu") ||
+		 !strcmp(algorithm, "dc vmu"))
+	{
+		return CHKALG_DREAMCASTVMU;
 	}
 
 	// Unknown algorithm name.
@@ -246,6 +321,8 @@ const char *Checksum::ChkAlgorithmToString(ChkAlgorithm algorithm)
 			return "AddBytes32";
 		case CHKALG_SONICCHAOGARDEN:
 			return "SonicChaoGarden";
+		case CHKALG_DREAMCASTVMU:
+			return "DreamcastVMU";
 	}
 }
 
@@ -271,6 +348,8 @@ const char *Checksum::ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm)
 			return "AddBytes32";
 		case CHKALG_SONICCHAOGARDEN:
 			return "Sonic Chao Garden";
+		case CHKALG_DREAMCASTVMU:
+			return "Dreamcast VMU";
 	}
 }
 

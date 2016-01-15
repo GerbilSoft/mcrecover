@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SAEditor</class>
+ <widget class="QWidget" name="SAEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="vboxMain">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tabGeneral">
+      <attribute name="title">
+       <string>&amp;General</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="vboxGeneral">
+       <item>
+        <widget class="SAGeneral" name="saGeneral" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabAdventure">
+      <attribute name="title">
+       <string>A&amp;dventure</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="vboxAdventure">
+       <item>
+        <widget class="SAAdventure" name="saAdventure" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabActionStages">
+      <attribute name="title">
+       <string>&amp;Action Stages</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="vboxActionStages">
+       <item>
+        <widget class="SALevelStats" name="saLevelStats" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabSubGames">
+      <attribute name="title">
+       <string>&amp;Sub Games</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="vboxSubGames">
+       <item>
+        <widget class="SASubGames" name="saSubGames" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabMiscEmblems">
+      <attribute name="title">
+       <string>&amp;Misc Emblems</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="vboxExtraEmblems">
+       <item>
+        <widget class="SAMiscEmblems" name="saMiscEmblems" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabEventFlags">
+      <attribute name="title">
+       <string>&amp;Event Flags</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="vboxEventFlags">
+       <item>
+        <widget class="BitFlagsView" name="saEventFlagsView" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabNPCFlags">
+      <attribute name="title">
+       <string>&amp;NPC Flags</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="vboxNPCFlags">
+       <item>
+        <widget class="BitFlagsView" name="saNPCFlagsView" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabLevelClearCount">
+      <attribute name="title">
+       <string>Level &amp;Clear Count</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="vboxLevelClearCount">
+       <item>
+        <widget class="SALevelClearCount" name="saLevelClearCount" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabMissions">
+      <attribute name="title">
+       <string>Missions</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="vboxSADXMissions">
+       <item>
+        <widget class="QScrollArea" name="scrlMissions">
+         <property name="styleSheet">
+          <string notr="true">#scrlSADXMissions { background-color: transparent; } #scrlSADXMissionsContent { background-color: transparent; }</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+         <widget class="QWidget" name="scrlMissionsContent">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>784</width>
+            <height>441</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="vboxSADXMissionsContent">
+           <property name="margin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="ByteFlagsView" name="sadxMissionFlagsView" native="true"/>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SALevelStats</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/SALevelStats.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SALevelClearCount</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/SALevelClearCount.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>BitFlagsView</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/BitFlagsView.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ByteFlagsView</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/ByteFlagsView.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SAGeneral</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/SAGeneral.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SAAdventure</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/SAAdventure.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SAMiscEmblems</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/SAMiscEmblems.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SASubGames</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/SASubGames.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

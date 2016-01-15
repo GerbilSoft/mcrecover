@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SAAdventure</class>
+ <widget class="QWidget" name="SAAdventure">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>658</width>
+    <height>30</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="vboxMain">
+   <item>
+    <layout class="QGridLayout" name="gridLevels">
+     <item row="0" column="0" alignment="Qt::AlignLeft|Qt::AlignTop">
+      <widget class="QLabel" name="lblCharacter">
+       <property name="text">
+        <string>Character:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignTop">
+      <widget class="QLabel" name="lblLives">
+       <property name="text">
+        <string>Lives:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2" alignment="Qt::AlignHCenter|Qt::AlignTop">
+      <widget class="QLabel" name="lblCompleted">
+       <property name="text">
+        <string>Completed:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3" alignment="Qt::AlignHCenter|Qt::AlignTop">
+      <widget class="QLabel" name="lblTimeOfDay">
+       <property name="text">
+        <string>Time of Day:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4" alignment="Qt::AlignHCenter|Qt::AlignTop">
+      <widget class="QLabel" name="lblUnknown1">
+       <property name="text">
+        <string>Unknown:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="5" alignment="Qt::AlignHCenter|Qt::AlignTop">
+      <widget class="QLabel" name="lblUnknown2">
+       <property name="text">
+        <string>Unknown:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="6" alignment="Qt::AlignHCenter|Qt::AlignTop">
+      <widget class="QLabel" name="lblEntrance">
+       <property name="text">
+        <string>Entrance:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="7" alignment="Qt::AlignLeft|Qt::AlignTop">
+      <widget class="QLabel" name="lblLevel">
+       <property name="text">
+        <string>Level:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="8" alignment="Qt::AlignLeft|Qt::AlignTop">
+      <widget class="QLabel" name="lblAct">
+       <property name="text">
+        <string notr="true"/>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="9" alignment="Qt::AlignHCenter|Qt::AlignTop">
+      <widget class="QLabel" name="lblUnknown3">
+       <property name="text">
+        <string>Unknown:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="20" column="0" colspan="7">
+      <spacer name="vspcSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

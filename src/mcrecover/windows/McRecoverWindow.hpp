@@ -51,8 +51,9 @@ class McRecoverWindow : public QMainWindow
 		/**
 		 * Open a GameCube Memory Card image.
 		 * @param filename Filename.
+		 * @param type Type hint from the Open dialog. (0 == GCN, 1 == VMS, other == unknown)
 		 */
-		void openCard(const QString &filename);
+		void openCard(const QString &filename, int type = -1);
 
 		/**
 		 * Close the currently-opened GameCube Memory Card image.

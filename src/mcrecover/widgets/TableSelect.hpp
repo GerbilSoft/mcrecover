@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * TableSelect.hpp: Directory/Block Table select widget.                   *
  *                                                                         *
- * Copyright (c) 2014 by David Korth.                                      *
+ * Copyright (c) 2014-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -24,7 +24,7 @@
 
 #include <QtGui/QWidget>
 
-class MemCard;
+class GcnCard;
 
 class TableSelectPrivate;
 
@@ -32,7 +32,7 @@ class TableSelect : public QWidget
 {
 	Q_OBJECT
 
-	Q_PROPERTY(MemCard* card READ card WRITE setCard)
+	Q_PROPERTY(GcnCard* card READ card WRITE setCard)
 
 	public:
 		TableSelect(QWidget *parent = 0);
@@ -46,16 +46,16 @@ class TableSelect : public QWidget
 
 	public:
 		/**
-		 * Get the MemCard being displayed.
-		 * @return MemCard.
+		 * Get the GcnCard being displayed.
+		 * @return GcnCard.
 		 */
-		MemCard *card(void) const;
+		GcnCard *card(void) const;
 
 		/**
-		 * Set the MemCard being displayed.
-		 * @param file MemCard.
+		 * Set the GcnCard being displayed.
+		 * @param file GcnCard.
 		 */
-		void setCard(MemCard *card);
+		void setCard(GcnCard *card);
 
 		/** Events. **/
 
@@ -67,7 +67,7 @@ class TableSelect : public QWidget
 
 	protected slots:
 		/**
-		 * MemCard object was destroyed.
+		 * GcnCard object was destroyed.
 		 * @param obj QObject that was destroyed.
 		 */
 		void memCard_destroyed_slot(QObject *obj = 0);

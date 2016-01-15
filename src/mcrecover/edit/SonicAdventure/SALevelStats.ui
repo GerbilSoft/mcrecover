@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SALevelStats</class>
+ <widget class="QWidget" name="SALevelStats">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>376</width>
+    <height>61</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="vboxMain">
+   <item>
+    <layout class="QHBoxLayout" name="hboxCharacter">
+     <item alignment="Qt::AlignLeft|Qt::AlignVCenter">
+      <widget class="QLabel" name="lblCharacter">
+       <property name="text">
+        <string>&amp;Character:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+       <property name="buddy">
+        <cstring>cboCharacter</cstring>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignLeft|Qt::AlignVCenter">
+      <widget class="QComboBox" name="cboCharacter">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>Sonic</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/sonic.png</normaloff>:/sonic/SA1/sonic.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Tails</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/tails.png</normaloff>:/sonic/SA1/tails.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Knuckles</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/knuckles.png</normaloff>:/sonic/SA1/knuckles.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Amy</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/amy.png</normaloff>:/sonic/SA1/amy.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Gamma</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/gamma.png</normaloff>:/sonic/SA1/gamma.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Big</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/big.png</normaloff>:/sonic/SA1/big.png</iconset>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <spacer name="hspcCharacter">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLevels" columnstretch="0,1,0,1,1">
+     <item row="0" column="0" alignment="Qt::AlignLeft|Qt::AlignTop">
+      <widget class="QLabel" name="lblLevelName">
+       <property name="text">
+        <string>Level:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" alignment="Qt::AlignLeft|Qt::AlignTop">
+      <widget class="QLabel" name="lblHighScore">
+       <property name="text">
+        <string>High Score:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2" alignment="Qt::AlignLeft|Qt::AlignTop">
+      <widget class="QLabel" name="lblEmblems">
+       <property name="text">
+        <string>Emblems:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3" alignment="Qt::AlignLeft|Qt::AlignTop">
+      <widget class="QLabel" name="lblBestTime">
+       <property name="text">
+        <string>Best Time:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4" alignment="Qt::AlignLeft|Qt::AlignTop">
+      <widget class="QLabel" name="lblMostRings">
+       <property name="text">
+        <string>Most Rings:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="20" column="0" colspan="5">
+      <spacer name="vspcSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../../resources/sonic/sonic.qrc"/>
+ </resources>
+ <connections/>
+</ui>

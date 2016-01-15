@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * XmlTemplateDialogManager.hpp: XmlTemplateDialog Manager.                *
  *                                                                         *
- * Copyright (c) 2014 by David Korth.                                      *
+ * Copyright (c) 2014-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -25,12 +25,10 @@
 // Qt includes.
 #include <QtCore/QObject>
 
-// MemCard classes.
-class MemCardFile;
+class GcnFile;
 class XmlTemplateDialog;
 
 class XmlTemplateDialogManagerPrivate;
-
 class XmlTemplateDialogManager : public QObject
 {
 	Q_OBJECT
@@ -47,21 +45,21 @@ class XmlTemplateDialogManager : public QObject
 
 	public:
 		/**
-		 * Create an XmlTemplateDialog for a given MemCardFile.
-		 * If a dialog exists for that MemCardFile, the existing
+		 * Create an XmlTemplateDialog for a given GcnFile.
+		 * If a dialog exists for that GcnFile, the existing
 		 * dialog will be used.
-		 * @param file MemCardFile.
+		 * @param file GcnFile.
 		 * @param parent Parent.
 		 * @return XmlTemplateDialog;
 		 */
-		XmlTemplateDialog *create(const MemCardFile *file, QWidget *parent = nullptr);
+		XmlTemplateDialog *create(const GcnFile *file, QWidget *parent = nullptr);
 
 	protected slots:
 		/**
-		 * A MemCardFile has been destroyed.
-		 * @param obj MemCardFile that was destroyed.
+		 * A GcnFile has been destroyed.
+		 * @param obj GcnFile that was destroyed.
 		 */
-		void memCardFile_destroyed_slot(QObject *obj);
+		void file_destroyed_slot(QObject *obj);
 
 		/**
 		 * An XmlTemplateDialog has been destroyed.

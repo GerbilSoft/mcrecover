@@ -32,17 +32,16 @@
 #include <QtGui/QStyle>
 
 // Custom types for QVariant.
-#include "FileComments.hpp"
 #include "GcnDateTime.hpp"
 
 // Translation Manager.
 #include "TranslationManager.hpp"
 
 // Import Qt plugins in static builds.
-#ifdef QT_IS_STATIC
+#if defined(QT_IS_STATIC) && defined(HAVE_QT_STATIC_PLUGIN_QJPCODECS)
 #include <QtCore/QtPlugin>
 Q_IMPORT_PLUGIN(qjpcodecs)
-#endif /* QT_IS_STATIC */
+#endif
 
 /** McRecoverQApplicationPrivate **/
 
@@ -87,7 +86,6 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 #endif
 
 	// Register custom types for QVariant.
-	qRegisterMetaType<FileComments>("FileComments");
 	qRegisterMetaType<GcnDateTime>("GcnDateTime");
 
 	// Initialize the TranslationManager.

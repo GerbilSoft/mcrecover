@@ -41,11 +41,15 @@
 #endif
 #endif /* QT_NO_DATASTREAM */
 
+// from vmu.h
+extern "C" struct _vmu_timestamp;
+
 class GcnDateTime
 {
 	public:
 		GcnDateTime();
 		GcnDateTime(uint32_t gcnTimestamp);
+		GcnDateTime(const _vmu_timestamp &vmuTimestamp);
 		GcnDateTime(const QDateTime &other);
 		GcnDateTime(const GcnDateTime &other);
 
@@ -63,10 +67,36 @@ class GcnDateTime
 		void setGcnTimestamp(uint32_t gcnTimestamp);
 
 		/**
+		 * Set the QDateTime using a Unix timestamp.
+		 * FIXME: 64-bit timestamp?
+		 * @param gcnTimestamp GCN timestamp.
+		 */
+		void setUnixTimestamp(uint32_t unixTimestamp);
+
+		/**
+		 * Set the QDateTime using a Dreamcast VMU timestamp.
+		 * @param vmuTimestamp VMU timestamp.
+		 */
+		void setVmuTimestamp(const _vmu_timestamp &vmuTimestamp);
+
+		/**
 		 * Get the GCN timestamp from the QDateTime.
 		 * @return GCN timestamp.
 		 */
 		uint32_t gcnTimestamp(void) const;
+
+		/**
+		 * Get the Unix timestamp from the QDateTime.
+		 * FIXME: 64-bit timestamp?
+		 * @return Unix timestamp.
+		 */
+		uint32_t unixTimestamp(void) const;
+
+		/**
+		 * Get the VMU timestamp from the QDateTime.
+		 * @return VMU timestamp.
+		 */
+		_vmu_timestamp vmuTimestamp(void) const;
 
 		/**
 		 * Set the QDateTime using a QDateTime.
@@ -167,8 +197,8 @@ inline GcnDateTime::GcnDateTime()
 	// GCN timestamps don't have timezones associated with them.
 	m_dateTime.setTimeSpec(Qt::UTC);
 
-	// Initialize the timestamp to 0.
-	// (2000/01/01 12:00 AM UTC)
+	// Initialize the timestamp to the Unix epoch.
+	// (1970/01/01 12:00 AM UTC)
 	setGcnTimestamp(0);
 }
 
@@ -183,6 +213,19 @@ inline GcnDateTime::GcnDateTime(uint32_t gcnTimestamp)
 
 	// Set the timestamp.
 	setGcnTimestamp(gcnTimestamp);
+}
+
+/**
+ * Create a GcnDateTime from a VMU timestamp.
+ * @param vmuTimestamp VMU timestamp.
+ */
+inline GcnDateTime::GcnDateTime(const _vmu_timestamp &vmuTimestamp)
+{
+	// GCN timestamps don't have timezones associated with them.
+	m_dateTime.setTimeSpec(Qt::UTC);
+
+	// Set the timestamp.
+	setVmuTimestamp(vmuTimestamp);
 }
 
 /**
@@ -215,11 +258,27 @@ inline void GcnDateTime::setGcnTimestamp(uint32_t gcnTimestamp)
 	{ m_dateTime.setTime_t(gcnTimestamp + GCN_EPOCH); }
 
 /**
+ * Set the GcnDateTime using a Unix timestamp.
+ * FIXME: 64-bit timestamp?
+ * @param unixTimestamp Unix timestamp.
+ */
+inline void GcnDateTime::setUnixTimestamp(uint32_t unixTimestamp)
+	{ m_dateTime.setTime_t(unixTimestamp); }
+
+/**
  * Get the GCN timestamp from the QDateTime.
  * @return GCN timestamp.
  */
 inline uint32_t GcnDateTime::gcnTimestamp(void) const
 	{ return (m_dateTime.toTime_t() - GCN_EPOCH); }
+
+/**
+ * Get the GCN timestamp from the QDateTime.
+ * FIXME: 64-bit timestamp?
+ * @return Unix timestamp.
+ */
+inline uint32_t GcnDateTime::unixTimestamp(void) const
+	{ return m_dateTime.toTime_t(); }
 
 /**
  * Set the QDateTime using a QDateTime.

@@ -47,8 +47,9 @@ class MessageWidgetStack : public QWidget
 		 * @param msg Message text. (supports Qt RichText formatting)
 		 * @param icon Icon.
 		 * @param timeout Timeout, in milliseconds. (0 for no timeout)
+		 * @param closeOnDestroy Close the message when the specified QObject is destroyed.
 		 */
-		void showMessage(const QString &msg, MessageWidget::MsgIcon icon, int timeout = 0);
+		void showMessage(const QString &msg, MessageWidget::MsgIcon icon, int timeout = 0, QObject *closeOnDestroy = 0);
 
 	protected slots:
 		/**

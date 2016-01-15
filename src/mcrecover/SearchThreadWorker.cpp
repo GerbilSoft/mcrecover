@@ -21,8 +21,8 @@
 
 #include "SearchThreadWorker.hpp"
 
-// MemCard
-#include "MemCard.hpp"
+// GcnCard
+#include "card/GcnCard.hpp"
 
 // GCN Memory Card File Database
 #include "GcnMcFileDb.hpp"
@@ -64,7 +64,7 @@ class SearchThreadWorkerPrivate
 		// searchMemCard() parameters used when this worker
 		// is called by a thread's started() signal.
 		struct {
-			MemCard *card;
+			GcnCard *card;
 			QVector<GcnMcFileDb*> dbs;
 
 			// Original thread.
@@ -123,7 +123,7 @@ QLinkedList<SearchData> SearchThreadWorker::filesFoundList(void)
  * If successful, retrieve the file list using dirEntryList().
  * If an error occurs, check the errorString(). (TODO)
  */
-int SearchThreadWorker::searchMemCard(MemCard *card, const QVector<GcnMcFileDb*> &dbs,
+int SearchThreadWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*> &dbs,
 				      char preferredRegion, bool searchUsedBlocks)
 {
 	Q_D(SearchThreadWorker);
@@ -136,9 +136,12 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const QVector<GcnMcFileDb*>
 		return -1;
 	}
 
+	// FIXME: GCN-specific assumptions used here. (first block is 5, etc)
+	// Add more information to Card to indicate the usable area.
+
 	// Block search list.
 	QVector<uint16_t> blockSearchList;
-	const int totalPhysBlocks = card->sizeInBlocks();
+	const int totalPhysBlocks = card->totalPhysBlocks();
 
 	// Used block map.
 	QVector<uint8_t> usedBlockMap;
@@ -154,7 +157,8 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const QVector<GcnMcFileDb*>
 		}
 	} else {
 		// Search through all blocks.
-		usedBlockMap = QVector<uint8_t>(card->sizeInBlocks(), 0);
+		// TODO: Mark system blocks as used?
+		usedBlockMap = QVector<uint8_t>(totalPhysBlocks, 0);
 
 		// Put together a block search list.
 		blockSearchList.reserve(totalPhysBlocks - 5);
@@ -342,7 +346,7 @@ int SearchThreadWorker::searchMemCard(MemCard *card, const QVector<GcnMcFileDb*>
  * @param preferredRegion Preferred region.
  * @param searchUsedBlocks If true, search all blocks, not just blocks marked as empty.
  */
-void SearchThreadWorker::setThreadInfo(MemCard *card, const QVector<GcnMcFileDb*> &dbs,
+void SearchThreadWorker::setThreadInfo(GcnCard *card, const QVector<GcnMcFileDb*> &dbs,
 				       QThread *orig_thread,
 				       char preferredRegion, bool searchUsedBlocks)
 {

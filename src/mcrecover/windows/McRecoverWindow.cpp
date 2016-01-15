@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * McRecoverWindow.cpp: Main window.                                       *
  *                                                                         *
- * Copyright (c) 2012-2014 by David Korth.                                 *
+ * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -29,12 +29,15 @@
 // PcreRegex is needed to access pcre configuration.
 #include "PcreRegex.hpp"
 
-// MemCard classes.
-#include "MemCard.hpp"
-#include "MemCardFile.hpp"
-#include "MemCardModel.hpp"
-#include "MemCardItemDelegate.hpp"
-#include "MemCardSortFilterProxyModel.hpp"
+// GcnCard classes.
+#include "card/GcnCard.hpp"
+#include "card/GcnFile.hpp"
+#include "card/MemCardModel.hpp"
+#include "card/MemCardItemDelegate.hpp"
+#include "card/MemCardSortFilterProxyModel.hpp"
+
+// VmuCard
+#include "card/VmuCard.hpp"
 
 // File database.
 #include "GcnMcFileDb.hpp"
@@ -61,6 +64,7 @@ using std::vector;
 #include <QtCore/QFile>
 #include <QtCore/QSignalMapper>
 #include <QtCore/QLocale>
+#include <QtCore/QTextCodec>
 #include <QtGui/QAction>
 #include <QtGui/QActionGroup>
 #include <QtGui/QDragEnterEvent>
@@ -103,15 +107,23 @@ class McRecoverWindowPrivate
 		bool scanningDisabled;
 
 		// Memory Card.
-		MemCard *card;
+		Card *card;
 		MemCardModel *model;
 		MemCardSortFilterProxyModel *proxyModel;
 
 		/**
 		 * Show a warning if the card (or files on the card) are Japanese,
-		 * but PCRE doesn't have Unicode character properties support.
+		 * but either Qt doesn't support Shift-JIS or PCRE doesn't have
+		 * Unicode character properties support.
 		 */
 		void showJpWarning(void);
+
+		/**
+		 * Format a file size
+		 * @param size File size.
+		 * @return Formatted file size.
+		 */
+		static QString formatFileSize(quint64 size);
 
 		// Filename.
 		QString filename;
@@ -161,7 +173,7 @@ class McRecoverWindowPrivate
 		 * @param files List of file(s) to save.
 		 * @param path If specified, save file(s) to path using default GCI filenames.
 		 */
-		void saveFiles(const QVector<MemCardFile*> &files, QString path = QString());
+		void saveFiles(const QVector<File*> &files, QString path = QString());
 
 		// UI busy counter.
 		int uiBusyCounter;
@@ -229,6 +241,18 @@ class McRecoverWindowPrivate
 
 		// Shh... it's a secret to everybody.
 		HerpDerpEggListener *herpDerp;
+
+		/**
+		 * Read a memory card file and try to guess
+		 * what system it's for.
+		 *
+		 * NOTE: This function will actually just check for VMU.
+		 * If the VMU header is missing, it will assume GCN.
+		 *
+		 * @param filename Memory card filename.
+		 * @return 0 for GCN; 1 for VMU; -1 for unknown.
+		 */
+		static int checkCardType(const QString &filename);
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -310,26 +334,80 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 
 /**
  * Show a warning if the card (or files on the card) are Japanese,
- * but PCRE doesn't have Unicode character properties support.
+ * but either Qt doesn't support Shift-JIS or PCRE doesn't have
+ * Unicode character properties support.
  */
 void McRecoverWindowPrivate::showJpWarning(void)
 {
+	const QString prefix = QChar(0x2022) + QChar(L' ');
+	QString msg;
+	int err_count = 0;
+
+	// FIXME: MessageWidget text cannot be retranslated while it's still visible.
+	// FIXME: Mac OS X will use a dylib in the application framework.
+
+	if (!QTextCodec::codecForName("Shift-JIS")) {
+		// Qt doesn't support Shift-JIS.
+		err_count++;
+#ifdef QT_IS_STATIC
+		//: Statically-linked Qt is missing qjpcodecs.
+		msg = prefix + McRecoverWindow::tr(
+			"The internal Qt library was not compiled with Shift-JIS support.");
+#else /* !QT_IS_STATIC */
+		//: Dyanmically-linked Qt is missing qjpcodecs.
+		msg = prefix + McRecoverWindow::tr(
+			"The system Qt library was not compiled with Shift-JIS support.");
+#endif /* QT_IS_STATIC */
+	}
+
 	if (!PcreRegex::PCRE_has_UCP()) {
-		// FIXME: MessageWidget text cannot be retranslated while it's still visible.
-		// FIXME: Mac OS X will use a dylib in the application framework.
+		if (err_count > 0) {
+			msg += QChar(L'\n');
+		}
+		err_count++;
 #ifdef PCRE_STATIC
 		//: Statically-linked PCRE is missing Unicode character properties support.
-		QString msg = McRecoverWindow::tr(
-				"The internal PCRE library was not compiled with Unicode character properties support.\n"
-				"Some files with Japanese descriptions might not be found when scanning.");
+		msg += prefix + McRecoverWindow::tr(
+			"The internal PCRE library was not compiled with Unicode character properties support.");
 #else /* !PCRE_STATIC */
 		//: Dynamically-linked PCRE is missing Unicode character properties support.
-		QString msg = McRecoverWindow::tr(
-				"The system PCRE library was not compiled with Unicode character properties support.\n"
-				"Some files with Japanese descriptions might not be found when scanning.");
+		msg += prefix + McRecoverWindow::tr(
+			"The system PCRE library was not compiled with Unicode character properties support.");
 #endif /* PCRE_STATIC */
-		ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING);
 	}
+
+	if (err_count > 0) {
+		//: Errors occurred while attempting to decode Japanese text.
+		QString osd = McRecoverWindow::tr(
+			"Error(s) occurred while attempting to decode Japanese text:\n%1\n"
+			"Some files with Japanese descriptions might not be found when scanning.", 0, err_count)
+				.arg(msg);
+		ui.msgWidget->showMessage(osd, MessageWidget::ICON_WARNING, 0, card);
+	}
+}
+
+/**
+ * Format a file size
+ * @param size File size.
+ * @return Formatted file size.
+ */
+QString McRecoverWindowPrivate::formatFileSize(quint64 size)
+{
+	// TODO: Optimize this?
+	if (size < (2ULL << 10))
+		return McRecoverWindow::tr("%Ln byte(s)", "", (int)size).arg(size);
+	else if (size < (2ULL << 20))
+		return McRecoverWindow::tr("%L1 KB").arg(size >> 10);
+	else if (size < (2ULL << 30))
+		return McRecoverWindow::tr("%L1 MB").arg(size >> 20);
+	else if (size < (2ULL << 40))
+		return McRecoverWindow::tr("%L1 GB").arg(size >> 30);
+	else if (size < (2ULL << 50))
+		return McRecoverWindow::tr("%L1 TB").arg(size >> 40);
+	else if (size < (2ULL << 60))
+		return McRecoverWindow::tr("%L1 PB").arg(size >> 50);
+	else /*if (size < (2ULL << 70))*/
+		return McRecoverWindow::tr("%L1 EB").arg(size >> 60);
 }
 
 /**
@@ -477,7 +555,7 @@ void McRecoverWindowPrivate::updateActionEnableStatus(void)
 			ui.actionScan->setEnabled(true);
 		ui.actionSave->setEnabled(
 			ui.lstFileList->selectionModel()->hasSelection());
-		ui.actionSaveAll->setEnabled(card->numFiles() > 0);
+		ui.actionSaveAll->setEnabled(card->fileCount() > 0);
 	}
 }
 
@@ -524,7 +602,7 @@ QString McRecoverWindowPrivate::changeFileExtension(const QString &filename, con
  * @param files List of file(s) to save.
  * @param path If specified, save file(s) to path using default GCI filenames.
  */
-void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QString path)
+void McRecoverWindowPrivate::saveFiles(const QVector<File*> &files, QString path)
 {
 	Q_Q(McRecoverWindow);
 
@@ -557,16 +635,18 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QStri
 		// Single file, path not specified.
 		singleFile = true;
 		overwriteAll = OVERWRITEALL_YESTOALL;
-		MemCardFile *file = files.at(0);
+		File *file = files.at(0);
 
 		const QString defFilename = lastPath() + QChar(L'/') +
-						file->defaultGciFilename();
+						file->defaultExportFilename();
 
 		// Prompt the user for a save location.
+		// FIXME: What type of file?
 		filename = QFileDialog::getSaveFileName(q,
 				McRecoverWindow::tr("Save GCN Save File %1")
 					.arg(file->filename()),	// Dialog title
 				defFilename,			// Default filename
+				// TODO: Remove extra space from the filename filter?
 				McRecoverWindow::tr("GameCube Save Files") + QLatin1String(" (*.gci);;") +
 				McRecoverWindow::tr("All Files") + QLatin1String(" (*)"));
 		if (filename.isEmpty())
@@ -590,9 +670,9 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QStri
 	// Animted image format for icons.
 	GcImageWriter::AnimImageFormat animImgf = animIconFormat();
 
-	foreach (MemCardFile *file, files) {
+	foreach (File *file, files) {
 		if (!singleFile)
-			filename = path + QChar(L'/') + file->defaultGciFilename();
+			filename = path + QChar(L'/') + file->defaultExportFilename();
 		QFile qfile(filename);
 
 		// Check if the file exists.
@@ -644,7 +724,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QStri
 		}
 
 		// Save the file.
-		int ret = file->saveGci(filename);
+		int ret = file->exportToFile(filename);
 		if (ret == 0) {
 			// File saved successfully.
 			filesSaved++;
@@ -663,7 +743,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<MemCardFile*> &files, QStri
 		// Extract the icon.
 		if (extractIcons) {
 			// TODO: Error handling and details.
-			if (file->numIcons() >= 1) {
+			if (file->iconCount() >= 1) {
 				// File has an icon.
 				QString iconFilename = changeFileExtension(filename, extIcon);
 				file->saveIcon(iconFilename, animImgf);
@@ -873,6 +953,58 @@ GcImageWriter::AnimImageFormat McRecoverWindowPrivate::animIconFormat(void) cons
 	return animImgf;
 }
 
+/**
+ * Read a memory card file and try to guess
+ * what system it's for.
+ *
+ * NOTE: This function will actually just check for VMU.
+ * If the VMU header is missing, it will assume GCN.
+ *
+ * @param filename Memory card filename.
+ * @return 0 for GCN; 1 for VMU; -1 for unknown.
+ */
+int McRecoverWindowPrivate::checkCardType(const QString &filename)
+{
+	QFile file(filename);
+	QByteArray ba;
+
+	// Assume GCN by default.
+	int type = 0;
+
+	if (file.size() == 131072) {
+		// Possibly a Dreamcast VMU.
+		// TODO: Support for 4x cards, though
+		// 4x dumps are likely "four regular dumps".
+
+		// Check if 0x1FE00 - 0x1FE0F is all 0x55.
+		// If it is, then this is probably a VMU.
+		if (!file.open(QIODevice::ReadOnly))
+			goto not_vmu;
+		if (!file.seek(0x1FE00))
+			goto not_vmu;
+
+		// Read the data.
+		ba = file.read(16);
+		if (ba.size() != 16)
+			goto not_vmu;
+
+		// Make sure all 16 bytes are 0x55.
+		const char *data = ba.data();
+		for (int i = ba.size()-1; i >= 0; i--, data++) {
+			if (*data != 0x55) {
+				goto not_vmu;
+			}
+		}
+
+		// This is probably a VMU.
+		type = 1;
+	}
+
+not_vmu:
+	return type;
+}
+
+
 /** McRecoverWindow **/
 
 McRecoverWindow::McRecoverWindow(QWidget *parent)
@@ -901,19 +1033,19 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 #endif
 #endif
 
-	// Set up the QSplitter sizes.
+	// Set up the main splitter sizes.
 	// We want the card info panel to be 160px wide at startup.
 	// TODO: Save positioning settings somewhere?
 	static const int MemCardInfoPanelWidth = 256;
 	QList<int> sizes;
 	sizes.append(this->width() - MemCardInfoPanelWidth);
 	sizes.append(MemCardInfoPanelWidth);
-	d->ui.splitter->setSizes(sizes);
+	d->ui.splitterMain->setSizes(sizes);
 
-	// Set the splitter stretch factors.
+	// Set the main splitter stretch factors.
 	// We want the QTreeView to stretch, but not the card info panel.
-	d->ui.splitter->setStretchFactor(0, 1);
-	d->ui.splitter->setStretchFactor(1, 0);
+	d->ui.splitterMain->setStretchFactor(0, 1);
+	d->ui.splitterMain->setStretchFactor(1, 0);
 
 	// Initialize lstFileList's item delegate.
 	d->ui.lstFileList->setItemDelegate(new MemCardItemDelegate(this));
@@ -939,7 +1071,7 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_DESCRIPTION, false);
 	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_SIZE, false);
 	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_MTIME, false);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_PERMISSION, false);
+	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_MODE, false);
 	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_GAMEID, false);
 	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_FILENAME, true);
 
@@ -994,22 +1126,45 @@ McRecoverWindow::~McRecoverWindow()
 /**
  * Open a GameCube Memory Card image.
  * @param filename Filename.
+ * @param type Type hint from the Open dialog. (0 == GCN, 1 == VMS, other == unknown)
  */
-void McRecoverWindow::openCard(const QString &filename)
+void McRecoverWindow::openCard(const QString &filename, int type)
 {
 	Q_D(McRecoverWindow);
 
 	if (d->card) {
-		d->model->setMemCard(nullptr);
+		d->model->setCard(nullptr);
 		d->ui.mcCardView->setCard(nullptr);
 		d->ui.mcfFileView->setFile(nullptr);
 		delete d->card;
 	}
 
+	/** TODO: CardFactory **/
+
+	// TODO: Use an enum for 'type'?
+	if (type < 0 || type > 1) {
+		// Check what type of card this is.
+		type = d->checkCardType(filename);
+		if (type < 0 || type > 1) {
+			// Still unknown.
+			// Assume GCN.
+			type = 0;
+		}
+	}
+
 	// Open the specified memory card image.
 	// TODO: Set this as the last path?
-	//d->card = MemCard::open(filename, this);
-	d->card = MemCard::open(filename, this);
+	QString unkErrMsg;
+	if (type == 1) {
+		//: Failure message for VmuCard.
+		unkErrMsg = tr("VmuCard::open() failed.");
+		d->card = VmuCard::open(filename, this);
+	} else /*if (type == 0)*/ {
+		//: Failure message for GcnCard.
+		unkErrMsg = tr("GcnCard::open() failed.");
+		d->card = GcnCard::open(filename, this);
+	}
+
 	if (!d->card || !d->card->isOpen()) {
 		// Could not open the card.
 		static const QChar chrBullet(0x2022);  // U+2022: BULLET
@@ -1017,14 +1172,14 @@ void McRecoverWindow::openCard(const QString &filename)
 		QString errMsg = tr("An error occurred while opening %1:")
 					.arg(filename_noPath) +
 				QChar(L'\n') + chrBullet + QChar(L' ') +
-				(d->card ? d->card->errorString() : tr("MemCard::open() failed."));
+				(d->card ? d->card->errorString() : unkErrMsg);
 		d->ui.msgWidget->showMessage(errMsg, MessageWidget::ICON_WARNING);
 		closeCard(true);
 		return;
 	}
 
 	d->filename = filename;
-	d->model->setMemCard(d->card);
+	d->model->setCard(d->card);
 
 	// Extract the filename from the path.
 	d->displayFilename = filename;
@@ -1032,57 +1187,72 @@ void McRecoverWindow::openCard(const QString &filename)
 	if (lastSlash >= 0)
 		d->displayFilename.remove(0, lastSlash + 1);
 
-	// Set the MemCardView's MemCard to the
+	// Set the CardView's Card to the
 	// selected card in the QTreeView.
 	d->ui.mcCardView->setCard(d->card);
 
 	// Check if any of the files are Japanese.
 	bool isJapanese = false;
-	if (d->card->encoding() == SYS_FONT_ENCODING_SJIS) {
+	if (d->card->encoding() == Card::ENCODING_SHIFTJIS) {
 		isJapanese = true;
 	} else {
-		for (int i = 0; i < d->card->numFiles(); i++) {
-			const MemCardFile *file = d->card->getFile(i);
-			if (file->encoding() == SYS_FONT_ENCODING_SJIS) {
+		// TODO: Add a "hasJapaneseCharacters" function.
+		// Files don't have an inherent encoding, and we're
+		// not simply going to check the region value, since
+		// that's GameCube-specific.
+		// Also, optimize this by skipping the whole thing if
+		// PCRE does support UCP.
+#if 0
+		for (int i = 0; i < d->card->fileCount(); i++) {
+			const GcnFile *file = qobject_cast<GcnFile*>(d->card->getFile(i));
+			if (file && file->encoding() == Card::ENCODING_SHIFTJIS) {
 				isJapanese = true;
 				break;
 			}
 		}
+#endif
 	}
 
 	// If the card encoding or any files are Japanese,
-	// show a warning if PCRE doesn't support UCP.
-	if (isJapanese)
+	// show a warning if either Qt doesn't support Shift-JIS
+	// or if PCRE doesn't support UCP.
+	if (isJapanese) {
 		d->showJpWarning();
+	}
 
 	// Check for other card errors.
 	// NOTE: These aren't retranslated if the UI is retranslated.
 	QStringList sl_cardErrors;
-	QFlags<MemCard::Error> cardErrors = d->card->errors();
-	if (cardErrors & MemCard::MCE_SZ_TOO_SMALL) {
+	QFlags<GcnCard::Error> cardErrors = d->card->errors();
+	QString cardSz = d->formatFileSize(d->card->filesize());
+	if (cardErrors & GcnCard::MCE_SZ_TOO_SMALL) {
+		QString minSz = d->formatFileSize(d->card->minBlocks() * d->card->blockSize());
+		//: %1 and %2 are both formatted sizes, e.g. "100 bytes" or "2 MB".
 		sl_cardErrors +=
-			tr("The card image is too small. (Card image is %L1 bytes; should be at least 512 KB.)")
-			.arg(d->card->filesize());
+			tr("The card image is too small. (Card image is %1; should be at least %2.)")
+			.arg(cardSz).arg(minSz);
 	}
-	if (cardErrors & MemCard::MCE_SZ_TOO_BIG) {
+	if (cardErrors & GcnCard::MCE_SZ_TOO_BIG) {
+		//: %1 and %2 are both formatted sizes, e.g. "100 bytes" or "2 MB".
+		QString maxSz = d->formatFileSize(d->card->maxBlocks() * d->card->blockSize());
+		sl_cardErrors +=
+			tr("The card image is too big. (Card image is %1; should be %2 or less.)")
+			.arg(cardSz).arg(maxSz);
+	}
+	if (cardErrors & GcnCard::MCE_SZ_NON_POW2) {
 		// TODO: Convert filesize to KB/MB/GB?
+		//: %1 is a formatted size, e.g. "100 bytes" or "2 MB".
 		sl_cardErrors +=
-			tr("The card image is too big. (Card image is %L1 bytes; should be 16 MB or less.)")
-			.arg(d->card->filesize());
+			tr("The card image size is not a power of two. (Card image is %1.)")
+			.arg(cardSz);
 	}
-	if (cardErrors & MemCard::MCE_SZ_NON_POW2) {
-		// TODO: Convert filesize to KB/MB/GB?
-		sl_cardErrors +=
-			tr("The card image size is not a power of two. (Card image is %L1 bytes.)")
-			.arg(d->card->filesize());
-	}
-	if (cardErrors & MemCard::MCE_INVALID_HEADER) {
+	if (cardErrors & GcnCard::MCE_INVALID_HEADER) {
 		sl_cardErrors += tr("The header checksum is invalid.");
 	}
-	if (cardErrors & MemCard::MCE_INVALID_DATS) {
+	if (cardErrors & GcnCard::MCE_INVALID_DATS) {
 		sl_cardErrors += tr("Both directory tables are invalid.");
 	}
-	if (cardErrors & MemCard::MCE_INVALID_BATS) {
+	if (cardErrors & GcnCard::MCE_INVALID_BATS) {
 		sl_cardErrors += tr("Both block tables are invalid.");
 	}
 
@@ -1091,18 +1261,19 @@ void McRecoverWindow::openCard(const QString &filename)
 		static const QChar chrBullet(0x2022);  // U+2022: BULLET
 		QString msg;
 		msg.reserve(2048);
-		msg += tr("Error(s) have been detected in this Memory Card image:", "", sl_cardErrors.size());
+		msg += tr("Error(s) have been detected in this %1 image:", "",
+			sl_cardErrors.size()).arg(d->card->productName());
 		foreach (const QString &str, sl_cardErrors) {
 			msg += QChar(L'\n') + chrBullet + QChar(L' ') + str;
 		}
 
 		// Show a warning message.
-		d->ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING);
+		d->ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING, 0, d->card);
 	}
 
 	// Update the UI.
 	d->updateLstFileList();
-	d->statusBarManager->opened(filename);
+	d->statusBarManager->opened(filename, d->card->productName());
 	d->updateWindowTitle();
 
 	// FIXME: If a file is opened from the command line,
@@ -1117,8 +1288,11 @@ void McRecoverWindow::openCard(const QString &filename)
 void McRecoverWindow::closeCard(bool noMsg)
 {
 	Q_D(McRecoverWindow);
+	QString productName;
+	if (d->card)
+		d->card->productName();
 
-	d->model->setMemCard(nullptr);
+	d->model->setCard(nullptr);
 	d->ui.mcCardView->setCard(nullptr);
 	d->ui.mcfFileView->setFile(nullptr);
 	delete d->card;
@@ -1131,7 +1305,7 @@ void McRecoverWindow::closeCard(bool noMsg)
 	// Update the UI.
 	d->updateLstFileList();
 	if (!noMsg)
-		d->statusBarManager->closed();
+		d->statusBarManager->closed(productName);
 	d->updateWindowTitle();
 }
 
@@ -1304,20 +1478,84 @@ void McRecoverWindow::markUiNotBusy(void)
 void McRecoverWindow::on_actionOpen_triggered(void)
 {
 	Q_D(McRecoverWindow);
-	QString filename = QFileDialog::getOpenFileName(this,
+
+	// TODO: Remove the space before the "*.raw"?
+	// On Linux, Qt shows an extra space after the filter name, since
+	// it doesn't show the extension. Not sure about Windows...
+	const QString gcnFilter = tr("GameCube Memory Card Image") + QLatin1String(" (*.raw)");
+	const QString vmuFilter = tr("Dreamcast VMU Image") + QLatin1String(" (*.bin)");
+	const QString allFilter = tr("All Files") + QLatin1String(" (*)");
+
+	QStringList filters;
+	filters.append(gcnFilter);
+	filters.append(vmuFilter);
+	filters.append(allFilter);
+
+	QString selectedFilter;
+
+	QFileDialog *dialog = new QFileDialog(this,
 			tr("Open GameCube Memory Card Image"),	// Dialog title
-			d->lastPath(),				// Default filename
-			tr("GameCube Memory Card Image") + QLatin1String(" (*.raw);;") +
-			tr("All Files") + QLatin1String(" (*)"));
+			d->lastPath());				// Default filename
+	dialog->setAcceptMode(QFileDialog::AcceptOpen);
+	dialog->setFileMode(QFileDialog::ExistingFile);
+	dialog->setNameFilters(filters);
 
-	if (filename.isEmpty())
-		return;
+	// Set the default filter.
+	QString defaultFilter;
+	const QString fileTypeKey = QLatin1String("fileType");
+	switch (d->cfg->getInt(fileTypeKey)) {
+		case 0:
+		default:
+			defaultFilter = gcnFilter;
+			break;
+		case 1:
+			defaultFilter = vmuFilter;
+			break;
+		case 2:
+			defaultFilter = allFilter;
+			break;
+	}
+	// FIXME: This isn't working on KDE 4.
+	// This may be a Qt/KDE bug:
+	// - https://git.reviewboard.kde.org/r/115478/
+	// - https://mail.kde.org/pipermail/kde-frameworks-devel/2014-March/012659.html
+	// - http://mail.kde.org/pipermail/kde-frameworks-devel/2014-February/010691.html
+	dialog->selectNameFilter(defaultFilter);
 
-	// Set the last path.
-	d->setLastPath(filename);
+	if (dialog->exec()) {
+		// Filename is selected.
+		QStringList filenames = dialog->selectedFiles();
+		if (filenames.isEmpty())
+			return;
+		QString filename = filenames.at(0);
+		if (filename.isEmpty())
+			return;
 
-	// Open the memory card file.
-	openCard(filename);
+		// Check the selected filename filter.
+		int type = -1;	// TODO: Enum?
+		int cfg_type = -1;
+		QString selectedFilter = dialog->selectedFilter();
+		if (selectedFilter == gcnFilter) {
+			type = 0;
+			cfg_type = 0;
+		} else if (selectedFilter == vmuFilter) {
+			type = 1;
+			cfg_type = 1;
+		} else if (selectedFilter == allFilter) {
+			type = -1;	// Auto-detect
+			cfg_type = 2;
+		}
+		printf("type == %d, cfg_type == %d\n", type, cfg_type);
+
+		// Save configuration settings.
+		d->setLastPath(filename);
+		d->cfg->set(fileTypeKey, cfg_type);
+
+		// Open the memory card file.
+		openCard(filename, type);
+	}
+
+	delete dialog;
 }
 
 /**
@@ -1339,6 +1577,10 @@ void McRecoverWindow::on_actionScan_triggered(void)
 {
 	Q_D(McRecoverWindow);
 	if (!d->card || d->scanningDisabled)
+		return;
+	// FIXME: Disable the button if the loaded card doesn't support scanning.
+	GcnCard *gcnCard = qobject_cast<GcnCard*>(d->card);
+	if (!gcnCard)
 		return;
 
 	// Get the database filenames.
@@ -1370,7 +1612,7 @@ void McRecoverWindow::on_actionScan_triggered(void)
 	if (ret != 0)
 		return;
 
-	// Remove lost files from the card.
+	// Remove "lost" files from the card.
 	d->card->removeLostFiles();
 
 	// Update the status bar manager.
@@ -1386,13 +1628,13 @@ void McRecoverWindow::on_actionScan_triggered(void)
 
 	// Search blocks for lost files.
 	// TODO: Handle errors.
-	ret = d->searchThread->searchMemCard_async(d->card, d->preferredRegion, searchUsedBlocks);
+	ret = d->searchThread->searchMemCard_async(gcnCard, d->preferredRegion, searchUsedBlocks);
 	if (ret < 0) {
 		// Error starting the thread.
 		// Use the synchronous version.
 		// TODO: Handle errors.
 		// NOTE: Files will be added by searchThread_searchFinished_slot().
-		ret = d->searchThread->searchMemCard(d->card, d->preferredRegion, searchUsedBlocks);
+		ret = d->searchThread->searchMemCard(gcnCard, d->preferredRegion, searchUsedBlocks);
 	}
 }
 
@@ -1426,12 +1668,12 @@ void McRecoverWindow::on_actionSave_triggered(void)
 	if (selList.isEmpty())
 		return;
 
-	QVector<MemCardFile*> files;
+	QVector<File*> files;
 	files.reserve(selList.size());
 
 	foreach(QModelIndex idx, selList) {
 		QModelIndex srcIdx = d->proxyModel->mapToSource(idx);
-		MemCardFile *file = d->card->getFile(srcIdx.row());
+		File *file = d->card->getFile(srcIdx.row());
 		if (file != nullptr)
 			files.append(file);
 	}
@@ -1453,15 +1695,15 @@ void McRecoverWindow::on_actionSaveAll_triggered(void)
 	if (!d->card)
 		return;
 
-	const int numFiles = d->card->numFiles();
+	const int numFiles = d->card->fileCount();
 	if (numFiles <= 0)
 		return;
 
-	QVector<MemCardFile*> files;
+	QVector<File*> files;
 	files.reserve(numFiles);
 
 	for (int i = 0; i < numFiles; i++) {
-		MemCardFile *file = d->card->getFile(i);
+		File *file = d->card->getFile(i);
 		if (file != nullptr)
 			files.append(file);
 	}
@@ -1550,7 +1792,7 @@ void McRecoverWindow::memCardModel_layoutChanged(void)
 
 void McRecoverWindow::memCardModel_rowsInserted(void)
 {
-	// A new file entry was added to the MemCard.
+	// A new file entry was added to the GcnCard.
 	// Update the QTreeView columns.
 	// FIXME: This doesn't work the first time a file is added...
 	Q_D(McRecoverWindow);
@@ -1566,6 +1808,11 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 	Q_UNUSED(lostFilesFound)
 	Q_D(McRecoverWindow);
 
+	// FIXME: Move "lost files" code to Card?
+	GcnCard *gcnCard = qobject_cast<GcnCard*>(d->card);
+	if (!gcnCard)
+		return;
+
 	// Remove lost files from the card.
 	d->card->removeLostFiles();
 
@@ -1573,12 +1820,19 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 	QLinkedList<SearchData> filesFoundList = d->searchThread->filesFoundList();
 
 	// Add the directory entries.
-	QList<MemCardFile*> files = d->card->addLostFiles(filesFoundList);
+	QList<GcnFile*> files = gcnCard->addLostFiles(filesFoundList);
 
+	// TODO: Add a "hasJapaneseCharacters" function.
+	// Files don't have an inherent encoding, and we're
+	// not simply going to check the region value, since
+	// that's GameCube-specific.
+	// Also, optimize this by skipping the whole thing if
+	// PCRE does support UCP.
+#if 0
 	// Check for any Japanese files.
 	bool isJapanese = false;
-	foreach (const MemCardFile *file, files) {
-		if (file->encoding() == SYS_FONT_ENCODING_SJIS) {
+	foreach (const GcnFile *file, files) {
+		if (file->encoding() == Card::ENCODING_SHIFTJIS) {
 			// Found a Japanese file.
 			isJapanese = true;
 			break;
@@ -1587,8 +1841,9 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 
 	// If the card encoding or any files are Japanese,
 	// show a warning if PCRE doesn't support UCP.
-	if (isJapanese || d->card->encoding() == SYS_FONT_ENCODING_SJIS)
+	if (isJapanese || d->card->encoding() == Card::ENCODING_SHIFTJIS)
 		d->showJpWarning();
+#endif
 }
 
 /**
@@ -1610,13 +1865,13 @@ void McRecoverWindow::lstFileList_selectionModel_currentRowChanged(
 	//actionSave->setEnabled(lstFileList->selectionModel()->hasSelection());
 	d->ui.actionSave->setEnabled(srcCurrent.row() >= 0);
 
-	// Set the MemCardFileView's MemCardFile to the
+	// Set the FileView's File to the
 	// selected file in the QTreeView.
-	const MemCardFile *file = d->card->getFile(srcCurrent.row());
+	const File *file = d->card->getFile(srcCurrent.row());
 	d->ui.mcfFileView->setFile(file);
 
 	// Shh... it's a secret to everybody.
-	d->herpDerp->setSelGameID(file ? file->id6() : QString());
+	d->herpDerp->setSelGameID(file ? file->gameID() : QString());
 }
 
 /**

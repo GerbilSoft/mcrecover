@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * TableSelect.cpp: Directory/Block Table select widget.                   *
  *                                                                         *
- * Copyright (c) 2014 by David Korth.                                      *
+ * Copyright (c) 2014-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -21,7 +21,7 @@
 
 #include "TableSelect.hpp"
 
-#include "MemCard.hpp"
+#include "card/GcnCard.hpp"
 #include "McRecoverQApplication.hpp"
 
 // Qt includes.
@@ -46,7 +46,7 @@ class TableSelectPrivate
 		// UI
 		Ui::TableSelect ui;
 
-		MemCard *card;
+		GcnCard *card;
 
 		// Icon size.
 		static const int iconSz = 16;
@@ -289,24 +289,24 @@ TableSelect::~TableSelect()
 }
 
 /**
- * Get the MemCard being displayed.
- * @return MemCard.
+ * Get the GcnCard being displayed.
+ * @return GcnCard.
  */
-MemCard *TableSelect::card(void) const
+GcnCard *TableSelect::card(void) const
 {
 	Q_D(const TableSelect);
 	return d->card;
 }
 
 /**
- * Set the MemCard being displayed.
- * @param card MemCard.
+ * Set the GcnCard being displayed.
+ * @param card GcnCard.
  */
-void TableSelect::setCard(MemCard *card)
+void TableSelect::setCard(GcnCard *card)
 {
 	Q_D(TableSelect);
 
-	// Disconnect the MemCard's destroyed() signal if a MemCard is already set.
+	// Disconnect the GcnCard's destroyed() signal if a GcnCard is already set.
 	if (d->card) {
 		disconnect(d->card, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(memCard_destroyed_slot(QObject*)));
@@ -314,7 +314,7 @@ void TableSelect::setCard(MemCard *card)
 
 	d->card = card;
 
-	// Connect the MemCard's destroyed() signal.
+	// Connect the GcnCard's destroyed() signal.
 	if (d->card) {
 		connect(d->card, SIGNAL(destroyed(QObject*)),
 			this, SLOT(memCard_destroyed_slot(QObject*)));
@@ -346,7 +346,7 @@ void TableSelect::changeEvent(QEvent *event)
 /** Slots. **/
 
 /**
- * MemCard object was destroyed.
+ * GcnCard object was destroyed.
  * @param obj QObject that was destroyed.
  */
 void TableSelect::memCard_destroyed_slot(QObject *obj)
@@ -354,7 +354,7 @@ void TableSelect::memCard_destroyed_slot(QObject *obj)
 	Q_D(TableSelect);
 
 	if (obj == d->card) {
-		// Our MemCard was destroyed.
+		// Our GcnCard was destroyed.
 		d->card = nullptr;
 
 		// Update the widget display.

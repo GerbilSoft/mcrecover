@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SASubGames</class>
+ <widget class="QWidget" name="SASubGames">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>487</width>
+    <height>476</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="vboxMain">
+   <item>
+    <layout class="QHBoxLayout" name="hboxCharacter">
+     <item>
+      <widget class="QLabel" name="lblCharacter">
+       <property name="text">
+        <string>&amp;Character:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+       <property name="buddy">
+        <cstring>cboCharacter</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cboCharacter">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>Sonic</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/sonic.png</normaloff>:/sonic/SA1/sonic.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Tails</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/tails.png</normaloff>:/sonic/SA1/tails.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Knuckles</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/knuckles.png</normaloff>:/sonic/SA1/knuckles.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Amy</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/amy.png</normaloff>:/sonic/SA1/amy.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Gamma</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/gamma.png</normaloff>:/sonic/SA1/gamma.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Big</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/sonic/sonic.qrc">
+          <normaloff>:/sonic/SA1/big.png</normaloff>:/sonic/SA1/big.png</iconset>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <spacer name="hspcCharacter">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="grpSkyChase">
+     <property name="title">
+      <string>Sky Chase (Best Scores)</string>
+     </property>
+     <layout class="QGridLayout" name="gridSkyChase" columnstretch="0,1,1,1,0,0">
+      <item row="0" column="0">
+       <widget class="QLabel" name="lblSkyChaseAct1">
+        <property name="text">
+         <string>Act 1:</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="spnSkyChaseAct1_1">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QSpinBox" name="spnSkyChaseAct1_2">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QSpinBox" name="spnSkyChaseAct1_3">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QCheckBox" name="chkSkyChaseAct1_1"/>
+      </item>
+      <item row="0" column="5">
+       <widget class="QCheckBox" name="chkSkyChaseAct1_2"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="lblSkyChaseAct2">
+        <property name="text">
+         <string>Act 2:</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="spnSkyChaseAct2_1">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QSpinBox" name="spnSkyChaseAct2_2">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QSpinBox" name="spnSkyChaseAct2_3">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QCheckBox" name="chkSkyChaseAct2_1"/>
+      </item>
+      <item row="1" column="5">
+       <widget class="QCheckBox" name="chkSkyChaseAct2_2"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="grpIceCap">
+     <property name="title">
+      <string>Ice Cap (Best Scores)</string>
+     </property>
+     <layout class="QGridLayout" name="gridIceCap">
+      <item row="0" column="0">
+       <widget class="QSpinBox" name="spnIceCap_1">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="spnIceCap_2">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QSpinBox" name="spnIceCap_3">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="grpSandHill">
+     <property name="title">
+      <string>Sand Hill (Best Scores)</string>
+     </property>
+     <layout class="QGridLayout" name="gridSandHill" columnstretch="1,1,1,0,0">
+      <item row="0" column="0">
+       <widget class="QSpinBox" name="spnSandHill_1">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="spnSandHill_2">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QSpinBox" name="spnSandHill_3">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QCheckBox" name="chkSandHill_1"/>
+      </item>
+      <item row="0" column="4">
+       <widget class="QCheckBox" name="chkSandHill_2"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="grpHedgehogHammer">
+     <property name="title">
+      <string>Hedgehog Hammer (Best Scores)</string>
+     </property>
+     <layout class="QGridLayout" name="gridHedgehogHammer" columnstretch="1,1,1,0,0">
+      <item row="0" column="0">
+       <widget class="QSpinBox" name="spnHedgehogHammer_1">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="spnHedgehogHammer_2">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QSpinBox" name="spnHedgehogHammer_3">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QCheckBox" name="chkHedgehogHammer_1"/>
+      </item>
+      <item row="0" column="4">
+       <widget class="QCheckBox" name="chkHedgehogHammer_2"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="hboxTwinkleCircuitBossAttack">
+     <item>
+      <widget class="QGroupBox" name="grpTwinkleCircuit">
+       <property name="title">
+        <string>Twinkle Circuit (Best Times)</string>
+       </property>
+       <layout class="QHBoxLayout" name="hboxTwinkleCircuit" stretch="1,1">
+        <item>
+         <widget class="QGroupBox" name="grpTwinkleCircuitBestTimes">
+          <property name="title">
+           <string>Best Times</string>
+          </property>
+          <layout class="QGridLayout" name="gridBestTimes">
+           <item row="0" column="0">
+            <widget class="TimeCodeEdit" name="tceTwinkleCircuitBestTimes_1" native="true">
+             <property name="minimumSize">
+              <size>
+               <width>16</width>
+               <height>0</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="TimeCodeEdit" name="tceTwinkleCircuitBestTimes_2" native="true">
+             <property name="minimumSize">
+              <size>
+               <width>16</width>
+               <height>0</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="TimeCodeEdit" name="tceTwinkleCircuitBestTimes_3" native="true">
+             <property name="minimumSize">
+              <size>
+               <width>16</width>
+               <height>0</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="grpTwinkleCircuitLaps">
+          <property name="title">
+           <string>Best Laps</string>
+          </property>
+          <layout class="QGridLayout" name="gridTwinkleCircuitLaps" columnstretch="0,1">
+           <item row="0" column="0">
+            <widget class="QLabel" name="lblTwinkleCircuitBestLap_1">
+             <property name="text">
+              <string>Lap 1:</string>
+             </property>
+             <property name="textFormat">
+              <enum>Qt::PlainText</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="TimeCodeEdit" name="tceTwinkleCircuitBestLap_1" native="true">
+             <property name="minimumSize">
+              <size>
+               <width>16</width>
+               <height>0</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="lblTwinkleCircuitBestLap_2">
+             <property name="text">
+              <string>Lap 2:</string>
+             </property>
+             <property name="textFormat">
+              <enum>Qt::PlainText</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="TimeCodeEdit" name="tceTwinkleCircuitBestLap_2" native="true">
+             <property name="minimumSize">
+              <size>
+               <width>16</width>
+               <height>0</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" colspan="2">
+            <layout class="QHBoxLayout" name="hboxTwinkleCircuitEmblems">
+             <item>
+              <spacer name="hspcTwinkleCircuitEmblems_1">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item alignment="Qt::AlignHCenter">
+              <widget class="QCheckBox" name="chkTwinkleCircuit_1"/>
+             </item>
+             <item alignment="Qt::AlignHCenter">
+              <widget class="QCheckBox" name="chkTwinkleCircuit_2"/>
+             </item>
+             <item>
+              <spacer name="hspcTwinkleCircuitEmblems_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="grpBossAttack">
+       <property name="title">
+        <string>Boss Attack (Best Times)</string>
+       </property>
+       <layout class="QGridLayout" name="gridBossAttack">
+        <item row="0" column="0">
+         <widget class="TimeCodeEdit" name="tceBossAttack_1" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="TimeCodeEdit" name="tceBossAttack_2" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="TimeCodeEdit" name="tceBossAttack_3" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="vspcSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TimeCodeEdit</class>
+   <extends>QWidget</extends>
+   <header>edit/SonicAdventure/TimeCodeEdit.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../resources/flags/flags.qrc"/>
+  <include location="../../resources/sonic/sonic.qrc"/>
+ </resources>
+ <connections/>
+</ui>

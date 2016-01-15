@@ -47,6 +47,7 @@ const ConfigDefaults::DefaultSetting ConfigDefaults::DefaultSettings[] =
 	{"searchUsedBlocks",	"false", 0, 0,	DefaultSetting::VT_BOOL, 0, 0},
 	{"animIconFormat",	"APNG", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
 	{"language",		"", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
+	{"fileType",		"0", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
 
 	/** End of array. **/
 	{nullptr, nullptr, 0, 0, DefaultSetting::VT_NONE, 0, 0}

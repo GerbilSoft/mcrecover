@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * StatusBarManager.hpp: Status Bar manager                                *
+ * StatusBarManager.cpp: Status Bar manager                                *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -335,10 +335,11 @@ void StatusBarManager::setSearchThread(SearchThread *searchThread)
 /** Public Slots. **/
 
 /**
- * A GameCube Memory Card image was opened.
+ * A memory card image was opened.
  * @param filename Filename.
+ * @param productName Product name of the memory card.
  */
-void StatusBarManager::opened(const QString &filename)
+void StatusBarManager::opened(const QString &filename, const QString &productName)
 {
 	// Extract the filename from the path.
 	QFileInfo fileInfo(filename);
@@ -347,7 +348,8 @@ void StatusBarManager::opened(const QString &filename)
 	Q_D(StatusBarManager);
 	d->scanning = false;
 	d->progressBar->setVisible(false);
-	d->lastStatusMessage = tr("Loaded GameCube Memory Card image %1")
+	d->lastStatusMessage = tr("Loaded %1 image %2")
+				.arg(productName)
 				.arg(filename_noPath);
 	d->updateStatusBar();
 
@@ -356,14 +358,15 @@ void StatusBarManager::opened(const QString &filename)
 }
 
 /**
- * The current GameCube Memory Card image was closed.
+ * The current memory card image was closed.
+ * @param productName Product name of the memory card.
  */
-void StatusBarManager::closed(void)
+void StatusBarManager::closed(const QString &productName)
 {
 	Q_D(StatusBarManager);
 	d->scanning = false;
 	d->progressBar->setVisible(false);
-	d->lastStatusMessage = tr("GameCube Memory Card image closed.");
+	d->lastStatusMessage = tr("%1 image closed.").arg(productName);
 	d->updateStatusBar();
 
 	// Stop the Hide Progress Bar timer.

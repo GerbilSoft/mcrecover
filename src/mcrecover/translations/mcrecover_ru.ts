@@ -136,6 +136,113 @@
     </message>
 </context>
 <context>
+    <name>CardView</name>
+    <message>
+        <location filename="../widgets/CardView.ui" line="88"/>
+        <source>&amp;Encoding:</source>
+        <translation>&amp;Кодировка:</translation>
+    </message>
+    <message>
+        <location filename="../widgets/CardView.ui" line="120"/>
+        <source>&amp;Calculated
+Checksum:</source>
+        <translation>&amp;Рассчитанная
+контрольная сумма:</translation>
+    </message>
+    <message>
+        <location filename="../widgets/CardView.ui" line="166"/>
+        <source>E&amp;xpected
+Checksum:</source>
+        <translation>&amp;Ожидаемая
+контрольная сумма:</translation>
+    </message>
+    <message>
+        <location filename="../widgets/CardView.cpp" line="171"/>
+        <source>Unknown</source>
+        <comment>checksum</comment>
+        <translation>Неизвестно</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../widgets/CardView.cpp" line="93"/>
+        <source>%L1 block(s) (%L2 free)</source>
+        <translatorcomment>Note for developer: String should be split. Will break if one block left.</translatorcomment>
+        <translation>
+            <numerusform>%L1 блок (%L2 доступно)</numerusform>
+            <numerusform>%L1 блока (%L2 доступно)</numerusform>
+            <numerusform>%L1 блоков (%L2 доступно)</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../widgets/CardView.cpp" line="224"/>
+        <source>Memory card header is corrupted.</source>
+        <translation>Заголовок карты памяти повреждён.</translation>
+    </message>
+</context>
+<context>
+    <name>FileView</name>
+    <message>
+        <location filename="../widgets/FileView.ui" line="137"/>
+        <source>&amp;Mode:</source>
+        <extracomment>File permissions. (Known as &quot;mode&quot; on Unix systems.)</extracomment>
+        <translation>&amp;Права доступа:</translation>
+    </message>
+    <message>
+        <location filename="../widgets/FileView.ui" line="168"/>
+        <source>Checksum
+&amp;Algorithm:</source>
+        <translation>&amp;Алгоритм
+контрольной суммы:</translation>
+    </message>
+    <message>
+        <location filename="../widgets/FileView.ui" line="207"/>
+        <source>&amp;Calculated
+Checksum:</source>
+        <translation>&amp;Рассчитанная
+контрольная сумма:</translation>
+    </message>
+    <message>
+        <location filename="../widgets/FileView.ui" line="253"/>
+        <source>E&amp;xpected
+Checksum:</source>
+        <translation>&amp;Ожидаемая
+контрольная сумма:</translation>
+    </message>
+    <message>
+        <location filename="../widgets/FileView.cpp" line="151"/>
+        <location filename="../widgets/FileView.cpp" line="175"/>
+        <source>Unknown</source>
+        <comment>checksum</comment>
+        <translation>Неизвестный Алгоритм</translation>
+    </message>
+</context>
+<context>
+    <name>FormatNewMemCardDialog</name>
+    <message>
+        <location filename="../windows/FormatNewMemCardDialog.ui" line="14"/>
+        <source>Format New Memory Card Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../windows/FormatNewMemCardDialog.ui" line="23"/>
+        <source>&amp;Size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../windows/FormatNewMemCardDialog.ui" line="70"/>
+        <location filename="../windows/FormatNewMemCardDialog.cpp" line="65"/>
+        <source>%Ln block(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GcnCard</name>
+    <message>
+        <location filename="../card/GcnCard.cpp" line="786"/>
+        <source>GameCube memory card</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>HackDetection</name>
     <message>
         <location filename="../sekrit/HackDetection.cpp" line="253"/>
@@ -401,7 +508,7 @@ recipe again, to continue to eat the snack.</source>
     </message>
     <message>
         <location filename="../windows/McRecoverWindow.ui" line="441"/>
-        <location filename="../windows/McRecoverWindow.cpp" line="458"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="492"/>
         <source>Preferred Region:</source>
         <translation>Предпочитаемый регион:</translation>
     </message>
@@ -436,7 +543,7 @@ recipe again, to continue to eat the snack.</source>
         <translation>Извлечь &amp;Баннеры</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="322"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="332"/>
         <source>The internal PCRE library was not compiled with Unicode character properties support.
 Some files with Japanese descriptions might not be found when scanning.</source>
         <extracomment>Statically-linked PCRE is missing Unicode character properties support.</extracomment>
@@ -444,36 +551,75 @@ Some files with Japanese descriptions might not be found when scanning.</source>
 Некоторые файлы с описанием на Японском языке могут быть не найдены во время сканирования.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="327"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="337"/>
         <source>The system PCRE library was not compiled with Unicode character properties support.
 Some files with Japanese descriptions might not be found when scanning.</source>
         <extracomment>Dynamically-linked PCRE is missing Unicode character properties support.</extracomment>
         <translation>Системная библиотека PCRE была скомпилирована без поддержки свойств символов Unicode.
 Некоторые файлы с описанием на Японском языке могут быть не найдены во время сканирования.</translation>
     </message>
+    <message numerus="yes">
+        <location filename="../windows/McRecoverWindow.cpp" line="354"/>
+        <source>%Ln byte(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="342"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="356"/>
+        <source>%L1 KB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="358"/>
+        <source>%L1 MB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="360"/>
+        <source>%L1 GB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="362"/>
+        <source>%L1 TB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="364"/>
+        <source>%L1 PB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="366"/>
+        <source>%L1 EB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="376"/>
         <source>No memory card loaded.</source>
         <translation>Карта памяти не была открыта.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="567"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="602"/>
         <source>Save GCN Save File %1</source>
         <translation>Сохранить файл сохранения GCN %1</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="570"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="606"/>
         <source>GameCube Save Files</source>
         <translation>Файлы Сохранений GameCube</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="571"/>
-        <location filename="../windows/McRecoverWindow.cpp" line="1308"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="607"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1354"/>
         <source>All Files</source>
         <translation>Все файлы</translation>
     </message>
     <message numerus="yes">
-        <location filename="../windows/McRecoverWindow.cpp" line="581"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="617"/>
         <source>Save %Ln GCN Save File(s)</source>
         <translation>
             <numerusform>Сохранить %Ln файл сохранения GCN</numerusform>
@@ -482,12 +628,12 @@ Some files with Japanese descriptions might not be found when scanning.</source>
         </translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="606"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="642"/>
         <source>File Already Exists</source>
         <translation>Файл уже существует</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="607"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="643"/>
         <source>A file named &quot;%1&quot; already exists in the specified directory.
 
 Do you want to overwrite it?</source>
@@ -496,14 +642,14 @@ Do you want to overwrite it?</source>
 Перезаписать файл?</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="735"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="771"/>
         <source>System Default (%1)</source>
         <comment>ts-language</comment>
         <extracomment>Translation: System Default (retrieved from system settings)</extracomment>
         <translation>Системный Язык (%1)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="967"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1003"/>
         <source>The internal PCRE library was not compiled with UTF-8 support.
 Scanning for lost files will not work.</source>
         <extracomment>Statically-linked PCRE is missing UTF-8 support.</extracomment>
@@ -511,7 +657,7 @@ Scanning for lost files will not work.</source>
 Сканирование на предмет потерянных файлов будет невозможным.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="971"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1007"/>
         <source>The system PCRE library was not compiled with UTF-8 support.
 Scanning for lost files will not work.</source>
         <extracomment>Dynamically-linked PCRE is missing UTF-8 support.</extracomment>
@@ -519,210 +665,160 @@ Scanning for lost files will not work.</source>
 Сканирование на предмет потерянных файлов будет невозможным.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1014"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1050"/>
         <source>An error occurred while opening %1:</source>
         <translation>Ошибка была обнаружена во время открытия %1:</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1061"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1053"/>
+        <source>GcnCard::open() failed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="1101"/>
+        <source>The card image is too small. (Card image is %1; should be at least %2.)</source>
+        <extracomment>%1 and %2 are both formatted sizes, e.g. &quot;100 bytes&quot; or &quot;2 MB&quot;.</extracomment>
+        <translatorcomment>Note for developer: change %L1 to %Ln</translatorcomment>
+        <translation type="unfinished">Образ карты памяти слишком мал. (Размер образа в байтах: %1; должен быть как минимум %2.)</translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="1108"/>
+        <source>The card image is too big. (Card image is %1; should be %2 or less.)</source>
+        <translatorcomment>Note for developer: change %L1 to %Ln</translatorcomment>
+        <translation type="unfinished">Образ карты памяти слишком велик. (Размер образа в байтах: %1; должен быть %2 или меньше.)</translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="1115"/>
+        <source>The card image size is not a power of two. (Card image is %1.)</source>
+        <extracomment>%1 is a formatted size, e.g. &quot;100 bytes&quot; or &quot;2 MB&quot;.</extracomment>
+        <translatorcomment>Note for developer: change %L1 to %Ln</translatorcomment>
+        <translation type="unfinished">Размер образа карты памяти не является степенью двойки. (Размер образа в байтах: %1.)</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../windows/McRecoverWindow.cpp" line="1133"/>
+        <source>Error(s) have been detected in this %1 image:</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
         <source>The card image is too small. (Card image is %L1 bytes; should be at least 512 KB.)</source>
         <translatorcomment>Note for developer: change %L1 to %Ln</translatorcomment>
-        <translation>Образ карты памяти слишком мал. (Размер образа в байтах: %L1; должен быть как минимум 512 КБ.)</translation>
+        <translation type="obsolete">Образ карты памяти слишком мал. (Размер образа в байтах: %L1; должен быть как минимум 512 КБ.)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1067"/>
         <source>The card image is too big. (Card image is %L1 bytes; should be 16 MB or less.)</source>
         <translatorcomment>Note for developer: change %L1 to %Ln</translatorcomment>
-        <translation>Образ карты памяти слишком велик. (Размер образа в байтах: %L1; должен быть 16 МБ или меньше.)</translation>
+        <translation type="obsolete">Образ карты памяти слишком велик. (Размер образа в байтах: %L1; должен быть 16 МБ или меньше.)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1073"/>
         <source>The card image size is not a power of two. (Card image is %L1 bytes.)</source>
         <translatorcomment>Note for developer: change %L1 to %Ln</translatorcomment>
-        <translation>Размер образа карты памяти не является степенью двойки. (Размер образа в байтах: %L1.)</translation>
+        <translation type="obsolete">Размер образа карты памяти не является степенью двойки. (Размер образа в байтах: %L1.)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1077"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1119"/>
         <source>The header checksum is invalid.</source>
         <translation>Контрольная сумма заголовка является неверной.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1080"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1122"/>
         <source>Both directory tables are invalid.</source>
         <translation>Обе таблицы каталогов являются неверными.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1083"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1125"/>
         <source>Both block tables are invalid.</source>
         <translation>Обе таблицы блоков являются неверными.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../windows/McRecoverWindow.cpp" line="1091"/>
         <source>Error(s) have been detected in this Memory Card image:</source>
-        <translation>
+        <translation type="obsolete">
             <numerusform>Ошибка была обнаружена в карте памяти:</numerusform>
             <numerusform>Ошибки были обнаружены в карте памяти:</numerusform>
             <numerusform>Ошибки были обнаружены в карте памяти:</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1305"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1351"/>
         <source>Open GameCube Memory Card Image</source>
         <translation>Открыть образ GameCube Memory Card</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1307"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1353"/>
         <source>GameCube Memory Card Image</source>
         <translation>Образ GameCube Memory Card</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1345"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1395"/>
         <source>The database files should be located in the data subdirectory in
 mcrecover.exe&apos;s program directory.</source>
         <translation>Файлы баз данных должны быть расположены в под-катологе data в
 каталоге с программой mcrecover.exe.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1349"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1399"/>
         <source>The database files should be located in %1.
 Alternatively, you can place your own version in ~/.config/mcrecover/data/</source>
         <translation>Файлы баз данных должны быть расположены в %1.
 Также, вы можете расположить ваши собственные в ~/.config/mcrecover/data/</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1356"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1406"/>
         <source>Database Load Error</source>
         <translation>Ошибка загрузки баз данных</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1357"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1407"/>
         <source>No GCN MemCard file databases were found.</source>
         <translation>Базы данных GCN MemCard не были найдены.</translation>
     </message>
 </context>
 <context>
-    <name>MemCardFileView</name>
-    <message>
-        <location filename="../widgets/MemCardFileView.ui" line="137"/>
-        <source>&amp;Mode:</source>
-        <extracomment>File permissions. (Known as &quot;mode&quot; on Unix systems.)</extracomment>
-        <translation>&amp;Права доступа:</translation>
-    </message>
-    <message>
-        <location filename="../widgets/MemCardFileView.ui" line="168"/>
-        <source>Checksum
-&amp;Algorithm:</source>
-        <translation>&amp;Алгоритм
-контрольной суммы:</translation>
-    </message>
-    <message>
-        <location filename="../widgets/MemCardFileView.ui" line="207"/>
-        <source>&amp;Calculated
-Checksum:</source>
-        <translation>&amp;Рассчитанная
-контрольная сумма:</translation>
-    </message>
-    <message>
-        <location filename="../widgets/MemCardFileView.ui" line="253"/>
-        <source>E&amp;xpected
-Checksum:</source>
-        <translation>&amp;Ожидаемая
-контрольная сумма:</translation>
-    </message>
-    <message>
-        <location filename="../widgets/MemCardFileView.cpp" line="150"/>
-        <location filename="../widgets/MemCardFileView.cpp" line="174"/>
-        <source>Unknown</source>
-        <comment>checksum</comment>
-        <translation>Неизвестный Алгоритм</translation>
-    </message>
-</context>
-<context>
     <name>MemCardModel</name>
     <message>
-        <location filename="../MemCardModel.cpp" line="465"/>
+        <location filename="../card/MemCardModel.cpp" line="468"/>
         <source>Icon</source>
         <translation>Иконка</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="466"/>
+        <location filename="../card/MemCardModel.cpp" line="469"/>
         <source>Banner</source>
         <translation>Баннер</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="467"/>
+        <location filename="../card/MemCardModel.cpp" line="470"/>
         <source>Description</source>
         <translation>Описание</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="468"/>
+        <location filename="../card/MemCardModel.cpp" line="471"/>
         <source>Size</source>
         <translation>Размер</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="469"/>
+        <location filename="../card/MemCardModel.cpp" line="472"/>
         <source>Last Modified</source>
         <translation>Дата изменения</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="471"/>
+        <location filename="../card/MemCardModel.cpp" line="474"/>
         <source>Mode</source>
         <extracomment>File permissions. (Known as &quot;mode&quot; on Unix systems.)</extracomment>
         <translation>Режим</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="473"/>
+        <location filename="../card/MemCardModel.cpp" line="476"/>
         <source>Game ID</source>
         <extracomment>6-digit game ID, e.g. GALE01.</extracomment>
         <translation>ID-номер игры</translation>
     </message>
     <message>
-        <location filename="../MemCardModel.cpp" line="474"/>
+        <location filename="../card/MemCardModel.cpp" line="477"/>
         <source>Filename</source>
         <translation>Имя Файла</translation>
-    </message>
-</context>
-<context>
-    <name>MemCardView</name>
-    <message>
-        <location filename="../widgets/MemCardView.ui" line="88"/>
-        <source>&amp;Encoding:</source>
-        <translation>&amp;Кодировка:</translation>
-    </message>
-    <message>
-        <location filename="../widgets/MemCardView.ui" line="120"/>
-        <source>&amp;Calculated
-Checksum:</source>
-        <translation>&amp;Рассчитанная
-контрольная сумма:</translation>
-    </message>
-    <message>
-        <location filename="../widgets/MemCardView.ui" line="166"/>
-        <source>E&amp;xpected
-Checksum:</source>
-        <translation>&amp;Ожидаемая
-контрольная сумма:</translation>
-    </message>
-    <message>
-        <location filename="../widgets/MemCardView.cpp" line="125"/>
-        <source>Unknown</source>
-        <comment>checksum</comment>
-        <translation>Неизвестно</translation>
-    </message>
-    <message numerus="yes">
-        <location filename="../widgets/MemCardView.cpp" line="83"/>
-        <source>%L1 block(s) (%L2 free)</source>
-        <translatorcomment>Note for developer: String should be split. Will break if one block left.</translatorcomment>
-        <translation>
-            <numerusform>%L1 блок (%L2 доступно)</numerusform>
-            <numerusform>%L1 блока (%L2 доступно)</numerusform>
-            <numerusform>%L1 блоков (%L2 доступно)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <location filename="../widgets/MemCardView.cpp" line="171"/>
-        <source>Memory card header is corrupted.</source>
-        <translation>Заголовок карты памяти повреждён.</translation>
     </message>
 </context>
 <context>
@@ -751,17 +847,25 @@ Checksum:</source>
         <translation>Сканирование блока #%L1 (%L2 отсканировано, %L3 осталось)...</translation>
     </message>
     <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="350"/>
         <source>Loaded GameCube Memory Card image %1</source>
-        <translation>Загружен образ GameCube Memory Card: %1</translation>
+        <translation type="obsolete">Загружен образ GameCube Memory Card: %1</translation>
     </message>
     <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="366"/>
         <source>GameCube Memory Card image closed.</source>
-        <translation>Образ GameCube Memory Card закрыт.</translation>
+        <translation type="obsolete">Образ GameCube Memory Card закрыт.</translation>
+    </message>
+    <message>
+        <location filename="../widgets/StatusBarManager.cpp" line="351"/>
+        <source>Loaded %1 image %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgets/StatusBarManager.cpp" line="369"/>
+        <source>%1 image closed.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../widgets/StatusBarManager.cpp" line="383"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="386"/>
         <source>%Ln file(s) saved to %1.</source>
         <translation>
             <numerusform>%Ln файл сохранён в %1.</numerusform>
@@ -770,12 +874,12 @@ Checksum:</source>
         </translation>
     </message>
     <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="445"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="448"/>
         <source>Scan cancelled.</source>
         <translation>Сканирование отменено.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../widgets/StatusBarManager.cpp" line="465"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="468"/>
         <source>Scan complete. %Ln lost file(s) found.</source>
         <translation>
             <numerusform>Сканирование завершено. %Ln потерянный файл найден.</numerusform>
@@ -784,7 +888,7 @@ Checksum:</source>
         </translation>
     </message>
     <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="499"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="502"/>
         <source>An error occurred while scanning: %1</source>
         <translation>Во время сканирования, была обнаружена ошибка: %1</translation>
     </message>
@@ -829,6 +933,22 @@ Checksum:</source>
 ----------
 %1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == &apos;A&apos; or &apos;B&apos;.</extracomment>
         <translation>%1 %2 является неверной.</translation>
+    </message>
+</context>
+<context>
+    <name>VmuCard</name>
+    <message>
+        <location filename="../card/VmuCard.cpp" line="484"/>
+        <source>Dreamcast Visual Memory Unit</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>VmuFile</name>
+    <message>
+        <location filename="../card/VmuFile.cpp" line="256"/>
+        <source>Custom VMU icon file.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

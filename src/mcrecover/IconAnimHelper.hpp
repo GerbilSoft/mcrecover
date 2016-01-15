@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * IconAnimHelper.hpp: Icon animation helper.                              *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2012-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -26,7 +26,7 @@
 #include <QtCore/QObject>
 #include <QtGui/QPixmap>
 
-class MemCardFile;
+class File;
 
 class IconAnimHelperPrivate;
 
@@ -34,13 +34,13 @@ class IconAnimHelper : public QObject
 {
 	Q_OBJECT
 
-	Q_PROPERTY(const MemCardFile* file READ file WRITE setFile)
+	Q_PROPERTY(const File* file READ file WRITE setFile)
 	Q_PROPERTY(bool animated READ isAnimated STORED false)
 	Q_PROPERTY(QPixmap icon READ icon STORED false)
 
 	public:
 		IconAnimHelper();
-		IconAnimHelper(const MemCardFile *file);
+		IconAnimHelper(const File *file);
 		~IconAnimHelper();
 
 	protected:
@@ -57,16 +57,16 @@ class IconAnimHelper : public QObject
 		static const int FAST_ANIM_TIMER = 125;
 
 		/**
-		 * Get the MemCardFile this IconAnimHelper is handling.
-		 * @return MemCardFile.
+		 * Get the File this IconAnimHelper is handling.
+		 * @return File.
 		 */
-		const MemCardFile *file(void) const;
+		const File *file(void) const;
 
 		/**
-		 * Set the MemCardFile this IconAnimHelper should handle.
-		 * @param file MemCardFile.
+		 * Set the File this IconAnimHelper should handle.
+		 * @param file File.
 		 */
-		void setFile(const MemCardFile *file);
+		void setFile(const File *file);
 
 		/**
 		 * Reset the animation state.
@@ -93,10 +93,10 @@ class IconAnimHelper : public QObject
 
 	protected slots:
 		/**
-		 * MemCardFile object was destroyed.
+		 * File object was destroyed.
 		 * @param obj QObject that was destroyed.
 		 */
-		void memCardFile_destroyed_slot(QObject *obj = 0);
+		void file_destroyed_slot(QObject *obj = 0);
 };
 
 #endif /* __MCRECOVER_ICONANIMHELPER_HPP__ */

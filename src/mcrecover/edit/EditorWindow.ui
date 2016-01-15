@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EditorWindow</class>
+ <widget class="QMainWindow" name="EditorWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>503</width>
+    <height>256</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Save File Editor</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::TopToolBarArea</set>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionSave"/>
+   <addaction name="actionReload"/>
+   <addaction name="separator"/>
+   <addaction name="actionGeneralSettings"/>
+  </widget>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="../resources/oxygen/oxygen.qrc">
+     <normaloff>:/oxygen/16x16/document-save.png</normaloff>:/oxygen/16x16/document-save.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionReload">
+   <property name="icon">
+    <iconset resource="../resources/oxygen/oxygen.qrc">
+     <normaloff>:/oxygen/16x16/edit-undo.png</normaloff>:/oxygen/16x16/edit-undo.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Reload</string>
+   </property>
+   <property name="toolTip">
+    <string>Reload (discards changes)</string>
+   </property>
+  </action>
+  <action name="actionGeneralSettings">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;General</string>
+   </property>
+   <property name="toolTip">
+    <string>General Settings</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../resources/oxygen/oxygen.qrc"/>
+ </resources>
+ <connections/>
+</ui>

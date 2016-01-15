@@ -112,8 +112,9 @@ MessageWidgetStack::~MessageWidgetStack()
  * @param msg Message text. (supports Qt RichText formatting)
  * @param icon Icon.
  * @param timeout Timeout, in milliseconds. (0 for no timeout)
+ * @param closeOnDestroy Close the message when the specified QObject is destroyed.
  */
-void MessageWidgetStack::showMessage(const QString &msg, MessageWidget::MsgIcon icon, int timeout)
+void MessageWidgetStack::showMessage(const QString &msg, MessageWidget::MsgIcon icon, int timeout, QObject *closeOnDestroy)
 {
 	Q_D(MessageWidgetStack);
 	MessageWidget *messageWidget = new MessageWidget(this);
@@ -129,7 +130,7 @@ void MessageWidgetStack::showMessage(const QString &msg, MessageWidget::MsgIcon 
 	// Show the message.
 	d->ui.vboxMain->addWidget(messageWidget);
 	d->ui.vboxMain->setAlignment(messageWidget, Qt::AlignTop);
-	messageWidget->showMessage(msg, icon, timeout);
+	messageWidget->showMessage(msg, icon, timeout, closeOnDestroy);
 }
 
 /** Slots. **/
