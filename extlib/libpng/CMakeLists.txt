@@ -12,19 +12,19 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 set(CMAKE_CONFIGURATION_TYPES "Release;Debug;MinSizeRel;RelWithDebInfo")
 
 project(libpng C)
-# mcrecover: Disable libpng testing.
+# gens-gs-ii: Disable libpng testing.
 IF(0)
 enable_testing()
 ENDIF(0)
 
 set(PNGLIB_MAJOR 1)
 set(PNGLIB_MINOR 6)
-set(PNGLIB_RELEASE 17)
+set(PNGLIB_RELEASE 20)
 set(PNGLIB_NAME libpng${PNGLIB_MAJOR}${PNGLIB_MINOR})
 set(PNGLIB_VERSION ${PNGLIB_MAJOR}.${PNGLIB_MINOR}.${PNGLIB_RELEASE})
 
 # needed packages
-# mcrecover: Disable FIND_PACKAGE(); this is handled in CheckPNG.
+# gens-gs-ii: Disable FIND_PACKAGE(); this is handled in CheckPNG.
 IF(0)
 find_package(ZLIB REQUIRED)
 ENDIF(0)
@@ -36,34 +36,26 @@ if(NOT WIN32)
     PATHS /usr/lib /usr/local/lib
   )
   if(NOT M_LIBRARY)
-    message(STATUS "math lib 'libm' not found - floating point support disabled")
+    message(STATUS "math lib 'libm' not found; floating point support disabled")
   endif()
 else()
   # not needed on windows
   set(M_LIBRARY "")
 endif()
 
-# mcrecover: Disable libpng options.
+# gens-gs-ii: Disable libpng options.
 IF(0)
 # COMMAND LINE OPTIONS
-if(DEFINED PNG_SHARED)
-  option(PNG_SHARED "Build shared lib" ${PNG_SHARED})
-else()
-  option(PNG_SHARED "Build shared lib" ON)
-endif()
-if(DEFINED PNG_STATIC)
-  option(PNG_STATIC "Build static lib" ${PNG_STATIC})
-else()
-  option(PNG_STATIC "Build static lib" ON)
-endif()
+option(PNG_SHARED "Build shared lib" ON)
+option(PNG_STATIC "Build static lib" ON)
 ENDIF(0)
 
-# mcrecover: Disable libpng options.
+# gens-gs-ii: Disable libpng options.
 IF(0)
 option(PNG_TESTS  "Build libpng tests" ON)
 ENDIF(0)
 
-# mcrecover: Disable libpng options.
+# gens-gs-ii: Disable libpng options.
 # Many more configuration options could be added here
 IF(0)
 option(PNG_FRAMEWORK "Build OS X framework" OFF)
@@ -144,11 +136,16 @@ if(PNG_SHARED)
     # msvc does not append 'lib' - do it here to have consistent name
     set_target_properties(${PNG_LIB_NAME} PROPERTIES PREFIX "lib")
     set_target_properties(${PNG_LIB_NAME} PROPERTIES IMPORT_PREFIX "lib")
-    # mcrecover: Set MSVC debug path.
+    # gens-gs-ii: Set MSVC debug path.
     INCLUDE(SetMSVCDebugPath)
     SET_MSVC_DEBUG_PATH(${PNG_LIB_NAME})
   endif()
   target_link_libraries(${PNG_LIB_NAME} ${ZLIB_LIBRARY} ${M_LIBRARY})
+  # Gens/GS II: Exclude from ALL and DEFAULT builds.
+  SET_TARGET_PROPERTIES(${PNG_LIB_NAME} PROPERTIES
+	EXCLUDE_FROM_ALL TRUE
+	EXCLUDE_FROM_DEFAULT_BUILD TRUE
+	)
 endif()
 
 if(PNG_STATIC)
@@ -159,11 +156,16 @@ if(PNG_STATIC)
   if(MSVC)
     # msvc does not append 'lib' - do it here to have consistent name
     set_target_properties(${PNG_LIB_NAME_STATIC} PROPERTIES PREFIX "lib")
-    # mcrecover: Set MSVC debug path.
+    # gens-gs-ii: Set MSVC debug path.
     INCLUDE(SetMSVCDebugPath)
     SET_MSVC_DEBUG_PATH(${PNG_LIB_NAME_STATIC})
   endif()
   target_link_libraries(${PNG_LIB_NAME_STATIC} ${ZLIB_LIBRARY} ${M_LIBRARY})
+  # Gens/GS II: Exclude from ALL and DEFAULT builds.
+  SET_TARGET_PROPERTIES(${PNG_LIB_NAME_STATIC} PROPERTIES
+	EXCLUDE_FROM_ALL TRUE
+	EXCLUDE_FROM_DEFAULT_BUILD TRUE
+	)
 endif()
 
 if(PNG_FRAMEWORK)
@@ -180,6 +182,11 @@ if(PNG_FRAMEWORK)
     PUBLIC_HEADER "${libpng_public_hdrs}"
     OUTPUT_NAME png)
   target_link_libraries(${PNG_LIB_NAME_FRAMEWORK} ${ZLIB_LIBRARY} ${M_LIBRARY})
+    # Gens/GS II: Exclude from ALL and DEFAULT builds.
+    SET_TARGET_PROPERTIES(${PNG_LIB_NAME_FRAMEWORK} PROPERTIES
+	EXCLUDE_FROM_ALL TRUE
+	EXCLUDE_FROM_DEFAULT_BUILD TRUE
+	)
 endif()
 
 if(NOT PNG_LIB_TARGETS)
@@ -291,7 +298,7 @@ endif(NOT WIN32 OR CYGWIN OR MINGW)
 # SET UP LINKS
 if(PNG_SHARED)
   set_target_properties(${PNG_LIB_NAME} PROPERTIES
-#   VERSION 16.${PNGLIB_RELEASE}.1.6.17
+#   VERSION 16.${PNGLIB_RELEASE}.1.6.20
     VERSION 16.${PNGLIB_RELEASE}.0
     SOVERSION 16
     CLEAN_DIRECT_OUTPUT 1)

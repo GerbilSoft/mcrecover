@@ -1,7 +1,7 @@
 
 /* pngtest.c - a simple test program to test libpng
  *
- * Last changed in libpng 1.6.17 [March 26, 2015]
+ * Last changed in libpng 1.5.25 [December 3, 2015]
  * Copyright (c) 1998-2015 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
@@ -61,10 +61,11 @@
    defined PNG_READ_sBIT_SUPPORTED &&\
    defined PNG_READ_sCAL_SUPPORTED &&\
    defined PNG_READ_sRGB_SUPPORTED &&\
+   defined PNG_READ_sPLT_SUPPORTED &&\
    defined PNG_READ_tEXt_SUPPORTED &&\
    defined PNG_READ_tIME_SUPPORTED &&\
    defined PNG_READ_zTXt_SUPPORTED &&\
-   defined PNG_WRITE_INTERLACING_SUPPORTED
+   (defined PNG_WRITE_INTERLACING_SUPPORTED || PNG_LIBPNG_VER >= 10700)
 
 #ifdef PNG_ZLIB_HEADER
 #  include PNG_ZLIB_HEADER /* defined by pnglibconf.h from 1.7 */
@@ -101,6 +102,10 @@ typedef FILE                * png_FILE_p;
 #  define SINGLE_ROWBUF_ALLOC  /* Makes buffer overruns easier to nail */
 #endif
 
+#ifndef PNG_UNUSED
+#  define PNG_UNUSED(param) (void)param;
+#endif
+
 /* Turn on CPU timing
 #define PNGTEST_TIMING
 */
@@ -118,6 +123,22 @@ static float t_start, t_stop, t_decode, t_encode, t_misc;
 #define PNG_tIME_STRING_LENGTH 29
 static int tIME_chunk_present = 0;
 static char tIME_string[PNG_tIME_STRING_LENGTH] = "tIME chunk is not present";
+
+#if PNG_LIBPNG_VER < 10619
+#define png_convert_to_rfc1123_buffer(ts, t) tIME_to_str(read_ptr, ts, t)
+
+static int
+tIME_to_str(png_structp png_ptr, png_charp ts, png_const_timep t)
+{
+    png_const_charp str = png_convert_to_rfc1123(png_ptr, t);
+
+    if (str == NULL)
+        return 0;
+
+    strcpy(ts, str);
+    return 1;
+}
+#endif /* older libpng */
 #endif
 
 static int verbose = 0;
@@ -185,16 +206,14 @@ write_row_callback(png_structp png_ptr, png_uint_32 row_number, int pass)
 
 
 #ifdef PNG_READ_USER_TRANSFORM_SUPPORTED
-/* Example of using user transform callback (we don't transform anything,
- * but merely examine the row filters.  We set this to 256 rather than
- * 5 in case illegal filter values are present.)
+/* Example of using a user transform callback (doesn't do anything at present).
  */
-static png_uint_32 filters_used[256];
 static void PNGCBAPI
-count_filters(png_structp png_ptr, png_row_infop row_info, png_bytep data)
+read_user_callback(png_structp png_ptr, png_row_infop row_info, png_bytep data)
 {
-   if (png_ptr != NULL && row_info != NULL)
-      ++filters_used[*(data - 1)];
+   PNG_UNUSED(png_ptr)
+   PNG_UNUSED(row_info)
+   PNG_UNUSED(data)
 }
 #endif
 
@@ -565,6 +584,7 @@ png_debug_free(png_structp png_ptr, png_voidp ptr)
    }
 
    /* Unlink the element from the list. */
+   if (pinformation != NULL)
    {
       memory_infop *ppinfo = &pinformation;
 
@@ -581,8 +601,7 @@ png_debug_free(png_structp png_ptr, png_voidp ptr)
             /* We must free the list element too, but first kill
                the memory that is to be freed. */
             memset(ptr, 0x55, pinfo->size);
-            if (pinfo != NULL)
-               free(pinfo);
+            free(pinfo);
             pinfo = NULL;
             break;
          }
@@ -792,7 +811,7 @@ write_chunks(png_structp write_ptr, int location)
  */
 #ifdef PNG_TEXT_SUPPORTED
 static void
-pngtest_check_text_support(png_const_structp png_ptr, png_textp text_ptr,
+pngtest_check_text_support(png_structp png_ptr, png_textp text_ptr,
    int num_text)
 {
    while (num_text > 0)
@@ -805,6 +824,8 @@ pngtest_check_text_support(png_const_structp png_ptr, png_textp text_ptr,
          case PNG_TEXT_COMPRESSION_zTXt:
 #           ifndef PNG_WRITE_zTXt_SUPPORTED
                ++unsupported_chunks;
+               /* In libpng 1.7 this now does an app-error, so stop it: */
+               text_ptr[num_text].compression = PNG_TEXT_COMPRESSION_NONE;
 #           endif
             break;
 
@@ -812,6 +833,7 @@ pngtest_check_text_support(png_const_structp png_ptr, png_textp text_ptr,
          case PNG_ITXT_COMPRESSION_zTXt:
 #           ifndef PNG_WRITE_iTXt_SUPPORTED
                ++unsupported_chunks;
+               text_ptr[num_text].compression = PNG_TEXT_COMPRESSION_NONE;
 #           endif
             break;
 
@@ -838,16 +860,19 @@ test_one_file(PNG_CONST char *inname, PNG_CONST char *outname)
    png_structp write_ptr;
    png_infop write_info_ptr;
    png_infop write_end_info_ptr;
+#ifdef PNG_WRITE_FILTER_SUPPORTED
    int interlace_preserved = 1;
-#else
+#endif /* WRITE_FILTER */
+#else /* !WRITE */
    png_structp write_ptr = NULL;
    png_infop write_info_ptr = NULL;
    png_infop write_end_info_ptr = NULL;
-#endif
+#endif /* !WRITE */
    png_bytep row_buf;
    png_uint_32 y;
    png_uint_32 width, height;
-   int num_pass = 1, pass;
+   volatile int num_passes;
+   int pass;
    int bit_depth, color_type;
 #ifdef PNG_APNG_SUPPORTED
    png_uint_32 num_frames;
@@ -1004,14 +1029,7 @@ test_one_file(PNG_CONST char *inname, PNG_CONST char *outname)
    }
 
 #ifdef PNG_READ_USER_TRANSFORM_SUPPORTED
-   {
-      int i;
-
-      for (i = 0; i<256; i++)
-         filters_used[i] = 0;
-
-      png_set_read_user_transform_fn(read_ptr, count_filters);
-   }
+   png_set_read_user_transform_fn(read_ptr, read_user_callback);
 #endif
 #ifdef PNG_WRITE_USER_TRANSFORM_SUPPORTED
    zero_samples = 0;
@@ -1058,27 +1076,27 @@ test_one_file(PNG_CONST char *inname, PNG_CONST char *outname)
       {
          png_set_IHDR(write_ptr, write_info_ptr, width, height, bit_depth,
             color_type, interlace_type, compression_type, filter_type);
-#ifndef PNG_READ_INTERLACING_SUPPORTED
-         /* num_pass will not be set below, set it here if the image is
-          * interlaced: what happens is that write interlacing is *not* turned
-          * on an the partial interlaced rows are written directly.
+         /* num_passes may not be available below if interlace support is not
+          * provided by libpng for both read and write.
           */
          switch (interlace_type)
          {
             case PNG_INTERLACE_NONE:
-               num_pass = 1;
+               num_passes = 1;
                break;
 
             case PNG_INTERLACE_ADAM7:
-               num_pass = 7;
-                break;
+               num_passes = 7;
+               break;
 
             default:
-                png_error(read_ptr, "invalid interlace type");
-                /*NOT REACHED*/
+               png_error(read_ptr, "invalid interlace type");
+               /*NOT REACHED*/
          }
-#endif
       }
+
+      else
+         png_error(read_ptr, "png_get_IHDR failed");
    }
 #ifdef PNG_FIXED_POINT_SUPPORTED
 #ifdef PNG_cHRM_SUPPORTED
@@ -1249,6 +1267,19 @@ test_one_file(PNG_CONST char *inname, PNG_CONST char *outname)
 #endif
 #endif
 #endif
+
+#ifdef PNG_sPLT_SUPPORTED
+   {
+       png_sPLT_tp entries;
+
+       int num_entries = (int) png_get_sPLT(read_ptr, read_info_ptr, &entries);
+       if (num_entries)
+       {
+           png_set_sPLT(write_ptr, write_info_ptr, entries, num_entries);
+       }
+   }
+#endif
+
 #ifdef PNG_TEXT_SUPPORTED
    {
       png_textp text_ptr;
@@ -1320,6 +1351,7 @@ test_one_file(PNG_CONST char *inname, PNG_CONST char *outname)
       }
    }
 #endif
+
 #ifdef PNG_APNG_SUPPORTED
    if (png_get_valid(read_ptr, read_info_ptr, PNG_INFO_acTL))
    {
@@ -1334,6 +1366,7 @@ test_one_file(PNG_CONST char *inname, PNG_CONST char *outname)
       }
    }
 #endif
+
 #ifdef PNG_WRITE_UNKNOWN_CHUNKS_SUPPORTED
    {
       png_unknown_chunkp unknowns;
@@ -1384,11 +1417,21 @@ test_one_file(PNG_CONST char *inname, PNG_CONST char *outname)
 #endif /* SINGLE_ROWBUF_ALLOC */
    pngtest_debug("Writing row data");
 
-#ifdef PNG_READ_INTERLACING_SUPPORTED
-   num_pass = png_set_interlace_handling(read_ptr);
-   if (png_set_interlace_handling(write_ptr) != num_pass)
-      png_error(write_ptr, "png_set_interlace_handling: inconsistent num_pass");
-#endif
+#if defined(PNG_READ_INTERLACING_SUPPORTED) &&\
+   defined(PNG_WRITE_INTERLACING_SUPPORTED)
+   /* Both must be defined for libpng to be able to handle the interlace,
+    * otherwise it gets handled below by simply reading and writing the passes
+    * directly.
+    */
+   if (png_set_interlace_handling(read_ptr) != num_passes)
+      png_error(write_ptr,
+            "png_set_interlace_handling(read): wrong pass count ");
+   if (png_set_interlace_handling(write_ptr) != num_passes)
+      png_error(write_ptr,
+            "png_set_interlace_handling(write): wrong pass count ");
+#else /* png_set_interlace_handling not called on either read or write */
+#  define calc_pass_height
+#endif /* not using libpng interlace handling */
 
 #ifdef PNGTEST_TIMING
    t_stop = (float)clock();
@@ -1436,17 +1479,38 @@ test_one_file(PNG_CONST char *inname, PNG_CONST char *outname)
                               delay_num, delay_den,
                               dispose_op, blend_op);
 #endif
-         for (pass = 0; pass < num_pass; pass++)
+         for (pass = 0; pass < num_passes; pass++)
          {
+#           ifdef calc_pass_height
+               png_uint_32 pass_height;
+
+               if (num_passes == 7) /* interlaced */
+               {
+                  if (PNG_PASS_COLS(frame_width, pass) > 0)
+                     pass_height = PNG_PASS_ROWS(frame_height, pass);
+
+                  else
+                     pass_height = 0;
+               }
+
+               else /* not interlaced */
+                  pass_height = frame_height;
+#           else
+#              define pass_height frame_height
+#           endif
+
             pngtest_debug1("Writing row data for pass %d", pass);
-            for (y = 0; y < frame_height; y++)
+            for (y = 0; y < pass_height; y++)
             {
 #ifndef SINGLE_ROWBUF_ALLOC
-               pngtest_debug2("Allocating row buffer (pass %d, y = %ld)...", pass, y);
+               pngtest_debug2("Allocating row buffer (pass %d, y = %u)...", pass, y);
+
                row_buf = (png_bytep)png_malloc(read_ptr,
                   png_get_rowbytes(read_ptr, read_info_ptr));
-               pngtest_debug2("0x%08lx (%ld bytes)", (unsigned long)row_buf,
-                  png_get_rowbytes(read_ptr, read_info_ptr));
+
+               pngtest_debug2("\t0x%08lx (%lu bytes)", (unsigned long)row_buf,
+                  (unsigned long)png_get_rowbytes(read_ptr, read_info_ptr));
+
 #endif /* !SINGLE_ROWBUF_ALLOC */
                png_read_rows(read_ptr, (png_bytepp)&row_buf, NULL, 1);
 
@@ -1465,7 +1529,7 @@ test_one_file(PNG_CONST char *inname, PNG_CONST char *outname)
 #endif /* PNG_WRITE_SUPPORTED */
 
 #ifndef SINGLE_ROWBUF_ALLOC
-               pngtest_debug2("Freeing row buffer (pass %d, y = %ld)", pass, y);
+               pngtest_debug2("Freeing row buffer (pass %d, y = %u)", pass, y);
                png_free(read_ptr, row_buf);
                row_buf = NULL;
 #endif /* !SINGLE_ROWBUF_ALLOC */
@@ -1478,10 +1542,28 @@ test_one_file(PNG_CONST char *inname, PNG_CONST char *outname)
    }
    else
 #endif
-   for (pass = 0; pass < num_pass; pass++)
+   for (pass = 0; pass < num_passes; pass++)
    {
+#     ifdef calc_pass_height
+         png_uint_32 pass_height;
+
+         if (num_passes == 7) /* interlaced */
+         {
+            if (PNG_PASS_COLS(width, pass) > 0)
+               pass_height = PNG_PASS_ROWS(height, pass);
+
+            else
+               pass_height = 0;
+         }
+
+         else /* not interlaced */
+            pass_height = height;
+#     else
+#        define pass_height height
+#     endif
+
       pngtest_debug1("Writing row data for pass %d", pass);
-      for (y = 0; y < height; y++)
+      for (y = 0; y < pass_height; y++)
       {
 #ifndef SINGLE_ROWBUF_ALLOC
          pngtest_debug2("Allocating row buffer (pass %d, y = %u)...", pass, y);
@@ -1671,7 +1753,7 @@ test_one_file(PNG_CONST char *inname, PNG_CONST char *outname)
    }
 
 #  ifdef PNG_WRITE_SUPPORTED
-      /* If there we no write support nothing was written! */
+      /* If there is no write support nothing was written! */
       else if (unsupported_chunks > 0)
       {
          fprintf(STDERR, "\n  %s: unsupported chunks (%d)%s",
@@ -1702,7 +1784,8 @@ test_one_file(PNG_CONST char *inname, PNG_CONST char *outname)
       return (1);
    }
 
-#ifdef PNG_WRITE_SUPPORTED /* else nothing was written */
+#if defined (PNG_WRITE_SUPPORTED) /* else nothing was written */ &&\
+    defined (PNG_WRITE_FILTER_SUPPORTED)
    if (interlace_preserved != 0) /* else the files will be changed */
    {
       for (;;)
@@ -1779,7 +1862,7 @@ test_one_file(PNG_CONST char *inname, PNG_CONST char *outname)
          }
       }
    }
-#endif /* WRITE */
+#endif /* WRITE && WRITE_FILTER */
 
    FCLOSE(fpin);
    FCLOSE(fpout);
@@ -1918,26 +2001,17 @@ main(int argc, char *argv[])
          kerror = test_one_file(argv[i], outname);
          if (kerror == 0)
          {
-#ifdef PNG_READ_USER_TRANSFORM_SUPPORTED
-            int k;
-#endif
 #ifdef PNG_WRITE_USER_TRANSFORM_SUPPORTED
             fprintf(STDERR, "\n PASS (%lu zero samples)\n",
                (unsigned long)zero_samples);
 #else
             fprintf(STDERR, " PASS\n");
 #endif
-#ifdef PNG_READ_USER_TRANSFORM_SUPPORTED
-            for (k = 0; k<256; k++)
-               if (filters_used[k] != 0)
-                  fprintf(STDERR, " Filter %d was used %lu times\n",
-                     k, (unsigned long)filters_used[k]);
-#endif
 #ifdef PNG_TIME_RFC1123_SUPPORTED
-         if (tIME_chunk_present != 0)
-            fprintf(STDERR, " tIME = %s\n", tIME_string);
+            if (tIME_chunk_present != 0)
+               fprintf(STDERR, " tIME = %s\n", tIME_string);
 
-         tIME_chunk_present = 0;
+            tIME_chunk_present = 0;
 #endif /* TIME_RFC1123 */
          }
 
@@ -2009,20 +2083,11 @@ main(int argc, char *argv[])
          {
             if (verbose == 1 || i == 2)
             {
-#ifdef PNG_READ_USER_TRANSFORM_SUPPORTED
-                int k;
-#endif
 #ifdef PNG_WRITE_USER_TRANSFORM_SUPPORTED
                 fprintf(STDERR, "\n PASS (%lu zero samples)\n",
                    (unsigned long)zero_samples);
 #else
                 fprintf(STDERR, " PASS\n");
-#endif
-#ifdef PNG_READ_USER_TRANSFORM_SUPPORTED
-                for (k = 0; k<256; k++)
-                   if (filters_used[k] != 0)
-                      fprintf(STDERR, " Filter %d was used %lu times\n",
-                         k, (unsigned long)filters_used[k]);
 #endif
 #ifdef PNG_TIME_RFC1123_SUPPORTED
              if (tIME_chunk_present != 0)
@@ -2129,4 +2194,4 @@ main(void)
 #endif
 
 /* Generate a compiler error if there is an old png.h in the search path. */
-typedef png_libpng_version_1_6_17 Your_png_h_is_not_version_1_6_17;
+typedef png_libpng_version_1_6_20 Your_png_h_is_not_version_1_6_20;
