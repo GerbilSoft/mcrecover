@@ -497,13 +497,6 @@ SALevelStats::SALevelStats(QWidget *parent)
 	Q_D(SALevelStats);
 	d->ui.setupUi(this);
 
-	// Fix alignment of the header labels.
-	d->ui.gridLevels->setAlignment(d->ui.lblLevelName, Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblHighScore, Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblEmblems, Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblBestTime, Qt::AlignTop);
-	d->ui.gridLevels->setAlignment(d->ui.lblMostRings, Qt::AlignTop);
-
 	// Initialize the level listing.
 	d->initLevels();
 	d->switchLevels(d->ui.cboCharacter->currentIndex());
