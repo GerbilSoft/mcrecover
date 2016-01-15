@@ -218,7 +218,7 @@ void SALevelClearCountPrivate::initLevels(void)
 			levels[level].spnCount[chr]->setRange(0, 255);
 			levels[level].spnCount[chr]->setSingleStep(1);
 			levels[level].spnCount[chr]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-			ui.gridLevels->addWidget(levels[level].spnCount[chr], level, chr+1, Qt::AlignCenter);
+			ui.gridLevels->addWidget(levels[level].spnCount[chr], level, chr+1, Qt::AlignVCenter);
 
 			if (!(levelMap[chr] & 1)) {
 				// Level is not used by this character.
