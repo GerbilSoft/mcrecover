@@ -1,4 +1,4 @@
-This copy of pcre-8.36 is a modified version of the original.
+This copy of pcre-8.38 is a modified version of the original.
 
 The following changes have been made to the original:
 
@@ -10,5 +10,5 @@ The following changes have been made to the original:
 
 - Files not necessary for building pcre have been removed.
 
-To obtain the original pcre-8.36, visit:
+To obtain the original pcre-8.38, visit:
 - http://www.pcre.org/
