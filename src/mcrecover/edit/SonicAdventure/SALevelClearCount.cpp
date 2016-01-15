@@ -71,7 +71,6 @@ class SALevelClearCountPrivate
 			QLabel *lblLevel;
 			QSpinBox *spnCount[TOTAL_CHARACTERS];
 		} levels[TOTAL_LEVELS];
-		QSpacerItem *vspcSpacer;
 
 		// Signal mapper for QSpinBox modifications.
 		QSignalMapper *mapperSpinBox;
@@ -136,7 +135,6 @@ const uint64_t SALevelClearCountPrivate::levelMap[TOTAL_CHARACTERS] = {
 
 SALevelClearCountPrivate::SALevelClearCountPrivate(SALevelClearCount *q)
 	: q_ptr(q)
-	, vspcSpacer(nullptr)
 	, mapperSpinBox(new QSignalMapper(q))
 {
 	// Clear the data.
@@ -158,7 +156,6 @@ SALevelClearCountPrivate::~SALevelClearCountPrivate()
 			delete levels[i].spnCount[j];
 		}
 	}
-	delete vspcSpacer;
 }
 
 /**
@@ -242,7 +239,8 @@ void SALevelClearCountPrivate::initLevels(void)
 
 	// Add a spacer to make sure everything is pushed to the top
 	// if the window is expanded.
-	vspcSpacer = new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+	// NOTE: QGridLayout takes ownership, so we shouldn't delete it ourselves.
+	QSpacerItem *vspcSpacer = new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
 	ui.gridLevels->addItem(vspcSpacer, TOTAL_LEVELS, 0, 1, TOTAL_CHARACTERS+1);
 }
 
