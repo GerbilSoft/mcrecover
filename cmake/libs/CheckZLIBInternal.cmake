@@ -1,6 +1,6 @@
 # Check for internal zlib.
 # NOTE: This is only used if internal PNG is being used.
-IF(USE_INTERNAL_PNG AND NOT USE_INTERNAL_ZLIB)
+IF(USE_INTERNAL_PNG AND NOT HAVE_ZLIB)
 
 MESSAGE(STATUS "Using internal ZLIB due to internal PNG dependency.")
 
@@ -13,4 +13,4 @@ SET(ZLIB_INCLUDE_DIR
 	"${CMAKE_CURRENT_BINARY_DIR}/extlib/zlib/"
 	)
 
-ENDIF(USE_INTERNAL_PNG AND NOT USE_INTERNAL_ZLIB)
+ENDIF(USE_INTERNAL_PNG AND NOT HAVE_ZLIB)

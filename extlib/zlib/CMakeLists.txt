@@ -135,19 +135,21 @@ if(NOT MINGW)
     )
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCC)
-    if(ASM686)
-        set(ZLIB_ASMS contrib/asm686/match.S)
-    elseif (AMD64)
-        set(ZLIB_ASMS contrib/amd64/amd64-match.S)
-    endif ()
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+	# mcrecover: cmake-2.8.4 is required for nasm.
+	cmake_minimum_required(VERSION 2.8.4)
+	if(ASM686)
+		set(ZLIB_ASMS contrib/asm686/match.S)
+	elseif (AMD64)
+		set(ZLIB_ASMS contrib/amd64/amd64-match.S)
+	endif ()
 
 	if(ZLIB_ASMS)
 		add_definitions(-DASMV)
 		# mcrecover: Disable underlines only if not Windows.
 		# NOTE: We have to force compilation as C.
 		if(WIN32)
-			set_source_files_properties(${ZLIB_ASMS} PROPERTIES LANGUAGE C)
+			set_source_files_properties(${ZLIB_ASMS} PROPERTIES LANGUAGE C COMPILE_FLAGS "")
 		else()
 			set_source_files_properties(${ZLIB_ASMS} PROPERTIES LANGUAGE C COMPILE_FLAGS -DNO_UNDERLINE)
 		endif()
@@ -155,22 +157,29 @@ if(CMAKE_COMPILER_IS_GNUCC)
 endif()
 
 if(MSVC)
-    if(ASM686)
+	# mcrecover: cmake-2.6.3 is required for masm.
+	cmake_minimum_required(VERSION 2.6.3)
+	if(ASM686)
 		ENABLE_LANGUAGE(ASM_MASM)
-        set(ZLIB_ASMS
+		set(ZLIB_ASMS
 			contrib/masmx86/inffas32.asm
 			contrib/masmx86/match686.asm
-		)
-    elseif (AMD64)
+			)
+	elseif (AMD64)
 		ENABLE_LANGUAGE(ASM_MASM)
-        set(ZLIB_ASMS
+		set(ZLIB_ASMS
 			contrib/masmx64/gvmat64.asm
 			contrib/masmx64/inffasx64.asm
-		)
-    endif()
+			)
+		# mcrecover: MSVC amd64 also requires inffas8664.c.
+		set(ZLIB_ASM_C_SRCS
+			contrib/masmx64/inffas8664.c
+			)
+	endif()
 
 	if(ZLIB_ASMS)
 		add_definitions(-DASMV -DASMINF)
+		set_source_files_properties(${ZLIB_ASMS} PROPERTIES LANGUAGE ASM_MASM)
 	endif()
 endif()
 
@@ -195,17 +204,28 @@ if(MINGW)
     set(ZLIB_DLL_SRCS ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj)
 endif(MINGW)
 
-# GCN MemCard Recover: Don't build zlib as a shared library.
-#add_library(zlib SHARED ${ZLIB_SRCS} ${ZLIB_ASMS} ${ZLIB_DLL_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
+# mcrecover: Don't build zlib as a shared library.
+# mcrecover: Added ${ZLIB_ASM_C_SRCS} for 64-bit MSVC builds.
+#add_library(zlib SHARED ${ZLIB_SRCS} ${ZLIB_ASMS} ${ZLIB_ASM_C_SRCS} ${ZLIB_DLL_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
 add_custom_target(zlib)
-add_library(zlibstatic STATIC ${ZLIB_SRCS} ${ZLIB_ASMS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
+add_library(zlibstatic STATIC ${ZLIB_SRCS} ${ZLIB_ASMS} ${ZLIB_ASM_C_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
 set_target_properties(zlib PROPERTIES DEFINE_SYMBOL ZLIB_DLL)
 set_target_properties(zlib PROPERTIES SOVERSION 1)
 
-# GCN MemCard Recover: Set the MSVC debug path.
+# mcrecover: Set the MSVC debug path.
 INCLUDE(SetMSVCDebugPath)
 SET_MSVC_DEBUG_PATH(zlib)
 SET_MSVC_DEBUG_PATH(zlibstatic)
+
+# Gens/GS II: Exclude from ALL and DEFAULT builds.
+SET_TARGET_PROPERTIES(zlib PROPERTIES
+	EXCLUDE_FROM_ALL TRUE
+	EXCLUDE_FROM_DEFAULT_BUILD TRUE
+	)
+SET_TARGET_PROPERTIES(zlibstatic PROPERTIES
+	EXCLUDE_FROM_ALL TRUE
+	EXCLUDE_FROM_DEFAULT_BUILD TRUE
+	)
 
 if(NOT CYGWIN)
     # This property causes shared libraries on Linux to have the full version
