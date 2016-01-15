@@ -377,14 +377,6 @@ SAEditor::SAEditor(QWidget *parent)
 	d->sadxMissionFlagsModel->setByteFlags(&d->sadxMissionFlags);
 	d->ui.sadxMissionFlagsView->setPageSize(0);
 	d->ui.sadxMissionFlagsView->setByteFlagsModel(d->sadxMissionFlagsModel);
-
-#if 0
-	// Attempt to fix the scroll area's minimum width.
-	// TODO: On theme change also?
-	int w = d->ui.saLevelClearCount->sizeHint().width();
-	w += qApp->style()->pixelMetric(QStyle::PM_ScrollBarExtent);
-	d->ui.scrlLevelClearCount->setMinimumWidth(w);
-#endif
 }
 
 /**
