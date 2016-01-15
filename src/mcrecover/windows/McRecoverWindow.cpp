@@ -1498,6 +1498,28 @@ void McRecoverWindow::on_actionOpen_triggered(void)
 	dialog->setFileMode(QFileDialog::ExistingFile);
 	dialog->setNameFilters(filters);
 
+	// Set the default filter.
+	QString defaultFilter;
+	const QString fileTypeKey = QLatin1String("fileType");
+	switch (d->cfg->getInt(fileTypeKey)) {
+		case 0:
+		default:
+			defaultFilter = gcnFilter;
+			break;
+		case 1:
+			defaultFilter = vmuFilter;
+			break;
+		case 2:
+			defaultFilter = allFilter;
+			break;
+	}
+	// FIXME: This isn't working on KDE 4.
+	// This may be a Qt/KDE bug:
+	// - https://git.reviewboard.kde.org/r/115478/
+	// - https://mail.kde.org/pipermail/kde-frameworks-devel/2014-March/012659.html
+	// - http://mail.kde.org/pipermail/kde-frameworks-devel/2014-February/010691.html
+	dialog->selectNameFilter(defaultFilter);
+
 	if (dialog->exec()) {
 		// Filename is selected.
 		QStringList filenames = dialog->selectedFiles();
@@ -1509,19 +1531,29 @@ void McRecoverWindow::on_actionOpen_triggered(void)
 
 		// Check the selected filename filter.
 		int type = -1;	// TODO: Enum?
+		int cfg_type = -1;
 		QString selectedFilter = dialog->selectedFilter();
 		if (selectedFilter == gcnFilter) {
 			type = 0;
+			cfg_type = 0;
 		} else if (selectedFilter == vmuFilter) {
 			type = 1;
+			cfg_type = 1;
+		} else if (selectedFilter == allFilter) {
+			type = -1;	// Auto-detect
+			cfg_type = 2;
 		}
+		printf("type == %d, cfg_type == %d\n", type, cfg_type);
 
-		// Set the last path.
+		// Save configuration settings.
 		d->setLastPath(filename);
+		d->cfg->set(fileTypeKey, cfg_type);
 
 		// Open the memory card file.
 		openCard(filename, type);
 	}
+
+	delete dialog;
 }
 
 /**
