@@ -23,6 +23,7 @@
 
 // Qt includes.
 #include <QtCore/QSignalMapper>
+#include <QtGui/QApplication>
 
 // Qt widgets.
 #include <QtGui/QHBoxLayout>
@@ -30,6 +31,7 @@
 #include <QtGui/QSpinBox>
 #include <QtGui/QCheckBox>
 #include <QtGui/QResizeEvent>
+#include <QtGui/QScrollBar>
 
 // C includes. (C++ namespace)
 #include <cstring>
@@ -95,10 +97,10 @@ class SALevelClearCountPrivate
 		void updateDisplay(void);
 
 		/**
-		 * QScrollArea was resized.
-		 * @param event QResizeEvent.
+		 * QScrollArea was resized, or QScrollBar visibility changed.
+		 * @param event QEvent.
 		 */
-		void scrollAreaResized(QResizeEvent *event);
+		void scrollAreaResized(QEvent *event);
 
 		/** Static read-only data. **/
 
@@ -268,10 +270,23 @@ void SALevelClearCountPrivate::updateDisplay(void)
 }
 
 /**
- * QScrollArea was resized.
+ * QScrollArea was resized, or QScrollBar visibility changed.
+ * @param event QEvent.
  */
-void SALevelClearCountPrivate::scrollAreaResized(QResizeEvent *event)
+void SALevelClearCountPrivate::scrollAreaResized(QEvent *event)
 {
+	if (event->type() == QEvent::Resize) {
+		QResizeEvent *resizeEvent = reinterpret_cast<QResizeEvent*>(event);
+		if (resizeEvent->oldSize().width() == resizeEvent->size().width()) {
+			// Vertical resize only.
+			return;
+		}
+	}
+	// TODO: On QScrollBar show, change QScrollArea's
+	// vertical scrollbar policy to "ScrollBarAsNeeded"?
+	// It's set to "ScrollBarAlwaysOn" in order to eliminate
+	// some flickering on load.
+
 	// Set lblLevel's width to match the widest widget in column 0.
 	// NOTE: Final row is a spacer item, so ignore it.
 	int width = 0;
@@ -281,8 +296,20 @@ void SALevelClearCountPrivate::scrollAreaResized(QResizeEvent *event)
 			width = qMax(item->sizeHint().width(), width);
 		}
 	}
-
 	ui.lblLevelName->setMinimumSize(QSize(width, 0));
+
+	// Set padding to match scroll area padding.
+	// The padding includes contentMargins from scrlLevels and gridLevels,
+	// plus the width of the vertical scrollbar.
+	QMargins margins1 = ui.scrlLevels->contentsMargins();
+	QMargins margins2 = ui.gridLevels->contentsMargins();
+
+	QMargins hMargins;
+	hMargins.setLeft(margins1.left() + margins2.left());
+	hMargins.setRight(margins1.right() + margins2.right());
+
+	// Set the new gridHeader margins.
+	ui.gridHeader->setContentsMargins(hMargins);
 }
 
 /** SALevelClearCount **/
@@ -297,8 +324,9 @@ SALevelClearCount::SALevelClearCount(QWidget *parent)
 	// Initialize the level listing.
 	d->initLevels();
 
-	// Install an event filter for the QScrollArea.
+	// Install event filters for the QScrollArea.
 	d->ui.scrlLevels->installEventFilter(this);
+	d->ui.scrlLevels->verticalScrollBar()->installEventFilter(this);
 }
 
 SALevelClearCount::~SALevelClearCount()
@@ -386,7 +414,7 @@ void SALevelClearCount::spnCount_mapped_slot(int spnId)
 
 /**
  * QObject eventFilter.
- * Used to handle QScrollArea resize events.
+ * Used to handle QScrollArea resize and QScrollBar show events.
  * @param watched Watched QObject.
  * @param event QEvent.
  * @return True to stop the event from being handled further; false to pass it down.
@@ -394,9 +422,11 @@ void SALevelClearCount::spnCount_mapped_slot(int spnId)
 bool SALevelClearCount::eventFilter(QObject *watched, QEvent *event)
 {
 	Q_D(SALevelClearCount);
-	if (watched == d->ui.scrlLevels && event->type() == QEvent::Resize) {
+	if ((event->type() == QEvent::Resize && watched == d->ui.scrlLevels) ||
+	    (event->type() == QEvent::Show && watched == d->ui.scrlLevels->verticalScrollBar()))
+	{
 		// QScrollArea resize event.
-		d->scrollAreaResized(reinterpret_cast<QResizeEvent*>(event));
+		d->scrollAreaResized(event);
 	}
 
 	// Allow event processing to continue.

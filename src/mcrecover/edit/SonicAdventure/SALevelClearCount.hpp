@@ -77,7 +77,7 @@ class SALevelClearCount : public QWidget
 	protected:
 		/**
 		 * QObject eventFilter.
-		 * Used to handle QScrollArea resize events.
+		 * Used to handle QScrollArea resize and QScrollBar show events.
 		 * @param watched Watched QObject.
 		 * @param event QEvent.
 		 * @return True to stop the event from being handled further; false to pass it down.

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>462</width>
-    <height>94</height>
+    <height>98</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="vboxMain">
@@ -144,6 +144,9 @@
       <string notr="true">#scrlLevels { background-color: transparent; }
 #scrlLevelContent { background-color: transparent; }</string>
      </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOn</enum>
+     </property>
      <property name="horizontalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
@@ -158,8 +161,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>456</width>
-        <height>66</height>
+        <width>439</width>
+        <height>70</height>
        </rect>
       </property>
       <property name="sizePolicy">
