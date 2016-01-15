@@ -103,15 +103,6 @@ class VmuFilePrivate : public FilePrivate
 		GcImage *vmu_icon_mono;
 		GcImage *vmu_icon_color;
 
-		// Mode bits.
-		// TODO: Use system-independent values.
-		enum VmuMode {
-			// File cannot be copied.
-			VMS_NO_COPY	= (1 << 0),
-			// File is a VMU program.
-			VMS_EXEC	= (1 << 1),
-		};
-
 		/**
 		 * Load the banner image.
 		 * @return GcImage containing the banner image, or nullptr on error.
@@ -231,10 +222,10 @@ void VmuFilePrivate::loadFileInfo(void)
 	// Mode.
 	this->mode = 0;
 	if (dirEntry->filetype == 0xCC) {
-		mode |= VMS_EXEC;
+		mode |= File::FILE_MODE_EXEC;
 	}
 	if (dirEntry->protect == 0xFF) {
-		mode |= VMS_NO_COPY;
+		mode |= File::FILE_MODE_NO_COPY;
 	}
 
 	// Load the block containing the file header.
@@ -555,8 +546,8 @@ QString VmuFile::modeAsString(void) const
 	Q_D(const VmuFile);
 	char str[2];
 
-	str[0] = ((d->mode & VmuFilePrivate::VMS_EXEC)    ? 'X' : '-');
-	str[1] = ((d->mode & VmuFilePrivate::VMS_NO_COPY) ? 'C' : '-');
+	str[0] = ((d->mode & FILE_MODE_EXEC)    ? 'X' : '-');
+	str[1] = ((d->mode & FILE_MODE_NO_COPY) ? 'C' : '-');
 
 	return QString::fromLatin1(str, sizeof(str));
 }

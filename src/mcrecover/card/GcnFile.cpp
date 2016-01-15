@@ -317,8 +317,8 @@ void GcnFilePrivate::loadFileInfo(void)
 	mtime.setGcnTimestamp(dirEntry->lastmodified);
 
 	// Mode.
-	// TODO: Convert to system-independent value?
-	this->mode = dirEntry->permission;
+	// GCN permission bits map nicely to File::ModeBits.
+	this->mode = (dirEntry->permission >> 2) & 0x0F;
 
 	// Get the block size.
 	const int blockSize = card->blockSize();
@@ -649,10 +649,10 @@ QString GcnFile::modeAsString(void) const
 	Q_D(const GcnFile);
 	char str[4];
 
-	str[0] = ((d->mode & CARD_ATTRIB_GLOBAL) ? 'G' : '-');
-	str[1] = ((d->mode & CARD_ATTRIB_NOMOVE) ? 'M' : '-');
-	str[2] = ((d->mode & CARD_ATTRIB_NOCOPY) ? 'C' : '-');
-	str[3] = ((d->mode & CARD_ATTRIB_PUBLIC) ? 'P' : '-');
+	str[0] = ((d->mode & FILE_MODE_GLOBAL)  ? 'G' : '-');
+	str[1] = ((d->mode & FILE_MODE_NO_MOVE) ? 'M' : '-');
+	str[2] = ((d->mode & FILE_MODE_NO_COPY) ? 'C' : '-');
+	str[3] = ((d->mode & FILE_MODE_PUBLIC)  ? 'P' : '-');
 
 	return QString::fromLatin1(str, sizeof(str));
 }

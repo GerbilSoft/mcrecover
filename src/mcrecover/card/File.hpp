@@ -140,10 +140,22 @@ class File : public QObject
 		 */
 		QString description(void) const;
 
+		enum ModeBits {
+			// File is public. (user-visible)
+			FILE_MODE_PUBLIC	= (1 << 0),
+			// File cannot be copied.
+			FILE_MODE_NO_COPY	= (1 << 1),
+			// File cannot be moved.
+			FILE_MODE_NO_MOVE	= (1 << 2),
+			// File is "global". (GCN-specific?)
+			FILE_MODE_GLOBAL	= (1 << 3),
+			// File is executable.
+			FILE_MODE_EXEC		= (1 << 4),
+		};
+
 		/**
 		 * Get the file's mode. (attributes, permissions)
-		 * NOTE: Values may be system-specific.
-		 * FIXME: Use system-independent values?
+		 * See ModeBits for a description of the mode.
 		 * @return File mode.
 		 */
 		uint32_t mode(void) const;
