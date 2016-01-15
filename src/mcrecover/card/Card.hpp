@@ -356,16 +356,22 @@ class Card : public QObject
 			MCE_SZ_TOO_BIG		= 0x02,
 			// Memory card size is not a power of two.
 			MCE_SZ_NON_POW2		= 0x04,
+			// Short read occurrd. (I/O error)
+			MCE_SHORT_READ		= 0x08,
 
 			// Header checksum is invalid.
+			// NOTE: What about "header is invalid 
 			MCE_INVALID_HEADER	= 0x10,
 
-			// GCN-specific errors.
+			// Header is invalid, and is mostly
+			// the same byte, indicating the dump
+			// may have failed.
+			MCE_HEADER_GARBAGE	= 0x20,
 
-			// Both DATs are invalid.
-			MCE_INVALID_DATS	= 0x20,
-			// Bot BATs are invalid.
-			MCE_INVALID_BATS	= 0x40,
+			// All DATs are invalid.
+			MCE_INVALID_DATS	= 0x100,
+			// All BATs are invalid.
+			MCE_INVALID_BATS	= 0x200,
 
 			// TODO: File open errors?
 		};
@@ -376,6 +382,18 @@ class Card : public QObject
 		 * @return Error flags.
 		 */
 		QFlags<Error> errors(void) const;
+
+		/**
+		 * Get the garbage byte information.
+		 * This function is only valid if
+		 * Errors contains MCE_HEADER_GARBAGE.
+		 * @param bad_byte	[out] Bad byte value.
+		 * @param count		[out] Number of times the byte appeared.
+		 * @param total		[out] Total number of bytes checked.
+		 * @return 0 on success; non-zero on error.
+		 * (If bad bytes weren't detected, this function will fail.)
+		 */
+		int garbageInfo(uint8_t *bad_byte, int *count, int *total) const;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Card::Errors);

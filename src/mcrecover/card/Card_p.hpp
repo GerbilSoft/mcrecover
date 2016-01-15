@@ -51,6 +51,19 @@ class CardPrivate
 		QString errorString;
 		QFlags<Card::Error> errors;
 
+		// Bad Bytes for MCE_HEADER_GARBAGE.
+		struct garbage_t{
+			uint8_t bad_byte;
+			int count;
+			int total;
+
+			garbage_t()
+				: bad_byte(0)
+				, count(0)
+				, total(0) { }
+		};
+		garbage_t garbage;
+
 		// File information.
 		QString filename;
 		QFile *file;
@@ -122,6 +135,16 @@ class CardPrivate
 		 * This will clear all cached file information.
 		 */
 		void close(void);
+
+		/**
+		 * Find the most common byte in a block of data.
+		 * This is useful for determining header garbage.
+		 * @param buf		[in] Data block.
+		 * @param siz		[in] Size of buf.
+		 * @param most_byte	[out] Byte that appears the most times in buf.
+		 * @param count		[out] Number of times most_byte appears.
+		 */
+		static void findMostCommonByte(const uint8_t *buf, size_t siz, uint8_t *most_byte, int *count);
 };
 
 #endif /* __MCRECOVER_CARD_CARD_P_HPP__ */

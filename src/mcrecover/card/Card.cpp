@@ -175,6 +175,43 @@ void CardPrivate::close(void)
 	freeBlocks = 0;
 }
 
+/**
+ * Find the most common byte in a block of data.
+ * This is useful for determining header garbage.
+ * @param buf		[in] Data block.
+ * @param siz		[in] Size of buf.
+ * @param most_byte	[out] Byte that appears the most times in buf.
+ * @param count		[out] Number of times most_byte appears.
+ */
+void CardPrivate::findMostCommonByte(const uint8_t *buf, size_t siz, uint8_t *most_byte, int *count)
+{
+	int bytes[256];
+	memset(bytes, 0, sizeof(bytes));
+
+	// Check the buffer.
+	// TODO: Loop unrolling optimization; decrement optimization?
+	for (size_t i = 0; i < siz; i++, buf++) {
+		++bytes[*buf];
+	}
+
+	// Find the most common byte.
+	uint8_t tmpbyte = 255;
+	int tmpcnt = bytes[255];
+	for (int i = 254; i >= 0; i--) {
+		if (bytes[i] > tmpcnt) {
+			tmpbyte = (uint8_t)i;
+			tmpcnt = bytes[i];
+		}
+	}
+
+	if (most_byte) {
+		*most_byte = tmpbyte;
+	}
+	if (count) {
+		*count = tmpcnt;
+	}
+}
+
 /** Card **/
 
 /**
@@ -549,4 +586,37 @@ QFlags<Card::Error> Card::errors(void) const
 	if (!isOpen())
 		return 0;
 	return d->errors;
+}
+
+/**
+ * Get the garbage byte information.
+ * This function is only valid if
+ * Errors contains MCE_HEADER_GARBAGE.
+ * @param bad_byte	[out] Bad byte value.
+ * @param count		[out] Number of times the byte appeared.
+ * @param total		[out] Total number of bytes checked.
+ * @return 0 on success; non-zero on error.
+ * (If bad bytes weren't detected, this function will fail.)
+ */
+int Card::garbageInfo(uint8_t *bad_byte, int *count, int *total) const
+{
+	Q_D(const Card);
+	if (!isOpen()) {
+		return -EBADF;
+	} else if (!(d->errors & MCE_INVALID_HEADER)) {
+		// TODO: Better error?
+		return -ENOTTY;
+	}
+
+	if (bad_byte) {
+		*bad_byte = d->garbage.bad_byte;
+	}
+	if (count) {
+		*count = d->garbage.count;
+	}
+	if (total) {
+		*total = d->garbage.total;
+	}
+
+	return 0;
 }

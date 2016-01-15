@@ -190,6 +190,31 @@ int GcnCardPrivate::open(const QString &filename)
 	// Load the GcnFile list.
 	loadGcnFileList();
 
+	if (errors != 0) {
+		// Errors were detected.
+		// Check for garbage.
+		// FIXME: mc_header is only 512 bytes; not the full 8 KB block.
+		// FIXME: Just reread the entire header?
+		uint8_t gbyte[3];
+		int gcount[3];
+		findMostCommonByte((const uint8_t*)&mc_header, sizeof(mc_header), &gbyte[0], &gcount[0]);
+		findMostCommonByte((const uint8_t*)mc_bat_int, sizeof(mc_bat_int), &gbyte[1], &gcount[1]);
+		findMostCommonByte((const uint8_t*)mc_dat_int, sizeof(mc_dat_int), &gbyte[2], &gcount[2]);
+		if (gbyte[0] == gbyte[1] && gbyte[1] == gbyte[2]) {
+			const int count = gcount[0] + gcount[1] + gcount[2];
+			const int total = sizeof(mc_header) + sizeof(mc_bat_int) + sizeof(mc_dat_int);
+			if (count >= (total * 3 / 4)) {
+				// At least 75% of the header is the same byte.
+				// Garbage is likely.
+				// TODO: Figure out the best ratio?
+				garbage.bad_byte = gbyte[0];
+				garbage.count = count;
+				garbage.total = total;
+				errors |= Card::MCE_HEADER_GARBAGE;
+			}
+		}
+	}
+
 	return 0;
 }
 
@@ -368,6 +393,8 @@ int GcnCardPrivate::loadSysInfo(void)
 	qint64 sz = file->read((char*)&mc_header, sizeof(mc_header));
 	if (sz < (qint64)sizeof(mc_header)) {
 		// Error reading the card header.
+		this->errors |= Card::MCE_SHORT_READ;
+
 		// Zero the header and block tables,
 		// and 0xFF the directory tables.
 		memset(&mc_header, 0x00, sizeof(mc_header));
@@ -432,7 +459,7 @@ int GcnCardPrivate::loadSysInfo(void)
 
 	if (headerChecksumValue.expected != headerChecksumValue.actual) {
 		// Header checksum is invalid.
-		this->errors |= GcnCard::MCE_INVALID_HEADER;
+		this->errors |= Card::MCE_INVALID_HEADER;
 	}
 
 	/**
@@ -511,6 +538,7 @@ int GcnCardPrivate::loadDirTable(card_dat *dat, uint32_t address, uint32_t *chec
 	qint64 sz = file->read((char*)dat, sizeof(*dat));
 	if (sz < (qint64)sizeof(*dat)) {
 		// Error reading the directory table.
+		this->errors |= Card::MCE_SHORT_READ;
 		return -1;
 	}
 
@@ -554,6 +582,7 @@ int GcnCardPrivate::loadBlockTable(card_bat *bat, uint32_t address, uint32_t *ch
 	qint64 sz = file->read((char*)bat, sizeof(*bat));
 	if (sz < (qint64)sizeof(*bat)) {
 		// Error reading the directory table.
+		this->errors |= Card::MCE_SHORT_READ;
 		return -1;
 	}
 
@@ -601,7 +630,7 @@ int GcnCardPrivate::checkTables(void)
 		idx = !idx;
 		if (!isDatValid(idx)) {
 			// Both directory tables are invalid.
-			this->errors |= GcnCard::MCE_INVALID_DATS;
+			this->errors |= Card::MCE_INVALID_DATS;
 			idx = -1;
 		}
 	}
@@ -627,7 +656,7 @@ int GcnCardPrivate::checkTables(void)
 		idx = !idx;
 		if (!isBatValid(idx)) {
 			// Both block allocation tables are invalid.
-			this->errors |= GcnCard::MCE_INVALID_BATS;
+			this->errors |= Card::MCE_INVALID_BATS;
 			idx = -1;
 		}
 	}

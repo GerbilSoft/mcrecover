@@ -1225,6 +1225,19 @@ void McRecoverWindow::openCard(const QString &filename, int type)
 	QStringList sl_cardErrors;
 	QFlags<GcnCard::Error> cardErrors = d->card->errors();
 	QString cardSz = d->formatFileSize(d->card->filesize());
+	if (cardErrors & GcnCard::MCE_HEADER_GARBAGE) {
+		uint8_t bad_byte; int count; int total;
+		if (!d->card->garbageInfo(&bad_byte, &count, &total)) {
+			float pct = (float)count / (float)total * 100.0f;
+			char hex_byte[8];
+			snprintf(hex_byte, sizeof(hex_byte), "%02X", bad_byte);
+			//: %1 is a percentage; %2 is a formatted size, e.g. "100 bytes" or "2 MB"; %3 is a two-digit hexadecimal number.
+			sl_cardErrors += tr("The header appears to contain garbage. "
+					"%1% of the %2 header is the same byte, 0x%3.")
+				.arg(pct, 0, 'f', 2)
+				.arg(d->formatFileSize(total), QLatin1String(hex_byte));
+		}
+	}
 	if (cardErrors & GcnCard::MCE_SZ_TOO_SMALL) {
 		QString minSz = d->formatFileSize(d->card->minBlocks() * d->card->blockSize());
 		//: %1 and %2 are both formatted sizes, e.g. "100 bytes" or "2 MB".
