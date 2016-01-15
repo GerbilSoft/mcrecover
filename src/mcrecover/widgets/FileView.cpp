@@ -211,10 +211,6 @@ FileView::FileView(QWidget *parent)
 	Q_D(FileView);
 	d->ui.setupUi(this);
 
-	// Fix alignment of the images.
-	d->ui.hboxFileImages->setAlignment(d->ui.lblFileIcon, Qt::AlignTop);
-	d->ui.hboxFileImages->setAlignment(d->ui.lblFileBanner, Qt::AlignTop);
-
 	// Set monospace fonts.
 	QFont fntMonospace;
 	fntMonospace.setFamily(QLatin1String("Monospace"));
