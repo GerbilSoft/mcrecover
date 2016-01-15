@@ -353,7 +353,7 @@ int SAAdventure::load(const sa_save_slot *sa_save)
 	Q_D(SAAdventure);
 
 	// Life counters.
-	for (int i = 0; i < TOTAL_CHARACTERS; i++) {
+	for (int i = TOTAL_CHARACTERS-1; i >= 0; i--) {
 		const int lifeIdx = d->mapRowsToLifeIdx[i];
 		if (lifeIdx < 0) {
 			// "Unused" character doesn't have a life counter.
@@ -376,25 +376,27 @@ int SAAdventure::load(const sa_save_slot *sa_save)
 	d->characters[6].chkCompleted->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 117));
 
 	// Adventure mode.
-	for (int i = 0; i < 8; i++) {
+	for (int i = TOTAL_CHARACTERS-1; i >= 0; i--) {
+		const int chr = d->mapRowsToCharIdx[i];
+
 		// TODO: Validate the data.
 		d->characters[i].cboTimeOfDay->setCurrentIndex(
-			sa_save->adventure_mode.chr[i].time_of_day);
+			sa_save->adventure_mode.chr[chr].time_of_day);
 		d->characters[i].spnEntrance->setValue(
-			sa_save->adventure_mode.chr[i].start_entrance);
+			sa_save->adventure_mode.chr[chr].start_entrance);
 		d->characters[i].cboLevelName->setCurrentIndex(
-			sa_save->adventure_mode.chr[i].start_level_and_act >> 8);
+			sa_save->adventure_mode.chr[chr].start_level_and_act >> 8);
 		d->characters[i].spnLevelAct->setValue(
-			sa_save->adventure_mode.chr[i].start_level_and_act & 0xFF);
+			sa_save->adventure_mode.chr[chr].start_level_and_act & 0xFF);
 
 #ifndef DONT_SHOW_UNKNOWN
 		// "Unknown" values.
 		d->characters[i].spnUnknown[0]->setValue(
-			sa_save->adventure_mode.chr[i].unknown1);
+			sa_save->adventure_mode.chr[chr].unknown1);
 		d->characters[i].spnUnknown[1]->setValue(
-			sa_save->adventure_mode.chr[i].unknown2);
+			sa_save->adventure_mode.chr[chr].unknown2);
 		d->characters[i].spnUnknown[2]->setValue(
-			sa_save->adventure_mode.chr[i].unknown3);
+			sa_save->adventure_mode.chr[chr].unknown3);
 #endif
 	}
 
@@ -412,7 +414,7 @@ int SAAdventure::save(sa_save_slot *sa_save) const
 	Q_D(const SAAdventure);
 
 	// Life counters.
-	for (int i = 0; i < TOTAL_CHARACTERS; i++) {
+	for (int i = TOTAL_CHARACTERS-1; i >= 0; i--) {
 		const int lifeIdx = d->mapRowsToLifeIdx[i];
 		if (lifeIdx < 0) {
 			// "Unused" character doesn't have a life counter.
@@ -438,24 +440,26 @@ int SAAdventure::save(sa_save_slot *sa_save) const
 	sa_save->emblems[14] |= (d->characters[6].chkCompleted->isChecked() ? 0x01 : 0x00);
 
 	// Adventure mode.
-	for (int i = 0; i < 8; i++) {
+	for (int i = TOTAL_CHARACTERS-1; i >= 0; i--) {
+		const int chr = d->mapRowsToCharIdx[i];
+
 		// TODO: Validate the data.
-		sa_save->adventure_mode.chr[i].time_of_day =
+		sa_save->adventure_mode.chr[chr].time_of_day =
 			d->characters[i].cboTimeOfDay->currentIndex();
-		sa_save->adventure_mode.chr[i].start_entrance =
+		sa_save->adventure_mode.chr[chr].start_entrance =
 			d->characters[i].spnEntrance->value();
 		// TODO: Masking is probably not needed here.
-		sa_save->adventure_mode.chr[i].start_level_and_act =
+		sa_save->adventure_mode.chr[chr].start_level_and_act =
 			((d->characters[i].cboLevelName->currentIndex() & 0xFF) << 8) |
 			 (d->characters[i].spnLevelAct->value() & 0xFF);
 
 #ifndef DONT_SHOW_UNKNOWN
 		// "Unknown" values.
-		sa_save->adventure_mode.chr[i].unknown1 =
+		sa_save->adventure_mode.chr[chr].unknown1 =
 			d->characters[i].spnUnknown[0]->value();
-		sa_save->adventure_mode.chr[i].unknown2 =
+		sa_save->adventure_mode.chr[chr].unknown2 =
 			d->characters[i].spnUnknown[1]->value();
-		sa_save->adventure_mode.chr[i].unknown3 =
+		sa_save->adventure_mode.chr[chr].unknown3 =
 			d->characters[i].spnUnknown[2]->value();
 #endif
 	}
