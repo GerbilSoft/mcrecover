@@ -80,10 +80,10 @@ SAMiscEmblemsPrivate::~SAMiscEmblemsPrivate()
 	// TODO: Is this needed?
 	// The widgets are owned by this widget, so they
 	// should be automatically deleted...
-	for (int i = 0; i < NUM_ELEMENTS(chkChaoRace); i++) {
+	for (int i = NUM_ELEMENTS(chkChaoRace); i >= 0; i--) {
 		delete chkChaoRace[i];
 	}
-	for (int i = 0; i < NUM_ELEMENTS(chkAdvField); i++) {
+	for (int i = NUM_ELEMENTS(chkAdvField); i >= 0; i--) {
 		delete chkAdvField[i];
 	}
 }

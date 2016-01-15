@@ -466,12 +466,8 @@ SASubGames::SASubGames(QWidget *parent)
 	d->ui.chkTwinkleCircuit_1->setStyleSheet(qsCssCheckBox);
 	d->ui.chkTwinkleCircuit_2->setStyleSheet(qsCssCheckBox);
 
-	// Center-align the Twinkle Circuit emblem checkboxes.
-	// TODO: More alignment.
 	// TODO: Some of the Time boxes are so wide they no longer look like times.
 	// (Added horizontal spacers to fix some of them...)
-	d->ui.hboxTwinkleCircuitEmblems->setAlignment(d->ui.chkTwinkleCircuit_1, Qt::AlignHCenter);
-	d->ui.hboxTwinkleCircuitEmblems->setAlignment(d->ui.chkTwinkleCircuit_2, Qt::AlignHCenter);
 
 	// Twinkle Circuit uses centiseconds.
 	d->ui.tceTwinkleCircuitBestTimes_1->setDisplayMode(TimeCodeEdit::DM_MSC);

@@ -152,9 +152,9 @@ SALevelClearCountPrivate::~SALevelClearCountPrivate()
 	// TODO: Is this needed?
 	// The level widgets are owned by this widget, so they
 	// should be automatically deleted...
-	for (int i = 0; i < TOTAL_LEVELS; i++) {
+	for (int i = TOTAL_LEVELS-1; i >= 0; i--) {
 		delete levels[i].lblLevel;
-		for (int j = 0; j < NUM_ELEMENTS(levels[i].spnCount); j++) {
+		for (int j = NUM_ELEMENTS(levels[i].spnCount)-1; j >= 0; j--) {
 			delete levels[i].spnCount[j];
 		}
 	}
@@ -258,8 +258,8 @@ void SALevelClearCountPrivate::updateDisplay(void)
 			    q, SLOT(spnCount_mapped_slot(int)));
 
 	// NOTE: Outer loop is the character due to cache locality.
-	for (int chr = 0; chr < NUM_ELEMENTS(levels[0].spnCount); chr++) {
-		for (int level = 0; level < NUM_ELEMENTS(levels); level++) {
+	for (int chr = NUM_ELEMENTS(levels[0].spnCount; chr >= 0); chr--) {
+		for (int level = NUM_ELEMENTS(levels); level >= 0; level--) {
 			levels[level].spnCount[chr]->setValue(clear_count.all[chr][level]);
 		}
 	}

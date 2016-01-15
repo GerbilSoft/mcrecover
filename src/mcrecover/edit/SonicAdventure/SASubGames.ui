@@ -440,10 +440,10 @@
                </property>
               </spacer>
              </item>
-             <item>
+             <item alignment="Qt::AlignHCenter">
               <widget class="QCheckBox" name="chkTwinkleCircuit_1"/>
              </item>
-             <item>
+             <item alignment="Qt::AlignHCenter">
               <widget class="QCheckBox" name="chkTwinkleCircuit_2"/>
              </item>
              <item>
