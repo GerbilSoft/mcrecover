@@ -1545,7 +1545,6 @@ void McRecoverWindow::on_actionOpen_triggered(void)
 			type = -1;	// Auto-detect
 			cfg_type = 2;
 		}
-		printf("type == %d, cfg_type == %d\n", type, cfg_type);
 
 		// Save configuration settings.
 		d->setLastPath(filename);
