@@ -206,6 +206,17 @@ QString FilePrivate::decodeText_SJISorCP1252(const char *str, int len)
 	static QTextCodec *shiftJis = QTextCodec::codecForName("Shift_JIS");
 	static QTextCodec *cp1252 = QTextCodec::codecForName("cp1252");
 
+	// Remove trailing NULL characters before converting to UTF-8.
+	for (int i = len-1; i >= 0; i--) {
+		if (str[i] == 0) {
+			// Found a NULL.
+			len--;
+		} else {
+			// No more NULLs.
+			break;
+		}
+	}
+
 	if (!shiftJis) {
 		// Shift-JIS isn't available.
 		// Always use cp1252.
