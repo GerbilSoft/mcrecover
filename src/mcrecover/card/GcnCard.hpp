@@ -42,10 +42,6 @@ class GcnCard : public Card
 
 	// TODO: Register Checksum::ChecksumValue metatype?
 	//Q_PROPERTY(Checksum::ChecksumValue headerChecksumValue READ headerChecksumValue)
-	Q_PROPERTY(int activeDatIdx READ activeDatIdx WRITE setActiveDatIdx)
-	Q_PROPERTY(int activeDatHdrIdx READ activeDatHdrIdx)
-	Q_PROPERTY(int activeBatIdx READ activeBatIdx WRITE setActiveBatIdx)
-	Q_PROPERTY(int activeBatHdrIdx READ activeBatHdrIdx)
 
 	protected:
 		GcnCard(QObject *parent = 0);
@@ -75,6 +71,25 @@ class GcnCard : public Card
 		static GcnCard *format(const QString& filename, QObject *parent);
 
 	public:
+		/** File system **/
+
+		/**
+		 * Set the active Directory Table index.
+		 * NOTE: This function reloads the file list, without lost files.
+		 * @param idx Active Directory Table index.
+		 */
+		virtual void setActiveDatIdx(int idx) override;
+
+		/**
+		 * Set the active Block Table index.
+		 * NOTE: This function reloads the file list, without lost files.
+		 * @param idx Active Block Table index.
+		 */
+		virtual void setActiveBatIdx(int idx) override;
+
+	public:
+		/** Card information **/
+
 		/**
 		 * Get the product name of this memory card.
 		 * This refers to the class in general,
@@ -119,58 +134,6 @@ class GcnCard : public Card
 		 * @return Header checksum value.
 		 */
 		Checksum::ChecksumValue headerChecksumValue(void) const;
-
-		/**
-		 * Get the active Directory Table index.
-		 * @return Active Directory Table index. (0 or 1)
-		 */
-		int activeDatIdx(void) const;
-
-		/**
-		 * Set the active Directory Table index.
-		 * NOTE: This function reloads the file list, without lost files.
-		 * @param idx Active Directory Table index. (0 or 1)
-		 */
-		void setActiveDatIdx(int idx);
-
-		/**
-		 * Get the active Directory Table index according to the card header.
-		 * @return Active Directory Table index (0 or 1), or -1 if both are invalid.
-		 */
-		int activeDatHdrIdx(void) const;
-
-		/**
-		 * Is a Directory Table valid?
-		 * @param idx Directory Table index. (0 or 1)
-		 * @return True if valid; false if not valid or idx is invalid.
-		 */
-		bool isDatValid(int idx) const;
-
-		/**
-		 * Get the active Block Table index.
-		 * @return Active Block Table index. (0 or 1)
-		 */
-		int activeBatIdx(void) const;
-
-		/**
-		 * Set the active Block Table index.
-		 * NOTE: This function reloads the file list, without lost files.
-		 * @param idx Active Block Table index. (0 or 1)
-		 */
-		void setActiveBatIdx(int idx);
-
-		/**
-		 * Get the active Block Table index according to the card header.
-		 * @return Active Block Table index (0 or 1), or -1 if both are invalid.
-		 */
-		int activeBatHdrIdx(void) const;
-
-		/**
-		 * Is a Block Table valid?
-		 * @param idx Block Table index. (0 or 1)
-		 * @return True if valid; false if not valid or idx is invalid.
-		 */
-		bool isBatValid(int idx) const;
 };
 
 #endif /* __MCRECOVER_CARD_GCNCARD_HPP__ */

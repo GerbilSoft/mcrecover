@@ -110,7 +110,12 @@ class VmuCardPrivate : public CardPrivate
 };
 
 VmuCardPrivate::VmuCardPrivate(VmuCard *q)
-	: CardPrivate(q, VMU_BLOCK_SIZE, 256, 256)
+	: CardPrivate(q,
+		VMU_BLOCK_SIZE,	// 512-byte blocks.
+		256,	// Minimum card size, in blocks.
+		256,	// Maximum card size, in blocks.
+		1,	// Number of directory tables.
+		1)	// Number of block tables.
 {
 	// Make sure vmu.h is correct.
 	static_assert(VMU_BLOCK_SIZE == 512, "VMU_BLOCK_SIZE is incorrect");
@@ -201,6 +206,14 @@ int VmuCardPrivate::loadSysInfo(void)
 {
 	if (!file)
 		return -1;
+
+	// FIXME: Assuming 1 DAT and 1 BAT.
+	dat_info.active_hdr = 0;
+	dat_info.active = 0;
+	dat_info.valid = 1;
+	bat_info.active_hdr = 0;
+	bat_info.active = 0;
+	bat_info.valid = 1;
 
 	// Root block.
 	file->seek(VMU_ROOT_BLOCK_ADDRESS * blockSize);
@@ -493,6 +506,36 @@ VmuCard *VmuCard::format(const QString& filename, QObject *parent)
 	d->format(filename);
 	return vmuCard;
 }
+
+/** File system **/
+
+/**
+ * Set the active Directory Table index.
+ * NOTE: This function reloads the file list, without lost files.
+ * @param idx Active Directory Table index. (0 or 1)
+ */
+void VmuCard::setActiveDatIdx(int idx)
+{
+	if (!isOpen())
+		return;
+	// FIXME: Does DC have multiple directory tables?
+	Q_UNUSED(idx)
+}
+
+/**
+ * Set the active Block Table index.
+ * NOTE: This function reloads the file list, without lost files.
+ * @param idx Active Block Table index. (0 or 1)
+ */
+void VmuCard::setActiveBatIdx(int idx)
+{
+	if (!isOpen())
+		return;
+	// FIXME: Does DC have multiple block tables?
+	Q_UNUSED(idx)
+}
+
+/** Card information **/
 
 /**
  * Get the product name of this memory card.

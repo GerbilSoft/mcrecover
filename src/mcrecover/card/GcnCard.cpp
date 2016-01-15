@@ -80,13 +80,6 @@ class GcnCardPrivate : public CardPrivate
 		uint32_t mc_dat_chk_expected[2];
 		uint32_t mc_bat_chk_actual[2];
 		uint32_t mc_bat_chk_expected[2];
-		bool mc_dat_valid[2];
-		bool mc_bat_valid[2];
-
-		// Active tables according to the card headers.
-		// 0, 1 == valid
-		//   -1 == both tables are invalid, default to 0
-		int8_t mc_dat_hdr_idx, mc_bat_hdr_idx;
 
 		// Active tables.
 		card_dat *mc_dat;
@@ -148,9 +141,12 @@ class GcnCardPrivate : public CardPrivate
 };
 
 GcnCardPrivate::GcnCardPrivate(GcnCard *q)
-	: CardPrivate(q, 8192, 64, 2048)
-	, mc_dat_hdr_idx(-1)
-	, mc_bat_hdr_idx(-1)
+	: CardPrivate(q,
+		8192,	// 8 KB blocks.
+		64,	// Minimum card size, in blocks.
+		2048,	// Maximum card size, in blocks.
+		2,	// Number of directory tables.
+		2)	// Number of block tables.
 	, mc_dat(nullptr)
 	, mc_bat(nullptr)
 {
@@ -162,8 +158,6 @@ GcnCardPrivate::GcnCardPrivate(GcnCard *q)
 	memset(mc_dat_chk_expected, 0, sizeof(mc_dat_chk_expected));
 	memset(mc_bat_chk_actual, 0, sizeof(mc_bat_chk_actual));
 	memset(mc_bat_chk_expected, 0, sizeof(mc_bat_chk_expected));
-	memset(mc_dat_valid, 0, sizeof(mc_dat_valid));
-	memset(mc_bat_valid, 0, sizeof(mc_bat_valid));
 }
 
 GcnCardPrivate::~GcnCardPrivate()
@@ -312,12 +306,15 @@ int GcnCardPrivate::format(const QString &filename)
 	mc_header.chksum2	= be16_to_cpu(mc_header.chksum2);
 	headerChecksumValue.actual = ((mc_header.chksum1 << 16) | mc_header.chksum2);
 	headerChecksumValue.expected = headerChecksumValue.actual;
+
+	dat_info.valid = 0;
+	bat_info.valid = 0;
 	for (int i = 0; i < 2; i++) {
 		// Directory Table.
 		mc_dat_int[i].dircntrl.updated = cpu_to_be16(mc_dat_int[i].dircntrl.updated);
 		mc_dat_int[i].dircntrl.chksum1 = cpu_to_be16(mc_dat_int[i].dircntrl.chksum1);
 		mc_dat_int[i].dircntrl.chksum2 = cpu_to_be16(mc_dat_int[i].dircntrl.chksum2);
-		mc_dat_valid[i] = true;
+		dat_info.valid |= (1 << i);
 
 		// Block Table.
 		mc_bat_int[i].updated		= cpu_to_be16(mc_bat_int[i].updated);
@@ -325,7 +322,7 @@ int GcnCardPrivate::format(const QString &filename)
 		mc_bat_int[i].lastalloc		= cpu_to_be16(mc_bat_int[i].lastalloc);
 		mc_bat_int[i].chksum1		= cpu_to_be16(mc_bat_int[i].chksum1);
 		mc_bat_int[i].chksum2		= cpu_to_be16(mc_bat_int[i].chksum2);
-		mc_bat_valid[i] = true;
+		bat_info.valid |= (1 << i);
 	}
 
 	// Reset the used block map.
@@ -454,6 +451,8 @@ int GcnCardPrivate::loadSysInfo(void)
 	// it will be zeroed out.
 	static const uint32_t DAT_addr[2] = {CARD_SYSDIR, CARD_SYSDIR_BACK};
 	static const uint32_t BAT_addr[2] = {CARD_SYSBAT, CARD_SYSBAT_BACK};
+	dat_info.valid = 0;
+	bat_info.valid = 0;
 	for (int i = 0; i < 2; i++) {
 		// Load the directory table.
 		int ret = loadDirTable(&mc_dat_int[i], DAT_addr[i], &mc_dat_chk_actual[i]);
@@ -469,7 +468,10 @@ int GcnCardPrivate::loadSysInfo(void)
 					 (mc_dat_int[i].dircntrl.chksum2);
 
 		// Check if the directory table is valid.
-		mc_dat_valid[i] = (mc_dat_chk_expected[i] == mc_dat_chk_actual[i]);
+		if (mc_dat_chk_expected[i] == mc_dat_chk_actual[i]) {
+			// DAT is valid.
+			dat_info.valid |= (1 << i);
+		}
 
 		// Load the block table.
 		ret = loadBlockTable(&mc_bat_int[i], BAT_addr[i], &mc_bat_chk_actual[i]);
@@ -485,7 +487,10 @@ int GcnCardPrivate::loadSysInfo(void)
 					 (mc_bat_int[i].chksum2);
 
 		// Check if the block table is valid.
-		mc_bat_valid[i] = (mc_bat_chk_expected[i] == mc_bat_chk_actual[i]);
+		if (mc_bat_chk_expected[i] == mc_bat_chk_actual[i]) {
+			// BAT is valid.
+			bat_info.valid |= (1 << i);
+		}
 	}
 
 	// Determine which tables are active.
@@ -591,10 +596,10 @@ int GcnCardPrivate::checkTables(void)
 	int idx = (mc_dat_int[1].dircntrl.updated > mc_dat_int[0].dircntrl.updated);
 
 	// Verify the checksums of the selected directory table.
-	if (!mc_dat_valid[idx]) {
+	if (!isDatValid(idx)) {
 		// Invalid checksum. Check the other directory table.
 		idx = !idx;
-		if (!mc_dat_valid[idx]) {
+		if (!isDatValid(idx)) {
 			// Both directory tables are invalid.
 			this->errors |= GcnCard::MCE_INVALID_DATS;
 			idx = -1;
@@ -604,7 +609,8 @@ int GcnCardPrivate::checkTables(void)
 	// Select the directory table.
 	int tmp_idx = (idx >= 0 ? idx : 0);
 	this->mc_dat = &mc_dat_int[tmp_idx];
-	this->mc_dat_hdr_idx = idx;
+	this->dat_info.active_hdr = idx;
+	this->dat_info.active = idx;
 
 	/**
 	 * Determine which block allocation table to use.
@@ -616,10 +622,10 @@ int GcnCardPrivate::checkTables(void)
 	idx = (mc_bat_int[1].updated > mc_bat_int[0].updated);
 
 	// Verify the checksums of the selected block allocation table.
-	if (!mc_bat_valid[idx]) {
+	if (!isBatValid(idx)) {
 		// Invalid checksum. Check the other block allocation table.
 		idx = !idx;
-		if (!mc_bat_valid[idx]) {
+		if (!isBatValid(idx)) {
 			// Both block allocation tables are invalid.
 			this->errors |= GcnCard::MCE_INVALID_BATS;
 			idx = -1;
@@ -629,7 +635,8 @@ int GcnCardPrivate::checkTables(void)
 	// Select the directory table.
 	tmp_idx = (idx >= 0 ? idx : 0);
 	this->mc_bat = &mc_bat_int[tmp_idx];
-	this->mc_bat_hdr_idx = idx;
+	this->bat_info.active_hdr = idx;
+	this->bat_info.active = idx;
 
 	// Update block counts.
 	totalUserBlocks = (totalPhysBlocks - 5);
@@ -772,6 +779,42 @@ GcnCard *GcnCard::format(const QString& filename, QObject *parent)
 	return gcnCard;
 }
 
+/** File system **/
+
+/**
+ * Set the active Directory Table index.
+ * NOTE: This function reloads the file list, without lost files.
+ * @param idx Active Directory Table index. (0 or 1)
+ */
+void GcnCard::setActiveDatIdx(int idx)
+{
+	if (!isOpen())
+		return;
+	Q_D(GcnCard);
+	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_dat_int))
+		return;
+	d->mc_dat = &d->mc_dat_int[idx];
+	d->loadGcnFileList();
+}
+
+/**
+ * Set the active Block Table index.
+ * NOTE: This function reloads the file list, without lost files.
+ * @param idx Active Block Table index. (0 or 1)
+ */
+void GcnCard::setActiveBatIdx(int idx)
+{
+	if (!isOpen())
+		return;
+	Q_D(GcnCard);
+	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_bat_int))
+		return;
+	d->mc_bat = &d->mc_bat_int[idx];
+	d->loadGcnFileList();
+}
+
+/** Card information **/
+
 /**
  * Get the product name of this memory card.
  * This refers to the class in general,
@@ -898,114 +941,4 @@ Checksum::ChecksumValue GcnCard::headerChecksumValue(void) const
 {
 	Q_D(const GcnCard);
 	return d->headerChecksumValue;
-}
-
-/**
- * Get the active Directory Table index.
- * @return Active Directory Table index. (0 or 1)
- */
-int GcnCard::activeDatIdx(void) const
-{
-	if (!isOpen())
-		return -1;
-	Q_D(const GcnCard);
-	return (d->mc_dat == &d->mc_dat_int[1]);
-}
-
-/**
- * Set the active Directory Table index.
- * NOTE: This function reloads the file list, without lost files.
- * @param idx Active Directory Table index. (0 or 1)
- */
-void GcnCard::setActiveDatIdx(int idx)
-{
-	if (!isOpen())
-		return;
-	Q_D(GcnCard);
-	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_dat_int))
-		return;
-	d->mc_dat = &d->mc_dat_int[idx];
-	d->loadGcnFileList();
-}
-
-/**
- * Get the active Directory Table index according to the card header.
- * @return Active Directory Table index (0 or 1), or -1 if both are invalid.
- */
-int GcnCard::activeDatHdrIdx(void) const
-{
-	if (!isOpen())
-		return -1;
-	Q_D(const GcnCard);
-	return d->mc_dat_hdr_idx;
-}
-
-/**
- * Is a Directory Table valid?
- * @param idx Directory Table index. (0 or 1)
- * @return True if valid; false if not valid or idx is invalid.
- */
-bool GcnCard::isDatValid(int idx) const
-{
-	if (!isOpen())
-		return false;
-	Q_D(const GcnCard);
-	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_dat_valid))
-		return false;
-	return d->mc_dat_valid[idx];
-}
-
-/**
- * Get the active Block Table index.
- * @return Active Block Table index. (0 or 1)
- */
-int GcnCard::activeBatIdx(void) const
-{
-	if (!isOpen())
-		return -1;
-	Q_D(const GcnCard);
-	return (d->mc_bat == &d->mc_bat_int[1]);
-}
-
-/**
- * Set the active Block Table index.
- * NOTE: This function reloads the file list, without lost files.
- * @param idx Active Block Table index. (0 or 1)
- */
-void GcnCard::setActiveBatIdx(int idx)
-{
-	if (!isOpen())
-		return;
-	Q_D(GcnCard);
-	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_bat_int))
-		return;
-	d->mc_bat = &d->mc_bat_int[idx];
-	d->loadGcnFileList();
-}
-
-/**
- * Get the active Block Table index according to the card header.
- * @return Active Block Table index (0 or 1), or -1 if both are invalid.
- */
-int GcnCard::activeBatHdrIdx(void) const
-{
-	if (!isOpen())
-		return -1;
-	Q_D(const GcnCard);
-	return d->mc_bat_hdr_idx;
-}
-
-/**
- * Is a Block Table valid?
- * @param idx Block Table index. (0 or 1)
- * @return True if valid; false if not valid or idx is invalid.
- */
-bool GcnCard::isBatValid(int idx) const
-{
-	if (!isOpen())
-		return false;
-	Q_D(const GcnCard);
-	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_bat_valid))
-		return false;
-	return d->mc_bat_valid[idx];
 }

@@ -36,6 +36,8 @@ class VmuCard : public Card
 
 	protected:
 		Q_DECLARE_PRIVATE(VmuCard)
+	private:
+		Q_DISABLE_COPY(VmuCard)
 
 	public:
 		/**
@@ -54,8 +56,22 @@ class VmuCard : public Card
 		 */
 		static VmuCard *format(const QString& filename, QObject *parent);
 
-	private:
-		Q_DISABLE_COPY(VmuCard)
+	public:
+		/** File system **/
+
+		/**
+		 * Set the active Directory Table index.
+		 * NOTE: This function reloads the file list, without lost files.
+		 * @param idx Active Directory Table index.
+		 */
+		virtual void setActiveDatIdx(int idx) override;
+
+		/**
+		 * Set the active Block Table index.
+		 * NOTE: This function reloads the file list, without lost files.
+		 * @param idx Active Block Table index.
+		 */
+		virtual void setActiveBatIdx(int idx) override;
 
 	public:
 		/**

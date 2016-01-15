@@ -35,7 +35,9 @@ class File;
 class CardPrivate
 {
 	public:
-		CardPrivate(Card *q, uint32_t blockSize, int minBlocks, int maxBlocks);
+		CardPrivate(Card *q, uint32_t blockSize,
+			    int minBlocks, int maxBlocks,
+			    int dat_count, int bat_count);
 		virtual ~CardPrivate();
 
 	protected:
@@ -66,6 +68,26 @@ class CardPrivate
 		int totalPhysBlocks;	// set by open()
 		int totalUserBlocks;	// must be set by subclass
 		int freeBlocks;		// must be set by subclass
+
+		// Table information.
+		// -1 indicates invalid.
+		struct tbl {
+			int count;	// Total number of this table.
+			int active;	// Which table is active?
+			int active_hdr;	// Which table is active, according to the header.
+			uint32_t valid;	// Bitfield indicating valid tables.
+		};
+
+		tbl dat_info;	// Directory Table information.
+		tbl bat_info;	// Block Table information.
+
+		// Useful inline functions to check if a DAT or BAT is valid.
+		inline bool isDatValid(int idx) const {
+			return !!(dat_info.valid & (1 << idx));
+		}
+		inline bool isBatValid(int idx) const {
+			return !!(bat_info.valid & (1 << idx));
+		}
 
 		// Files.
 		QVector<File*> lstFiles;

@@ -39,7 +39,9 @@
 
 /** CardPrivate **/
 
-CardPrivate::CardPrivate(Card *q, uint32_t blockSize, int minBlocks, int maxBlocks)
+CardPrivate::CardPrivate(Card *q, uint32_t blockSize,
+			 int minBlocks, int maxBlocks,
+			 int dat_count, int bat_count)
 	: q_ptr(q)
 	, errors(0)
 	, file(nullptr)
@@ -56,6 +58,20 @@ CardPrivate::CardPrivate(Card *q, uint32_t blockSize, int minBlocks, int maxBloc
 	assert(blockSize > 0);
 	assert(minBlocks > 0);
 	assert(maxBlocks >= minBlocks);
+	assert(dat_count > 0 && dat_count < 32);
+	assert(bat_count > 0 && bat_count < 32);
+
+	// Directory Table information.
+	dat_info.count = dat_count;
+	dat_info.active = -1;
+	dat_info.active_hdr = 0;
+	dat_info.valid = 0;
+
+	// Block Table information.
+	bat_info.count = dat_count;
+	bat_info.active = -1;
+	bat_info.active_hdr = 0;
+	bat_info.valid = 0;
 }
 
 CardPrivate::~CardPrivate()
@@ -331,6 +347,110 @@ GcnDateTime Card::formatTime(void) const
 		return GcnDateTime();
 	Q_D(const Card);
 	return d->formatTime;
+}
+
+/** File system **/
+
+/**
+ * Get the number of directory tables.
+ * @return Number of directory tables. (-1 on error)
+ */
+int Card::datCount(void) const
+{
+	if (!isOpen())
+		return -1;
+	Q_D(const Card);
+	return d->dat_info.count;
+}
+
+/**
+ * Get the active Directory Table index.
+ * @return Active Directory Table index. (-1 on error)
+ */
+int Card::activeDatIdx(void) const
+{
+	if (!isOpen())
+		return -1;
+	Q_D(const Card);
+	return d->dat_info.active;
+}
+
+/**
+ * Get the active Directory Table index according to the card header.
+ * @return Active Directory Table index, or -1 if all are invalid.
+ */
+int Card::activeDatHdrIdx(void) const
+{
+	if (!isOpen())
+		return -1;
+	Q_D(const Card);
+	return d->dat_info.active_hdr;
+}
+
+/**
+ * Is a Directory Table valid?
+ * @param idx Directory Table index.
+ * @return True if valid; false if not valid or idx is invalid.
+ */
+bool Card::isDatValid(int idx) const
+{
+	if (!isOpen())
+		return false;
+	Q_D(const Card);
+	if (idx < 0 || idx >= d->dat_info.count)
+		return false;
+	return d->isDatValid(idx);
+}
+
+/**
+ * Get the number of block tables.
+ * @return Number of block tables. (-1 on error)
+ */
+int Card::batCount(void) const
+{
+	if (!isOpen())
+		return -1;
+	Q_D(const Card);
+	return d->bat_info.count;
+}
+
+/**
+ * Get the active Block Table index.
+ * @return Active Block Table index. (-1 on error)
+ */
+int Card::activeBatIdx(void) const
+{
+	if (!isOpen())
+		return -1;
+	Q_D(const Card);
+	return d->bat_info.active;
+}
+
+/**
+ * Get the active Block Table index according to the card header.
+ * @return Active Block Table index, or -1 if both are invalid.
+ */
+int Card::activeBatHdrIdx(void) const
+{
+	if (!isOpen())
+		return -1;
+	Q_D(const Card);
+	return d->bat_info.active_hdr;
+}
+
+/**
+ * Is a Block Table valid?
+ * @param idx Block Table index.
+ * @return True if valid; false if not valid or idx is invalid.
+ */
+bool Card::isBatValid(int idx) const
+{
+	if (!isOpen())
+		return false;
+	Q_D(const Card);
+	if (idx < 0 || idx >= d->bat_info.count)
+		return false;
+	return d->isBatValid(idx);
 }
 
 /** Card I/O **/

@@ -60,6 +60,15 @@ class Card : public QObject
 	Q_PROPERTY(QColor color READ color NOTIFY colorChanged)
 	Q_PROPERTY(GcnDateTime formatTime READ formatTime)
 
+	// File system.
+	// TODO: Notify signals for activeDatIdx / activeBatIdx?
+	Q_PROPERTY(int datCount READ datCount)
+	Q_PROPERTY(int activeDatIdx READ activeDatIdx WRITE setActiveDatIdx /*NOTIFY activeDatIdxChanged*/)
+	Q_PROPERTY(int activeDatHdrIdx READ activeDatHdrIdx)
+	Q_PROPERTY(int batCount READ batCount)
+	Q_PROPERTY(int activeBatIdx READ activeBatIdx WRITE setActiveBatIdx /*NOTIFY activeBatIdxChanged*/)
+	Q_PROPERTY(int activeBatHdrIdx READ activeBatHdrIdx)
+
 	// File management.
 	Q_PROPERTY(int fileCount READ fileCount)
 	Q_PROPERTY(bool empty READ isEmpty)
@@ -109,6 +118,7 @@ class Card : public QObject
 		 */
 		QString errorString(void) const;
 
+	public:
 		/** Card information **/
 
 		/**
@@ -201,6 +211,75 @@ class Card : public QObject
 		 */
 		GcnDateTime formatTime(void) const;
 
+	public:
+		/** File system **/
+		// TODO: Negative POSIX code on error, or just -1?
+
+		/**
+		 * Get the number of directory tables.
+		 * @return Number of directory tables. (-1 on error)
+		 */
+		int datCount(void) const;
+
+		/**
+		 * Get the active Directory Table index.
+		 * @return Active Directory Table index. (-1 on error)
+		 */
+		int activeDatIdx(void) const;
+
+		/**
+		 * Set the active Directory Table index.
+		 * NOTE: This function reloads the file list, without lost files.
+		 * @param idx Active Directory Table index.
+		 */
+		virtual void setActiveDatIdx(int idx) = 0;
+
+		/**
+		 * Get the active Directory Table index according to the card header.
+		 * @return Active Directory Table index, or -1 if both are invalid.
+		 */
+		int activeDatHdrIdx(void) const;
+
+		/**
+		 * Is a Directory Table valid?
+		 * @param idx Directory Table index.
+		 * @return True if valid; false if not valid or if idx is invalid.
+		 */
+		bool isDatValid(int idx) const;
+
+		/**
+		 * Get the number of block tables.
+		 * @return Number of block tables. (-1 on error)
+		 */
+		int batCount(void) const;
+
+		/**
+		 * Get the active Block Table index.
+		 * @return Active Block Table index. (-1 on error)
+		 */
+		int activeBatIdx(void) const;
+
+		/**
+		 * Set the active Block Table index.
+		 * NOTE: This function reloads the file list, without lost files.
+		 * @param idx Active Block Table index, or -1 if both are invalid.
+		 */
+		virtual void setActiveBatIdx(int idx) = 0;
+
+		/**
+		 * Get the active Block Table index according to the card header.
+		 * @return Active Block Table index, or -1 if both are invalid.
+		 */
+		int activeBatHdrIdx(void) const;
+
+		/**
+		 * Is a Block Table valid?
+		 * @param idx Block Table index.
+		 * @return True if valid; false if not valid or idx is invalid.
+		 */
+		bool isBatValid(int idx) const;
+
+	public:
 		/** Card I/O **/
 
 		/**
