@@ -530,20 +530,6 @@ int SAEditor::setFile(File *file)
 			d->data_sadx.append(nullptr);
 		}
 
-		// HACK: Remove before committing.
-		// Add the main save slot two more times to simulate DC.
-		// TODO: Add a way to 'hide' SADX Extras in various widgets
-		// by calling loadDX() with nullptr?
-		sa_save_slot *svx = (sa_save_slot*)malloc(sizeof(*svx));
-		memcpy(svx, sa_save, sizeof(*svx));
-		d->data_main.append(svx);
-		svx = (sa_save_slot*)malloc(sizeof(*svx));
-		memcpy(svx, sa_save, sizeof(*svx));
-		d->data_main.append(svx);
-
-		d->data_sadx.append(nullptr);
-		d->data_sadx.append(nullptr);
-
 		// Loaded successfully.
 		ret = 0;
 	} else {
