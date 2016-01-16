@@ -453,6 +453,10 @@ IF(COMPRESS_EXE)
 	COMPRESS_EXE_WITH_UPX(mcrecover)
 ENDIF(COMPRESS_EXE)
 
+# Define -DQT_NO_DEBUG in release builds.
+SET(CMAKE_C_FLAGS_RELEASE   "-DQT_NO_DEBUG ${CMAKE_C_FLAGS_RELEASE}")
+SET(CMAKE_CXX_FLAGS_RELEASE "-DQT_NO_DEBUG ${CMAKE_CXX_FLAGS_RELEASE}")
+
 # Qt options:
 # - Fast QString concatenation. (Qt 4.6+, plus 4.8-specific version)
 # - Disable implicit QString ASCII casts.

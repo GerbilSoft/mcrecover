@@ -1,7 +1,7 @@
 /***************************************************************************
- * c++11-compat.h.in: C++ 2011 compatibility header.                       *
+ * c++11-compat.h: C++ 2011 compatibility header.                          *
  *                                                                         *
- * Copyright (c) 2011-2013 by David Korth.                                 *
+ * Copyright (c) 2011-2015 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -21,72 +21,27 @@
 #ifndef __CXX11_COMPAT_H__
 #define __CXX11_COMPAT_H__
 
-/* Define to 1 if C++ 2011 is supported. */
-#cmakedefine HAVE_CXX_2011 1
-
-#if !defined(HAVE_CXX_2011) || !defined(__cplusplus)
-
+#ifndef __cplusplus
 /**
- * Either C++ 2011 is not supported, or we're compiling C code.
+ * We're compiling C code.
  * Provide replacements for C++ 2011 functionality.
  */
 #define CXX11_COMPAT_NULLPTR
 #define CXX11_COMPAT_OVERRIDE
 #define CXX11_COMPAT_CHARTYPES
 #define CXX11_COMPAT_STATIC_ASSERT
+#endif /* !__cplusplus */
 
-#else
+/** Compiler-specific headers. **/
 
-#if defined(__GNUC__)
-
-/* Some versions of gcc implement parts of C++11, but not all of it. */
-
-/* Explicit virtual override: Added in gcc-4.7. */
-#if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 7))
-#define CXX11_COMPAT_OVERRIDE
-#endif
-
-/* nullptr: Added in gcc-4.6 */
-#if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 6))
-#define CXX11_COMPAT_NULLPTR
-#endif
-
-/* New character types: Added in gcc-4.4 */
-#if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 4))
-#define CXX11_COMPAT_CHARTYPES
-#endif
-
-/* Static assertions: Added in gcc-4.3 (first version to support C++11) */
-#if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 3))
-#define CXX11_COMPAT_STATIC_ASSERT
-#endif
-
+#if defined(__clang__)
+#include "c++11-compat.clang.h"
+#elif defined(__GNUC__)
+#include "c++11-compat.gcc.h"
 #elif defined(_MSC_VER)
-
-/* No versions of MSVC support char16_t/char32_t yet. */
-#define CXX11_COMPAT_CHARTYPES
-
-#if (_MSC_VER < 1700)
-/**
- * MSVC 2010 (10.0) does support override, but not final.
- * However, it has a "sealed" keyword that works almost
- * the same way as final.
- */
-#define final sealed
-#endif
-
-#if (_MSC_VER < 1600)
-/**
- * MSVC 2008 (9.0) and older: No C++ 2011 support at all.
- * Probably won't compile at all due to lack of stdint.h.
- */
-#define CXX11_COMPAT_NULLPTR
-#define CXX11_COMPAT_OVERRIDE
-#define CXX11_COMPAT_STATIC_ASSERT
-#endif
-
-#endif /* compiler-specific */
-
+#include "c++11-compat.msvc.h"
+#else
+#error Unknown compiler, please update c++11-compat.h.
 #endif
 
 /* nullptr: Represents a NULL pointer. NULL == 0 */
@@ -106,7 +61,6 @@ typedef uint16_t char16_t;
 typedef uint32_t char32_t;
 
 #ifdef __cplusplus
-
 #include <string>
 namespace std {
 	typedef basic_string<char16_t> u16string;
@@ -118,22 +72,13 @@ namespace std {
 /* Explicit override/final. */
 #ifdef CXX11_COMPAT_OVERRIDE
 #define override
+/* final may be defined as 'sealed' on older MSVC */
+#ifndef final
 #define final
+#endif
 #endif
 
 /** Other compatibility stuff. **/
-
-#ifdef _MSC_VER
-/**
- * MSVC prefixes some POSIX/C99 functions with underscores,
- * and has completely different names for others.
- * Instead, it has _snprintf().
- */
-#define snprintf(str, size, format, ...) _snprintf(str, size, format, __VA_ARGS__)
-#define vsnprintf(str, size, format, ap) _vsnprintf(str, size, format, ap)
-#define strcasecmp(s1, s2) _stricmp(s1, s2)
-#define strncasecmp(s1, s2, n) _strnicmp(s1, s2, n)
-#endif
 
 /**
  * MSVC (and old gcc) doesn't have __func__.
@@ -148,11 +93,11 @@ namespace std {
 #endif
 
 /**
- * MSVC doesn't have typeof(), but as of MSVC 2010,
- * it has decltype(), which is essentially the same thing.
+ * MSVCRT prior to MSVC 2015 has a non-compliant _snprintf().
+ * Note that MinGW-w64 uses MSVCRT.
  */
-#ifdef _MSC_VER
-#define typeof(x) decltype(x)
+#ifdef _WIN32
+#include "c99-compat.msvcrt.h"
 #endif
 
 #endif /* __CXX11_COMPAT_H__ */
