@@ -27,5 +27,9 @@ IF(WIN32)
 	STRING(REPLACE "${_remove_flags}" "${_linker_flags}" CMAKE_CXX_CREATE_SHARED_MODULE "${CMAKE_CXX_CREATE_SHARED_MODULE}")
 	STRING(REPLACE "${_remove_flags}" "${_linker_flags}" CMAKE_CXX_CREATE_SHARED_LIBRARY "${CMAKE_CXX_CREATE_SHARED_LIBRARY}")
 	STRING(REPLACE "${_remove_flags}" "${_linker_flags}" CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE}")
+
+	# Unset temporary variables.
+	UNSET(_remove_flags)
+	UNSET(_linker_flags)
 ENDIF(WIN32)
 ENDMACRO(WIN32_IMAGE_VERSION_LINKER_FLAGS)

@@ -1,18 +1,50 @@
 # Win32-specific CFLAGS/CXXFLAGS.
 # For Microsoft Visual C++ compilers.
 
-# Basic platform flags:
-# - wchar_t should be a distinct type.
-# - Enable strict type checking in the Windows headers.
-# - Set minimum Windows version to Windows 2000. (Windows NT 5.0)
-SET(MCRECOVER_C_FLAGS_WIN32 "-Zc:wchar_t -DSTRICT -D_WIN32_WINNT=0x0500")
+# Basic platform flags for MSVC:
+# - wchar_t should be a distinct type. (MSVC 2002+)
+IF(MSVC_VERSION GREATER 1200)
+	SET(MCRECOVER_BASE_C_FLAGS_WIN32 "${MCRECOVER_BASE_C_FLAGS_WIN32} -Zc:wchar_t")
+ENDIF()
+
+# Subsystem and minimum Windows version:
+# - If 32-bit: 5.00
+# - If 64-bit: 5.02
+# GCN MemCard Recover does NOT support ANSI Windows.
+# NOTE: MSVC 2008 and 2010 have a minimum subsystem value of 4.00.
+# NOTE: MSVC 2012 and later have a minimum subsystem value of 5.01.
+# NOTE: CMAKE sets /subsystem:windows or /subsystem:console itself.
+# It does not affect the subsystem version that's set here, though.
+IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
+	# 64-bit, Unicode Windows only.
+	# (There is no 64-bit ANSI Windows.)
+	SET(MCRECOVER_BASE_C_FLAGS_WIN32 "${MCRECOVER_BASE_C_FLAGS_WIN32} -D_WIN32_WINNT=0x0502")
+	SET(MCRECOVER_BASE_EXE_LINKER_FLAGS_WIN32 "-subsystem:windows,5.02")
+ELSE()
+	# 32-bit, Unicode Windows only.
+	SET(MCRECOVER_BASE_C_FLAGS_WIN32 "${MCRECOVER_BASE_C_FLAGS_WIN32} -D_WIN32_WINNT=0x0500")
+	IF(MSVC_VERSION GREATER 1600)
+		# MSVC 2012 or later.
+		# Minimum target version is Windows XP.
+		SET(MCRECOVER_BASE_EXE_LINKER_FLAGS_WIN32 "-subsystem:windows,5.01")
+	ELSE()
+		# MSVC 2010 or earlier.
+		SET(MCRECOVER_BASE_EXE_LINKER_FLAGS_WIN32 "-subsystem:windows,5.00")
+	ENDIF()
+ENDIF()
+SET(MCRECOVER_BASE_SHARED_LINKER_FLAGS_WIN32 "${MCRECOVER_BASE_EXE_LINKER_FLAGS_WIN32}")
 
 # Release build: Prefer static libraries.
 IF(CMAKE_BUILD_TYPE MATCHES ^release)
 	SET(CMAKE_FIND_LIBRARY_SUFFIXES .lib .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
 ENDIF(CMAKE_BUILD_TYPE MATCHES ^release)
 
-# Append the CFLAGS.
-SET(MCRECOVER_BASE_C_FLAGS_COMMON "${MCRECOVER_BASE_C_FLAGS_COMMON} ${MCRECOVER_C_FLAGS_WIN32}")
-SET(MCRECOVER_BASE_CXX_FLAGS_COMMON "${MCRECOVER_BASE_CXX_FLAGS_COMMON} ${MCRECOVER_C_FLAGS_WIN32}")
-UNSET(MCRECOVER_C_FLAGS_WIN32)
+# Append the CFLAGS and LDFLAGS.
+SET(MCRECOVER_BASE_C_FLAGS_COMMON		"${MCRECOVER_BASE_C_FLAGS_COMMON} ${MCRECOVER_C_FLAGS_WIN32}")
+SET(MCRECOVER_BASE_CXX_FLAGS_COMMON		"${MCRECOVER_BASE_CXX_FLAGS_COMMON} ${MCRECOVER_C_FLAGS_WIN32}")
+SET(MCRECOVER_BASE_EXE_LINKER_FLAGS_COMMON	"${MCRECOVER_BASE_EXE_LINKER_FLAGS_COMMON} ${MCRECOVER_BASE_EXE_LINKER_FLAGS_WIN32}")
+SET(MCRECOVER_BASE_SHARED_LINKER_FLAGS_COMMON	"${MCRECOVER_BASE_SHARED_LINKER_FLAGS_COMMON} ${MCRECOVER_BASE_SHARED_LINKER_FLAGS_WIN32}")
+
+# Unset temporary variables.
+UNSET(MCRECOVER_BASE_C_FLAGS_WIN32)
+UNSET(MCRECOVER_BASE_EXE_LINKER_FLAGS_WIN32)

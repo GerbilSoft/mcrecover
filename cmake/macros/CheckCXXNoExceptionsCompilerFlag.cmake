@@ -21,6 +21,9 @@ MACRO(CHECK_CXX_NO_EXCEPTIONS_COMPILER_FLAG _RESULT)
 	
 	MESSAGE(STATUS "Checking what CXXFLAG is required to disable C++ exceptions:")
 	IF(MSVC)
+		# NOTE: This doesn't disable C++ exceptions.
+		# It only disables "asynchronous" exceptions, which are
+		# similar to Unix signals.
 		SET(${_RESULT} "-EHsc")
 	ELSE(MSVC)
 	FOREACH(CHECK_CXX_NO_EXCEPTIONS_CFLAG "-fno-exceptions")
