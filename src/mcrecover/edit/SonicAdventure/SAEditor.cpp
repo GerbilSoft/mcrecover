@@ -116,7 +116,7 @@ SAEditorPrivate::SAEditorPrivate(SAEditor* q)
 	: EditorWidgetPrivate(q)
 	, saEventFlagsModel(nullptr)
 	, saNPCFlagsModel(nullptr)
-	, sadxMissionFlags(nullptr)
+	, sadxMissionFlagsModel(nullptr)
 {
 	// Make sure sa_defs.h is correct.
 	static_assert(SA_SCORES_LEN == 128, "SA_SCORES_LEN is incorrect");
