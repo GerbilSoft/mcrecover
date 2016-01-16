@@ -2,7 +2,7 @@
  * GameCube Tools Library.                                                 *
  * GcImageWriter.hpp: GameCube image writer.                               *
  *                                                                         *
- * Copyright (c) 2012-2014 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -30,14 +30,13 @@
 
 class GcImage;
 
-class GcImageWriterPrivate;
-
 /**
  * GcImageWriter class.
  * Writes GcImage objects to image files.
  * 
  * NOTE: All const char* functions use ASCII.
  */
+class GcImageWriterPrivate;
 class GcImageWriter
 {
 	public:

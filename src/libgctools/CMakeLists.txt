@@ -33,11 +33,24 @@ SET(libgctools_SRCS
 	GcImageLoader.cpp
 	DcImageLoader.cpp
 	)
+SET(libgctools_H
+	GcImage.hpp
+	GcImage_p.hpp
+	Checksum.hpp
+	GcImageWriter.hpp
+	GcImageWriter_p.hpp
+	GcImageLoader.hpp
+	DcImageLoader.hpp
+	)
 
 # PNG-specific sources.
 IF(HAVE_PNG)
 	SET(libgctools_PNG_SRCS
+		GcImageWriter_PNG.cpp
 		APNG_dlopen.c
+		)
+	SET(libgctools_PNG_H
+		APNG_dlopen.h
 		)
 ENDIF(HAVE_PNG)
 
@@ -50,7 +63,10 @@ ENDIF(NOT USE_INTERNAL_PNG)
 # Build the library. #
 ######################
 
-ADD_LIBRARY(gctools STATIC ${libgctools_SRCS} ${libgctools_PNG_SRCS})
+ADD_LIBRARY(gctools STATIC
+	${libgctools_SRCS} ${libgctools_H}
+	${libgctools_PNG_SRCS} ${libgctools_PNG_H}
+	)
 INCLUDE(SetMSVCDebugPath)
 SET_MSVC_DEBUG_PATH(gctools)
 TARGET_LINK_LIBRARIES(gctools ${PNG_LIBRARY} ${gctools_DL_LIBS})
