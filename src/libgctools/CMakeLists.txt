@@ -54,3 +54,6 @@ ADD_LIBRARY(gctools STATIC ${libgctools_SRCS} ${libgctools_PNG_SRCS})
 INCLUDE(SetMSVCDebugPath)
 SET_MSVC_DEBUG_PATH(gctools)
 TARGET_LINK_LIBRARIES(gctools ${PNG_LIBRARY} ${gctools_DL_LIBS})
+
+# Definitions for third-party libraries.
+ADD_DEFINITIONS(${ZLIB_DEFINITIONS} ${PNG_DEFINITIONS})

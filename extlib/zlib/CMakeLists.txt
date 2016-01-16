@@ -211,6 +211,7 @@ add_custom_target(zlib)
 add_library(zlibstatic STATIC ${ZLIB_SRCS} ${ZLIB_ASMS} ${ZLIB_ASM_C_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
 set_target_properties(zlib PROPERTIES DEFINE_SYMBOL ZLIB_DLL)
 set_target_properties(zlib PROPERTIES SOVERSION 1)
+add_definitions(${ZLIB_DEFINITIONS})
 
 # mcrecover: Set the MSVC debug path.
 INCLUDE(SetMSVCDebugPath)
