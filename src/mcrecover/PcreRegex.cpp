@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * PcreRegex.cpp: PCRE regular expression wrapper class.                   *
  *                                                                         *
- * Copyright (c) 2013-2015 by David Korth.                                 *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -49,11 +49,11 @@
 
 // Regex type.
 #ifdef HAVE_PCRE16
-#define REGEX_CAST(x) ((pcre16*)x)
+#define REGEX_CAST(x) (reinterpret_cast<pcre16*>(x))
 #define pcre_config(what, where) pcre16_config(what, where)
 #define pcre_free(ptr) pcre16_free(ptr)
 #else /* !HAVE_PCRE16 */
-#define REGEX_CAST(x) ((pcre*)x)
+#define REGEX_CAST(x) (reinterpret_cast<pcre*>(x))
 #endif
 
 PcreRegex::PcreRegex()
@@ -83,8 +83,9 @@ PcreRegex::~PcreRegex()
 int PcreRegex::setRegex(const QString &regex, int *errOffset)
 {
 	// Free the existing regex if one is set.
-	if (m_regex)
+	if (m_regex) {
 		pcre_free(m_regex);
+	}
 
 	// Don't allow empty regular expressions.
 	if (regex.isEmpty()) {
@@ -93,8 +94,8 @@ int PcreRegex::setRegex(const QString &regex, int *errOffset)
 	}
 
 	const char *error;
-	int erroffset;
 	int errorcode;
+	int erroffset;
 
 #ifdef HAVE_PCRE16
 	// pcre16: Use the UTF-16 as-is.
@@ -105,7 +106,7 @@ int PcreRegex::setRegex(const QString &regex, int *errOffset)
 		&error,			// error message
 		&erroffset,		// error offset
 		nullptr);		// use default character tables
-#else
+#else /* !HAVE_PCRE16 */
 	// pcre: Convert the regex to UTF-8.
 	QByteArray regex_utf8 = regex.toUtf8();
 	m_regex = (void*)pcre_compile2(
@@ -115,12 +116,14 @@ int PcreRegex::setRegex(const QString &regex, int *errOffset)
 		&error,			// error message
 		&erroffset,		// error offset
 		nullptr);		// use default character tables
-#endif
+#endif /* HAVE_PCRE16 */
 
 	if (!m_regex) {
 		// Regex compilation failed.
-		if (errOffset)
+		// TODO: Save the error message.
+		if (errOffset) {
 			*errOffset = erroffset;
+		}
 		return errorcode;
 	}
 
@@ -132,7 +135,7 @@ int PcreRegex::setRegex(const QString &regex, int *errOffset)
 // Similarly, when compiling with regular pcre, the UTF-16 function is unavailable.
 // This improves performance, since converting between encodings adds overhead.
 
-#if !defined(HAVE_PCRE16)
+#ifndef HAVE_PCRE16
 /**
  * Execute a regular expression.
  * @param subjectUtf8	[in] Subject to match against, encoded in UTF-8.
@@ -194,7 +197,7 @@ int PcreRegex::exec(const QByteArray &subjectUtf8, QVector<QString> *outVector) 
 }
 #endif /* !HAVE_PCRE16 */
 
-#if defined(HAVE_PCRE16)
+#ifdef HAVE_PCRE16
 /**
  * Execute a regular expression.
  * @param subjectUtf16	[in] Subject to match against, encoded in UTF-16.
@@ -269,7 +272,7 @@ int PcreRegex::exec(const QString &subjectUtf16, QVector<QString> *outVector) co
 bool PcreRegex::PCRE_has_Unicode(void)
 {
 	int ret, val;
-#if !defined(HAVE_PCRE16)
+#ifdef HAVE_PCRE16
 	ret = pcre_config(PCRE_CONFIG_UTF8, &val);
 #else
 	ret = pcre16_config(PCRE_CONFIG_UTF16, &val);
