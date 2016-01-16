@@ -272,10 +272,10 @@ int PcreRegex::exec(const QString &subjectUtf16, QVector<QString> *outVector) co
 bool PcreRegex::PCRE_has_Unicode(void)
 {
 	int ret, val;
-#ifdef HAVE_PCRE16
-	ret = pcre_config(PCRE_CONFIG_UTF8, &val);
-#else
+#if HAVE_PCRE16
 	ret = pcre16_config(PCRE_CONFIG_UTF16, &val);
+#else
+	ret = pcre_config(PCRE_CONFIG_UTF8, &val);
 #endif
 	return (ret == 0 && val == 1);
 }
