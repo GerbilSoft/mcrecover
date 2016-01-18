@@ -435,6 +435,10 @@ int GcImageWriter::write(const vector<const GcImage*> *gcImages,
 		case ANIMGF_PNG_HS:
 			return d->writePng_anim(&adjGcImages, &adjGcIconDelays, animImgf);
 #endif /* HAVE_PNG */
+#ifdef HAVE_GIF
+		case ANIMGF_GIF:
+			return d->writeGif_anim(&adjGcImages, &adjGcIconDelays);
+#endif /* HAVE_GIF */
 		default:
 			break;
 	}

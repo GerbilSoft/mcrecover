@@ -1,0 +1,194 @@
+/***************************************************************************
+ * GameCube Tools Library.                                                 *
+ * GcImageWriter_GIF.cpp: GameCube image writer. (GIF functions)           *
+ *                                                                         *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
+ *                                                                         *
+ * This program is free software; you can redistribute it and/or modify it *
+ * under the terms of the GNU General Public License as published by the   *
+ * Free Software Foundation; either version 2 of the License, or (at your  *
+ * option) any later version.                                              *
+ *                                                                         *
+ * This program is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ * GNU General Public License for more details.                            *
+ *                                                                         *
+ * You should have received a copy of the GNU General Public License along *
+ * with this program; if not, write to the Free Software Foundation, Inc., *
+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ ***************************************************************************/
+
+#include <config.libgctools.h>
+
+#ifndef HAVE_GIF
+#error GcImageWriter_GIF.cpp should only be compiled if giflib is available.
+#endif
+
+#include "GcImageWriter.hpp"
+#include "GcImageWriter_p.hpp"
+#include "GcImage.hpp"
+
+// C includes.
+#include <errno.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+// C++ includes.
+#include <vector>
+using std::vector;
+
+/**
+ * GIF write function.
+ * @param gif GifFileType pointer.
+ * @param buf Data to write.
+ * @param len Size of buf.
+ * @return Number of bytes written.
+ */
+int GcImageWriterPrivate::gif_output_func(GifFileType *gif, const GifByteType *buf, int len)
+{
+	if (!gif->UserData || len <= 0)
+		return 0;
+
+	// Assuming the UserData is a vector<uint8_t>*.
+	vector<uint8_t> *gifBuffer = reinterpret_cast<vector<uint8_t>*>(gif->UserData);
+	size_t pos = gifBuffer->size();
+	gifBuffer->resize(pos + len);
+	memcpy(&gifBuffer->data()[pos], buf, len);
+	return len;
+}
+
+/**
+ * Write an animated GcImage to the internal memory buffer in some GIF format.
+ * @param gcImages	[in] Vector of GcImage.
+ * @param gcIconDelays	[in] Icon delays.
+ * @return 0 on success; non-zero on error.
+ */
+int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
+					const vector<int> *gcIconDelays)
+{
+	// All frames should be the same size.
+	const GcImage *gcImage0 = gcImages->at(0);
+	const int w = gcImage0->width();
+	const int h = gcImage0->height();
+	if (gcImage0->pxFmt() == GcImage::PXFMT_ARGB32) {
+		// FIXME: Convert to 256-color palettes.
+		printf("ARGB32, need to convert to 256\n");
+		return -1;
+	}
+
+	// Create a color map based on the first frame.
+	ColorMapObject *colorMap = MakeMapObject(256, nullptr);
+	if (!colorMap) {
+		return -2;
+	}
+
+	// Global Color Table.
+	// TODO: Use this if NOT CI8_UNIQUE.
+	// TODO: Check colorMap->BitsPerPixel.
+	GifColorType *color = colorMap->Colors;
+	const uint32_t *pal = gcImage0->palette();
+	for (int i = 256-1; i >= 0; i--, color++, pal++) {
+		color->Red   = ( *pal        & 0xFF);
+		color->Green = ((*pal >>  8) & 0xFF);
+		color->Blue  = ((*pal >> 16) & 0xFF);
+	}
+
+	// Initialize the internal buffer.
+	vector<uint8_t> *gifBuffer = new vector<uint8_t>();
+	gifBuffer->reserve(32768);	// 32 KB should cover most of the use cases.
+
+	GifFileType *gif = EGifOpen(gifBuffer, gif_output_func);
+	if (!gif) {
+		// Error!
+		delete gifBuffer;
+		FreeMapObject(colorMap);
+		return -1;
+	}
+
+	// Put the screen description for the first frame.
+	if (EGifPutScreenDesc(gif, w, h, 8, 0, colorMap) != GIF_OK) {
+		// Error!
+		EGifCloseFile(gif);
+		delete gifBuffer;
+		FreeMapObject(colorMap);
+		return -2;
+	}
+
+	// Create the loop descriptor.
+	// TODO: Error checking.
+	static const char nsle[] = "NETSCAPE2.0";
+	if (EGifPutExtensionFirst(gif, APPLICATION_EXT_FUNC_CODE, 11, nsle) != GIF_OK) {
+		// Error!
+		EGifCloseFile(gif);
+		delete gifBuffer;
+		FreeMapObject(colorMap);
+		return -3;
+	}
+
+	// Subblock information:
+	// - 0: Netscape looping extension.
+	// - 1, 2: Loop count. (16LE; 0 == infinite)
+	static const char subblock[3] = {1, 0, 0};
+	if (EGifPutExtensionLast(gif, APPLICATION_EXT_FUNC_CODE, 3, subblock) != GIF_OK) {
+		// Error!
+		EGifCloseFile(gif);
+		delete gifBuffer;
+		FreeMapObject(colorMap);
+		return -4;
+	}
+
+	// Write the frames.
+	for (int i = 0; i < (int)gcImages->size(); i++) {
+		// NOTE: NULL images should be removed by write().
+		const GcImage *gcImage = gcImages->at(i);
+
+		// Graphics control block.
+		// Byte 0: Bitfield:
+		// - Bit 0: Transparent flag (1 if a transparent color is present)
+		// - Bit 1: User Input flag (1 if it should wait for user input before showing the next frame)
+		// - Bits 2-4: Disposal method (0 = undef; 1 = leave in place; 2 = bg color; 3 = prev state)
+		// - Bits 5-7: Reserved
+		// Bytes 1-2: Delay. (16LE; centiseconds)
+		// Byte 4: Transparent color index. (TODO)
+		char animctrl[4];
+		animctrl[0] = 0;
+		animctrl[3] = 0xFF;
+
+		// NOTE: Icon delay is in units of 8 NTSC frames.
+		const float fIconDelay = (float)(gcIconDelays->at(i) * 8 * 100) / 60.0f;
+		const uint16_t uIconDelay = (uint16_t)fIconDelay;
+		animctrl[1] = uIconDelay & 0xFF;
+		animctrl[2] = (uIconDelay >> 8) & 0xFF;
+
+		EGifPutExtension(gif, GRAPHICS_EXT_FUNC_CODE, sizeof(animctrl), animctrl);
+
+		// Start the frame.
+		// TODO: Local palette for CI8_UNIQUE?
+		if (EGifPutImageDesc(gif, 0, 0, w, h, false, nullptr) != GIF_OK) {
+			// Error!
+			EGifCloseFile(gif);
+			delete gifBuffer;
+			FreeMapObject(colorMap);
+			return -5;
+		}
+
+		// Write the entire image.
+		if (EGifPutLine(gif, (uint8_t*)gcImage->imageData(),
+			gcImage->imageData_len()) != GIF_OK)
+		{
+			// Error!
+			EGifCloseFile(gif);
+			delete gifBuffer;
+			FreeMapObject(colorMap);
+			return -6;
+		}
+	}
+
+	FreeMapObject(colorMap);
+	EGifCloseFile(gif);
+
+	// Add the gifBuffer to the memBuffer.
+	memBuffer.push_back(gifBuffer);
+	return 0;
+}

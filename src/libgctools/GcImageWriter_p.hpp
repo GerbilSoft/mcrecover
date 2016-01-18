@@ -35,6 +35,11 @@ class GcImage;
 #include "APNG_dlopen.h"
 #endif /* HAVE_PNG */
 
+// giflib
+#ifdef HAVE_GIF
+#include <gif_lib.h>
+#endif /* HAVE_GIF */
+
 class GcImageWriterPrivate
 {
 	public:
@@ -51,6 +56,15 @@ class GcImageWriterPrivate
 		// Internal memory buffers.
 		// Each call to write() creates a new buffer.
 		std::vector<std::vector<uint8_t>* > memBuffer;
+
+	private:
+		/**
+		 * Check if a vector of gcImages is CI8_UNIQUE.
+		 * If they are, convert them to ARGB32 and return the new vector.
+		 * @param gcImages	[in] Vector of GcImage.
+		 * @return Vector of ARGB32 GcImage if CI8_UNIQUE, or nullptr otherwise.
+		 */
+		std::vector<const GcImage*> *gcImages_from_CI8_UNIQUE(const std::vector<const GcImage*> *gcImages);
 
 #ifdef HAVE_PNG
 		/**
@@ -81,24 +95,6 @@ class GcImageWriterPrivate
 				  const uint32_t *palette, int num_entries);
 
 		/**
-		 * Write a GcImage to the internal memory buffer in PNG format.
-		 * @param gcImage	[in] GcImage.
-		 * @return 0 on success; non-zero on error.
-		 */
-		int writePng(const GcImage *gcImage);
-#endif /* HAVE_PNG */
-
-	private:
-		/**
-		 * Check if a vector of gcImages is CI8_UNIQUE.
-		 * If they are, convert them to ARGB32 and return the new vector.
-		 * @param gcImages	[in] Vector of GcImage.
-		 * @return Vector of ARGB32 GcImage if CI8_UNIQUE, or nullptr otherwise.
-		 */
-		std::vector<const GcImage*> *gcImages_from_CI8_UNIQUE(const std::vector<const GcImage*> *gcImages);
-
-#ifdef HAVE_PNG
-		/**
 		 * Write an animated GcImage to the internal memory buffer in APNG format.
 		 * @param gcImages	[in] Vector of GcImage.
 		 * @param gcIconDelays	[in] Icon delays.
@@ -128,8 +124,26 @@ class GcImageWriterPrivate
 		int writePng_HS(const std::vector<const GcImage*> *gcImages);
 #endif /* HAVE_PNG */
 
+#ifdef HAVE_GIF
+		/**
+		 * GIF write function.
+		 * @param gif GifFileType pointer.
+		 * @param buf Data to write.
+		 * @param len Size of buf.
+		 * @return Number of bytes written.
+		 */
+		static int gif_output_func(GifFileType *gif, const GifByteType *buf, int len);
+#endif /* HAVE_GIF */
+
 	public:
 #ifdef HAVE_PNG
+		/**
+		 * Write a GcImage to the internal memory buffer in PNG format.
+		 * @param gcImage	[in] GcImage.
+		 * @return 0 on success; non-zero on error.
+		 */
+		int writePng(const GcImage *gcImage);
+
 		/**
 		 * Write an animated GcImage to the internal memory buffer in some PNG format.
 		 * @param gcImages	[in] Vector of GcImage.
@@ -141,6 +155,17 @@ class GcImageWriterPrivate
 				  const std::vector<int> *gcIconDelays,
 				  GcImageWriter::AnimImageFormat animImgf);
 #endif /* HAVE_PNG */
+
+#ifdef HAVE_GIF
+		/**
+		 * Write an animated GcImage to the internal memory buffer in GIF format.
+		 * @param gcImages	[in] Vector of GcImage.
+		 * @param gcIconDelays	[in] Icon delays.
+		 * @return 0 on success; non-zero on error.
+		 */
+		int writeGif_anim(const std::vector<const GcImage*> *gcImages,
+				  const std::vector<int> *gcIconDelays);
+#endif /* HAVE_GIF */
 };
 
 #endif /* __LIBGCTOOLS_GCIMAGE_P_HPP__ */

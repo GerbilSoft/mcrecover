@@ -21,6 +21,12 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/util/byteorder.h.in" "${CMAKE_CURREN
 # libpng
 INCLUDE(CheckPNG)
 INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
+ADD_DEFINITIONS(${ZLIB_DEFINITIONS} ${PNG_DEFINITIONS})
+
+# giflib
+INCLUDE(CheckGIF)
+INCLUDE_DIRECTORIES(${GIF_INCLUDE_DIR})
+ADD_DEFINITIONS(${GIF_DEFINITIONS})
 
 # Write the config.h file.
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.libgctools.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.libgctools.h")
@@ -54,6 +60,11 @@ IF(HAVE_PNG)
 		)
 ENDIF(HAVE_PNG)
 
+# GIF-specific sources.
+IF(HAVE_GIF)
+	SET(libgctools_GIF_SRCS GcImageWriter_GIF.cpp)
+ENDIF(HAVE_GIF)
+
 # If we're using an external libpng, link in libdl.
 IF(NOT USE_INTERNAL_PNG)
 	SET(gctools_DL_LIBS ${CMAKE_DL_LIBS})
@@ -66,10 +77,14 @@ ENDIF(NOT USE_INTERNAL_PNG)
 ADD_LIBRARY(gctools STATIC
 	${libgctools_SRCS} ${libgctools_H}
 	${libgctools_PNG_SRCS} ${libgctools_PNG_H}
+	${libgctools_GIF_SRCS}
 	)
 INCLUDE(SetMSVCDebugPath)
 SET_MSVC_DEBUG_PATH(gctools)
-TARGET_LINK_LIBRARIES(gctools ${PNG_LIBRARY} ${gctools_DL_LIBS})
-
-# Definitions for third-party libraries.
-ADD_DEFINITIONS(${ZLIB_DEFINITIONS} ${PNG_DEFINITIONS})
+TARGET_LINK_LIBRARIES(gctools ${gctools_DL_LIBS})
+IF(HAVE_PNG)
+	TARGET_LINK_LIBRARIES(${PNG_LIBRARY})
+ENDIF(HAVE_PNG)
+IF(HAVE_GIF)
+	TARGET_LINK_LIBRARIES(gctools ${GIF_LIBRARY})
+ENDIF(HAVE_GIF)
