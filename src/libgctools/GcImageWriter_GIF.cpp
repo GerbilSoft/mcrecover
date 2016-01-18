@@ -136,6 +136,10 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 	vector<uint8_t> *gifBuffer = new vector<uint8_t>();
 	gifBuffer->reserve(32768);	// 32 KB should cover most of the use cases.
 
+	// Set the GIF version to GIF89a.
+	// (Required for animated GIFs.)
+	EGifSetGifVersion("89a");
+
 	GifFileType *gif = EGifOpen(gifBuffer, gif_output_func);
 	if (!gif) {
 		// Error!
