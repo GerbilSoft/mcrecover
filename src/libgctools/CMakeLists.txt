@@ -63,6 +63,16 @@ ENDIF(HAVE_PNG)
 # GIF-specific sources.
 IF(HAVE_GIF)
 	SET(libgctools_GIF_SRCS GcImageWriter_GIF.cpp)
+
+	# GifQuantizeBuffer()
+	# giflib-4.1 and earlier has this; however, the function
+	# was removed in giflib-4.2. giflib-5.0 readded it.
+	IF(GIF_VERSION LESS 5)
+		SET(libgctools_GIF_SRCS
+			${libgctools_GIF_SRCS}
+			quantize.c
+			)
+	ENDIF(GIF_VERSION LESS 5)
 ENDIF(HAVE_GIF)
 
 # If we're using an external libpng, link in libdl.

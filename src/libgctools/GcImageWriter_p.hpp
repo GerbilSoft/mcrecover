@@ -167,6 +167,17 @@ class GcImageWriterPrivate
 		 * @param iconDelay	[in] Icon delay, in centiseconds.
 		 */
 		static int gif_addGraphicsControlBlock(GifFileType *gif, int trans_idx, uint16_t iconDelay);
+
+		/**
+		 * Write an ARGB32 image to a GIF.
+		 * This will reduce the image to 256 colors first.
+		 * @param gif		[in] GIF image.
+		 * @param gcImage	[in] GcImage to write.
+		 * @param colorMap	[in] Color map object to use.
+		 * @return GIF_OK on success; GIF_ERROR on error.
+		 */
+		static int gif_writeARGB32Image(GifFileType *gif,
+				const GcImage *gcImage, ColorMapObject *colorMap);
 #endif /* HAVE_GIF */
 
 	public:

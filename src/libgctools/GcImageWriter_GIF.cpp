@@ -63,6 +63,20 @@ using std::vector;
 #define wr_EGifCloseFile(GifFile, ErrorCode) EGifCloseFile((GifFile), (ErrorCode))
 #endif /* GIFLIB_OLDER_THAN_5_1 */
 
+#ifdef GIFLIB_OLDER_THAN_5_0
+// giflib-4.2 doesn't have QuantizeBuffer().
+// To prevent issues, we're including our own copy of
+// giflib-5.1.2's GifQuantizeBuffer() for old versions.
+extern "C"
+int gcn_GifQuantizeBuffer(unsigned int Width, unsigned int Height,
+                   int *ColorMapSize, GifByteType * RedInput,
+                   GifByteType * GreenInput, GifByteType * BlueInput,
+                   GifByteType * OutputBuffer,
+                   GifColorType * OutputColorMap);
+#define GifQuantizeBuffer(Width, Height, ColorMapSize, RedInput, GreenInput, BlueInput, OutputBuffer, OutputColorMap) \
+	gcn_GifQuantizeBuffer((Width), (Height), (ColorMapSize), (RedInput), (GreenInput), (BlueInput), (OutputBuffer), (OutputColorMap))
+#endif /* GIFLIB_OLDER_THAN_5_0 */
+
 /**
  * GIF write function.
  * @param gif GifFileType pointer.
@@ -213,6 +227,72 @@ int GcImageWriterPrivate::gif_addGraphicsControlBlock(GifFileType *gif, int tran
 }
 
 /**
+ * Write an ARGB32 image to a GIF.
+ * This will reduce the image to 256 colors first.
+ * @param gif		[in] GIF image.
+ * @param gcImage	[in] GcImage to write.
+ * @param colorMap	[in] Color map object to use.
+ * @return GIF_OK on success; GIF_ERROR on error.
+ */
+int GcImageWriterPrivate::gif_writeARGB32Image(GifFileType *gif,
+		const GcImage *gcImage, ColorMapObject *colorMap)
+{
+	// Split the image into separate Red/Green/Blue buffers.
+	// TODO: Transparency?
+	const size_t bufSz = gcImage->width() * gcImage->height();
+	const size_t fullBufSz = bufSz * 4;
+	// TODO: std::auto_ptr?
+	GifByteType *full = (GifByteType*)malloc(fullBufSz);
+	GifByteType *red = full;
+	GifByteType *green = full + bufSz;
+	GifByteType *blue = green + bufSz;
+	GifByteType *out = blue + bufSz;
+
+	const uint32_t *src = (const uint32_t*)gcImage->imageData();
+	for (size_t i = bufSz; i > 0; i--, src++) {
+		*red++   = ((*src >> 16) & 0xFF);
+		*green++ = ((*src >>  8) & 0xFF);
+		*blue++  = ( *src        & 0xFF);
+	}
+
+	// Reset the buffer pointers.
+	red = full;
+	green = full + bufSz;
+	blue = green + bufSz;
+
+	// Quantize the image buffer.
+	colorMap->ColorCount = 256;
+	int ret = GifQuantizeBuffer(gcImage->width(), gcImage->height(),
+			&colorMap->ColorCount, red, green, blue, out,
+			colorMap->Colors);
+	if (ret != GIF_OK) {
+		// Error!
+		free(full);
+		return ret;
+	}
+
+	// Start the frame.
+	ret = EGifPutImageDesc(gif, 0, 0, gcImage->width(), gcImage->height(), false, colorMap);
+	if (ret != GIF_OK) {
+		// Error!
+		free(full);
+		return ret;
+	}
+
+	// Write the entire image.
+	ret = EGifPutLine(gif, out, bufSz);
+	if (ret != GIF_OK) {
+		// Error!
+		free(full);
+		return ret;
+	}
+
+	// Image written.
+	free(full);
+	return GIF_OK;
+}
+
+/**
  * Write an animated GcImage to the internal memory buffer in some GIF format.
  * @param gcImages	[in] Vector of GcImage.
  * @param gcIconDelays	[in] Icon delays.
@@ -234,24 +314,13 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 	}
 
 	bool is_CI8_UNIQUE = false;
-	switch (gcImage0->pxFmt()) {
-		case GcImage::PXFMT_ARGB32:
-			// FIXME: Convert to 256-color palettes.
-			printf("ARGB32, need to convert to 256\n");
-			GifFreeMapObject(colorMap);
-			return -2;
-		case GcImage::PXFMT_CI8:
-			// May be CI8 or CI8_UNIQUE.
-			is_CI8_UNIQUE = is_gcImages_CI8_UNIQUE(gcImages);
-			if (!is_CI8_UNIQUE) {
-				// Convert the palette from the first frame.
-				paletteToGifColorMap(colorMap, gcImage0->palette());
-			}
-			break;
-		default:
-			// Unsupported pixel format.
-			GifFreeMapObject(colorMap);
-			return -2;
+	if (gcImage0->pxFmt() == GcImage::PXFMT_CI8) {
+		// May be CI8 or CI8_UNIQUE.
+		is_CI8_UNIQUE = is_gcImages_CI8_UNIQUE(gcImages);
+		if (!is_CI8_UNIQUE) {
+			// Convert the palette from the first frame.
+			paletteToGifColorMap(colorMap, gcImage0->palette());
+		}
 	}
 
 	// Initialize the internal buffer.
@@ -334,26 +403,49 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 			paletteToGifColorMap(colorMap, gcImage->palette());
 		}
 
-		// Start the frame.
-		if (EGifPutImageDesc(gif, 0, 0, w, h, false,
-		    (is_CI8_UNIQUE ? colorMap : nullptr)) != GIF_OK)
-		{
-			// Error!
-			wr_EGifCloseFile(gif, &err);
-			delete gifBuffer;
-			GifFreeMapObject(colorMap);
-			return -6;
-		}
+		switch (gcImage->pxFmt()) {
+			case GcImage::PXFMT_CI8:
+				// Start the frame.
+				if (EGifPutImageDesc(gif, 0, 0, w, h, false,
+				    (is_CI8_UNIQUE ? colorMap : nullptr)) != GIF_OK)
+				{
+					// Error!
+					wr_EGifCloseFile(gif, &err);
+					delete gifBuffer;
+					GifFreeMapObject(colorMap);
+					return -6;
+				}
 
-		// Write the entire image.
-		if (EGifPutLine(gif, (uint8_t*)gcImage->imageData(),
-			gcImage->imageData_len()) != GIF_OK)
-		{
-			// Error!
-			wr_EGifCloseFile(gif, &err);
-			delete gifBuffer;
-			GifFreeMapObject(colorMap);
-			return -7;
+				// Write the entire image.
+				if (EGifPutLine(gif, (uint8_t*)gcImage->imageData(),
+				    gcImage->imageData_len()) != GIF_OK)
+				{
+					// Error!
+					wr_EGifCloseFile(gif, &err);
+					delete gifBuffer;
+					GifFreeMapObject(colorMap);
+					return -7;
+				}
+				break;
+
+			case GcImage::PXFMT_ARGB32:
+				// Reduce the image to 256 colors.
+				// TODO: Use a similar palette for all images?
+				// Otherwise it might look weird...
+				if (gif_writeARGB32Image(gif, gcImage, colorMap) != GIF_OK) {
+					// Error!
+					wr_EGifCloseFile(gif, &err);
+					delete gifBuffer;
+					GifFreeMapObject(colorMap);
+					return -8;
+				}
+				break;
+
+			default:
+				// Unsupported pixel format.
+				delete gifBuffer;
+				GifFreeMapObject(colorMap);
+				return -9;
 		}
 	}
 
