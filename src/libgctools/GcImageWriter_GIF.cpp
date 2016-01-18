@@ -59,6 +59,38 @@ int GcImageWriterPrivate::gif_output_func(GifFileType *gif, const GifByteType *b
 }
 
 /**
+ * Convert a GcImage palette to a GIF palette.
+ * @param colorMap	[out] GIF ColorMapObject.
+ * @param palette	[in] GcImage palette. (must have 256 entries)
+ * @return Index of transparent color, or -1 if no transparent color.
+ */
+int GcImageWriterPrivate::paletteToGifColorMap(ColorMapObject *colorMap, const uint32_t *palette)
+{
+	int trans_idx = -1;
+	GifColorType *color = colorMap->Colors;
+	for (int i = 0; i < 256; i++, color++, palette++) {
+		color->Red   = ((*palette >> 16) & 0xFF);
+		color->Green = ((*palette >>  8) & 0xFF);
+		color->Blue  = ( *palette        & 0xFF);
+
+		// Check for full transparency.
+		// NOTE: GIF doesn't support alpha-transparency;
+		// semi-transparent pixels will be opaque.
+		// TODO: If multiple entries are fully-transparent,
+		// convert them all to the first entry.
+		if (((*palette >> 24) & 0xFF) == 0) {
+			// Color is fully transparent.
+			if (trans_idx < 0) {
+				trans_idx = i;
+			}
+		}
+	}
+
+	// Return the index of the first fully-transparent color.
+	return trans_idx;
+}
+
+/**
  * Write an animated GcImage to the internal memory buffer in some GIF format.
  * @param gcImages	[in] Vector of GcImage.
  * @param gcIconDelays	[in] Icon delays.
@@ -71,27 +103,33 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 	const GcImage *gcImage0 = gcImages->at(0);
 	const int w = gcImage0->width();
 	const int h = gcImage0->height();
-	if (gcImage0->pxFmt() == GcImage::PXFMT_ARGB32) {
-		// FIXME: Convert to 256-color palettes.
-		printf("ARGB32, need to convert to 256\n");
+
+	// Color Map object for palettes.
+	ColorMapObject *colorMap = MakeMapObject(256, nullptr);
+	if (!colorMap) {
+		// Error allocating a color map.
 		return -1;
 	}
 
-	// Create a color map based on the first frame.
-	ColorMapObject *colorMap = MakeMapObject(256, nullptr);
-	if (!colorMap) {
-		return -2;
-	}
-
-	// Global Color Table.
-	// TODO: Use this if NOT CI8_UNIQUE.
-	// TODO: Check colorMap->BitsPerPixel.
-	GifColorType *color = colorMap->Colors;
-	const uint32_t *pal = gcImage0->palette();
-	for (int i = 256-1; i >= 0; i--, color++, pal++) {
-		color->Red   = ( *pal        & 0xFF);
-		color->Green = ((*pal >>  8) & 0xFF);
-		color->Blue  = ((*pal >> 16) & 0xFF);
+	bool is_CI8_UNIQUE = false;
+	switch (gcImage0->pxFmt()) {
+		case GcImage::PXFMT_ARGB32:
+			// FIXME: Convert to 256-color palettes.
+			printf("ARGB32, need to convert to 256\n");
+			FreeMapObject(colorMap);
+			return -2;
+		case GcImage::PXFMT_CI8:
+			// May be CI8 or CI8_UNIQUE.
+			is_CI8_UNIQUE = is_gcImages_CI8_UNIQUE(gcImages);
+			if (!is_CI8_UNIQUE) {
+				// Convert the palette from the first frame.
+				paletteToGifColorMap(colorMap, gcImage0->palette());
+			}
+			break;
+		default:
+			// Unsupported pixel format.
+			FreeMapObject(colorMap);
+			return -2;
 	}
 
 	// Initialize the internal buffer.
@@ -107,7 +145,10 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 	}
 
 	// Put the screen description for the first frame.
-	if (EGifPutScreenDesc(gif, w, h, 8, 0, colorMap) != GIF_OK) {
+	// NOTE: colorMap is only specified if the image
+	// uses a global palette. For CI8_UNIQUE, each
+	// frame will have its own local palette.
+	if (EGifPutScreenDesc(gif, w, h, 8, 0, (is_CI8_UNIQUE ? nullptr : colorMap)) != GIF_OK) {
 		// Error!
 		EGifCloseFile(gif);
 		delete gifBuffer;
@@ -163,9 +204,13 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 
 		EGifPutExtension(gif, GRAPHICS_EXT_FUNC_CODE, sizeof(animctrl), animctrl);
 
+		if (is_CI8_UNIQUE) {
+			// Update the ColorMap for this frame.
+			paletteToGifColorMap(colorMap, gcImage->palette());
+		}
+
 		// Start the frame.
-		// TODO: Local palette for CI8_UNIQUE?
-		if (EGifPutImageDesc(gif, 0, 0, w, h, false, nullptr) != GIF_OK) {
+		if (EGifPutImageDesc(gif, 0, 0, w, h, false, (is_CI8_UNIQUE ? colorMap : nullptr)) != GIF_OK) {
 			// Error!
 			EGifCloseFile(gif);
 			delete gifBuffer;

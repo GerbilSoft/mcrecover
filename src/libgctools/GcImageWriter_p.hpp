@@ -60,6 +60,13 @@ class GcImageWriterPrivate
 	private:
 		/**
 		 * Check if a vector of gcImages is CI8_UNIQUE.
+		 * @param gcImages	[in] Vector of GcImage.
+		 * @return True if the gcImages are CI8_UNIQUE; false if not.
+		 */
+		bool is_gcImages_CI8_UNIQUE(const std::vector<const GcImage*> *gcImages);
+
+		/**
+		 * Check if a vector of gcImages is CI8_UNIQUE.
 		 * If they are, convert them to ARGB32 and return the new vector.
 		 * @param gcImages	[in] Vector of GcImage.
 		 * @return Vector of ARGB32 GcImage if CI8_UNIQUE, or nullptr otherwise.
@@ -133,6 +140,14 @@ class GcImageWriterPrivate
 		 * @return Number of bytes written.
 		 */
 		static int gif_output_func(GifFileType *gif, const GifByteType *buf, int len);
+
+		/**
+		 * Convert a GcImage palette to a GIF palette.
+		 * @param colorMap	[out] GIF ColorMapObject.
+		 * @param palette	[in] GcImage palette. (must have 256 entries)
+		 * @return Index of transparent color, or -1 if no transparent color.
+		 */
+		static int paletteToGifColorMap(ColorMapObject *colorMap, const uint32_t *palette);
 #endif /* HAVE_GIF */
 
 	public:

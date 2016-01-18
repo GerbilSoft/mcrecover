@@ -51,16 +51,11 @@ GcImageWriterPrivate::~GcImageWriterPrivate()
 
 /**
  * Check if a vector of gcImages is CI8_UNIQUE.
- * If they are, convert them to ARGB32 and return the new vector.
  * @param gcImages	[in] Vector of GcImage.
- * @return Vector of ARGB32 GcImage if CI8_UNIQUE, or nullptr otherwise.
+ * @return True if the gcImages are CI8_UNIQUE; false if not.
  */
-vector<const GcImage*> *GcImageWriterPrivate::gcImages_from_CI8_UNIQUE(const vector<const GcImage*> *gcImages)
+bool GcImageWriterPrivate::is_gcImages_CI8_UNIQUE(const vector<const GcImage*> *gcImages)
 {
-	// NOTE: APNG only supports a single palette.
-	// If the icon is CI8_UNIQUE, it will need to be
-	// converted to ARGB32.
-	// TODO: Test this; I don't have any files with CI8_UNIQUE...
 	const GcImage *gcImage0 = gcImages->at(0);
 	const GcImage::PxFmt pxFmt = gcImage0->pxFmt();
 
@@ -79,8 +74,23 @@ vector<const GcImage*> *GcImageWriterPrivate::gcImages_from_CI8_UNIQUE(const vec
 		}
 	}
 
+	return is_CI8_UNIQUE;
+}
+
+/**
+ * Check if a vector of gcImages is CI8_UNIQUE.
+ * If they are, convert them to ARGB32 and return the new vector.
+ * @param gcImages	[in] Vector of GcImage.
+ * @return Vector of ARGB32 GcImage if CI8_UNIQUE, or nullptr otherwise.
+ */
+vector<const GcImage*> *GcImageWriterPrivate::gcImages_from_CI8_UNIQUE(const vector<const GcImage*> *gcImages)
+{
+	// NOTE: APNG only supports a single palette.
+	// If the icon is CI8_UNIQUE, it will need to be
+	// converted to ARGB32.
+	// TODO: Test this; I don't have any files with CI8_UNIQUE...
 	vector<const GcImage*> *gcImagesARGB32 = nullptr;
-	if (is_CI8_UNIQUE) {
+	if (is_gcImages_CI8_UNIQUE(gcImages)) {
 		// CI8_UNIQUE. Convert to ARGB32.
 		gcImagesARGB32->resize(gcImages->size());
 		for (int i = 0; i < (int)gcImages->size(); i++) {
