@@ -47,7 +47,7 @@ using std::vector;
 void GcImageWriterPrivate::png_io_write(png_structp png_ptr, png_bytep buf, png_size_t len)
 {
 	void *io_ptr = png_get_io_ptr(png_ptr);
-	if (!io_ptr)
+	if (!io_ptr || len == 0)
 		return;
 
 	// Assuming the io_ptr is a vector<uint8_t>*.
