@@ -90,9 +90,9 @@ int GcImageWriterPrivate::writePng_PLTE(
 
 	// Convert the palette.
 	for (int i = 0; i < num_entries; i++) {
+		png_pal[i].blue  = ( palette[i]        & 0xFF);
+		png_pal[i].green = ((palette[i] >> 8)  & 0xFF);
 		png_pal[i].red   = ((palette[i] >> 16) & 0xFF);
-		png_pal[i].green = ((palette[i] >> 8) & 0xFF);
-		png_pal[i].blue  = (palette[i] & 0xFF);
 		png_tRNS[i]      = ((palette[i] >> 24) & 0xFF);
 	}
 
@@ -647,8 +647,9 @@ int GcImageWriterPrivate::writePng_anim(const vector<const GcImage*> *gcImages,
 	// converted to ARGB32.
 	// TODO: Test this; I don't have any files with CI8_UNIQUE...
 	vector<const GcImage*> *gcImagesARGB32 = gcImages_from_CI8_UNIQUE(gcImages);
-	if (gcImagesARGB32)
+	if (gcImagesARGB32) {
 		gcImages = gcImagesARGB32;
+	}
 
 	int ret;
 	switch (animImgf) {
