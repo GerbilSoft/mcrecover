@@ -1,0 +1,10 @@
+This copy of giflib-5.1.2 is a modified version of the original.
+
+The following changes have been made to the original:
+
+- autoconf build infratsructure has been removed.
+
+- Files not necessary for building giflib have been removed.
+
+To obtain the original giflib-5.1.2, visit:
+http://giflib.sourceforge.net/
