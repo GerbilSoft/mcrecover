@@ -1,7 +1,7 @@
 # Check for giflib.
 # If giflib isn't found, extlib/giflib/ will be used instead.
 # TODO: Option to enable/disable GIF support.
-IF(NOT DEFINED HAVE_GIF)
+IF(USE_GIF AND NOT DEFINED HAVE_GIF)
 
 IF(WIN32)
 	MESSAGE(STATUS "Win32: using internal giflib")
@@ -23,4 +23,4 @@ IF(NOT GIF_FOUND)
 	SET(GIF_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/extlib/giflib/lib/")
 ENDIF(NOT GIF_FOUND)
 
-ENDIF(NOT DEFINED HAVE_GIF)
+ENDIF(USE_GIF AND NOT DEFINED HAVE_GIF)
