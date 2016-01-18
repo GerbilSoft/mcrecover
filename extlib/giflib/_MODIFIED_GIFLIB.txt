@@ -6,5 +6,8 @@ The following changes have been made to the original:
 
 - Files not necessary for building giflib have been removed.
 
+- Example images, the test suite, and utility programs
+  have been removed.
+
 To obtain the original giflib-5.1.2, visit:
 http://giflib.sourceforge.net/
