@@ -26,6 +26,9 @@
 #include "GcImageWriter.hpp"
 class GcImage;
 
+// C includes.
+#include <stdint.h>
+
 // C++ includes.
 #include <vector>
 
@@ -148,6 +151,22 @@ class GcImageWriterPrivate
 		 * @return Index of transparent color, or -1 if no transparent color.
 		 */
 		static int paletteToGifColorMap(ColorMapObject *colorMap, const uint32_t *palette);
+
+		/**
+		 * Add a loop extension block to the GIF image.
+		 * @param gif		[in] GIF image.
+		 * @param loopCount	[in] Loop count. (0 == infinite)
+		 * @return GIF_OK on success; GIF_ERROR on error.
+		 */
+		static int gif_addLoopExtension(GifFileType *gif, uint16_t loopCount);
+
+		/**
+		 * Add a graphics control block to a GIF frame.
+		 * @param gif		[in] GIF image.
+		 * @param trans_idx	[in] Transparent color index. (-1 for no transparency)
+		 * @param iconDelay	[in] Icon delay, in centiseconds.
+		 */
+		static int gif_addGraphicsControlBlock(GifFileType *gif, int trans_idx, uint16_t iconDelay);
 #endif /* HAVE_GIF */
 
 	public:

@@ -91,6 +91,70 @@ int GcImageWriterPrivate::paletteToGifColorMap(ColorMapObject *colorMap, const u
 }
 
 /**
+ * Add a loop extension block to the GIF image.
+ * @param gif		[in] GIF image.
+ * @param loopCount	[in] Loop count. (0 == infinite)
+ * @return GIF_OK on success; GIF_ERROR on error.
+ */
+int GcImageWriterPrivate::gif_addLoopExtension(GifFileType *gif, uint16_t loopCount)
+{
+	// Create the loop descriptor.
+	static const char nsle[] = "NETSCAPE2.0";
+	int ret = EGifPutExtensionFirst(gif, APPLICATION_EXT_FUNC_CODE, 11, nsle);
+	if (ret != GIF_OK) {
+		// Failed to start the extension.
+		return ret;
+	}
+
+	// Loop block data:
+	// - 0: '1' for Netscape looping extension.
+	// - 1, 2: Loop count. (16LE; 0 == infinite)
+	uint8_t loopData[3];
+	loopData[0] = 1;			// Netscape looping extension.
+	loopData[1] = loopCount & 0xFF;		// loopCount LSB
+	loopData[2] = (loopCount >> 8) & 0xFF;	// loopCount MSB
+	ret = EGifPutExtensionLast(gif, APPLICATION_EXT_FUNC_CODE, sizeof(loopData), loopData);
+
+	// Done adding the loop extension block.
+	return ret;
+}
+
+/**
+ * Add a graphics control block to a GIF frame.
+ * @param gif		[in] GIF image.
+ * @param trans_idx	[in] Transparent color index. (-1 for no transparency)
+ * @param iconDelay	[in] Icon delay, in centiseconds.
+ * @return GIF_OK on success; GIF_ERROR on error.
+ */
+int GcImageWriterPrivate::gif_addGraphicsControlBlock(GifFileType *gif, int trans_idx, uint16_t iconDelay)
+{
+	/**
+	 * Graphics control block.
+	 * Byte 0: Bitfield:
+	 * - Bit 0: Transparent flag (1 if a transparent color is present)
+	 * - Bit 1: User Input flag (1 if it should wait for user input before showing the next frame)
+	 * - Bits 2-4: Disposal method (0 = undef; 1 = leave in place; 2 = bg color; 3 = prev state)
+	 * - Bits 5-7: Reserved
+	 * Bytes 1-2: Delay. (16LE; centiseconds)
+	 * Byte 4: Transparent color index.
+	 */
+	char animctrl[4];
+	if (trans_idx >= 0) {
+		animctrl[0] = 1;
+		animctrl[3] = trans_idx & 0xFF;
+	} else {
+		animctrl[0] = 0;
+		animctrl[3] = 0xFF;
+	}
+
+	// Icon delay.
+	animctrl[1] = iconDelay & 0xFF;
+	animctrl[2] = (iconDelay >> 8) & 0xFF;
+
+	return EGifPutExtension(gif, GRAPHICS_EXT_FUNC_CODE, sizeof(animctrl), animctrl);
+}
+
+/**
  * Write an animated GcImage to the internal memory buffer in some GIF format.
  * @param gcImages	[in] Vector of GcImage.
  * @param gcIconDelays	[in] Icon delays.
@@ -160,10 +224,8 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 		return -2;
 	}
 
-	// Create the loop descriptor.
-	// TODO: Error checking.
-	static const char nsle[] = "NETSCAPE2.0";
-	if (EGifPutExtensionFirst(gif, APPLICATION_EXT_FUNC_CODE, 11, nsle) != GIF_OK) {
+	// Add the loop extension block.
+	if (gif_addLoopExtension(gif, 0) != GIF_OK) {
 		// Error!
 		EGifCloseFile(gif);
 		delete gifBuffer;
@@ -171,42 +233,24 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 		return -3;
 	}
 
-	// Subblock information:
-	// - 0: Netscape looping extension.
-	// - 1, 2: Loop count. (16LE; 0 == infinite)
-	static const char subblock[3] = {1, 0, 0};
-	if (EGifPutExtensionLast(gif, APPLICATION_EXT_FUNC_CODE, 3, subblock) != GIF_OK) {
-		// Error!
-		EGifCloseFile(gif);
-		delete gifBuffer;
-		FreeMapObject(colorMap);
-		return -4;
-	}
-
 	// Write the frames.
 	for (int i = 0; i < (int)gcImages->size(); i++) {
 		// NOTE: NULL images should be removed by write().
 		const GcImage *gcImage = gcImages->at(i);
 
-		// Graphics control block.
-		// Byte 0: Bitfield:
-		// - Bit 0: Transparent flag (1 if a transparent color is present)
-		// - Bit 1: User Input flag (1 if it should wait for user input before showing the next frame)
-		// - Bits 2-4: Disposal method (0 = undef; 1 = leave in place; 2 = bg color; 3 = prev state)
-		// - Bits 5-7: Reserved
-		// Bytes 1-2: Delay. (16LE; centiseconds)
-		// Byte 4: Transparent color index. (TODO)
-		char animctrl[4];
-		animctrl[0] = 0;
-		animctrl[3] = 0xFF;
-
 		// NOTE: Icon delay is in units of 8 NTSC frames.
 		const float fIconDelay = (float)(gcIconDelays->at(i) * 8 * 100) / 60.0f;
 		const uint16_t uIconDelay = (uint16_t)fIconDelay;
-		animctrl[1] = uIconDelay & 0xFF;
-		animctrl[2] = (uIconDelay >> 8) & 0xFF;
 
-		EGifPutExtension(gif, GRAPHICS_EXT_FUNC_CODE, sizeof(animctrl), animctrl);
+		// Graphics control block.
+		// TODO: Transparent color index.
+		if (gif_addGraphicsControlBlock(gif, -1, uIconDelay) != GIF_OK) {
+			// Error!
+			EGifCloseFile(gif);
+			delete gifBuffer;
+			FreeMapObject(colorMap);
+			return -5;
+		}
 
 		if (is_CI8_UNIQUE) {
 			// Update the ColorMap for this frame.
@@ -214,12 +258,14 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 		}
 
 		// Start the frame.
-		if (EGifPutImageDesc(gif, 0, 0, w, h, false, (is_CI8_UNIQUE ? colorMap : nullptr)) != GIF_OK) {
+		if (EGifPutImageDesc(gif, 0, 0, w, h, false,
+		    (is_CI8_UNIQUE ? colorMap : nullptr)) != GIF_OK)
+		{
 			// Error!
 			EGifCloseFile(gif);
 			delete gifBuffer;
 			FreeMapObject(colorMap);
-			return -5;
+			return -6;
 		}
 
 		// Write the entire image.
@@ -230,7 +276,7 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 			EGifCloseFile(gif);
 			delete gifBuffer;
 			FreeMapObject(colorMap);
-			return -6;
+			return -7;
 		}
 	}
 
