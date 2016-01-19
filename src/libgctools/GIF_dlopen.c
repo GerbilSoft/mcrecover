@@ -237,7 +237,6 @@ void *GifDlGetUserData(const GifFileType *GifFile)
 			return ((const GifFileType_v50*)GifFile)->UserData;
 		case 42:
 		case 41:
-			return ((const GifFileType_v41*)GifFile)->UserData;
 		case 40:
 			return ((const GifFileType_v40*)GifFile)->UserData;
 		default:
