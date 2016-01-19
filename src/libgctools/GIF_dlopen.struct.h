@@ -28,9 +28,21 @@
 extern "C" {
 #endif
 
+// giflib version enum.
+// Value maps to the soname.
+typedef enum {
+	GIFLIB_UNKNOWN = -1,
+
+	GIFLIB_51 = 7,
+	GIFLIB_50 = 6,
+	GIFLIB_42 = 5,	// actually 4, but 5 is unused
+	GIFLIB_41 = 4,
+	GIFLIB_40 = 3,  // TODO
+} GifLib_Version_t;
+
 // giflib function pointers.
 typedef struct _giflib_t {
-	int version;
+	GifLib_Version_t version;
 
 	// TODO: Split into multiple structs if a lot of these
 	// functions are the same?

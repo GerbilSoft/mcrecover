@@ -64,18 +64,9 @@ static bool have_tried_dlopen = false;
  */
 static int init_giflib(void)
 {
-	/**
-	 * giflib SO versions:
-	 * - giflib-5.1: libgif.so.7
-	 * - giflib-5.0: libgif.so.6
-	 * - giflib-4.2: libgif.so.5 (TODO: Verify!)
-	 * - giflib-4.1: libgif.so.4
-	 * - giflib-4.0: [unknown] - probably the oldest we'll support?
-	 * idx 0 = library version; idx 1 = so version
-	 */
-	static const uint8_t so_map[5][2] = {
-		{51, 7}, {50, 6}, {42, 5}, {41, 4}, {40, 3}
-	};
+	// Check for giflib .so versions 7 through 3.
+	// This corresponds to 5.1, 5.0, 4.2, 4.1, and 4.0.
+	// NOTE: .so version 5 doesn't exist (4.2 is still v4),
 	char giflib_dll_filename[32];
 	int i;
 
@@ -85,19 +76,33 @@ static int init_giflib(void)
 	}
 
 	// External GIF library.
-	giflib.version = 0;
-	for (i = 0; i < 5; i++) {
+	giflib.version = GIFLIB_UNKNOWN;
+	for (i = 7; i >= 3; i--) {
+		if (i == 5) {
+			// .so version 5 doesn't exist.
+			continue;
+		}
+
 		// TODO: On Windows, it might just be called giflib.dll.
 		// Identifying the actual version may be tricky.
 #ifdef _WIN32
 #error External giflib is not currently supported on Windows.
 #endif
 		snprintf(giflib_dll_filename, sizeof(giflib_dll_filename),
-			 "libgif.so.%d", so_map[i][1]);
+			 "libgif.so.%d", i);
 		giflib_dll = dlopen(giflib_dll_filename, RTLD_LOCAL|RTLD_NOW);
 		if (giflib_dll) {
 			// Found giflib.
-			giflib.version = so_map[i][0];
+			giflib.version = i;
+			if (i == GIFLIB_41) {
+				// Check for giflib-4.2.
+				if (dlsym(giflib_dll, "GifErrorString") != NULL &&
+				    dlsym(giflib_dll, "GifLastError") != NULL)
+				{
+					// This is giflib-4.2.
+					i = GIFLIB_42;
+				}
+			}
 			break;
 		}
 	}
@@ -115,7 +120,7 @@ static int init_giflib(void)
 		if (!giflib.section.symname) { \
 			/* Error loading a required symbol. */ \
 			/* TODO: Try the next available soname? */ \
-			giflib.version = 0; \
+			giflib.version = GIFLIB_UNKNOWN; \
 			dlclose(giflib_dll); \
 			giflib_dll = NULL; \
 			return 0; /* TODO: dlsym() error code? */ \
@@ -127,7 +132,7 @@ static int init_giflib(void)
 		if (!giflib.section.symname) { \
 			/* Error loading a required symbol. */ \
 			/* TODO: Try the next available soname? */ \
-			giflib.version = 0; \
+			giflib.version = GIFLIB_UNKNOWN; \
 			dlclose(giflib_dll); \
 			giflib_dll = NULL; \
 			return 0; /* TODO: dlsym() error code? */ \
@@ -164,7 +169,7 @@ static int init_giflib(void)
 	}
 
 	switch (giflib.version) {
-		case 51:
+		case GIFLIB_51:
 			// giflib-5.1
 			DLOPEN_GIF(v51, EGifOpenFileName);
 			DLOPEN_GIF(v51, EGifOpenFileHandle);
@@ -178,7 +183,7 @@ static int init_giflib(void)
 			DLOPEN_GIF(v51, GifErrorString);
 			break;
 
-		case 50:
+		case GIFLIB_50:
 			// giflib-5.0
 			DLOPEN_GIF(v50, EGifOpenFileName);
 			DLOPEN_GIF(v50, EGifOpenFileHandle);
@@ -192,7 +197,7 @@ static int init_giflib(void)
 			DLOPEN_GIF(v50, GifErrorString);
 			break;
 
-		case 42:
+		case GIFLIB_42:
 			// giflib-4.2
 			DLOPEN_GIF(v42, EGifOpenFileName);
 			DLOPEN_GIF(v42, EGifOpenFileHandle);
@@ -207,8 +212,8 @@ static int init_giflib(void)
 			DLOPEN_GIF(v42, GifLastError);
 			break;
 
-		case 41:
-		case 40:
+		case GIFLIB_41:
+		case GIFLIB_40:
 			// giflib-4.0, 4.1
 			DLOPEN_GIF(v40, EGifOpenFileName);
 			DLOPEN_GIF(v40, EGifOpenFileHandle);
@@ -223,7 +228,7 @@ static int init_giflib(void)
 
 		default:
 			// Unknown giflib.
-			giflib.version = 0;
+			giflib.version = GIFLIB_UNKNOWN;
 			dlclose(giflib_dll);
 			giflib_dll = NULL;
 			return 0;
@@ -244,7 +249,17 @@ int GifDlVersion(void)
 		have_tried_dlopen = true;
 	}
 
-	return giflib.version;
+	// TODO: Use a lookup table?
+	switch (giflib.version) {
+		case GIFLIB_51: return 51;
+		case GIFLIB_50: return 50;
+		case GIFLIB_42: return 42;
+		case GIFLIB_41: return 41;
+		case GIFLIB_40: return 40;
+
+		case GIFLIB_UNKNOWN:
+		default:        return 0;
+	}
 }
 
 /**
@@ -255,12 +270,12 @@ int GifDlVersion(void)
 void *GifDlGetUserData(const GifFileType *GifFile)
 {
 	switch (giflib.version) {
-		case 51:
-		case 50:
+		case GIFLIB_51:
+		case GIFLIB_50:
 			return ((const GifFileType_v50*)GifFile)->UserData;
-		case 42:
-		case 41:
-		case 40:
+		case GIFLIB_42:
+		case GIFLIB_41:
+		case GIFLIB_40:
 			return ((const GifFileType_v40*)GifFile)->UserData;
 		default:
 			break;
