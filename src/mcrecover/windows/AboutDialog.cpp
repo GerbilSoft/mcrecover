@@ -33,7 +33,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
 #include <QtCore/QCoreApplication>
-#include <QtGui/QScrollArea>
+#include <QScrollArea>
 
 // Path functions.
 #include "PathFuncs.hpp"
@@ -133,8 +133,7 @@ void AboutDialogPrivate::initAboutDialogText(void)
 	// Set the "MegaCard Engine" text.
 	sPrgTitle += sLineBreak + sLineBreak +
 		QApplication::translate("AboutDialog",
-			"Powered by the<br/>\n<b>MegaCard Engine</b>™",
-			0, QApplication::UnicodeUTF8);
+			"Powered by the<br/>\n<b>MegaCard Engine</b>™", 0);
 #endif
 
 	// Set the program title text.

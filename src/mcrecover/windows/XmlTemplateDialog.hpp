@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_XMLTEMPLATEDIALOG_HPP__
 #define __MCRECOVER_XMLTEMPLATEDIALOG_HPP__
 
-#include <QtGui/QDialog>
+#include <QDialog>
 
 class GcnFile;
 

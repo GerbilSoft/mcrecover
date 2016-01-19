@@ -22,10 +22,10 @@
 #include "SALevelStats.hpp"
 
 // Qt widgets.
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QSpinBox>
-#include <QtGui/QCheckBox>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QSpinBox>
+#include <QCheckBox>
 
 // TimeCodeEdit widget.
 #include "TimeCodeEdit.hpp"

@@ -26,7 +26,7 @@
 #include <QtCore/QEvent>
 #include <QtCore/QSignalMapper>
 #include <QtCore/QVector>
-#include <QtGui/QAction>
+#include <QAction>
 
 // Files.
 #include "card/File.hpp"

@@ -29,7 +29,7 @@
 #include <QtCore/QLibraryInfo>
 #include <QtCore/QDir>
 #include <QtGui/QIcon>
-#include <QtGui/QStyle>
+#include <QStyle>
 
 // Custom types for QVariant.
 #include "GcnDateTime.hpp"
@@ -101,6 +101,7 @@ McRecoverQApplication::McRecoverQApplication(int &argc, char **argv)
 	McRecoverQApplicationPrivate::mcrqaInit();
 }
 
+#if QT_VERSION < 0x050000
 McRecoverQApplication::McRecoverQApplication(int &argc, char **argv, bool GUIenabled)
 	: QApplication(argc, argv, GUIenabled)
 {
@@ -112,6 +113,7 @@ McRecoverQApplication::McRecoverQApplication(int &argc, char **argv, Type type)
 {
 	McRecoverQApplicationPrivate::mcrqaInit();
 }
+#endif /* QT_VERSION < 0x050000 */
 
 /**
  * Get an icon from the system theme.

@@ -23,7 +23,7 @@
 #define __MCRECOVER_MEMCARDITEMDELEGATE_HPP__
 
 // Qt includes.
-#include <QtGui/QStyledItemDelegate>
+#include <QStyledItemDelegate>
 
 class MemCardItemDelegatePrivate;
 

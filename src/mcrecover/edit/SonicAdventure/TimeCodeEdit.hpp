@@ -22,8 +22,8 @@
 #ifndef __MCRECOVER_EDIT_SONICADVENTURE_TIMECODEEDIT_HPP__
 #define __MCRECOVER_EDIT_SONICADVENTURE_TIMECODEEDIT_HPP__
 
-#include <QtGui/QWidget>
 #include <QtCore/QMetaType>
+#include <QWidget>
 
 // C includes.
 #include <stdint.h>

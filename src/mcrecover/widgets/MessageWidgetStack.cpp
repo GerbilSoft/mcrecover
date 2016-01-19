@@ -25,7 +25,7 @@
 // Qt includes.
 #include <QtCore/QSet>
 #include <QtCore/QSignalMapper>
-#include <QtGui/QVBoxLayout>
+#include <QVBoxLayout>
 
 // Qt animation includes.
 #include <QtCore/QTimeLine>

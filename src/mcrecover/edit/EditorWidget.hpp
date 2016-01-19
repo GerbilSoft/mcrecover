@@ -26,7 +26,7 @@
 #include <cassert>
 
 // Qt includes.
-#include <QtGui/QWidget>
+#include <QWidget>
 
 // TODO: Namespace?
 class File;

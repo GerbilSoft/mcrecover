@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_MCRECOVERWINDOW_HPP__
 #define __MCRECOVER_MCRECOVERWINDOW_HPP__
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 
 // Qt includes.
 #include <QtCore/QString>

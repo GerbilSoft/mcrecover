@@ -22,10 +22,10 @@
 #ifndef __MCRECOVER_MCRECOVERQAPPLICATION_HPP__
 #define __MCRECOVER_MCRECOVERQAPPLICATION_HPP__
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtGui/QIcon>
 #include <QtGui/QPixmap>
-#include <QtGui/QStyle>
+#include <QStyle>
 
 class McRecoverQApplicationPrivate;
 
@@ -35,8 +35,10 @@ class McRecoverQApplication : public QApplication
 
 	public:
 		McRecoverQApplication(int &argc, char **argv);
+#if QT_VERSION < 0x050000
 		McRecoverQApplication(int &argc, char **argv, bool GUIenabled);
 		McRecoverQApplication(int &argc, char **argv, Type type);
+#endif /* QT_VERSION < 0x050000 */
 		virtual ~McRecoverQApplication() { }
 
 	private:

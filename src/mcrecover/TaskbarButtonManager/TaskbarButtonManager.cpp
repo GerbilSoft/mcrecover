@@ -22,7 +22,7 @@
 #include "TaskbarButtonManager.hpp"
 
 // Qt includes.
-#include <QtGui/QWidget>
+#include <QWidget>
 
 // Available TaskbarButtonManager classes.
 #include <config.mcrecover.h>

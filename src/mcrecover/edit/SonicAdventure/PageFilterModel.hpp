@@ -25,7 +25,7 @@
 #define __MCRECOVER_EDIT_SONICADVENTURE_PAGEFILTERMODEL_HPP__
 
 // Qt includes.
-#include <QtGui/QSortFilterProxyModel>
+#include <QSortFilterProxyModel>
 
 class PageFilterModelPrivate;
 class PageFilterModel : public QSortFilterProxyModel

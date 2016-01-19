@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_TABLESELECT_HPP__
 #define __MCRECOVER_TABLESELECT_HPP__
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class GcnCard;
 

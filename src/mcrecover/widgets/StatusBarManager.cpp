@@ -27,10 +27,10 @@
 // Qt includes.
 #include <QtCore/QDir>
 #include <QtCore/QTimer>
-#include <QtGui/QApplication>
-#include <QtGui/QLabel>
-#include <QtGui/QStatusBar>
-#include <QtGui/QProgressBar>
+#include <QApplication>
+#include <QLabel>
+#include <QStatusBar>
+#include <QProgressBar>
 
 // taskbarButtonManager.
 #include "TaskbarButtonManager/TaskbarButtonManager.hpp"

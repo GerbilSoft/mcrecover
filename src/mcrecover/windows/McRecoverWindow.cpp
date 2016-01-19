@@ -65,14 +65,15 @@ using std::vector;
 #include <QtCore/QSignalMapper>
 #include <QtCore/QLocale>
 #include <QtCore/QTextCodec>
-#include <QtGui/QAction>
-#include <QtGui/QActionGroup>
+#include <QtCore/QMimeData>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDropEvent>
-#include <QtGui/QFileDialog>
-#include <QtGui/QLabel>
-#include <QtGui/QMessageBox>
-#include <QtGui/QToolBar>
+#include <QAction>
+#include <QActionGroup>
+#include <QFileDialog>
+#include <QLabel>
+#include <QMessageBox>
+#include <QToolBar>
 
 // GcImageWriter.
 #include "GcImageWriter.hpp"

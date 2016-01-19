@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_EDIT_SONICADVENTURE_SALEVELSTATS_HPP__
 #define __MCRECOVER_EDIT_SONICADVENTURE_SALEVELSTATS_HPP__
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 struct _sa_save_slot;
 struct _sadx_extra_save_slot;

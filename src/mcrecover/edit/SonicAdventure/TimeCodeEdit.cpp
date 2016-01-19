@@ -21,13 +21,6 @@
 
 #include "TimeCodeEdit.hpp"
 
-// Qt widgets.
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QPushButton>
-#include <QtGui/QButtonGroup>
-#include <QtCore/QSignalMapper>
-
 // Sonic Adventure save file definitions.
 #include "sa_defs.h"
 

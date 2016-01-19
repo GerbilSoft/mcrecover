@@ -25,10 +25,10 @@
 #include <QtCore/QSignalMapper>
 
 // Qt widgets.
-#include <QtGui/QLabel>
-#include <QtGui/QSpinBox>
-#include <QtGui/QCheckBox>
-#include <QtGui/QComboBox>
+#include <QLabel>
+#include <QSpinBox>
+#include <QCheckBox>
+#include <QComboBox>
 
 // C includes. (C++ namespace)
 #include <cstring>

@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_ABOUTDIALOG_HPP__
 #define __MCRECOVER_ABOUTDIALOG_HPP__
 
-#include <QtGui/QDialog>
+#include <QDialog>
 
 // Qt classes.
 class QWidget;

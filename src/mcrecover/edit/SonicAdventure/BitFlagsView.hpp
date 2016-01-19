@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSVIEW_HPP__
 #define __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSVIEW_HPP__
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class BitFlagsModel;
 

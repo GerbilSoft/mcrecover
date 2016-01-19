@@ -28,10 +28,10 @@
 #include <QtGui/QPainter>
 
 // Qt widgets.
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QFrame>
-#include <QtGui/QLabel>
-#include <QtGui/QToolButton>
+#include <QHBoxLayout>
+#include <QFrame>
+#include <QLabel>
+#include <QToolButton>
 
 // Qt animation includes.
 #include <QtCore/QTimeLine>

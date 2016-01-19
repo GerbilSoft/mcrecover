@@ -23,15 +23,15 @@
 
 // Qt includes.
 #include <QtCore/QSignalMapper>
-#include <QtGui/QApplication>
+#include <QApplication>
 
 // Qt widgets.
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QSpinBox>
-#include <QtGui/QCheckBox>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QSpinBox>
+#include <QCheckBox>
 #include <QtGui/QResizeEvent>
-#include <QtGui/QScrollBar>
+#include <QScrollBar>
 
 // C includes. (C++ namespace)
 #include <cstring>
