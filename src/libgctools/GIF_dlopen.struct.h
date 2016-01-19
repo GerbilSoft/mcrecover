@@ -121,6 +121,64 @@ typedef struct _giflib_t {
 	} common;
 } giflib_t;
 
+/**
+ * GifFileType from giflib-5.1.2.
+ * (compatible with v5.0.x, v5.1.x)
+ */
+typedef struct GifFileType_v50 {
+    GifWord SWidth, SHeight;         /* Size of virtual canvas */
+    GifWord SColorResolution;        /* How many colors can we generate? */
+    GifWord SBackGroundColor;        /* Background color for virtual canvas */
+    GifByteType AspectByte;	     /* Used to compute pixel aspect ratio */
+    ColorMapObject *SColorMap;       /* Global colormap, NULL if nonexistent. */
+    int ImageCount;                  /* Number of current image (both APIs) */
+    GifImageDesc Image;              /* Current image (low-level API) */
+    SavedImage *SavedImages;         /* Image sequence (high-level API) */
+    int ExtensionBlockCount;         /* Count extensions past last image */
+    ExtensionBlock *ExtensionBlocks; /* Extensions past last image */    
+    int Error;			     /* Last error condition reported */
+    void *UserData;                  /* hook to attach user data (TVT) */
+    void *Private;                   /* Don't mess with this! */
+} GifFileType_v50;
+
+/**
+ * GifFileType from giflib-4.2.
+ * Compatible with v4.1.x, v4.2.x.
+ * NOTE: 4.1.x originally used VoidPtr for UserData and Private.
+ * VoidPtr was defined to char* on SYSV, and void* elsewhere.
+ * We're using void*, since that's what later giflib uses.
+ */
+typedef struct GifFileType_v41 {
+    GifWord SWidth, SHeight,        /* Screen dimensions. */
+      SColorResolution,         /* How many colors can we generate? */
+      SBackGroundColor;         /* I hope you understand this one... */
+    ColorMapObject *SColorMap;  /* NULL if not exists. */
+    int ImageCount;             /* Number of current image */
+    GifImageDesc Image;         /* Block describing current image */
+    struct SavedImage *SavedImages; /* Use this to accumulate file state */
+    void *UserData;            /* hook to attach user data (TVT) */
+    void *Private;             /* Don't mess with this! */
+} GifFileType_v41;
+
+/**
+ * GifFileType from giflib-4.0.
+ * Compatible with v4.0.x.
+ * NOTE: This originally used VoidPtr for UserData and Private.
+ * VoidPtr was defined to char* on SYSV, and void* elsewhere.
+ * We're using void*, since that's what later giflib uses.
+ */
+typedef struct GifFileType_v40 {
+    int SWidth, SHeight,		/* Screen dimensions. */
+	SColorResolution, 		/* How many colors can we generate? */
+	SBackGroundColor;		/* I hope you understand this one... */
+    ColorMapObject *SColorMap;		/* NULL if not exists. */
+    int ImageCount;			/* Number of current image */
+    GifImageDesc Image;			/* Block describing current image */
+    struct SavedImage *SavedImages;	/* Use this to accumulate file state */
+    void *UserData;           /* hook to attach user data (TVT) */
+    void *Private;	  		/* Don't mess with this! */
+} GifFileType_v40;
+
 #ifdef __cplusplus
 }
 #endif
