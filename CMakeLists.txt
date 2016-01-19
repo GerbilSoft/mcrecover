@@ -78,6 +78,7 @@ INCLUDE(cmake/platform.cmake)
 # results may be lost.
 INCLUDE(CheckPCRE)
 INCLUDE(CheckPNG)
+INCLUDE(CheckGIF)
 
 # Project subdirectories.
 ADD_SUBDIRECTORY(extlib)

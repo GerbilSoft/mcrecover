@@ -94,13 +94,18 @@ INCLUDE_DIRECTORIES("${mcrecover_base_BINARY_DIR}")
 # PCRE
 INCLUDE(CheckPCRE)
 INCLUDE_DIRECTORIES(${PCRE_INCLUDE_DIR})
+ADD_DEFINITIONS(${PCRE_DEFINITIONS})
 
-# libpng (AboutDialog only; indirectly through libgctools)
+# libpng (AboutDialog only; linked indirectly through libgctools)
 INCLUDE(CheckPNG)
 INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
-
-# zlib (AboutDialog only!)
 INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR})
+ADD_DEFINITIONS(${ZLIB_DEFINITIONS} ${PNG_DEFINITIONS})
+
+# giflib (AboutDialog only; linked indirectly through libgctools)
+INCLUDE(CheckGIF)
+INCLUDE_DIRECTORIES(${GIF_INCLUDE_DIR})
+ADD_DEFINITIONS(${GIF_DEFINITIONS})
 
 # Write the config.h file.
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.mcrecover.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.mcrecover.h")
@@ -465,12 +470,6 @@ ADD_DEFINITIONS(-DQT_USE_FAST_CONCATENATION
 	-DQT_USE_QSTRINGBUILDER
 	-DQT_NO_CAST_FROM_ASCII
 	-DQT_NO_CAST_TO_ASCII
-	)
-
-# Definitions for third-party libraries.
-ADD_DEFINITIONS(${ZLIB_DEFINITIONS}
-	${PNG_DEFINITIONS}
-	${PCRE_DEFINITIONS}
 	)
 
 # Win32: image version.

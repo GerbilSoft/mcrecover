@@ -2,7 +2,7 @@
  * GameCube Tools Library.                                                 *
  * config.libgctools.h.in: libgctools configuration. (source file)         *
  *                                                                         *
- * Copyright (c) 2014 by David Korth.                                      *
+ * Copyright (c) 2014-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -29,5 +29,11 @@
 
 /* Define to 1 if we're using our own libpng. */
 #cmakedefine USE_INTERNAL_PNG 1
+
+/* Define to 1 if we should enable GIF support using giflib. */
+#cmakedefine USE_GIF 1
+
+/* Define to 1 if we're using our own giflib. */
+#cmakedefine USE_INTERNAL_GIF 1
 
 #endif /* __LIBGCTOOLS_CONFIG_LIBGCTOOLS_H__ */

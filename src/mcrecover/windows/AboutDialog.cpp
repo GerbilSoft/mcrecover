@@ -55,6 +55,9 @@
 #include "APNG_dlopen.h"
 #endif /* HAVE_PNG */
 
+// giflib
+#include "GIF_dlopen.h"
+
 /** AboutDialogPrivate **/
 
 #include "ui_AboutDialog.h"
@@ -434,9 +437,8 @@ QString AboutDialogPrivate::GetLibraries(void)
 			: AboutDialog::tr(" (No APNG support)"));
 
 	sLibraries += sDLineBreak;
-	QString pngVersion = QLatin1String("libpng %1.%2.%3");
 	const uint32_t png_version_number = png_access_version_number();
-	pngVersion = pngVersion
+	QString pngVersion = QString::fromLatin1("libpng %1.%2.%3")
 			.arg(png_version_number / 10000)
 			.arg((png_version_number / 100) % 100)
 			.arg(png_version_number % 100);
@@ -450,6 +452,7 @@ QString AboutDialogPrivate::GetLibraries(void)
 	sLibraries += sCompiledWith.arg(pngVersionCompiled) + QChar(L'\n');
 	sLibraries += sUsingDll.arg(pngVersion);
 #endif /* USE_INTERNAL_PNG */
+
 	/**
 	 * NOTE: MSVC does not define __STDC__ by default.
 	 * If __STDC__ is not defined, the libpng copyright
@@ -469,6 +472,32 @@ QString AboutDialogPrivate::GetLibraries(void)
 	sLibraries += png_copyright;
 	sLibraries += sLicense.arg(QLatin1String("libpng license"));
 #endif /* HAVE_PNG */
+
+#ifdef USE_GIF
+	/** giflib **/
+	sLibraries += sDLineBreak;
+	// TODO: Constant string instead of .arg()?
+#ifdef USE_INTERNAL_GIF
+	QString gifVersion = QString::fromLatin1("giflib %1.%2.%3")
+			.arg(GIFLIB_MAJOR)
+			.arg(GIFLIB_MINOR)
+			.arg(GIFLIB_RELEASE);
+	sLibraries += sIntCopyOf.arg(gifVersion) + QChar(L'\n');
+	sLibraries += QLatin1String("Copyright (c) 1989-2016 giflib developers.") + QChar(L'\n');
+	sLibraries += sLicense.arg(QLatin1String("MIT/X license"));
+#else /* !USE_INTERNAL_GIF */
+	int giflib_version = GifDlVersion();
+	if (giflib_version > 0) {
+		// TODO: Get the revision number somehow?
+		QString gifVersion = QString::fromLatin1("giflib %1.%2")
+				.arg(giflib_version / 10)
+				.arg(giflib_version % 10);
+		sLibraries += sUsingDll.arg(gifVersion) + QChar(L'\n');
+		sLibraries += QLatin1String("Copyright (c) 1989-2016 giflib developers.") + QChar(L'\n');
+		sLibraries += sLicense.arg(QLatin1String("MIT/X license"));
+	}
+#endif /* USE_INTERNAL_GIF */
+#endif /* USE_GIF */
 
 	// Return the included libraries string.
 	return sLibraries;
