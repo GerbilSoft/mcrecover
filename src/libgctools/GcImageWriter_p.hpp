@@ -132,7 +132,6 @@ class GcImageWriterPrivate
 		int writePng_HS(const std::vector<const GcImage*> *gcImages);
 #endif /* HAVE_PNG */
 
-#ifdef HAVE_GIF
 		/**
 		 * GIF write function.
 		 * @param gif GifFileType pointer.
@@ -176,7 +175,6 @@ class GcImageWriterPrivate
 		 */
 		static int gif_writeARGB32Image(GifFileType *gif,
 				const GcImage *gcImage, ColorMapObject *colorMap);
-#endif /* HAVE_GIF */
 
 	public:
 #ifdef HAVE_PNG
@@ -199,7 +197,6 @@ class GcImageWriterPrivate
 				  GcImageWriter::AnimImageFormat animImgf);
 #endif /* HAVE_PNG */
 
-#ifdef HAVE_GIF
 		/**
 		 * Write an animated GcImage to the internal memory buffer in GIF format.
 		 * @param gcImages	[in] Vector of GcImage.
@@ -208,7 +205,6 @@ class GcImageWriterPrivate
 		 */
 		int writeGif_anim(const std::vector<const GcImage*> *gcImages,
 				  const std::vector<int> *gcIconDelays);
-#endif /* HAVE_GIF */
 };
 
 #endif /* __LIBGCTOOLS_GCIMAGE_P_HPP__ */

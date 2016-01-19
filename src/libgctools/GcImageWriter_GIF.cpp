@@ -274,6 +274,12 @@ int GcImageWriterPrivate::gif_writeARGB32Image(GifFileType *gif,
 int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 					const vector<int> *gcIconDelays)
 {
+	// Make sure giflib is usable.
+	if (GifDlVersion() == 0) {
+		// giflib is NOT usable.
+		return 0;
+	}
+
 	// All frames should be the same size.
 	const GcImage *gcImage0 = gcImages->at(0);
 	const int w = gcImage0->width();
