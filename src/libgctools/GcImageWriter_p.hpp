@@ -41,6 +41,9 @@ class GcImage;
 // giflib
 #include "GIF_dlopen.h"
 
+// TODO: Split PNG and GIF into separate classes.
+// Need to make a common class for the CI8_UNIQUE functions.
+
 class GcImageWriterPrivate
 {
 	public:
@@ -64,7 +67,8 @@ class GcImageWriterPrivate
 		 * @param gcImages	[in] Vector of GcImage.
 		 * @return True if the gcImages are CI8_UNIQUE; false if not.
 		 */
-		bool is_gcImages_CI8_UNIQUE(const std::vector<const GcImage*> *gcImages);
+		static bool is_gcImages_CI8_UNIQUE(
+			const std::vector<const GcImage*> *gcImages);
 
 		/**
 		 * Check if a vector of gcImages is CI8_UNIQUE.
@@ -72,14 +76,15 @@ class GcImageWriterPrivate
 		 * @param gcImages	[in] Vector of GcImage.
 		 * @return Vector of ARGB32 GcImage if CI8_UNIQUE, or nullptr otherwise.
 		 */
-		std::vector<const GcImage*> *gcImages_from_CI8_UNIQUE(const std::vector<const GcImage*> *gcImages);
+		static std::vector<const GcImage*> *gcImages_from_CI8_UNIQUE(
+			const std::vector<const GcImage*> *gcImages);
 
 #ifdef HAVE_PNG
 		/**
 		 * PNG write function.
-		 * @param png_ptr PNG pointer.
-		 * @param buf Data to write.
-		 * @param len Size of buf.
+		 * @param png_ptr	[in] PNG pointer.
+		 * @param buf		[in] Data to write.
+		 * @param len		[in] Size of buf.
 		 */
 		static void png_io_write(png_structp png_ptr, png_bytep buf, png_size_t len);
 
@@ -87,20 +92,20 @@ class GcImageWriterPrivate
 		 * PNG flush function.
 		 * Required when writing PNG images.
 		 * This implementation is a no-op.
-		 * @param png_ptr PNG pointer.
+		 * @param png_ptr	[in] PNG pointer.
 		 */
 		static void png_io_flush(png_structp png_ptr);
 
 		/**
 		 * Write a PLTE chunk to a PNG image.
-		 * @param png_ptr PNG pointer.
-		 * @param info_ptr PNG info pointer.
-		 * @param palette Palette. (ARGB32 format)
-		 * @param num_entries Number of palette entries.
+		 * @param png_ptr	[in] PNG pointer.
+		 * @param info_ptr	[in] PNG info pointer.
+		 * @param palette	[in] Palette. (ARGB32 format)
+		 * @param num_entries	[in] Number of palette entries.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int writePng_PLTE(png_structp png_ptr, png_infop info_ptr,
-				  const uint32_t *palette, int num_entries);
+		static int writePng_PLTE(png_structp png_ptr, png_infop info_ptr,
+					 const uint32_t *palette, int num_entries);
 
 		/**
 		 * Write an animated GcImage to the internal memory buffer in APNG format.
@@ -135,9 +140,9 @@ class GcImageWriterPrivate
 #ifdef USE_GIF
 		/**
 		 * GIF write function.
-		 * @param gif GifFileType pointer.
-		 * @param buf Data to write.
-		 * @param len Size of buf.
+		 * @param gif	[in] GifFileType pointer.
+		 * @param buf	[in] Data to write.
+		 * @param len	[in] Size of buf.
 		 * @return Number of bytes written.
 		 */
 		static int gif_output_func(GifFileType *gif, const GifByteType *buf, int len);

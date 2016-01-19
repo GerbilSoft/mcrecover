@@ -40,9 +40,9 @@ using std::vector;
 
 /**
  * PNG write function.
- * @param png_ptr PNG pointer.
- * @param buf Data to write.
- * @param len Size of buf.
+ * @param png_ptr	[in] PNG pointer.
+ * @param buf		[in] Data to write.
+ * @param len		[in] Size of buf.
  */
 void GcImageWriterPrivate::png_io_write(png_structp png_ptr, png_bytep buf, png_size_t len)
 {
@@ -61,7 +61,7 @@ void GcImageWriterPrivate::png_io_write(png_structp png_ptr, png_bytep buf, png_
  * PNG flush function.
  * Required when writing PNG images.
  * This implementation is a no-op.
- * @param png_ptr PNG pointer.
+ * @param png_ptr	[in] PNG pointer.
  */
 void GcImageWriterPrivate::png_io_flush(png_structp png_ptr)
 {
@@ -71,10 +71,10 @@ void GcImageWriterPrivate::png_io_flush(png_structp png_ptr)
 
 /**
  * Write a PLTE chunk to a PNG image.
- * @param png_ptr PNG pointer.
- * @param info_ptr PNG info pointer.
- * @param palette Palette. (ARGB32 format)
- * @param num_entries Number of palette entries.
+ * @param png_ptr	[in] PNG pointer.
+ * @param info_ptr	[in] PNG info pointer.
+ * @param palette	[in] Palette. (ARGB32 format)
+ * @param num_entries	[in] Number of palette entries.
  * @return 0 on success; non-zero on error.
  */
 int GcImageWriterPrivate::writePng_PLTE(

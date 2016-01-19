@@ -51,9 +51,9 @@ int gcn_GifQuantizeBuffer(unsigned int Width, unsigned int Height,
 
 /**
  * GIF write function.
- * @param gif GifFileType pointer.
- * @param buf Data to write.
- * @param len Size of buf.
+ * @param gif	[in] GifFileType pointer.
+ * @param buf	[in] Data to write.
+ * @param len	[in] Size of buf.
  * @return Number of bytes written.
  */
 int GcImageWriterPrivate::gif_output_func(GifFileType *gif, const GifByteType *buf, int len)
