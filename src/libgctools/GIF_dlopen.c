@@ -25,6 +25,7 @@
 // C includes.
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #ifndef _WIN32
 // Unix dlopen()
@@ -57,6 +58,25 @@ static giflib_t giflib;
  * Have we tried dlopen() yet?
  */
 static bool have_tried_dlopen = false;
+
+/**
+ * Set GIF standard to GIF89a.
+ * This is for compatibility with giflib-4.2,
+ * which has a global GIF89a setting.
+ */
+static bool use_gif89a = false;
+
+/**
+ * GIF extension code state.
+ * Used for compatibility with giflib-4.2's EGifPutExtension*() functions.
+ * TODO: Associate gif_ext_code with a GifFile.
+ * Note that giflib-4.2 isn't thread-safe, so this isn't
+ * entirely necessary...
+ */
+static struct {
+	int GifExtCode;
+	bool first;
+} ext_state;
 
 /**
  * Attempt to initialize giflib.
@@ -284,4 +304,416 @@ void *GifDlGetUserData(const GifFileType *GifFile)
 	// Unknown version of GIFLIB.
 	return NULL;
 }
+
+// NOTE: No NULL pointer checking is done in these functions.
+// GifDlVersion() MUST be called once on startup to determine
+// if giflib is available. If it isn't available, do NOT call
+// these functions!
+
+/** Common giflib functions. **/
+
+int EGifDlSpew(GifFileType * GifFile)
+{
+	return giflib.common.EGifSpew(GifFile);
+}
+
+int EGifDlPutScreenDesc(GifFileType *GifFile,
+			const int GifWidth, const int GifHeight, 
+			const int GifColorRes,
+			const int GifBackGround,
+			const ColorMapObject *GifColorMap)
+{
+	return giflib.common.EGifPutScreenDesc(GifFile, GifWidth, GifHeight,
+			GifColorRes, GifBackGround, GifColorMap);
+}
+
+int EGifDlPutImageDesc(GifFileType *GifFile, 
+		       const int GifLeft, const int GifTop,
+		       const int GifWidth, const int GifHeight, 
+		       const bool GifInterlace,
+		       const ColorMapObject *GifColorMap)
+{
+	// Slight difference introduced in v4.2
+	// due to switch from 'int' to 'bool'.
+	if (giflib.version >= GIFLIB_42) {
+		return giflib.v42_bool.EGifPutImageDesc(GifFile, GifLeft, GifTop,
+				GifWidth, GifHeight, GifInterlace, GifColorMap);
+	} else {
+		return giflib.v40_int.EGifPutImageDesc(GifFile, GifLeft, GifTop,
+				GifWidth, GifHeight, GifInterlace, GifColorMap);
+	}
+}
+
+int EGifDlPutLine(GifFileType *GifFile, GifPixelType *GifLine,
+		int GifLineLen)
+{
+	return giflib.common.EGifPutLine(GifFile, GifLine, GifLineLen);
+}
+
+int EGifDlPutPixel(GifFileType *GifFile, const GifPixelType GifPixel)
+{
+	return giflib.common.EGifPutPixel(GifFile, GifPixel);
+}
+
+int EGifDlPutComment(GifFileType *GifFile, const char *GifComment)
+{
+	return giflib.common.EGifPutComment(GifFile, GifComment);
+}
+
+int EGifDlPutExtension(GifFileType *GifFile, const int GifExtCode, 
+		     const int GifExtLen,
+		     const void *GifExtension)
+{
+	return giflib.common.EGifPutExtension(GifFile, GifExtCode,
+			GifExtLen, GifExtension);
+}
+
+int EGifDlPutCode(GifFileType *GifFile, int GifCodeSize,
+		const GifByteType *GifCodeBlock)
+{
+	return giflib.common.EGifPutCode(GifFile, GifCodeSize, GifCodeBlock);
+}
+
+int EGifDlPutCodeNext(GifFileType *GifFile,
+		    const GifByteType *GifCodeBlock)
+{
+	return giflib.common.EGifPutCodeNext(GifFile, GifCodeBlock);
+}
+
+// NOTE: These functions exist in v4.2, v5.0, and v5.1;
+// however, their names were changed to Gif* in v5.0.
+// Arguments and functionality remain the same.
+
+ColorMapObject *GifDlMakeMapObject(int ColorCount,
+				   const GifColorType *ColorMap)
+{
+	return giflib.common.GifMakeMapObject(ColorCount, ColorMap);
+}
+
+void GifDlFreeMapObject(ColorMapObject *Object)
+{
+	giflib.common.GifFreeMapObject(Object);
+}
+
+ColorMapObject *GifDlUnionColorMap(const ColorMapObject *ColorIn1,
+				   const ColorMapObject *ColorIn2,
+				   GifPixelType ColorTransIn2[])
+{
+	return giflib.common.GifUnionColorMap(ColorIn1, ColorIn2, ColorTransIn2);
+}
+
+int GifDlBitSize(int n)
+{
+	return giflib.common.GifBitSize(n);
+}
+
+/** Functions that differ in various versions of giflib. **/
+
+GifFileType *EGifDlOpenFileName(const char *GifFileName,
+				const bool GifTestExistence, int *Error)
+{
+	switch (giflib.version) {
+		case GIFLIB_51:
+			return giflib.v51.EGifOpenFileName(
+				GifFileName, GifTestExistence, Error);
+		case GIFLIB_50:
+			return giflib.v50.EGifOpenFileName(
+				GifFileName, GifTestExistence, Error);
+		case GIFLIB_42: {
+			GifFileType *ret = giflib.v42.EGifOpenFileName(
+				GifFileName, GifTestExistence);
+			if (!ret && Error) {
+				*Error = giflib.v42.GifError();
+			}
+			return ret;
+		}
+
+		case GIFLIB_41:
+		case GIFLIB_40: {
+			GifFileType *ret = giflib.v40.EGifOpenFileName(
+				GifFileName, GifTestExistence);
+			if (!ret && Error) {
+				*Error = giflib.v40.GifError();
+			}
+			return ret;
+		}
+
+		default:
+			break;
+	}
+
+	if (Error) {
+		*Error = E_GIF_ERR_OPEN_FAILED;
+	}
+	return NULL;
+}
+
+GifFileType *EGifDlOpenFileHandle(const int GifFileHandle, int *Error)
+{
+	switch (giflib.version) {
+		case GIFLIB_51:
+			return giflib.v51.EGifOpenFileHandle(
+				GifFileHandle, Error);
+		case GIFLIB_50:
+			return giflib.v50.EGifOpenFileHandle(
+				GifFileHandle, Error);
+		case GIFLIB_42: {
+			GifFileType *ret = giflib.v42.EGifOpenFileHandle(
+				GifFileHandle);
+			if (!ret && Error) {
+				*Error = giflib.v42.GifError();
+			}
+			return ret;
+		}
+
+		case GIFLIB_41:
+		case GIFLIB_40: {
+			GifFileType *ret = giflib.v40.EGifOpenFileHandle(
+				GifFileHandle);
+			if (!ret && Error) {
+				*Error = giflib.v40.GifError();
+			}
+			return ret;
+		}
+
+		default:
+			break;
+	}
+
+	if (Error) {
+		*Error = E_GIF_ERR_OPEN_FAILED;
+	}
+	return NULL;
+}
+
+GifFileType *EGifDlOpen(void *userPtr, OutputFunc writeFunc, int *Error)
+{
+	switch (giflib.version) {
+		case GIFLIB_51:
+			return giflib.v51.EGifOpen(
+				userPtr, writeFunc, Error);
+		case GIFLIB_50:
+			return giflib.v50.EGifOpen(
+				userPtr, writeFunc, Error);
+		case GIFLIB_42: {
+			GifFileType *ret = giflib.v42.EGifOpen(
+				userPtr, writeFunc);
+			if (!ret && Error) {
+				*Error = giflib.v42.GifError();
+			}
+			return ret;
+		}
+
+		case GIFLIB_41:
+		case GIFLIB_40: {
+			GifFileType *ret = giflib.v40.EGifOpen(
+				userPtr, writeFunc);
+			if (!ret && Error) {
+				*Error = giflib.v40.GifError();
+			}
+			return ret;
+		}
+
+		default:
+			break;
+	}
+
+	if (Error) {
+		*Error = E_GIF_ERR_OPEN_FAILED;
+	}
+	return NULL;
+}
+
+const char *EGifDlGetGifVersion(GifFileType *GifFile)
+{
+	switch (giflib.version) {
+		case GIFLIB_51:
+			return giflib.v51.EGifGetGifVersion(GifFile);
+		case GIFLIB_50:
+			return giflib.v50.EGifGetGifVersion(GifFile);
+		default:
+			// giflib-4.2 and earlier have a global GIF version.
+			return (use_gif89a ? GIF89_STAMP : GIF87_STAMP);
+	}
+}
+
+int EGifDlCloseFile(GifFileType *GifFile, int *ErrorCode)
+{
+	switch (giflib.version) {
+		case GIFLIB_51:
+			return giflib.v51.EGifCloseFile(
+				GifFile, ErrorCode);
+
+		case GIFLIB_50: {
+			int ret = giflib.v50.EGifCloseFile(GifFile);
+			if (ret != GIF_OK) {
+				// Get the error code, then free GifFile.
+				if (ErrorCode) {
+					*ErrorCode = ((GifFileType_v50*)GifFile)->Error;
+				}
+				// TODO: EGifCloseFile() again so we
+				// don't free() across DLL boundaries?
+				free(GifFile);
+			}
+			return ret;
+		}
+
+		case GIFLIB_42: {
+			int ret = giflib.v42.EGifCloseFile(GifFile);
+			if (ret != GIF_OK && ErrorCode) {
+				*ErrorCode = giflib.v42.GifError();
+			}
+			return ret;
+		}
+
+		case GIFLIB_40:
+		case GIFLIB_41: {
+			int ret = giflib.v40.EGifCloseFile(GifFile);
+			if (ret != GIF_OK && ErrorCode) {
+				*ErrorCode = giflib.v40.GifError();
+			}
+			return ret;
+		}
+
+		default:
+			break;
+	}
+
+	if (ErrorCode) {
+		*ErrorCode = E_GIF_ERR_CLOSE_FAILED;
+	}
+	return GIF_ERROR;
+}
+
+void EGifDlSetGifVersion(GifFileType *GifFile, const bool gif89)
+{
+	use_gif89a = gif89;
+	switch (giflib.version) {
+		case GIFLIB_51:
+			giflib.v51.EGifSetGifVersion(GifFile, gif89);
+			break;
+		case GIFLIB_50:
+			giflib.v50.EGifSetGifVersion(GifFile, gif89);
+			break;
+		case GIFLIB_42:
+			giflib.v42.EGifSetGifVersion(gif89 ? "89a" : "87a");
+			break;
+		case GIFLIB_41:
+		case GIFLIB_40:
+			giflib.v42.EGifSetGifVersion(gif89 ? "89a" : "87a");
+			break;
+		default:
+			break;
+	}
+}
+
+int EGifDlPutExtensionLeader(GifFileType *GifFile, const int GifExtCode)
+{
+	switch (giflib.version) {
+		case GIFLIB_51:
+			return giflib.v51.EGifPutExtensionLeader(GifFile, GifExtCode);
+		case GIFLIB_50:
+			return giflib.v50.EGifPutExtensionLeader(GifFile, GifExtCode);
+		case GIFLIB_42:
+		case GIFLIB_41:
+		case GIFLIB_40:
+			// Don't do anything yet.
+			ext_state.GifExtCode = GifExtCode;
+			ext_state.first = true;
+			return GIF_OK;
+		default:
+			break;
+	}
+
+	return GIF_ERROR;
+}
+
+int EGifDlPutExtensionBlock(GifFileType *GifFile,
+			    const int GifExtLen, const void *GifExtension)
+{
+	switch (giflib.version) {
+		case GIFLIB_51:
+			return giflib.v51.EGifPutExtensionBlock(GifFile, GifExtLen, GifExtension);
+		case GIFLIB_50:
+			return giflib.v50.EGifPutExtensionBlock(GifFile, GifExtLen, GifExtension);
+
+		case GIFLIB_42: {
+			int ret;
+			if (ext_state.first) {
+				// First extension block.
+				ret = giflib.v42.EGifPutExtensionFirst(GifFile,
+					ext_state.GifExtCode, GifExtLen, GifExtension);
+				ext_state.first = false;
+			} else {
+				// Next extension block.
+				ret = giflib.v42.EGifPutExtensionNext(GifFile,
+					ext_state.GifExtCode, GifExtLen, GifExtension);
+			}
+			return ret;
+		}
+
+		case GIFLIB_41:
+		case GIFLIB_40: {
+			int ret;
+			if (ext_state.first) {
+				// First extension block.
+				ret = giflib.v40.EGifPutExtensionFirst(GifFile,
+					ext_state.GifExtCode, GifExtLen, GifExtension);
+				ext_state.first = false;
+			} else {
+				// Next extension block.
+				ret = giflib.v40.EGifPutExtensionNext(GifFile,
+					ext_state.GifExtCode, GifExtLen, GifExtension);
+			}
+			return ret;
+		}
+
+		default:
+			break;
+	}
+
+	return GIF_ERROR;
+}
+
+int EGifDlPutExtensionTrailer(GifFileType *GifFile)
+{
+	switch (giflib.version) {
+		case GIFLIB_51:
+			return giflib.v51.EGifPutExtensionTrailer(GifFile);
+		case GIFLIB_50:
+			return giflib.v50.EGifPutExtensionTrailer(GifFile);
+		case GIFLIB_42:
+			return giflib.v42.EGifPutExtensionLast(GifFile,
+					ext_state.GifExtCode, 0, NULL);
+		case GIFLIB_41:
+		case GIFLIB_40:
+			return giflib.v40.EGifPutExtensionLast(GifFile,
+					ext_state.GifExtCode, 0, NULL);
+		default:
+			break;
+	}
+
+	return GIF_ERROR;
+}
+
+const char *GifDlErrorString(int ErrorCode)
+{
+	switch (giflib.version) {
+		case GIFLIB_51:
+			return giflib.v51.GifErrorString(ErrorCode);
+		case GIFLIB_50:
+			return giflib.v50.GifErrorString(ErrorCode);
+		case GIFLIB_42:
+		case GIFLIB_41:
+		case GIFLIB_40:
+		default:
+			// TODO: giflib-4.2 only provides the error string
+			// for the last error. v4.1 and v4.0 don't have
+			// error strings at all.
+			break;
+	}
+
+	return "Unknown";
+}
+
 #endif /* USE_INTERNAL_GIF */

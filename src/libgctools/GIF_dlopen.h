@@ -68,6 +68,12 @@ extern "C" {
 #define GIF_ERROR   0
 #define GIF_OK      1
 
+#define GIF_STAMP "GIFVER"          /* First chars in file - GIF stamp.  */
+#define GIF_STAMP_LEN sizeof(GIF_STAMP) - 1
+#define GIF_VERSION_POS 3           /* Version first character in stamp. */
+#define GIF87_STAMP "GIF87a"        /* First chars in file - GIF stamp.  */
+#define GIF89_STAMP "GIF89a"        /* First chars in file - GIF stamp.  */
+
 typedef unsigned char GifPixelType;
 typedef unsigned char *GifRowType;
 typedef unsigned char GifByteType;
