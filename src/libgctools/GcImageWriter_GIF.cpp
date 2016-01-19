@@ -122,17 +122,6 @@ int GcImageWriterPrivate::gif_addLoopExtension(GifFileType *gif, uint16_t loopCo
 	loopData[1] = loopCount & 0xFF;		// loopCount LSB
 	loopData[2] = (loopCount >> 8) & 0xFF;	// loopCount MSB
 
-#ifdef GIFLIB_OLDER_THAN_5_0
-	// Create the loop extension block.
-	ret = EGifDlPutExtensionFirst(gif, APPLICATION_EXT_FUNC_CODE, sizeof(nsle)-1, nsle);
-	if (ret != GIF_OK) {
-		// Failed to start the extension.
-		return ret;
-	}
-
-	// Write the loop extension data.
-	ret = EGifDlPutExtensionLast(gif, APPLICATION_EXT_FUNC_CODE, sizeof(loopData), loopData);
-#else /* !GIFLIB_OLDER_THAN_5_0 */
 	// Start an extension block.
 	ret = EGifDlPutExtensionLeader(gif, APPLICATION_EXT_FUNC_CODE);
 	if (ret != GIF_OK) {
@@ -156,7 +145,6 @@ int GcImageWriterPrivate::gif_addLoopExtension(GifFileType *gif, uint16_t loopCo
 
 	// Finish the extension block.
 	ret = EGifDlPutExtensionTrailer(gif);
-#endif /* GIFLIB_OLDER_THAN_5_0 */
 
 	// Done adding the loop extension block.
 	return ret;
