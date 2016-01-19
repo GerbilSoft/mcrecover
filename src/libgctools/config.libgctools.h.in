@@ -30,9 +30,6 @@
 /* Define to 1 if we're using our own libpng. */
 #cmakedefine USE_INTERNAL_PNG 1
 
-/* Define to 1 if giflib was found. */
-#cmakedefine HAVE_GIF 1
-
 /* Define to 1 if we're using our own giflib. */
 #cmakedefine USE_INTERNAL_GIF 1
 
