@@ -120,7 +120,7 @@ static int init_giflib(void)
 				    dlsym(giflib_dll, "GifLastError") != NULL)
 				{
 					// This is giflib-4.2.
-					i = GIFLIB_42;
+					giflib.version = GIFLIB_42;
 				}
 			}
 			break;
