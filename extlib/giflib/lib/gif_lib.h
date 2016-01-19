@@ -19,7 +19,18 @@ extern "C" {
 #define GIF_OK      1
 
 #include <stddef.h>
+#if !defined(_MSC_VER) || _MSC_VER >= 1800
+/* MSVC: stdbool.h was first available in MSVC 2013. */
+/* Other: Assume stdbool.h is available. */
 #include <stdbool.h>
+#else
+/* Older MSVC; stdbool.h is not available. */
+#ifndef __cplusplus
+typedef unsigned char bool;
+#define true 1
+#define false 0
+#endif /* __cplusplus */
+#endif
 
 #define GIF_STAMP "GIFVER"          /* First chars in file - GIF stamp.  */
 #define GIF_STAMP_LEN sizeof(GIF_STAMP) - 1

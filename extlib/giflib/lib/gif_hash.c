@@ -11,7 +11,9 @@ This module is used to hash the GIF codes during encoding.
 
 *****************************************************************************/
 
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif /* _MSC_VER */
 #include <stdint.h>
 #include <stdlib.h>
 #include <fcntl.h>

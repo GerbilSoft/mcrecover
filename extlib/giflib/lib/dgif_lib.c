@@ -12,7 +12,9 @@ two modules will be linked.  Preserve this property!
 #include <limits.h>
 #include <stdint.h>
 #include <fcntl.h>
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif /* _MSC_VER */
 #include <stdio.h>
 #include <string.h>
 
