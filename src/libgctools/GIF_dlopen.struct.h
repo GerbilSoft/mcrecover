@@ -121,6 +121,9 @@ typedef struct _giflib_t {
 	} common;
 } giflib_t;
 
+// Opaque forward declaration.
+typedef struct SavedImage SavedImage;
+
 /**
  * GifFileType from giflib-5.1.2.
  * (compatible with v5.0.x, v5.1.x)

@@ -35,11 +35,7 @@
 #ifdef USE_INTERNAL_GIF
 #include <gif_lib.h>
 #define GifDlVersion() (GIFLIB_MAJOR * 10 + GIFLIB_MINOR)
-#else
-#ifdef __cplusplus
-extern "C"
-#endif /* __cplusplus */
-int GifDlVersion(void);
+#define GifDlGetUserData(GifFile) (GifFile)->UserData
 #endif /* USE_INTERNAL_GIF */
 
 // API is based on giflib-5.1.2.
@@ -106,9 +102,22 @@ typedef struct ExtensionBlock {
 #define APPLICATION_EXT_FUNC_CODE 0xff    /* application block */
 } ExtensionBlock;
 
+/**
+ * Check what version of giflib is available.
+ * This function will load giflib if it hasn't been loaded yet.
+ * @return giflib version (51, 50, 42, 41, 40), or 0 if giflib isn't available.
+ */
+int GifDlVersion(void);
+
 // GifFileType is an opaque type for compatibility purposes.
 typedef struct GifFileType GifFileType;
-void GifDlGetUserData(const GifFileType *GifFile);
+
+/**
+ * Get the UserData pointer from the specified GifFile.
+ * @param GifFile GIF file.
+ * @return UserData pointer.
+ */
+void *GifDlGetUserData(const GifFileType *GifFile);
 
 /* func type to read gif data from arbitrary sources (TVT) */
 typedef int (*InputFunc) (GifFileType *GifFile, GifByteType *buf, int len);

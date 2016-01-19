@@ -58,11 +58,12 @@ int gcn_GifQuantizeBuffer(unsigned int Width, unsigned int Height,
  */
 int GcImageWriterPrivate::gif_output_func(GifFileType *gif, const GifByteType *buf, int len)
 {
-	if (!gif->UserData || len <= 0)
+	void *userData = GifDlGetUserData(gif);
+	if (!userData || len <= 0)
 		return 0;
 
 	// Assuming the UserData is a vector<uint8_t>*.
-	vector<uint8_t> *gifBuffer = reinterpret_cast<vector<uint8_t>*>(gif->UserData);
+	vector<uint8_t> *gifBuffer = reinterpret_cast<vector<uint8_t>*>(userData);
 	size_t pos = gifBuffer->size();
 	gifBuffer->resize(pos + len);
 	memcpy(&gifBuffer->data()[pos], buf, len);
@@ -279,7 +280,7 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 	const int h = gcImage0->height();
 
 	// Color Map object for palettes.
-	ColorMapObject *colorMap = GifMakeMapObject(256, nullptr);
+	ColorMapObject *colorMap = GifDlMakeMapObject(256, nullptr);
 	if (!colorMap) {
 		// Error allocating a color map.
 		return -1;

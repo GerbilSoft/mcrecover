@@ -212,7 +212,7 @@ static int init_giflib(void)
 /**
  * Check what version of giflib is available.
  * This function will load giflib if it hasn't been loaded yet.
- * @return giflib version (e.g. 51, 50), or 0 if giflib isn't available.
+ * @return giflib version (51, 50, 42, 41, 40), or 0 if giflib isn't available.
  */
 int GifDlVersion(void)
 {
@@ -222,5 +222,29 @@ int GifDlVersion(void)
 	}
 
 	return giflib.version;
+}
+
+/**
+ * Get the UserData pointer from the specified GifFile.
+ * @param GifFile GIF file.
+ * @return UserData pointer.
+ */
+void *GifDlGetUserData(const GifFileType *GifFile)
+{
+	switch (giflib.version) {
+		case 51:
+		case 50:
+			return ((const GifFileType_v50*)GifFile)->UserData;
+		case 42:
+		case 41:
+			return ((const GifFileType_v41*)GifFile)->UserData;
+		case 40:
+			return ((const GifFileType_v40*)GifFile)->UserData;
+		default:
+			break;
+	}
+
+	// Unknown version of GIFLIB.
+	return NULL;
 }
 #endif /* USE_INTERNAL_GIF */
