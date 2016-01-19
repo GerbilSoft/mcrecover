@@ -136,7 +136,6 @@ static int init_giflib(void)
 
 	DLOPEN_GIF(common, EGifSpew);
 	DLOPEN_GIF(common, EGifPutScreenDesc);
-	DLOPEN_GIF(common, EGifPutImageDesc);
 	DLOPEN_GIF(common, EGifPutLine);
 	DLOPEN_GIF(common, EGifPutPixel);
 	DLOPEN_GIF(common, EGifPutComment);
@@ -144,6 +143,13 @@ static int init_giflib(void)
 	DLOPEN_GIF(common, EGifPutCode);
 	DLOPEN_GIF(common, EGifPutCodeNext);
 
+	// EGifPutImageDesc is slightly different on v4.2+.
+	if (giflib.version >= 42) {
+		DLOPEN_GIF(v42_bool, EGifPutImageDesc);
+	} else {
+		DLOPEN_GIF(v40_int, EGifPutImageDesc);
+	}
+	
 	// Common GIF symbols that were renamed in giflib-5.0.
 	if (giflib.version >= 50) {
 		DLOPEN_GIF(common, GifMakeMapObject);
@@ -174,7 +180,16 @@ static int init_giflib(void)
 
 		case 50:
 			// giflib-5.0
-			// TODO
+			DLOPEN_GIF(v50, EGifOpenFileName);
+			DLOPEN_GIF(v50, EGifOpenFileHandle);
+			DLOPEN_GIF(v50, EGifOpen);
+			DLOPEN_GIF(v50, EGifGetGifVersion);
+			DLOPEN_GIF(v50, EGifCloseFile);
+			DLOPEN_GIF(v50, EGifSetGifVersion);
+			DLOPEN_GIF(v50, EGifPutExtensionLeader);
+			DLOPEN_GIF(v50, EGifPutExtensionBlock);
+			DLOPEN_GIF(v50, EGifPutExtensionTrailer);
+			DLOPEN_GIF(v50, GifErrorString);
 			break;
 
 		case 42:
@@ -194,8 +209,16 @@ static int init_giflib(void)
 
 		case 41:
 		case 40:
-			// giflib-4.1, 4.0
-			// TODO
+			// giflib-4.0, 4.1
+			DLOPEN_GIF(v40, EGifOpenFileName);
+			DLOPEN_GIF(v40, EGifOpenFileHandle);
+			DLOPEN_GIF(v40, EGifOpen);
+			DLOPEN_GIF(v40, EGifSetGifVersion);
+			DLOPEN_GIF(v40, EGifCloseFile);
+			DLOPEN_GIF(v40, EGifPutExtensionFirst);
+			DLOPEN_GIF(v40, EGifPutExtensionNext);
+			DLOPEN_GIF(v40, EGifPutExtensionLast);
+			DLOPEN_GIF(v40, GifError);
 			break;
 
 		default:

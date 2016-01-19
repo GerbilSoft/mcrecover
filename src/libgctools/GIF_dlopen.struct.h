@@ -37,8 +37,7 @@ typedef struct _giflib_t {
 	union {
 		struct {
 			// giflib-5.1 function pointers.
-			// Mostly the same as giflib-5.0, but with
-			// extra "error" parameters.
+			// Similar to giflib-5.0, except EGifCloseFile has an ErrorCode parameter.
 			GifFileType *(*EGifOpenFileName)(const char *GifFileName,
 							 const bool GifTestExistence, int *Error);
 			GifFileType *(*EGifOpenFileHandle)(const int GifFileHandle, int *Error);
@@ -55,11 +54,30 @@ typedef struct _giflib_t {
 			const char *(*GifErrorString)(int ErrorCode);
 		} v51;
 
-		// TODO: v50-specific
+		struct {
+			// giflib-5.0 function pointers.
+			// Now with better error handling.
+			GifFileType *(*EGifOpenFileName)(const char *GifFileName,
+							 const bool GifTestExistence, int *Error);
+			GifFileType *(*EGifOpenFileHandle)(const int GifFileHandle, int *Error);
+			GifFileType *(*EGifOpen)(void *userPtr, OutputFunc writeFunc, int *Error);
+			const char *(*EGifGetGifVersion)(GifFileType *GifFile);
+			int (*EGifCloseFile)(GifFileType *GifFile);
+
+			void (*EGifSetGifVersion)(GifFileType *GifFile, const bool gif89);
+			int (*EGifPutExtensionLeader)(GifFileType *GifFile, const int GifExtCode);
+			int (*EGifPutExtensionBlock)(GifFileType *GifFile,
+						     const int GifExtLen, const void *GifExtension);
+			int (*EGifPutExtensionTrailer)(GifFileType *GifFile);
+
+			const char *(*GifErrorString)(int ErrorCode);
+		} v50;
 
 		struct {
 			// giflib-4.2 function pointers.
-			// TODO: Verify that these are the same as 4.1 and 4.0.
+			// Similar to v4.1, except it has additional error checking functions.
+			// v4.1 also used VoidPtr for the void* arguments, which expanded to
+			// char* on SYSV and void* everywhere else.
 			GifFileType *(*EGifOpenFileName)(const char *GifFileName,
 							 bool GifTestExistance);
 			GifFileType *(*EGifOpenFileHandle)(int GifFileHandle);
@@ -78,6 +96,27 @@ typedef struct _giflib_t {
 			char *(*GifErrorString)(void);
 			int *(*GifLastError)(void);
 		} v42;
+
+		struct {
+			// giflib-4.0, 4.1 function pointers.
+			// v4.1 added const qualifiers to some pointer arguments.
+			// Note that const qualifiers don't break the ABI.
+			GifFileType *(*EGifOpenFileName)(const char *GifFileName,
+							 int GifTestExistance);
+			GifFileType *(*EGifOpenFileHandle)(int GifFileHandle);
+			GifFileType *(*EGifOpen)(void *userPtr, OutputFunc writeFunc);
+			void (*EGifSetGifVersion)(const char *Version);
+			int (*EGifCloseFile)(GifFileType * GifFile);
+
+			int (*EGifPutExtensionFirst)(GifFileType * GifFile, int GifExtCode,
+						     int GifExtLen, const void *GifExtension);
+			int (*EGifPutExtensionNext)(GifFileType * GifFile, int GifExtCode,
+						    int GifExtLen, const void *GifExtension);
+			int (*EGifPutExtensionLast)(GifFileType * GifFile, int GifExtCode,
+						    int GifExtLen, const void *GifExtension);
+
+			int (*GifError)(void);
+		} v40;
 	};
 
 	struct {
@@ -91,11 +130,6 @@ typedef struct _giflib_t {
 					 const int GifColorRes,
 					 const int GifBackGround,
 					 const ColorMapObject *GifColorMap);
-		int (*EGifPutImageDesc)(GifFileType *GifFile, 
-					const int GifLeft, const int GifTop,
-					const int GifWidth, const int GifHeight, 
-					const bool GifInterlace,
-					const ColorMapObject *GifColorMap);
 		int (*EGifPutLine)(GifFileType *GifFile, GifPixelType *GifLine,
 				int GifLineLen);
 		int (*EGifPutPixel)(GifFileType *GifFile, const GifPixelType GifPixel);
@@ -119,6 +153,28 @@ typedef struct _giflib_t {
 						    GifPixelType ColorTransIn2[]);
 		int (*GifBitSize)(int n);
 	} common;
+
+	union {
+		// Function pointers that use 'bool' on v4.2+ and 'int' on v4.0 and v4.1.
+		// TODO: Is 'bool' guaranteed to be the same size as 'int' when used as a
+		// function parameter on all systems?
+		// If so, this can be merged into common...
+		struct {
+			int (*EGifPutImageDesc)(GifFileType *GifFile,
+						const int GifLeft, const int GifTop,
+						const int GifWidth, const int GifHeight, 
+						const bool GifInterlace,
+						const ColorMapObject *GifColorMap);
+		} v42_bool;
+
+		struct {
+			int (*EGifPutImageDesc)(GifFileType *GifFile,
+						const int GifLeft, const int GifTop,
+						const int GifWidth, const int GifHeight, 
+						const int GifInterlace,
+						const ColorMapObject *GifColorMap);
+		} v40_int;
+	};
 } giflib_t;
 
 // Opaque forward declaration.
