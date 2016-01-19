@@ -23,7 +23,7 @@
 
 // Qt includes.
 #include <QtCore/QTimer>
-#include <QtGui/QWidget>
+#include <QWidget>
 
 // QtDBus includes.
 #include <QtDBus/QDBusConnection>

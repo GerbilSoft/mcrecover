@@ -43,6 +43,11 @@ IF(USE_QT4)
 	ELSEIF(NOT QT_QTGUI_FOUND)
 		MESSAGE(FATAL_ERROR "QtGui not found! Please install Qt ${MCRECOVER_QT4_MIN_VERSION} or higher.")
 	ENDIF()
+
+	IF(QT_QTDBUS_FOUND)
+		SET(QtDBus_FOUND 1)
+	ENDIF(QT_QTDBUS_FOUND)
+
 	INCLUDE(${QT_USE_FILE})
 ELSEIF(USE_QT5)
 	# Find Qt 5.
@@ -61,13 +66,14 @@ ELSEIF(USE_QT5)
 		# QtDBus is used for DockManager.
 		FIND_PACKAGE(Qt5DBus)
 		# FIXME: HAVE_Qt5DBus isn't working...
-		IF(HAVE_Qt5DBus)
+		IF(Qt5DBus_FOUND)
+			SET(QtDBus_FOUND 1)
 			INCLUDE_DIRECTORIES(${Qt5DBus_INCLUDE_DIRS})
 
 			# If Qt 5 is built with -reduce-relocations, we must build with -fPIC.
 			# Qt's CMake modules provide the CFLAGS for this.
 			SET(QT5_EXECUTABLE_COMPILE_FLAGS "${QT5_EXECUTABLE_COMPILE_FLAGS} ${Qt5DBus_EXECUTABLE_COMPILE_FLAGS}")
-		ENDIF(HAVE_Qt5DBus)
+		ENDIF(Qt5DBus_FOUND)
 	ENDIF(ENABLE_DBUS)
 
 	# Add Qt 5 compile flags.
@@ -366,9 +372,9 @@ ELSEIF(USE_QT5)
 	QT5_WRAP_CPP(mcrecover_MOC_SRCS ${mcrecover_MOC_H})
 ENDIF()
 
-# TODO: Qt5 version.
-IF(QT_QTDBUS_FOUND)
-	# QtDBus found.
+IF(QtDBus_FOUND AND UNIX AND NOT APPLE)
+IF(USE_QT4)
+	# Qt4: QtDBus found.
 	# Enable DockManager / Unity API support.
 	# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
 	# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
@@ -379,20 +385,41 @@ IF(QT_QTDBUS_FOUND)
 		dbus/net.launchpad.DockItem.xml
 		dbus/net.launchpad.DockManager.xml
 		)
-
-	IF(UNIX AND NOT APPLE)
-		SET(mcrecover_DBUS_SRCS
-			${mcrecover_DBUS_SRCS}
-			TaskbarButtonManager/DockManager.cpp
-			)
-		SET(mcrecover_DBUS_MOC_H
-			TaskbarButtonManager/DockManager.hpp
-			)
-
-		# Create MOC source files for classes that need them.
-		QT4_WRAP_CPP(mcrecover_DBUS_MOC_SRCS ${mcrecover_DBUS_MOC_H})
-	ENDIF(UNIX AND NOT APPLE)
-ENDIF(QT_QTDBUS_FOUND)
+	SET(mcrecover_DBUS_SRCS
+		${mcrecover_DBUS_SRCS}
+		TaskbarButtonManager/DockManager.cpp
+		)
+	SET(mcrecover_DBUS_MOC_H
+		TaskbarButtonManager/DockManager.hpp
+		)
+	# Create MOC source files for classes that need them.
+	QT4_WRAP_CPP(mcrecover_DBUS_MOC_SRCS ${mcrecover_DBUS_MOC_H})
+ELSEIF(USE_QT5)
+	# Qt5: QtDBus found.
+	# Enable DockManager / Unity API support.
+	# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
+	# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
+	INCLUDE(QtDBusInterfaceNoNS)
+	# TODO: Qt5 version.
+	IF(0)
+	QT4_ADD_DBUS_INTERFACES_NONS(
+		mcrecover_DBUS_SRCS
+		INCLUDE dbus/DBusMetatypes.hpp
+		dbus/net.launchpad.DockItem.xml
+		dbus/net.launchpad.DockManager.xml
+		)
+	ENDIF(0)
+	SET(mcrecover_DBUS_SRCS
+		${mcrecover_DBUS_SRCS}
+		TaskbarButtonManager/DockManager.cpp
+		)
+	SET(mcrecover_DBUS_MOC_H
+		TaskbarButtonManager/DockManager.hpp
+		)
+	# Create MOC source files for classes that need them.
+	QT5_WRAP_CPP(mcrecover_DBUS_MOC_SRCS ${mcrecover_DBUS_MOC_H})
+ENDIF()
+ENDIF(QtDBus_FOUND AND UNIX AND NOT APPLE)
 
 #################
 # Translations. #
@@ -480,10 +507,9 @@ IF(USE_QT4)
 		)
 ELSEIF(USE_QT5)
 	# TODO: qjpcodecs for static linkage.
-	# FIXME: HAVE_Qt5DBus isn't working...
-	IF(HAVE_Qt5DBus)
+	IF(Qt5DBus_FOUND)
 		TARGET_LINK_LIBRARIES(mcrecover Qt5::DBus)
-	ENDIF(HAVE_Qt5DBus)
+	ENDIF(Qt5DBus_FOUND)
 	TARGET_LINK_LIBRARIES(mcrecover Qt5::Widgets Qt5::Gui Qt5::Core)
 ENDIF()
 

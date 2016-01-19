@@ -26,9 +26,9 @@
 
 // Available TaskbarButtonManager classes.
 #include <config.mcrecover.h>
-#ifdef QT_QTDBUS_FOUND
+#ifdef QtDBus_FOUND
 #include "DockManager.hpp"
-#endif /* QT_QTDBUS_FOUND */
+#endif /* QtDBus_FOUND */
 
 class TaskbarButtonManagerPrivate
 {
@@ -95,13 +95,13 @@ TaskbarButtonManager *TaskbarButtonManager::Instance(QObject *parent)
 	TaskbarButtonManager *mgr = nullptr;
 
 	// Check the various implementations.
-#ifdef QT_QTDBUS_FOUND
+#ifdef QtDBus_FOUND
 	// DockManager
 	if (DockManager::IsUsable()) {
 		// DockManager is usable.
 		mgr = new DockManager(parent);
 	}
-#endif
+#endif /* QtDBus_FOUND */
 
 	return mgr;
 }
