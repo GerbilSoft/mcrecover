@@ -26,7 +26,9 @@
 #include "GcImage.hpp"
 
 // GIF dlopen() wrapper.
+#ifdef USE_GIF
 #include "GIF_dlopen.h"
+#endif /* USE_GIF */
 
 // C includes.
 #include <errno.h>
@@ -210,17 +212,16 @@ bool GcImageWriter::isAnimImageFormatSupported(AnimImageFormat animImgf)
 		case ANIMGF_APNG:
 			return !!APNG_is_supported();
 #endif /* HAVE_PNG */
-
+#ifdef USE_GIF
 		case ANIMGF_GIF:
 			return (GifDlVersion() != 0);
-
+#endif /* USE_GIF */
 #ifdef HAVE_PNG
 		case ANIMGF_PNG_FPF:
 		case ANIMGF_PNG_VS:
 		case ANIMGF_PNG_HS:
 			return true;
 #endif /* HAVE_PNG */
-
 		default:
 			break;
 	}
@@ -446,8 +447,10 @@ int GcImageWriter::write(const vector<const GcImage*> *gcImages,
 		case ANIMGF_PNG_HS:
 			return d->writePng_anim(&adjGcImages, &adjGcIconDelays, animImgf);
 #endif /* HAVE_PNG */
+#ifdef USE_GIF
 		case ANIMGF_GIF:
 			return d->writeGif_anim(&adjGcImages, &adjGcIconDelays);
+#endif /* USE_GIF */
 		default:
 			break;
 	}

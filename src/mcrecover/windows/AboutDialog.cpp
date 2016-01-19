@@ -473,6 +473,7 @@ QString AboutDialogPrivate::GetLibraries(void)
 	sLibraries += sLicense.arg(QLatin1String("libpng license"));
 #endif /* HAVE_PNG */
 
+#ifdef USE_GIF
 	/** giflib **/
 	sLibraries += sDLineBreak;
 	// TODO: Constant string instead of .arg()?
@@ -496,6 +497,7 @@ QString AboutDialogPrivate::GetLibraries(void)
 		sLibraries += sLicense.arg(QLatin1String("MIT/X license"));
 	}
 #endif /* USE_INTERNAL_GIF */
+#endif /* USE_GIF */
 
 	// Return the included libraries string.
 	return sLibraries;
