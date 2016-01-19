@@ -47,14 +47,32 @@ IF(USE_QT4)
 ELSEIF(USE_QT5)
 	# Find Qt 5.
 	# FIXME: Figure out a minimum Qt5 version.
-	FIND_PACKAGE(Qt5Core REQUIRED)
-	FIND_PACKAGE(Qt5Gui REQUIRED)
-	FIND_PACKAGE(Qt5Widgets REQUIRED)
-	FIND_PACKAGE(Qt5Xml REQUIRED)
+	SET(QT5_EXECUTABLE_COMPILE_FLAGS "")
+	FOREACH(QT5_MODULE Qt5Core Qt5Gui Qt5Widgets Qt5Xml)
+		FIND_PACKAGE(${QT5_MODULE} REQUIRED)
+		INCLUDE_DIRECTORIES(${${QT5_MODULE}_INCLUDE_DIRS})
+
+		# If Qt 5 is built with -reduce-relocations, we must build with -fPIC.
+		# Qt's CMake modules provide the CFLAGS for this.
+		SET(QT5_EXECUTABLE_COMPILE_FLAGS "${QT5_EXECUTABLE_COMPILE_FLAGS} ${${QT5_MODULE}_EXECUTABLE_COMPILE_FLAGS}")
+	ENDFOREACH()
+
 	IF(ENABLE_DBUS)
 		# QtDBus is used for DockManager.
 		FIND_PACKAGE(Qt5DBus)
+		IF(HAVE_Qt5DBus)
+			INCLUDE_DIRECTORIES(${Qt5DBus_INCLUDE_DIRS})
+
+			# If Qt 5 is built with -reduce-relocations, we must build with -fPIC.
+			# Qt's CMake modules provide the CFLAGS for this.
+			SET(QT5_EXECUTABLE_COMPILE_FLAGS "${QT5_EXECUTABLE_COMPILE_FLAGS} ${Qt5DBus_EXECUTABLE_COMPILE_FLAGS}")
+		ENDIF(HAVE_Qt5DBus)
 	ENDIF(ENABLE_DBUS)
+
+	# Add Qt 5 compile flags.
+	# TODO: Also linker flags?
+	SET(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${QT5_EXECUTABLE_COMPILE_FLAGS}")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${QT5_EXECUTABLE_COMPILE_FLAGS}")
 ENDIF()
 
 ####################################
