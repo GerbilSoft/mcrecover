@@ -210,7 +210,7 @@ int GcImageWriterPrivate::gif_addGraphicsControlBlock(GifFileType *gif, int tran
 
 	// TODO: Use EGifGCBToSavedExtension() in giflib-5.x.
 	// This requires the image to be written first...
-	char animctrl[4];
+	uint8_t animctrl[4];
 	if (trans_idx >= 0) {
 		animctrl[0] = 1;
 		animctrl[3] = trans_idx & 0xFF;
