@@ -39,9 +39,7 @@ class GcImage;
 #endif /* HAVE_PNG */
 
 // giflib
-#ifdef HAVE_GIF
-#include <gif_lib.h>
-#endif /* HAVE_GIF */
+#include "GIF_dlopen.h"
 
 class GcImageWriterPrivate
 {

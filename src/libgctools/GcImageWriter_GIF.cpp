@@ -21,10 +21,6 @@
 
 #include <config.libgctools.h>
 
-#ifndef HAVE_GIF
-#error GcImageWriter_GIF.cpp should only be compiled if giflib is available.
-#endif
-
 #include "GcImageWriter.hpp"
 #include "GcImageWriter_p.hpp"
 #include "GcImage.hpp"
@@ -37,31 +33,6 @@
 // C++ includes.
 #include <vector>
 using std::vector;
-
-// giflib version compatibility
-#if GIFLIB_MAJOR < 5
-#define GIFLIB_OLDER_THAN_5_0 1
-#define GIFLIB_OLDER_THAN_5_1 1
-#elif GIFLIB_MAJOR == 5 && GIFLIB_MINOR < 1
-#define GIFLIB_OLDER_THAN_5_1 1
-#endif
-
-// giflib-4.x compatibility macros.
-#ifdef GIFLIB_OLDER_THAN_5_0
-#define GifMakeMapObject(ColorCount, ColorMap) MakeMapObject((ColorCount), (ColorMap))
-#define GifFreeMapObject(Object) FreeMapObject(Object)
-#endif /* GIFLIB_OLDER_THAN_5_0 */
-
-// Error parameters added in giflib-5.1.
-// TODO: For giflib-5.0, read GifFileType's "Error" parameter.
-// TODO: For giflib-4.2 and earlier, read a static "Error" parameter.
-#ifdef GIFLIB_OLDER_THAN_5_1
-#define wr_EGifOpen(userPtr, writeFunc, Error) EGifOpen((userPtr), (writeFunc))
-#define wr_EGifCloseFile(GifFile, ErrorCode) EGifCloseFile(GifFile)
-#else /* !GIFLIB_OLDER_THAN_5_1 */
-#define wr_EGifOpen(userPtr, writeFunc, Error) EGifOpen((userPtr), (writeFunc), (Error))
-#define wr_EGifCloseFile(GifFile, ErrorCode) EGifCloseFile((GifFile), (ErrorCode))
-#endif /* GIFLIB_OLDER_THAN_5_1 */
 
 #ifndef USE_INTERNAL_GIF
 // giflib-4.2 doesn't have QuantizeBuffer().
@@ -151,38 +122,38 @@ int GcImageWriterPrivate::gif_addLoopExtension(GifFileType *gif, uint16_t loopCo
 
 #ifdef GIFLIB_OLDER_THAN_5_0
 	// Create the loop extension block.
-	ret = EGifPutExtensionFirst(gif, APPLICATION_EXT_FUNC_CODE, sizeof(nsle)-1, nsle);
+	ret = EGifDlPutExtensionFirst(gif, APPLICATION_EXT_FUNC_CODE, sizeof(nsle)-1, nsle);
 	if (ret != GIF_OK) {
 		// Failed to start the extension.
 		return ret;
 	}
 
 	// Write the loop extension data.
-	ret = EGifPutExtensionLast(gif, APPLICATION_EXT_FUNC_CODE, sizeof(loopData), loopData);
+	ret = EGifDlPutExtensionLast(gif, APPLICATION_EXT_FUNC_CODE, sizeof(loopData), loopData);
 #else /* !GIFLIB_OLDER_THAN_5_0 */
 	// Start an extension block.
-	ret = EGifPutExtensionLeader(gif, APPLICATION_EXT_FUNC_CODE);
+	ret = EGifDlPutExtensionLeader(gif, APPLICATION_EXT_FUNC_CODE);
 	if (ret != GIF_OK) {
 		// Failed to start the extension block.
 		return ret;
 	}
 
 	// Netscape loop extension.
-	ret = EGifPutExtensionBlock(gif, sizeof(nsle)-1, nsle);
+	ret = EGifDlPutExtensionBlock(gif, sizeof(nsle)-1, nsle);
 	if (ret != GIF_OK) {
 		// Failed to add the extension block.
 		return ret;
 	}
 
 	// Write the loop extension data.
-	ret = EGifPutExtensionBlock(gif, sizeof(loopData), loopData);
+	ret = EGifDlPutExtensionBlock(gif, sizeof(loopData), loopData);
 	if (ret != GIF_OK) {
 		// Failed to write the loop block data.
 		return ret;
 	}
 
 	// Finish the extension block.
-	ret = EGifPutExtensionTrailer(gif);
+	ret = EGifDlPutExtensionTrailer(gif);
 #endif /* GIFLIB_OLDER_THAN_5_0 */
 
 	// Done adding the loop extension block.
@@ -224,7 +195,7 @@ int GcImageWriterPrivate::gif_addGraphicsControlBlock(GifFileType *gif, int tran
 	animctrl[1] = iconDelay & 0xFF;
 	animctrl[2] = (iconDelay >> 8) & 0xFF;
 
-	return EGifPutExtension(gif, GRAPHICS_EXT_FUNC_CODE, sizeof(animctrl), animctrl);
+	return EGifDlPutExtension(gif, GRAPHICS_EXT_FUNC_CODE, sizeof(animctrl), animctrl);
 }
 
 /**
@@ -273,7 +244,7 @@ int GcImageWriterPrivate::gif_writeARGB32Image(GifFileType *gif,
 	}
 
 	// Start the frame.
-	ret = EGifPutImageDesc(gif, 0, 0, gcImage->width(), gcImage->height(), false, colorMap);
+	ret = EGifDlPutImageDesc(gif, 0, 0, gcImage->width(), gcImage->height(), false, colorMap);
 	if (ret != GIF_OK) {
 		// Error!
 		free(full);
@@ -281,7 +252,7 @@ int GcImageWriterPrivate::gif_writeARGB32Image(GifFileType *gif,
 	}
 
 	// Write the entire image.
-	ret = EGifPutLine(gif, out, bufSz);
+	ret = EGifDlPutLine(gif, out, bufSz);
 	if (ret != GIF_OK) {
 		// Error!
 		free(full);
@@ -328,55 +299,41 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 	vector<uint8_t> *gifBuffer = new vector<uint8_t>();
 	gifBuffer->reserve(32768);	// 32 KB should cover most of the use cases.
 
-#ifdef GIFLIB_OLDER_THAN_5_0
-	// Set the GIF version to GIF89a.
-	// (Required for animated GIFs.)
-	// NOTE: giflib-4.2+ is supposed to automatically set
-	// this based on the written extension blocks, but it
-	// doesn't seem to be working...
-	EGifSetGifVersion("89a");
-#endif /* GIFLIB_OLDER_THAN_5_0 */
-
-	// TODO: Make use of the giflib error code. (giflib-5.1+ only)
+	// TODO: Make use of the giflib error code.
 	int err = GIF_OK;
-#ifdef GIFLIB_OLDER_THAN_5_1
-	((void)err);	// not used prior to giflib-5.1
-#endif
-	GifFileType *gif = wr_EGifOpen(gifBuffer, gif_output_func, &err);
+	GifFileType *gif = EGifDlOpen(gifBuffer, gif_output_func, &err);
 	if (!gif) {
 		// Error!
 		delete gifBuffer;
-		GifFreeMapObject(colorMap);
+		GifDlFreeMapObject(colorMap);
 		return -1;
 	}
 
-#ifndef GIFLIB_OLDER_THAN_5_0
 	// Set the GIF version to GIF89a.
 	// (Required for animated GIFs.)
 	// NOTE: giflib-4.2+ is supposed to automatically set
 	// this based on the written extension blocks, but it
 	// doesn't seem to be working...
-	EGifSetGifVersion(gif, true);
-#endif
+	EGifDlSetGifVersion(gif, true);
 
 	// Put the screen description for the first frame.
 	// NOTE: colorMap is only specified if the image
 	// uses a global palette. For CI8_UNIQUE, each
 	// frame will have its own local palette.
-	if (EGifPutScreenDesc(gif, w, h, 8, 0, (is_CI8_UNIQUE ? nullptr : colorMap)) != GIF_OK) {
+	if (EGifDlPutScreenDesc(gif, w, h, 8, 0, (is_CI8_UNIQUE ? nullptr : colorMap)) != GIF_OK) {
 		// Error!
-		wr_EGifCloseFile(gif, &err);
+		EGifDlCloseFile(gif, &err);
 		delete gifBuffer;
-		GifFreeMapObject(colorMap);
+		GifDlFreeMapObject(colorMap);
 		return -2;
 	}
 
 	// Add the loop extension block.
 	if (gif_addLoopExtension(gif, 0) != GIF_OK) {
 		// Error!
-		wr_EGifCloseFile(gif, &err);
+		EGifDlCloseFile(gif, &err);
 		delete gifBuffer;
-		GifFreeMapObject(colorMap);
+		GifDlFreeMapObject(colorMap);
 		return -3;
 	}
 
@@ -393,9 +350,9 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 		// TODO: Transparent color index.
 		if (gif_addGraphicsControlBlock(gif, -1, uIconDelay) != GIF_OK) {
 			// Error!
-			wr_EGifCloseFile(gif, &err);
+			EGifDlCloseFile(gif, &err);
 			delete gifBuffer;
-			GifFreeMapObject(colorMap);
+			GifDlFreeMapObject(colorMap);
 			return -5;
 		}
 
@@ -407,24 +364,24 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 		switch (gcImage->pxFmt()) {
 			case GcImage::PXFMT_CI8:
 				// Start the frame.
-				if (EGifPutImageDesc(gif, 0, 0, w, h, false,
+				if (EGifDlPutImageDesc(gif, 0, 0, w, h, false,
 				    (is_CI8_UNIQUE ? colorMap : nullptr)) != GIF_OK)
 				{
 					// Error!
-					wr_EGifCloseFile(gif, &err);
+					EGifDlCloseFile(gif, &err);
 					delete gifBuffer;
-					GifFreeMapObject(colorMap);
+					GifDlFreeMapObject(colorMap);
 					return -6;
 				}
 
 				// Write the entire image.
-				if (EGifPutLine(gif, (uint8_t*)gcImage->imageData(),
+				if (EGifDlPutLine(gif, (uint8_t*)gcImage->imageData(),
 				    gcImage->imageData_len()) != GIF_OK)
 				{
 					// Error!
-					wr_EGifCloseFile(gif, &err);
+					EGifDlCloseFile(gif, &err);
 					delete gifBuffer;
-					GifFreeMapObject(colorMap);
+					GifDlFreeMapObject(colorMap);
 					return -7;
 				}
 				break;
@@ -435,9 +392,9 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 				// Otherwise it might look weird...
 				if (gif_writeARGB32Image(gif, gcImage, colorMap) != GIF_OK) {
 					// Error!
-					wr_EGifCloseFile(gif, &err);
+					EGifDlCloseFile(gif, &err);
 					delete gifBuffer;
-					GifFreeMapObject(colorMap);
+					GifDlFreeMapObject(colorMap);
 					return -8;
 				}
 				break;
@@ -445,13 +402,13 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 			default:
 				// Unsupported pixel format.
 				delete gifBuffer;
-				GifFreeMapObject(colorMap);
+				GifDlFreeMapObject(colorMap);
 				return -9;
 		}
 	}
 
-	GifFreeMapObject(colorMap);
-	wr_EGifCloseFile(gif, &err);
+	GifDlFreeMapObject(colorMap);
+	EGifDlCloseFile(gif, &err);
 
 	// Add the gifBuffer to the memBuffer.
 	memBuffer.push_back(gifBuffer);
