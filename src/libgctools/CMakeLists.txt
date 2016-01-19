@@ -62,17 +62,18 @@ ENDIF(HAVE_PNG)
 
 # GIF-specific sources.
 IF(HAVE_GIF)
-	SET(libgctools_GIF_SRCS GcImageWriter_GIF.cpp)
-
-	# GifQuantizeBuffer()
-	# giflib-4.1 and earlier has this; however, the function
-	# was removed in giflib-4.2. giflib-5.0 readded it.
-	IF(GIF_VERSION LESS 5)
-		SET(libgctools_GIF_SRCS
-			${libgctools_GIF_SRCS}
-			quantize.c
-			)
-	ENDIF(GIF_VERSION LESS 5)
+	# quantize.c is from giflib-5.1.
+	# It's included here because giflib-4.2 removed it,
+	# and it was readded in giflib-5.0. Hence, we can't
+	# rely on it being available in giflib.
+	SET(libgctools_GIF_SRCS
+		GcImageWriter_GIF.cpp
+		quantize.c
+		GIF_dlopen.c
+		)
+	SET(libgctools_GIF_H
+		GIF_dlopen.h
+		)
 ENDIF(HAVE_GIF)
 
 # If we're using an external libpng, link in libdl.
@@ -87,7 +88,7 @@ ENDIF(NOT USE_INTERNAL_PNG)
 ADD_LIBRARY(gctools STATIC
 	${libgctools_SRCS} ${libgctools_H}
 	${libgctools_PNG_SRCS} ${libgctools_PNG_H}
-	${libgctools_GIF_SRCS}
+	${libgctools_GIF_SRCS} ${libgctools_GIF_H}
 	)
 INCLUDE(SetMSVCDebugPath)
 SET_MSVC_DEBUG_PATH(gctools)
