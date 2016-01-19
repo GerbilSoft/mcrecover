@@ -63,10 +63,11 @@ using std::vector;
 #define wr_EGifCloseFile(GifFile, ErrorCode) EGifCloseFile((GifFile), (ErrorCode))
 #endif /* GIFLIB_OLDER_THAN_5_1 */
 
-#ifdef GIFLIB_OLDER_THAN_5_0
+#ifndef USE_INTERNAL_GIF
 // giflib-4.2 doesn't have QuantizeBuffer().
 // To prevent issues, we're including our own copy of
-// giflib-5.1.2's GifQuantizeBuffer() for old versions.
+// giflib-5.1.2's GifQuantizeBuffer() if we're not
+// using an internal copy of giflib.
 extern "C"
 int gcn_GifQuantizeBuffer(unsigned int Width, unsigned int Height,
                    int *ColorMapSize, GifByteType * RedInput,
@@ -75,7 +76,7 @@ int gcn_GifQuantizeBuffer(unsigned int Width, unsigned int Height,
                    GifColorType * OutputColorMap);
 #define GifQuantizeBuffer(Width, Height, ColorMapSize, RedInput, GreenInput, BlueInput, OutputBuffer, OutputColorMap) \
 	gcn_GifQuantizeBuffer((Width), (Height), (ColorMapSize), (RedInput), (GreenInput), (BlueInput), (OutputBuffer), (OutputColorMap))
-#endif /* GIFLIB_OLDER_THAN_5_0 */
+#endif /* USE_INTERNAL_GIF */
 
 /**
  * GIF write function.

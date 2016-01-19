@@ -68,12 +68,20 @@ IF(HAVE_GIF)
 	# rely on it being available in giflib.
 	SET(libgctools_GIF_SRCS
 		GcImageWriter_GIF.cpp
-		quantize.c
 		GIF_dlopen.c
 		)
 	SET(libgctools_GIF_H
 		GIF_dlopen.h
 		)
+
+	IF(NOT USE_INTERNAL_GIF)
+		# quantize.c is from giflib-5.1.
+		# It's included here because giflib-4.2 removed it,
+		# and it was readded in giflib-5.0. Hence, we can't
+		# rely on it being available in giflib.
+		# (Unless we're using the internal giflib, that is...)
+		SET(libgctools_GIF_SRCS ${libgctools_GIF_SRCS} quantize.c)
+	ENDIF(NOT USE_INTERNAL_GIF)
 ENDIF(HAVE_GIF)
 
 # If we're using an external libpng, link in libdl.
