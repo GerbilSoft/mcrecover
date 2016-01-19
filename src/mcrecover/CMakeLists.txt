@@ -26,27 +26,36 @@ ELSE()
 	SET(MCRECOVER_TRANSLATIONS_DIRECTORY "${CMAKE_INSTALL_PREFIX}/share/mcrecover/translations")
 ENDIF()
 
-# Find Qt4.
-# Components used:
-# - QtCore
-# - QtGui
-# - QtXml
-# - QtDBus (optional; used for DockManager / Unity API)
-SET(MCRECOVER_QT4_MIN_VERSION 4.6.0)
-SET(MCRECOVER_QT_COMPONENTS QtCore QtGui QtXml)
-IF(ENABLE_DBUS)
-	SET(MCRECOVER_QT_COMPONENTS ${MCRECOVER_QT_COMPONENTS} QtDBus)
-ENDIF(ENABLE_DBUS)
+IF(USE_QT4)
+	# Find Qt 4.
+	SET(MCRECOVER_QT4_MIN_VERSION 4.6.0)
+	SET(MCRECOVER_QT4_COMPONENTS QtCore QtGui QtXml)
+	IF(ENABLE_DBUS)
+		# QtDBus is used for DockManager.
+		# TODO: Unity API?
+		SET(MCRECOVER_QT4_COMPONENTS ${MCRECOVER_QT4_COMPONENTS} QtDBus)
+	ENDIF(ENABLE_DBUS)
 
-FIND_PACKAGE(Qt4 ${MCRECOVER_QT4_MIN_VERSION}
-	COMPONENTS ${MCRECOVER_QT_COMPONENTS})
-IF(NOT QT_QTCORE_FOUND)
-	MESSAGE(FATAL_ERROR "QtCore not found! Please install Qt ${MCRECOVER_QT4_MIN_VERSION} or higher.")
-ELSEIF(NOT QT_QTGUI_FOUND)
-	MESSAGE(FATAL_ERROR "QtGui not found! Please install Qt ${MCRECOVER_QT4_MIN_VERSION} or higher.")
+	FIND_PACKAGE(Qt4 ${MCRECOVER_QT4_MIN_VERSION}
+		COMPONENTS ${MCRECOVER_QT4_COMPONENTS})
+	IF(NOT QT_QTCORE_FOUND)
+		MESSAGE(FATAL_ERROR "QtCore not found! Please install Qt ${MCRECOVER_QT4_MIN_VERSION} or higher.")
+	ELSEIF(NOT QT_QTGUI_FOUND)
+		MESSAGE(FATAL_ERROR "QtGui not found! Please install Qt ${MCRECOVER_QT4_MIN_VERSION} or higher.")
+	ENDIF()
+	INCLUDE(${QT_USE_FILE})
+ELSEIF(USE_QT5)
+	# Find Qt 5.
+	# FIXME: Figure out a minimum Qt5 version.
+	FIND_PACKAGE(Qt5Core REQUIRED)
+	FIND_PACKAGE(Qt5Gui REQUIRED)
+	FIND_PACKAGE(Qt5Widgets REQUIRED)
+	FIND_PACKAGE(Qt5Xml REQUIRED)
+	IF(ENABLE_DBUS)
+		# QtDBus is used for DockManager.
+		FIND_PACKAGE(Qt5DBus)
+	ENDIF(ENABLE_DBUS)
 ENDIF()
-
-INCLUDE(${QT_USE_FILE})
 
 ####################################
 # Qt plugins. (Static build only!) #
@@ -308,14 +317,19 @@ SET(mcrecover_EDIT_UIS
 	)
 
 # Generate the header files from the UI files.
-QT4_WRAP_UI(mcrecover_UIS_H
+SET(mcrecover_UIS
 	${mcrecover_WINDOW_UIS}
 	${mcrecover_WIDGET_UIS}
 	${mcrecover_EDIT_UIS}
 	)
+IF(USE_QT4)
+	QT4_WRAP_UI(mcrecover_UIS_H ${mcrecover_UIS})
+ELSEIF(USE_QT5)
+	QT5_WRAP_UI(mcrecover_UIS_H ${mcrecover_UIS})
+ENDIF()
 
 # Create MOC source files for classes that need them.
-QT4_WRAP_CPP(mcrecover_MOC_SRCS
+SET(mcrecover_MOC_H
 	${mcrecover_MOC_H}
 	${mcrecover_WINDOW_MOC_H}
 	${mcrecover_WIDGET_MOC_H}
@@ -323,7 +337,13 @@ QT4_WRAP_CPP(mcrecover_MOC_SRCS
 	${mcrecover_EDIT_MOC_H}
 	${mcrecover_SEKRIT_MOC_H}
 	)
+IF(USE_QT4)
+	QT4_WRAP_CPP(mcrecover_MOC_SRCS ${mcrecover_MOC_H})
+ELSEIF(USE_QT5)
+	QT5_WRAP_CPP(mcrecover_MOC_SRCS ${mcrecover_MOC_H})
+ENDIF()
 
+# TODO: Qt5 version.
 IF(QT_QTDBUS_FOUND)
 	# QtDBus found.
 	# Enable DockManager / Unity API support.
@@ -370,11 +390,17 @@ SET(mcrecover_RCC_SRCS
 	resources/sonic/sonic.qrc
 	)
 
-# Add the resource files to the project.
-QT4_ADD_RESOURCES(
-	mcrecover_RCC_O ${mcrecover_RCC_SRCS}
-	OPTIONS -no-compress
-	)
+IF(USE_QT4)
+	QT4_ADD_RESOURCES(
+		mcrecover_RCC_O ${mcrecover_RCC_SRCS}
+		OPTIONS -no-compress
+		)
+ELSEIF(USE_QT5)
+	QT5_ADD_RESOURCES(
+		mcrecover_RCC_O ${mcrecover_RCC_SRCS}
+		OPTIONS -no-compress
+		)
+ENDIF()
 
 #########################
 # Build the executable. #
