@@ -36,6 +36,9 @@
 #include <gif_lib.h>
 #define GifDlVersion() (GIFLIB_MAJOR * 10 + GIFLIB_MINOR)
 #define GifDlGetUserData(GifFile) (GifFile)->UserData
+#define GifDlGetColorMapArray(Object) (Object)->Colors
+#define GifDlGetColorMapCount(Object) (Object)->ColorCount
+#define GifDlSetColorMapCount(Object, colorCount) (Object)->ColorCount = (colorCount)
 #endif /* USE_INTERNAL_GIF */
 
 // API is based on giflib-5.1.2.
@@ -84,19 +87,6 @@ typedef struct GifColorType {
     GifByteType Red, Green, Blue;
 } GifColorType;
 
-typedef struct ColorMapObject {
-    int ColorCount;
-    int BitsPerPixel;
-    bool SortFlag;
-    GifColorType *Colors;    /* on malloc(3) heap */
-} ColorMapObject;
-
-typedef struct GifImageDesc {
-    GifWord Left, Top, Width, Height;   /* Current image dimensions. */
-    bool Interlace;                     /* Sequential/Interlaced lines. */
-    ColorMapObject *ColorMap;           /* The local color map */
-} GifImageDesc;
-
 typedef struct ExtensionBlock {
     int ByteCount;
     GifByteType *Bytes; /* on malloc(3) heap */
@@ -115,8 +105,9 @@ typedef struct ExtensionBlock {
  */
 int GifDlVersion(void);
 
-// GifFileType is an opaque type for compatibility purposes.
+// Opaque types for compatibility purposes.
 typedef struct GifFileType GifFileType;
+typedef struct ColorMapObject ColorMapObject;
 
 /**
  * Get the UserData pointer from the specified GifFile.
@@ -124,6 +115,27 @@ typedef struct GifFileType GifFileType;
  * @return UserData pointer.
  */
 void *GifDlGetUserData(const GifFileType *GifFile);
+
+/**
+ * Get the Colors[] array from a ColorMapObject.
+ * @param Object ColorMapObject.
+ * @return Colors[] array.
+ */
+GifColorType *GifDlGetColorMapArray(ColorMapObject *Object);
+
+/**
+ * Get the color count from a ColorMapObject.
+ * @param Object ColorMapObject.
+ * @return Color count.
+ */
+int GifDlGetColorMapCount(const ColorMapObject *Object);
+
+/**
+ * Set the color count in a ColorMapObject.
+ * @param Object ColorMapObject.
+ * @param colorCount Color count.
+ */
+void GifDlSetColorMapCount(ColorMapObject *Object, int colorCount);
 
 /* func type to read gif data from arbitrary sources (TVT) */
 typedef int (*InputFunc) (GifFileType *GifFile, GifByteType *buf, int len);

@@ -79,7 +79,8 @@ int GcImageWriterPrivate::gif_output_func(GifFileType *gif, const GifByteType *b
 int GcImageWriterPrivate::paletteToGifColorMap(ColorMapObject *colorMap, const uint32_t *palette)
 {
 	int trans_idx = -1;
-	GifColorType *color = colorMap->Colors;
+	// TODO: Verify the size of colorMap?
+	GifColorType *color = GifDlGetColorMapArray(colorMap);
 	for (int i = 0; i < 256; i++, color++, palette++) {
 		color->Red   = ((*palette >> 16) & 0xFF);
 		color->Green = ((*palette >>  8) & 0xFF);
@@ -234,10 +235,12 @@ int GcImageWriterPrivate::gif_writeARGB32Image(GifFileType *gif,
 	blue = green + bufSz;
 
 	// Quantize the image buffer.
-	colorMap->ColorCount = 256;
+	int colorCount = 256;
+	GifDlSetColorMapCount(colorMap, colorCount);
 	int ret = GifQuantizeBuffer(gcImage->width(), gcImage->height(),
-			&colorMap->ColorCount, red, green, blue, out,
-			colorMap->Colors);
+			&colorCount, red, green, blue, out,
+			GifDlGetColorMapArray(colorMap));
+	GifDlSetColorMapCount(colorMap, colorCount);
 	if (ret != GIF_OK) {
 		// Error!
 		free(full);

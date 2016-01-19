@@ -305,6 +305,76 @@ void *GifDlGetUserData(const GifFileType *GifFile)
 	return NULL;
 }
 
+/**
+ * Get the Colors[] array from a ColorMapObject.
+ * @param Object ColorMapObject.
+ * @return Colors[] array.
+ */
+GifColorType *GifDlGetColorMapArray(ColorMapObject *Object)
+{
+	switch (giflib.version) {
+		case GIFLIB_51:
+		case GIFLIB_50:
+			return ((ColorMapObject_v50*)Object)->Colors;
+
+		case GIFLIB_42:
+		case GIFLIB_41:
+		case GIFLIB_40:
+			return ((ColorMapObject_v40*)Object)->Colors;
+
+		default:
+			break;
+	}
+
+	return NULL;
+}
+
+/**
+ * Get the color count from a ColorMapObject.
+ * @param Object ColorMapObject.
+ * @return Color count.
+ */
+int GifDlGetColorMapCount(const ColorMapObject *Object)
+{
+	switch (giflib.version) {
+		case GIFLIB_51:
+		case GIFLIB_50:
+			return ((ColorMapObject_v50*)Object)->ColorCount;
+
+		case GIFLIB_42:
+		case GIFLIB_41:
+		case GIFLIB_40:
+			return ((ColorMapObject_v40*)Object)->ColorCount;
+
+		default:
+			break;
+	}
+
+	return 0;
+}
+
+/**
+ * Set the color count in a ColorMapObject.
+ * @param Object ColorMapObject.
+ * @param colorCount Color count.
+ */
+void GifDlSetColorMapCount(ColorMapObject *Object, int colorCount)
+{
+	switch (giflib.version) {
+		case GIFLIB_51:
+		case GIFLIB_50:
+			((ColorMapObject_v50*)Object)->ColorCount = colorCount;
+
+		case GIFLIB_42:
+		case GIFLIB_41:
+		case GIFLIB_40:
+			((ColorMapObject_v40*)Object)->ColorCount = colorCount;
+
+		default:
+			break;
+	}
+}
+
 // NOTE: No NULL pointer checking is done in these functions.
 // GifDlVersion() MUST be called once on startup to determine
 // if giflib is available. If it isn't available, do NOT call

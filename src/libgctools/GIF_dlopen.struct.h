@@ -189,21 +189,62 @@ typedef struct _giflib_t {
 	};
 } giflib_t;
 
-// Opaque forward declaration.
+// Opaque forward declarations.
 typedef struct SavedImage SavedImage;
 
 /**
+ * ColorMapObject from giflib-5.1.2.
+ * Compatible with v5.0.x, v5.1.x.
+ */
+typedef struct ColorMapObject_v50 {
+    int ColorCount;
+    int BitsPerPixel;
+    bool SortFlag;
+    GifColorType *Colors;    /* on malloc(3) heap */
+} ColorMapObject_v50;
+
+/**
+ * GifFileType from giflib-4.2.3.
+ * Compatible with v4.0.x, v4.1.x, v4.2.x.
+ */
+typedef struct ColorMapObject_v40 {
+    int ColorCount;
+    int BitsPerPixel;
+    GifColorType *Colors;    /* on malloc(3) heap */
+} ColorMapObject_v40;
+
+/**
+ * GifImageDesc from giflib-5.1.2.
+ * Compatible with v5.0.x, v5.1.x.
+ */
+typedef struct GifImageDesc_v50 {
+    GifWord Left, Top, Width, Height;   /* Current image dimensions. */
+    bool Interlace;                     /* Sequential/Interlaced lines. */
+    ColorMapObject_v50 *ColorMap;       /* The local color map */
+} GifImageDesc_v50;
+
+/**
+ * GifImageDesc from giflib-4.1.
+ * Compatible with v4.0.x, v4.1.x, v4.2.x.
+ */
+typedef struct GifImageDesc_v40 {
+    GifWord Left, Top, Width, Height,   /* Current image dimensions. */
+      Interlace;                    /* Sequential/Interlaced lines. */
+    ColorMapObject_v40 *ColorMap;   /* The local color map */
+} GifImageDesc_v40;
+
+/**
  * GifFileType from giflib-5.1.2.
- * (compatible with v5.0.x, v5.1.x)
+ * Ccompatible with v5.0.x, v5.1.x.
  */
 typedef struct GifFileType_v50 {
     GifWord SWidth, SHeight;         /* Size of virtual canvas */
     GifWord SColorResolution;        /* How many colors can we generate? */
     GifWord SBackGroundColor;        /* Background color for virtual canvas */
     GifByteType AspectByte;	     /* Used to compute pixel aspect ratio */
-    ColorMapObject *SColorMap;       /* Global colormap, NULL if nonexistent. */
+    ColorMapObject_v50 *SColorMap;   /* Global colormap, NULL if nonexistent. */
     int ImageCount;                  /* Number of current image (both APIs) */
-    GifImageDesc Image;              /* Current image (low-level API) */
+    GifImageDesc_v50 Image;          /* Current image (low-level API) */
     SavedImage *SavedImages;         /* Image sequence (high-level API) */
     int ExtensionBlockCount;         /* Count extensions past last image */
     ExtensionBlock *ExtensionBlocks; /* Extensions past last image */    
@@ -224,9 +265,9 @@ typedef struct GifFileType_v40 {
     GifWord SWidth, SHeight,        /* Screen dimensions. */
       SColorResolution,         /* How many colors can we generate? */
       SBackGroundColor;         /* I hope you understand this one... */
-    ColorMapObject *SColorMap;  /* NULL if not exists. */
+    ColorMapObject_v40 *SColorMap;  /* NULL if not exists. */
     int ImageCount;             /* Number of current image */
-    GifImageDesc Image;         /* Block describing current image */
+    GifImageDesc_v40 Image;     /* Block describing current image */
     struct SavedImage *SavedImages; /* Use this to accumulate file state */
     void *UserData;            /* hook to attach user data (TVT) */
     void *Private;             /* Don't mess with this! */
