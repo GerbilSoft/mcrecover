@@ -1499,55 +1499,49 @@ void McRecoverWindow::on_actionOpen_triggered(void)
 	const QString vmuFilter = tr("Dreamcast VMU Image") + QLatin1String(" (*.bin)");
 	const QString allFilter = tr("All Files") + QLatin1String(" (*)");
 
-	QStringList filters;
-	filters.append(gcnFilter);
-	filters.append(vmuFilter);
-	filters.append(allFilter);
-
-	QString selectedFilter;
-
-	QFileDialog *dialog = new QFileDialog(this,
-			tr("Open GameCube Memory Card Image"),	// Dialog title
-			d->lastPath());				// Default filename
-	dialog->setAcceptMode(QFileDialog::AcceptOpen);
-	dialog->setFileMode(QFileDialog::ExistingFile);
-	dialog->setNameFilters(filters);
+	// NOTE: Using a QFileDialog instead of QFileDialog::getOpenFileName()
+	// causes a non-native appearance on Windows. Hence, we should use
+	// QFileDialog::getOpenFileName().
+	const QString filters = gcnFilter + QLatin1String(";;") +
+				vmuFilter + QLatin1String(";;") +
+				allFilter;
 
 	// Set the default filter.
-	QString defaultFilter;
+	QString selectedFilter;
 	const QString fileTypeKey = QLatin1String("fileType");
 	switch (d->cfg->getInt(fileTypeKey)) {
 		case 0:
 		default:
-			defaultFilter = gcnFilter;
+			selectedFilter = gcnFilter;
 			break;
 		case 1:
-			defaultFilter = vmuFilter;
+			selectedFilter = vmuFilter;
 			break;
 		case 2:
-			defaultFilter = allFilter;
+			selectedFilter = allFilter;
 			break;
 	}
+
 	// FIXME: This isn't working on KDE 4.
 	// This may be a Qt/KDE bug:
 	// - https://git.reviewboard.kde.org/r/115478/
 	// - https://mail.kde.org/pipermail/kde-frameworks-devel/2014-March/012659.html
 	// - http://mail.kde.org/pipermail/kde-frameworks-devel/2014-February/010691.html
-	dialog->selectNameFilter(defaultFilter);
+	//dialog->selectNameFilter(defaultFilter);
 
-	if (dialog->exec()) {
+	// Get the filename.
+	QString filename = QFileDialog::getOpenFileName(this,
+			tr("Open GameCube Memory Card Image"),	// Dialog title
+			d->lastPath(),				// Default filename
+			filters,				// Filters
+			&selectedFilter);			// Selected filter
+
+       if (!filename.isEmpty()) {
 		// Filename is selected.
-		QStringList filenames = dialog->selectedFiles();
-		if (filenames.isEmpty())
-			return;
-		QString filename = filenames.at(0);
-		if (filename.isEmpty())
-			return;
 
 		// Check the selected filename filter.
 		int type = -1;	// TODO: Enum?
 		int cfg_type = -1;
-		QString selectedFilter = dialog->selectedFilter();
 		if (selectedFilter == gcnFilter) {
 			type = 0;
 			cfg_type = 0;
@@ -1566,8 +1560,6 @@ void McRecoverWindow::on_actionOpen_triggered(void)
 		// Open the memory card file.
 		openCard(filename, type);
 	}
-
-	delete dialog;
 }
 
 /**
