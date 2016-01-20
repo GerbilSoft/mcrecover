@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * TaskbarButtonManager.hpp: Taskbar button manager base class.            *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,14 +19,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_TASKBARBUTTONMANAGER_HPP__
-#define __MCRECOVER_TASKBARBUTTONMANAGER_HPP__
+#ifndef __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGER_HPP__
+#define __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGER_HPP__
 
 #include <QtCore/QObject>
 class QWidget;
 
 class TaskbarButtonManagerPrivate;
-
 class TaskbarButtonManager : public QObject
 {
 	Q_OBJECT
@@ -36,14 +35,15 @@ class TaskbarButtonManager : public QObject
 	Q_PROPERTY(int progressBarMax READ progressBarMax WRITE setProgressBarMax)
 
 	protected:
-		TaskbarButtonManager(QObject *parent = 0);
+		TaskbarButtonManager(TaskbarButtonManagerPrivate *d, QObject *parent = 0);
 	public:
 		virtual ~TaskbarButtonManager();
 
+	protected:
+		TaskbarButtonManagerPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(TaskbarButtonManager)
 	private:
-		friend class TaskbarButtonManagerPrivate;
-		TaskbarButtonManagerPrivate *const d;
-		Q_DISABLE_COPY(TaskbarButtonManager);
+		Q_DISABLE_COPY(TaskbarButtonManager)
 
 	public:
 		/**
@@ -122,4 +122,4 @@ class TaskbarButtonManager : public QObject
 		void windowDestroyed_slot(QObject *obj);
 };
 
-#endif /* __MCRECOVER_TASKBARBUTTONMANAGER_HPP__ */
+#endif /* __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGER_HPP__ */

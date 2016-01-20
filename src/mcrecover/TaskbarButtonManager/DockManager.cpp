@@ -42,12 +42,21 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-class DockManagerPrivate
+/** DockManagerPrivate **/
+
+#include "TaskbarButtonManager_p.hpp"
+class DockManagerPrivate : public TaskbarButtonManagerPrivate
 {
 	public:
 		DockManagerPrivate(DockManager *const q);
-		~DockManagerPrivate();
+		virtual ~DockManagerPrivate();
 
+	protected:
+		Q_DECLARE_PUBLIC(DockManager)
+	private:
+		Q_DISABLE_COPY(DockManagerPrivate)
+
+	public:
 		/**
 		 * Close all DockManager connections.
 		 */
@@ -73,18 +82,13 @@ class DockManagerPrivate
 		void update(void);
 
 	private:
-		DockManager *const q;
-		Q_DISABLE_COPY(DockManagerPrivate);
-
-	private:
 		// DockManager.
 		NetLaunchpadDockManagerInterface *ifDockManager;
 		NetLaunchpadDockItemInterface *ifDockItem;
 };
 
-
 DockManagerPrivate::DockManagerPrivate(DockManager *const q)
-	: q(q)
+	: TaskbarButtonManagerPrivate(q)
 	, ifDockManager(nullptr)
 	, ifDockItem(nullptr)
 {
@@ -99,7 +103,6 @@ DockManagerPrivate::~DockManagerPrivate()
 	close();
 }
 
-
 /**
  * Close all DockManager connections.
  */
@@ -110,7 +113,6 @@ void DockManagerPrivate::close(void)
 	delete ifDockManager;
 	ifDockManager = nullptr;
 }
-
 
 /**
  * Get the DockManager interface.
@@ -137,7 +139,6 @@ NetLaunchpadDockManagerInterface *DockManagerPrivate::GetDockManagerInterface(QO
 	return ifDockManager;
 }
 
-
 /**
  * Connect to the DockManager.
  * @return 0 on success; non-zero on error.
@@ -148,13 +149,14 @@ int DockManagerPrivate::connectToDockManager(void)
 	close();
 
 	// If we don't have a window specified, don't do anything.
-	if (!q->window())
+	if (!this->window)
 		return -1;
 
 	// Get the session bus.
 	QDBusConnection bus = QDBusConnection::sessionBus();
 
 	// Connect to the DockManager over D-Bus.
+	Q_Q(DockManager);
 	ifDockManager = GetDockManagerInterface(q);
 	if (!ifDockManager)
 		return 1;
@@ -197,7 +199,6 @@ int DockManagerPrivate::connectToDockManager(void)
 	return 0;
 }
 
-
 /**
  * Update the DockItem status.
  * DockItem must be connected.
@@ -216,8 +217,8 @@ void DockManagerPrivate::update(void)
 
 	// Progress.
 	int progress;
-	int curVal = q->progressBarValue();
-	int curMax = q->progressBarMax();
+	int curVal = this->progressBarValue;
+	int curMax = this->progressBarMax;
 	if (curVal < 0 || curMax <= 0) {
 		progress = -1;
 	} else if (curVal >= curMax) {
@@ -230,17 +231,17 @@ void DockManagerPrivate::update(void)
 	ifDockItem->UpdateDockItem(dockItemProps);
 }
 
-
 /** DockManager **/
 
-
 DockManager::DockManager(QObject* parent)
-	: TaskbarButtonManager(parent)
-	, d(new DockManagerPrivate(this))
+	: TaskbarButtonManager(new DockManagerPrivate(this), parent)
 { }
 
 DockManager::~DockManager()
-	{ delete d; }
+{
+	// d_ptr is deleted by ~TaskbarButtonManager().
+	// TODO: Remove this function?
+}
 
 /**
  * Is this TaskbarButtonManager usable?
@@ -255,7 +256,6 @@ bool DockManager::IsUsable(void)
 	return isUsable;
 }
 
-
 /**
  * Set the window this TaskbarButtonManager should manage.
  * This must be a top-level window in order to work properly.
@@ -269,6 +269,8 @@ bool DockManager::IsUsable(void)
  */
 void DockManager::setWindow(QWidget *window)
 {
+	Q_D(DockManager);
+
 	// Disconnect any existing connections.
 	d->close();
 
@@ -282,16 +284,16 @@ void DockManager::setWindow(QWidget *window)
 	}
 }
 
-
 /**
  * Update the taskbar button.
  */
 void DockManager::update(void)
-	{ d->update(); }
-
+{
+	Q_D(DockManager);
+	d->update();
+}
 
 /** Slots **/
-
 
 /**
  * HACK: Timer for window initialization.
@@ -299,4 +301,7 @@ void DockManager::update(void)
  * window is fully initialized, we won't find it.
  */
 void DockManager::setWindow_timer_slot(void)
-	{ d->connectToDockManager(); }
+{
+	Q_D(DockManager);
+	d->connectToDockManager();
+}

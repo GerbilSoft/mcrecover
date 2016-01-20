@@ -166,6 +166,9 @@ SET(mcrecover_SRCS
 	config/ConfigDefaults.cpp
 	PathFuncs.cpp
 	)
+SET(mcrecover_H
+	TaskbarButtonManager/TaskbarButtonManager_p.hpp
+	)
 
 SET(mcrecover_WINDOW_SRCS
 	windows/McRecoverWindow.cpp
@@ -459,7 +462,7 @@ ENDIF()
 # TODO: Set Win32 when compiling release build
 # to disable the command prompt window.
 ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
-	${mcrecover_SRCS}
+	${mcrecover_SRCS} ${mcrecover_H}
 	${mcrecover_WINDOW_SRCS}
 	${mcrecover_WIDGET_SRCS}
 	${mcrecover_CARD_SRCS}
