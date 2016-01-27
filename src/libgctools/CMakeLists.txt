@@ -51,13 +51,16 @@ SET(libgctools_H
 
 # PNG-specific sources.
 IF(HAVE_PNG)
-	SET(libgctools_PNG_SRCS
-		GcImageWriter_PNG.cpp
-		APNG_dlopen.c
-		)
-	SET(libgctools_PNG_H
-		APNG_dlopen.h
-		)
+	SET(libgctools_PNG_SRCS GcImageWriter_PNG.cpp)
+	IF(NOT USE_INTERNAL_PNG)
+		SET(libgctools_PNG_SRCS
+			"${libgctools_PNG_SRCS}"
+			APNG_dlopen.c
+			)
+		SET(libgctools_PNG_H
+			APNG_dlopen.h
+			)
+	ENDIF(NOT USE_INTERNAL_PNG)
 ENDIF(HAVE_PNG)
 
 # GIF-specific sources.

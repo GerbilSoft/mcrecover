@@ -23,11 +23,8 @@
 #include <png.h>
 
 #ifdef USE_INTERNAL_PNG
-// Check if the internal libpng supports APNG.
-#ifdef PNG_APNG_SUPPORTED
-#define INT_PNG_APNG_SUPPORTED
-#endif /* PNG_APNG_SUPPORTED */
-#endif /* USE_INTERNAL_PNG */
+#error APNG_dlopen.c should not be compiled if using the internal libpng.
+#endif
 
 #include "APNG_dlopen.h"
 
@@ -53,10 +50,8 @@
 #define NULL 0
 #endif
 
-#ifndef USE_INTERNAL_PNG
 // DLL handle.
 static void *libpng_dll = NULL;
-#endif /* USE_INTERNAL_PNG */
 
 // APNG function pointers.
 APNG_png_get_acTL_t APNG_png_get_acTL = NULL;
@@ -96,36 +91,6 @@ static int is_apng_supported_ret = 0;
  */
 static int init_apng(void)
 {
-#ifdef USE_INTERNAL_PNG
-	// Internal PNG library.
-#ifdef INT_PNG_APNG_SUPPORTED
-	// APNG is supported in the internal PNG library.
-	APNG_png_get_acTL = png_get_acTL;
-	APNG_png_set_acTL = png_set_acTL;
-	APNG_png_get_num_frames = png_get_num_frames;
-	APNG_png_get_num_plays = png_get_num_plays;
-	APNG_png_get_next_frame_fcTL = png_get_next_frame_fcTL;
-	APNG_png_set_next_frame_fcTL = png_set_next_frame_fcTL;
-	APNG_png_get_next_frame_width = png_get_next_frame_width;
-	APNG_png_get_next_frame_height = png_get_next_frame_height;
-	APNG_png_get_next_frame_x_offset = png_get_next_frame_x_offset;
-	APNG_png_get_next_frame_y_offset = png_get_next_frame_y_offset;
-	APNG_png_get_next_frame_delay_num = png_get_next_frame_delay_num;
-	APNG_png_get_next_frame_delay_den = png_get_next_frame_delay_den;
-	APNG_png_get_next_frame_dispose_op = png_get_next_frame_dispose_op;
-	APNG_png_get_next_frame_blend_op = png_get_next_frame_blend_op;
-	APNG_png_get_first_frame_is_hidden = png_get_first_frame_is_hidden;
-	APNG_png_set_first_frame_is_hidden = png_set_first_frame_is_hidden;
-	APNG_png_read_frame_head = png_read_frame_head;
-	APNG_png_set_progressive_frame_fn = png_set_progressive_frame_fn;
-	APNG_png_write_frame_head = png_write_frame_head;
-	APNG_png_write_frame_tail = png_write_frame_tail;
-	return 1;
-#else
-	// APNG is not supported in the internal PNG library.
-	return 0;
-#endif /* INT_PNG_APNG_SUPPORTED */
-#else
 	// External PNG library.
 	char png_dll_filename[32];
 #ifdef _WIN32
@@ -176,10 +141,6 @@ static int init_apng(void)
 	APNG_png_write_frame_head = dlsym(libpng_dll, "png_write_frame_head");
 	APNG_png_write_frame_tail = dlsym(libpng_dll, "png_write_frame_tail");
 	return 1;
-#endif /* USE_INTERNAL_PNG */
-
-	// Should not get here...
-	return 0;
 }
 
 /**
