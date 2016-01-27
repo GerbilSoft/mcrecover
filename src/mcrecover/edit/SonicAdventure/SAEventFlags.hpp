@@ -44,6 +44,23 @@ class SAEventFlags : public BitFlags
 		 * @return Flag type, e.g. "Event".
 		 */
 		virtual QString flagType(void) const override;
+
+		/**
+		 * Get the desired page size for the BitFlagsModel.
+		 * @return Page size.
+		 */
+		virtual int pageSize(void) const override;
+
+		/**
+		 * Get the name for a given page of data.
+		 *
+		 * If pagination is enabled (pageSize > 0), this function is
+		 * used to determine the text for the corresponding tab.
+		 *
+		 * @param page Page number.
+		 * @return Page name.
+		 */
+		virtual QString pageName(int page) const override;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGS_HPP__ */

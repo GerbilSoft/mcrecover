@@ -363,19 +363,16 @@ SAEditor::SAEditor(QWidget *parent)
 	// SAEventFlags model and widget.
 	d->saEventFlagsModel = new BitFlagsModel(this);
 	d->saEventFlagsModel->setBitFlags(&d->saEventFlags);
-	d->ui.saEventFlagsView->setPageSize(64);
 	d->ui.saEventFlagsView->setBitFlagsModel(d->saEventFlagsModel);
 
 	// SANPCFlags model and widget.
 	d->saNPCFlagsModel = new BitFlagsModel(this);
 	d->saNPCFlagsModel->setBitFlags(&d->saNPCFlags);
-	d->ui.saNPCFlagsView->setPageSize(0);
 	d->ui.saNPCFlagsView->setBitFlagsModel(d->saNPCFlagsModel);
 
 	// SADXMissionFlags model and widget.
 	d->sadxMissionFlagsModel = new ByteFlagsModel(this);
 	d->sadxMissionFlagsModel->setByteFlags(&d->sadxMissionFlags);
-	d->ui.sadxMissionFlagsView->setPageSize(0);
 	d->ui.sadxMissionFlagsView->setByteFlagsModel(d->sadxMissionFlagsModel);
 }
 

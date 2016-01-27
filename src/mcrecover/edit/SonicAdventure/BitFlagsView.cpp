@@ -85,7 +85,28 @@ void BitFlagsViewPrivate::updateDisplay(void)
 		return;
 	}
 
-	// TODO: Add/remove tabs as necessary.
+	// Add/remove tabs as necessary.
+	// TODO: Option to force tab text update?
+	const int oldPages = ui.tabBar->count();
+	const int newPages = pageFilterModel->pageCount();
+	if (newPages < oldPages) {
+		// Remove some tabs.
+		if (ui.tabBar->currentIndex() >= newPages) {
+			// Update the current tab first.
+			ui.tabBar->setCurrentIndex(newPages - 1);
+		}
+		for (int i = newPages-1; i >= oldPages; i--) {
+			ui.tabBar->removeTab(i);
+		}
+	} else if (newPages > oldPages) {
+		// Add some tabs.
+		Q_Q(BitFlagsView);
+		const BitFlagsModel *model = q->bitFlagsModel();
+		for (int i = oldPages; i < newPages; i++) {
+			ui.tabBar->addTab(model->pageName(i));
+		}
+	}
+
 	// For now, just hide the entire tab bar if it's a single page.
 	ui.tabBar->setVisible(pageFilterModel->pageCount() > 1);
 
@@ -127,14 +148,6 @@ BitFlagsView::BitFlagsView(QWidget *parent)
 	// TODO: Parent should set the tab names...
 	d->ui.tabBar->setExpanding(false);
 	d->ui.tabBar->setDrawBase(true);
-	d->ui.tabBar->addTab(tr("Unused?"));
-	d->ui.tabBar->addTab(tr("General"));
-	d->ui.tabBar->addTab(tr("Sonic"));
-	d->ui.tabBar->addTab(tr("Tails"));
-	d->ui.tabBar->addTab(tr("Knuckles"));
-	d->ui.tabBar->addTab(tr("Amy"));
-	d->ui.tabBar->addTab(tr("Gamma"));
-	d->ui.tabBar->addTab(tr("Big"));
 
 	// Update the display.
 	d->updateDisplay();
@@ -171,8 +184,11 @@ BitFlagsModel *BitFlagsView::bitFlagsModel(void) const
 void BitFlagsView::setBitFlagsModel(BitFlagsModel *bitFlagsModel)
 {
 	// TODO: Connect destroyed() signal for BitFlagsModel?
+	// TODO: Watch for row count changes to adjust pages?
 	Q_D(BitFlagsView);
 	d->pageFilterModel->setSourceModel(bitFlagsModel);
+	// TODO: Signal from pageFilterModel to adjust tabs?
+	d->pageFilterModel->setPageSize(bitFlagsModel->pageSize());
 
 	// Update the QTabBar.
 	d->updateDisplay();
@@ -190,19 +206,4 @@ int BitFlagsView::pageSize(void) const
 	return d->pageFilterModel->pageSize();
 }
 
-/**
- * Set the page size.
- * @param pageSize Page size.
- */
-void BitFlagsView::setPageSize(int pageSize)
-{
-	Q_D(BitFlagsView);
-	// TODO: Signal from pageFilterModel to adjust tabs?
-	d->pageFilterModel->setPageSize(pageSize);
-
-	// Update the display.
-	d->updateDisplay();
-}
-
 // TODO: Page count?
-// TODO: Set tab names.

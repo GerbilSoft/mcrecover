@@ -58,3 +58,39 @@ QString SAEventFlags::flagType(void) const
 {
 	return tr("Event");
 }
+
+/**
+ * Get the desired page size for the BitFlagsModel.
+ * @return Page size.
+ */
+int SAEventFlags::pageSize(void) const
+{
+	// 64 events per character.
+	return 64;
+}
+
+/**
+ * Get the name for a given page of data.
+ *
+ * If pagination is enabled (pageSize > 0), this function is
+ * used to determine the text for the corresponding tab.
+ *
+ * @param page Page number.
+ * @return Page name.
+ */
+QString SAEventFlags::pageName(int page) const
+{
+	switch (page) {
+		case 0:	return tr("Unused?");
+		case 1:	return tr("General");
+		case 2:	return tr("Sonic");
+		case 3:	return tr("Tails");
+		case 4:	return tr("Knuckles");
+		case 5:	return tr("Amy");
+		case 6:	return tr("Gamma");
+		case 7:	return tr("Big");
+		default: break;
+	}
+
+	return QString();
+}

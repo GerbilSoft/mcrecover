@@ -280,6 +280,37 @@ void BitFlagsModel::setBitFlags(BitFlags *bitFlags)
 	}
 }
 
+/**
+ * Get the desired page size from the BitFlags.
+ * @return Page size.
+ */
+int BitFlagsModel::pageSize(void) const
+{
+	Q_D(const BitFlagsModel);
+	if (d->bitFlags) {
+		return d->bitFlags->pageSize();
+	}
+	return 0;
+}
+
+/**
+ * Get the name for a given page of data.
+ *
+ * If pagination is enabled (pageSize > 0), this function is
+ * used to determine the text for the corresponding tab.
+ *
+ * @param page Page number.
+ * @return Page name.
+ */
+QString BitFlagsModel::pageName(int page) const
+{
+	Q_D(const BitFlagsModel);
+	if (d->bitFlags) {
+		return d->bitFlags->pageName(page);
+	}
+	return QString();
+}
+
 /** Slots. **/
 
 /**

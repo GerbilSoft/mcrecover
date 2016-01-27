@@ -31,6 +31,8 @@ class BitFlags : public QObject
 {
 	Q_OBJECT
 
+	Q_PROPERTY(int pageSize READ pageSize)
+
 	// This class should not be used directly.
 	protected:
 		BitFlags(BitFlagsPrivate *d, QObject *parent = 0);
@@ -129,6 +131,23 @@ class BitFlags : public QObject
 		 * @return Flag type, e.g. "Event".
 		 */
 		virtual QString flagType(void) const = 0;
+
+		/**
+		 * Get the desired page size for the BitFlagsModel.
+		 * @return Page size.
+		 */
+		virtual int pageSize(void) const;
+
+		/**
+		 * Get the name for a given page of data.
+		 *
+		 * If pagination is enabled (pageSize > 0), this function is
+		 * used to determine the text for the corresponding tab.
+		 *
+		 * @param page Page number.
+		 * @return Page name.
+		 */
+		virtual QString pageName(int page) const;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_FLAGS_HPP__ */

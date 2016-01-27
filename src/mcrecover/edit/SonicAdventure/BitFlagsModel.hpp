@@ -33,6 +33,7 @@ class BitFlagsModel : public QAbstractListModel
 	Q_OBJECT
 
 	// TODO: Q_PROPERTY() for eventFlags.
+	Q_PROPERTY(int pageSize READ pageSize)
 
 	public:
 		BitFlagsModel(QObject *parent = 0);
@@ -78,6 +79,23 @@ class BitFlagsModel : public QAbstractListModel
 		 * @param bitFlags BitFlags to show.
 		 */
 		void setBitFlags(BitFlags *bitFlags);
+
+		/**
+		 * Get the desired page size from the BitFlags.
+		 * @return Page size.
+		 */
+		int pageSize(void) const;
+
+		/**
+		 * Get the name for a given page of data.
+		 *
+		 * If pagination is enabled (pageSize > 0), this function is
+		 * used to determine the text for the corresponding tab.
+		 *
+		 * @param page Page number.
+		 * @return Page name.
+		 */
+		QString pageName(int page) const;
 
 	protected slots:
 		/**

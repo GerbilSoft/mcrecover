@@ -213,3 +213,29 @@ int BitFlags::setAllFlags(const uint8_t *data, int sz)
 	emit flagsChanged(0, bits-1);
 	return bits;
 }
+
+/**
+ * Get the desired page size for the BitFlagsModel.
+ * @return Page size.
+ */
+int BitFlags::pageSize(void) const
+{
+	// Default is no pagination.
+	return 0;
+}
+
+/**
+ * Get the name for a given page of data.
+ *
+ * If pagination is enabled (pageSize > 0), this function is
+ * used to determine the text for the corresponding tab.
+ *
+ * @param page Page number.
+ * @return Page name.
+ */
+QString BitFlags::pageName(int page) const
+{
+	// Default is no pagination.
+	Q_UNUSED(page)
+	return QString();
+}
