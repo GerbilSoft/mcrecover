@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * TaskbarButtonManagerFactory.hpp: TaskbarButtonManager factory class.    *
+ * UnityLauncher.cpp: Unity Launcher implementation.                       *
  *                                                                         *
- * Copyright (c) 2015-2016 by David Korth.                                 *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,49 +19,51 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#include "TaskbarButtonManagerFactory.hpp"
+#ifndef __MCRECOVER_TASKBARBUTTONMANAGER_UNITYLAUNCHER_HPP__
+#define __MCRECOVER_TASKBARBUTTONMANAGER_UNITYLAUNCHER_HPP__
+
 #include "TaskbarButtonManager.hpp"
 
-// TaskbarButtonManager subclasses.
-#include <config.mcrecover.h>
-#ifdef Q_OS_WIN32
-#include "Win7TaskbarList.hpp"
-#endif /* Q_OS_WIN32 */
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
-#include "UnityLauncher.hpp"
-#endif
-#ifdef QtDBus_FOUND
-#include "DockManager.hpp"
-#endif /* QtDBus_FOUND */
-
-/**
- * Create a TaskbarButtonManager.
- * @param parent Parent object.
- * @return System-specific TaskbarButtonManager, or nullptr on error.
- */
-TaskbarButtonManager *TaskbarButtonManagerFactory::createManager(QObject *parent)
+class UnityLauncherPrivate;
+class UnityLauncher : public TaskbarButtonManager
 {
-	// Check the various implementations.
-#ifdef Q_OS_WIN
-	if (Win7TaskbarList::IsUsable()) {
-		// Win7TaskbarList is usable.
-		return new Win7TaskbarList(parent);
-	}
-#endif /* Q_OS_WIN */
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
-	// Unity Launcher
-	if (UnityLauncher::IsUsable()) {
-		// Unity Launcher is usable.
-		return new UnityLauncher(parent);
-	}
-#endif /* defined(Q_OS_UNIX) && !defined(Q_OS_MAC) */
-#ifdef QtDBus_FOUND
-	if (DockManager::IsUsable()) {
-		// DockManager is usable.
-		return new DockManager(parent);
-	}
-#endif /* QtDBus_FOUND */
+	Q_OBJECT
 
-	// No TaskbarButtonManager subclasses are available.
-	return nullptr;
-}
+	public:
+		UnityLauncher(QObject *parent = 0);
+		virtual ~UnityLauncher();
+
+	protected:
+		Q_DECLARE_PRIVATE(UnityLauncher)
+	private:
+		Q_DISABLE_COPY(UnityLauncher)
+
+	public:
+		/**
+		 * Is this TaskbarButtonManager usable?
+		 * @return True if usable; false if not.
+		 */
+		static bool IsUsable(void);
+
+	public:
+		/**
+		 * Set the window this TaskbarButtonManager should manage.
+		 * This must be a top-level window in order to work properly.
+		 *
+		 * Subclasses should reimplement this function if special
+		 * initialization is required to set up the taskbar button.
+		 *
+		 * TODO: Make a separate protected function that setWindow() calls?
+		 *
+		 * @param window Window.
+		 */
+		virtual void setWindow(QWidget *window) override;
+
+	protected:
+		/**
+		 * Update the taskbar button.
+		 */
+		virtual void update(void) override;
+};
+
+#endif /* __MCRECOVER_TASKBARBUTTONMANAGER_UNITYLAUNCHER_HPP__ */

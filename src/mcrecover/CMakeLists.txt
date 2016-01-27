@@ -390,52 +390,66 @@ IF(WIN32)
 		${mcrecover_TBM_MOC_H}
 		TaskbarButtonManager/Win7TaskbarList.hpp
 		)
-ELSEIF(QtDBus_FOUND AND UNIX AND NOT APPLE)
-	IF(USE_QT4)
-		# Qt4: QtDBus found.
-		# Enable DockManager / Unity API support.
-		# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
-		# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
-		INCLUDE(QtDBusInterfaceNoNS)
-		QT4_ADD_DBUS_INTERFACES_NONS(
-			mcrecover_TBM_SRCS
-			INCLUDE dbus/DBusMetatypes.hpp
-			dbus/net.launchpad.DockItem.xml
-			dbus/net.launchpad.DockManager.xml
-			)
-		SET(mcrecover_TBM_SRCS
-			${mcrecover_TBM_SRCS}
-			TaskbarButtonManager/DockManager.cpp
-			)
-		SET(mcrecover_TBM_MOC_H
-			${mcrecover_TBM_MOC_H}
-			TaskbarButtonManager/DockManager.hpp
-			)
-	ELSEIF(USE_QT5)
-		# Qt5: QtDBus found.
-		# Enable DockManager / Unity API support.
-		# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
-		# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
-		INCLUDE(QtDBusInterfaceNoNS)
-		# TODO: Qt5 version.
-		IF(0)
-		INCLUDE(QtDBusInterfaceNoNS)
-		QT4_ADD_DBUS_INTERFACES_NONS(
-			mcrecover_TBM_SRCS
-			INCLUDE dbus/DBusMetatypes.hpp
-			dbus/net.launchpad.DockItem.xml
-			dbus/net.launchpad.DockManager.xml
-			)
-		SET(mcrecover_TBM_SRCS
-			${mcrecover_TBM_SRCS}
-			TaskbarButtonManager/DockManager.cpp
-			)
-		SET(mcrecover_TBM_MOC_H
-			${mcrecover_TBM_MOC_H}
-			TaskbarButtonManager/DockManager.hpp
-			)
-		ENDIF(0)
-	ENDIF()
+ELSEIF(UNIX AND NOT APPLE)
+	# Unity Launcher API.
+	# dlopen() is required.
+	SET(mcrecover_NEEDS_DL 1)
+	SET(mcrecover_TBM_SRCS
+		${mcrecover_TBM_SRCS}
+		TaskbarButtonManager/UnityLauncher.cpp
+		)
+	SET(mcrecover_TBM_MOC_H
+		${mcrecover_TBM_MOC_H}
+		TaskbarButtonManager/UnityLauncher.hpp
+		)
+
+	IF(QtDBus_FOUND)
+		IF(USE_QT4)
+			# Qt4: QtDBus found.
+			# Enable DockManager / Unity API support.
+			# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
+			# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
+			INCLUDE(QtDBusInterfaceNoNS)
+			QT4_ADD_DBUS_INTERFACES_NONS(
+				mcrecover_TBM_SRCS
+				INCLUDE dbus/DBusMetatypes.hpp
+				dbus/net.launchpad.DockItem.xml
+				dbus/net.launchpad.DockManager.xml
+				)
+			SET(mcrecover_TBM_SRCS
+				${mcrecover_TBM_SRCS}
+				TaskbarButtonManager/DockManager.cpp
+				)
+			SET(mcrecover_TBM_MOC_H
+				${mcrecover_TBM_MOC_H}
+				TaskbarButtonManager/DockManager.hpp
+				)
+		ELSEIF(USE_QT5)
+			# Qt5: QtDBus found.
+			# Enable DockManager / Unity API support.
+			# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
+			# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
+			INCLUDE(QtDBusInterfaceNoNS)
+			# TODO: Qt5 version.
+			IF(0)
+			INCLUDE(QtDBusInterfaceNoNS)
+			QT4_ADD_DBUS_INTERFACES_NONS(
+				mcrecover_TBM_SRCS
+				INCLUDE dbus/DBusMetatypes.hpp
+				dbus/net.launchpad.DockItem.xml
+				dbus/net.launchpad.DockManager.xml
+				)
+			SET(mcrecover_TBM_SRCS
+				${mcrecover_TBM_SRCS}
+				TaskbarButtonManager/DockManager.cpp
+				)
+			SET(mcrecover_TBM_MOC_H
+				${mcrecover_TBM_MOC_H}
+				TaskbarButtonManager/DockManager.hpp
+				)
+			ENDIF(0)
+		ENDIF()
+	ENDIF(QtDBus_FOUND)
 ENDIF()
 
 IF(mcrecover_TBM_MOC_H)
@@ -547,6 +561,12 @@ TARGET_LINK_LIBRARIES(mcrecover
 	${WIN32_LIBS}
 	${APPLE_LIBS}
 	)
+
+# Link in libdl if it's required for dlopen()
+# and we have a component that uses it.
+IF(mcrecover_NEEDS_DL AND CMAKE_DL_LIBS)
+	TARGET_LINK_LIBRARIES(mcrecover ${CMAKE_DL_LIBS})
+ENDIF(mcrecover_NEEDS_DL AND CMAKE_DL_LIBS)
 
 # Translations.
 ADD_DEPENDENCIES(mcrecover translations_target)
