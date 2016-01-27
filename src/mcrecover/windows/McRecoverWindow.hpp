@@ -69,13 +69,12 @@ class McRecoverWindow : public QMainWindow
 		virtual void dropEvent(QDropEvent *event) override;
 
 #ifdef Q_OS_WIN
-		/**
-		 * Windows message handler.
-		 * Used for TaskbarButtonManager.
-		 * @param message
-		 * @param result
-		 */
+		// Windows message handler. Used for TaskbarButtonManager.
+#if QT_VERSION >= 0x050000
+		virtual bool nativeEvent(const QByteArray &eventType, void *message, long *result) override;
+#else /* QT_VERSION < 0x050000 */
 		virtual bool winEvent(MSG *message, long *result) override;
+#endif
 #endif /* Q_OS_WIN */
 
 	protected slots:

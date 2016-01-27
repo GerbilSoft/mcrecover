@@ -1460,18 +1460,17 @@ void McRecoverWindow::dropEvent(QDropEvent *event)
 }
 
 #ifdef Q_OS_WIN
-/**
- * Windows message handler.
- * Used for TaskbarButtonManager.
- * @param message
- * @param result
- */
+// Windows message handler. Used for TaskbarButtonManager.
+#if QT_VERSION >= 0x050000
+bool McRecoverWindow::nativeEvent(const QByteArray &eventType, void *message, long *result)
+#else /* QT_VERSION < 0x050000 */
 bool McRecoverWindow::winEvent(MSG *message, long *result)
+#endif
 {
 	// Reference: http://nicug.blogspot.com/2011/03/windows-7-taskbar-extensions-in-qt.html
 	// FIXME: winEvent() has been replaced by nativeEvent() in Qt 5.
 	Q_D(McRecoverWindow);
-	if (message->message == McRecoverQApplication::WM_TaskbarButtonCreated()) {
+	if (((MSG*)message)->message == McRecoverQApplication::WM_TaskbarButtonCreated()) {
 		// Initialize the Taskbar Button Manager.
 		d->taskbarButtonManager = TaskbarButtonManager::Instance(this);
 		if (d->taskbarButtonManager) {
