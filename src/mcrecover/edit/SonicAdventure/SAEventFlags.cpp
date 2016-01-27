@@ -31,7 +31,7 @@
 /** SAEventFlags **/
 
 SAEventFlags::SAEventFlags(QObject *parent)
-	: BitFlags(512, &sa_event_flags_desc[0], NUM_ELEMENTS(sa_event_flags_desc), parent)
+	: BitFlags(512, &sa_event_flags_desc[0], NUM_ELEMENTS(sa_event_flags_desc)-1, parent)
 { }
 
 /**
