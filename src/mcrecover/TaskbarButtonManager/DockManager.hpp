@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * DockManager.cpp: DockManager D-Bus implementation.                      *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,8 +19,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_DOCKMANAGER_HPP__
-#define __MCRECOVER_DOCKMANAGER_HPP__
+#ifndef __MCRECOVER_TASKBARBUTTONMANAGER_DOCKMANAGER_HPP__
+#define __MCRECOVER_TASKBARBUTTONMANAGER_DOCKMANAGER_HPP__
 
 #include "TaskbarButtonManager.hpp"
 
@@ -57,13 +57,13 @@ class DockManager : public TaskbarButtonManager
 		 *
 		 * @param window Window.
 		 */
-		virtual void setWindow(QWidget *window);
+		virtual void setWindow(QWidget *window) override;
 
 	protected:
 		/**
 		 * Update the taskbar button.
 		 */
-		void update(void);
+		virtual void update(void) override;
 
 	private slots:
 		/**
