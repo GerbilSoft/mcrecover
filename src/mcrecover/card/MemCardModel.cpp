@@ -86,11 +86,9 @@ class MemCardModelPrivate
 		void updateAnimTimerState(void);
 
 		// Animation timer.
-		QTimer animTimer;
+		QTimer *animTimer;
 		// Pause count. If >0, animation is paused.
 		int pauseCounter;
-		// Animation timer "slot".
-		void animTimerSlot(void);
 
 		// Style variables.
 		struct style_t {
@@ -135,7 +133,7 @@ MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	, insertEnd(-1)
 {
 	// Connect animTimer's timeout() signal.
-	QObject::connect(&animTimer, SIGNAL(timeout()),
+	QObject::connect(animTimer, SIGNAL(timeout()),
 			 q, SLOT(animTimerSlot()));
 
 	// Initialize the style variables.
@@ -184,7 +182,8 @@ void MemCardModelPrivate::style_t::init(void)
 
 MemCardModelPrivate::~MemCardModelPrivate()
 {
-	animTimer.stop();
+	animTimer->stop();
+	delete animTimer;
 
 	// TODO: Check for race conditions.
 	qDeleteAll(animState);
@@ -196,7 +195,7 @@ MemCardModelPrivate::~MemCardModelPrivate()
  */
 void MemCardModelPrivate::initAnimState(void)
 {
-	animTimer.stop();
+	animTimer->stop();
 
 	// TODO: Check for race conditions.
 	qDeleteAll(animState);
@@ -241,41 +240,11 @@ void MemCardModelPrivate::updateAnimTimerState(void)
 	if (pauseCounter <= 0 && !animState.isEmpty()) {
 		// Animation is not paused, and we have animated icons.
 		// Start the timer.
-		animTimer.start(IconAnimHelper::FAST_ANIM_TIMER);
+		animTimer->start(IconAnimHelper::FAST_ANIM_TIMER);
 	} else {
 		// Either animation is paused, or we don't have animated icons.
 		// Stop the timer.
-		animTimer.stop();
-	}
-}
-
-/**
- * Animation timer "slot".
- */
-void MemCardModelPrivate::animTimerSlot(void)
-{
-	if (!card) {
-		animTimer.stop();
-		return;
-	}
-
-	// Check for icon animations.
-	Q_Q(MemCardModel);
-	for (int i = 0; i < fileCount; i++) {
-		const File *file = card->getFile(i);
-		IconAnimHelper *helper = animState.value(file);
-		if (!helper)
-			continue;
-
-		// Tell the IconAnimHelper that a timer tick has occurred.
-		// TODO: Connect the timer to the IconAnimHelper directly?
-		bool iconUpdated = helper->tick();
-		if (iconUpdated) {
-			// Icon has been updated.
-			// Notify the UI that the icon has changed.
-			QModelIndex iconIndex = q->createIndex(i, MemCardModel::COL_ICON, 0);
-			emit q->dataChanged(iconIndex, iconIndex);
-		}
+		animTimer->stop();
 	}
 }
 
@@ -617,7 +586,28 @@ void MemCardModel::resumeAnimation(void)
 void MemCardModel::animTimerSlot(void)
 {
 	Q_D(MemCardModel);
-	d->animTimerSlot();
+	if (!d->card) {
+		d->animTimer->stop();
+		return;
+	}
+
+	// Check for icon animations.
+	for (int i = 0; i < d->fileCount; i++) {
+		const File *file = d->card->getFile(i);
+		IconAnimHelper *helper = d->animState.value(file);
+		if (!helper)
+			continue;
+
+		// Tell the IconAnimHelper that a timer tick has occurred.
+		// TODO: Connect the timer to the IconAnimHelper directly?
+		bool iconUpdated = helper->tick();
+		if (iconUpdated) {
+			// Icon has been updated.
+			// Notify the UI that the icon has changed.
+			QModelIndex iconIndex = createIndex(i, MemCardModel::COL_ICON, 0);
+			emit dataChanged(iconIndex, iconIndex);
+		}
+	}
 }
 
 /**
