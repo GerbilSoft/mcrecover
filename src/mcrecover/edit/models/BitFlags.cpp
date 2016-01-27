@@ -44,7 +44,6 @@ class BitFlagsPrivate
 		 * @param count Number of bit_flags entries. (must be >= total_flags)
 		 */
 		BitFlagsPrivate(int total_flags, const bit_flag_t *bit_flags, int count);
-		~BitFlagsPrivate();
 
 	private:
 		Q_DISABLE_COPY(BitFlagsPrivate)
@@ -88,9 +87,6 @@ BitFlagsPrivate::BitFlagsPrivate(int total_flags, const bit_flag_t *bit_flags, i
 		flags_desc.insert(bit_flags->event, QLatin1String(bit_flags->description));
 	}
 }
-
-BitFlagsPrivate::~BitFlagsPrivate()
-{ }
 
 /** BitFlags **/
 
