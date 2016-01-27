@@ -40,7 +40,7 @@
 #include "card/VmuCard.hpp"
 
 // File database.
-#include "GcnMcFileDb.hpp"
+#include "db/GcnMcFileDb.hpp"
 
 // Search classes.
 #include "SearchThread.hpp"

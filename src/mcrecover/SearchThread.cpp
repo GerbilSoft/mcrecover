@@ -25,7 +25,7 @@
 #include "card/GcnCard.hpp"
 
 // GCN Memory Card File Database.
-#include "GcnMcFileDb.hpp"
+#include "db/GcnMcFileDb.hpp"
 
 // Worker object.
 #include "SearchThreadWorker.hpp"

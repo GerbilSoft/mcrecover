@@ -23,7 +23,7 @@
 #include "AboutDialog.hpp"
 #include "util/git.h"
 
-#include "GcnMcFileDb.hpp"
+#include "db/GcnMcFileDb.hpp"
 
 // C includes.
 #include <string.h>

@@ -113,7 +113,6 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.mcrecover.h.in" "${CMAKE_CURR
 # Sources.
 SET(mcrecover_SRCS
 	mcrecover.cpp
-	GcnMcFileDb.cpp
 	SearchThread.cpp
 	SearchThreadWorker.cpp
 	PcreRegex.cpp
@@ -127,6 +126,13 @@ SET(mcrecover_SRCS
 	config/ConfigStore.cpp
 	config/ConfigDefaults.cpp
 	PathFuncs.cpp
+	)
+
+SET(mcrecover_DB_SRCS
+	db/GcnMcFileDb.cpp
+	)
+SET(mcrecover_DB_H
+	db/GcnMcFileDef.hpp
 	)
 
 SET(mcrecover_WINDOW_SRCS
@@ -210,13 +216,16 @@ ENDIF(WIN32)
 
 # Headers with Qt4 objects.
 SET(mcrecover_MOC_H
-	GcnMcFileDb.hpp
 	SearchThread.hpp
 	SearchThreadWorker.hpp
 	IconAnimHelper.hpp
 	McRecoverQApplication.hpp
 	TaskbarButtonManager/TaskbarButtonManager.hpp
 	config/ConfigStore.hpp
+	)
+
+SET(mcrecover_DB_MOC_H
+	db/GcnMcFileDb.hpp
 	)
 
 SET(mcrecover_WINDOW_MOC_H
@@ -318,6 +327,7 @@ QT4_WRAP_UI(mcrecover_UIS_H
 # Create MOC source files for classes that need them.
 QT4_WRAP_CPP(mcrecover_MOC_SRCS
 	${mcrecover_MOC_H}
+	${mcrecover_DB_MOC_H}
 	${mcrecover_WINDOW_MOC_H}
 	${mcrecover_WIDGET_MOC_H}
 	${mcrecover_CARD_MOC_H}
@@ -385,6 +395,7 @@ QT4_ADD_RESOURCES(
 # to disable the command prompt window.
 ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_SRCS}
+	${mcrecover_DB_SRCS} ${mcrecover_DB_H}
 	${mcrecover_WINDOW_SRCS}
 	${mcrecover_WIDGET_SRCS}
 	${mcrecover_CARD_SRCS}
