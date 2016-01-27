@@ -25,7 +25,7 @@
 // NOTE: Many of the event flags are unused, so instead of using
 // an array, we're using a struct of event flags.
 // FIXME: Alignment on 64-bit?
-#include "bit_flag.h"
+#include "../models/bit_flag.h"
 
 // Sonic Adventure event flags data.
 // Borrowed from SASave.

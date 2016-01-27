@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * ByteFlagsView.hpp: Byte Flags editor.                                   *
+ * BitFlagsView.hpp: Bit Flags editor.                                     *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,38 +19,34 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#include "ByteFlagsView.hpp"
+#include "BitFlagsView.hpp"
 
-#include "ByteFlags.hpp"
-#include "ByteFlagsModel.hpp"
-#include "PageFilterModel.hpp"
-#include "CenteredCheckBoxDelegate.hpp"
+#include "../models/BitFlags.hpp"
+#include "../models/BitFlagsModel.hpp"
+#include "../models/PageFilterModel.hpp"
 
 // C includes. (C++ namespace)
 #include <cassert>
 
-// Sonic Adventure save file definitions.
-#include "sa_defs.h"
-
 // TODO: Put this in a common header file somewhere.
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
-/** ByteFlagsViewPrivate **/
+/** BitFlagsViewPrivate **/
 
-#include "ui_ByteFlagsView.h"
-class ByteFlagsViewPrivate
+#include "ui_BitFlagsView.h"
+class BitFlagsViewPrivate
 {
 	public:
-		ByteFlagsViewPrivate(ByteFlagsView *q);
+		BitFlagsViewPrivate(BitFlagsView *q);
 
 	protected:
-		ByteFlagsView *const q_ptr;
-		Q_DECLARE_PUBLIC(ByteFlagsView)
+		BitFlagsView *const q_ptr;
+		Q_DECLARE_PUBLIC(BitFlagsView)
 	private:
-		Q_DISABLE_COPY(ByteFlagsViewPrivate)
+		Q_DISABLE_COPY(BitFlagsViewPrivate)
 
 	public:
-		Ui_ByteFlagsView ui;
+		Ui_BitFlagsView ui;
 
 		// Page Filter model. (owned by this widget)
 		PageFilterModel *pageFilterModel;
@@ -64,7 +60,7 @@ class ByteFlagsViewPrivate
 		void updateDisplay(void);
 };
 
-ByteFlagsViewPrivate::ByteFlagsViewPrivate(ByteFlagsView *q)
+BitFlagsViewPrivate::BitFlagsViewPrivate(BitFlagsView *q)
 	: q_ptr(q)
 	, pageFilterModel(nullptr)
 {
@@ -76,7 +72,7 @@ ByteFlagsViewPrivate::ByteFlagsViewPrivate(ByteFlagsView *q)
 /**
  * Update the display.
  */
-void ByteFlagsViewPrivate::updateDisplay(void)
+void BitFlagsViewPrivate::updateDisplay(void)
 {
 	QAbstractItemModel *const model = pageFilterModel->sourceModel();
 	if (!model) {
@@ -86,39 +82,57 @@ void ByteFlagsViewPrivate::updateDisplay(void)
 		return;
 	}
 
-	// TODO: Add/remove tabs as necessary.
+	// Add/remove tabs as necessary.
+	// TODO: Option to force tab text update?
+	const int oldPages = ui.tabBar->count();
+	const int newPages = pageFilterModel->pageCount();
+	if (newPages < oldPages) {
+		// Remove some tabs.
+		if (ui.tabBar->currentIndex() >= newPages) {
+			// Update the current tab first.
+			ui.tabBar->setCurrentIndex(newPages - 1);
+		}
+		for (int i = newPages-1; i >= oldPages; i--) {
+			ui.tabBar->removeTab(i);
+		}
+	} else if (newPages > oldPages) {
+		// Add some tabs.
+		Q_Q(BitFlagsView);
+		const BitFlagsModel *model = q->bitFlagsModel();
+		for (int i = oldPages; i < newPages; i++) {
+			ui.tabBar->addTab(model->pageName(i));
+		}
+	}
+
 	// For now, just hide the entire tab bar if it's a single page.
 	ui.tabBar->setVisible(pageFilterModel->pageCount() > 1);
 
 	// Resize the columns to fit the contents.
 	// TODO: On theme change, pageSize change...?
-	ui.lstEventFlags->resizeColumnToContents(ByteFlagsModel::COL_CHARACTER);
-	for (int i = ByteFlagsModel::COL_BIT0; i < ByteFlagsModel::COL_BIT7; i++) {
-		ui.lstEventFlags->resizeColumnToContents(i);
-	}
-
+	ui.lstEventFlags->resizeColumnToContents(BitFlagsModel::COL_CHECKBOX);
 	// ID should be as wide as the largest ID number.
 	QFontMetrics fm = ui.lstEventFlags->fontMetrics();
 	int id_width = fm.width(QString::number(model->rowCount()-1));
 	// FIXME: Add text margins. For now, just add width of 'W'.
 	id_width += fm.width(QChar(L'W'));
-	ui.lstEventFlags->setColumnWidth(ByteFlagsModel::COL_ID, id_width+1);
+	ui.lstEventFlags->setColumnWidth(BitFlagsModel::COL_ID, id_width+1);
+	
+	// Event Description and overall width.
+	ui.lstEventFlags->resizeColumnToContents(BitFlagsModel::COL_DESCRIPTION);
+	ui.lstEventFlags->resizeColumnToContents(model->columnCount());
 }
 
-/** ByteFlagsView **/
+/** BitFlagsView **/
 
-ByteFlagsView::ByteFlagsView(QWidget *parent)
+BitFlagsView::BitFlagsView(QWidget *parent)
 	: QWidget(parent)
-	, d_ptr(new ByteFlagsViewPrivate(this))
+	, d_ptr(new BitFlagsViewPrivate(this))
 {
-	Q_D(ByteFlagsView);
+	Q_D(BitFlagsView);
 	d->ui.setupUi(this);
 
 	// Set lstEventFlags' model.
 	d->ui.lstEventFlags->setModel(d->pageFilterModel);
-
-	// Set up a CentereCheckBoxDelegate.
-	d->ui.lstEventFlags->setItemDelegate(new CenteredCheckBoxDelegate(this));
 
 	// NOTE: QTabBar is initialized after the model is set to prevent
 	// signals from being triggered before pageFilterModel is valid.
@@ -131,14 +145,6 @@ ByteFlagsView::ByteFlagsView(QWidget *parent)
 	// TODO: Parent should set the tab names...
 	d->ui.tabBar->setExpanding(false);
 	d->ui.tabBar->setDrawBase(true);
-	d->ui.tabBar->addTab(tr("Unused?"));
-	d->ui.tabBar->addTab(tr("General"));
-	d->ui.tabBar->addTab(tr("Sonic"));
-	d->ui.tabBar->addTab(tr("Tails"));
-	d->ui.tabBar->addTab(tr("Knuckles"));
-	d->ui.tabBar->addTab(tr("Amy"));
-	d->ui.tabBar->addTab(tr("Gamma"));
-	d->ui.tabBar->addTab(tr("Big"));
 
 	// Update the display.
 	d->updateDisplay();
@@ -150,43 +156,36 @@ ByteFlagsView::ByteFlagsView(QWidget *parent)
 		d->ui.tabBar, SLOT(setCurrentIndex(int)));
 }
 
-ByteFlagsView::~ByteFlagsView()
+BitFlagsView::~BitFlagsView()
 {
-	Q_D(ByteFlagsView);
+	Q_D(BitFlagsView);
 	delete d;
 }
 
 /** Model access. **/
 
 /**
- * Get the ByteFlagsModel this widget is editing.
- * @return ByteFlagsModel.
+ * Get the BitFlagsModel this widget is editing.
+ * @return BitFlagsModel.
  */
-ByteFlagsModel *ByteFlagsView::byteFlagsModel(void) const
+BitFlagsModel *BitFlagsView::bitFlagsModel(void) const
 {
-	Q_D(const ByteFlagsView);
-	return qobject_cast<ByteFlagsModel*>(d->pageFilterModel->sourceModel());
+	Q_D(const BitFlagsView);
+	return qobject_cast<BitFlagsModel*>(d->pageFilterModel->sourceModel());
 }
 
 /**
- * Set the ByteFlagsModel to edit.
- * @param byteFlagsModel ByteFlagsModel.
+ * Set the BitFlagsModel to edit.
+ * @param bitFlagsModel BitFlagsModel.
  */
-void ByteFlagsView::setByteFlagsModel(ByteFlagsModel *byteFlagsModel)
+void BitFlagsView::setBitFlagsModel(BitFlagsModel *bitFlagsModel)
 {
-	// TODO: Connect destroyed() signal for ByteFlagsModel?
-	Q_D(ByteFlagsView);
-	d->pageFilterModel->setSourceModel(byteFlagsModel);
-
-	// Hide undefined bits.
-	// TODO: When byteFlagsModel's byteFlags changes?
-	const ByteFlags *byteFlags = byteFlagsModel->byteFlags();
-	for (int i = 0; i < 8; i++) {
-		const bool isHidden = byteFlags->flagType(i).isEmpty();
-		const int col = (ByteFlagsModel::COL_BIT0 + i);
-		d->ui.lstEventFlags->setColumnHidden(col, isHidden);
-		d->ui.lstEventFlags->resizeColumnToContents(col);
-	}
+	// TODO: Connect destroyed() signal for BitFlagsModel?
+	// TODO: Watch for row count changes to adjust pages?
+	Q_D(BitFlagsView);
+	d->pageFilterModel->setSourceModel(bitFlagsModel);
+	// TODO: Signal from pageFilterModel to adjust tabs?
+	d->pageFilterModel->setPageSize(bitFlagsModel->pageSize());
 
 	// Update the QTabBar.
 	d->updateDisplay();
@@ -198,25 +197,10 @@ void ByteFlagsView::setByteFlagsModel(ByteFlagsModel *byteFlagsModel)
  * Get the page size.
  * @return Page size.
  */
-int ByteFlagsView::pageSize(void) const
+int BitFlagsView::pageSize(void) const
 {
-	Q_D(const ByteFlagsView);
+	Q_D(const BitFlagsView);
 	return d->pageFilterModel->pageSize();
 }
 
-/**
- * Set the page size.
- * @param pageSize Page size.
- */
-void ByteFlagsView::setPageSize(int pageSize)
-{
-	Q_D(ByteFlagsView);
-	// TODO: Signal from pageFilterModel to adjust tabs?
-	d->pageFilterModel->setPageSize(pageSize);
-
-	// Update the display.
-	d->updateDisplay();
-}
-
 // TODO: Page count?
-// TODO: Set tab names.

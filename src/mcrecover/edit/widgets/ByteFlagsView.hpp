@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * BitFlagsView.hpp: Bit Flags editor.                                     *
+ * ByteFlagsView.hpp: Byte Flags editor.                                   *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,45 +19,47 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSVIEW_HPP__
-#define __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSVIEW_HPP__
+#ifndef __MCRECOVER_EDIT_MODELS_BYTEFLAGSVIEW_HPP__
+#define __MCRECOVER_EDIT_MODELS_BYTEFLAGSVIEW_HPP__
 
 #include <QtGui/QWidget>
 
-class BitFlagsModel;
+class ByteFlagsModel;
 
-class BitFlagsViewPrivate;
-class BitFlagsView : public QWidget
+class ByteFlagsViewPrivate;
+class ByteFlagsView : public QWidget
 {
 	Q_OBJECT
 
-	Q_PROPERTY(BitFlagsModel* bitFlagsModel READ bitFlagsModel WRITE setBitFlagsModel)
-	Q_PROPERTY(int pageSize READ pageSize)
+	Q_PROPERTY(ByteFlagsModel* byteFlagsModel READ byteFlagsModel WRITE setByteFlagsModel)
+	// TODO: Function to set tab titles.
+	// TODO: Signal for pageSizeChanged()?
+	Q_PROPERTY(int pageSize READ pageSize WRITE setPageSize)
 
 	public:
-		BitFlagsView(QWidget *parent = 0);
-		~BitFlagsView();
+		ByteFlagsView(QWidget *parent = 0);
+		~ByteFlagsView();
 
 	protected:
-		BitFlagsViewPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(BitFlagsView)
+		ByteFlagsViewPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(ByteFlagsView)
 	private:
-		Q_DISABLE_COPY(BitFlagsView)
+		Q_DISABLE_COPY(ByteFlagsView)
 
 	public:
 		/** Model access. **/
 
 		/**
-		 * Get the BitFlagsModel this widget is editing.
-		 * @return BitFlagsModel.
+		 * Get the ByteFlagsModel this widget is editing.
+		 * @return ByteFlagsModel.
 		 */
-		BitFlagsModel *bitFlagsModel(void) const;
+		ByteFlagsModel *byteFlagsModel(void) const;
 
 		/**
-		 * Set the BitFlagsModel to edit.
-		 * @param bitFlagsModel BitFlagsModel.
+		 * Set the ByteFlagsModel to edit.
+		 * @param byteFlagsModel ByteFlagsModel.
 		 */
-		void setBitFlagsModel(BitFlagsModel *model);
+		void setByteFlagsModel(ByteFlagsModel *model);
 
 		/** Data access. **/
 
@@ -67,7 +69,14 @@ class BitFlagsView : public QWidget
 		 */
 		int pageSize(void) const;
 
+		/**
+		 * Set the page size.
+		 * @param pageSize Page size.
+		 */
+		void setPageSize(int pageSize);
+
 		// TODO: Page count?
+		// TODO: Set tab names.
 };
 
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSVIEW_HPP__ */
+#endif /* __MCRECOVER_EDIT_MODELS_BYTEFLAGSVIEW_HPP__ */

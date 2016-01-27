@@ -25,7 +25,7 @@
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 /** SANPCFlagsPrivate **/
-#include "BitFlags_p.hpp"
+#include "../models/BitFlags_p.hpp"
 class SANPCFlagsPrivate : public BitFlagsPrivate
 {
 	public:

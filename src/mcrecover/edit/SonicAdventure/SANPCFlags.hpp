@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_EDIT_SONICADVENTURE_SANPCFLAGS_HPP__
 #define __MCRECOVER_EDIT_SONICADVENTURE_SANPCFLAGS_HPP__
 
-#include "BitFlags.hpp"
+#include "../models/BitFlags.hpp"
 
 class SANPCFlagsPrivate;
 class SANPCFlags : public BitFlags

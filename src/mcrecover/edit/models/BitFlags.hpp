@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * BitFlags.hpp: Generic bit flags base class.                             *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,11 +19,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGS_HPP__
-#define __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGS_HPP__
+#ifndef __MCRECOVER_EDIT_MODELS_BITFLAGS_HPP__
+#define __MCRECOVER_EDIT_MODELS_BITFLAGS_HPP__
 
 // Qt includes.
-// TODO: Should this actually inherit from QObject?
 #include <QtCore/QObject>
 
 class BitFlagsPrivate;
@@ -150,4 +149,4 @@ class BitFlags : public QObject
 		virtual QString pageName(int page) const;
 };
 
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_FLAGS_HPP__ */
+#endif /* __MCRECOVER_EDIT_MODELS_BITFLAGS_HPP__ */

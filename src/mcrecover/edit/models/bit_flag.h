@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * BitFlags.hpp: Generic bit flags base class. (PRIVATE)                   *
+ * bit_flag.h: Bit flag description struct.                                *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,48 +19,20 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGS_P_HPP__
-#define __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGS_P_HPP__
+#ifndef __MCRECOVER_EDIT_MODELS_BIT_FLAG_H__
+#define __MCRECOVER_EDIT_MODELS_BIT_FLAG_H__
 
-// Qt includes.
-#include <QtCore/QHash>
-#include <QtCore/QString>
-#include <QtCore/QVector>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-// Bit flag struct.
-#include "bit_flag.h"
+typedef struct _bit_flag_t {
+	int event;
+	const char *description;
+} bit_flag_t;
 
-class BitFlagsPrivate
-{
-	public:
-		/**
-		 * Initialize BitFlagsPrivate.
-		 *
-		 * Derived BitFlags classes should have their own private class
-		 * that derives from BitFlagsPrivate.
-		 *
-		 * @param total_flags Total number of flags the user can edit.
-		 * @param bit_flags Bit flag descriptions.
-		 * @param count Number of bit_flags entries. (must be >= total_flags)
-		 */
-		BitFlagsPrivate(int total_flags, const bit_flag_t *bit_flags, int count);
-		virtual ~BitFlagsPrivate();
+#ifdef __cplusplus
+}
+#endif
 
-	private:
-		Q_DISABLE_COPY(BitFlagsPrivate)
-
-	public:
-		// Flag descriptions.
-		// TODO: Shared copy shared by a specific derived
-		// class that's only deleted once all instances
-		// of said class are deleted?
-		// TODO: An array might be more efficient, even if
-		// it wastes some memory...
-		QHash<int, QString> flags_desc;
-
-		// Flags.
-		// NOTE: QVector<bool> does not have bit "optimization".
-		QVector<bool> flags;
-};
-
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGS_P_HPP__ */
+#endif /* __MCRECOVER_EDIT_MODELS_BIT_FLAG_H__ */

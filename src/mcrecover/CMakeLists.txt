@@ -164,20 +164,20 @@ SET(mcrecover_EDIT_SRCS
 	edit/EditorWindow.cpp
 	edit/EditorWidget.cpp
 	edit/EditorWidgetFactory.cpp
+	edit/models/BitFlags.cpp
+	edit/models/BitFlagsModel.cpp
+	edit/models/ByteFlags.cpp
+	edit/models/ByteFlagsModel.cpp
+	edit/models/PageFilterModel.cpp
+	edit/widgets/BitFlagsView.cpp
+	edit/widgets/ByteFlagsView.cpp
+	edit/widgets/CenteredCheckBoxDelegate.cpp
 	edit/SonicAdventure/SAEditor.cpp
 	edit/SonicAdventure/SALevelStats.cpp
 	edit/SonicAdventure/SALevelClearCount.cpp
 	edit/SonicAdventure/SAEventFlags.cpp
-	edit/SonicAdventure/BitFlagsModel.cpp
-	edit/SonicAdventure/BitFlagsView.cpp
-	edit/SonicAdventure/PageFilterModel.cpp
-	edit/SonicAdventure/BitFlags.cpp
 	edit/SonicAdventure/SANPCFlags.cpp
-	edit/SonicAdventure/ByteFlags.cpp
 	edit/SonicAdventure/SADXMissionFlags.cpp
-	edit/SonicAdventure/ByteFlagsModel.cpp
-	edit/SonicAdventure/ByteFlagsView.cpp
-	edit/SonicAdventure/CenteredCheckBoxDelegate.cpp
 	edit/SonicAdventure/SAGeneral.cpp
 	edit/SonicAdventure/SADataEvents.c
 	edit/SonicAdventure/SADXDataMissions.c
@@ -190,6 +190,7 @@ SET(mcrecover_EDIT_SRCS
 	)
 SET(mcrecover_EDIT_H
 	edit/EditorWidgetFactory.hpp
+	edit/models/bit_flag.h
 	edit/SonicAdventure/SAData.h
 	)
 
@@ -252,20 +253,20 @@ SET(mcrecover_CARD_MOC_H
 SET(mcrecover_EDIT_MOC_H
 	edit/EditorWindow.hpp
 	edit/EditorWidget.hpp
+	edit/models/BitFlags.hpp
+	edit/models/BitFlagsModel.hpp
+	edit/models/ByteFlags.hpp
+	edit/models/ByteFlagsModel.hpp
+	edit/models/PageFilterModel.hpp
+	edit/widgets/BitFlagsView.hpp
+	edit/widgets/ByteFlagsView.hpp
+	edit/widgets/CenteredCheckBoxDelegate.hpp
 	edit/SonicAdventure/SAEditor.hpp
 	edit/SonicAdventure/SALevelStats.hpp
 	edit/SonicAdventure/SALevelClearCount.hpp
 	edit/SonicAdventure/SAEventFlags.hpp
-	edit/SonicAdventure/BitFlagsModel.hpp
-	edit/SonicAdventure/BitFlagsView.hpp
-	edit/SonicAdventure/PageFilterModel.hpp
-	edit/SonicAdventure/BitFlags.hpp
 	edit/SonicAdventure/SANPCFlags.hpp
-	edit/SonicAdventure/ByteFlags.hpp
 	edit/SonicAdventure/SADXMissionFlags.hpp
-	edit/SonicAdventure/ByteFlagsModel.hpp
-	edit/SonicAdventure/ByteFlagsView.hpp
-	edit/SonicAdventure/CenteredCheckBoxDelegate.hpp
 	edit/SonicAdventure/SAGeneral.hpp
 	edit/SonicAdventure/SAAdventure.hpp
 	edit/SonicAdventure/SAMiscEmblems.hpp
@@ -295,11 +296,11 @@ SET(mcrecover_WIDGET_UIS
 # File edtors.
 SET(mcrecover_EDIT_UIS
 	edit/EditorWindow.ui
+	edit/widgets/BitFlagsView.ui
+	edit/widgets/ByteFlagsView.ui
 	edit/SonicAdventure/SAEditor.ui
 	edit/SonicAdventure/SALevelStats.ui
 	edit/SonicAdventure/SALevelClearCount.ui
-	edit/SonicAdventure/BitFlagsView.ui
-	edit/SonicAdventure/ByteFlagsView.ui
 	edit/SonicAdventure/SAGeneral.ui
 	edit/SonicAdventure/SAAdventure.ui
 	edit/SonicAdventure/SAMiscEmblems.ui

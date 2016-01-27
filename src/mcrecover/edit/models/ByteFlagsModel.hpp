@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * BitFlagsModel.hpp: QAbstractListModel for BitFlags.                     *
+ * ByteFlagsModel.hpp: QAbstractListModel for ByteFlags.                   *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2016 by David Korth.                                      *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,31 +19,29 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSMODEL_HPP__
-#define __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSMODEL_HPP__
+#ifndef __MCRECOVER_EDIT_MODELS_BYTEFLAGSMODEL_HPP__
+#define __MCRECOVER_EDIT_MODELS_BYTEFLAGSMODEL_HPP__
 
 // Qt includes.
 #include <QtCore/QAbstractListModel>
 
-class BitFlags;
-
-class BitFlagsModelPrivate;
-class BitFlagsModel : public QAbstractListModel
+class ByteFlags;
+class ByteFlagsModelPrivate;
+class ByteFlagsModel : public QAbstractListModel
 {
 	Q_OBJECT
 
 	// TODO: Q_PROPERTY() for eventFlags.
-	Q_PROPERTY(int pageSize READ pageSize)
 
 	public:
-		BitFlagsModel(QObject *parent = 0);
-		virtual ~BitFlagsModel();
+		ByteFlagsModel(QObject *parent = 0);
+		virtual ~ByteFlagsModel();
 
 	protected:
-		BitFlagsModelPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(BitFlagsModel)
+		ByteFlagsModelPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(ByteFlagsModel)
 	private:
-		Q_DISABLE_COPY(BitFlagsModel)
+		Q_DISABLE_COPY(ByteFlagsModel)
 
 	public:
 		/** Qt Model/View interface. **/
@@ -58,9 +56,21 @@ class BitFlagsModel : public QAbstractListModel
 
 		// Columns.
 		enum Column {
-			COL_CHECKBOX,		// Checkbox
-			COL_ID,			// Flag ID
-			COL_DESCRIPTION,	// Description
+			// Object ID
+			COL_ID = 0,
+
+			// Character
+			COL_CHARACTER,
+
+			// Bits
+			COL_BIT0, COL_BIT1, COL_BIT2, COL_BIT3,
+			COL_BIT4, COL_BIT5, COL_BIT6, COL_BIT7,
+
+			// Description.
+			// Needs to go after the bitflags because
+			// Qt doesn't like making anything but the
+			// final column an expanding column.
+			COL_DESCRIPTION,
 
 			COL_MAX
 		};
@@ -69,53 +79,36 @@ class BitFlagsModel : public QAbstractListModel
 		/** Data access. **/
 
 		/**
-		 * Get the BitFlags this model is showing.
-		 * @return BitFlags this model is showing.
+		 * Get the ByteFlags this model is showing.
+		 * @return ByteFlags this model is showing.
 		 */
-		BitFlags *bitFlags(void) const;
+		ByteFlags *byteFlags(void) const;
 
 		/**
-		 * Set the BitFlags for this model to show.
-		 * @param bitFlags BitFlags to show.
+		 * Set the ByteFlags for this model to show.
+		 * @param byteFlags ByteFlags to show.
 		 */
-		void setBitFlags(BitFlags *bitFlags);
-
-		/**
-		 * Get the desired page size from the BitFlags.
-		 * @return Page size.
-		 */
-		int pageSize(void) const;
-
-		/**
-		 * Get the name for a given page of data.
-		 *
-		 * If pagination is enabled (pageSize > 0), this function is
-		 * used to determine the text for the corresponding tab.
-		 *
-		 * @param page Page number.
-		 * @return Page name.
-		 */
-		QString pageName(int page) const;
+		void setByteFlags(ByteFlags *byteFlags);
 
 	protected slots:
 		/**
-		 * BitFlags object was destroyed.
+		 * ByteFlags object was destroyed.
 		 * @param obj QObject that was destroyed.
 		 */
-		void bitFlags_destroyed_slot(QObject *obj = 0);
+		void byteFlags_destroyed_slot(QObject *obj = 0);
 
 		/**
-		 * BitFlags: A flag has been changed.
-		 * @param flag Flag ID.
+		 * ByteFlags: An object's flags have been changed.
+		 * @param id Object ID.
 		 */
-		void bitFlags_flagChanged_slot(int flag);
+		void byteFlags_flagChanged_slot(int id);
 
 		/**
-		 * BitFlags: Multiple flags have been changed.
-		 * @param firstFlag First flag that has changed.
-		 * @param lastFlag Last flag that has changed.
+		 * ByteFlags: Multiple objects' flags have been changed.
+		 * @param firstID ID of first object whose flags have changed.
+		 * @param lastID ID of last object whose flags have changed.
 		 */
-		void bitFlags_flagsChanged_slot(int firstFlag, int lastFlag);
+		void byteFlags_flagsChanged_slot(int firstID, int lastID);
 };
 
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_BITFLAGSMODEL_HPP__ */
+#endif /* __MCRECOVER_EDIT_MODELS_BYTEFLAGSMODEL_HPP__ */

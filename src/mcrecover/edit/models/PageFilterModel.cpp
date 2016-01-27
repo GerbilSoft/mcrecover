@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * PageFilterModel.cpp: Filter a QAbstractItemModel by pages.              *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,7 +19,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-// TODO: Move to edit/common/?
 #include "PageFilterModel.hpp"
 
 // C includes. (C++ namespace)

@@ -37,12 +37,12 @@
 #include "sa_defs.h"
 
 // BitFlags
-#include "BitFlagsModel.hpp"
+#include "../models/BitFlagsModel.hpp"
 #include "SAEventFlags.hpp"
 #include "SANPCFlags.hpp"
 
 // ByteFlags
-#include "ByteFlagsModel.hpp"
+#include "../models/ByteFlagsModel.hpp"
 #include "SADXMissionFlags.hpp"
 
 // TODO: Put this in a common header file somewhere.

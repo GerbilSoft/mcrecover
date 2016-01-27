@@ -163,13 +163,13 @@
   <customwidget>
    <class>BitFlagsView</class>
    <extends>QWidget</extends>
-   <header>edit/SonicAdventure/BitFlagsView.hpp</header>
+   <header>edit/widgets/BitFlagsView.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ByteFlagsView</class>
    <extends>QWidget</extends>
-   <header>edit/SonicAdventure/ByteFlagsView.hpp</header>
+   <header>edit/widgets/ByteFlagsView.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>

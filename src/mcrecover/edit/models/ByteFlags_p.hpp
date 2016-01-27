@@ -4,7 +4,7 @@
  * Used for things where a single object has multiple flags                *
  * stored as a byte.                                                       *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -21,8 +21,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_BYTEFLAGS_P_HPP__
-#define __MCRECOVER_EDIT_SONICADVENTURE_BYTEFLAGS_P_HPP__
+#ifndef __MCRECOVER_EDIT_MODELS_BYTEFLAGS_P_HPP__
+#define __MCRECOVER_EDIT_MODELS_BYTEFLAGS_P_HPP__
 
 // Qt includes.
 #include <QtCore/QHash>
@@ -65,4 +65,4 @@ class ByteFlagsPrivate
 		QVector<uint8_t> objs;
 };
 
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_BYTEFLAGS_P_HPP__ */
+#endif /* __MCRECOVER_EDIT_MODELS_BYTEFLAGS_P_HPP__ */

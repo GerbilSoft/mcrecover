@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * SAEventFlags.hpp: Sonic Adventure - Event flags.                        *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGS_HPP__
 #define __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGS_HPP__
 
-#include "BitFlags.hpp"
+#include "../models/BitFlags.hpp"
 
 class SAEventFlagsPrivate;
 class SAEventFlags : public BitFlags

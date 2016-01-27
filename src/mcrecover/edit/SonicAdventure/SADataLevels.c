@@ -22,11 +22,6 @@
 
 #include "SAData.h"
 
-// NOTE: Many of the event flags are unused, so instead of using
-// an array, we're using a struct of event flags.
-// FIXME: Alignment on 64-bit?
-#include "bit_flag.h"
-
 /**
  * Level names. (ASCII, untranslated)
  * Contains Action Stages only, in the order of Sonic's story,

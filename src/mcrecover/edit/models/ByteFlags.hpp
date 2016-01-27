@@ -4,7 +4,7 @@
  * Used for things where a single object has multiple flags                *
  * stored as a byte.                                                       *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -21,12 +21,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_BYTEFLAGS_HPP__
-#define __MCRECOVER_EDIT_SONICADVENTURE_BYTEFLAGS_HPP__
+#ifndef __MCRECOVER_EDIT_MODELS_BYTEFLAGS_HPP__
+#define __MCRECOVER_EDIT_MODELS_BYTEFLAGS_HPP__
 
-#include <stdint.h>
+// Qt includes.
 #include <QtCore/QObject>
 #include <QtGui/QPixmap>
+
+// C includes.
+#include <stdint.h>
+
 class ByteFlagsPrivate;
 class ByteFlags : public QObject
 {
@@ -147,4 +151,4 @@ class ByteFlags : public QObject
 		virtual QPixmap icon(int id) const = 0;
 };
 
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_BYTEFLAGS_HPP__ */
+#endif /* __MCRECOVER_EDIT_MODELS_BYTEFLAGS_HPP__ */

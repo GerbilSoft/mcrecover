@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * SADXMissionFlags.cpp: Sonic Adventure DX - Mission flags.               *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -26,7 +26,7 @@
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 /** SADXMissionFlagsPrivate **/
-#include "ByteFlags_p.hpp"
+#include "../models/ByteFlags_p.hpp"
 class SADXMissionFlagsPrivate : public ByteFlagsPrivate
 {
 	public:
