@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * StatusBarManager.cpp: Status Bar manager                                *
  *                                                                         *
- * Copyright (c) 2013-2015 by David Korth.                                 *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -34,7 +34,6 @@
 
 // taskbarButtonManager.
 #include "TaskbarButtonManager/TaskbarButtonManager.hpp"
-
 
 /** StatusBarManagerPrivate **/
 
@@ -105,7 +104,7 @@ StatusBarManagerPrivate::StatusBarManagerPrivate(StatusBarManager *q)
 	, currentSearchBlock(0)
 	, totalSearchBlocks(0)
 	, lostFilesFound(0)
-	, taskbarButtonManager(TaskbarButtonManager::Instance(q))
+	, taskbarButtonManager(nullptr)
 {
 	// Default message.
 	lastStatusMessage = StatusBarManager::tr("Ready.");
@@ -122,7 +121,6 @@ StatusBarManagerPrivate::~StatusBarManagerPrivate()
 	delete lblMessage;
 	delete progressBar;
 	delete statusBar;
-	delete taskbarButtonManager;
 }
 
 /**
@@ -170,8 +168,9 @@ void StatusBarManagerPrivate::updateStatusBar(void)
 			taskbarButtonManager->setProgressBarMax(totalSearchBlocks);
 		}
 	} else {
-		if (taskbarButtonManager)
+		if (taskbarButtonManager) {
 			taskbarButtonManager->clearProgressBar();
+		}
 	}
 }
 
@@ -213,6 +212,8 @@ QStatusBar *StatusBarManager::statusBar(void) const
 void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 {
 	Q_D(StatusBarManager);
+	if (d->statusBar == statusBar)
+		return;
 
 	// Stop the Hide Progress Bar timer.
 	d->tmrHideProgressBar.stop();
@@ -225,10 +226,6 @@ void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 			   this, SLOT(object_destroyed_slot(QObject*)));
 		disconnect(d->progressBar, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(object_destroyed_slot(QObject*)));
-
-		// Clear the TaskbarButtonManager window.
-		if (d->taskbarButtonManager)
-			d->taskbarButtonManager->setWindow(nullptr);
 
 		// Delete the progress bar.
 		delete d->progressBar;
@@ -260,10 +257,6 @@ void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 		d->progressBar->setMinimumWidth(320);
 		d->progressBar->setMaximumWidth(320);
 
-		// Set the TaskbarButtonmanager's window to the status bar's topmost parent window.
-		if (d->taskbarButtonManager)
-			d->taskbarButtonManager->setWindow(d->statusBar->window());
-
 		// Update the status bar.
 		d->updateStatusBar();
 	}
@@ -286,6 +279,8 @@ SearchThread *StatusBarManager::searchThread(void) const
 void StatusBarManager::setSearchThread(SearchThread *searchThread)
 {
 	Q_D(StatusBarManager);
+	if (d->searchThread == searchThread)
+		return;
 
 	if (d->searchThread) {
 		// Disconnect signals from the current searchThread.
@@ -305,19 +300,19 @@ void StatusBarManager::setSearchThread(SearchThread *searchThread)
 
 	d->searchThread = searchThread;
 
-	if (d->searchThread) {
+	if (searchThread) {
 		// Connect signals to the new searchThread.
-		connect(d->searchThread, SIGNAL(destroyed(QObject*)),
+		connect(searchThread, SIGNAL(destroyed(QObject*)),
 			this, SLOT(object_destroyed_slot(QObject*)));
-		connect(d->searchThread, SIGNAL(searchStarted(int,int,int)),
+		connect(searchThread, SIGNAL(searchStarted(int,int,int)),
 			this, SLOT(searchStarted_slot(int,int,int)));
-		connect(d->searchThread, SIGNAL(searchCancelled()),
+		connect(searchThread, SIGNAL(searchCancelled()),
 			this, SLOT(searchCancelled_slot()));
-		connect(d->searchThread, SIGNAL(searchFinished(int)),
+		connect(searchThread, SIGNAL(searchFinished(int)),
 			this, SLOT(searchFinished_slot(int)));
-		connect(d->searchThread, SIGNAL(searchUpdate(int,int,int)),
+		connect(searchThread, SIGNAL(searchUpdate(int,int,int)),
 			this, SLOT(searchUpdate_slot(int,int,int)));
-		connect(d->searchThread, SIGNAL(searchError(QString)),
+		connect(searchThread, SIGNAL(searchError(QString)),
 			this, SLOT(searchError_slot(QString)));
 	}
 
@@ -330,6 +325,44 @@ void StatusBarManager::setSearchThread(SearchThread *searchThread)
 	d->totalSearchBlocks = 0;
 	d->lostFilesFound = 0;
 	d->updateStatusBar();
+}
+
+/**
+ * Get the TaskbarButtonManager.
+ * @return TaskbarButtonManager.
+ */
+TaskbarButtonManager *StatusBarManager::taskbarButtonManager(void) const
+{
+	Q_D(const StatusBarManager);
+	return d->taskbarButtonManager;
+}
+
+/**
+ * Set the TaskbarButtonManager.
+ * @param taskbarButtonManager TaskbarButtonManager.
+ */
+void StatusBarManager::setTaskbarButtonManager(TaskbarButtonManager *taskbarButtonManager)
+{
+	Q_D(StatusBarManager);
+	if (d->taskbarButtonManager == taskbarButtonManager)
+		return;
+
+	if (d->taskbarButtonManager) {
+		// Disconnect the "destroyed" slot.
+		disconnect(d->taskbarButtonManager, SIGNAL(destroyed(QObject*)),
+			   this, SLOT(object_destroyed_slot(QObject*)));
+	}
+
+	d->taskbarButtonManager = taskbarButtonManager;
+
+	if (taskbarButtonManager) {
+		// Connect the "destroyed" slot.
+		connect(taskbarButtonManager, SIGNAL(destroyed(QObject*)),
+			this, SLOT(object_destroyed_slot(QObject*)));
+
+		// Update the status.
+		d->updateStatusBar();
+	}
 }
 
 /** Public Slots. **/
@@ -399,8 +432,10 @@ void StatusBarManager::filesSaved(int n, const QString &path)
  */
 void StatusBarManager::object_destroyed_slot(QObject *obj)
 {
-	Q_D(StatusBarManager);
+	if (!obj)
+		return;
 
+	Q_D(StatusBarManager);
 	if (obj == d->statusBar) {
 		d->statusBar = nullptr;
 	} else if (obj == d->lblMessage) {
@@ -411,6 +446,8 @@ void StatusBarManager::object_destroyed_slot(QObject *obj)
 		d->progressBar = nullptr;
 	} else if (obj == d->searchThread) {
 		d->searchThread = nullptr;
+	} else if (obj == d->taskbarButtonManager) {
+		d->taskbarButtonManager = nullptr;
 	}
 }
 

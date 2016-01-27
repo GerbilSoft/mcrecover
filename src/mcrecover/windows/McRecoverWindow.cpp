@@ -46,6 +46,9 @@
 #include "SearchThread.hpp"
 #include "widgets/StatusBarManager.hpp"
 
+// Taskbar Button Manager.
+#include "TaskbarButtonManager/TaskbarButtonManager.hpp"
+
 // Translation Manager.
 #include "TranslationManager.hpp"
 
@@ -254,6 +257,9 @@ class McRecoverWindowPrivate
 		 * @return 0 for GCN; 1 for VMU; -1 for unknown.
 		 */
 		static int checkCardType(const QString &filename);
+
+		// Taskbar Button Manager.
+		TaskbarButtonManager *taskbarButtonManager;
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -276,6 +282,7 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, mapperAnimIconFormat(new QSignalMapper(q))
 	, cfg(new ConfigStore(q))
 	, herpDerp(new HerpDerpEggListener(q))
+	, taskbarButtonManager(nullptr)
 {
 	// Connect the MemCardModel slots.
 	QObject::connect(model, SIGNAL(layoutChanged()),
@@ -331,6 +338,7 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 
 	// TODO: Wait for searchThread to finish?
 	delete searchThread;
+	delete taskbarButtonManager;
 }
 
 /**
@@ -1114,6 +1122,10 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 			 d->herpDerp, SLOT(widget_keyPress(QKeyEvent*)));
 	QObject::connect(d->ui.lstFileList, SIGNAL(focusOut(QFocusEvent*)),
 			 d->herpDerp, SLOT(widget_focusOut(QFocusEvent*)));
+
+	// Initialize the Taskbar Button Manager.
+	d->taskbarButtonManager = TaskbarButtonManager::Instance(this);
+	d->statusBarManager->setTaskbarButtonManager(d->taskbarButtonManager);
 
 	// Emit all configuration signals.
 	d->cfg->notifyAll();

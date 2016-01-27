@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * StatusBarManager.hpp: Status Bar manager                                *
  *                                                                         *
- * Copyright (c) 2013-2015 by David Korth.                                 *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -29,18 +29,17 @@ class QStatusBar;
 // Card definitions.
 #include "card.h"
 
-// SearchThread.
 class SearchThread;
+class TaskbarButtonManager;
 
-// StatusBarManager private class.
 class StatusBarManagerPrivate;
-
 class StatusBarManager : public QObject
 {
 	Q_OBJECT
 
 	Q_PROPERTY(QStatusBar* statusBar READ statusBar WRITE setStatusBar)
 	Q_PROPERTY(SearchThread* searchThread READ searchThread WRITE setSearchThread)
+	Q_PROPERTY(TaskbarButtonManager* taskbarButtonManager READ taskbarButtonManager WRITE setTaskbarButtonManager)
 
 	public:
 		StatusBarManager(QObject *parent = 0);
@@ -77,6 +76,18 @@ class StatusBarManager : public QObject
 		 * @param searchThread SearchThread.
 		 */
 		void setSearchThread(SearchThread *searchThread);
+
+		/**
+		 * Get the TaskbarButtonManager.
+		 * @return TaskbarButtonManager.
+		 */
+		TaskbarButtonManager *taskbarButtonManager(void) const;
+
+		/**
+		 * Set the TaskbarButtonManager.
+		 * @param taskbarButtonManager TaskbarButtonManager.
+		 */
+		void setTaskbarButtonManager(TaskbarButtonManager *taskbarButtonManager);
 
 	public slots:
 		/**
