@@ -1355,9 +1355,11 @@ void McRecoverWindow::changeEvent(QEvent *event)
 				if (!(wsc_event->oldState() & Qt::WindowMinimized) && isMinimized()) {
 					// Window was just minimized.
 					d->model->pauseAnimation();
+					d->ui.mcfFileView->pauseAnimation();
 				} else if ((wsc_event->oldState() & Qt::WindowMinimized) && !isMinimized()) {
 					// Window was just un-minimized.
 					d->model->resumeAnimation();
+					d->ui.mcfFileView->resumeAnimation();
 				}
 			}
 			break;

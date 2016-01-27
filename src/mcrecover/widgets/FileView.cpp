@@ -61,12 +61,20 @@ class FileViewPrivate
 		IconAnimHelper helper;
 
 		// Animation timer.
-		QTimer animTimer;
+		QTimer *animTimer;
+		// Pause count. If >0, animation is paused.
+		int pauseCounter;
 
 		/**
 		 * Update the widget display.
 		 */
 		void updateWidgetDisplay(void);
+
+		/**
+		 * Update the animation timer state.
+		 * Starts the timer if animated icons are present; stops the timer if not.
+		 */
+		void updateAnimTimerState(void);
 
 		/**
 		 * XmlTemplateDialog manager.
@@ -77,10 +85,12 @@ class FileViewPrivate
 FileViewPrivate::FileViewPrivate(FileView *q)
 	: q_ptr(q)
 	, file(nullptr)
+	, animTimer(new QTimer(q))
+	, pauseCounter(0)
 	, xmlTemplateDialogManager(new XmlTemplateDialogManager(q))
 {
 	// Connect animTimer's timeout() signal.
-	QObject::connect(&animTimer, SIGNAL(timeout()),
+	QObject::connect(animTimer, SIGNAL(timeout()),
 			 q, SLOT(animTimer_slot()));
 }
 
@@ -124,15 +134,15 @@ void FileViewPrivate::updateWidgetDisplay(void)
 
 	// Icon animation.
 	helper.setFile(file);
-	if (helper.isAnimated())
-		animTimer.start(IconAnimHelper::FAST_ANIM_TIMER);
+	updateAnimTimerState();
 
 	// File banner.
 	QPixmap banner = file->banner();
-	if (!banner.isNull())
+	if (!banner.isNull()) {
 		ui.lblFileBanner->setPixmap(banner);
-	else
+	} else {
 		ui.lblFileBanner->clear();
+	}
 
 	// XML button.
 	ui.btnXML->setVisible(true);
@@ -199,6 +209,23 @@ void FileViewPrivate::updateWidgetDisplay(void)
 		ui.lblChecksumExpectedTitle->setVisible(false);
 		ui.lblChecksumExpected->setVisible(false);
 		ui.lblChecksumExpected->clear();
+	}
+}
+
+/**
+ * Update the animation timer state.
+ * Starts the timer if animated icons are present; stops the timer if not.
+ */
+void FileViewPrivate::updateAnimTimerState(void)
+{
+	if (pauseCounter <= 0 && file != nullptr && helper.isAnimated()) {
+		// Animation is not paused, and we have an animated icon.
+		// Start the timer.
+		animTimer->start(IconAnimHelper::FAST_ANIM_TIMER);
+	} else {
+		// Either animation is paused, or we don't have an animated icon.
+		// Stop the timer.
+		animTimer->stop();
 	}
 }
 
@@ -284,7 +311,41 @@ void FileView::changeEvent(QEvent *event)
 	this->QWidget::changeEvent(event);
 }
 
-/** Slots. **/
+/** Public slots. **/
+
+/**
+ * Pause animation.
+ * Should be used if e.g. the window is minimized.
+ * NOTE: This uses an internal counter; the number of resumes
+ * must match the number of pauses to resume animation.
+ */
+void FileView::pauseAnimation(void)
+{
+	Q_D(FileView);
+	d->pauseCounter++;
+	d->updateAnimTimerState();
+}
+
+/**
+ * Resume animation.
+ * Should be used if e.g. the window is un-minimized.
+ * NOTE: This uses an internal counter; the number of resumes
+ * must match the number of pauses to resume animation.
+ */
+void FileView::resumeAnimation(void)
+{
+	Q_D(FileView);
+	if (d->pauseCounter > 0) {
+		d->pauseCounter--;
+	} else {
+		// Not paused...
+		d->pauseCounter = 0; // TODO: Probably not needed.
+	}
+
+	d->updateAnimTimerState();
+}
+
+/** Private slots. **/
 
 /**
  * File object was destroyed.
@@ -310,11 +371,10 @@ void FileView::file_destroyed_slot(QObject *obj)
 void FileView::animTimer_slot(void)
 {
 	Q_D(FileView);
-
-	if (!d->file || !d->helper.isAnimated()) {
+	if (!d->file || !d->helper.isAnimated() || d->pauseCounter > 0) {
 		// No file is loaded, or the file doesn't have an animated icon.
 		// Stop the animation timer.
-		d->animTimer.stop();
+		d->animTimer->stop();
 		return;
 	}
 
