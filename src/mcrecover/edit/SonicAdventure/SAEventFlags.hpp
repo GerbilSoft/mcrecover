@@ -24,7 +24,6 @@
 
 #include "../models/BitFlags.hpp"
 
-class SAEventFlagsPrivate;
 class SAEventFlags : public BitFlags
 {
 	// TODO: Should this actually inherit from QObject?
@@ -33,8 +32,6 @@ class SAEventFlags : public BitFlags
 	public:
 		SAEventFlags(QObject *parent = 0);
 
-	protected:
-		Q_DECLARE_PRIVATE(SAEventFlags)
 	private:
 		Q_DISABLE_COPY(SAEventFlags)
 

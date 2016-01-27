@@ -25,6 +25,10 @@
 // Qt includes.
 #include <QtCore/QObject>
 
+// Bit flag struct.
+// (Works for ByteFlags as well.)
+#include "bit_flag.h"
+
 class BitFlagsPrivate;
 class BitFlags : public QObject
 {
@@ -34,7 +38,18 @@ class BitFlags : public QObject
 
 	// This class should not be used directly.
 	protected:
-		BitFlags(BitFlagsPrivate *d, QObject *parent = 0);
+		/**
+		 * Initialize BitFlags.
+		 *
+		 * This should be called by subclass constructors with
+		 * the appropriate values.
+		 *
+		 * @param total_flags Total number of flags the user can edit.
+		 * @param bit_flags Bit flag descriptions.
+		 * @param count Number of bit_flags entries. (must be >= total_flags)
+		 * @param parent Parent object.
+		 */
+		BitFlags(int total_flags, const bit_flag_t *bit_flags, int count, QObject *parent = 0);
 	public:
 		virtual ~BitFlags();
 

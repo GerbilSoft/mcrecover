@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * SAEventFlags.cpp: Sonic Adventure - Event flags.                        *
  *                                                                         *
- * Copyright (c) 201-20165 by David Korth.                                 *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -25,29 +25,13 @@
 // TODO: Put this in a common header file somewhere.
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
-/** SAEventFlagsPrivate **/
-#include "../models/BitFlags_p.hpp"
-class SAEventFlagsPrivate : public BitFlagsPrivate
-{
-	public:
-		SAEventFlagsPrivate();
-
-	private:
-		Q_DISABLE_COPY(SAEventFlagsPrivate)
-
-	public:
-		static const int flagCount = 512;
-};
-
-// NOTE: NUM_ELEMENTS() includes the NULL-terminator.
-SAEventFlagsPrivate::SAEventFlagsPrivate()
-	: BitFlagsPrivate(512, &sa_event_flags_desc[0], NUM_ELEMENTS(sa_event_flags_desc))
-{ }
+// Total number of Event Flags.
+#define SA_EVENT_FLAG_COUNT 512
 
 /** SAEventFlags **/
 
 SAEventFlags::SAEventFlags(QObject *parent)
-	: BitFlags(new SAEventFlagsPrivate(), parent)
+	: BitFlags(512, &sa_event_flags_desc[0], NUM_ELEMENTS(sa_event_flags_desc), parent)
 { }
 
 /**

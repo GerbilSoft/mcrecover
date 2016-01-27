@@ -20,7 +20,11 @@
  ***************************************************************************/
 
 #include "BitFlags.hpp"
-#include "BitFlags_p.hpp"
+
+// Qt includes.
+#include <QtCore/QHash>
+#include <QtCore/QString>
+#include <QtCore/QVector>
 
 // C includes. (C++ namespace)
 #include <cassert>
@@ -29,6 +33,35 @@
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 /** BitFlagsPrivate **/
+
+class BitFlagsPrivate
+{
+	public:
+		/**
+		 * Initialize BitFlagsPrivate.
+		 * @param total_flags Total number of flags the user can edit.
+		 * @param bit_flags Bit flag descriptions.
+		 * @param count Number of bit_flags entries. (must be >= total_flags)
+		 */
+		BitFlagsPrivate(int total_flags, const bit_flag_t *bit_flags, int count);
+		~BitFlagsPrivate();
+
+	private:
+		Q_DISABLE_COPY(BitFlagsPrivate)
+
+	public:
+		// Flag descriptions.
+		// TODO: Shared copy shared by a specific derived
+		// class that's only deleted once all instances
+		// of said class are deleted?
+		// TODO: An array might be more efficient, even if
+		// it wastes some memory...
+		QHash<int, QString> flags_desc;
+
+		// Flags.
+		// NOTE: QVector<bool> does not have bit "optimization".
+		QVector<bool> flags;
+};
 
 BitFlagsPrivate::BitFlagsPrivate(int total_flags, const bit_flag_t *bit_flags, int count)
 {
@@ -61,15 +94,25 @@ BitFlagsPrivate::~BitFlagsPrivate()
 
 /** BitFlags **/
 
-BitFlags::BitFlags(BitFlagsPrivate *d, QObject *parent)
+/**
+ * Initialize BitFlags.
+ *
+ * This should be called by subclass constructors with
+ * the appropriate values.
+ *
+ * @param total_flags Total number of flags the user can edit.
+ * @param bit_flags Bit flag descriptions.
+ * @param count Number of bit_flags entries. (must be >= total_flags)
+ * @param parent Parent object.
+ */
+BitFlags::BitFlags(int total_flags, const bit_flag_t *bit_flags, int count, QObject *parent)
 	: QObject(parent)
-	, d_ptr(d)
+	, d_ptr(new BitFlagsPrivate(total_flags, bit_flags, count))
 { }
 
 BitFlags::~BitFlags()
 {
-	Q_D(BitFlags);
-	delete d;
+	delete d_ptr;
 }
 
 /**

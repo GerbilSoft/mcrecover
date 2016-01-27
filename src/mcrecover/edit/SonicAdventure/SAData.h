@@ -23,6 +23,8 @@
 #ifndef __MCRECOVER_EDIT_SONICADVENTURE_SADATA_H__
 #define __MCRECOVER_EDIT_SONICADVENTURE_SADATA_H__
 
+#define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
+
 // NOTE: Many of the event flags are unused, so instead of using
 // an array, we're using a struct of event flags.
 // FIXME: Alignment on 64-bit?
