@@ -31,6 +31,10 @@
 // C includes.
 #include <stdint.h>
 
+// Bit flag struct.
+// (Works for ByteFlags as well.)
+#include "bit_flag.h"
+
 class ByteFlagsPrivate;
 class ByteFlags : public QObject
 {
@@ -38,7 +42,18 @@ class ByteFlags : public QObject
 
 	// This class should not be used directly.
 	protected:
-		ByteFlags(ByteFlagsPrivate *d, QObject *parent = 0);
+		/**
+		 * Initialize ByteFlags.
+		 *
+		 * This should be called by subclass constructors with
+		 * the appropriate values.
+		 *
+		 * @param total_flags Total number of flags the user can edit.
+		 * @param byte_flags Byte flag descriptions.
+		 * @param count Number of bit_flags entries. (must be >= total_flags)
+		 * @param parent Parent object.
+		 */
+		ByteFlags(int total_flags, const bit_flag_t *byte_flags, int count, QObject *parent = 0);
 	public:
 		virtual ~ByteFlags();
 

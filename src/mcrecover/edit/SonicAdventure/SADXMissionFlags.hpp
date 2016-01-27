@@ -31,8 +31,10 @@ class SADXMissionFlags : public ByteFlags
 
 	public:
 		SADXMissionFlags(QObject *parent = 0);
+		virtual ~SADXMissionFlags();
 
 	protected:
+		SADXMissionFlagsPrivate *d_ptr;
 		Q_DECLARE_PRIVATE(SADXMissionFlags)
 	private:
 		Q_DISABLE_COPY(SADXMissionFlags)

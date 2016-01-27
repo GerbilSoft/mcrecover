@@ -22,7 +22,11 @@
  ***************************************************************************/
 
 #include "ByteFlags.hpp"
-#include "ByteFlags_p.hpp"
+
+// Qt includes.
+#include <QtCore/QHash>
+#include <QtCore/QString>
+#include <QtCore/QVector>
 
 // C includes. (C++ namespace)
 #include <cassert>
@@ -31,6 +35,33 @@
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 /** ByteFlagsPrivate **/
+
+class ByteFlagsPrivate
+{
+	public:
+		/**
+		 * Initialize ByteFlagsPrivate.
+		 * @param total_flags Total number of flags the user can edit.
+		 * @param byte_flags Byte flag descriptions.
+		 * @param count Number of bit_flags entries. (must be >= total_flags)
+		 */
+		ByteFlagsPrivate(int total_flags, const bit_flag_t *byte_flags, int count);
+
+	private:
+		Q_DISABLE_COPY(ByteFlagsPrivate)
+
+	public:
+		// Object descriptions.
+		// TODO: Shared copy shared by a specific derived
+		// class that's only deleted once all instances
+		// of said class are deleted?
+		// TODO: An array might be more efficient, even if
+		// it wastes some memory...
+		QHash<int, QString> objs_desc;
+
+		// Objects, each with 8 flags.
+		QVector<uint8_t> objs;
+};
 
 ByteFlagsPrivate::ByteFlagsPrivate(int total_flags, const bit_flag_t *byte_flags, int count)
 {
@@ -58,20 +89,27 @@ ByteFlagsPrivate::ByteFlagsPrivate(int total_flags, const bit_flag_t *byte_flags
 	}
 }
 
-ByteFlagsPrivate::~ByteFlagsPrivate()
-{ }
-
 /** ByteFlags **/
 
-ByteFlags::ByteFlags(ByteFlagsPrivate *d, QObject *parent)
+/**
+ * Initialize ByteFlags.
+ *
+ * This should be called by subclass constructors with
+ * the appropriate values.
+ *
+ * @param total_flags Total number of flags the user can edit.
+ * @param byte_flags Byte flag descriptions.
+ * @param count Number of bit_flags entries. (must be >= total_flags)
+ * @param parent Parent object.
+ */
+ByteFlags::ByteFlags(int total_flags, const bit_flag_t *byte_flags, int count, QObject *parent)
 	: QObject(parent)
-	, d_ptr(d)
+	, d_ptr(new ByteFlagsPrivate(total_flags, byte_flags, count))
 { }
 
 ByteFlags::~ByteFlags()
 {
-	Q_D(ByteFlags);
-	delete d;
+	delete d_ptr;
 }
 
 /**
@@ -190,5 +228,6 @@ int ByteFlags::setAllFlags(const uint8_t *data, int sz)
 QPixmap ByteFlags::icon(int id) const
 {
 	// No icons by default...
+	Q_UNUSED(id)
 	return QPixmap();
 }
