@@ -371,8 +371,13 @@ ELSEIF(USE_QT5)
 ENDIF()
 
 # TaskbarButtonManager
-SET(mcrecover_TBM_SRCS TaskbarButtonManager/TaskbarButtonManager.cpp)
-SET(mcrecover_TBM_MOC_H TaskbarButtonManager/TaskbarButtonManager.hpp)
+SET(mcrecover_TBM_SRCS
+	TaskbarButtonManager/TaskbarButtonManager.cpp
+	TaskbarButtonManager/TaskbarButtonManagerFactory.cpp
+	)
+SET(mcrecover_TBM_MOC_H
+	TaskbarButtonManager/TaskbarButtonManager.hpp
+	)
 SET(mcrecover_TBM_H TaskbarButtonManager/TaskbarButtonManager_p.hpp)
 
 IF(WIN32)

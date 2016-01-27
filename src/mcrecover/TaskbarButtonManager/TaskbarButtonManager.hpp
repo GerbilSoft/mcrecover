@@ -47,20 +47,6 @@ class TaskbarButtonManager : public QObject
 
 	public:
 		/**
-		 * Is this TaskbarButtonManager usable?
-		 * @return True if usable; false if not.
-		 */
-		static bool IsUsable(void);
-
-		/**
-		 * Get a system-specific TaskbarButtonManager.
-		 * @param parent Parent object.
-		 * @return System-specific TaskbarButtonManager, or nullptr on error.
-		 */
-		static TaskbarButtonManager *Instance(QObject *parent = 0);
-
-	public:
-		/**
 		 * Get the window this TaskbarButtonManager is managing.
 		 * @return Window.
 		 */

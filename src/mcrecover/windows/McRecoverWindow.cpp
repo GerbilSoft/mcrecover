@@ -48,6 +48,7 @@
 
 // Taskbar Button Manager.
 #include "TaskbarButtonManager/TaskbarButtonManager.hpp"
+#include "TaskbarButtonManager/TaskbarButtonManagerFactory.hpp"
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif /* Q_OS_WIN */
@@ -1128,7 +1129,7 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 
 #ifndef Q_OS_WIN
 	// Initialize the Taskbar Button Manager. (Non-Windows systems)
-	d->taskbarButtonManager = TaskbarButtonManager::Instance(this);
+	d->taskbarButtonManager = TaskbarButtonManagerFactory::createManager(this);
 	d->statusBarManager->setTaskbarButtonManager(d->taskbarButtonManager);
 #endif /* Q_OS_WIN */
 
@@ -1472,7 +1473,7 @@ bool McRecoverWindow::winEvent(MSG *message, long *result)
 	Q_D(McRecoverWindow);
 	if (((MSG*)message)->message == McRecoverQApplication::WM_TaskbarButtonCreated()) {
 		// Initialize the Taskbar Button Manager.
-		d->taskbarButtonManager = TaskbarButtonManager::Instance(this);
+		d->taskbarButtonManager = TaskbarButtonManagerFactory::createManager(this);
 		if (d->taskbarButtonManager) {
 			d->taskbarButtonManager->setWindow(this);
 			d->statusBarManager->setTaskbarButtonManager(d->taskbarButtonManager);

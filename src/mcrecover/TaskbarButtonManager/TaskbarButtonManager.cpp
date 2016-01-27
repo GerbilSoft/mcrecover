@@ -24,15 +24,6 @@
 // Qt includes.
 #include <QWidget>
 
-// Available TaskbarButtonManager classes.
-#include <config.mcrecover.h>
-#ifdef Q_OS_WIN32
-#include "Win7TaskbarList.hpp"
-#endif /* Q_OS_WIN32 */
-#ifdef QtDBus_FOUND
-#include "DockManager.hpp"
-#endif /* QtDBus_FOUND */
-
 /** TaskbarButtonManagerPrivate **/
 #include "TaskbarButtonManager_p.hpp"
 
@@ -56,41 +47,6 @@ TaskbarButtonManager::TaskbarButtonManager(TaskbarButtonManagerPrivate *d, QObje
 TaskbarButtonManager::~TaskbarButtonManager()
 {
 	delete d_ptr;
-}
-
-/**
- * Is this TaskbarButtonManager usable?
- * @return True if usable; false if not.
- */
-bool TaskbarButtonManager::IsUsable(void)
-{
-	// Base class is not usable...
-	return false;
-}
-
-/**
- * Get a system-specific TaskbarButtonManager.
- * @param parent Parent object.
- * @return System-specific TaskbarButtonManager, or nullptr on error.
- */
-TaskbarButtonManager *TaskbarButtonManager::Instance(QObject *parent)
-{
-	// Check the various implementations.
-#ifdef Q_OS_WIN
-	if (Win7TaskbarList::IsUsable()) {
-		// Win7TaskbarList is usable.
-		return new Win7TaskbarList(parent);
-	}
-#endif /* Q_OS_WIN */
-#ifdef QtDBus_FOUND
-	if (DockManager::IsUsable()) {
-		// DockManager is usable.
-		return new DockManager(parent);
-	}
-#endif /* QtDBus_FOUND */
-
-	// No TaskbarButtonManager subclasses are available.
-	return nullptr;
 }
 
 /**
