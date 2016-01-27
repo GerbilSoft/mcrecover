@@ -38,10 +38,6 @@
 #include "dockmanagerinterface.h"
 #include "dockiteminterface.h"
 
-// C includes.
-#include <sys/types.h>
-#include <unistd.h>
-
 /** DockManagerPrivate **/
 
 #include "TaskbarButtonManager_p.hpp"
@@ -166,10 +162,10 @@ int DockManagerPrivate::connectToDockManager(void)
 	// NOTE: GetItemByXid() is broken when using KDE's IconTasks.
 	// Use GetItemsByPid() instead, and take the first entry.
 	// TODO: Implement hacks from Quassel?
-	// https://github.com/agaida/quassel/blob/master/src/qtui/dockmanagernotificationbackend.cpp
+	// https://github.com/quassel/quassel/blob/master/src/qtui/dockmanagernotificationbackend.cpp
 	// TODO: How do we handle multiple windows per application?
-	pid_t pid = getpid();
-	QDBusPendingReply<QList<QDBusObjectPath> > reply = ifDockManager->GetItemsByPid(pid);
+	QDBusPendingReply<QList<QDBusObjectPath> > reply =
+		ifDockManager->GetItemsByPid(QCoreApplication::applicationPid());
 	reply.waitForFinished();
 	if (!reply.isValid()) {
 		// Cannot find the DockItem for this window.
