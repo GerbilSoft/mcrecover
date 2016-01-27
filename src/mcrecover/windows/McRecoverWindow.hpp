@@ -32,7 +32,6 @@
 class MemCardFile;
 
 class McRecoverWindowPrivate;
-
 class McRecoverWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -68,6 +67,16 @@ class McRecoverWindow : public QMainWindow
 		// QMainWindow virtual functions: drag and drop.
 		virtual void dragEnterEvent(QDragEnterEvent *event) override;
 		virtual void dropEvent(QDropEvent *event) override;
+
+#ifdef Q_OS_WIN
+		/**
+		 * Windows message handler.
+		 * Used for TaskbarButtonManager.
+		 * @param message
+		 * @param result
+		 */
+		virtual bool winEvent(MSG *message, long *result) override;
+#endif /* Q_OS_WIN */
 
 	protected slots:
 		// UI busy functions.

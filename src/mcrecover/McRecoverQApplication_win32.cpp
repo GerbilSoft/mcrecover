@@ -3,7 +3,7 @@
  * McRecoverQApplication_win32.cpp: QApplication subclass.                 *
  * Win32-specific functions.                                               *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -89,7 +89,19 @@ class McRecoverQApplicationWin32Private
 		 */
 		static QPixmap GetIconFromModule(const QString &module, 
 					uint16_t resId, const QSize &size);
+
+		/**
+		 * Register the "TaskbarButtonCreated" message.
+		 * This is required in order to use ITaskbarList3 on Windows 7+.
+		 */
+		static void RegisterTaskbarButtonCreatedMessage(void);
+
+		// TaskbarButtonCreated message.
+		static UINT WM_TaskbarButtonCreated;
 };
+
+// TaskbarButtonCreated message.
+UINT McRecoverQApplicationWin32Private::WM_TaskbarButtonCreated = 0;
 
 /**
  * Enable extra security options.
@@ -162,6 +174,22 @@ QPixmap McRecoverQApplicationWin32Private::GetIconFromModule(
 	return pixmap;
 }
 
+/**
+ * Register the "TaskbarButtonCreated" message.
+ * This is required in order to use ITaskbarList3 on Windows 7+.
+ */
+void McRecoverQApplicationWin32Private::RegisterTaskbarButtonCreatedMessage(void)
+{
+	// Reference: https://github.com/shellscape/Shellscape.Common/blob/master/Shellscape.Common/CodePackShim.cs
+	WM_TaskbarButtonCreated = RegisterWindowMessageW(L"TaskbarButtonCreated");
+	// Enable taskbar messages even if running elevated.
+	// TODO: Why run mcrecover elevated?
+	ChangeWindowMessageFilter(WM_TaskbarButtonCreated, MSGFLT_ADD);
+	ChangeWindowMessageFilter(WM_COMMAND, MSGFLT_ADD);
+	ChangeWindowMessageFilter(WM_SYSCOMMAND, MSGFLT_ADD);
+	ChangeWindowMessageFilter(WM_ACTIVATE, MSGFLT_ADD);
+}
+
 /** McRecoverQApplication (Win32) **/
 
 /**
@@ -201,6 +229,9 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 	QVector<char*> argv;
 	argv.reserve(8);
 	qWinMain(hInst, hPrevInst, cmdParam.data(), nCmdShow, argc, argv);
+
+	// Register the "TaskbarButtonCreated" message.
+	McRecoverQApplicationWin32Private::RegisterTaskbarButtonCreatedMessage();
 
 	// Call the real main function.
 	return mcrecover_main(argc, argv.data());
@@ -320,4 +351,13 @@ void McRecoverQApplication::SetFont_Win32(void)
 
 	// Set the Qt application font.
 	QApplication::setFont(qAppFont);
+}
+
+/**
+ * Get the message ID for TaskbarButtonCreated.
+ * @return Message ID, or 0 if not registered.
+ */
+UINT McRecoverQApplication::WM_TaskbarButtonCreated(void)
+{
+	return McRecoverQApplicationWin32Private::WM_TaskbarButtonCreated;
 }

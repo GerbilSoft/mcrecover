@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * TaskbarButtonManager.cpp: Taskbar button manager base class.            *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -26,6 +26,9 @@
 
 // Available TaskbarButtonManager classes.
 #include <config.mcrecover.h>
+#ifdef Q_OS_WIN32
+#include "Win7TaskbarList.hpp"
+#endif /* Q_OS_WIN32 */
 #ifdef QtDBus_FOUND
 #include "DockManager.hpp"
 #endif /* QtDBus_FOUND */
@@ -72,18 +75,22 @@ bool TaskbarButtonManager::IsUsable(void)
  */
 TaskbarButtonManager *TaskbarButtonManager::Instance(QObject *parent)
 {
-	TaskbarButtonManager *mgr = nullptr;
-
 	// Check the various implementations.
+#ifdef Q_OS_WIN
+	if (Win7TaskbarList::IsUsable()) {
+		// Win7TaskbarList is usable.
+		return new Win7TaskbarList(parent);
+	}
+#endif /* Q_OS_WIN */
 #ifdef QtDBus_FOUND
-	// DockManager
 	if (DockManager::IsUsable()) {
 		// DockManager is usable.
-		mgr = new DockManager(parent);
+		return new DockManager(parent);
 	}
 #endif /* QtDBus_FOUND */
 
-	return mgr;
+	// No TaskbarButtonManager subclasses are available.
+	return nullptr;
 }
 
 /**

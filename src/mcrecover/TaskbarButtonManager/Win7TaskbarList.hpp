@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * DockManager.cpp: DockManager D-Bus implementation.                      *
+ * Win7TaskbarList.hpp: Windows 7 ITaskBarList3 implementation.            *
  *                                                                         *
  * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
@@ -19,24 +19,24 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_TASKBARBUTTONMANAGER_DOCKMANAGER_HPP__
-#define __MCRECOVER_TASKBARBUTTONMANAGER_DOCKMANAGER_HPP__
+#ifndef __MCRECOVER_TASKBARBUTTONMANAGER_WIN7TASKBARLIST_HPP__
+#define __MCRECOVER_TASKBARBUTTONMANAGER_WIN7TASKBARLIST_HPP__
 
 #include "TaskbarButtonManager.hpp"
 
-class DockManagerPrivate;
-class DockManager : public TaskbarButtonManager
+class Win7TaskbarListPrivate;
+class Win7TaskbarList : public TaskbarButtonManager
 {
 	Q_OBJECT
 
 	public:
-		DockManager(QObject *parent = 0);
-		virtual ~DockManager();
+		Win7TaskbarList(QObject *parent = 0);
+		virtual ~Win7TaskbarList();
 
 	protected:
-		Q_DECLARE_PRIVATE(DockManager)
+		Q_DECLARE_PRIVATE(Win7TaskbarList)
 	private:
-		Q_DISABLE_COPY(DockManager)
+		Q_DISABLE_COPY(Win7TaskbarList)
 
 	public:
 		/**
@@ -54,6 +54,7 @@ class DockManager : public TaskbarButtonManager
 		 * initialization is required to set up the taskbar button.
 		 *
 		 * TODO: Make a separate protected function that setWindow() calls?
+		 * TODO: Mark this (and in DockManager) as final?
 		 *
 		 * @param window Window.
 		 */
@@ -62,16 +63,9 @@ class DockManager : public TaskbarButtonManager
 	protected:
 		/**
 		 * Update the taskbar button.
+		 * TODO: Mark this (and in DockManager) as final?
 		 */
 		virtual void update(void) override;
-
-	private slots:
-		/**
-		 * HACK: Timer for window initialization.
-		 * If we attempt to get the dock item before the
-		 * window is fully initialized, we won't find it.
-		 */
-		void setWindow_timer_slot(void);
 };
 
-#endif /* __MCRECOVER_TASKBARBUTTONMANAGER_DOCKMANAGER_HPP__ */
+#endif /* __MCRECOVER_TASKBARBUTTONMANAGER_WIN7TASKBARLIST_HPP__ */

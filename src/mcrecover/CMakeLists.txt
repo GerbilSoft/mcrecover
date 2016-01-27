@@ -159,15 +159,11 @@ SET(mcrecover_SRCS
 	IconAnimHelper.cpp
 	McRecoverQApplication.cpp
 	VarReplace.cpp
-	TaskbarButtonManager/TaskbarButtonManager.cpp
 	GcToolsQt.cpp
 	TranslationManager.cpp
 	config/ConfigStore.cpp
 	config/ConfigDefaults.cpp
 	PathFuncs.cpp
-	)
-SET(mcrecover_H
-	TaskbarButtonManager/TaskbarButtonManager_p.hpp
 	)
 
 SET(mcrecover_WINDOW_SRCS
@@ -255,7 +251,6 @@ SET(mcrecover_MOC_H
 	SearchThreadWorker.hpp
 	IconAnimHelper.hpp
 	McRecoverQApplication.hpp
-	TaskbarButtonManager/TaskbarButtonManager.hpp
 	config/ConfigStore.hpp
 	)
 
@@ -375,54 +370,77 @@ ELSEIF(USE_QT5)
 	QT5_WRAP_CPP(mcrecover_MOC_SRCS ${mcrecover_MOC_H})
 ENDIF()
 
-IF(QtDBus_FOUND AND UNIX AND NOT APPLE)
-IF(USE_QT4)
-	# Qt4: QtDBus found.
-	# Enable DockManager / Unity API support.
-	# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
-	# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
-	INCLUDE(QtDBusInterfaceNoNS)
-	QT4_ADD_DBUS_INTERFACES_NONS(
-		mcrecover_DBUS_SRCS
-		INCLUDE dbus/DBusMetatypes.hpp
-		dbus/net.launchpad.DockItem.xml
-		dbus/net.launchpad.DockManager.xml
+# TaskbarButtonManager
+SET(mcrecover_TBM_SRCS TaskbarButtonManager/TaskbarButtonManager.cpp)
+SET(mcrecover_TBM_MOC_H TaskbarButtonManager/TaskbarButtonManager.hpp)
+SET(mcrecover_TBM_H TaskbarButtonManager/TaskbarButtonManager_p.hpp)
+
+IF(WIN32)
+	# Windows: Use ITaskbarList3. (Win7+)
+	SET(mcrecover_TBM_SRCS
+		${mcrecover_TBM_SRCS}
+		TaskbarButtonManager/Win7TaskbarList.cpp
 		)
-	SET(mcrecover_DBUS_SRCS
-		${mcrecover_DBUS_SRCS}
-		TaskbarButtonManager/DockManager.cpp
+	SET(mcrecover_TBM_MOC_H
+		${mcrecover_TBM_MOC_H}
+		TaskbarButtonManager/Win7TaskbarList.hpp
 		)
-	SET(mcrecover_DBUS_MOC_H
-		TaskbarButtonManager/DockManager.hpp
-		)
-	# Create MOC source files for classes that need them.
-	QT4_WRAP_CPP(mcrecover_DBUS_MOC_SRCS ${mcrecover_DBUS_MOC_H})
-ELSEIF(USE_QT5)
-	# Qt5: QtDBus found.
-	# Enable DockManager / Unity API support.
-	# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
-	# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
-	INCLUDE(QtDBusInterfaceNoNS)
-	# TODO: Qt5 version.
-	IF(0)
-	QT4_ADD_DBUS_INTERFACES_NONS(
-		mcrecover_DBUS_SRCS
-		INCLUDE dbus/DBusMetatypes.hpp
-		dbus/net.launchpad.DockItem.xml
-		dbus/net.launchpad.DockManager.xml
-		)
-	ENDIF(0)
-	SET(mcrecover_DBUS_SRCS
-		${mcrecover_DBUS_SRCS}
-		TaskbarButtonManager/DockManager.cpp
-		)
-	SET(mcrecover_DBUS_MOC_H
-		TaskbarButtonManager/DockManager.hpp
-		)
-	# Create MOC source files for classes that need them.
-	QT5_WRAP_CPP(mcrecover_DBUS_MOC_SRCS ${mcrecover_DBUS_MOC_H})
+ELSEIF(QtDBus_FOUND AND UNIX AND NOT APPLE)
+	IF(USE_QT4)
+		# Qt4: QtDBus found.
+		# Enable DockManager / Unity API support.
+		# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
+		# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
+		INCLUDE(QtDBusInterfaceNoNS)
+		QT4_ADD_DBUS_INTERFACES_NONS(
+			mcrecover_TBM_SRCS
+			INCLUDE dbus/DBusMetatypes.hpp
+			dbus/net.launchpad.DockItem.xml
+			dbus/net.launchpad.DockManager.xml
+			)
+		SET(mcrecover_TBM_SRCS
+			${mcrecover_TBM_SRCS}
+			TaskbarButtonManager/DockManager.cpp
+			)
+		SET(mcrecover_TBM_MOC_H
+			${mcrecover_TBM_MOC_H}
+			TaskbarButtonManager/DockManager.hpp
+			)
+	ELSEIF(USE_QT5)
+		# Qt5: QtDBus found.
+		# Enable DockManager / Unity API support.
+		# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
+		# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
+		INCLUDE(QtDBusInterfaceNoNS)
+		# TODO: Qt5 version.
+		IF(0)
+		INCLUDE(QtDBusInterfaceNoNS)
+		QT4_ADD_DBUS_INTERFACES_NONS(
+			mcrecover_TBM_SRCS
+			INCLUDE dbus/DBusMetatypes.hpp
+			dbus/net.launchpad.DockItem.xml
+			dbus/net.launchpad.DockManager.xml
+			)
+		SET(mcrecover_TBM_SRCS
+			${mcrecover_TBM_SRCS}
+			TaskbarButtonManager/DockManager.cpp
+			)
+		SET(mcrecover_TBM_MOC_H
+			${mcrecover_TBM_MOC_H}
+			TaskbarButtonManager/DockManager.hpp
+			)
+		ENDIF(0)
+	ENDIF()
 ENDIF()
-ENDIF(QtDBus_FOUND AND UNIX AND NOT APPLE)
+
+IF(mcrecover_TBM_MOC_H)
+	# Create MOC source files for classes that need them.
+	IF(USE_QT4)
+		QT4_WRAP_CPP(mcrecover_TBM_MOC_SRCS ${mcrecover_TBM_MOC_H})
+	ELSEIF(USE_QT5)
+		QT5_WRAP_CPP(mcrecover_TBM_MOC_SRCS ${mcrecover_TBM_MOC_H})
+	ENDIF()
+ENDIF(mcrecover_TBM_MOC_H)
 
 #################
 # Translations. #
@@ -462,7 +480,7 @@ ENDIF()
 # TODO: Set Win32 when compiling release build
 # to disable the command prompt window.
 ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
-	${mcrecover_SRCS} ${mcrecover_H}
+	${mcrecover_SRCS}
 	${mcrecover_WINDOW_SRCS}
 	${mcrecover_WIDGET_SRCS}
 	${mcrecover_CARD_SRCS}
@@ -472,8 +490,8 @@ ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_MOC_SRCS}
 	${mcrecover_UIS_H}
 	${mcrecover_RCC_O}
-	${mcrecover_DBUS_SRCS}
-	${mcrecover_DBUS_MOC_SRCS}
+	${mcrecover_TBM_SRCS} ${mcrecover_TBM_H}
+	${mcrecover_TBM_MOC_SRCS}
 	)
 INCLUDE(SetMSVCDebugPath)
 SET_MSVC_DEBUG_PATH(mcrecover)

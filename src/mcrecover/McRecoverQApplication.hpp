@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * McRecoverQApplication.hpp: QApplication subclass.                       *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -28,7 +28,6 @@
 #include <QStyle>
 
 class McRecoverQApplicationPrivate;
-
 class McRecoverQApplication : public QApplication
 {
 	Q_OBJECT
@@ -95,18 +94,20 @@ class McRecoverQApplication : public QApplication
 		 * @return QIcon.
 		 */
 		static QIcon Win32Icon(Win32Icon_t icon, const QSize &size);
-#endif /* Q_OS_WIN */
 
-#ifdef Q_OS_WIN
 		// Win32 event filter.
 		bool winEventFilter(MSG *msg, long *result);
-#endif /* Q_OS_WIN */
 
-#ifdef Q_OS_WIN
 		/**
 		 * Set the Qt font to match the system font.
 		 */
 		static void SetFont_Win32(void);
+
+		/**
+		 * Get the message ID for TaskbarButtonCreated.
+		 * @return Message ID, or 0 if not registered.
+		 */
+		static unsigned int WM_TaskbarButtonCreated(void);
 #endif /* Q_OS_WIN */
 
 	signals:
