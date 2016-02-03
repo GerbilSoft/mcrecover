@@ -57,14 +57,14 @@
        <property name="spacing">
         <number>0</number>
        </property>
-       <item>
+       <item alignment="Qt::AlignTop">
         <widget class="QPushButton" name="btnXML">
          <property name="text">
           <string notr="true">&amp;XML</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item alignment="Qt::AlignTop">
         <widget class="QPushButton" name="btnEdit">
          <property name="text">
           <string notr="true">&amp;Edit</string>
