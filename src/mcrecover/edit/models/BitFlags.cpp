@@ -22,6 +22,7 @@
 #include "BitFlags.hpp"
 
 // Qt includes.
+#include <QtCore/QCoreApplication>
 #include <QtCore/QHash>
 #include <QtCore/QString>
 #include <QtCore/QVector>
@@ -40,10 +41,12 @@ class BitFlagsPrivate
 		/**
 		 * Initialize BitFlagsPrivate.
 		 * @param total_flags Total number of flags the user can edit.
+		 * @param tr_ctx Translation context for bit flag descriptions.
 		 * @param bit_flags Bit flag descriptions.
 		 * @param count Number of bit_flags entries. (must be >= total_flags)
 		 */
-		BitFlagsPrivate(int total_flags, const bit_flag_t *bit_flags, int count);
+		BitFlagsPrivate(int total_flags, const char *tr_ctx,
+				const bit_flag_t *bit_flags, int count);
 
 	private:
 		Q_DISABLE_COPY(BitFlagsPrivate)
@@ -55,14 +58,26 @@ class BitFlagsPrivate
 		// of said class are deleted?
 		// TODO: An array might be more efficient, even if
 		// it wastes some memory...
-		QHash<int, QString> flags_desc;
+		QHash<int, const char*> flags_desc;
 
 		// Flags.
 		// NOTE: QVector<bool> does not have bit "optimization".
 		QVector<bool> flags;
+
+		// Translation context for bit flags.
+		const char *tr_ctx;
 };
 
-BitFlagsPrivate::BitFlagsPrivate(int total_flags, const bit_flag_t *bit_flags, int count)
+/**
+ * Initialize BitFlagsPrivate.
+ * @param total_flags Total number of flags the user can edit.
+ * @param tr_ctx Translation context for bit flag descriptions.
+ * @param bit_flags Bit flag descriptions.
+ * @param count Number of bit_flags entries. (must be >= total_flags)
+ */
+BitFlagsPrivate::BitFlagsPrivate(int total_flags, const char *tr_ctx,
+				 const bit_flag_t *bit_flags, int count)
+	: tr_ctx(tr_ctx)
 {
 	// This is initialized by a derived private class.
 	assert(total_flags > 0);
@@ -84,7 +99,7 @@ BitFlagsPrivate::BitFlagsPrivate(int total_flags, const bit_flag_t *bit_flags, i
 			break;
 		}
 
-		flags_desc.insert(bit_flags->event, QLatin1String(bit_flags->description));
+		flags_desc.insert(bit_flags->event, bit_flags->description);
 	}
 }
 
@@ -101,9 +116,28 @@ BitFlagsPrivate::BitFlagsPrivate(int total_flags, const bit_flag_t *bit_flags, i
  * @param count Number of bit_flags entries. (must be >= total_flags)
  * @param parent Parent object.
  */
-BitFlags::BitFlags(int total_flags, const bit_flag_t *bit_flags, int count, QObject *parent)
+BitFlags::BitFlags(int total_flags, const bit_flag_t *bit_flags,
+		   int count, QObject *parent)
 	: QObject(parent)
-	, d_ptr(new BitFlagsPrivate(total_flags, bit_flags, count))
+	, d_ptr(new BitFlagsPrivate(total_flags, nullptr, bit_flags, count))
+{ }
+
+/**
+ * Initialize BitFlags.
+ *
+ * This should be called by subclass constructors with
+ * the appropriate values.
+ *
+ * @param total_flags Total number of flags the user can edit.
+ * @param tr_ctx Translation context for bit flag descriptions.
+ * @param bit_flags Bit flag descriptions.
+ * @param count Number of bit_flags entries. (must be >= total_flags)
+ * @param parent Parent object.
+ */
+BitFlags::BitFlags(int total_flags, const char *tr_ctx,
+		   const bit_flag_t *bit_flags, int count, QObject *parent)
+	: QObject(parent)
+	, d_ptr(new BitFlagsPrivate(total_flags, tr_ctx, bit_flags, count))
 { }
 
 BitFlags::~BitFlags()
@@ -133,7 +167,22 @@ QString BitFlags::description(int flag) const
 		return tr("Invalid flag ID");
 
 	Q_D(const BitFlags);
-	return d->flags_desc.value(flag, tr("Unknown"));
+	const char *desc = d->flags_desc.value(flag);
+	if (!desc) {
+		// No flag description is available.
+		return tr("Unknown");
+	}
+
+	if (d->tr_ctx) {
+		// Translation context is available.
+		return QCoreApplication::translate(d->tr_ctx, desc);
+	}
+
+	// Translation context is not available.
+	// NOTE: This may end up being slower and/or
+	// using more memory due to lack of implicit
+	// QString sharing.
+	return QLatin1String(desc);
 }
 
 /**

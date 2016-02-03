@@ -31,7 +31,11 @@
 /** SAEventFlags **/
 
 SAEventFlags::SAEventFlags(QObject *parent)
-	: BitFlags(512, &sa_event_flags_desc[0], NUM_ELEMENTS(sa_event_flags_desc)-1, parent)
+	: BitFlags(512,					// Total number of bit flags.
+		"SADataEvents",				// Translation context.
+		&sa_event_flags_desc[0],		// Bit flags with names.
+		NUM_ELEMENTS(sa_event_flags_desc)-1,	// Number of named flags.
+		parent)
 { }
 
 /**

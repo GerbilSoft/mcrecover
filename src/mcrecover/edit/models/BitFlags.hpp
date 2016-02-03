@@ -49,7 +49,23 @@ class BitFlags : public QObject
 		 * @param count Number of bit_flags entries. (must be >= total_flags)
 		 * @param parent Parent object.
 		 */
-		BitFlags(int total_flags, const bit_flag_t *bit_flags, int count, QObject *parent = 0);
+		BitFlags(int total_flags, const bit_flag_t *bit_flags,
+			 int count, QObject *parent = 0);
+
+		/**
+		 * Initialize BitFlags.
+		 *
+		 * This should be called by subclass constructors with
+		 * the appropriate values.
+		 *
+		 * @param total_flags Total number of flags the user can edit.
+		 * @param tr_ctx Translation context for bit flag descriptions.
+		 * @param bit_flags Bit flag descriptions.
+		 * @param count Number of bit_flags entries. (must be >= total_flags)
+		 * @param parent Parent object.
+		 */
+		BitFlags(int total_flags, const char *tr_ctx,
+			 const bit_flag_t *bit_flags, int count, QObject *parent = 0);
 	public:
 		virtual ~BitFlags();
 

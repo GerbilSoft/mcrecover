@@ -29,7 +29,11 @@
 
 // TODO: NPC flag descriptions.
 SANPCFlags::SANPCFlags(QObject *parent)
-	: BitFlags(512, nullptr, 0, parent)
+	: BitFlags(512,		// Total number of bit flags.
+		nullptr,	// Translation context.
+		nullptr,	// Bit flags with names.
+		0,		// Number of named flags.
+		parent)
 { }
 
 /**
