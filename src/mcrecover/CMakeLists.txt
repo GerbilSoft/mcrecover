@@ -282,6 +282,8 @@ SET(mcrecover_EDIT_MOC_H
 	edit/SonicAdventure/SAMiscEmblems.hpp
 	edit/SonicAdventure/TimeCodeEdit.hpp
 	edit/SonicAdventure/SASubGames.hpp
+	edit/SonicAdventure/SAEditWidget.hpp
+	edit/SonicAdventure/SADXEditWidget.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H

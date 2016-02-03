@@ -22,19 +22,20 @@
 #ifndef __MCRECOVER_EDIT_SONICADVENTURE_SAGENERAL_HPP__
 #define __MCRECOVER_EDIT_SONICADVENTURE_SAGENERAL_HPP__
 
-#include <QtGui/QWidget>
+#include "SADXEditWidget.hpp"
 
 struct _sa_save_slot;
 struct _sadx_extra_save_slot;
 
 class SAGeneralPrivate;
-class SAGeneral : public QWidget
+class SAGeneral : public SADXEditWidget
 {
 	Q_OBJECT
+	typedef SADXEditWidget super;
 
 	public:
 		SAGeneral(QWidget *parent = 0);
-		~SAGeneral();
+		virtual ~SAGeneral();
 
 	protected:
 		SAGeneralPrivate *const d_ptr;
@@ -44,7 +45,13 @@ class SAGeneral : public QWidget
 
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
-		void changeEvent(QEvent *event);
+		virtual void changeEvent(QEvent *event) final;
+
+	public:
+		/**
+		 * Clear the loaded data.
+		 */
+		virtual void clear(void) final;
 
 	public:
 		/**
@@ -53,7 +60,7 @@ class SAGeneral : public QWidget
 		 * The data must have already been byteswapped to host-endian.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int load(const _sa_save_slot *sa_save);
+		virtual int load(const _sa_save_slot *sa_save) final;
 
 		/**
 		 * Save data to a Sonic Adventure save slot.
@@ -61,8 +68,9 @@ class SAGeneral : public QWidget
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int save(_sa_save_slot *sa_save) const;
+		virtual int save(_sa_save_slot *sa_save) const final;
 
+	public:
 		/**
 		 * Load data from a Sonic Adventure DX extra save slot.
 		 * @param sadx_extra_save Sonic Adventure DX extra save slot.
@@ -70,7 +78,7 @@ class SAGeneral : public QWidget
 		 * If nullptr, SADX editor components will be hidden.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int loadDX(const _sadx_extra_save_slot *sadx_extra_save);
+		virtual int loadDX(const _sadx_extra_save_slot *sadx_extra_save) final;
 
 		/**
 		 * Save data to a Sonic Adventure DX extra save slot.
@@ -78,12 +86,7 @@ class SAGeneral : public QWidget
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int saveDX(_sadx_extra_save_slot *sadx_extra_save);
-
-		/**
-		 * Clear the loaded data.
-		 */
-		void clear(void);
+		virtual int saveDX(_sadx_extra_save_slot *sadx_extra_save) const final;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAGENERAL_HPP__ */

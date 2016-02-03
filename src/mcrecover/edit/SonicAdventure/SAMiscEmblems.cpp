@@ -120,7 +120,7 @@ void SAMiscEmblemsPrivate::initWidgets(void)
 /** SAMiscEmblems **/
 
 SAMiscEmblems::SAMiscEmblems(QWidget *parent)
-	: QWidget(parent)
+	: super(parent)
 	, d_ptr(new SAMiscEmblemsPrivate(this))
 {
 	Q_D(SAMiscEmblems);

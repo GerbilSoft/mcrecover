@@ -315,7 +315,7 @@ void SALevelClearCountPrivate::scrollAreaResized(QEvent *event)
 /** SALevelClearCount **/
 
 SALevelClearCount::SALevelClearCount(QWidget *parent)
-	: QWidget(parent)
+	: super(parent)
 	, d_ptr(new SALevelClearCountPrivate(this))
 {
 	Q_D(SALevelClearCount);

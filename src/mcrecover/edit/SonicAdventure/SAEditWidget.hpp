@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SAAdventure.hpp: Sonic Adventure - Adventure Mode status editor.        *
+ * SAEditWidget.hpp: Sonic Adventure - SA1/SADX edit widget base class.    *
  *                                                                         *
  * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
@@ -19,32 +19,31 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SAADVENTURE_HPP__
-#define __MCRECOVER_EDIT_SONICADVENTURE_SAADVENTURE_HPP__
+#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SAEDITWIDGET_HPP__
+#define __MCRECOVER_EDIT_SONICADVENTURE_SAEDITWIDGET_HPP__
 
-#include "SAEditWidget.hpp"
+#include <QtGui/QWidget>
 
 struct _sa_save_slot;
 
-class SAAdventurePrivate;
-class SAAdventure : public SAEditWidget
+class SAEditWidget : public QWidget
 {
 	Q_OBJECT
-	typedef SAEditWidget super;
+	typedef QWidget super;
 
 	public:
-		SAAdventure(QWidget *parent = 0);
-		virtual ~SAAdventure();
+		SAEditWidget(QWidget *parent = 0)
+			: super(parent) { }
 
-	protected:
-		SAAdventurePrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(SAAdventure)
 	private:
-		Q_DISABLE_COPY(SAAdventure)
+		Q_DISABLE_COPY(SAEditWidget)
 
-	protected:
-		// State change event. (Used for switching the UI language at runtime.)
-		virtual void changeEvent(QEvent *event) final;
+	public:
+		/**
+		 * Clear the loaded data.
+		 * TODO: Make this function pure virtual.
+		 */
+		virtual void clear(void) { };
 
 	public:
 		/**
@@ -53,7 +52,7 @@ class SAAdventure : public SAEditWidget
 		 * The data must have already been byteswapped to host-endian.
 		 * @return 0 on success; non-zero on error.
 		 */
-		virtual int load(const _sa_save_slot *sa_save) final;
+		virtual int load(const _sa_save_slot *sa_save) = 0;
 
 		/**
 		 * Save data to a Sonic Adventure save slot.
@@ -61,7 +60,7 @@ class SAAdventure : public SAEditWidget
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		virtual int save(_sa_save_slot *sa_save) const final;
+		virtual int save(_sa_save_slot *sa_save) const = 0;
 };
 
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAADVENTURE_HPP__ */
+#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAEDITWIDGET_HPP__ */

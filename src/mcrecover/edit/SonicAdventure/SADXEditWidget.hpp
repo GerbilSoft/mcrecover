@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SAAdventure.hpp: Sonic Adventure - Adventure Mode status editor.        *
+ * SAEditWidget.hpp: Sonic Adventure - SADX edit widget base class.        *
  *                                                                         *
  * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
@@ -19,49 +19,42 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SAADVENTURE_HPP__
-#define __MCRECOVER_EDIT_SONICADVENTURE_SAADVENTURE_HPP__
+#ifndef __MCRECOVER_EDIT_SONICADVENTURE_SADXEDITWIDGET_HPP__
+#define __MCRECOVER_EDIT_SONICADVENTURE_SADXEDITWIDGET_HPP__
 
 #include "SAEditWidget.hpp"
 
-struct _sa_save_slot;
+struct _sadx_extra_save_slot;
 
-class SAAdventurePrivate;
-class SAAdventure : public SAEditWidget
+class SADXEditWidget : public SAEditWidget
 {
 	Q_OBJECT
 	typedef SAEditWidget super;
 
 	public:
-		SAAdventure(QWidget *parent = 0);
-		virtual ~SAAdventure();
+		SADXEditWidget(QWidget *parent = 0)
+			: super(parent) { }
 
-	protected:
-		SAAdventurePrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(SAAdventure)
 	private:
-		Q_DISABLE_COPY(SAAdventure)
-
-	protected:
-		// State change event. (Used for switching the UI language at runtime.)
-		virtual void changeEvent(QEvent *event) final;
+		Q_DISABLE_COPY(SADXEditWidget)
 
 	public:
 		/**
-		 * Load data from a Sonic Adventure save slot.
-		 * @param sa_save Sonic Adventure save slot.
+		 * Load data from a Sonic Adventure DX extra save slot.
+		 * @param sadx_extra_save Sonic Adventure DX extra save slot.
 		 * The data must have already been byteswapped to host-endian.
+		 * If nullptr, SADX editor components will be hidden.
 		 * @return 0 on success; non-zero on error.
 		 */
-		virtual int load(const _sa_save_slot *sa_save) final;
+		virtual int loadDX(const _sadx_extra_save_slot *sadx_extra_save) = 0;
 
 		/**
-		 * Save data to a Sonic Adventure save slot.
-		 * @param sa_save Sonic Adventure save slot.
+		 * Save data to a Sonic Adventure DX extra save slot.
+		 * @param sadx_extra_save Sonic Adventure DX extra save slot.
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		virtual int save(_sa_save_slot *sa_save) const final;
+		virtual int saveDX(_sadx_extra_save_slot *sadx_extra_save) const = 0;
 };
 
-#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAADVENTURE_HPP__ */
+#endif /* __MCRECOVER_EDIT_SONICADVENTURE_SADXEDITWIDGET_HPP__ */

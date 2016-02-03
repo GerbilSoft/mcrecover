@@ -58,7 +58,7 @@ SAGeneralPrivate::SAGeneralPrivate(SAGeneral *q)
 /** SAGeneral **/
 
 SAGeneral::SAGeneral(QWidget *parent)
-	: QWidget(parent)
+	: super(parent)
 	, d_ptr(new SAGeneralPrivate(this))
 {
 	Q_D(SAGeneral);
@@ -210,7 +210,7 @@ int SAGeneral::loadDX(const sadx_extra_save_slot *sadx_extra_save)
  * The data will be in host-endian format.
  * @return 0 on success; non-zero on error.
  */
-int SAGeneral::saveDX(sadx_extra_save_slot *sadx_extra_save)
+int SAGeneral::saveDX(sadx_extra_save_slot *sadx_extra_save) const
 {
 	Q_D(const SAGeneral);
 

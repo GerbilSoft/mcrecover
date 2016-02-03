@@ -296,7 +296,7 @@ void SAAdventurePrivate::initCharacters(void)
 /** SAAdventure **/
 
 SAAdventure::SAAdventure(QWidget *parent)
-	: QWidget(parent)
+	: super(parent)
 	, d_ptr(new SAAdventurePrivate(this))
 {
 	Q_D(SAAdventure);

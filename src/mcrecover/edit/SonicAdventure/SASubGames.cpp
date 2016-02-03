@@ -445,7 +445,7 @@ void SASubGamesPrivate::saveCurrentStats(void)
 /** SASubGames **/
 
 SASubGames::SASubGames(QWidget *parent)
-	: QWidget(parent)
+	: super(parent)
 	, d_ptr(new SASubGamesPrivate(this))
 {
 	Q_D(SASubGames);
@@ -564,13 +564,13 @@ int SASubGames::load(const sa_save_slot *sa_save)
  * The data will be in host-endian format.
  * @return 0 on success; non-zero on error.
  */
-int SASubGames::save(sa_save_slot *sa_save)
+int SASubGames::save(sa_save_slot *sa_save) const
 {
-	Q_D(SASubGames);
+	Q_D(const SASubGames);
+
 	// Save the current character's stats.
-	// TODO: Use modification signals to make this unnecessary,
-	// and mark this function as const?
-	d->saveCurrentStats();
+	// TODO: Use modification signals to make this unnecessary.
+	const_cast<SASubGamesPrivate*>(d)->saveCurrentStats();
 
 	memcpy(&sa_save->mini_game_scores, &d->mini_game_scores, sizeof(sa_save->mini_game_scores));
 	memcpy(&sa_save->twinkle_circuit,  &d->twinkle_circuit,  sizeof(sa_save->twinkle_circuit));
@@ -640,14 +640,14 @@ int SASubGames::loadDX(const sadx_extra_save_slot *sadx_extra_save)
  * The data will be in host-endian format.
  * @return 0 on success; non-zero on error.
  */
-int SASubGames::saveDX(sadx_extra_save_slot *sadx_extra_save)
+int SASubGames::saveDX(sadx_extra_save_slot *sadx_extra_save) const
 {
-	Q_D(SASubGames);
+	Q_D(const SASubGames);
+
 	// Save the current character's stats.
-	// TODO: Use modification signals to make this unnecessary,
-	// and mark this function as const?
+	// TODO: Use modification signals to make this unnecessary.
 	// TODO: Only do this if the current character is Metal Sonic.
-	d->saveCurrentStats();
+	const_cast<SASubGamesPrivate*>(d)->saveCurrentStats();
 
 	memcpy(&sadx_extra_save->mini_game_scores_metal, &d->metal_sonic.mini_game_scores, sizeof(sadx_extra_save->mini_game_scores_metal));
 	memcpy(&sadx_extra_save->twinkle_circuit_metal,  &d->metal_sonic.twinkle_circuit,  sizeof(sadx_extra_save->twinkle_circuit_metal));
