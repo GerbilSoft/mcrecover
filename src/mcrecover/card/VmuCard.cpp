@@ -276,7 +276,27 @@ int VmuCardPrivate::loadSysInfo(void)
 	if (mc_root.icon <= 123) {
 		char filename[64];
 		snprintf(filename, sizeof(filename), ":/vmu/bios/%03d.png", mc_root.icon);
-		this->icon = QPixmap(QLatin1String(filename));
+		QImage img(QString::fromLatin1(filename));
+
+		// The included icons use a black-and-white palette.
+		// Update it to match the VMU's LCD colors.
+		QVector<QRgb> colorTable = img.colorTable();
+		if (colorTable.count() == 2) {
+			for (int i = colorTable.count()-1; i >= 0; i--) {
+				QRgb color = colorTable[i] & 0xFFFFFF;
+				if (color == 0) {
+					// Black. Change to "blue".
+					colorTable[i] = qRgb(8, 24, 132);
+				} else {
+					// White. Change to "green".
+					colorTable[i] = qRgb(140, 206, 173);
+				}
+			}
+			img.setColorTable(colorTable);
+		}
+
+		// Convert to QPixmpa.
+		this->icon = QPixmap::fromImage(img);
 	}
 
 	// Load the FAT.
