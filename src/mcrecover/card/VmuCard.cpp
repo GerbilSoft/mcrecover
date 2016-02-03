@@ -270,6 +270,15 @@ int VmuCardPrivate::loadSysInfo(void)
 	// Set the format time.
 	this->formatTime.setVmuTimestamp(mc_root.timestamp);
 
+	// VMU icon.
+	// TODO: Check for "ICONDATA_VMS" first?
+	// If it's not present, use this icon.
+	if (mc_root.icon <= 123) {
+		char filename[64];
+		snprintf(filename, sizeof(filename), ":/vmu/bios/%03d.png", mc_root.icon);
+		this->icon = QPixmap(QLatin1String(filename));
+	}
+
 	// Load the FAT.
 	int ret = loadFat();
 	if (ret != 0) {
@@ -291,6 +300,8 @@ int VmuCardPrivate::loadSysInfo(void)
 		memset(&mc_dir, 0x00, sizeof(mc_dir));
 		return -4;
 	}
+
+	// TODO: Check for "ICONDATA_VMS" icon.
 
 	return 0;
 }

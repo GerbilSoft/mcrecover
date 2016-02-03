@@ -386,6 +386,18 @@ GcnDateTime Card::formatTime(void) const
 	return d->formatTime;
 }
 
+/**
+ * Get the card's icon.
+ * @return Icon, or default system icon or null QPixmap if unavailable.
+ */
+QPixmap Card::icon(void) const
+{
+	if (!isOpen())
+		return QPixmap();
+	Q_D(const Card);
+	return d->icon;
+}
+
 /** File system **/
 
 /**

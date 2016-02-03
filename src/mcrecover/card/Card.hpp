@@ -211,6 +211,12 @@ class Card : public QObject
 		 */
 		GcnDateTime formatTime(void) const;
 
+		/**
+		 * Get the card's icon.
+		 * @return Icon, or default system icon or null QPixmap if unavailable.
+		 */
+		QPixmap icon(void) const;
+
 	public:
 		/** File system **/
 		// TODO: Negative POSIX code on error, or just -1?

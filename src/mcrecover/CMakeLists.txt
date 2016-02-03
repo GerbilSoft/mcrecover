@@ -380,6 +380,7 @@ SET(mcrecover_RCC_SRCS
 	resources/oxygen/oxygen.qrc
 	resources/flags/flags.qrc
 	resources/sonic/sonic.qrc
+	resources/vmu/vmu.qrc
 	)
 
 # Add the resource files to the project.
