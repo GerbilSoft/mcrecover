@@ -31,12 +31,43 @@ class SAEditWidget : public QWidget
 	Q_OBJECT
 	typedef QWidget super;
 
+	Q_PROPERTY(bool modified READ isModified NOTIFY hasBeenModified)
+
 	public:
 		SAEditWidget(QWidget *parent = 0)
-			: super(parent) { }
+			: super(parent)
+			, m_modified(false) { }
 
 	private:
 		Q_DISABLE_COPY(SAEditWidget)
+
+	signals:
+		/**
+		 * Modification status has changed.
+		 * @param modified New modified status.
+		 */
+		void hasBeenModified(bool modified);
+		
+	private:
+		// NOTE: This is modified by the save functions,
+		// so it must be mutable.
+		mutable bool m_modified;
+
+	public:
+		/**
+		 * Has this widget been modified?
+		 * @return True if modified; false if not.
+		 */
+		inline bool isModified(void) const;
+
+	protected:
+		/**
+		 * Change the 'modified' state.
+		 * This function must be called instead of modifying
+		 * the variable directly in order to handle signals.
+		 * @param modified New 'modified' state.
+		 */
+		inline void setModified(bool modified);
 
 	public:
 		/**
@@ -60,7 +91,30 @@ class SAEditWidget : public QWidget
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		virtual int save(_sa_save_slot *sa_save) const = 0;
+		virtual int save(_sa_save_slot *sa_save) = 0;
 };
+
+/**
+ * Has this widget been modified?
+ * @return True if modified; false if not.
+ */
+inline bool SAEditWidget::isModified(void) const
+{
+	return m_modified;
+}
+
+/**
+ * Change the 'modified' state.
+ * This function must be called instead of modifying
+ * the variable directly in order to handle signals.
+ * @param modified New 'modified' state.
+ */
+inline void SAEditWidget::setModified(bool modified)
+{
+	if (m_modified == modified)
+		return;
+	m_modified = modified;
+	emit hasBeenModified(modified);
+}
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAEDITWIDGET_HPP__ */

@@ -251,7 +251,7 @@ void SAEditorPrivate::saveCurrentSlot(void)
 
 	// Save the data.
 	sa_save_slot *sa_save = data_main.at(this->currentSaveSlot);
-	foreach (const SAEditWidget *saEditWidget, saEditWidgets) {
+	foreach (SAEditWidget *saEditWidget, saEditWidgets) {
 		saEditWidget->save(sa_save);
 	}
 
@@ -266,7 +266,7 @@ void SAEditorPrivate::saveCurrentSlot(void)
 	}
 	if (sadx_extra_save) {
 		// SADX extra data found. Save it.
-		foreach (const SADXEditWidget *sadxEditWidget, sadxEditWidgets) {
+		foreach (SADXEditWidget *sadxEditWidget, sadxEditWidgets) {
 			sadxEditWidget->saveDX(sadx_extra_save);
 		}
 

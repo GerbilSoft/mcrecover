@@ -54,7 +54,7 @@ class SADXEditWidget : public SAEditWidget
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		virtual int saveDX(_sadx_extra_save_slot *sadx_extra_save) const = 0;
+		virtual int saveDX(_sadx_extra_save_slot *sadx_extra_save) = 0;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SADXEDITWIDGET_HPP__ */

@@ -564,7 +564,7 @@ int SASubGames::load(const sa_save_slot *sa_save)
  * The data will be in host-endian format.
  * @return 0 on success; non-zero on error.
  */
-int SASubGames::save(sa_save_slot *sa_save) const
+int SASubGames::save(sa_save_slot *sa_save)
 {
 	Q_D(const SASubGames);
 
@@ -592,6 +592,7 @@ int SASubGames::save(sa_save_slot *sa_save) const
 	sa_save->emblems[13] |= (d->ui.chkSandHill_1->isChecked() ? 0x01 : 0x00);
 	sa_save->emblems[13] |= (d->ui.chkHedgehogHammer_1->isChecked() ? 0x02 : 0x00);
 
+	setModified(false);
 	return 0;
 }
 
@@ -631,6 +632,7 @@ int SASubGames::loadDX(const sadx_extra_save_slot *sadx_extra_save)
 	// isn't changed after it's loaded, and all slots either
 	// have SADX extras or don't have SADX extras.
 	d->updateDisplay();
+	setModified(false);
 	return 0;
 }
 
@@ -640,7 +642,7 @@ int SASubGames::loadDX(const sadx_extra_save_slot *sadx_extra_save)
  * The data will be in host-endian format.
  * @return 0 on success; non-zero on error.
  */
-int SASubGames::saveDX(sadx_extra_save_slot *sadx_extra_save) const
+int SASubGames::saveDX(sadx_extra_save_slot *sadx_extra_save)
 {
 	Q_D(const SASubGames);
 
@@ -653,6 +655,7 @@ int SASubGames::saveDX(sadx_extra_save_slot *sadx_extra_save) const
 	memcpy(&sadx_extra_save->twinkle_circuit_metal,  &d->metal_sonic.twinkle_circuit,  sizeof(sadx_extra_save->twinkle_circuit_metal));
 	memcpy(&sadx_extra_save->boss_attack_metal,      &d->metal_sonic.boss_attack,      sizeof(sadx_extra_save->boss_attack_metal));
 
+	setModified(false);
 	return 0;
 }
 
@@ -664,4 +667,5 @@ void SASubGames::clear(void)
 	Q_D(SASubGames);
 	d->clear();
 	d->updateDisplay();
+	setModified(false);
 }

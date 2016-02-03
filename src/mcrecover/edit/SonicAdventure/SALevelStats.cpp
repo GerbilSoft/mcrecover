@@ -574,6 +574,7 @@ int SALevelStats::load(const sa_save_slot *sa_save)
 
 	// Update the display.
 	d->updateDisplay();
+	setModified(false);
 	return 0;
 }
 
@@ -583,7 +584,7 @@ int SALevelStats::load(const sa_save_slot *sa_save)
  * The data will be in host-endian format.
  * @return 0 on success; non-zero on error.
  */
-int SALevelStats::save(sa_save_slot *sa_save) const
+int SALevelStats::save(sa_save_slot *sa_save)
 {
 	Q_D(const SALevelStats);
 
@@ -608,6 +609,7 @@ int SALevelStats::save(sa_save_slot *sa_save) const
 		sa_save->emblems[i] = bits;
 	}
 
+	setModified(false);
 	return 0;
 }
 
@@ -652,6 +654,7 @@ int SALevelStats::loadDX(const sadx_extra_save_slot *sadx_extra_save)
 		}
 	}
 
+	setModified(false);
 	return 0;
 }
 
@@ -661,9 +664,9 @@ int SALevelStats::loadDX(const sadx_extra_save_slot *sadx_extra_save)
  * The data will be in host-endian format.
  * @return 0 on success; non-zero on error.
  */
-int SALevelStats::saveDX(sadx_extra_save_slot *sadx_extra_save) const
+int SALevelStats::saveDX(sadx_extra_save_slot *sadx_extra_save)
 {
-	Q_D(const SALevelStats);
+	Q_D(SALevelStats);
 
 	// Save the current character's stats.
 	// TODO: Use modification signals to make this unnecessary.
@@ -686,6 +689,7 @@ int SALevelStats::saveDX(sadx_extra_save_slot *sadx_extra_save) const
 	}
 	sadx_extra_save->emblems_metal = metal_emblems;
 
+	setModified(false);
 	return 0;
 }
 
@@ -697,4 +701,5 @@ void SALevelStats::clear(void)
 	Q_D(SALevelStats);
 	d->clear();
 	d->updateDisplay();
+	setModified(false);
 }

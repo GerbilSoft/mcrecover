@@ -390,6 +390,7 @@ int SAAdventure::load(const sa_save_slot *sa_save)
 #endif
 	}
 
+	setModified(false);
 	return 0;
 }
 
@@ -399,7 +400,7 @@ int SAAdventure::load(const sa_save_slot *sa_save)
  * The data will be in host-endian format.
  * @return 0 on success; non-zero on error.
  */
-int SAAdventure::save(sa_save_slot *sa_save) const
+int SAAdventure::save(sa_save_slot *sa_save)
 {
 	Q_D(const SAAdventure);
 
@@ -454,5 +455,6 @@ int SAAdventure::save(sa_save_slot *sa_save) const
 #endif
 	}
 
+	setModified(false);
 	return 0;
 }

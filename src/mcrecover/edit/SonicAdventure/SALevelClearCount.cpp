@@ -368,6 +368,7 @@ int SALevelClearCount::load(const sa_save_slot *sa_save)
 
 	// Update the display.
 	d->updateDisplay();
+	setModified(false);
 	return 0;
 }
 
@@ -377,10 +378,11 @@ int SALevelClearCount::load(const sa_save_slot *sa_save)
  * The data will be in host-endian format.
  * @return 0 on success; non-zero on error.
  */
-int SALevelClearCount::save(sa_save_slot *sa_save) const
+int SALevelClearCount::save(sa_save_slot *sa_save)
 {
 	Q_D(const SALevelClearCount);
 	memcpy(&sa_save->clear_count, &d->clear_count, sizeof(sa_save->clear_count));
+	setModified(false);
 	return 0;
 }
 
@@ -392,6 +394,7 @@ void SALevelClearCount::clear(void)
 	Q_D(SALevelClearCount);
 	d->clear();
 	d->updateDisplay();
+	setModified(false);
 }
 
 /** Slots. **/

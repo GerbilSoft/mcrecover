@@ -137,6 +137,7 @@ int SAGeneral::load(const sa_save_slot *sa_save)
 		last_level = 0;
 	d->ui.cboLastLevel->setCurrentIndex(last_level);
 
+	setModified(false);
 	return 0;
 }
 
@@ -146,7 +147,7 @@ int SAGeneral::load(const sa_save_slot *sa_save)
  * The data will be in host-endian format.
  * @return 0 on success; non-zero on error.
  */
-int SAGeneral::save(sa_save_slot *sa_save) const
+int SAGeneral::save(sa_save_slot *sa_save)
 {
 	Q_D(const SAGeneral);
 
@@ -172,6 +173,7 @@ int SAGeneral::save(sa_save_slot *sa_save) const
 	if (d->ui.cboLastLevel->currentIndex() >= 0)
 		sa_save->last_level = d->ui.cboLastLevel->currentIndex();
 
+	setModified(false);
 	return 0;
 }
 
@@ -201,6 +203,7 @@ int SAGeneral::loadDX(const sadx_extra_save_slot *sadx_extra_save)
 		d->ui.spnBlackMarketRings->hide();
 	}
 
+	setModified(false);
 	return 0;
 }
 
@@ -210,7 +213,7 @@ int SAGeneral::loadDX(const sadx_extra_save_slot *sadx_extra_save)
  * The data will be in host-endian format.
  * @return 0 on success; non-zero on error.
  */
-int SAGeneral::saveDX(sadx_extra_save_slot *sadx_extra_save) const
+int SAGeneral::saveDX(sadx_extra_save_slot *sadx_extra_save)
 {
 	Q_D(const SAGeneral);
 
@@ -218,6 +221,7 @@ int SAGeneral::saveDX(sadx_extra_save_slot *sadx_extra_save) const
 	// TODO: Validate the value?
 	sadx_extra_save->rings_black_market = d->ui.spnBlackMarketRings->value();
 
+	setModified(false);
 	return 0;
 }
 
@@ -228,4 +232,5 @@ void SAGeneral::clear(void)
 {
 	Q_D(SAGeneral);
 	// TODO
+	setModified(false);
 }

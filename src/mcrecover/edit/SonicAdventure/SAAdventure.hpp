@@ -61,7 +61,7 @@ class SAAdventure : public SAEditWidget
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		virtual int save(_sa_save_slot *sa_save) const final;
+		virtual int save(_sa_save_slot *sa_save) final;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAADVENTURE_HPP__ */

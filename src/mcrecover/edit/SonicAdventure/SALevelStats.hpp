@@ -68,7 +68,7 @@ class SALevelStats : public SADXEditWidget
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		virtual int save(_sa_save_slot *sa_save) const final;
+		virtual int save(_sa_save_slot *sa_save) final;
 
 	public:
 		/**
@@ -86,7 +86,7 @@ class SALevelStats : public SADXEditWidget
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		virtual int saveDX(_sadx_extra_save_slot *sadx_extra_save) const final;
+		virtual int saveDX(_sadx_extra_save_slot *sadx_extra_save) final;
 
 	protected slots:
 		/**
