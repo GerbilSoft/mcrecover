@@ -447,7 +447,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string notr="true">APNG</string>
+    <string>APNG</string>
    </property>
   </action>
   <action name="actionAnimGIF">
@@ -455,7 +455,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string notr="true">GIF</string>
+    <string>GIF</string>
    </property>
   </action>
   <action name="actionAnimPNGfpf">
