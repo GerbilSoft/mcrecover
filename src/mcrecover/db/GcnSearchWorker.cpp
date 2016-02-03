@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SearchThreadWorker.cpp: SearchThread "worker" object.                   *
+ * GcnSearchWorker.hpp: GCN "lost" file search worker.                     *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,7 +19,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#include "SearchThreadWorker.hpp"
+#include "GcnSearchWorker.hpp"
 
 // GcnCard
 #include "card/GcnCard.hpp"
@@ -40,17 +40,18 @@
 #include <QtCore/QLinkedList>
 #include <QtCore/QVector>
 
+/** GcnSearchWorkerPrivate **/
 
-class SearchThreadWorkerPrivate
+class GcnSearchWorkerPrivate
 {
 	public:
-		SearchThreadWorkerPrivate(SearchThreadWorker *q);
+		GcnSearchWorkerPrivate(GcnSearchWorker *q);
 
 	protected:
-		SearchThreadWorker *const q_ptr;
-		Q_DECLARE_PUBLIC(SearchThreadWorker)
+		GcnSearchWorker *const q_ptr;
+		Q_DECLARE_PUBLIC(GcnSearchWorker)
 	private:
-		Q_DISABLE_COPY(SearchThreadWorkerPrivate)
+		Q_DISABLE_COPY(GcnSearchWorkerPrivate)
 
 	public:
 		/**
@@ -59,7 +60,7 @@ class SearchThreadWorkerPrivate
 		 * in order to turn "reverse-order" into "correct-order".
 		 * TODO: Use malloc()'d SearchData?
 		 */
-		QLinkedList<SearchData> filesFoundList;
+		QLinkedList<GcnSearchData> filesFoundList;
 
 		// searchMemCard() parameters used when this worker
 		// is called by a thread's started() signal.
@@ -78,7 +79,7 @@ class SearchThreadWorkerPrivate
 		} thread_info;
 };
 
-SearchThreadWorkerPrivate::SearchThreadWorkerPrivate(SearchThreadWorker* q)
+GcnSearchWorkerPrivate::GcnSearchWorkerPrivate(GcnSearchWorker* q)
 	: q_ptr(q)
 {
 	// NULL these out by default.
@@ -88,16 +89,16 @@ SearchThreadWorkerPrivate::SearchThreadWorkerPrivate(SearchThreadWorker* q)
 	thread_info.searchUsedBlocks = false;
 }
 
-/** SearchThreadWorker **/
+/** GcnSearchWorker **/
 
-SearchThreadWorker::SearchThreadWorker(QObject *parent)
+GcnSearchWorker::GcnSearchWorker(QObject *parent)
 	: QObject(parent)
-	, d_ptr(new SearchThreadWorkerPrivate(this))
+	, d_ptr(new GcnSearchWorkerPrivate(this))
 { }
 
-SearchThreadWorker::~SearchThreadWorker()
+GcnSearchWorker::~GcnSearchWorker()
 {
-	Q_D(SearchThreadWorker);
+	Q_D(GcnSearchWorker);
 	delete d;
 }
 
@@ -105,10 +106,10 @@ SearchThreadWorker::~SearchThreadWorker()
  * Get the list of files found in the last successful search.
  * @return List of files found.
  */
-QLinkedList<SearchData> SearchThreadWorker::filesFoundList(void)
+QLinkedList<GcnSearchData> GcnSearchWorker::filesFoundList(void)
 {
 	// TODO: Not while thread is running...
-	Q_D(SearchThreadWorker);
+	Q_D(GcnSearchWorker);
 	return d->filesFoundList;
 }
 
@@ -123,10 +124,10 @@ QLinkedList<SearchData> SearchThreadWorker::filesFoundList(void)
  * If successful, retrieve the file list using dirEntryList().
  * If an error occurs, check the errorString(). (TODO)
  */
-int SearchThreadWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*> &dbs,
+int GcnSearchWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*> &dbs,
 				      char preferredRegion, bool searchUsedBlocks)
 {
-	Q_D(SearchThreadWorker);
+	Q_D(GcnSearchWorker);
 	d->filesFoundList.clear();
 
 	if (dbs.isEmpty()) {
@@ -201,16 +202,16 @@ int SearchThreadWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*>
 		}
 
 		// Check the block in the databases.
-		QVector<SearchData> searchDataEntries;
+		QVector<GcnSearchData> searchDataEntries;
 		foreach (GcnMcFileDb *db, dbs) {
-			QVector<SearchData> curEntries = db->checkBlock(buf, blockSize);
+			QVector<GcnSearchData> curEntries = db->checkBlock(buf, blockSize);
 			searchDataEntries += curEntries;
 		}
 
 		// TODO: Search for preferred region. For now, just use the first hit.
 		if (!searchDataEntries.isEmpty()) {
 			// Matched!
-			SearchData searchData;
+			GcnSearchData searchData;
 			if (searchDataEntries.size() == 1 || preferredRegion == 0) {
 				// Only one entry, or no preferred region.
 				searchData = searchDataEntries.at(0);
@@ -219,7 +220,7 @@ int SearchThreadWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*>
 				bool isMatch = false;
 				printf("\n");
 				for (int i = 0; i < searchDataEntries.size(); i++) {
-					const SearchData &schk = searchDataEntries.at(i);
+					const GcnSearchData &schk = searchDataEntries.at(i);
 					if (schk.dirEntry.gamecode[3] == preferredRegion) {
 						// Found a match!
 						searchData = schk;
@@ -346,11 +347,11 @@ int SearchThreadWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*>
  * @param preferredRegion Preferred region.
  * @param searchUsedBlocks If true, search all blocks, not just blocks marked as empty.
  */
-void SearchThreadWorker::setThreadInfo(GcnCard *card, const QVector<GcnMcFileDb*> &dbs,
+void GcnSearchWorker::setThreadInfo(GcnCard *card, const QVector<GcnMcFileDb*> &dbs,
 				       QThread *orig_thread,
 				       char preferredRegion, bool searchUsedBlocks)
 {
-	Q_D(SearchThreadWorker);
+	Q_D(GcnSearchWorker);
 	d->thread_info.card = card;
 	d->thread_info.dbs = dbs; // TODO: Convert to QVector<const GcnMcFileDb*>?
 	d->thread_info.orig_thread = orig_thread;
@@ -363,9 +364,9 @@ void SearchThreadWorker::setThreadInfo(GcnCard *card, const QVector<GcnMcFileDb*
  * This version should be connected to a QThread's SIGNAL(started()).
  * Thread information must have been set using setThreadInfo().
  */
-void SearchThreadWorker::searchMemCard_threaded(void)
+void GcnSearchWorker::searchMemCard_threaded(void)
 {
-	Q_D(SearchThreadWorker);
+	Q_D(GcnSearchWorker);
 
 	if (!d->thread_info.card ||
 	    d->thread_info.dbs.isEmpty() ||
@@ -378,7 +379,7 @@ void SearchThreadWorker::searchMemCard_threaded(void)
 		}
 
 		// TODO: Set an error string.
-		emit searchError(QLatin1String("SearchThreadWorker: Thread information was not set."));
+		emit searchError(QLatin1String("GcnSearchWorker: Thread information was not set."));
 		return;
 	}
 

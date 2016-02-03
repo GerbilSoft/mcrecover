@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnMcFileDb.hpp: GCN Memory Card File Database class.                   *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -29,7 +29,7 @@
 #include "Checksum.hpp"
 
 // Search data.
-#include "SearchData.hpp"
+#include "GcnSearchData.hpp"
 
 // Qt includes.
 #include <QtCore/QObject>
@@ -73,7 +73,7 @@ class GcnMcFileDb : public QObject
 		 * @param siz	[in] Size of buf. (Should be BLOCK_SIZE == 0x2000.)
 		 * @return QVector of matches, or empty QVector if no matches were found.
 		 */
-		QVector<SearchData> checkBlock(const void *buf, int siz) const;
+		QVector<GcnSearchData> checkBlock(const void *buf, int siz) const;
 
 		/**
 		 * Get a list of database files.

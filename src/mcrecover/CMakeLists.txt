@@ -113,8 +113,6 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.mcrecover.h.in" "${CMAKE_CURR
 # Sources.
 SET(mcrecover_SRCS
 	mcrecover.cpp
-	SearchThread.cpp
-	SearchThreadWorker.cpp
 	PcreRegex.cpp
 	GcnDateTime.cpp
 	IconAnimHelper.cpp
@@ -130,9 +128,12 @@ SET(mcrecover_SRCS
 
 SET(mcrecover_DB_SRCS
 	db/GcnMcFileDb.cpp
+	db/GcnSearchThread.cpp
+	db/GcnSearchWorker.cpp
 	)
 SET(mcrecover_DB_H
 	db/GcnMcFileDef.hpp
+	db/GcnSearchData.hpp
 	)
 
 SET(mcrecover_WINDOW_SRCS
@@ -216,8 +217,6 @@ ENDIF(WIN32)
 
 # Headers with Qt4 objects.
 SET(mcrecover_MOC_H
-	SearchThread.hpp
-	SearchThreadWorker.hpp
 	IconAnimHelper.hpp
 	McRecoverQApplication.hpp
 	TaskbarButtonManager/TaskbarButtonManager.hpp
@@ -226,6 +225,8 @@ SET(mcrecover_MOC_H
 
 SET(mcrecover_DB_MOC_H
 	db/GcnMcFileDb.hpp
+	db/GcnSearchThread.hpp
+	db/GcnSearchWorker.hpp
 	)
 
 SET(mcrecover_WINDOW_MOC_H

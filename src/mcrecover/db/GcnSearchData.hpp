@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SearchThreadWorker.hpp: SearchThread "worker" object.                   *
+ * GcnSearchData.hpp: GCN search data.                                     *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,8 +19,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_SEARCHDATA_HPP__
-#define __MCRECOVER_SEARCHDATA_HPP__
+#ifndef __MCRECOVER_DB_GCNSEARCHDATA_HPP__
+#define __MCRECOVER_DB_GCNSEARCHDATA_HPP__
 
 #include "card.h"
 #include "Checksum.hpp"
@@ -28,7 +28,7 @@
 // Qt includes.
 #include <QtCore/QVector>
 
-struct SearchData
+struct GcnSearchData
 {
 	card_direntry dirEntry;
 	QVector<uint16_t> fatEntries;

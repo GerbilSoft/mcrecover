@@ -43,7 +43,7 @@
 #include "db/GcnMcFileDb.hpp"
 
 // Search classes.
-#include "SearchThread.hpp"
+#include "db/GcnSearchThread.hpp"
 #include "widgets/StatusBarManager.hpp"
 
 // Translation Manager.
@@ -135,7 +135,7 @@ class McRecoverWindowPrivate
 		void updateLstFileList(void);
 
 		// Search thread.
-		SearchThread *searchThread;
+		GcnSearchThread *searchThread;
 
 		/**
 		 * Initialize the toolbar.
@@ -261,7 +261,7 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, card(nullptr)
 	, model(new MemCardModel(q))
 	, proxyModel(new MemCardSortFilterProxyModel(q))
-	, searchThread(new SearchThread(q))
+	, searchThread(new GcnSearchThread(q))
 	, statusBarManager(nullptr)
 	, uiBusyCounter(0)
 	, preferredRegion(0)
@@ -286,7 +286,7 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	QObject::connect(searchThread, SIGNAL(searchFinished(int)),
 			 q, SLOT(searchThread_searchFinished_slot(int)));
 
-	// Connect SearchThread to the mark-as-busy slots.
+	// Connect searchThread to the mark-as-busy slots.
 	QObject::connect(searchThread, SIGNAL(searchStarted(int,int,int)),
 			 q, SLOT(markUiBusy()));
 	QObject::connect(searchThread, SIGNAL(searchFinished(int)),
@@ -1823,7 +1823,7 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 	d->card->removeLostFiles();
 
 	// Get the files found list.
-	QLinkedList<SearchData> filesFoundList = d->searchThread->filesFoundList();
+	QLinkedList<GcnSearchData> filesFoundList = d->searchThread->filesFoundList();
 
 	// Add the directory entries.
 	QList<GcnFile*> files = gcnCard->addLostFiles(filesFoundList);

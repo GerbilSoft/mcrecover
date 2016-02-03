@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SearchThreadWorker.hpp: SearchThread "worker" object.                   *
+ * GcnSearchWorker.hpp: GCN "lost" file search worker.                     *
  *                                                                         *
- * Copyright (c) 2013-2015 by David Korth.                                 *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,14 +19,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_SEARCHTHREADWORKER_HPP__
-#define __MCRECOVER_SEARCHTHREADWORKER_HPP__
+#ifndef __MCRECOVER_DB_GCNSEARCHWORKER_HPP__
+#define __MCRECOVER_DB_GCNSEARCHWORKER_HPP__
 
 // Card definitions.
 #include "card.h"
 
 // Search Data struct.
-#include "SearchData.hpp"
+#include "GcnSearchData.hpp"
 
 // Qt includes.
 #include <QtCore/QLinkedList>
@@ -40,22 +40,20 @@ class QThread;
 class GcnCard;
 class GcnMcFileDb;
 
-// SearchThreadWorker private class.
-class SearchThreadWorkerPrivate;
-
-class SearchThreadWorker : public QObject
+class GcnSearchWorkerPrivate;
+class GcnSearchWorker : public QObject
 {
 	Q_OBJECT
 
 	public:
-		SearchThreadWorker(QObject *parent = 0);
-		~SearchThreadWorker();
+		GcnSearchWorker(QObject *parent = 0);
+		~GcnSearchWorker();
 
 	protected:
-		SearchThreadWorkerPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(SearchThreadWorker)
+		GcnSearchWorkerPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(GcnSearchWorker)
 	private:
-		Q_DISABLE_COPY(SearchThreadWorker)
+		Q_DISABLE_COPY(GcnSearchWorker)
 
 	signals:
 		/**
@@ -96,7 +94,7 @@ class SearchThreadWorker : public QObject
 		 * Get the list of files found in the last successful search.
 		 * @return List of files found.
 		 */
-		QLinkedList<SearchData> filesFoundList(void);
+		QLinkedList<GcnSearchData> filesFoundList(void);
 
 		/**
 		 * Search a memory card for "lost" files.
@@ -136,4 +134,4 @@ class SearchThreadWorker : public QObject
 		void searchMemCard_threaded(void);
 };
 
-#endif /* __MCRECOVER_SEARCHTHREADWORKER_HPP__ */
+#endif /* __MCRECOVER_DB_GCNSEARCHWORKER_HPP__ */

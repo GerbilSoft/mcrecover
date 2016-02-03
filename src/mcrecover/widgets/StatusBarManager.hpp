@@ -29,18 +29,16 @@ class QStatusBar;
 // Card definitions.
 #include "card.h"
 
-// SearchThread.
-class SearchThread;
+// GcnSearchThread.
+class GcnSearchThread;
 
-// StatusBarManager private class.
 class StatusBarManagerPrivate;
-
 class StatusBarManager : public QObject
 {
 	Q_OBJECT
 
 	Q_PROPERTY(QStatusBar* statusBar READ statusBar WRITE setStatusBar)
-	Q_PROPERTY(SearchThread* searchThread READ searchThread WRITE setSearchThread)
+	Q_PROPERTY(GcnSearchThread* searchThread READ searchThread WRITE setSearchThread)
 
 	public:
 		StatusBarManager(QObject *parent = 0);
@@ -67,16 +65,16 @@ class StatusBarManager : public QObject
 		void setStatusBar(QStatusBar *statusBar);
 
 		/**
-		 * Get the SearchThread.
-		 * @return SearchThread.
+		 * Get the GcnSearchThread.
+		 * @return GcnSearchThread.
 		 */
-		SearchThread *searchThread(void) const;
+		GcnSearchThread *searchThread(void) const;
 
 		/**
-		 * Set the SearchThread.
-		 * @param searchThread SearchThread.
+		 * Set the GcnSearchThread.
+		 * @param searchThread GcnSearchThread.
 		 */
-		void setSearchThread(SearchThread *searchThread);
+		void setSearchThread(GcnSearchThread *searchThread);
 
 	public slots:
 		/**

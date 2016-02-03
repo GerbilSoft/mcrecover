@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SearchThread.cpp: "Lost" file search thread.                            *
+ * GcnSearchThread.cpp: GCN "lost" file search thread.                     *
  *                                                                         *
- * Copyright (c) 2013-2015 by David Korth.                                 *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,7 +19,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#include "SearchThread.hpp"
+#include "GcnSearchThread.hpp"
 
 // GcnCard
 #include "card/GcnCard.hpp"
@@ -28,24 +28,24 @@
 #include "db/GcnMcFileDb.hpp"
 
 // Worker object.
-#include "SearchThreadWorker.hpp"
+#include "GcnSearchWorker.hpp"
 
 // Qt includes.
 #include <QtCore/QLinkedList>
 #include <QtCore/QStack>
 #include <QtCore/QThread>
 
-class SearchThreadPrivate
+class GcnSearchThreadPrivate
 {
 	public:
-		SearchThreadPrivate(SearchThread *q);
-		~SearchThreadPrivate();
+		GcnSearchThreadPrivate(GcnSearchThread *q);
+		~GcnSearchThreadPrivate();
 
 	protected:
-		SearchThread *const q_ptr;
-		Q_DECLARE_PUBLIC(SearchThread)
+		GcnSearchThread *const q_ptr;
+		Q_DECLARE_PUBLIC(GcnSearchThread)
 	private:
-		Q_DISABLE_COPY(SearchThreadPrivate)
+		Q_DISABLE_COPY(GcnSearchThreadPrivate)
 
 	public:
 		// GCN Memory Card File databases.
@@ -54,7 +54,7 @@ class SearchThreadPrivate
 		// Worker object.
 		// NOTE: This object cannot have a parent;
 		// otherwise, QObject::moveToThread() won't work.
-		SearchThreadWorker *worker;
+		GcnSearchWorker *worker;
 
 		// Worker thread.
 		QThread *workerThread;
@@ -65,9 +65,9 @@ class SearchThreadPrivate
 		void stopWorkerThread(void);
 };
 
-SearchThreadPrivate::SearchThreadPrivate(SearchThread* q)
+GcnSearchThreadPrivate::GcnSearchThreadPrivate(GcnSearchThread* q)
 	: q_ptr(q)
-	, worker(new SearchThreadWorker())
+	, worker(new GcnSearchWorker())
 	, workerThread(nullptr)
 {
 	// Signal passthrough.
@@ -86,7 +86,7 @@ SearchThreadPrivate::SearchThreadPrivate(SearchThread* q)
 			 q, SLOT(searchError_slot(QString)));
 }	
 
-SearchThreadPrivate::~SearchThreadPrivate()
+GcnSearchThreadPrivate::~GcnSearchThreadPrivate()
 {
 	delete worker;
 	qDeleteAll(dbs);
@@ -96,7 +96,7 @@ SearchThreadPrivate::~SearchThreadPrivate()
 /**
  * Stop the worker thread.
  */
-void SearchThreadPrivate::stopWorkerThread(void)
+void GcnSearchThreadPrivate::stopWorkerThread(void)
 {
 	if (!workerThread)
 		return;
@@ -108,16 +108,16 @@ void SearchThreadPrivate::stopWorkerThread(void)
 	workerThread = nullptr;
 }
 
-/** SearchThread **/
+/** GcnSearchThread **/
 
-SearchThread::SearchThread(QObject *parent)
+GcnSearchThread::GcnSearchThread(QObject *parent)
 	: QObject(parent)
-	, d_ptr(new SearchThreadPrivate(this))
+	, d_ptr(new GcnSearchThreadPrivate(this))
 { }
 
-SearchThread::~SearchThread()
+GcnSearchThread::~GcnSearchThread()
 {
-	Q_D(SearchThread);
+	Q_D(GcnSearchThread);
 	delete d;
 }
 
@@ -126,9 +126,9 @@ SearchThread::~SearchThread()
  * @param dbFilenames Filenames of GCN Memory Card File database.
  * @return 0 on success; non-zero on error. (Check error string!)
  */
-int SearchThread::loadGcnMcFileDbs(const QVector<QString> &dbFilenames)
+int GcnSearchThread::loadGcnMcFileDbs(const QVector<QString> &dbFilenames)
 {
-	Q_D(SearchThread);
+	Q_D(GcnSearchThread);
 	qDeleteAll(d->dbs);
 	d->dbs.clear();
 
@@ -159,10 +159,10 @@ int SearchThread::loadGcnMcFileDbs(const QVector<QString> &dbFilenames)
  * Get the list of files found in the last successful search.
  * @return List of files found.
  */
-QLinkedList<SearchData> SearchThread::filesFoundList(void)
+QLinkedList<GcnSearchData> GcnSearchThread::filesFoundList(void)
 {
 	// TODO: Not while thread is running...
-	Q_D(SearchThread);
+	Q_D(GcnSearchThread);
 	return d->worker->filesFoundList();
 }
 
@@ -177,9 +177,9 @@ QLinkedList<SearchData> SearchThread::filesFoundList(void)
  * If successful, retrieve the file list using dirEntryList().
  * If an error occurs, check the errorString(). (TODO)
  */
-int SearchThread::searchMemCard(GcnCard *card, char preferredRegion, bool searchUsedBlocks)
+int GcnSearchThread::searchMemCard(GcnCard *card, char preferredRegion, bool searchUsedBlocks)
 {
-	Q_D(SearchThread);
+	Q_D(GcnSearchThread);
 
 	// TODO: Mutex?
 	if (d->workerThread) {
@@ -209,9 +209,9 @@ int SearchThread::searchMemCard(GcnCard *card, char preferredRegion, bool search
  * - searchFinished(): Search has completed.
  * - searchError(): Search failed due to an error.
  */
-int SearchThread::searchMemCard_async(GcnCard *card, char preferredRegion, bool searchUsedBlocks)
+int GcnSearchThread::searchMemCard_async(GcnCard *card, char preferredRegion, bool searchUsedBlocks)
 {
-	Q_D(SearchThread);
+	Q_D(GcnSearchThread);
 
 	// TODO: Mutex?
 	if (d->workerThread) {
@@ -243,9 +243,9 @@ int SearchThread::searchMemCard_async(GcnCard *card, char preferredRegion, bool 
 /**
  * Search has been cancelled.
  */
-void SearchThread::searchCancelled_slot(void)
+void GcnSearchThread::searchCancelled_slot(void)
 {
-	Q_D(SearchThread);
+	Q_D(GcnSearchThread);
 	if (d->workerThread)
 		d->stopWorkerThread();
 
@@ -256,9 +256,9 @@ void SearchThread::searchCancelled_slot(void)
  * Search has completed.
  * @param lostFilesFound Number of "lost" files found.
  */
-void SearchThread::searchFinished_slot(int lostFilesFound)
+void GcnSearchThread::searchFinished_slot(int lostFilesFound)
 {
-	Q_D(SearchThread);
+	Q_D(GcnSearchThread);
 	if (d->workerThread)
 		d->stopWorkerThread();
 
@@ -269,9 +269,9 @@ void SearchThread::searchFinished_slot(int lostFilesFound)
  * An error has occurred during the search.
  * @param errorString Error string.
  */
-void SearchThread::searchError_slot(const QString &errorString)
+void GcnSearchThread::searchError_slot(const QString &errorString)
 {
-	Q_D(SearchThread);
+	Q_D(GcnSearchThread);
 	if (d->workerThread) {
 		d->worker->moveToThread(QThread::currentThread());
 		d->stopWorkerThread();

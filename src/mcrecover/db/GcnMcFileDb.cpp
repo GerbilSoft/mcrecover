@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnMcFileDb.cpp: GCN Memory Card File Database class.                   *
  *                                                                         *
- * Copyright (c) 2013-2015 by David Korth.                                 *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -130,13 +130,13 @@ class GcnMcFileDbPrivate
 		static QByteArray GetGcnCommentUtf8(const char *buf, int siz, QTextCodec *textCodec);
 
 		/**
-		 * Construct a SearchData entry.
+		 * Construct a GcnSearchData entry.
 		 * @param matchFileDef	[in] File definition.
 		 * @param vars		[in] Variables.
 		 * @param gcnDateTime	[in] GCN timestamp.
-		 * @return SearchData entry.
+		 * @return GcnSearchData entry.
 		 */
-		SearchData constructSearchData(
+		GcnSearchData constructSearchData(
 			const GcnMcFileDef *matchFileDef,
 			const QHash<QString, QString> &vars,
 			const GcnDateTime &gcnDateTime) const;
@@ -804,19 +804,19 @@ QByteArray GcnMcFileDbPrivate::GetGcnCommentUtf8(const char *buf, int siz, QText
 }
 
 /**
- * Construct a SearchData entry.
+ * Construct a GcnSearchData entry.
  * @param matchFileDef	[in] File definition.
  * @param vars		[in] Variables.
  * @param gcnDateTime	[in] GCN timestamp.
- * @return SearchData entry.
+ * @return GcnSearchData entry.
  */
-SearchData GcnMcFileDbPrivate::constructSearchData(
+GcnSearchData GcnMcFileDbPrivate::constructSearchData(
 	const GcnMcFileDef *matchFileDef,
 	const QHash<QString, QString> &vars,
 	const GcnDateTime &gcnDateTime) const
 {
-	// TODO: Implicitly share SearchData?
-	SearchData searchData;
+	// TODO: Implicitly share GcnSearchData?
+	GcnSearchData searchData;
 	card_direntry *const dirEntry = &searchData.dirEntry;
 	memset(dirEntry, 0x00, sizeof(*dirEntry));
 	
@@ -922,10 +922,10 @@ QString GcnMcFileDb::errorString(void) const
  * @param siz	[in] Size of buf. (Should be BLOCK_SIZE == 0x2000.)
  * @return QVector of matches, or empty QVector if no matches were found.
  */
-QVector<SearchData> GcnMcFileDb::checkBlock(const void *buf, int siz) const
+QVector<GcnSearchData> GcnMcFileDb::checkBlock(const void *buf, int siz) const
 {
 	// File entry matches.
-	QVector<SearchData> fileMatches;
+	QVector<GcnSearchData> fileMatches;
 
 	Q_D(const GcnMcFileDb);
 	foreach (uint32_t address, d->addr_file_defs.keys()) {
@@ -997,7 +997,7 @@ QVector<SearchData> GcnMcFileDb::checkBlock(const void *buf, int siz) const
 				int ret = VarReplace::ApplyModifiers(gcnMcFileDef->varModifiers, vars, &gcnDateTime);
 				if (ret == 0) {
 					// Variable modifiers applied successfully.
-					// Construct a SearchData struct for this file entry.
+					// Construct a GcnSearchData struct for this file entry.
 					fileMatches.append(d->constructSearchData(gcnMcFileDef, vars, gcnDateTime));
 				}
 			}

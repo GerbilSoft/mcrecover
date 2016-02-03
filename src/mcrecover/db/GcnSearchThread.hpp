@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * SearchThread.hpp: "Lost" file search thread.                            *
+ * GcnSearchThread.hpp: GCN "lost" file search thread.                      *
  *                                                                         *
- * Copyright (c) 2013-2015 by David Korth.                                 *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,14 +19,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_SEARCHTHREAD_HPP__
-#define __MCRECOVER_SEARCHTHREAD_HPP__
+#ifndef __MCRECOVER_DB_GCNSEARCHTHREAD_HPP__
+#define __MCRECOVER_DB_GCNSEARCHTHREAD_HPP__
 
 // Card definitions.
 #include "card.h"
 
 // Search Data struct.
-#include "SearchData.hpp"
+#include "GcnSearchData.hpp"
 
 // Qt includes.
 #include <QtCore/QLinkedList>
@@ -35,21 +35,20 @@
 
 class GcnCard;
 
-class SearchThreadPrivate;
-
-class SearchThread : public QObject
+class GcnSearchThreadPrivate;
+class GcnSearchThread : public QObject
 {
 	Q_OBJECT
 
 	public:
-		SearchThread(QObject *parent = 0);
-		~SearchThread();
+		GcnSearchThread(QObject *parent = 0);
+		~GcnSearchThread();
 
 	protected:
-		SearchThreadPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(SearchThread)
+		GcnSearchThreadPrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(GcnSearchThread)
 	private:
-		Q_DISABLE_COPY(SearchThread)
+		Q_DISABLE_COPY(GcnSearchThread)
 
 	signals:
 		/**
@@ -104,7 +103,7 @@ class SearchThread : public QObject
 		 * Get the list of files found in the last successful search.
 		 * @return List of files found.
 		 */
-		QLinkedList<SearchData> filesFoundList(void);
+		QLinkedList<GcnSearchData> filesFoundList(void);
 
 		/**
 		 * Search a memory card for "lost" files.
@@ -162,7 +161,7 @@ class SearchThread : public QObject
  * @param dbFilename Filename of GCN Memory Card File database.
  * @return 0 on success; non-zero on error. (Check error string!)
  */
-inline int SearchThread::loadGcnMcFileDb(const QString &dbFilename)
+inline int GcnSearchThread::loadGcnMcFileDb(const QString &dbFilename)
 {
 	QVector<QString> dbFilenames;
 	dbFilenames.append(dbFilename);

@@ -22,7 +22,7 @@
 #include "StatusBarManager.hpp"
 
 // Search Thread.
-#include "SearchThread.hpp"
+#include "db/GcnSearchThread.hpp"
 
 // Qt includes.
 #include <QtCore/QDir>
@@ -62,7 +62,7 @@ class StatusBarManagerPrivate
 
 		// Search thread.
 		// NOTE: We don't own this!
-		SearchThread *searchThread;
+		GcnSearchThread *searchThread;
 
 		// Last status message.
 		QString lastStatusMessage;
@@ -270,20 +270,20 @@ void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 }
 
 /**
- * Get the SearchThread.
- * @return SearchThread.
+ * Get the GcnSearchThread.
+ * @return GcnSearchThread.
  */
-SearchThread *StatusBarManager::searchThread(void) const
+GcnSearchThread *StatusBarManager::searchThread(void) const
 {
 	Q_D(const StatusBarManager);
 	return d->searchThread;
 }
 
 /**
- * Set the SearchThread.
- * @param searchThread SearchThread.
+ * Set the GcnSearchThread.
+ * @param searchThread GcnSearchThread.
  */
-void StatusBarManager::setSearchThread(SearchThread *searchThread)
+void StatusBarManager::setSearchThread(GcnSearchThread *searchThread)
 {
 	Q_D(StatusBarManager);
 
