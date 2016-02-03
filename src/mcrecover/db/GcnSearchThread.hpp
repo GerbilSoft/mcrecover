@@ -85,6 +85,19 @@ class GcnSearchThread : public QObject
 		void searchError(QString errorString);
 
 	public:
+		/** Read-only properties. **/
+
+		/**
+		 * Get the last error string.
+		 *
+		 * NOTE: This is NOT cleared if no error occurs.
+		 * It should only be checked if an error occurred.
+		 *
+		 * @return Last error string.
+		 */
+		QString errorString(void) const;
+
+	public:
 		/**
 		 * Load a GCN Memory Card File database.
 		 * @param dbFilename Filename of GCN Memory Card File database.
@@ -112,6 +125,9 @@ class GcnSearchThread : public QObject
 		 * @param preferredRegion Preferred region.
 		 * @param searchUsedBlocks If true, search all blocks, not just blocks marked as empty.
 		 * @return Number of files found on success; negative on error.
+		 *
+		 * NOTE: Even though the search will be done synchronously,
+		 * signals will still be admitted, similar to searchMemCard_async().
 		 *
 		 * If successful, retrieve the file list using dirEntryList().
 		 * If an error occurs, check the errorString(). (TODO)

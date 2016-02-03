@@ -45,6 +45,7 @@ class GcnSearchWorker : public QObject
 {
 	Q_OBJECT
 
+	Q_PROPERTY(QString errorString READ errorString)
 	Q_PROPERTY(QLinkedList<GcnSearchData> filesFoundList READ filesFoundList)
 
 	Q_PROPERTY(GcnCard* card READ card WRITE setCard)
@@ -98,6 +99,18 @@ class GcnSearchWorker : public QObject
 		void searchError(QString errorString);
 
 	public:
+		/** Read-only properties. **/
+
+		/**
+		 * Get the last error string.
+		 *
+		 * NOTE: This is NOT cleared if no error occurs.
+		 * It should only be checked if an error occurred.
+		 *
+		 * @return Last error string.
+		 */
+		QString errorString(void) const;
+
 		/**
 		 * Get the list of files found in the last successful search.
 		 * @return List of files found.

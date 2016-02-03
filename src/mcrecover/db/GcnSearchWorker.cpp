@@ -54,6 +54,9 @@ class GcnSearchWorkerPrivate
 		Q_DISABLE_COPY(GcnSearchWorkerPrivate)
 
 	public:
+		// Last error string.
+		QString errorString;
+
 		/**
 		 * List of files found in the last successful search.
 		 * QLinkedList allows us to prepend items, so we do that
@@ -91,6 +94,22 @@ GcnSearchWorker::~GcnSearchWorker()
 {
 	Q_D(GcnSearchWorker);
 	delete d;
+}
+
+/** Read-only properties. **/
+
+/**
+ * Get the last error string.
+ *
+ * NOTE: This is NOT cleared if no error occurs.
+ * It should only be checked if an error occurred.
+ *
+ * @return Last error string.
+ */
+QString GcnSearchWorker::errorString(void) const
+{
+	Q_D(const GcnSearchWorker);
+	return d->errorString;
 }
 
 /**
@@ -236,10 +255,18 @@ int GcnSearchWorker::searchMemCard(void)
 	Q_D(GcnSearchWorker);
 	d->filesFoundList.clear();
 
+	if (!d->card) {
+		// No card specified.
+		d->errorString = tr("searchMemCard(): A card was not set.");
+		emit searchError(d->errorString);
+		return -1;
+	}
+
 	if (d->databases.isEmpty()) {
 		// Database is not loaded.
 		// TODO: Set an error string somewhere.
-		emit searchCancelled();
+		d->errorString = tr("searchMemCard(): No databases were loaded.");
+		emit searchError(d->errorString);
 		return -1;
 	}
 
@@ -279,8 +306,8 @@ int GcnSearchWorker::searchMemCard(void)
 		// No blocks to search.
 		// This may happen if searchUsedBlocks == false
 		// and the card is full.
-		// TODO: Set an error string somewhere.
-		emit searchCancelled();
+		d->errorString = tr("searchMemCard(): No blocks to search.");
+		emit searchError(d->errorString);
 		return 0;
 	}
 
@@ -462,8 +489,8 @@ void GcnSearchWorker::searchMemCard_threaded(void)
 			moveToThread(d->origThread);
 		}
 
-		// TODO: Set an error string.
-		emit searchError(QLatin1String("GcnSearchWorker: Thread information was not set."));
+		d->errorString = tr("GcnSearchWorker: Thread information was not set.");
+		emit searchError(d->errorString);
 		return;
 	}
 

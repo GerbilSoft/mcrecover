@@ -121,6 +121,24 @@ GcnSearchThread::~GcnSearchThread()
 	delete d;
 }
 
+/** Read-only properties. **/
+
+/**
+ * Get the last error string.
+ *
+ * NOTE: This is NOT cleared if no error occurs.
+ * It should only be checked if an error occurred.
+ *
+ * @return Last error string.
+ */
+QString GcnSearchThread::errorString(void) const
+{
+	Q_D(const GcnSearchThread);
+	return d->worker->errorString();
+}
+
+/** Functions. **/
+
 /**
  * Load multiple GCN Memory Card File databases.
  * @param dbFilenames Filenames of GCN Memory Card File database.
@@ -231,6 +249,7 @@ int GcnSearchThread::searchMemCard_async(GcnCard *card, char preferredRegion, bo
 		return 0;
 
 	// Set up the worker thread.
+	// TODO: Do synchronous search if this fails.
 	d->workerThread = new QThread(this);
 	d->worker->moveToThread(d->workerThread);
 
@@ -259,8 +278,10 @@ int GcnSearchThread::searchMemCard_async(GcnCard *card, char preferredRegion, bo
 void GcnSearchThread::searchCancelled_slot(void)
 {
 	Q_D(GcnSearchThread);
-	if (d->workerThread)
+	if (d->workerThread) {
+		// Worker moved itself back to this thread.
 		d->stopWorkerThread();
+	}
 
 	emit searchCancelled();
 }
@@ -272,8 +293,10 @@ void GcnSearchThread::searchCancelled_slot(void)
 void GcnSearchThread::searchFinished_slot(int lostFilesFound)
 {
 	Q_D(GcnSearchThread);
-	if (d->workerThread)
+	if (d->workerThread) {
+		// Worker moved itself back to this thread.
 		d->stopWorkerThread();
+	}
 
 	emit searchFinished(lostFilesFound);
 }
@@ -286,8 +309,7 @@ void GcnSearchThread::searchError_slot(const QString &errorString)
 {
 	Q_D(GcnSearchThread);
 	if (d->workerThread) {
-		// WARNING: Not thread-safe...
-		d->worker->moveToThread(QThread::currentThread());
+		// Worker moved itself back to this thread.
 		d->stopWorkerThread();
 	}
 
