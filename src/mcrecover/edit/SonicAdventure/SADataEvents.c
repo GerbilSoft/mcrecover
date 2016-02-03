@@ -31,6 +31,7 @@
 // Borrowed from SASave.
 // TODO: Auto-generate a .h file from SASave's Events.ini?
 const bit_flag_t sa_event_flags_desc[SA_EVENT_FLAGS_COUNT+1] = {
+	// General
 	{65, "Sonic Unlocked in Adventure"},
 	{66, "Tails Unlocked in Adventure"},
 	{67, "Knuckles Unlocked in Adventure"},
@@ -48,6 +49,8 @@ const bit_flag_t sa_event_flags_desc[SA_EVENT_FLAGS_COUNT+1] = {
 	{79, "Gold Chao Egg Taken"},
 	{80, "Silver Chao Egg Taken"},
 	{81, "Black Chao Egg Taken"},
+
+	// Sonic
 	{128, "Police Barricade Removed"},
 	{129, "Station Square Hotel Open"},
 	{130, "Station Square Station Open"},
@@ -97,6 +100,8 @@ const bit_flag_t sa_event_flags_desc[SA_EVENT_FLAGS_COUNT+1] = {
 	{180, "Egg Viper Clear"},
 	{181, "Sky Chase Act 1 Clear"},
 	{182, "Sky Chase Act 2 Clear"},
+
+	// Tails
 	{193, "Station Square Hotel Open"},
 	{197, "Casinopolis Open"},
 	{202, "Station Square Station Open"},
@@ -119,6 +124,8 @@ const bit_flag_t sa_event_flags_desc[SA_EVENT_FLAGS_COUNT+1] = {
 	{235, "Sky Chase Act 2 Clear"},
 	{236, "Emerald Coast Clear"},
 	{237, "Red Mountain Clear"},
+
+	// Knuckles
 	{259, "Casinopolis Open"},
 	{271, "Egg Carrier Sunk"},
 	{281, "Shovel Claw Obtained"},
@@ -131,6 +138,8 @@ const bit_flag_t sa_event_flags_desc[SA_EVENT_FLAGS_COUNT+1] = {
 	{292, "Chaos 6 Clear"},
 	{293, "Chaos 4 Clear"},
 	{294, "Sky Deck Clear"},
+
+	// Amy
 	{333, "Egg Carrier Sunk"},
 	{338, "Warrior Feather Obtained"},
 	{342, "Twinkle Park Clear"},
@@ -138,6 +147,8 @@ const bit_flag_t sa_event_flags_desc[SA_EVENT_FLAGS_COUNT+1] = {
 	{344, "Final Egg Clear"},
 	{345, "Zero Clear"},
 	{350, "Long Hammer"},
+
+	// Gamma
 	{393, "Jet Booster Obtained"},
 	{394, "Laser Blaster Obtained"},
 	{396, "Egg Carrier Sunk"},
@@ -149,6 +160,8 @@ const bit_flag_t sa_event_flags_desc[SA_EVENT_FLAGS_COUNT+1] = {
 	{415, "Final Egg Clear"},
 	{416, "E-101 Clear"},
 	{417, "E-101mkII Clear"},
+
+	// Big
 	{459, "Egg Carrier Sunk"},
 	{464, "Life Ring Obtained"},
 	{465, "Power Rod Obtained"},
