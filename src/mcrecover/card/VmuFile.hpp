@@ -33,6 +33,7 @@ class QIODevice;
 #include "Checksum.hpp"
 
 class VmuCard;
+class GcImage;
 
 class VmuFilePrivate;
 class VmuFile : public File
@@ -94,6 +95,23 @@ class VmuFile : public File
 		 */
 		virtual int exportToFile(QIODevice *qioDevice) override;
 		// TODO: Move these down to File.
+
+	public:
+		/** DC-specific functions. **/
+
+		/**
+		 * Get the monochrome ICONDATA_VMS icon.
+		 * This is only valid for ICONDATA_VMS files.
+		 * @return Monochrome ICONDATA_VMS icon, or nullptr if not found.
+		 */
+		const GcImage *vmu_icondata_mono(void) const;
+
+		/**
+		 * Get the color ICONDATA_VMS icon.
+		 * This is only valid for ICONDATA_VMS files.
+		 * @return Color ICONDATA_VMS icon, or nullptr if not found.
+		 */
+		const GcImage *vmu_icondata_color(void) const;
 };
 
 #endif /* __MCRECOVER_CARD_VMUFILE_HPP__ */

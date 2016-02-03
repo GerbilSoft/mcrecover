@@ -90,6 +90,7 @@ class VmuFilePrivate : public FilePrivate
 		const vmu_dir_entry *dirEntry;
 
 		// VMU file header.
+		// NOTE: Not allocated for ICONDATA_VMS.
 		vmu_file_header *fileHeader;
 
 		// File descriptions.
@@ -118,10 +119,12 @@ class VmuFilePrivate : public FilePrivate
 		/**
 		 * Load the icon images.
 		 * Special version for ICONDATA_VMS.
-		 * NOTE: This also sets internal variables vmu_icon_mono and vmu_icon_color.
-		 * @return QVector<GcImage*> containing the icon images, or empty QVector on error.
+		 *
+		 * NOTE: This function ONLY sets the internal variables
+		 * vmu_icon_mono and vmu_icon_color. The caller must
+		 * check those variables afterwards.
 		 */
-		QVector<GcImage*> loadIconImages_ICONDATA_VMS(void);
+		void loadIconImages_ICONDATA_VMS(void);
 };
 
 /**
@@ -348,7 +351,34 @@ QVector<GcImage*> VmuFilePrivate::loadIconImages(void)
 {
 	if (isIconData) {
 		// ICONDATA_VMS
-		return loadIconImages_ICONDATA_VMS();
+
+		// NOTE: This file *may* have a different icon
+		// for the File Manager, but it's usually the
+		// same as the color icon. In addition, this
+		// file is hidden in the File Manager, so a
+		// custom icon wouldn't be visible.
+
+		// Load the ICONDATA_VMS icons for CardView.
+		// The "regular" icon will be loaded here.
+		loadIconImages_ICONDATA_VMS();
+
+		// TODO: If the ICONDATA_VMS icon doesn't start
+		// at 0x60, load a separate icon. For now, just
+		// return either the color or monochrome icon.
+		GcImage *ret_icon = nullptr;
+		if (vmu_icon_color) {
+			// Color icon was loaded.
+			ret_icon = new GcImage(*vmu_icon_color);
+		} else if (vmu_icon_mono) {
+			// Monochrome icon was loaded.
+			ret_icon = new GcImage(*vmu_icon_mono);
+		}
+
+		QVector<GcImage*> ret;
+		if (ret_icon) {
+			ret.append(ret_icon);
+		}
+		return ret;
 	}
 
 	// DC only supports looping icon animations.
@@ -407,10 +437,12 @@ QVector<GcImage*> VmuFilePrivate::loadIconImages(void)
 /**
  * Load the icon images.
  * Special version for ICONDATA_VMS.
- * NOTE: This also sets internal variables vmu_icon_mono and vmu_icon_color.
- * @return QVector<GcImage*> containing the icon images, or empty QVector on error.
+ *
+ * NOTE: This function ONLY sets the internal variables
+ * vmu_icon_mono and vmu_icon_color. The caller must
+ * check those variables afterwards.
  */
-QVector<GcImage*> VmuFilePrivate::loadIconImages_ICONDATA_VMS(void)
+void VmuFilePrivate::loadIconImages_ICONDATA_VMS(void)
 {
 	// Delete any allocated VMU icons.
 	delete vmu_icon_mono;
@@ -434,7 +466,7 @@ QVector<GcImage*> VmuFilePrivate::loadIconImages_ICONDATA_VMS(void)
 	if (data.size() < headerEnd) {
 		// File is too small.
 		// The icons aren't actually there...
-		return QVector<GcImage*>();
+		return;
 	}
 	vmu_card_icon_header iconHeader;
 	memcpy(&iconHeader, (data.data() + headerStart), sizeof(iconHeader));
@@ -447,53 +479,30 @@ QVector<GcImage*> VmuFilePrivate::loadIconImages_ICONDATA_VMS(void)
 	// TODO: Only check for offset != 0?
 	if (iconHeader.icon_mono_offset >= (uint32_t)headerEnd) {
 		int monoIconEnd = iconHeader.icon_mono_offset + sizeof(vmu_card_icon_mono_data);
-		if (data.size() < monoIconEnd) {
-			// File is too small.
-			// The icon isn't actually here...
-			goto colorIcon;
+		if (data.size() >= monoIconEnd) {
+			// Load the monochrome icon.
+			const vmu_card_icon_mono_data *monoIconData =
+				(const vmu_card_icon_mono_data*)(data.data() + iconHeader.icon_mono_offset);
+			vmu_icon_mono = DcImageLoader::fromMonochrome(
+						VMU_ICON_W, VMU_ICON_H,
+						monoIconData->icon, sizeof(monoIconData->icon));
 		}
-
-		const vmu_card_icon_mono_data *monoIconData =
-			(const vmu_card_icon_mono_data*)(data.data() + iconHeader.icon_mono_offset);
-		vmu_icon_mono = DcImageLoader::fromMonochrome(
-					VMU_ICON_W, VMU_ICON_H,
-					monoIconData->icon, sizeof(monoIconData->icon));
 	}
 
-colorIcon:
 	// Load the color icon.
 	// TODO: Only check for offset != 0?
 	if (iconHeader.icon_color_offset >= (uint32_t)headerEnd) {
 		int colorIconEnd = iconHeader.icon_color_offset + sizeof(vmu_card_icon_color_data);
-		if (data.size() < colorIconEnd) {
-			// File is too small.
-			// The icon isn't actually here...
-			goto doneLoadingIcons;
+		if (data.size() >= colorIconEnd) {
+			// Load the color icon.
+			const vmu_card_icon_color_data *colorIconData =
+				(const vmu_card_icon_color_data*)(data.data() + iconHeader.icon_color_offset);
+			vmu_icon_color = DcImageLoader::fromPalette16(
+						VMU_ICON_W, VMU_ICON_H,
+						colorIconData->icon, sizeof(colorIconData->icon),
+						colorIconData->palette, sizeof(colorIconData->palette));
 		}
-
-		const vmu_card_icon_color_data *colorIconData =
-			(const vmu_card_icon_color_data*)(data.data() + iconHeader.icon_color_offset);
-		vmu_icon_color = DcImageLoader::fromPalette16(
-					VMU_ICON_W, VMU_ICON_H,
-					colorIconData->icon, sizeof(colorIconData->icon),
-					colorIconData->palette, sizeof(colorIconData->palette));
 	}
-
-doneLoadingIcons:
-	// Check if any icons were loaded.
-	GcImage *ret_icon = nullptr;
-	if (vmu_icon_color) {
-		// Color icon was loaded.
-		ret_icon = new GcImage(*vmu_icon_color);
-	} else if (vmu_icon_mono) {
-		// Monochrome icon was loaded.
-		ret_icon = new GcImage(*vmu_icon_mono);
-	}
-
-	QVector<GcImage*> ret;
-	if (ret_icon)
-		ret.append(ret_icon);
-	return ret;
 }
 
 /** VmuFile **/
@@ -590,4 +599,28 @@ int VmuFile::exportToFile(QIODevice *qioDevice)
 	// TODO
 	Q_UNUSED(qioDevice);
 	return -ENOSYS;
+}
+
+/** DC-specific functions. **/
+
+/**
+ * Get the monochrome ICONDATA_VMS icon.
+ * This is only valid for ICONDATA_VMS files.
+ * @return Monochrome ICONDATA_VMS icon, or nullptr if not found.
+ */
+const GcImage *VmuFile::vmu_icondata_mono(void) const
+{
+	Q_D(const VmuFile);
+	return d->vmu_icon_mono;
+}
+
+/**
+ * Get the color ICONDATA_VMS icon.
+ * This is only valid for ICONDATA_VMS files.
+ * @return Color ICONDATA_VMS icon, or nullptr if not found.
+ */
+const GcImage *VmuFile::vmu_icondata_color(void) const
+{
+	Q_D(const VmuFile);
+	return d->vmu_icon_color;
 }

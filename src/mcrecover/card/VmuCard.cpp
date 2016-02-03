@@ -25,6 +25,9 @@
 // VmuFile
 #include "VmuFile.hpp"
 
+// GcImage conversion.
+#include "GcToolsQt.hpp"
+
 // C includes. (C++ namespace)
 #include <cstring>
 #include <cstdio>
@@ -271,8 +274,6 @@ int VmuCardPrivate::loadSysInfo(void)
 	this->formatTime.setVmuTimestamp(mc_root.timestamp);
 
 	// VMU icon.
-	// TODO: Check for "ICONDATA_VMS" first?
-	// If it's not present, use this icon.
 	if (mc_root.icon <= 123) {
 		char filename[64];
 		snprintf(filename, sizeof(filename), ":/vmu/bios/%03d.png", mc_root.icon);
@@ -320,8 +321,6 @@ int VmuCardPrivate::loadSysInfo(void)
 		memset(&mc_dir, 0x00, sizeof(mc_dir));
 		return -4;
 	}
-
-	// TODO: Check for "ICONDATA_VMS" icon.
 
 	return 0;
 }
@@ -463,13 +462,29 @@ void VmuCardPrivate::loadFileList(void)
 			continue;
 
 		// Valid directory entry.
-		VmuFile *mcFile = new VmuFile(q, dirEntry, &mc_fat);
-		lstFiles_new.append(mcFile);
+		VmuFile *vmuFile = new VmuFile(q, dirEntry, &mc_fat);
+		lstFiles_new.append(vmuFile);
+
+		// Is this file ICONDATA_VMS?
+		if (vmuFile->filename() == QLatin1String("ICONDATA_VMS")) {
+			// Found ICONDATA_VMS.
+			const GcImage *img = vmuFile->vmu_icondata_color();
+			if (!img) {
+				// Color icon is missing.
+				// Check the monochrome icon.
+				img = vmuFile->vmu_icondata_mono();
+			}
+
+			if (img) {
+				// ICONDATA_VMS has an icon.
+				this->icon = QPixmap::fromImage(gcImageToQImage(img));
+			}
+		}
 
 		// Mark the file's blocks as used.
 		// TODO
 		/*
-		QVector<uint16_t> fatEntries = mcFile->fatEntries();
+		QVector<uint16_t> fatEntries = vmuFile->fatEntries();
 		foreach (uint16_t block, fatEntries) {
 			if (block >= 5 && block < usedBlockMap.size()) {
 				// Valid block.
