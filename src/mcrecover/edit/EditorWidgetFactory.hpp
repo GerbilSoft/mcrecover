@@ -49,6 +49,13 @@ class EditorWidgetFactory
 		// TODO:
 		// - Get list of editors that support a given file.
 		// - Add option to select a specific editor.
+
+		/**
+		 * Is an editor available for the specified file?
+		 * @param file File to edit.
+		 * @return True if an editor is available; false if not.
+		 */
+		static bool isEditorAvailable(const File *file);
 };
 
 #endif /* __MCRECOVER_EDIT_EDITORWIDGETFACTORY_HPP__ */

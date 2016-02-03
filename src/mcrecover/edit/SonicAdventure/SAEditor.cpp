@@ -406,12 +406,12 @@ void SAEditor::changeEvent(QEvent *event)
  * Is the specified file supported by this editor?
  * @return True if supported; false if not.
  */
-bool SAEditor::isFileSupported(File *file)
+bool SAEditor::isFileSupported(const File *file)
 {
 	bool ret = false;
 	const QString filename = file->filename();
 	// TODO: "PC" file for SADX PC?
-	if (qobject_cast<GcnFile*>(file) != nullptr) {
+	if (qobject_cast<const GcnFile*>(file) != nullptr) {
 		// GameCube file. (SADX)
 		if (file->gameID().left(3) == QLatin1String("GXS") &&
 		    filename.startsWith(QLatin1String("SONICADVENTURE_DX_PLAYRECORD_"))) {
@@ -423,7 +423,7 @@ bool SAEditor::isFileSupported(File *file)
 				ret = true;
 			}
 		}
-	} else if (qobject_cast<VmuFile*>(file) != nullptr) {
+	} else if (qobject_cast<const VmuFile*>(file) != nullptr) {
 		// Dreamcast file. (SA1)
 		if (filename == QLatin1String("SONICADV_SYS") ||
 		    filename == QLatin1String("SONICADV_INT"))

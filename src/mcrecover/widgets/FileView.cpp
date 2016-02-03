@@ -30,8 +30,9 @@
 #include "../windows/XmlTemplateDialog.hpp"
 #include "../windows/XmlTemplateDialogManager.hpp"
 
-// Testing...
+// Editors.
 #include "../edit/EditorWindow.hpp"
+#include "../edit/EditorWidgetFactory.hpp"
 
 // Qt includes.
 #include <QtCore/QTimer>
@@ -146,6 +147,9 @@ void FileViewPrivate::updateWidgetDisplay(void)
 
 	// XML button.
 	ui.btnXML->setVisible(true);
+
+	// Edit button.
+	ui.btnEdit->setVisible(EditorWidgetFactory::isEditorAvailable(file));
 
 	// Filename.
 	ui.lblFilename->setText(file->filename());

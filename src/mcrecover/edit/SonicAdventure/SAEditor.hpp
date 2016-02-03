@@ -52,7 +52,7 @@ class SAEditor : public EditorWidget
 		 * Is the specified file supported by this editor?
 		 * @return True if supported; false if not.
 		 */
-		static bool isFileSupported(File *file);
+		static bool isFileSupported(const File *file);
 
 	public:
 		/** Public functions. **/
