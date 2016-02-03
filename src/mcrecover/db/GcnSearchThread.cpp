@@ -191,8 +191,15 @@ int GcnSearchThread::searchMemCard(GcnCard *card, char preferredRegion, bool sea
 	if (d->dbs.isEmpty())
 		return 0;
 
+	// Set the GcnSearchWorker's properties.
+	d->worker->setCard(card);
+	d->worker->setDatabases(d->dbs);
+	d->worker->setPreferredRegion(preferredRegion);
+	d->worker->setSearchUsedBlocks(searchUsedBlocks);
+	d->worker->setOrigThread(nullptr);
+
 	// Search for files.
-	return d->worker->searchMemCard(card, d->dbs, preferredRegion, searchUsedBlocks);
+	return d->worker->searchMemCard();
 }
 
 /**
@@ -226,7 +233,13 @@ int GcnSearchThread::searchMemCard_async(GcnCard *card, char preferredRegion, bo
 	// Set up the worker thread.
 	d->workerThread = new QThread(this);
 	d->worker->moveToThread(d->workerThread);
-	d->worker->setThreadInfo(card, d->dbs, QThread::currentThread(), preferredRegion, searchUsedBlocks);
+
+	// Set the GcnSearchWorker's properties.
+	d->worker->setCard(card);
+	d->worker->setDatabases(d->dbs);
+	d->worker->setPreferredRegion(preferredRegion);
+	d->worker->setSearchUsedBlocks(searchUsedBlocks);
+	d->worker->setOrigThread(QThread::currentThread());
 
 	connect(d->workerThread, SIGNAL(started()),
 		d->worker, SLOT(searchMemCard_threaded()));
@@ -273,6 +286,7 @@ void GcnSearchThread::searchError_slot(const QString &errorString)
 {
 	Q_D(GcnSearchThread);
 	if (d->workerThread) {
+		// WARNING: Not thread-safe...
 		d->worker->moveToThread(QThread::currentThread());
 		d->stopWorkerThread();
 	}

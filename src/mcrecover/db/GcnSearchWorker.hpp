@@ -45,6 +45,14 @@ class GcnSearchWorker : public QObject
 {
 	Q_OBJECT
 
+	Q_PROPERTY(QLinkedList<GcnSearchData> filesFoundList READ filesFoundList)
+
+	Q_PROPERTY(GcnCard* card READ card WRITE setCard)
+	Q_PROPERTY(QVector<GcnMcFileDb*> databases READ databases WRITE setDatabases)
+	Q_PROPERTY(char preferredRegion READ preferredRegion WRITE setPreferredRegion)
+	Q_PROPERTY(bool searchUsedBlocks READ searchUsedBlocks WRITE setSearchUsedBlocks)
+	Q_PROPERTY(QThread* origThread READ origThread WRITE setOrigThread)
+
 	public:
 		GcnSearchWorker(QObject *parent = 0);
 		~GcnSearchWorker();
@@ -94,21 +102,93 @@ class GcnSearchWorker : public QObject
 		 * Get the list of files found in the last successful search.
 		 * @return List of files found.
 		 */
-		QLinkedList<GcnSearchData> filesFoundList(void);
+		QLinkedList<GcnSearchData> filesFoundList(void) const;
+
+	public:
+		/** Properties. **/
+
+		/**
+		 * Get the GcnCard.
+		 * @return GcnCard.
+		 */
+		GcnCard *card(void) const;
+
+		/**
+		 * Set the GcnCard.
+		 * @param card GcnCard.
+		 */
+		void setCard(GcnCard *card);
+
+		/**
+		 * Get the vector of GCN file databases.
+		 * @return GCN file databases.
+		 */
+		QVector<GcnMcFileDb*> databases(void) const;
+
+		/**
+		 * Set the vector of GCN file databases.
+		 * @param databases GCN file databases.
+		 */
+		void setDatabases(const QVector<GcnMcFileDb*> &databases);
+
+		/**
+		 * Get the preferred region.
+		 * @return Preferred region.
+		 */
+		char preferredRegion(void) const;
+
+		/**
+		 * Set the preferred region.
+		 * @param preferredRegion Preferred region.
+		 */
+		void setPreferredRegion(char preferredRegion);
+
+		/**
+		 * Search used blocks?
+		 * @return True if searching used blocks; false if not.
+		 */
+		bool searchUsedBlocks(void) const;
+
+		/**
+		 * Should we search used blocks?
+		 * @param searchUsedBlocks True to search used blocks; false to not.
+		 */
+		void setSearchUsedBlocks(bool searchUsedBlocks);
+
+		/**
+		 * Get the "original thread".
+		 *
+		 * This is the thread the object attaches to after
+		 * the search is complete. If nullptr, no attachment
+		 * will be done, and the data may be lost.
+		 *
+		 * @return Original thread.
+		 */
+		QThread *origThread(void) const;
+
+		/**
+		 * Set the "original thread".
+		 *
+		 * This is the thread the object attaches to after
+		 * the search is complete. If nullptr, no attachment
+		 * will be done, and the data may be lost.
+		 *
+		 * @param origThread Original thread.
+		 */
+		void setOrigThread(QThread *origThread);
+
+	public:
+		/** Search functions. **/
 
 		/**
 		 * Search a memory card for "lost" files.
-		 * @param card Memory Card to search.
-		 * @param dbs Vector of GcnMcFileDb to use.
-		 * @param preferredRegion Preferred region.
-		 * @param searchUsedBlocks If true, search all blocks, not just blocks marked as empty.
+		 * Properties must have been set previously.
 		 * @return Number of files found on success; negative on error.
 		 *
-		 * If successful, retrieve the file list using dirEntryList().
+		 * If successful, retrieve the file list using filesEntryList().
 		 * If an error occurs, check the errorString(). (TODO)
 		 */
-		int searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*> &dbs,
-				char preferredRegion = 0, bool searchUsedBlocks = false);
+		int searchMemCard(void);
 
 		/**
 		 * Set internal information for threading purposes.

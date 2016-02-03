@@ -132,6 +132,9 @@ class GcnSearchThread : public QObject
 		 * - searchFinished(): Search has completed.
 		 * - searchError(): Search failed due to an error.
 		 *
+		 * NOTE: If the search could not be done asynchronously, it will
+		 * be done synchronously, though the signals will still be emitted.
+		 *
 		 * In the case of searchFinished(), use dirEntryList() to get
 		 * the list of files.
 		 */

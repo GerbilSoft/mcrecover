@@ -62,32 +62,23 @@ class GcnSearchWorkerPrivate
 		 */
 		QLinkedList<GcnSearchData> filesFoundList;
 
-		// searchMemCard() parameters used when this worker
-		// is called by a thread's started() signal.
-		struct {
-			GcnCard *card;
-			QVector<GcnMcFileDb*> dbs;
+		// Properties.
+		GcnCard *card;
+		QVector<GcnMcFileDb*> databases;
+		char preferredRegion;
+		bool searchUsedBlocks;
 
-			// Original thread.
-			QThread *orig_thread;
-
-			// Preferred region.
-			char preferredRegion;
-
-			// If true, search all blocks, not just empty blocks.
-			bool searchUsedBlocks;
-		} thread_info;
+		// Original thread.
+		QThread *origThread;
 };
 
 GcnSearchWorkerPrivate::GcnSearchWorkerPrivate(GcnSearchWorker* q)
 	: q_ptr(q)
-{
-	// NULL these out by default.
-	thread_info.card = nullptr;
-	thread_info.dbs.clear();
-	thread_info.orig_thread = nullptr;
-	thread_info.searchUsedBlocks = false;
-}
+	, card(nullptr)
+	, preferredRegion(0)
+	, searchUsedBlocks(false)
+	, origThread(nullptr)
+{ }
 
 /** GcnSearchWorker **/
 
@@ -106,31 +97,146 @@ GcnSearchWorker::~GcnSearchWorker()
  * Get the list of files found in the last successful search.
  * @return List of files found.
  */
-QLinkedList<GcnSearchData> GcnSearchWorker::filesFoundList(void)
+QLinkedList<GcnSearchData> GcnSearchWorker::filesFoundList(void) const
 {
 	// TODO: Not while thread is running...
-	Q_D(GcnSearchWorker);
+	Q_D(const GcnSearchWorker);
 	return d->filesFoundList;
 }
 
+/** Properties. **/
+
+/**
+ * Get the GcnCard.
+ * @return GcnCard.
+ */
+GcnCard *GcnSearchWorker::card(void) const
+{
+	Q_D(const GcnSearchWorker);
+	return d->card;
+}
+
+/**
+ * Set the GcnCard.
+ * @param card GcnCard.
+ */
+void GcnSearchWorker::setCard(GcnCard *card)
+{
+	// TODO: Not if searching?
+	Q_D(GcnSearchWorker);
+	d->card = card;
+}
+
+/**
+ * Get the vector of GCN file databases.
+ * @return GCN file databases.
+ */
+QVector<GcnMcFileDb*> GcnSearchWorker::databases(void) const
+{
+	Q_D(const GcnSearchWorker);
+	return d->databases;
+}
+
+/**
+ * Set the vector of GCN file databases.
+ * @param databases GCN file databases.
+ */
+void GcnSearchWorker::setDatabases(const QVector<GcnMcFileDb*> &databases)
+{
+	// TODO: Not if searching?
+	Q_D(GcnSearchWorker);
+	d->databases = databases;
+}
+
+/**
+ * Get the preferred region.
+ * @return Preferred region.
+ */
+char GcnSearchWorker::preferredRegion(void) const
+{
+	Q_D(const GcnSearchWorker);
+	return d->preferredRegion;
+}
+
+/**
+ * Set the preferred region.
+ * @param preferredRegion Preferred region.
+ */
+void GcnSearchWorker::setPreferredRegion(char preferredRegion)
+{
+	// TODO: Not if searching?
+	Q_D(GcnSearchWorker);
+	d->preferredRegion = preferredRegion;
+}
+
+/**
+ * Search used blocks?
+ * @return True if searching used blocks; false if not.
+ */
+bool GcnSearchWorker::searchUsedBlocks(void) const
+{
+	Q_D(const GcnSearchWorker);
+	return d->searchUsedBlocks;
+}
+
+/**
+ * Should we search used blocks?
+ * @param searchUsedBlocks True to search used blocks; false to not.
+ */
+void GcnSearchWorker::setSearchUsedBlocks(bool searchUsedBlocks)
+{
+	// TODO: Not if searching?
+	Q_D(GcnSearchWorker);
+	d->searchUsedBlocks = searchUsedBlocks;
+}
+
+/**
+ * Get the "original thread".
+ *
+ * This is the thread the object attaches to after
+ * the search is complete. If nullptr, no attachment
+ * will be done, and the data may be lost.
+ *
+ * @return Original thread.
+ */
+QThread *GcnSearchWorker::origThread(void) const
+{
+	Q_D(const GcnSearchWorker);
+	return d->origThread;
+}
+
+/**
+ * Set the "original thread".
+ *
+ * This is the thread the object attaches to after
+ * the search is complete. If nullptr, no attachment
+ * will be done, and the data may be lost.
+ *
+ * @param origThread Original thread.
+ */
+void GcnSearchWorker::setOrigThread(QThread *origThread)
+{
+	// TODO: Not if searching?
+	Q_D(GcnSearchWorker);
+	d->origThread = origThread;
+}
+
+/** Search functions. **/
+
 /**
  * Search a memory card for "lost" files.
- * @param card Memory Card to search.
- * @param dbs Vector of GcnMcFileDb to use.
- * @param preferredRegion Preferred region.
- * @param searchUsedBlocks If true, search all blocks, not just blocks marked as empty.
+ * Properties must have been set previously.
  * @return Number of files found on success; negative on error.
  *
- * If successful, retrieve the file list using dirEntryList().
+ * If successful, retrieve the file list using filesEntryList().
  * If an error occurs, check the errorString(). (TODO)
  */
-int GcnSearchWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*> &dbs,
-				      char preferredRegion, bool searchUsedBlocks)
+int GcnSearchWorker::searchMemCard(void)
 {
 	Q_D(GcnSearchWorker);
 	d->filesFoundList.clear();
 
-	if (dbs.isEmpty()) {
+	if (d->databases.isEmpty()) {
 		// Database is not loaded.
 		// TODO: Set an error string somewhere.
 		emit searchCancelled();
@@ -142,19 +248,20 @@ int GcnSearchWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*> &d
 
 	// Block search list.
 	QVector<uint16_t> blockSearchList;
-	const int totalPhysBlocks = card->totalPhysBlocks();
+	const int totalPhysBlocks = d->card->totalPhysBlocks();
 
 	// Used block map.
 	QVector<uint8_t> usedBlockMap;
-	if (!searchUsedBlocks) {
+	if (!d->searchUsedBlocks) {
 		// Only search empty blocks.
-		usedBlockMap = card->usedBlockMap();
+		usedBlockMap = d->card->usedBlockMap();
 
 		// Put together a block search list.
-		blockSearchList.reserve(totalPhysBlocks - card->freeBlocks() - 5);
+		blockSearchList.reserve(totalPhysBlocks - d->card->freeBlocks() - 5);
 		for (int i = (usedBlockMap.size() - 1); i >= 5; i--) {
-			if (usedBlockMap[i] == 0)
+			if (usedBlockMap[i] == 0) {
 				blockSearchList.append((uint16_t)i);
+			}
 		}
 	} else {
 		// Search through all blocks.
@@ -178,7 +285,7 @@ int GcnSearchWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*> &d
 	}
 
 	// Block buffer.
-	const int blockSize = card->blockSize();
+	const int blockSize = d->card->blockSize();
 	void *buf = malloc(blockSize);
 
 	fprintf(stderr, "--------------------------------\n");
@@ -194,7 +301,7 @@ int GcnSearchWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*> &d
 		fprintf(stderr, "Searching block: %d...\n", currentPhysBlock);
 		emit searchUpdate(currentPhysBlock, currentSearchBlock, d->filesFoundList.size());
 
-		int ret = card->readBlock(buf, blockSize, currentPhysBlock);
+		int ret = d->card->readBlock(buf, blockSize, currentPhysBlock);
 		if (ret != blockSize) {
 			// Error reading block.
 			fprintf(stderr, "ERROR reading block %d - readBlock() returned %d.\n", currentPhysBlock, ret);
@@ -203,7 +310,7 @@ int GcnSearchWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*> &d
 
 		// Check the block in the databases.
 		QVector<GcnSearchData> searchDataEntries;
-		foreach (GcnMcFileDb *db, dbs) {
+		foreach (GcnMcFileDb *db, d->databases) {
 			QVector<GcnSearchData> curEntries = db->checkBlock(buf, blockSize);
 			searchDataEntries += curEntries;
 		}
@@ -212,7 +319,7 @@ int GcnSearchWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*> &d
 		if (!searchDataEntries.isEmpty()) {
 			// Matched!
 			GcnSearchData searchData;
-			if (searchDataEntries.size() == 1 || preferredRegion == 0) {
+			if (searchDataEntries.size() == 1 || d->preferredRegion == 0) {
 				// Only one entry, or no preferred region.
 				searchData = searchDataEntries.at(0);
 			} else {
@@ -221,7 +328,7 @@ int GcnSearchWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*> &d
 				printf("\n");
 				for (int i = 0; i < searchDataEntries.size(); i++) {
 					const GcnSearchData &schk = searchDataEntries.at(i);
-					if (schk.dirEntry.gamecode[3] == preferredRegion) {
+					if (schk.dirEntry.gamecode[3] == d->preferredRegion) {
 						// Found a match!
 						searchData = schk;
 						isMatch = true;
@@ -337,29 +444,6 @@ int GcnSearchWorker::searchMemCard(GcnCard *card, const QVector<GcnMcFileDb*> &d
 }
 
 /**
- * Set internal information for threading purposes.
- * This is basically the parameters to searchMemCard().
- * We can't pass these when starting the thread, so
- * we have to set them up first.
- * @param card Memory Card to search.
- * @param dbs Vector of GcnMcFileDb to use.
- * @param orig_thread Thread to move back to once completed.
- * @param preferredRegion Preferred region.
- * @param searchUsedBlocks If true, search all blocks, not just blocks marked as empty.
- */
-void GcnSearchWorker::setThreadInfo(GcnCard *card, const QVector<GcnMcFileDb*> &dbs,
-				       QThread *orig_thread,
-				       char preferredRegion, bool searchUsedBlocks)
-{
-	Q_D(GcnSearchWorker);
-	d->thread_info.card = card;
-	d->thread_info.dbs = dbs; // TODO: Convert to QVector<const GcnMcFileDb*>?
-	d->thread_info.orig_thread = orig_thread;
-	d->thread_info.preferredRegion = preferredRegion;
-	d->thread_info.searchUsedBlocks = searchUsedBlocks;
-}
-
-/**
  * Search the memory card for "lost" files.
  * This version should be connected to a QThread's SIGNAL(started()).
  * Thread information must have been set using setThreadInfo().
@@ -368,14 +452,14 @@ void GcnSearchWorker::searchMemCard_threaded(void)
 {
 	Q_D(GcnSearchWorker);
 
-	if (!d->thread_info.card ||
-	    d->thread_info.dbs.isEmpty() ||
-	    !d->thread_info.orig_thread)
+	if (!d->card ||
+	    d->databases.isEmpty() ||
+	    !d->origThread)
 	{
 		// Thread information was not set.
-		if (d->thread_info.orig_thread) {
+		if (d->origThread) {
 			// Move back to the original thread.
-			moveToThread(d->thread_info.orig_thread);
+			moveToThread(d->origThread);
 		}
 
 		// TODO: Set an error string.
@@ -384,9 +468,8 @@ void GcnSearchWorker::searchMemCard_threaded(void)
 	}
 
 	// Search the memory card.
-	searchMemCard(d->thread_info.card, d->thread_info.dbs,
-		      d->thread_info.preferredRegion, d->thread_info.searchUsedBlocks);
+	searchMemCard();
 
 	// Move back to the original thread.
-	moveToThread(d->thread_info.orig_thread);
+	moveToThread(d->origThread);
 }
