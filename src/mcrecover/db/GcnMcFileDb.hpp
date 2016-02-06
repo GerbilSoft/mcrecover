@@ -41,10 +41,11 @@ class GcnMcFileDbPrivate;
 class GcnMcFileDb : public QObject
 {
 	Q_OBJECT
+	typedef QObject super;
 
 	public:
 		GcnMcFileDb(QObject *parent = 0);
-		~GcnMcFileDb();
+		virtual ~GcnMcFileDb();
 
 	protected:
 		GcnMcFileDbPrivate *const d_ptr;

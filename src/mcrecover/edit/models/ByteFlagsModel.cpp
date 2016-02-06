@@ -69,7 +69,7 @@ ByteFlagsModelPrivate::ByteFlagsModelPrivate(ByteFlagsModel *q)
 /** ByteFlagsModel **/
 
 ByteFlagsModel::ByteFlagsModel(QObject *parent)
-	: QAbstractListModel(parent)
+	: super(parent)
 	, d_ptr(new ByteFlagsModelPrivate(this))
 { }
 

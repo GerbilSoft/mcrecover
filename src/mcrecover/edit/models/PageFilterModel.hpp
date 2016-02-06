@@ -29,6 +29,7 @@ class PageFilterModelPrivate;
 class PageFilterModel : public QSortFilterProxyModel
 {
 	Q_OBJECT
+	typedef QSortFilterProxyModel super;
 
 	Q_PROPERTY(int currentPage READ currentPage WRITE setCurrentPage NOTIFY currentPageChanged)
 	// TODO: Add signal for pageSizeChanged()

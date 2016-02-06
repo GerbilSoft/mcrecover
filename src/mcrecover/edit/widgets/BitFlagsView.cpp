@@ -125,7 +125,7 @@ void BitFlagsViewPrivate::updateDisplay(void)
 /** BitFlagsView **/
 
 BitFlagsView::BitFlagsView(QWidget *parent)
-	: QWidget(parent)
+	: super(parent)
 	, d_ptr(new BitFlagsViewPrivate(this))
 {
 	Q_D(BitFlagsView);

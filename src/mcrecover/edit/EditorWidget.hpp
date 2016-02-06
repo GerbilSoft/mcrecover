@@ -35,6 +35,7 @@ class EditorWidgetPrivate;
 class EditorWidget : public QWidget
 {
 	Q_OBJECT
+	typedef QWidget super;
 
 	// TODO: NOTIFY signal for file?
 	Q_PROPERTY(File* file READ file WRITE setFile /*NOTIFY fileChanged*/)

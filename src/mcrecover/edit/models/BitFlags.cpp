@@ -118,7 +118,7 @@ BitFlagsPrivate::BitFlagsPrivate(int total_flags, const char *tr_ctx,
  */
 BitFlags::BitFlags(int total_flags, const bit_flag_t *bit_flags,
 		   int count, QObject *parent)
-	: QObject(parent)
+	: super(parent)
 	, d_ptr(new BitFlagsPrivate(total_flags, nullptr, bit_flags, count))
 { }
 
@@ -136,7 +136,7 @@ BitFlags::BitFlags(int total_flags, const bit_flag_t *bit_flags,
  */
 BitFlags::BitFlags(int total_flags, const char *tr_ctx,
 		   const bit_flag_t *bit_flags, int count, QObject *parent)
-	: QObject(parent)
+	: super(parent)
 	, d_ptr(new BitFlagsPrivate(total_flags, tr_ctx, bit_flags, count))
 { }
 

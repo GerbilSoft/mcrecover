@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * AboutDialog.cpp: About Dialog.                                          *
  *                                                                         *
- * Copyright (c) 2013-2015 by David Korth.                                 *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -690,7 +690,7 @@ QString AboutDialogPrivate::GetSupport(void)
  * Initialize the About Dialog.
  */
 AboutDialog::AboutDialog(QWidget *parent)
-	: QDialog(parent,
+	: super(parent,
 		Qt::Dialog |
 		Qt::CustomizeWindowHint |
 		Qt::WindowTitleHint |
@@ -766,5 +766,5 @@ void AboutDialog::changeEvent(QEvent *event)
 	}
 
 	// Pass the event to the base class.
-	this->QDialog::changeEvent(event);
+	super::changeEvent(event);
 }

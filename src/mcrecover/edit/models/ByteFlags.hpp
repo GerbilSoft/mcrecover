@@ -39,6 +39,7 @@ class ByteFlagsPrivate;
 class ByteFlags : public QObject
 {
 	Q_OBJECT
+	typedef QObject super;
 
 	// This class should not be used directly.
 	protected:

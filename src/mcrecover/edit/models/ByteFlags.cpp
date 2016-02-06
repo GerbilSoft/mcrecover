@@ -119,7 +119,7 @@ ByteFlagsPrivate::ByteFlagsPrivate(int total_flags, const char *tr_ctx,
  */
 ByteFlags::ByteFlags(int total_flags, const bit_flag_t *byte_flags,
 		     int count, QObject *parent)
-	: QObject(parent)
+	: super(parent)
 	, d_ptr(new ByteFlagsPrivate(total_flags, nullptr, byte_flags, count))
 { }
 

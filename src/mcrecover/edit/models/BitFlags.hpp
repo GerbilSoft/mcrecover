@@ -33,6 +33,7 @@ class BitFlagsPrivate;
 class BitFlags : public QObject
 {
 	Q_OBJECT
+	typedef QObject super;
 
 	Q_PROPERTY(int pageSize READ pageSize)
 

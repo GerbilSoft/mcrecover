@@ -86,7 +86,7 @@ GcnSearchWorkerPrivate::GcnSearchWorkerPrivate(GcnSearchWorker* q)
 /** GcnSearchWorker **/
 
 GcnSearchWorker::GcnSearchWorker(QObject *parent)
-	: QObject(parent)
+	: super(parent)
 	, d_ptr(new GcnSearchWorkerPrivate(this))
 { }
 

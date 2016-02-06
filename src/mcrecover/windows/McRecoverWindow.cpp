@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * McRecoverWindow.cpp: Main window.                                       *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -1008,7 +1008,7 @@ not_vmu:
 /** McRecoverWindow **/
 
 McRecoverWindow::McRecoverWindow(QWidget *parent)
-	: QMainWindow(parent)
+	: super(parent)
 	, d_ptr(new McRecoverWindowPrivate(this))
 {
 	Q_D(McRecoverWindow);
@@ -1370,7 +1370,7 @@ void McRecoverWindow::changeEvent(QEvent *event)
 	}
 
 	// Pass the event to the base class.
-	this->QMainWindow::changeEvent(event);
+	super::changeEvent(event);
 }
 
 /**

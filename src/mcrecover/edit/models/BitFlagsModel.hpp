@@ -31,6 +31,7 @@ class BitFlagsModelPrivate;
 class BitFlagsModel : public QAbstractListModel
 {
 	Q_OBJECT
+	typedef QAbstractListModel super;
 
 	// TODO: Q_PROPERTY() for eventFlags.
 	Q_PROPERTY(int pageSize READ pageSize)

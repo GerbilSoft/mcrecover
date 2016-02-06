@@ -39,10 +39,11 @@ class GcnSearchThreadPrivate;
 class GcnSearchThread : public QObject
 {
 	Q_OBJECT
+	typedef QObject super;
 
 	public:
 		GcnSearchThread(QObject *parent = 0);
-		~GcnSearchThread();
+		virtual ~GcnSearchThread();
 
 	protected:
 		GcnSearchThreadPrivate *const d_ptr;

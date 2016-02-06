@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * VmuCard.hpp: Dreamcast VMU memory card class.                           *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -28,11 +28,12 @@ class VmuCardPrivate;
 class VmuCard : public Card
 {
 	Q_OBJECT
+	typedef Card super;
 
 	protected:
 		VmuCard(QObject *parent = 0);
 	public:
-		~VmuCard();
+		virtual ~VmuCard();
 
 	protected:
 		Q_DECLARE_PRIVATE(VmuCard)

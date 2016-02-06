@@ -111,7 +111,7 @@ void GcnSearchThreadPrivate::stopWorkerThread(void)
 /** GcnSearchThread **/
 
 GcnSearchThread::GcnSearchThread(QObject *parent)
-	: QObject(parent)
+	: super(parent)
 	, d_ptr(new GcnSearchThreadPrivate(this))
 { }
 

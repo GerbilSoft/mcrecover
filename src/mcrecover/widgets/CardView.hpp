@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * CardView.hpp: Card view widget.                                         *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -30,12 +30,13 @@ class CardViewPrivate;
 class CardView : public QWidget
 {
 	Q_OBJECT
+	typedef QWidget super;
 
 	Q_PROPERTY(Card* card READ card WRITE setCard)
 
 	public:
 		CardView(QWidget *parent = 0);
-		~CardView();
+		virtual ~CardView();
 
 	protected:
 		CardViewPrivate *const d_ptr;

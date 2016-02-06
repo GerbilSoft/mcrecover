@@ -30,6 +30,7 @@ class BitFlagsViewPrivate;
 class BitFlagsView : public QWidget
 {
 	Q_OBJECT
+	typedef QWidget super;
 
 	Q_PROPERTY(BitFlagsModel* bitFlagsModel READ bitFlagsModel WRITE setBitFlagsModel)
 	Q_PROPERTY(int pageSize READ pageSize)

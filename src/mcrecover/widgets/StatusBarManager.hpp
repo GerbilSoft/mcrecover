@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * StatusBarManager.hpp: Status Bar manager                                *
  *                                                                         *
- * Copyright (c) 2013-2015 by David Korth.                                 *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -36,6 +36,7 @@ class StatusBarManagerPrivate;
 class StatusBarManager : public QObject
 {
 	Q_OBJECT
+	typedef QObject super;
 
 	Q_PROPERTY(QStatusBar* statusBar READ statusBar WRITE setStatusBar)
 	Q_PROPERTY(GcnSearchThread* searchThread READ searchThread WRITE setSearchThread)
@@ -43,7 +44,7 @@ class StatusBarManager : public QObject
 	public:
 		StatusBarManager(QObject *parent = 0);
 		explicit StatusBarManager(QStatusBar *statusBar, QObject *parent = 0);
-		~StatusBarManager();
+		virtual ~StatusBarManager();
 
 	protected:
 		StatusBarManagerPrivate *const d_ptr;

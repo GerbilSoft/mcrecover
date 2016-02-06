@@ -68,7 +68,7 @@ BitFlagsModelPrivate::BitFlagsModelPrivate(BitFlagsModel *q)
 /** BitFlagsModel **/
 
 BitFlagsModel::BitFlagsModel(QObject *parent)
-	: QAbstractListModel(parent)
+	: super(parent)
 	, d_ptr(new BitFlagsModelPrivate(this))
 { }
 

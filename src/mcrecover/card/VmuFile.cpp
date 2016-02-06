@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * VmuFile.cpp: Dreamcast VMU file entry class.                            *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -53,6 +53,8 @@ using std::vector;
 #include "File_p.hpp"
 class VmuFilePrivate : public FilePrivate
 {
+	typedef FilePrivate super;
+
 	public:
 		/**
 		 * Initialize the VmuFile private class.
@@ -138,7 +140,7 @@ class VmuFilePrivate : public FilePrivate
 VmuFilePrivate::VmuFilePrivate(VmuFile *q, VmuCard *card,
 		const vmu_dir_entry *dirEntry,
 		const vmu_fat *mc_fat)
-	: FilePrivate(q, card)
+	: super(q, card)
 	, mc_fat(mc_fat)
 	, dirEntry(dirEntry)
 	, fileHeader(nullptr)
@@ -518,7 +520,7 @@ void VmuFilePrivate::loadIconImages_ICONDATA_VMS(void)
 VmuFile::VmuFile(VmuCard *card,
 		const vmu_dir_entry *dirEntry,
 		const vmu_fat *mc_fat)
-	: File(new VmuFilePrivate(this, card, dirEntry, mc_fat), card)
+	: super(new VmuFilePrivate(this, card, dirEntry, mc_fat), card)
 {
 	// NOTE: This can't be put in VmuFilePrivate::loadFileInfo(),
 	// since VmuCard isn't fully created at that time.

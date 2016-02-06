@@ -30,6 +30,7 @@ class ByteFlagsViewPrivate;
 class ByteFlagsView : public QWidget
 {
 	Q_OBJECT
+	typedef QWidget super;
 
 	Q_PROPERTY(ByteFlagsModel* byteFlagsModel READ byteFlagsModel WRITE setByteFlagsModel)
 	// TODO: Function to set tab titles.

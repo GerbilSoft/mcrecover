@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * ByteFlagsModel.hpp: QAbstractListModel for ByteFlags.                   *
  *                                                                         *
- * Copyright (c) 2016 by David Korth.                                      *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -30,6 +30,7 @@ class ByteFlagsModelPrivate;
 class ByteFlagsModel : public QAbstractListModel
 {
 	Q_OBJECT
+	typedef QAbstractListModel super;
 
 	// TODO: Q_PROPERTY() for eventFlags.
 

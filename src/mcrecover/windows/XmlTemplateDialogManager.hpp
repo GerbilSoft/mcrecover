@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * XmlTemplateDialogManager.hpp: XmlTemplateDialog Manager.                *
  *                                                                         *
- * Copyright (c) 2014-2015 by David Korth.                                 *
+ * Copyright (c) 2014-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -32,10 +32,11 @@ class XmlTemplateDialogManagerPrivate;
 class XmlTemplateDialogManager : public QObject
 {
 	Q_OBJECT
+	typedef QObject super;
 
 	public:
 		XmlTemplateDialogManager(QObject *parent = nullptr);
-		~XmlTemplateDialogManager();
+		virtual ~XmlTemplateDialogManager();
 
 	protected:
 		XmlTemplateDialogManagerPrivate *const d_ptr;

@@ -105,7 +105,7 @@ void ByteFlagsViewPrivate::updateDisplay(void)
 /** ByteFlagsView **/
 
 ByteFlagsView::ByteFlagsView(QWidget *parent)
-	: QWidget(parent)
+	: super(parent)
 	, d_ptr(new ByteFlagsViewPrivate(this))
 {
 	Q_D(ByteFlagsView);

@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * MessageWidgetStack.hpp: Message widget stack.                           *
  *                                                                         *
- * Copyright (c) 2014 by David Korth.                                      *
+ * Copyright (c) 2014-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -94,7 +94,7 @@ void MessageWidgetStackPrivate::Ui_MessageWidgetStack::setupUi(QWidget *MessageW
 /** MessageWidgetStack **/
 
 MessageWidgetStack::MessageWidgetStack(QWidget *parent)
-	: QWidget(parent)
+	: super(parent)
 	, d_ptr(new MessageWidgetStackPrivate(this))
 {
 	Q_D(MessageWidgetStack);

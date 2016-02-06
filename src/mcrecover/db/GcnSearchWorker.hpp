@@ -44,6 +44,7 @@ class GcnSearchWorkerPrivate;
 class GcnSearchWorker : public QObject
 {
 	Q_OBJECT
+	typedef QObject super;
 
 	Q_PROPERTY(QString errorString READ errorString)
 	Q_PROPERTY(QLinkedList<GcnSearchData> filesFoundList READ filesFoundList)
@@ -56,7 +57,7 @@ class GcnSearchWorker : public QObject
 
 	public:
 		GcnSearchWorker(QObject *parent = 0);
-		~GcnSearchWorker();
+		virtual ~GcnSearchWorker();
 
 	protected:
 		GcnSearchWorkerPrivate *const d_ptr;

@@ -327,7 +327,7 @@ void SAAdventure::changeEvent(QEvent *event)
 	}
 
 	// Pass the event to the base class.
-	this->QWidget::changeEvent(event);
+	super::changeEvent(event);
 }
 
 /** Public functions. **/

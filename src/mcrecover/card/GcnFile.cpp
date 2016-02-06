@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnFile.cpp: GameCube file entry class.                                 *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -54,6 +54,8 @@ using std::vector;
 #include "File_p.hpp"
 class GcnFilePrivate : public FilePrivate
 {
+	typedef FilePrivate super;
+
 	public:
 		/**
 		 * Initialize the GcnFile private class.
@@ -138,7 +140,7 @@ class GcnFilePrivate : public FilePrivate
 GcnFilePrivate::GcnFilePrivate(GcnFile *q, GcnCard *card,
 		const card_direntry *dirEntry,
 		const card_bat *mc_bat)
-	: FilePrivate(q, card)
+	: super(q, card)
 	, mc_bat(mc_bat)
 	, dirEntry(dirEntry)
 {
@@ -195,7 +197,7 @@ GcnFilePrivate::GcnFilePrivate(GcnFile *q, GcnCard *card,
 GcnFilePrivate::GcnFilePrivate(GcnFile *q, GcnCard *card,
 		const card_direntry *dirEntry,
 		const QVector<uint16_t> &fatEntries)
-	: FilePrivate(q, card)
+	: super(q, card)
 	, mc_bat(nullptr)
 	, dirEntry(dirEntry)
 {
@@ -599,7 +601,7 @@ QVector<GcImage*> GcnFilePrivate::loadIconImages(void)
 GcnFile::GcnFile(GcnCard *card,
 		const card_direntry *dirEntry,
 		const card_bat *mc_bat)
-	: File(new GcnFilePrivate(this, card, dirEntry, mc_bat), card)
+	: super(new GcnFilePrivate(this, card, dirEntry, mc_bat), card)
 { }
 
 /**
@@ -612,7 +614,7 @@ GcnFile::GcnFile(GcnCard *card,
 GcnFile::GcnFile(GcnCard *card,
 		const card_direntry *dirEntry,
 		const QVector<uint16_t> &fatEntries)
-	: File(new GcnFilePrivate(this, card, dirEntry, fatEntries), card)
+	: super(new GcnFilePrivate(this, card, dirEntry, fatEntries), card)
 { }
 
 // TODO: Maybe not needed?
@@ -703,7 +705,7 @@ int GcnFile::exportToFile(const QString &filename)
 	// from the base class function, but gcc-4.9.2 attempts to use
 	// the QIODevice version when using a GcnFile* instead of a
 	// File*. Hence, we need this virtual function.
-	return File::exportToFile(filename);
+	return super::exportToFile(filename);
 }
 
 /**

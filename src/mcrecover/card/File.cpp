@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * File.cpp: Memory Card file entry. [base class]                          *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -440,7 +440,7 @@ void FilePrivate::calculateChecksum(void)
  * @param card Card object.
  */
 File::File(FilePrivate *d, Card *card)
-	: QObject(card)
+	: super(card)
 	, d_ptr(d)
 { }
 

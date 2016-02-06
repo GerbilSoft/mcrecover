@@ -882,7 +882,7 @@ GcnSearchData GcnMcFileDbPrivate::constructSearchData(
 /** GcnMcFileDb **/
 
 GcnMcFileDb::GcnMcFileDb(QObject *parent)
-	: QObject(parent)
+	: super(parent)
 	, d_ptr(new GcnMcFileDbPrivate(this))
 { }
 

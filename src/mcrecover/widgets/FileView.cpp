@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * FileView.cpp: File view widget.                                         *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -236,7 +236,7 @@ void FileViewPrivate::updateAnimTimerState(void)
 /** FileView **/
 
 FileView::FileView(QWidget *parent)
-	: QWidget(parent)
+	: super(parent)
 	, d_ptr(new FileViewPrivate(this))
 {
 	Q_D(FileView);
@@ -312,7 +312,7 @@ void FileView::changeEvent(QEvent *event)
 	}
 
 	// Pass the event to the base class.
-	this->QWidget::changeEvent(event);
+	super::changeEvent(event);
 }
 
 /** Public slots. **/

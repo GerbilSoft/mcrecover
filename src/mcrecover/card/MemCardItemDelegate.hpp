@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * MemCardItemDelegate.hpp: MemCard item delegate for QListView.           *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -26,14 +26,14 @@
 #include <QtGui/QStyledItemDelegate>
 
 class MemCardItemDelegatePrivate;
-
 class MemCardItemDelegate : public QStyledItemDelegate
 {
 	Q_OBJECT
+	typedef QStyledItemDelegate super;
 
 	public:
 		MemCardItemDelegate(QObject *parent);
-		~MemCardItemDelegate();
+		virtual ~MemCardItemDelegate();
 
 	protected:
 		MemCardItemDelegatePrivate *const d_ptr;
@@ -42,10 +42,10 @@ class MemCardItemDelegate : public QStyledItemDelegate
 		Q_DISABLE_COPY(MemCardItemDelegate)
 
 	public:
-		void paint(QPainter *painter, const QStyleOptionViewItem &option,
-			   const QModelIndex &index) const;
-		QSize sizeHint(const QStyleOptionViewItem &option,
-			       const QModelIndex &index) const;
+		virtual void paint(QPainter *painter, const QStyleOptionViewItem &option,
+			   const QModelIndex &index) const final;
+		virtual QSize sizeHint(const QStyleOptionViewItem &option,
+			       const QModelIndex &index) const final;
 
 	private slots:
 		/**

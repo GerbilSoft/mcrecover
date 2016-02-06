@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * IconAnimHelper.hpp: Icon animation helper.                              *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -33,6 +33,7 @@ class IconAnimHelperPrivate;
 class IconAnimHelper : public QObject
 {
 	Q_OBJECT
+	typedef QObject super;
 
 	Q_PROPERTY(const File* file READ file WRITE setFile)
 	Q_PROPERTY(bool animated READ isAnimated STORED false)
@@ -41,7 +42,7 @@ class IconAnimHelper : public QObject
 	public:
 		IconAnimHelper();
 		IconAnimHelper(const File *file);
-		~IconAnimHelper();
+		virtual ~IconAnimHelper();
 
 	protected:
 		IconAnimHelperPrivate *const d_ptr;

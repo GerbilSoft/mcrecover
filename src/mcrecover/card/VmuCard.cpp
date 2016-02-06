@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * VmuCard.cpp: Dreamcast VMU memory card class.                           *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -46,6 +46,8 @@
 #include "Card_p.hpp"
 class VmuCardPrivate : public CardPrivate
 {
+	typedef CardPrivate super;
+
 	public:
 		VmuCardPrivate(VmuCard *q);
 		virtual ~VmuCardPrivate();
@@ -113,7 +115,7 @@ class VmuCardPrivate : public CardPrivate
 };
 
 VmuCardPrivate::VmuCardPrivate(VmuCard *q)
-	: CardPrivate(q,
+	: super(q,
 		VMU_BLOCK_SIZE,	// 512-byte blocks.
 		256,	// Minimum card size, in blocks.
 		256,	// Maximum card size, in blocks.
@@ -515,7 +517,7 @@ void VmuCardPrivate::loadFileList(void)
 /** VmuCard **/
 
 VmuCard::VmuCard(QObject *parent)
-	: Card(new VmuCardPrivate(this), parent)
+	: super(new VmuCardPrivate(this), parent)
 { }
 
 VmuCard::~VmuCard()

@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * SALevelStats.hpp: Sonic Adventure - Level Stats editor.                 *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *

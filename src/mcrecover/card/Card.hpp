@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * Card.hpp: Memory Card physical layer. [base class]                      *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -39,6 +39,7 @@ class CardPrivate;
 class Card : public QObject
 {
 	Q_OBJECT
+	typedef QObject super;
 
 	Q_ENUMS(Encoding)
 	Q_FLAGS(Error Errors)

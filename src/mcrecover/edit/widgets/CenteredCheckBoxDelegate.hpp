@@ -10,15 +10,17 @@ class QPainter;
 class CenteredCheckBoxDelegate : public QStyledItemDelegate
 {
 	Q_OBJECT
+	typedef QStyledItemDelegate super;
 
 	public:
 		CenteredCheckBoxDelegate(QObject *parent = 0);
  
-		void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+		virtual void paint(QPainter *painter, const QStyleOptionViewItem &option,
+				   const QModelIndex &index) const final;
 
 		virtual bool editorEvent(QEvent *event, QAbstractItemModel *model,
 				const QStyleOptionViewItem &option,
-				const QModelIndex &index) override;
+				const QModelIndex &index) final;
 };
  
 #endif /* CENTEREDCHECKBOXDELEGATE_HPP */

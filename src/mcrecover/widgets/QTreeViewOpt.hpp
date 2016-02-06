@@ -3,7 +3,7 @@
  * QTreeViewOpt.hpp: QTreeView with drawing optimizations.                 *
  * Specifically, don't update rows that are offscreen.			   *
  *                                                                         *
- * Copyright (c) 2013-2014 by David Korth.                                 *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -31,10 +31,10 @@ class QFocusEvent;
 class QTreeViewOpt : public QTreeView
 {
 	Q_OBJECT
+	typedef QTreeView super;
 
 	public:
 		QTreeViewOpt(QWidget *parent = 0);
-		virtual ~QTreeViewOpt() { }
 
 	private:
 		Q_DISABLE_COPY(QTreeViewOpt);

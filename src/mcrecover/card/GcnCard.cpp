@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnCard.hpp: GameCube memory card class.                                *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -39,6 +39,8 @@
 #include "Card_p.hpp"
 class GcnCardPrivate : public CardPrivate
 {
+	typedef CardPrivate super;
+
 	public:
 		GcnCardPrivate(GcnCard *q);
 		virtual ~GcnCardPrivate();
@@ -141,7 +143,7 @@ class GcnCardPrivate : public CardPrivate
 };
 
 GcnCardPrivate::GcnCardPrivate(GcnCard *q)
-	: CardPrivate(q,
+	: super(q,
 		8192,	// 8 KB blocks.
 		64,	// Minimum card size, in blocks.
 		2048,	// Maximum card size, in blocks.
@@ -776,7 +778,7 @@ void GcnCardPrivate::loadGcnFileList(void)
 /** GcnCard **/
 
 GcnCard::GcnCard(QObject *parent)
-	: Card(new GcnCardPrivate(this), parent)
+	: super(new GcnCardPrivate(this), parent)
 { }
 
 GcnCard::~GcnCard()

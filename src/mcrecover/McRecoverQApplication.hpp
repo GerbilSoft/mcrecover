@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * McRecoverQApplication.hpp: QApplication subclass.                       *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -32,6 +32,7 @@ class McRecoverQApplicationPrivate;
 class McRecoverQApplication : public QApplication
 {
 	Q_OBJECT
+	typedef QApplication super;
 
 	public:
 		McRecoverQApplication(int &argc, char **argv);

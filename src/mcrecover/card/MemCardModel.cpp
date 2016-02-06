@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * MemCardModel.cpp: QAbstractListModel for GcnCard.                       *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -251,7 +251,7 @@ void MemCardModelPrivate::updateAnimTimerState(void)
 /** MemCardModel **/
 
 MemCardModel::MemCardModel(QObject *parent)
-	: QAbstractListModel(parent)
+	: super(parent)
 	, d_ptr(new MemCardModelPrivate(this))
 {
 	// Connect the "themeChanged" signal.

@@ -143,7 +143,7 @@ void PageFilterModelPrivate::calcPageOffsets(void)
 /** PageFilterModel **/
 
 PageFilterModel::PageFilterModel(QObject *parent)
-	: QSortFilterProxyModel(parent)
+	: super(parent)
 	, d_ptr(new PageFilterModelPrivate(this))
 { }
 
@@ -169,7 +169,7 @@ bool PageFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceP
 void PageFilterModel::setSourceModel(QAbstractItemModel *sourceModel)
 {
 	Q_D(PageFilterModel);
-	QSortFilterProxyModel::setSourceModel(sourceModel);
+	super::setSourceModel(sourceModel);
 	d->calcPageOffsets();
 }
 

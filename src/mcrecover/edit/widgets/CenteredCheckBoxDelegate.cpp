@@ -9,7 +9,7 @@
 #include <QtGui/QKeyEvent>
 
 CenteredCheckBoxDelegate::CenteredCheckBoxDelegate(QObject *parent)
-        : QStyledItemDelegate(parent)
+        : super(parent)
 { }
 
 void CenteredCheckBoxDelegate::paint(QPainter *painter,
