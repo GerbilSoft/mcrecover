@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Save File Editor</string>
   </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>true</bool>
+  </property>
   <widget class="QWidget" name="centralwidget"/>
   <widget class="QToolBar" name="toolBar">
    <property name="movable">
