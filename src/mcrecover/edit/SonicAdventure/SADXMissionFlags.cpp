@@ -54,7 +54,7 @@ SADXMissionFlagsPrivate::SADXMissionFlagsPrivate()
 /** SADXMissionFlags **/
 
 SADXMissionFlags::SADXMissionFlags(QObject *parent)
-	: ByteFlags(512,					// Total number of byte flags.
+	: ByteFlags(SADX_MISSION_COUNT,				// Total number of byte flags.
 		"SADXDataMissions",				// Translation context.
 		&sadx_mission_flags_desc[0],			// Bit flags with names.
 		NUM_ELEMENTS(sadx_mission_flags_desc)-1,	// Number of named flags.
