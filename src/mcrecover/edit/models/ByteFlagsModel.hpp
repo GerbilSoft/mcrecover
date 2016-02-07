@@ -33,6 +33,7 @@ class ByteFlagsModel : public QAbstractListModel
 	typedef QAbstractListModel super;
 
 	// TODO: Q_PROPERTY() for eventFlags.
+	Q_PROPERTY(int pageSize READ pageSize)
 
 	public:
 		ByteFlagsModel(QObject *parent = 0);
@@ -91,7 +92,24 @@ class ByteFlagsModel : public QAbstractListModel
 		 */
 		void setByteFlags(ByteFlags *byteFlags);
 
-	protected slots:
+		/**
+		 * Get the desired page size from the BitFlags.
+		 * @return Page size.
+		 */
+		int pageSize(void) const;
+
+		/**
+		 * Get the name for a given page of data.
+		 *
+		 * If pagination is enabled (pageSize > 0), this function is
+		 * used to determine the text for the corresponding tab.
+		 *
+		 * @param page Page number.
+		 * @return Page name.
+		 */
+		QString pageName(int page) const;
+
+protected slots:
 		/**
 		 * ByteFlags object was destroyed.
 		 * @param obj QObject that was destroyed.

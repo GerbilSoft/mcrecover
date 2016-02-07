@@ -280,3 +280,29 @@ QPixmap ByteFlags::icon(int id) const
 	Q_UNUSED(id)
 	return QPixmap();
 }
+
+/**
+ * Get the desired page size for the ByteFlagsModel.
+ * @return Page size.
+ */
+int ByteFlags::pageSize(void) const
+{
+	// Default is no pagination.
+	return 0;
+}
+
+/**
+ * Get the name for a given page of data.
+ *
+ * If pagination is enabled (pageSize > 0), this function is
+ * used to determine the text for the corresponding tab.
+ *
+ * @param page Page number.
+ * @return Page name.
+ */
+QString ByteFlags::pageName(int page) const
+{
+	// Default is no pagination.
+	Q_UNUSED(page)
+	return QString();
+}

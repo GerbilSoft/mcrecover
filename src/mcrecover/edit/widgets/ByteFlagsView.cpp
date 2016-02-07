@@ -83,8 +83,31 @@ void ByteFlagsViewPrivate::updateDisplay(void)
 		return;
 	}
 
-	// TODO: Add/remove tabs as necessary.
-	// For now, just hide the entire tab bar if it's a single page.
+	// Add/remove tabs as necessary.
+	// TODO: Option to force tab text update?
+	const int oldPages = ui.tabBar->count();
+	const int newPages = pageFilterModel->pageCount();
+	if (newPages < oldPages) {
+		// Remove some tabs.
+		if (ui.tabBar->currentIndex() >= newPages) {
+			// Update the current tab first.
+			ui.tabBar->setCurrentIndex(newPages - 1);
+		}
+		for (int i = newPages-1; i >= oldPages; i--) {
+			ui.tabBar->removeTab(i);
+		}
+	} else if (newPages > oldPages) {
+		// Add some tabs.
+		const ByteFlagsModel *model = qobject_cast<const ByteFlagsModel*>(pageFilterModel->sourceModel());
+		assert(model != nullptr);
+		if (model) {
+			for (int i = oldPages; i < newPages; i++) {
+				ui.tabBar->addTab(model->pageName(i));
+			}
+		}
+	}
+
+	// Hide the tab bar if there's only one page.
 	ui.tabBar->setVisible(pageFilterModel->pageCount() > 1);
 
 	// Resize the columns to fit the contents.
@@ -128,14 +151,6 @@ ByteFlagsView::ByteFlagsView(QWidget *parent)
 	// TODO: Parent should set the tab names...
 	d->ui.tabBar->setExpanding(false);
 	d->ui.tabBar->setDrawBase(true);
-	d->ui.tabBar->addTab(tr("Unused?"));
-	d->ui.tabBar->addTab(tr("General"));
-	d->ui.tabBar->addTab(tr("Sonic"));
-	d->ui.tabBar->addTab(tr("Tails"));
-	d->ui.tabBar->addTab(tr("Knuckles"));
-	d->ui.tabBar->addTab(tr("Amy"));
-	d->ui.tabBar->addTab(tr("Gamma"));
-	d->ui.tabBar->addTab(tr("Big"));
 
 	// Update the display.
 	d->updateDisplay();
@@ -172,8 +187,11 @@ ByteFlagsModel *ByteFlagsView::byteFlagsModel(void) const
 void ByteFlagsView::setByteFlagsModel(ByteFlagsModel *byteFlagsModel)
 {
 	// TODO: Connect destroyed() signal for ByteFlagsModel?
+	// TODO: Watch for row count changes to adjust pages?
 	Q_D(ByteFlagsView);
 	d->pageFilterModel->setSourceModel(byteFlagsModel);
+	// TODO: Signal from pageFilterModel to adjust tabs?
+	d->pageFilterModel->setPageSize(byteFlagsModel->pageSize());
 
 	// Hide undefined bits.
 	// TODO: When byteFlagsModel's byteFlags changes?
@@ -201,19 +219,4 @@ int ByteFlagsView::pageSize(void) const
 	return d->pageFilterModel->pageSize();
 }
 
-/**
- * Set the page size.
- * @param pageSize Page size.
- */
-void ByteFlagsView::setPageSize(int pageSize)
-{
-	Q_D(ByteFlagsView);
-	// TODO: Signal from pageFilterModel to adjust tabs?
-	d->pageFilterModel->setPageSize(pageSize);
-
-	// Update the display.
-	d->updateDisplay();
-}
-
 // TODO: Page count?
-// TODO: Set tab names.

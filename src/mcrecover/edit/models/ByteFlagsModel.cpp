@@ -407,3 +407,34 @@ void ByteFlagsModel::byteFlags_flagsChanged_slot(int firstID, int lastID)
 	// COL_BIT0 through COL_BIT7 have checkboxes.
 	emit dataChanged(createIndex(firstID, COL_BIT0), createIndex(lastID, COL_BIT7));
 }
+
+/**
+ * Get the desired page size from the ByteFlags.
+ * @return Page size.
+ */
+int ByteFlagsModel::pageSize(void) const
+{
+       Q_D(const ByteFlagsModel);
+       if (d->byteFlags) {
+               return d->byteFlags->pageSize();
+       }
+       return 0;
+}
+
+/**
+ * Get the name for a given page of data.
+ *
+ * If pagination is enabled (pageSize > 0), this function is
+ * used to determine the text for the corresponding tab.
+ *
+ * @param page Page number.
+ * @return Page name.
+ */
+QString ByteFlagsModel::pageName(int page) const
+{
+       Q_D(const ByteFlagsModel);
+       if (d->byteFlags) {
+               return d->byteFlags->pageName(page);
+       }
+       return QString();
+}

@@ -33,9 +33,7 @@ class ByteFlagsView : public QWidget
 	typedef QWidget super;
 
 	Q_PROPERTY(ByteFlagsModel* byteFlagsModel READ byteFlagsModel WRITE setByteFlagsModel)
-	// TODO: Function to set tab titles.
-	// TODO: Signal for pageSizeChanged()?
-	Q_PROPERTY(int pageSize READ pageSize WRITE setPageSize)
+	Q_PROPERTY(int pageSize READ pageSize)
 
 	public:
 		ByteFlagsView(QWidget *parent = 0);
@@ -70,14 +68,7 @@ class ByteFlagsView : public QWidget
 		 */
 		int pageSize(void) const;
 
-		/**
-		 * Set the page size.
-		 * @param pageSize Page size.
-		 */
-		void setPageSize(int pageSize);
-
 		// TODO: Page count?
-		// TODO: Set tab names.
 };
 
 #endif /* __MCRECOVER_EDIT_MODELS_BYTEFLAGSVIEW_HPP__ */

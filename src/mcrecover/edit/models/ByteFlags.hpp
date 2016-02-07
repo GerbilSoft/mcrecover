@@ -41,6 +41,8 @@ class ByteFlags : public QObject
 	Q_OBJECT
 	typedef QObject super;
 
+	Q_PROPERTY(int pageSize READ pageSize)
+
 	// This class should not be used directly.
 	protected:
 		/**
@@ -181,6 +183,23 @@ class ByteFlags : public QObject
 		 * @return Character icon.
 		 */
 		virtual QPixmap icon(int id) const = 0;
+
+		/**
+		 * Get the desired page size for the BitFlagsModel.
+		 * @return Page size.
+		 */
+		virtual int pageSize(void) const;
+
+		/**
+		 * Get the name for a given page of data.
+		 *
+		 * If pagination is enabled (pageSize > 0), this function is
+		 * used to determine the text for the corresponding tab.
+		 *
+		 * @param page Page number.
+		 * @return Page name.
+		 */
+		virtual QString pageName(int page) const;
 };
 
 #endif /* __MCRECOVER_EDIT_MODELS_BYTEFLAGS_HPP__ */
