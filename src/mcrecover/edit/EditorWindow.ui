@@ -15,9 +15,6 @@
   </property>
   <widget class="QWidget" name="centralwidget"/>
   <widget class="QToolBar" name="toolBar">
-   <property name="windowTitle">
-    <string>toolBar</string>
-   </property>
    <property name="movable">
     <bool>false</bool>
    </property>
