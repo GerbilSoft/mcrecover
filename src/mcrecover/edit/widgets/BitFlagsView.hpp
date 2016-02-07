@@ -45,6 +45,10 @@ class BitFlagsView : public QWidget
 	private:
 		Q_DISABLE_COPY(BitFlagsView)
 
+	protected:
+		// State change event. (Used for switching the UI language at runtime.)
+		virtual void changeEvent(QEvent *event) final;
+
 	public:
 		/** Model access. **/
 

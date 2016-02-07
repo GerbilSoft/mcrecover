@@ -58,6 +58,12 @@ class BitFlagsViewPrivate
 		 * Update the display.
 		 */
 		void updateDisplay(void);
+
+		/**
+		 * Update the tab bar.
+		 * @param forceTextUpdate If true, update all tab text. Needed for language changes.
+		 */
+		void updateTabBar(bool forceTextUpdate = false);
 };
 
 BitFlagsViewPrivate::BitFlagsViewPrivate(BitFlagsView *q)
@@ -82,32 +88,8 @@ void BitFlagsViewPrivate::updateDisplay(void)
 		return;
 	}
 
-	// Add/remove tabs as necessary.
-	// TODO: Option to force tab text update?
-	const int oldPages = ui.tabBar->count();
-	const int newPages = pageFilterModel->pageCount();
-	if (newPages < oldPages) {
-		// Remove some tabs.
-		if (ui.tabBar->currentIndex() >= newPages) {
-			// Update the current tab first.
-			ui.tabBar->setCurrentIndex(newPages - 1);
-		}
-		for (int i = newPages-1; i >= oldPages; i--) {
-			ui.tabBar->removeTab(i);
-		}
-	} else if (newPages > oldPages) {
-		// Add some tabs.
-		const BitFlagsModel *model = qobject_cast<const BitFlagsModel*>(pageFilterModel->sourceModel());
-		assert(model != nullptr);
-		if (model) {
-			for (int i = oldPages; i < newPages; i++) {
-				ui.tabBar->addTab(model->pageName(i));
-			}
-		}
-	}
-
-	// Hide the tab bar if there's only one page.
-	ui.tabBar->setVisible(pageFilterModel->pageCount() > 1);
+	// Update the tab bar.
+	updateTabBar();
 
 	// Resize the columns to fit the contents.
 	// TODO: On theme change, pageSize change...?
@@ -122,6 +104,48 @@ void BitFlagsViewPrivate::updateDisplay(void)
 	// Event Description and overall width.
 	ui.lstEventFlags->resizeColumnToContents(BitFlagsModel::COL_DESCRIPTION);
 	ui.lstEventFlags->resizeColumnToContents(model->columnCount());
+}
+
+/**
+ * Update the tab bar.
+ * @param forceTextUpdate If true, update all tab text. Needed for language changes.
+ */
+void BitFlagsViewPrivate::updateTabBar(bool forceTextUpdate)
+{
+	// Add/remove tabs as necessary.
+	const BitFlagsModel *model = qobject_cast<const BitFlagsModel*>(pageFilterModel->sourceModel());
+	assert(model != nullptr);
+	if (!model)
+		return;
+
+	const int oldPages = ui.tabBar->count();
+	const int newPages = pageFilterModel->pageCount();
+
+	if (newPages < oldPages) {
+		// Remove some tabs.
+		if (ui.tabBar->currentIndex() >= newPages) {
+			// Update the current tab first.
+			ui.tabBar->setCurrentIndex(newPages - 1);
+		}
+		for (int i = newPages-1; i >= oldPages; i--) {
+			ui.tabBar->removeTab(i);
+		}
+	} else if (newPages > oldPages) {
+		// Add some tabs.
+		for (int i = oldPages; i < newPages; i++) {
+			ui.tabBar->addTab(model->pageName(i));
+		}
+	}
+
+	if (forceTextUpdate) {
+		// Update all tabs' titles.
+		for (int i = qMin(oldPages, newPages); i >= 0; i--) {
+			ui.tabBar->setTabText(i, model->pageName(i));
+		}
+	}
+
+	// Hide the tab bar if there's only one page.
+	ui.tabBar->setVisible(pageFilterModel->pageCount() > 1);
 }
 
 /** BitFlagsView **/
@@ -160,8 +184,28 @@ BitFlagsView::BitFlagsView(QWidget *parent)
 
 BitFlagsView::~BitFlagsView()
 {
-	Q_D(BitFlagsView);
-	delete d;
+	delete d_ptr;
+}
+
+/** Events. **/
+
+/**
+ * Widget state has changed.
+ * @param event State change event.
+ */
+void BitFlagsView::changeEvent(QEvent *event)
+{
+	if (event->type() == QEvent::LanguageChange) {
+		// Retranslate the UI.
+		Q_D(BitFlagsView);
+		d->ui.retranslateUi(this);
+
+		// Update the tab titles.
+		d->updateTabBar(true);
+	}
+
+	// Pass the event to the base class.
+	super::changeEvent(event);
 }
 
 /** Model access. **/

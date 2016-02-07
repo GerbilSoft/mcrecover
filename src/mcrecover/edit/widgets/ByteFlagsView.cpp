@@ -59,6 +59,12 @@ class ByteFlagsViewPrivate
 		 * Update the display.
 		 */
 		void updateDisplay(void);
+
+		/**
+		 * Update the tab bar.
+		 * @param forceTextUpdate If true, update all tab text. Needed for language changes.
+		 */
+		void updateTabBar(bool forceTextUpdate = false);
 };
 
 ByteFlagsViewPrivate::ByteFlagsViewPrivate(ByteFlagsView *q)
@@ -83,33 +89,6 @@ void ByteFlagsViewPrivate::updateDisplay(void)
 		return;
 	}
 
-	// Add/remove tabs as necessary.
-	// TODO: Option to force tab text update?
-	const int oldPages = ui.tabBar->count();
-	const int newPages = pageFilterModel->pageCount();
-	if (newPages < oldPages) {
-		// Remove some tabs.
-		if (ui.tabBar->currentIndex() >= newPages) {
-			// Update the current tab first.
-			ui.tabBar->setCurrentIndex(newPages - 1);
-		}
-		for (int i = newPages-1; i >= oldPages; i--) {
-			ui.tabBar->removeTab(i);
-		}
-	} else if (newPages > oldPages) {
-		// Add some tabs.
-		const ByteFlagsModel *model = qobject_cast<const ByteFlagsModel*>(pageFilterModel->sourceModel());
-		assert(model != nullptr);
-		if (model) {
-			for (int i = oldPages; i < newPages; i++) {
-				ui.tabBar->addTab(model->pageName(i));
-			}
-		}
-	}
-
-	// Hide the tab bar if there's only one page.
-	ui.tabBar->setVisible(pageFilterModel->pageCount() > 1);
-
 	// Resize the columns to fit the contents.
 	// TODO: On theme change, pageSize change...?
 	ui.lstEventFlags->resizeColumnToContents(ByteFlagsModel::COL_CHARACTER);
@@ -123,6 +102,48 @@ void ByteFlagsViewPrivate::updateDisplay(void)
 	// FIXME: Add text margins. For now, just add width of 'W'.
 	id_width += fm.width(QChar(L'W'));
 	ui.lstEventFlags->setColumnWidth(ByteFlagsModel::COL_ID, id_width+1);
+}
+
+/**
+ * Update the tab bar.
+ * @param forceTextUpdate If true, update all tab text. Needed for language changes.
+ */
+void ByteFlagsViewPrivate::updateTabBar(bool forceTextUpdate)
+{
+	// Add/remove tabs as necessary.
+	const ByteFlagsModel *model = qobject_cast<const ByteFlagsModel*>(pageFilterModel->sourceModel());
+	assert(model != nullptr);
+	if (!model)
+		return;
+
+	const int oldPages = ui.tabBar->count();
+	const int newPages = pageFilterModel->pageCount();
+
+	if (newPages < oldPages) {
+		// Remove some tabs.
+		if (ui.tabBar->currentIndex() >= newPages) {
+			// Update the current tab first.
+			ui.tabBar->setCurrentIndex(newPages - 1);
+		}
+		for (int i = newPages-1; i >= oldPages; i--) {
+			ui.tabBar->removeTab(i);
+		}
+	} else if (newPages > oldPages) {
+		// Add some tabs.
+		for (int i = oldPages; i < newPages; i++) {
+			ui.tabBar->addTab(model->pageName(i));
+		}
+	}
+
+	if (forceTextUpdate) {
+		// Update all tabs' titles.
+		for (int i = qMin(oldPages, newPages); i >= 0; i--) {
+			ui.tabBar->setTabText(i, model->pageName(i));
+		}
+	}
+
+	// Hide the tab bar if there's only one page.
+	ui.tabBar->setVisible(pageFilterModel->pageCount() > 1);
 }
 
 /** ByteFlagsView **/
@@ -164,8 +185,28 @@ ByteFlagsView::ByteFlagsView(QWidget *parent)
 
 ByteFlagsView::~ByteFlagsView()
 {
-	Q_D(ByteFlagsView);
-	delete d;
+	delete d_ptr;
+}
+
+/** Events. **/
+
+/**
+ * Widget state has changed.
+ * @param event State change event.
+ */
+void ByteFlagsView::changeEvent(QEvent *event)
+{
+	if (event->type() == QEvent::LanguageChange) {
+		// Retranslate the UI.
+		Q_D(ByteFlagsView);
+		d->ui.retranslateUi(this);
+
+		// Update the tab titles.
+		d->updateTabBar(true);
+	}
+
+	// Pass the event to the base class.
+	super::changeEvent(event);
 }
 
 /** Model access. **/
