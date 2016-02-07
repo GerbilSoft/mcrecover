@@ -104,7 +104,7 @@ void BitFlagsViewPrivate::updateDisplay(void)
 		}
 	}
 
-	// For now, just hide the entire tab bar if it's a single page.
+	// Hide the tab bar if there's only one page.
 	ui.tabBar->setVisible(pageFilterModel->pageCount() > 1);
 
 	// Resize the columns to fit the contents.
