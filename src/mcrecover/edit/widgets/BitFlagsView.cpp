@@ -97,10 +97,12 @@ void BitFlagsViewPrivate::updateDisplay(void)
 		}
 	} else if (newPages > oldPages) {
 		// Add some tabs.
-		Q_Q(BitFlagsView);
-		const BitFlagsModel *model = q->bitFlagsModel();
-		for (int i = oldPages; i < newPages; i++) {
-			ui.tabBar->addTab(model->pageName(i));
+		const BitFlagsModel *model = qobject_cast<const BitFlagsModel*>(pageFilterModel->sourceModel());
+		assert(model != nullptr);
+		if (model) {
+			for (int i = oldPages; i < newPages; i++) {
+				ui.tabBar->addTab(model->pageName(i));
+			}
 		}
 	}
 
