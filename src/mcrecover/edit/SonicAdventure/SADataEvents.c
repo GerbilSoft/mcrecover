@@ -106,9 +106,9 @@ const bit_flag_t sa_event_flags_desc[SA_EVENT_FLAGS_COUNT+1] = {
 	{182, QT_TRANSLATE_NOOP("SADataEvents", "Sky Chase Act 2 clear")},
 
 	// Tails
-	{193, QT_TRANSLATE_NOOP("SADataEvents", "Station Square Hotel open")},
+	{193, QT_TRANSLATE_NOOP("SADataEvents", "Station Square hotel open")},
 	{197, QT_TRANSLATE_NOOP("SADataEvents", "Casinopolis open")},
-	{202, QT_TRANSLATE_NOOP("SADataEvents", "Station Square Station open")},
+	{202, QT_TRANSLATE_NOOP("SADataEvents", "Station Square station open")},
 	{205, QT_TRANSLATE_NOOP("SADataEvents", "Jet Anklet obtained")},
 	{210, QT_TRANSLATE_NOOP("SADataEvents", "Egg Carrier sunk")},
 	{211, QT_TRANSLATE_NOOP("SADataEvents", "Windy Valley open")},
