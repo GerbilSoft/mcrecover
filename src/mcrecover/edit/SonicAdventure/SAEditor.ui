@@ -101,7 +101,7 @@
      </widget>
      <widget class="QWidget" name="tabMissions">
       <attribute name="title">
-       <string>Missions</string>
+       <string>M&amp;issions</string>
       </attribute>
       <layout class="QVBoxLayout" name="vboxSADXMissions">
        <item>
