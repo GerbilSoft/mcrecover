@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * CardView.hpp: Card view widget.                                         *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -109,6 +109,8 @@ void CardViewPrivate::updateWidgetDisplay(void)
 		// TODO: Better method?
 		//ui.fraBorder->setStyleSheet(QString());
 		ui.formLayout->setContentsMargins(0, 0, 0, 0);
+		ui.lblCardIcon->setVisible(false);
+		ui.lblCardType->setVisible(false);
 		ui.lblBlockCount->setVisible(false);
 		ui.lblStatusIcon->setVisible(false);
 		ui.lblFormatTimeTitle->setVisible(false);
@@ -133,7 +135,19 @@ void CardViewPrivate::updateWidgetDisplay(void)
 		return;
 	}
 
-	// Show the widget display.
+	// Card icon and type.
+	QPixmap icon = card->icon();
+	if (!icon.isNull()) {
+		ui.lblCardIcon->setPixmap(icon);
+		ui.lblCardIcon->setVisible(true);
+	} else {
+		ui.lblCardIcon->setVisible(false);
+	}
+	// TODO: Shortened product name, with line breaks.
+	//ui.lblCardType->setText(card->productName());
+	ui.lblCardType->setVisible(true);
+
+	// Block count.
 	ui.lblBlockCount->setVisible(true);
 
 	// Update the format time.
@@ -287,7 +301,7 @@ void CardViewPrivate::updateWidgetDisplay(void)
 /** MemCardFileView **/
 
 CardView::CardView(QWidget *parent)
-	: QWidget(parent)
+	: super(parent)
 	, d_ptr(new CardViewPrivate(this))
 {
 	Q_D(CardView);
@@ -372,7 +386,7 @@ void CardView::changeEvent(QEvent *event)
 	}
 
 	// Pass the event to the base class.
-	this->QWidget::changeEvent(event);
+	super::changeEvent(event);
 }
 
 /**

@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * SADXMissionFlags.cpp: Sonic Adventure DX - Mission flags.               *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -22,12 +22,12 @@
 #include "SADXMissionFlags.hpp"
 #include "SAData.h"
 
-// TODO: Put this in a common header file somewhere.
-#define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
+// Total number of missions.
+#define SADX_MISSION_COUNT 60
 
 /** SADXMissionFlagsPrivate **/
-#include "ByteFlags_p.hpp"
-class SADXMissionFlagsPrivate : public ByteFlagsPrivate
+
+class SADXMissionFlagsPrivate
 {
 	public:
 		SADXMissionFlagsPrivate();
@@ -36,15 +36,11 @@ class SADXMissionFlagsPrivate : public ByteFlagsPrivate
 		Q_DISABLE_COPY(SADXMissionFlagsPrivate)
 
 	public:
-		static const int flagCount = 60;
-
 		// Pixmaps.
 		QPixmap pixmaps[6];
 };
 
-// NOTE: NUM_ELEMENTS() includes the NULL-terminator.
 SADXMissionFlagsPrivate::SADXMissionFlagsPrivate()
-	: ByteFlagsPrivate(flagCount, &sadx_mission_flags_desc[0], NUM_ELEMENTS(sadx_mission_flags_desc)-1)
 {
 	// Load the pixmaps. (TODO: Once per class?)
 	for (int i = 0; i < NUM_ELEMENTS(pixmaps); i++) {
@@ -58,8 +54,20 @@ SADXMissionFlagsPrivate::SADXMissionFlagsPrivate()
 /** SADXMissionFlags **/
 
 SADXMissionFlags::SADXMissionFlags(QObject *parent)
-	: ByteFlags(new SADXMissionFlagsPrivate(), parent)
+	: ByteFlags(SADX_MISSION_COUNT,				// Total number of byte flags.
+		"SADXDataMissions",				// Translation context.
+		&sadx_mission_flags_desc[0],			// Bit flags with names.
+		NUM_ELEMENTS(sadx_mission_flags_desc)-1,	// Number of named flags.
+		parent)
+	, d_ptr(new SADXMissionFlagsPrivate())
 { }
+
+SADXMissionFlags::~SADXMissionFlags()
+{
+	// NOTE: SADXMissionFlags has its own d_ptr.
+	// that isn't based on ByteFlagsPrivate.
+	delete d_ptr;
+}
 
 /**
  * Get a description of the type of object that is represented by the class.

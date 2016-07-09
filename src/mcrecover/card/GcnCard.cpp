@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnCard.hpp: GameCube memory card class.                                *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -39,6 +39,8 @@
 #include "Card_p.hpp"
 class GcnCardPrivate : public CardPrivate
 {
+	typedef CardPrivate super;
+
 	public:
 		GcnCardPrivate(GcnCard *q);
 		virtual ~GcnCardPrivate();
@@ -141,7 +143,7 @@ class GcnCardPrivate : public CardPrivate
 };
 
 GcnCardPrivate::GcnCardPrivate(GcnCard *q)
-	: CardPrivate(q,
+	: super(q,
 		8192,	// 8 KB blocks.
 		64,	// Minimum card size, in blocks.
 		2048,	// Maximum card size, in blocks.
@@ -776,7 +778,7 @@ void GcnCardPrivate::loadGcnFileList(void)
 /** GcnCard **/
 
 GcnCard::GcnCard(QObject *parent)
-	: Card(new GcnCardPrivate(this), parent)
+	: super(new GcnCardPrivate(this), parent)
 { }
 
 GcnCard::~GcnCard()
@@ -933,10 +935,10 @@ GcnFile *GcnCard::addLostFile(const card_direntry *dirEntry, const QVector<uint1
 
 /**
  * Add "lost" files.
- * @param filesFoundList List of SearchData.
+ * @param filesFoundList List of GcnSearchData.
  * @return List of GcnFiles added to the GcnCard, or empty list on error.
  */
-QList<GcnFile*> GcnCard::addLostFiles(const QLinkedList<SearchData> &filesFoundList)
+QList<GcnFile*> GcnCard::addLostFiles(const QLinkedList<GcnSearchData> &filesFoundList)
 {
 	QList<GcnFile*> files;
 	if (!isOpen())
@@ -949,13 +951,13 @@ QList<GcnFile*> GcnCard::addLostFiles(const QLinkedList<SearchData> &filesFoundL
 	const int idxLast = idx + filesFoundList.size() - 1;
 	emit filesAboutToBeInserted(idx, idxLast);
 
-	foreach (const SearchData &searchData, filesFoundList) {
+	foreach (const GcnSearchData &searchData, filesFoundList) {
 		GcnFile *file = new GcnFile(this, &searchData.dirEntry, searchData.fatEntries);
 		// NOTE: If file is nullptr, this may screw up the QTreeView
 		// due to filesAboutToBeInserted().
 
 		// TODO: Add ChecksumData parameter to addLostFile.
-		// Alternatively, add SearchData overload?
+		// Alternatively, add GcnSearchData overload?
 		if (file) {
 			files.append(file);
 			d->lstFiles.append(file);

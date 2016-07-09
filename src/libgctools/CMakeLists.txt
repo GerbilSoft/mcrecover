@@ -51,13 +51,19 @@ SET(libgctools_H
 
 # PNG-specific sources.
 IF(HAVE_PNG)
-	SET(libgctools_PNG_SRCS
-		GcImageWriter_PNG.cpp
-		APNG_dlopen.c
-		)
-	SET(libgctools_PNG_H
-		APNG_dlopen.h
-		)
+	SET(libgctools_PNG_SRCS GcImageWriter_PNG.cpp)
+	IF(NOT USE_INTERNAL_PNG)
+		SET(libgctools_PNG_SRCS
+			"${libgctools_PNG_SRCS}"
+			APNG_dlopen.c
+			)
+		SET(libgctools_PNG_H
+			APNG_dlopen.h
+			)
+
+		# libdl is needed for dlopen().
+		SET(gctools_NEEDS_DL 1)
+	ENDIF(NOT USE_INTERNAL_PNG)
 ENDIF(HAVE_PNG)
 
 # GIF-specific sources.
@@ -77,13 +83,11 @@ IF(USE_GIF)
 		# rely on it being available in giflib.
 		# (Unless we're using the internal giflib, that is...)
 		SET(libgctools_GIF_SRCS ${libgctools_GIF_SRCS} quantize.c)
+
+		# libdl is needed for dlopen().
+		SET(gctools_NEEDS_DL 1)
 	ENDIF(NOT USE_INTERNAL_GIF)
 ENDIF(USE_GIF)
-
-# If we're using an external libpng, link in libdl.
-IF(NOT USE_INTERNAL_PNG)
-	SET(gctools_DL_LIBS ${CMAKE_DL_LIBS})
-ENDIF(NOT USE_INTERNAL_PNG)
 
 ######################
 # Build the library. #
@@ -103,3 +107,9 @@ ENDIF(HAVE_PNG)
 IF(USE_GIF AND USE_INTERNAL_GIF)
 	TARGET_LINK_LIBRARIES(gctools ${GIF_LIBRARY})
 ENDIF(USE_GIF AND USE_INTERNAL_GIF)
+
+# Link in libdl if it's required for dlopen()
+# and we have a component that uses it.
+IF(gctools_NEEDS_DL AND CMAKE_DL_LIBS)
+	TARGET_LINK_LIBRARIES(gctools ${CMAKE_DL_LIBS})
+ENDIF(gctools_NEEDS_DL AND CMAKE_DL_LIBS)

@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * SALevelClearCount.hpp: Sonic Adventure - Level Clear Count editor.      *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -22,18 +22,19 @@
 #ifndef __MCRECOVER_EDIT_SONICADVENTURE_SALEVELCLEARCOUNT_HPP__
 #define __MCRECOVER_EDIT_SONICADVENTURE_SALEVELCLEARCOUNT_HPP__
 
-#include <QWidget>
+#include "SAEditWidget.hpp"
 
 struct _sa_save_slot;
 
 class SALevelClearCountPrivate;
-class SALevelClearCount : public QWidget
+class SALevelClearCount : public SAEditWidget
 {
 	Q_OBJECT
+	typedef SAEditWidget super;
 
 	public:
 		SALevelClearCount(QWidget *parent = 0);
-		~SALevelClearCount();
+		virtual ~SALevelClearCount();
 
 	protected:
 		SALevelClearCountPrivate *const d_ptr;
@@ -43,7 +44,13 @@ class SALevelClearCount : public QWidget
 
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
-		void changeEvent(QEvent *event);
+		virtual void changeEvent(QEvent *event) final;
+
+	public:
+		/**
+		 * Clear the loaded data.
+		 */
+		virtual void clear(void) final;
 
 	public:
 		/**
@@ -52,7 +59,7 @@ class SALevelClearCount : public QWidget
 		 * The data must have already been byteswapped to host-endian.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int load(const _sa_save_slot *sa_save);
+		virtual int load(const _sa_save_slot *sa_save) final;
 
 		/**
 		 * Save data to a Sonic Adventure save slot.
@@ -60,12 +67,7 @@ class SALevelClearCount : public QWidget
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int save(_sa_save_slot *sa_save) const;
-
-		/**
-		 * Clear the loaded data.
-		 */
-		void clear(void);
+		virtual int save(_sa_save_slot *sa_save) final;
 
 	protected slots:
 		/**

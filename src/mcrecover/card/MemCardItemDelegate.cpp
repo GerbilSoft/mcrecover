@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * MemCardItemDelegate.cpp: MemCard item delegate for QListView.           *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -179,7 +179,7 @@ bool MemCardItemDelegatePrivate::isVistaTheme(void) const
 /** MemCardItemDelegate **/
 
 MemCardItemDelegate::MemCardItemDelegate(QObject *parent)
-	: QStyledItemDelegate(parent)
+	: super(parent)
 	, d_ptr(new MemCardItemDelegatePrivate(this))
 {
 	// Connect the "themeChanged" signal.
@@ -203,7 +203,7 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	if (!index.isValid()) {
 		// Index is invalid.
 		// Use the default paint().
-		QStyledItemDelegate::paint(painter, option, index);
+		super::paint(painter, option, index);
 		return;
 	}
 
@@ -215,7 +215,7 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	if (split < 0) {
 		// No '\0' is present.
 		// Use the default paint().
-		QStyledItemDelegate::paint(painter, option, index);
+		super::paint(painter, option, index);
 		return;
 	}
 
@@ -354,7 +354,7 @@ QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 	if (!index.isValid()) {
 		// Index is invalid.
 		// Use the default sizeHint().
-		QSize sz = QStyledItemDelegate::sizeHint(option, index);
+		QSize sz = super::sizeHint(option, index);
 
 		// Minimum height.
 		static const int MIN_H = (CARD_ICON_H + 4);
@@ -371,7 +371,7 @@ QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 	if (split < 0) {
 		// No '\0' is present.
 		// TODO: Combine with !index.isValid() case.
-		QSize sz = QStyledItemDelegate::sizeHint(option, index);
+		QSize sz = super::sizeHint(option, index);
 
 		// Minimum height.
 		static const int MIN_H = (CARD_ICON_H + 4);

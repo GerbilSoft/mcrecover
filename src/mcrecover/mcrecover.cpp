@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * mcrecover.cpp: Main program.                                            *
  *                                                                         *
- * Copyright (c) 2011-2013 by David Korth.                                 *
+ * Copyright (c) 2011-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -29,6 +29,7 @@
 
 // Qt includes.
 #include "McRecoverQApplication.hpp"
+#include <QtCore/QDir>
 
 /**
  * Main entry point.
@@ -44,8 +45,10 @@ int mcrecover_main(int argc, char *argv[])
 	McRecoverWindow *mcRecoverWindow = new McRecoverWindow();
 
 	// If a filename was specified, open it.
-	if (argc > 1)
-		mcRecoverWindow->openCard(QString::fromLocal8Bit(argv[1]));
+	QStringList args = mcApp->arguments();
+	if (args.size() >= 2) {
+		mcRecoverWindow->openCard(QDir::fromNativeSeparators(args.at(1)));
+	}
 
 	// Show the window.
 	mcRecoverWindow->show();

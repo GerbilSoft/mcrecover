@@ -152,9 +152,6 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.mcrecover.h.in" "${CMAKE_CURR
 # Sources.
 SET(mcrecover_SRCS
 	mcrecover.cpp
-	GcnMcFileDb.cpp
-	SearchThread.cpp
-	SearchThreadWorker.cpp
 	PcreRegex.cpp
 	GcnDateTime.cpp
 	IconAnimHelper.cpp
@@ -165,6 +162,16 @@ SET(mcrecover_SRCS
 	config/ConfigStore.cpp
 	config/ConfigDefaults.cpp
 	PathFuncs.cpp
+	)
+
+SET(mcrecover_DB_SRCS
+	db/GcnMcFileDb.cpp
+	db/GcnSearchThread.cpp
+	db/GcnSearchWorker.cpp
+	)
+SET(mcrecover_DB_H
+	db/GcnMcFileDef.hpp
+	db/GcnSearchData.hpp
 	)
 
 SET(mcrecover_WINDOW_SRCS
@@ -202,20 +209,20 @@ SET(mcrecover_EDIT_SRCS
 	edit/EditorWindow.cpp
 	edit/EditorWidget.cpp
 	edit/EditorWidgetFactory.cpp
+	edit/models/BitFlags.cpp
+	edit/models/BitFlagsModel.cpp
+	edit/models/ByteFlags.cpp
+	edit/models/ByteFlagsModel.cpp
+	edit/models/PageFilterModel.cpp
+	edit/widgets/BitFlagsView.cpp
+	edit/widgets/ByteFlagsView.cpp
+	edit/widgets/CenteredCheckBoxDelegate.cpp
 	edit/SonicAdventure/SAEditor.cpp
 	edit/SonicAdventure/SALevelStats.cpp
 	edit/SonicAdventure/SALevelClearCount.cpp
 	edit/SonicAdventure/SAEventFlags.cpp
-	edit/SonicAdventure/BitFlagsModel.cpp
-	edit/SonicAdventure/BitFlagsView.cpp
-	edit/SonicAdventure/PageFilterModel.cpp
-	edit/SonicAdventure/BitFlags.cpp
 	edit/SonicAdventure/SANPCFlags.cpp
-	edit/SonicAdventure/ByteFlags.cpp
 	edit/SonicAdventure/SADXMissionFlags.cpp
-	edit/SonicAdventure/ByteFlagsModel.cpp
-	edit/SonicAdventure/ByteFlagsView.cpp
-	edit/SonicAdventure/CenteredCheckBoxDelegate.cpp
 	edit/SonicAdventure/SAGeneral.cpp
 	edit/SonicAdventure/SADataEvents.c
 	edit/SonicAdventure/SADXDataMissions.c
@@ -228,6 +235,7 @@ SET(mcrecover_EDIT_SRCS
 	)
 SET(mcrecover_EDIT_H
 	edit/EditorWidgetFactory.hpp
+	edit/models/bit_flag.h
 	edit/SonicAdventure/SAData.h
 	)
 
@@ -247,12 +255,15 @@ ENDIF(WIN32)
 
 # Headers with Qt4 objects.
 SET(mcrecover_MOC_H
-	GcnMcFileDb.hpp
-	SearchThread.hpp
-	SearchThreadWorker.hpp
 	IconAnimHelper.hpp
 	McRecoverQApplication.hpp
 	config/ConfigStore.hpp
+	)
+
+SET(mcrecover_DB_MOC_H
+	db/GcnMcFileDb.hpp
+	db/GcnSearchThread.hpp
+	db/GcnSearchWorker.hpp
 	)
 
 SET(mcrecover_WINDOW_MOC_H
@@ -289,25 +300,27 @@ SET(mcrecover_CARD_MOC_H
 SET(mcrecover_EDIT_MOC_H
 	edit/EditorWindow.hpp
 	edit/EditorWidget.hpp
+	edit/models/BitFlags.hpp
+	edit/models/BitFlagsModel.hpp
+	edit/models/ByteFlags.hpp
+	edit/models/ByteFlagsModel.hpp
+	edit/models/PageFilterModel.hpp
+	edit/widgets/BitFlagsView.hpp
+	edit/widgets/ByteFlagsView.hpp
+	edit/widgets/CenteredCheckBoxDelegate.hpp
 	edit/SonicAdventure/SAEditor.hpp
 	edit/SonicAdventure/SALevelStats.hpp
 	edit/SonicAdventure/SALevelClearCount.hpp
 	edit/SonicAdventure/SAEventFlags.hpp
-	edit/SonicAdventure/BitFlagsModel.hpp
-	edit/SonicAdventure/BitFlagsView.hpp
-	edit/SonicAdventure/PageFilterModel.hpp
-	edit/SonicAdventure/BitFlags.hpp
 	edit/SonicAdventure/SANPCFlags.hpp
-	edit/SonicAdventure/ByteFlags.hpp
 	edit/SonicAdventure/SADXMissionFlags.hpp
-	edit/SonicAdventure/ByteFlagsModel.hpp
-	edit/SonicAdventure/ByteFlagsView.hpp
-	edit/SonicAdventure/CenteredCheckBoxDelegate.hpp
 	edit/SonicAdventure/SAGeneral.hpp
 	edit/SonicAdventure/SAAdventure.hpp
 	edit/SonicAdventure/SAMiscEmblems.hpp
 	edit/SonicAdventure/TimeCodeEdit.hpp
 	edit/SonicAdventure/SASubGames.hpp
+	edit/SonicAdventure/SAEditWidget.hpp
+	edit/SonicAdventure/SADXEditWidget.hpp
 	)
 
 SET(mcrecover_SEKRIT_MOC_H
@@ -332,11 +345,11 @@ SET(mcrecover_WIDGET_UIS
 # File edtors.
 SET(mcrecover_EDIT_UIS
 	edit/EditorWindow.ui
+	edit/widgets/BitFlagsView.ui
+	edit/widgets/ByteFlagsView.ui
 	edit/SonicAdventure/SAEditor.ui
 	edit/SonicAdventure/SALevelStats.ui
 	edit/SonicAdventure/SALevelClearCount.ui
-	edit/SonicAdventure/BitFlagsView.ui
-	edit/SonicAdventure/ByteFlagsView.ui
 	edit/SonicAdventure/SAGeneral.ui
 	edit/SonicAdventure/SAAdventure.ui
 	edit/SonicAdventure/SAMiscEmblems.ui
@@ -359,6 +372,7 @@ ENDIF()
 # Create MOC source files for classes that need them.
 SET(mcrecover_MOC_H
 	${mcrecover_MOC_H}
+	${mcrecover_DB_MOC_H}
 	${mcrecover_WINDOW_MOC_H}
 	${mcrecover_WIDGET_MOC_H}
 	${mcrecover_CARD_MOC_H}
@@ -479,6 +493,7 @@ SET(mcrecover_RCC_SRCS
 	resources/oxygen/oxygen.qrc
 	resources/flags/flags.qrc
 	resources/sonic/sonic.qrc
+	resources/vmu/vmu.qrc
 	)
 
 IF(USE_QT4)
@@ -501,6 +516,7 @@ ENDIF()
 # to disable the command prompt window.
 ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_SRCS}
+	${mcrecover_DB_SRCS} ${mcrecover_DB_H}
 	${mcrecover_WINDOW_SRCS}
 	${mcrecover_WIDGET_SRCS}
 	${mcrecover_CARD_SRCS}

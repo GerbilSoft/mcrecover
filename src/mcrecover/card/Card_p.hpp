@@ -29,6 +29,7 @@
 #include <QtCore/QFlags>
 #include <QtCore/QString>
 #include <QtCore/QVector>
+#include <QtGui/QPixmap>
 
 class File;
 
@@ -71,6 +72,7 @@ class CardPrivate
 		Card::Encoding encoding;
 		QColor color;
 		GcnDateTime formatTime;
+		QPixmap icon;
 
 		// Card size information.
 		const uint32_t blockSize;	// must be a power of 2

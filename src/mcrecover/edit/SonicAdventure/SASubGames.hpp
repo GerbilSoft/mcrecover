@@ -22,19 +22,20 @@
 #ifndef __MCRECOVER_EDIT_SONICADVENTURE_SASUBGAMES_HPP__
 #define __MCRECOVER_EDIT_SONICADVENTURE_SASUBGAMES_HPP__
 
-#include <QWidget>
+#include "SADXEditWidget.hpp"
 
 struct _sa_save_slot;
 struct _sadx_extra_save_slot;
 
 class SASubGamesPrivate;
-class SASubGames : public QWidget
+class SASubGames : public SADXEditWidget
 {
 	Q_OBJECT
+	typedef SADXEditWidget super;
 
 	public:
 		SASubGames(QWidget *parent = 0);
-		~SASubGames();
+		virtual ~SASubGames();
 
 	protected:
 		SASubGamesPrivate *const d_ptr;
@@ -44,14 +45,13 @@ class SASubGames : public QWidget
 
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
-		void changeEvent(QEvent *event);
+		virtual void changeEvent(QEvent *event) final;
 
-	protected slots:
+	public:
 		/**
-		 * The selected character was changed.
-		 * @param index New character ID.
+		 * Clear the loaded data.
 		 */
-		void on_cboCharacter_currentIndexChanged(int index);
+		virtual void clear(void) final;
 
 	public:
 		/**
@@ -60,7 +60,7 @@ class SASubGames : public QWidget
 		 * The data must have already been byteswapped to host-endian.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int load(const _sa_save_slot *sa_save);
+		virtual int load(const _sa_save_slot *sa_save) final;
 
 		/**
 		 * Save data to a Sonic Adventure save slot.
@@ -68,8 +68,9 @@ class SASubGames : public QWidget
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int save(_sa_save_slot *sa_save);
+		virtual int save(_sa_save_slot *sa_save) final;
 
+	public:
 		/**
 		 * Load data from a Sonic Adventure DX extra save slot.
 		 * @param sadx_extra_save Sonic Adventure DX extra save slot.
@@ -77,7 +78,7 @@ class SASubGames : public QWidget
 		 * If nullptr, SADX editor components will be hidden.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int loadDX(const _sadx_extra_save_slot *sadx_extra_save);
+		virtual int loadDX(const _sadx_extra_save_slot *sadx_extra_save) final;
 
 		/**
 		 * Save data to a Sonic Adventure DX extra save slot.
@@ -85,12 +86,14 @@ class SASubGames : public QWidget
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int saveDX(_sadx_extra_save_slot *sadx_extra_save);
+		virtual int saveDX(_sadx_extra_save_slot *sadx_extra_save) final;
 
+	protected slots:
 		/**
-		 * Clear the loaded data.
+		 * The selected character was changed.
+		 * @param index New character ID.
 		 */
-		void clear(void);
+		void on_cboCharacter_currentIndexChanged(int index);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SASUBGAMES_HPP__ */

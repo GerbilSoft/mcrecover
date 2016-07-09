@@ -29,11 +29,29 @@
 extern "C" {
 #endif
 
+#ifdef USE_INTERNAL_PNG
+/* Internal libpng; we always know if APNG is supported. */
+#ifdef PNG_APNG_SUPPORTED
+#define APNG_is_supported() 1
+#else /* !PNG_APNG_SUPPORTED */
+#define APNG_is_supported() 0
+#endif /* PNG_APNG_SUPPORTED */
+/* Disable DLL import/export when using the internal libpng. */
+#ifdef PNG_IMPEXP
+#undef PNG_IMPEXP
+#define PNG_IMPEXP
+#endif /* PNG_IMPEXP */
+#else /* !USE_INTERNAL_PNG */
 /**
  * Check if APNG is supported.
  * @return Non-zero if supported, 0 if not supported.
  */
 extern int APNG_is_supported(void);
+#endif /* USE_INTERNAL_PNG */
+
+#ifndef USE_INTERNAL_PNG
+/* PNG/APNG macros that might not be present if the system libpng *
+ * is too old, or if it doesn't have support for APNG.            */
 
 /** PNG_CALLBACK was added in libpng-1.5.0beta14. [2010/03/14] **/
 #ifndef PNGCAPI
@@ -48,8 +66,6 @@ extern int APNG_is_supported(void);
 #ifndef PNG_CALLBACK
 #  define PNG_CALLBACK(type, name, args) type (PNGCBAPI name) PNGARG(args)
 #endif
-
-/* APNG constants that might not be present if APNG isn't supported. */
 
 #ifndef PNG_APNG_SUPPORTED
 /* dispose_op flags from inside fcTL */
@@ -71,13 +87,6 @@ typedef PNG_CALLBACK(void, *png_progressive_row_ptr, (png_structp, png_bytep,
     png_uint_32, int));
 #endif /* PNG_APNG_SUPPORTED */
 
-#ifdef USE_INTERNAL_PNG
-#ifdef PNG_IMPEXP
-#undef PNG_IMPEXP
-#define PNG_IMPEXP
-#endif /* PNG_IMPEXP */
-#endif /* USE_INTERNAL_PNG */
-
 #ifndef PNG_APNG_SUPPORTED
 #define PNG_APNG_SUPPORTED
 #endif
@@ -91,7 +100,64 @@ typedef PNG_CALLBACK(void, *png_progressive_row_ptr, (png_structp, png_bytep,
 #ifdef PNG_EXPORT
 #undef PNG_EXPORT
 #endif
+#endif /* USE_INTERNAL_PNG */
 
+#ifdef USE_INTERNAL_PNG
+/* For internal libpng, simply #define the APNG function *
+ * names to map directly to the APNG functions.          */
+#define APNG_png_get_acTL(png_ptr, info_ptr, num_frames, num_plays) \
+	png_get_acTL(png_ptr, info_ptr, num_frames, num_plays)
+#define APNG_png_set_acTL(png_ptr, info_ptr, num_frames, num_plays) \
+	png_set_acTL(png_ptr, info_ptr, num_frames, num_plays)
+#define APNG_png_get_num_frames(png_ptr, info_ptr) \
+	png_get_num_frames(png_ptr, info_ptr)
+#define APNG_png_get_num_plays(png_ptr, info_ptr) \
+	png_get_num_plays(png_ptr, info_ptr)
+#define APNG_png_get_next_frame_fcTL(png_ptr, info_ptr, width, height, x_offset, y_offset, delay_num, delay_den, dispose_op, blend_op) \
+	png_get_next_frame_fcTL(png_ptr, info_ptr, width, height, x_offset, y_offset, delay_num, delay_den, dispose_op, blend_op)
+#define APNG_png_set_next_frame_fcTL(png_ptr, info_ptr, width, height, x_offset, y_offset, delay_num, delay_den, dispose_op, blend_op) \
+	png_set_next_frame_fcTL(png_ptr, info_ptr, width, height, x_offset, y_offset, delay_num, delay_den, dispose_op, blend_op)
+#define APNG_png_get_next_frame_width(png_ptr, info_ptr) \
+	png_get_next_frame_width(png_ptr, info_ptr)
+#define APNG_png_get_next_frame_height(png_ptr, info_ptr) \
+	png_get_next_frame_height(png_ptr, info_ptr)
+#define APNG_png_get_next_frame_x_offset(png_ptr, info_ptr) \
+	png_get_next_frame_x_offset(png_ptr, info_ptr)
+#define APNG_png_get_next_frame_y_offset(png_ptr, info_ptr) \
+	APNG_png_get_next_frame_y_offset(png_ptr, info_ptr)
+#define APNG_png_get_next_frame_delay_num(png_ptr, info_ptr) \
+	png_get_next_frame_delay_num(png_ptr, info_ptr)
+#define APNG_png_get_next_frame_delay_den(png_ptr, info_ptr) \
+	png_get_next_frame_delay_den(png_ptr, info_ptr)
+#define APNG_png_get_next_frame_dispose_op(png_ptr, info_ptr) \
+	png_get_next_frame_dispose_op(png_ptr, info_ptr)
+#define APNG_png_get_next_frame_blend_op(png_ptr, info_ptr) \
+	png_get_next_frame_blend_op(png_ptr, info_ptr)
+#define APNG_png_get_first_frame_is_hidden(png_ptr, info_ptr) \
+	png_get_first_frame_is_hidden(png_ptr, info_ptr)
+#define APNG_png_set_first_frame_is_hidden(png_ptr, info_ptr, is_hidden) \
+	png_set_first_frame_is_hidden(png_ptr, info_ptr, is_hidden)
+
+#ifdef PNG_READ_APNG_SUPPORTED
+#define APNG_png_read_frame_head(png_ptr, info_ptr) \
+	png_read_frame_head(png_ptr, info_ptr)
+#ifdef PNG_PROGRESSIVE_READ_SUPPORTED
+#define APNG_png_set_progressive_frame_fn(png_ptr, frame_info_fn, frame_end_fn) \
+	png_set_progressive_frame_fnpng_ptr, frame_info_fn, frame_end_fn)
+#endif /* PNG_PROGRESSIVE_READ_SUPPORTED */
+#endif /* PNG_READ_APNG_SUPPORTED */
+
+#ifdef PNG_WRITE_APNG_SUPPORTED
+#define APNG_png_write_frame_head(png_ptr, info_ptr, row_pointers, width, height, x_offset, y_offset, delay_num, delay_den, dispose_op, blend_op) \
+	png_write_frame_head(png_ptr, info_ptr, row_pointers, width, height, x_offset, y_offset, delay_num, delay_den, dispose_op, blend_op)
+#define APNG_png_write_frame_tail(png_ptr, info_ptr) \
+	png_write_frame_tail(png_ptr, info_ptr)
+#endif /* PNG_WRITE_APNG_SUPPORTED */
+
+#else /* !USE_INTERNAL_PNG */
+/* For external libpng, the APNG function names will *
+ * actually be function pointers, which get filled   *
+ * in at runtime using dlopen()/dlsym().             */
 #define PNG_EXPORT(ordinal, type, name, args) \
 	typedef type (*APNG_##name## _t) args; \
 	extern APNG_##name##_t APNG_##name;
@@ -165,6 +231,8 @@ PNG_EXPORT(264, void, png_write_frame_tail, (png_structp png_ptr,
    png_infop info_ptr));
 #endif /* PNG_WRITE_APNG_SUPPORTED */
 #endif /* PNG_APNG_SUPPORTED */
+
+#endif /* USE_INTERNAL_PNG */
 
 #ifdef __cplusplus
 }

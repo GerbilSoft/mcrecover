@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * FormatNewMemCardDialog.cpp: Format New Memory Card Image dialog.        *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -28,14 +28,14 @@
 class MemCardFile;
 
 class FormatNewMemCardDialogPrivate;
-
 class FormatNewMemCardDialog : public QDialog
 {
 	Q_OBJECT
+	typedef QDialog super;
 
 	public:
 		FormatNewMemCardDialog(QWidget *parent = nullptr);
-		~FormatNewMemCardDialog();
+		virtual ~FormatNewMemCardDialog();
 	private:
 		void init(void);
 
@@ -47,7 +47,7 @@ class FormatNewMemCardDialog : public QDialog
 
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
-		void changeEvent(QEvent *event);
+		virtual void changeEvent(QEvent *event) final;
 
 	private slots:
 		void on_sldSize_sliderMoved(int value);

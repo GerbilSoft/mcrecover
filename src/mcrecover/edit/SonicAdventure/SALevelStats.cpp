@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * SALevelStats.cpp: Sonic Adventure - Level Stats editor.                 *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -491,7 +491,7 @@ void SALevelStatsPrivate::saveCurrentStats(void)
 /** SALevelStats **/
 
 SALevelStats::SALevelStats(QWidget *parent)
-	: QWidget(parent)
+	: super(parent)
 	, d_ptr(new SALevelStatsPrivate(this))
 {
 	Q_D(SALevelStats);
@@ -528,7 +528,7 @@ void SALevelStats::changeEvent(QEvent *event)
 	}
 
 	// Pass the event to the base class.
-	this->QWidget::changeEvent(event);
+	super::changeEvent(event);
 }
 
 /** UI widget slots. **/
@@ -574,6 +574,7 @@ int SALevelStats::load(const sa_save_slot *sa_save)
 
 	// Update the display.
 	d->updateDisplay();
+	setModified(false);
 	return 0;
 }
 
@@ -585,11 +586,11 @@ int SALevelStats::load(const sa_save_slot *sa_save)
  */
 int SALevelStats::save(sa_save_slot *sa_save)
 {
-	Q_D(SALevelStats);
+	Q_D(const SALevelStats);
+
 	// Save the current character's stats.
-	// TODO: Use modification signals to make this unnecessary,
-	// and mark this function as const?
-	d->saveCurrentStats();
+	// TODO: Use modification signals to make this unnecessary.
+	const_cast<SALevelStatsPrivate*>(d)->saveCurrentStats();
 
 	memcpy(&sa_save->scores,  &d->scores,  sizeof(sa_save->scores));
 	memcpy(&sa_save->times,   &d->times,   sizeof(sa_save->times));
@@ -608,6 +609,7 @@ int SALevelStats::save(sa_save_slot *sa_save)
 		sa_save->emblems[i] = bits;
 	}
 
+	setModified(false);
 	return 0;
 }
 
@@ -652,6 +654,7 @@ int SALevelStats::loadDX(const sadx_extra_save_slot *sadx_extra_save)
 		}
 	}
 
+	setModified(false);
 	return 0;
 }
 
@@ -664,11 +667,11 @@ int SALevelStats::loadDX(const sadx_extra_save_slot *sadx_extra_save)
 int SALevelStats::saveDX(sadx_extra_save_slot *sadx_extra_save)
 {
 	Q_D(SALevelStats);
+
 	// Save the current character's stats.
-	// TODO: Use modification signals to make this unnecessary,
-	// and mark this function as const?
+	// TODO: Use modification signals to make this unnecessary.
 	// TODO: Only do this if the current character is Metal Sonic.
-	d->saveCurrentStats();
+	const_cast<SALevelStatsPrivate*>(d)->saveCurrentStats();
 
 	memcpy(&sadx_extra_save->scores_metal, &d->metal_sonic.scores, sizeof(sadx_extra_save->scores_metal));
 	memcpy(&sadx_extra_save->times_metal,  &d->metal_sonic.times,  sizeof(sadx_extra_save->times_metal));
@@ -686,6 +689,7 @@ int SALevelStats::saveDX(sadx_extra_save_slot *sadx_extra_save)
 	}
 	sadx_extra_save->emblems_metal = metal_emblems;
 
+	setModified(false);
 	return 0;
 }
 
@@ -697,4 +701,5 @@ void SALevelStats::clear(void)
 	Q_D(SALevelStats);
 	d->clear();
 	d->updateDisplay();
+	setModified(false);
 }

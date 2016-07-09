@@ -29,22 +29,22 @@ class QStatusBar;
 // Card definitions.
 #include "card.h"
 
-class SearchThread;
+class GcnSearchThread;
 class TaskbarButtonManager;
 
 class StatusBarManagerPrivate;
 class StatusBarManager : public QObject
 {
 	Q_OBJECT
+	typedef QObject super;
 
 	Q_PROPERTY(QStatusBar* statusBar READ statusBar WRITE setStatusBar)
-	Q_PROPERTY(SearchThread* searchThread READ searchThread WRITE setSearchThread)
-	Q_PROPERTY(TaskbarButtonManager* taskbarButtonManager READ taskbarButtonManager WRITE setTaskbarButtonManager)
+	Q_PROPERTY(GcnSearchThread* searchThread READ searchThread WRITE setSearchThread)
 
 	public:
 		StatusBarManager(QObject *parent = 0);
 		explicit StatusBarManager(QStatusBar *statusBar, QObject *parent = 0);
-		~StatusBarManager();
+		virtual ~StatusBarManager();
 
 	protected:
 		StatusBarManagerPrivate *const d_ptr;
@@ -66,16 +66,16 @@ class StatusBarManager : public QObject
 		void setStatusBar(QStatusBar *statusBar);
 
 		/**
-		 * Get the SearchThread.
-		 * @return SearchThread.
+		 * Get the GcnSearchThread.
+		 * @return GcnSearchThread.
 		 */
-		SearchThread *searchThread(void) const;
+		GcnSearchThread *searchThread(void) const;
 
 		/**
-		 * Set the SearchThread.
-		 * @param searchThread SearchThread.
+		 * Set the GcnSearchThread.
+		 * @param searchThread GcnSearchThread.
 		 */
-		void setSearchThread(SearchThread *searchThread);
+		void setSearchThread(GcnSearchThread *searchThread);
 
 		/**
 		 * Get the TaskbarButtonManager.

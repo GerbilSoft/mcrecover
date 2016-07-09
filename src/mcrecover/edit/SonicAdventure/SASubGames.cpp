@@ -445,7 +445,7 @@ void SASubGamesPrivate::saveCurrentStats(void)
 /** SASubGames **/
 
 SASubGames::SASubGames(QWidget *parent)
-	: QWidget(parent)
+	: super(parent)
 	, d_ptr(new SASubGamesPrivate(this))
 {
 	Q_D(SASubGames);
@@ -508,7 +508,7 @@ void SASubGames::changeEvent(QEvent *event)
 	}
 
 	// Pass the event to the base class.
-	this->QWidget::changeEvent(event);
+	super::changeEvent(event);
 }
 
 /** UI widget slots. **/
@@ -566,11 +566,11 @@ int SASubGames::load(const sa_save_slot *sa_save)
  */
 int SASubGames::save(sa_save_slot *sa_save)
 {
-	Q_D(SASubGames);
+	Q_D(const SASubGames);
+
 	// Save the current character's stats.
-	// TODO: Use modification signals to make this unnecessary,
-	// and mark this function as const?
-	d->saveCurrentStats();
+	// TODO: Use modification signals to make this unnecessary.
+	const_cast<SASubGamesPrivate*>(d)->saveCurrentStats();
 
 	memcpy(&sa_save->mini_game_scores, &d->mini_game_scores, sizeof(sa_save->mini_game_scores));
 	memcpy(&sa_save->twinkle_circuit,  &d->twinkle_circuit,  sizeof(sa_save->twinkle_circuit));
@@ -592,6 +592,7 @@ int SASubGames::save(sa_save_slot *sa_save)
 	sa_save->emblems[13] |= (d->ui.chkSandHill_1->isChecked() ? 0x01 : 0x00);
 	sa_save->emblems[13] |= (d->ui.chkHedgehogHammer_1->isChecked() ? 0x02 : 0x00);
 
+	setModified(false);
 	return 0;
 }
 
@@ -631,6 +632,7 @@ int SASubGames::loadDX(const sadx_extra_save_slot *sadx_extra_save)
 	// isn't changed after it's loaded, and all slots either
 	// have SADX extras or don't have SADX extras.
 	d->updateDisplay();
+	setModified(false);
 	return 0;
 }
 
@@ -642,17 +644,18 @@ int SASubGames::loadDX(const sadx_extra_save_slot *sadx_extra_save)
  */
 int SASubGames::saveDX(sadx_extra_save_slot *sadx_extra_save)
 {
-	Q_D(SASubGames);
+	Q_D(const SASubGames);
+
 	// Save the current character's stats.
-	// TODO: Use modification signals to make this unnecessary,
-	// and mark this function as const?
+	// TODO: Use modification signals to make this unnecessary.
 	// TODO: Only do this if the current character is Metal Sonic.
-	d->saveCurrentStats();
+	const_cast<SASubGamesPrivate*>(d)->saveCurrentStats();
 
 	memcpy(&sadx_extra_save->mini_game_scores_metal, &d->metal_sonic.mini_game_scores, sizeof(sadx_extra_save->mini_game_scores_metal));
 	memcpy(&sadx_extra_save->twinkle_circuit_metal,  &d->metal_sonic.twinkle_circuit,  sizeof(sadx_extra_save->twinkle_circuit_metal));
 	memcpy(&sadx_extra_save->boss_attack_metal,      &d->metal_sonic.boss_attack,      sizeof(sadx_extra_save->boss_attack_metal));
 
+	setModified(false);
 	return 0;
 }
 
@@ -664,4 +667,5 @@ void SASubGames::clear(void)
 	Q_D(SASubGames);
 	d->clear();
 	d->updateDisplay();
+	setModified(false);
 }

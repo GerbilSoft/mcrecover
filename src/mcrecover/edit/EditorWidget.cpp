@@ -88,7 +88,7 @@ void EditorWidgetPrivate::setGeneralSettings(bool generalSettings)
  * @param parent Parent widget.
  */
 EditorWidget::EditorWidget(EditorWidgetPrivate *d, QWidget *parent)
-	: QWidget(parent)
+	: super(parent)
 	, d_ptr(d)
 {
 	// No extra initialization required here...

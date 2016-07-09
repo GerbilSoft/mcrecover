@@ -3,7 +3,7 @@
  * QTreeViewOpt.cpp: QTreeView with drawing optimizations.                 *
  * Specifically, don't update rows that are offscreen.			   *
  *                                                                         *
- * Copyright (c) 2013-2014 by David Korth.                                 *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -28,7 +28,7 @@
 #include <QAction>
 
 QTreeViewOpt::QTreeViewOpt(QWidget *parent)
-	: QTreeView(parent)
+	: super(parent)
 {
 	// Connect the signal for hiding/showing columns.
 	this->header()->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -61,7 +61,7 @@ void QTreeViewOpt::dataChanged(const QModelIndex &topLeft, const QModelIndex &bo
 
 	if (propagateEvent) {
 		// Propagate the dataChanged() event.
-		QTreeView::dataChanged(topLeft, bottomRight);
+		super::dataChanged(topLeft, bottomRight);
 	}
 }
 
@@ -132,12 +132,12 @@ void QTreeViewOpt::showColumnContextMenu(const QPoint &point)
 
 void QTreeViewOpt::keyPressEvent(QKeyEvent *event)
 {
-	QTreeView::keyPressEvent(event);
+	super::keyPressEvent(event);
 	emit keyPress(event);
 }
 
 void QTreeViewOpt::focusOutEvent(QFocusEvent *event)
 {
-	QTreeView::focusOutEvent(event);
+	super::focusOutEvent(event);
 	emit focusOut(event);
 }

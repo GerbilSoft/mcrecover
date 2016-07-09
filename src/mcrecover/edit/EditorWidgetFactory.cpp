@@ -53,3 +53,22 @@ EditorWidget *EditorWidgetFactory::createWidget(File *file)
 
 	return widget;
 }
+
+/**
+ * Is an editor available for the specified file?
+ * @param file File to edit.
+ * @return True if an editor is available; false if not.
+ */
+bool EditorWidgetFactory::isEditorAvailable(const File *file)
+{
+	// TODO: Register all editor widgets somewhere?
+
+	// Check if the file is supported by the various editors.
+	EditorWidget *widget = nullptr;
+	if (SAEditor::isFileSupported(file)) {
+		return true;
+	}
+
+	// No editors are available for this file.
+	return false;
+}

@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * SAEventFlags.hpp: Sonic Adventure - Event flags.                        *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -22,9 +22,8 @@
 #ifndef __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGS_HPP__
 #define __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGS_HPP__
 
-#include "BitFlags.hpp"
+#include "../models/BitFlags.hpp"
 
-class SAEventFlagsPrivate;
 class SAEventFlags : public BitFlags
 {
 	// TODO: Should this actually inherit from QObject?
@@ -33,8 +32,6 @@ class SAEventFlags : public BitFlags
 	public:
 		SAEventFlags(QObject *parent = 0);
 
-	protected:
-		Q_DECLARE_PRIVATE(SAEventFlags)
 	private:
 		Q_DISABLE_COPY(SAEventFlags)
 
@@ -44,6 +41,23 @@ class SAEventFlags : public BitFlags
 		 * @return Flag type, e.g. "Event".
 		 */
 		virtual QString flagType(void) const override;
+
+		/**
+		 * Get the desired page size for the BitFlagsModel.
+		 * @return Page size.
+		 */
+		virtual int pageSize(void) const override;
+
+		/**
+		 * Get the name for a given page of data.
+		 *
+		 * If pagination is enabled (pageSize > 0), this function is
+		 * used to determine the text for the corresponding tab.
+		 *
+		 * @param page Page number.
+		 * @return Page name.
+		 */
+		virtual QString pageName(int page) const override;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGS_HPP__ */

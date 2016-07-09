@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * MemCardModel.hpp: QAbstractListModel for Card.                          *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -32,10 +32,11 @@ class MemCardModelPrivate;
 class MemCardModel : public QAbstractListModel
 {
 	Q_OBJECT
+	typedef QAbstractListModel super;
 	
 	public:
 		MemCardModel(QObject *parent = 0);
-		~MemCardModel();
+		virtual ~MemCardModel();
 
 	protected:
 		MemCardModelPrivate *const d_ptr;
@@ -59,11 +60,11 @@ class MemCardModel : public QAbstractListModel
 		};
 
 		// Qt Model/View interface.
-		int rowCount(const QModelIndex& parent = QModelIndex()) const;
-		int columnCount(const QModelIndex& parent = QModelIndex()) const;
+		virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+		virtual int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
-		QVariant data(const QModelIndex& index, int role) const;
-		QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+		virtual QVariant data(const QModelIndex& index, int role) const override;
+		virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
 		/**
 		 * Set the memory card to use in this model.

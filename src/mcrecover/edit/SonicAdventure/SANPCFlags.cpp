@@ -20,33 +20,20 @@
  ***************************************************************************/
 
 #include "SANPCFlags.hpp"
+#include "SAData.h"
 
-// TODO: Put this in a common header file somewhere.
-#define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
-
-/** SANPCFlagsPrivate **/
-#include "BitFlags_p.hpp"
-class SANPCFlagsPrivate : public BitFlagsPrivate
-{
-	public:
-		SANPCFlagsPrivate();
-
-	private:
-		Q_DISABLE_COPY(SANPCFlagsPrivate)
-
-	public:
-		static const int flagCount = 512;
-};
-
-// NOTE: NUM_ELEMENTS() includes the NULL-terminator.
-SANPCFlagsPrivate::SANPCFlagsPrivate()
-	: BitFlagsPrivate(512, nullptr, 0)
-{ }
+// Total number of NPC Flags.
+#define SA_NPC_FLAG_COUNT 512
 
 /** SANPCFlags **/
 
+// TODO: NPC flag descriptions.
 SANPCFlags::SANPCFlags(QObject *parent)
-	: BitFlags(new SANPCFlagsPrivate(), parent)
+	: BitFlags(512,		// Total number of bit flags.
+		nullptr,	// Translation context.
+		nullptr,	// Bit flags with names.
+		0,		// Number of named flags.
+		parent)
 { }
 
 /**

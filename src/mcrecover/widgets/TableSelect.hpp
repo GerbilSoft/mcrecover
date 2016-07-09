@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * TableSelect.hpp: Directory/Block Table select widget.                   *
  *                                                                         *
- * Copyright (c) 2014-2015 by David Korth.                                 *
+ * Copyright (c) 2014-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -31,12 +31,13 @@ class TableSelectPrivate;
 class TableSelect : public QWidget
 {
 	Q_OBJECT
+	typedef QWidget super;
 
 	Q_PROPERTY(GcnCard* card READ card WRITE setCard)
 
 	public:
 		TableSelect(QWidget *parent = 0);
-		~TableSelect();
+		virtual ~TableSelect();
 
 	protected:
 		TableSelectPrivate *const d_ptr;

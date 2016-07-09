@@ -120,7 +120,7 @@ void SAMiscEmblemsPrivate::initWidgets(void)
 /** SAMiscEmblems **/
 
 SAMiscEmblems::SAMiscEmblems(QWidget *parent)
-	: QWidget(parent)
+	: super(parent)
 	, d_ptr(new SAMiscEmblemsPrivate(this))
 {
 	Q_D(SAMiscEmblems);
@@ -151,7 +151,7 @@ void SAMiscEmblems::changeEvent(QEvent *event)
 	}
 
 	// Pass the event to the base class.
-	this->QWidget::changeEvent(event);
+	super::changeEvent(event);
 }
 
 /** Public functions. **/
@@ -187,6 +187,7 @@ int SAMiscEmblems::load(const sa_save_slot *sa_save)
 	d->chkAdvField[10]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 128));
 	d->chkAdvField[11]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 129));
 
+	setModified(false);
 	return 0;
 }
 
@@ -196,7 +197,7 @@ int SAMiscEmblems::load(const sa_save_slot *sa_save)
  * The data will be in host-endian format.
  * @return 0 on success; non-zero on error.
  */
-int SAMiscEmblems::save(sa_save_slot *sa_save) const
+int SAMiscEmblems::save(sa_save_slot *sa_save)
 {
 	Q_D(const SAMiscEmblems);
 
@@ -227,5 +228,6 @@ int SAMiscEmblems::save(sa_save_slot *sa_save) const
 	sa_save->emblems[16] |= (d->chkAdvField[10]->isChecked() ? 0x01 : 0x00);
 	sa_save->emblems[16] |= (d->chkAdvField[11]->isChecked() ? 0x02 : 0x00);
 
+	setModified(false);
 	return 0;
 }

@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * Card.hpp: Memory Card physical layer. [base class]                      *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -39,6 +39,7 @@ class CardPrivate;
 class Card : public QObject
 {
 	Q_OBJECT
+	typedef QObject super;
 
 	Q_ENUMS(Encoding)
 	Q_FLAGS(Error Errors)
@@ -210,6 +211,12 @@ class Card : public QObject
 		 * @return Format time. (If not available, will return Unix epoch.)
 		 */
 		GcnDateTime formatTime(void) const;
+
+		/**
+		 * Get the card's icon.
+		 * @return Icon, or default system icon or null QPixmap if unavailable.
+		 */
+		QPixmap icon(void) const;
 
 	public:
 		/** File system **/

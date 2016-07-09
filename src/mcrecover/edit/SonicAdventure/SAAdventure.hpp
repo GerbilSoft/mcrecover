@@ -22,18 +22,19 @@
 #ifndef __MCRECOVER_EDIT_SONICADVENTURE_SAADVENTURE_HPP__
 #define __MCRECOVER_EDIT_SONICADVENTURE_SAADVENTURE_HPP__
 
-#include <QWidget>
+#include "SAEditWidget.hpp"
 
 struct _sa_save_slot;
 
 class SAAdventurePrivate;
-class SAAdventure : public QWidget
+class SAAdventure : public SAEditWidget
 {
 	Q_OBJECT
+	typedef SAEditWidget super;
 
 	public:
 		SAAdventure(QWidget *parent = 0);
-		~SAAdventure();
+		virtual ~SAAdventure();
 
 	protected:
 		SAAdventurePrivate *const d_ptr;
@@ -43,7 +44,7 @@ class SAAdventure : public QWidget
 
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
-		void changeEvent(QEvent *event);
+		virtual void changeEvent(QEvent *event) final;
 
 	public:
 		/**
@@ -52,7 +53,7 @@ class SAAdventure : public QWidget
 		 * The data must have already been byteswapped to host-endian.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int load(const _sa_save_slot *sa_save);
+		virtual int load(const _sa_save_slot *sa_save) final;
 
 		/**
 		 * Save data to a Sonic Adventure save slot.
@@ -60,7 +61,7 @@ class SAAdventure : public QWidget
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		int save(_sa_save_slot *sa_save) const;
+		virtual int save(_sa_save_slot *sa_save) final;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAADVENTURE_HPP__ */

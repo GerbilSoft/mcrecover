@@ -29,140 +29,193 @@
         <translation>&amp;5upp0r7</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="116"/>
+        <location filename="../windows/AboutDialog.cpp" line="123"/>
         <source>Version %1</source>
         <translation>v3r510n %1</translation>
     </message>
     <message utf8="true">
-        <location filename="../windows/AboutDialog.cpp" line="128"/>
+        <location filename="../windows/AboutDialog.cpp" line="135"/>
         <source>Powered by the&lt;br/&gt;
 &lt;b&gt;MegaCard Engine&lt;/b&gt;™</source>
         <translation>p0w3r3d by 7h3&lt;br/&gt;
 &lt;b&gt;m364c4rd 3n61n3&lt;/b&gt;™</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="274"/>
+        <location filename="../windows/AboutDialog.cpp" line="281"/>
         <source>Memory Card File Contributors:</source>
         <translation>m3m0ry c4rd f1l3 c0n7r1bu70r5:</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="277"/>
+        <location filename="../windows/AboutDialog.cpp" line="284"/>
         <source>UI Translators:</source>
         <translation>u1 7r4n5l470r5:</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="321"/>
+        <location filename="../windows/AboutDialog.cpp" line="328"/>
         <source>Internal copy of %1.</source>
         <extracomment>Using an internal copy of a library.</extracomment>
         <translation>1n73rn4l c0py 0f %1.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="323"/>
+        <location filename="../windows/AboutDialog.cpp" line="330"/>
         <source>Compiled with %1.</source>
         <extracomment>Compiled with a specific version of an external library.</extracomment>
         <translation>c0mp1l3d w17h %1.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="325"/>
+        <location filename="../windows/AboutDialog.cpp" line="332"/>
         <source>Using %1.</source>
         <extracomment>Using an external library, e.g. libpcre.so</extracomment>
         <translation>u51n6 %1.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="327"/>
+        <location filename="../windows/AboutDialog.cpp" line="334"/>
         <source>License: %1</source>
         <extracomment>License: (libraries with only a single license)</extracomment>
         <translation>l1c3n53: %1</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="329"/>
+        <location filename="../windows/AboutDialog.cpp" line="336"/>
         <source>Licenses: %1</source>
         <extracomment>Licenses: (libraries with multiple licenses)</extracomment>
         <translation>l1c3n535: %1</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="391"/>
-        <source>WARNING: PCRE does not have UTF-8 support.</source>
-        <translation>w4rn1n6: pcr3 d035 n07 h4v3 u7f-8 5upp0r7.</translation>
+        <location filename="../windows/AboutDialog.cpp" line="404"/>
+        <source>WARNING: PCRE does not have Unicode support.</source>
+        <translation>w4rn1n6: pcr3 d035 n07 h4v3 un1c0d3 5upp0r7.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="393"/>
+        <location filename="../windows/AboutDialog.cpp" line="407"/>
         <source>WARNING: PCRE does not have Unicode character properties support.</source>
         <translation>w4rn1n6: pcr3 d035 n07 h4v3 un1c0d3 ch4r4c73r pr0p3r7135 5upp0r7.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="423"/>
+        <location filename="../windows/AboutDialog.cpp" line="437"/>
         <source> (No APNG support)</source>
         <translation>(n0 4pn6 5upp0r7)</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="485"/>
+        <location filename="../windows/AboutDialog.cpp" line="525"/>
         <source>Available databases:</source>
         <translation>4v41l4bl3 d474b4535:</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="487"/>
+        <location filename="../windows/AboutDialog.cpp" line="527"/>
         <source>(none found)</source>
         <translation>(n0n3 f0und)</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="546"/>
+        <location filename="../windows/AboutDialog.cpp" line="586"/>
         <source>Unknown [GetCPInfoExA() failed]</source>
         <extracomment>GetCPInfoExA() call failed.</extracomment>
         <translation>unkn0wn [637cp1nf03x4() f41l3d]</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="584"/>
+        <location filename="../windows/AboutDialog.cpp" line="624"/>
         <source>Using Unicode strings for Win32 API.</source>
         <extracomment>Win32: Unicode strings are being used. (WinNT)</extracomment>
         <translation>u51n6 un1c0d3 57r1n65 f0r w1n32 4p1.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="587"/>
+        <location filename="../windows/AboutDialog.cpp" line="627"/>
         <source>Using ANSI strings for Win32 API.</source>
         <extracomment>Win32: ANSI strings are being used. (Win9x)</extracomment>
         <translation>u51n6 4n51 57r1n65 f0r w1n32 4p1.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="604"/>
+        <location filename="../windows/AboutDialog.cpp" line="644"/>
         <source>For technical support, you can visit the following websites:</source>
         <translation>f0r 73chn1c4l 5upp0r7, y0u c4n v1517 7h3 f0ll0w1n6 w3b51735:</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="636"/>
+        <location filename="../windows/AboutDialog.cpp" line="676"/>
         <source>You can also email the developer directly:</source>
         <translation>y0u c4n 4l50 3m41l 7h3 d3v3l0p3r d1r3c7ly:</translation>
     </message>
 </context>
 <context>
+    <name>BitFlags</name>
+    <message>
+        <location filename="../edit/models/BitFlags.cpp" line="167"/>
+        <source>Invalid flag ID</source>
+        <translation>1nv4l1d fl46 1d</translation>
+    </message>
+    <message>
+        <location filename="../edit/models/BitFlags.cpp" line="173"/>
+        <source>Unknown</source>
+        <translation>unkn0wn</translation>
+    </message>
+</context>
+<context>
+    <name>BitFlagsModel</name>
+    <message>
+        <location filename="../edit/models/BitFlagsModel.cpp" line="150"/>
+        <source>ID</source>
+        <translation>1d</translation>
+    </message>
+</context>
+<context>
+    <name>ByteFlags</name>
+    <message>
+        <location filename="../edit/models/ByteFlags.cpp" line="168"/>
+        <source>Invalid object ID</source>
+        <translation>1nv4l1d 0bj3c7 1d</translation>
+    </message>
+    <message>
+        <location filename="../edit/models/ByteFlags.cpp" line="174"/>
+        <source>Unknown</source>
+        <translation>unkn0wn</translation>
+    </message>
+</context>
+<context>
+    <name>ByteFlagsModel</name>
+    <message>
+        <location filename="../edit/models/ByteFlagsModel.cpp" line="186"/>
+        <source>ID</source>
+        <translation>1d</translation>
+    </message>
+    <message>
+        <location filename="../edit/models/ByteFlagsModel.cpp" line="191"/>
+        <source>Char</source>
+        <extracomment>Abbreviation of &quot;character&quot;.</extracomment>
+        <translation>ch4r</translation>
+    </message>
+</context>
+<context>
     <name>CardView</name>
     <message>
-        <location filename="../widgets/CardView.ui" line="88"/>
+        <location filename="../widgets/CardView.ui" line="82"/>
+        <source>Timestamp:</source>
+        <translation>71m3574mp:</translation>
+    </message>
+    <message>
+        <location filename="../widgets/CardView.ui" line="102"/>
         <source>&amp;Encoding:</source>
         <translation>&amp;3nc0d1n6:</translation>
     </message>
     <message>
-        <location filename="../widgets/CardView.ui" line="120"/>
+        <location filename="../widgets/CardView.ui" line="134"/>
         <source>&amp;Calculated
 Checksum:</source>
         <translation>&amp;c4lcul473d
 ch3ck5um:</translation>
     </message>
     <message>
-        <location filename="../widgets/CardView.ui" line="166"/>
+        <location filename="../widgets/CardView.ui" line="183"/>
         <source>E&amp;xpected
 Checksum:</source>
         <translation>3&amp;xp3c73d
 ch3ck5um:</translation>
     </message>
     <message>
-        <location filename="../widgets/CardView.cpp" line="171"/>
+        <location filename="../widgets/CardView.cpp" line="209"/>
         <source>Unknown</source>
         <comment>checksum</comment>
         <translation>unkn0wn</translation>
     </message>
     <message numerus="yes">
-        <location filename="../widgets/CardView.cpp" line="93"/>
+        <location filename="../widgets/CardView.cpp" line="96"/>
         <source>%L1 block(s) (%L2 free)</source>
         <translation>
             <numerusform>%L1 bl0ck (%L2 fr33)</numerusform>
@@ -170,43 +223,89 @@ ch3ck5um:</translation>
         </translation>
     </message>
     <message>
-        <location filename="../widgets/CardView.cpp" line="224"/>
+        <location filename="../widgets/CardView.cpp" line="262"/>
         <source>Memory card header is corrupted.</source>
         <translation>m3m0ry c4rd h34d3r 15 c0rrup73d.</translation>
     </message>
 </context>
 <context>
+    <name>EditorWidget</name>
+    <message>
+        <location filename="../edit/EditorWindow.cpp" line="206"/>
+        <source>Save Slot %1</source>
+        <translation>54v3 5l07 %1</translation>
+    </message>
+</context>
+<context>
+    <name>EditorWindow</name>
+    <message>
+        <location filename="../edit/EditorWindow.ui" line="14"/>
+        <source>Save File Editor</source>
+        <translation>54v3 f1l3 3d170r</translation>
+    </message>
+    <message>
+        <location filename="../edit/EditorWindow.ui" line="44"/>
+        <source>&amp;Save</source>
+        <translation>&amp;54v3</translation>
+    </message>
+    <message>
+        <location filename="../edit/EditorWindow.ui" line="47"/>
+        <source>Save</source>
+        <translation>54v3</translation>
+    </message>
+    <message>
+        <location filename="../edit/EditorWindow.ui" line="56"/>
+        <source>&amp;Reload</source>
+        <translation>&amp;r3l04d</translation>
+    </message>
+    <message>
+        <location filename="../edit/EditorWindow.ui" line="59"/>
+        <source>Reload (discards changes)</source>
+        <translation>r3l04d (d15c4rd5 ch4n635)</translation>
+    </message>
+    <message>
+        <location filename="../edit/EditorWindow.ui" line="67"/>
+        <source>&amp;General</source>
+        <translation>&amp;63n3r4l</translation>
+    </message>
+    <message>
+        <location filename="../edit/EditorWindow.ui" line="70"/>
+        <source>General Settings</source>
+        <translation>63n3r4l 53771n65</translation>
+    </message>
+</context>
+<context>
     <name>FileView</name>
     <message>
-        <location filename="../widgets/FileView.ui" line="137"/>
+        <location filename="../widgets/FileView.ui" line="103"/>
         <source>&amp;Mode:</source>
         <extracomment>File permissions. (Known as &quot;mode&quot; on Unix systems.)</extracomment>
         <translation>&amp;m0d3:</translation>
     </message>
     <message>
-        <location filename="../widgets/FileView.ui" line="168"/>
+        <location filename="../widgets/FileView.ui" line="134"/>
         <source>Checksum
 &amp;Algorithm:</source>
         <translation>ch3ck5um
 &amp;4l60r17hm:</translation>
     </message>
     <message>
-        <location filename="../widgets/FileView.ui" line="207"/>
+        <location filename="../widgets/FileView.ui" line="173"/>
         <source>&amp;Calculated
 Checksum:</source>
         <translation>&amp;c4lcul473d
 ch3ck5um:</translation>
     </message>
     <message>
-        <location filename="../widgets/FileView.ui" line="253"/>
+        <location filename="../widgets/FileView.ui" line="219"/>
         <source>E&amp;xpected
 Checksum:</source>
         <translation>3&amp;xp3c73d
 ch3ck5um:</translation>
     </message>
     <message>
-        <location filename="../widgets/FileView.cpp" line="151"/>
-        <location filename="../widgets/FileView.cpp" line="175"/>
+        <location filename="../widgets/FileView.cpp" line="170"/>
+        <location filename="../widgets/FileView.cpp" line="194"/>
         <source>Unknown</source>
         <comment>checksum</comment>
         <translation>unkn0wn</translation>
@@ -217,12 +316,12 @@ ch3ck5um:</translation>
     <message>
         <location filename="../windows/FormatNewMemCardDialog.ui" line="14"/>
         <source>Format New Memory Card Image</source>
-        <translation type="unfinished"></translation>
+        <translation>f0rm47 n3w m3m0ry c4rd 1m463</translation>
     </message>
     <message>
         <location filename="../windows/FormatNewMemCardDialog.ui" line="23"/>
         <source>&amp;Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;51z3:</translation>
     </message>
     <message>
         <location filename="../windows/FormatNewMemCardDialog.ui" line="70"/>
@@ -234,9 +333,32 @@ ch3ck5um:</translation>
 <context>
     <name>GcnCard</name>
     <message>
-        <location filename="../card/GcnCard.cpp" line="786"/>
+        <location filename="../card/GcnCard.cpp" line="863"/>
         <source>GameCube memory card</source>
         <translation>64m3cub3 m3m0ry c4rd</translation>
+    </message>
+</context>
+<context>
+    <name>GcnSearchWorker</name>
+    <message>
+        <location filename="../db/GcnSearchWorker.cpp" line="260"/>
+        <source>searchMemCard(): A card was not set.</source>
+        <translation>534rchm3mc4rd(): 4 c4rd w45 n07 537.</translation>
+    </message>
+    <message>
+        <location filename="../db/GcnSearchWorker.cpp" line="268"/>
+        <source>searchMemCard(): No databases were loaded.</source>
+        <translation>534rchm3mc4rd(): n0 d474b4535 w3r3 l04d3d.</translation>
+    </message>
+    <message>
+        <location filename="../db/GcnSearchWorker.cpp" line="309"/>
+        <source>searchMemCard(): No blocks to search.</source>
+        <translation>534rchm3mc4rd(): n0 bl0ck5 70 534rch.</translation>
+    </message>
+    <message>
+        <location filename="../db/GcnSearchWorker.cpp" line="492"/>
+        <source>GcnSearchWorker: Thread information was not set.</source>
+        <translation>6cn534rchw0rk3r: 7hr34d 1nf0rm4710n w45 n07 537.</translation>
     </message>
 </context>
 <context>
@@ -340,286 +462,279 @@ r3c1p3 4641n, 70 c0n71nu3 70 347 7h3 5n4ck.</translation>
 <context>
     <name>McRecoverWindow</name>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="78"/>
+        <location filename="../windows/McRecoverWindow.ui" line="73"/>
         <source>Memory Card Details</source>
         <translation>m3m0ry c4rd d3741l5</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="128"/>
+        <location filename="../windows/McRecoverWindow.ui" line="121"/>
         <source>File Information</source>
         <translation>f1l3 1nf0rm4710n</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="192"/>
+        <location filename="../windows/McRecoverWindow.ui" line="185"/>
         <source>&amp;File</source>
         <translation>&amp;f1l3</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="205"/>
+        <location filename="../windows/McRecoverWindow.ui" line="198"/>
         <source>&amp;Help</source>
         <translation>&amp;h3lp</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="211"/>
+        <location filename="../windows/McRecoverWindow.ui" line="204"/>
         <source>&amp;Options</source>
         <translation>&amp;0p710n5</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="215"/>
+        <location filename="../windows/McRecoverWindow.ui" line="208"/>
         <source>Animated Icon Format</source>
         <translation>4n1m473d 1c0n f0rm47</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="237"/>
+        <location filename="../windows/McRecoverWindow.ui" line="230"/>
         <source>&amp;Language</source>
         <translation>&amp;l4n6u463</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="255"/>
+        <location filename="../windows/McRecoverWindow.ui" line="248"/>
         <source>Main Toolbar</source>
         <translation>m41n 700lb4r</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="289"/>
+        <location filename="../windows/McRecoverWindow.ui" line="282"/>
         <source>&amp;Open</source>
         <translation>&amp;0p3n</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="292"/>
+        <location filename="../windows/McRecoverWindow.ui" line="285"/>
         <source>Open a GameCube Memory Card image</source>
         <translation>0p3n 4 64m3cub3 m3m0ry c4rd 1m463</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="295"/>
+        <location filename="../windows/McRecoverWindow.ui" line="288"/>
         <source>Ctrl+O</source>
         <extracomment>Shortcut for opening a GameCube Memory Card image.</extracomment>
         <translation>Ctrl+0</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="304"/>
+        <location filename="../windows/McRecoverWindow.ui" line="297"/>
         <source>&amp;Save</source>
         <translation>&amp;54v3</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="307"/>
+        <location filename="../windows/McRecoverWindow.ui" line="300"/>
         <source>Save the selected file(s)</source>
         <translation>54v3 7h3 53l3c73d f1l3(5)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="310"/>
+        <location filename="../windows/McRecoverWindow.ui" line="303"/>
         <source>Ctrl+S</source>
         <extracomment>Shortcut for saving the currently selected file.</extracomment>
         <translation>Ctrl+5</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="319"/>
+        <location filename="../windows/McRecoverWindow.ui" line="312"/>
         <source>Save &amp;All</source>
         <translation>54v3 &amp;4ll</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="322"/>
+        <location filename="../windows/McRecoverWindow.ui" line="315"/>
         <source>Save all files</source>
         <translation>54v3 4ll f1l35</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="331"/>
+        <location filename="../windows/McRecoverWindow.ui" line="324"/>
         <source>E&amp;xit</source>
         <translation>3&amp;x17</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="334"/>
+        <location filename="../windows/McRecoverWindow.ui" line="327"/>
         <source>Exit the program</source>
         <translation>3x17 7h3 pr06r4m</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="343"/>
+        <location filename="../windows/McRecoverWindow.ui" line="336"/>
         <source>&amp;About</source>
         <translation>&amp;4b0u7</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="346"/>
+        <location filename="../windows/McRecoverWindow.ui" line="339"/>
         <source>About this program</source>
         <translation>4b0u7 7h15 pr06r4m</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="355"/>
+        <location filename="../windows/McRecoverWindow.ui" line="348"/>
         <source>S&amp;can for Lost Files</source>
         <translation>5&amp;c4n f0r l057 f1l35</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="358"/>
+        <location filename="../windows/McRecoverWindow.ui" line="351"/>
         <source>Scan the memory card image for lost files</source>
         <translation>5c4n 7h3 m3m0ry c4rd 1m463 f0r l057 f1l35</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="367"/>
+        <location filename="../windows/McRecoverWindow.ui" line="360"/>
         <source>&amp;Close</source>
         <translation>&amp;cl053</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="370"/>
+        <location filename="../windows/McRecoverWindow.ui" line="363"/>
         <source>Close the GameCube Memory Card image</source>
         <translation>cl053 7h3 64m3cub3 m3m0ry c4rd 1m463</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="373"/>
+        <location filename="../windows/McRecoverWindow.ui" line="366"/>
         <source>Ctrl+W</source>
         <extracomment>Shortcut for closing the current GameCube Memory Card image.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="385"/>
+        <location filename="../windows/McRecoverWindow.ui" line="378"/>
         <source>&amp;USA</source>
         <translation>&amp;u54</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="388"/>
+        <location filename="../windows/McRecoverWindow.ui" line="381"/>
         <source>USA</source>
         <translation>u54</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="400"/>
+        <location filename="../windows/McRecoverWindow.ui" line="393"/>
         <source>&amp;Europe</source>
         <translation>&amp;3ur0p3</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="403"/>
+        <location filename="../windows/McRecoverWindow.ui" line="396"/>
         <source>Europe</source>
         <translation>3ur0p3</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="415"/>
+        <location filename="../windows/McRecoverWindow.ui" line="408"/>
         <source>&amp;Japan</source>
         <translation>&amp;j4p4n</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="418"/>
+        <location filename="../windows/McRecoverWindow.ui" line="411"/>
         <source>Japan</source>
         <translation>j4p4n</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="430"/>
+        <location filename="../windows/McRecoverWindow.ui" line="423"/>
         <source>South &amp;Korea</source>
         <translation>50u7h &amp;k0r34</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="433"/>
+        <location filename="../windows/McRecoverWindow.ui" line="426"/>
         <source>South Korea</source>
         <translation>50u7h k0r34</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="441"/>
-        <location filename="../windows/McRecoverWindow.cpp" line="492"/>
+        <location filename="../windows/McRecoverWindow.ui" line="434"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="536"/>
         <source>Preferred Region:</source>
         <translation>pr3f3rr3d r3610n:</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="449"/>
+        <location filename="../windows/McRecoverWindow.ui" line="442"/>
         <source>Search U&amp;sed Blocks</source>
         <translation>534rch u&amp;53d bl0ck5</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="473"/>
+        <location filename="../windows/McRecoverWindow.ui" line="450"/>
+        <source>APNG</source>
+        <translation>4pn6</translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.ui" line="458"/>
+        <source>GIF</source>
+        <translation>61f</translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.ui" line="466"/>
         <source>PNG (file per frame)</source>
         <translation>pn6 (f1l3 p3r fr4m3)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="481"/>
+        <location filename="../windows/McRecoverWindow.ui" line="474"/>
         <source>PNG (vertical strip)</source>
         <translation>pn6 (v3r71c4l 57r1p)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="489"/>
+        <location filename="../windows/McRecoverWindow.ui" line="482"/>
         <source>PNG (horizontal strip)</source>
         <translation>pn6 (h0r1z0n74l 57r1p)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="497"/>
+        <location filename="../windows/McRecoverWindow.ui" line="490"/>
         <source>Extract &amp;Icons</source>
         <translation>3x7r4c7 &amp;1c0n5</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.ui" line="505"/>
+        <location filename="../windows/McRecoverWindow.ui" line="498"/>
         <source>Extract &amp;Banners</source>
         <translation>3x7r4c7 &amp;b4nn3r5</translation>
     </message>
-    <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="332"/>
-        <source>The internal PCRE library was not compiled with Unicode character properties support.
-Some files with Japanese descriptions might not be found when scanning.</source>
-        <extracomment>Statically-linked PCRE is missing Unicode character properties support.</extracomment>
-        <translation>7h3 1n73rn4l pcr3 l1br4ry w45 n07 c0mp1l3d w17h un1c0d3 ch4r4c73r pr0p3r7135 5upp0r7.
-50m3 f1l35 w17h j4p4n353 d35cr1p710n5 m16h7 n07 b3 f0und wh3n 5c4nn1n6.</translation>
-    </message>
-    <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="337"/>
-        <source>The system PCRE library was not compiled with Unicode character properties support.
-Some files with Japanese descriptions might not be found when scanning.</source>
-        <extracomment>Dynamically-linked PCRE is missing Unicode character properties support.</extracomment>
-        <translation>7h3 5y573m pcr3 l1br4ry w45 n07 c0mp1l3d w17h un1c0d3 ch4r4c73r pr0p3r7135 5upp0r7.
-50m3 f1l35 w17h j4p4n353 d35cr1p710n5 m16h7 n07 b3 f0und wh3n 5c4nn1n6.</translation>
-    </message>
     <message numerus="yes">
-        <location filename="../windows/McRecoverWindow.cpp" line="354"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="398"/>
         <source>%Ln byte(s)</source>
         <translation>
-            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="356"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="400"/>
         <source>%L1 KB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="358"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="402"/>
         <source>%L1 MB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="360"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="404"/>
         <source>%L1 GB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="362"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="406"/>
         <source>%L1 TB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="364"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="408"/>
         <source>%L1 PB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="366"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="410"/>
         <source>%L1 EB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="376"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="420"/>
         <source>No memory card loaded.</source>
         <translation>n0 m3m0ry c4rd l04d3d.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="602"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="646"/>
         <source>Save GCN Save File %1</source>
         <translation>54v3 6cn 54v3 f1l3 %1</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="606"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="650"/>
         <source>GameCube Save Files</source>
         <translation>64m3cub3 54v3 f1l35</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="607"/>
-        <location filename="../windows/McRecoverWindow.cpp" line="1354"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="651"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1502"/>
         <source>All Files</source>
         <translation>4ll f1l35</translation>
     </message>
     <message numerus="yes">
-        <location filename="../windows/McRecoverWindow.cpp" line="617"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="661"/>
         <source>Save %Ln GCN Save File(s)</source>
         <translation>
             <numerusform>54v3 %Ln 6cn 54v3 f1l3</numerusform>
@@ -627,12 +742,12 @@ Some files with Japanese descriptions might not be found when scanning.</source>
         </translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="642"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="686"/>
         <source>File Already Exists</source>
         <translation>f1l3 4lr34dy 3x1575</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="643"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="687"/>
         <source>A file named &quot;%1&quot; already exists in the specified directory.
 
 Do you want to overwrite it?</source>
@@ -641,57 +756,109 @@ Do you want to overwrite it?</source>
 d0 y0u w4n7 70 0v3rwr173 17?</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="771"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="815"/>
         <source>System Default (%1)</source>
         <comment>ts-language</comment>
         <extracomment>Translation: System Default (retrieved from system settings)</extracomment>
         <translation>5y573m d3f4ul7 (%1)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1003"/>
-        <source>The internal PCRE library was not compiled with UTF-8 support.
-Scanning for lost files will not work.</source>
-        <extracomment>Statically-linked PCRE is missing UTF-8 support.</extracomment>
-        <translation>7h3 1n73rn4l pcr3 l1br4ry w45 n07 c0mp1l3d w17h u7f-8 5upp0r7.
-5c4nn1n6 f0r l057 f1l35 w1ll n07 w0rk.</translation>
-    </message>
-    <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1007"/>
-        <source>The system PCRE library was not compiled with UTF-8 support.
-Scanning for lost files will not work.</source>
-        <extracomment>Dynamically-linked PCRE is missing UTF-8 support.</extracomment>
-        <translation>7h3 5y573m pcr3 l1br4ry w45 n07 c0mp1l3d w17h u7f-8 5upp0r7.
-5c4nn1n6 f0r l057 f1l35 w1ll n07 w0rk.</translation>
-    </message>
-    <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1050"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1172"/>
         <source>An error occurred while opening %1:</source>
         <translation>4n 3rr0r 0ccurr3d wh1l3 0p3n1n6 %1:</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1053"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1164"/>
         <source>GcnCard::open() failed.</source>
+        <extracomment>Failure message for GcnCard.</extracomment>
         <translation>6cnc4rd::0p3n() f41l3d.</translation>
     </message>
     <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="354"/>
+        <source>The internal Qt library was not compiled with Shift-JIS support.</source>
+        <extracomment>Statically-linked Qt is missing qjpcodecs.</extracomment>
+        <translation>7h3 1n73rn4l q7 l1br4ry w45 n07 c0mp1l3d w17h 5h1f7-j15 5upp0r7.</translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="358"/>
+        <source>The system Qt library was not compiled with Shift-JIS support.</source>
+        <extracomment>Dyanmically-linked Qt is missing qjpcodecs.</extracomment>
+        <translation>7h3 5y573m q7 l1br4ry w45 n07 c0mp1l3d w17h 5h1f7-j15 5upp0r7.</translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="370"/>
+        <source>The internal PCRE library was not compiled with Unicode character properties support.</source>
+        <extracomment>Statically-linked PCRE is missing Unicode character properties support.</extracomment>
+        <translation>7h3 1n73rn4l pcr3 l1br4ry w45 n07 c0mp1l3d w17h un1c0d3 ch4r4c73r pr0p3r7135 5upp0r7.</translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="374"/>
+        <source>The system PCRE library was not compiled with Unicode character properties support.</source>
+        <extracomment>Dynamically-linked PCRE is missing Unicode character properties support.</extracomment>
+        <translation>7h3 5y573m pcr3 l1br4ry w45 n07 c0mp1l3d w17h un1c0d3 ch4r4c73r pr0p3r7135 5upp0r7.</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../windows/McRecoverWindow.cpp" line="381"/>
+        <source>Error(s) occurred while attempting to decode Japanese text:
+%1
+Some files with Japanese descriptions might not be found when scanning.</source>
+        <extracomment>Errors occurred while attempting to decode Japanese text.</extracomment>
+        <translation>
+            <numerusform>4n 3rr0r 0ccurr3d wh1l3 4773mp71n6 70 d3c0d3 j4p4n353 73x7:
+%1
+50m3 f1l35 w17h j4p4n353 d35cr1p710n5 m16h7 n07 b3 f0und wh3n 5c4nn1n6.</numerusform>
+            <numerusform>3rr0r5 0ccurr3d wh1l3 4773mp71n6 70 d3c0d3 j4p4n353 73x7:
+%1
+50m3 f1l35 w17h j4p4n353 d35cr1p710n5 m16h7 n07 b3 f0und wh3n 5c4nn1n6.</numerusform>
+        </translation>
+    </message>
+    <message>
         <location filename="../windows/McRecoverWindow.cpp" line="1101"/>
+        <source>The internal PCRE library was not compiled with Unicode support.
+Scanning for lost files will not work.</source>
+        <extracomment>Statically-linked PCRE is missing UTF-8 support.</extracomment>
+        <translation>7h3 1n73rn4l pcr3 l1br4ry w45 n07 c0mp1l3d w17h un1c0d3 5upp0r7.
+5c4nn1n6 f0r l057 f1l35 w1ll n07 w0rk.</translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="1105"/>
+        <source>The system PCRE library was not compiled with Unicode support.
+Scanning for lost files will not work.</source>
+        <extracomment>Dynamically-linked PCRE is missing UTF-8 support.</extracomment>
+        <translation>7h3 5y573m pcr3 l1br4ry w45 n07 c0mp1l3d w17h un1c0d3 5upp0r7.
+5c4nn1n6 f0r l057 f1l35 w1ll n07 w0rk.</translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="1160"/>
+        <source>VmuCard::open() failed.</source>
+        <extracomment>Failure message for VmuCard.</extracomment>
+        <translation>vmuc4rd::0p3n() f41l3d.</translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="1235"/>
+        <source>The header appears to contain garbage. %1% of the %2 header is the same byte, 0x%3.</source>
+        <extracomment>%1 is a percentage; %2 is a formatted size, e.g. &quot;100 bytes&quot; or &quot;2 MB&quot;; %3 is a two-digit hexadecimal number.</extracomment>
+        <translation>7h3 h34d3r 4pp34r5 70 c0n741n 64rb463. %1% 0f 7h3 %2 h34d3r 15 7h3 54m3 by73, 0x%3.</translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="1245"/>
         <source>The card image is too small. (Card image is %1; should be at least %2.)</source>
         <extracomment>%1 and %2 are both formatted sizes, e.g. &quot;100 bytes&quot; or &quot;2 MB&quot;.</extracomment>
         <translation>7h3 c4rd 1m463 15 700 5m4ll. (c4rd 1m463 15 %1; 5h0uld b3 47 l3457 %2.)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1108"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1252"/>
         <source>The card image is too big. (Card image is %1; should be %2 or less.)</source>
         <translation>7h3 c4rd 1m463 15 700 b16. (c4rd 1m463 15 %1; 5h0uld b3 %2 0r l355.)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1115"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1259"/>
         <source>The card image size is not a power of two. (Card image is %1.)</source>
         <extracomment>%1 is a formatted size, e.g. &quot;100 bytes&quot; or &quot;2 MB&quot;.</extracomment>
         <translation>7h3 c4rd 1m463 51z3 15 n07 4 p0w3r 0f 7w0. (c4rd 1m463 15 %1.)</translation>
     </message>
     <message numerus="yes">
-        <location filename="../windows/McRecoverWindow.cpp" line="1133"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1277"/>
         <source>Error(s) have been detected in this %1 image:</source>
         <translation>
             <numerusform>4n 3rr0r h45 b33n d373c73d 1n 7h15 %1 1m463:</numerusform>
@@ -699,70 +866,56 @@ Scanning for lost files will not work.</source>
         </translation>
     </message>
     <message>
-        <source>The card image is too small. (Card image is %L1 bytes; should be at least 512 KB.)</source>
-        <translation type="obsolete">7h3 c4rd 1m463 15 700 5m4ll. (c4rd 1m463 15 %L1 by735; 5h0uld b3 47 l3457 512 kb.)</translation>
-    </message>
-    <message>
-        <source>The card image is too big. (Card image is %L1 bytes; should be 16 MB or less.)</source>
-        <translation type="obsolete">7h3 c4rd 1m463 15 700 b16. (c4rd 1m463 15 %L1 by735; 5h0uld b3 16 mb 0r l355.)</translation>
-    </message>
-    <message>
-        <source>The card image size is not a power of two. (Card image is %L1 bytes.)</source>
-        <translation type="obsolete">7h3 c4rd 1m463 51z3 15 n07 4 p0w3r 0f 7w0. (c4rd 1m463 15 %L1 by735.)</translation>
-    </message>
-    <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1119"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1263"/>
         <source>The header checksum is invalid.</source>
         <translation>7h3 h34d3r ch3ck5um 15 1nv4l1d.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1122"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1266"/>
         <source>Both directory tables are invalid.</source>
         <translation>b07h d1r3c70ry 74bl35 4r3 1nv4l1d.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1125"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1269"/>
         <source>Both block tables are invalid.</source>
         <translation>b07h bl0ck 74bl35 4r3 1nv4l1d.</translation>
     </message>
-    <message numerus="yes">
-        <source>Error(s) have been detected in this Memory Card image:</source>
-        <translation type="obsolete">
-            <numerusform>4n 3rr0r h45 b33n d373c73d 1n 7h15 m3m0ry c4rd 1m463:</numerusform>
-            <numerusform>3rr0r5 h4v3 b33n d373c73d 1n 7h15 m3m0ry c4rd 1m463:</numerusform>
-        </translation>
-    </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1351"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1536"/>
         <source>Open GameCube Memory Card Image</source>
         <translation>0p3n 64m3cub3 m3m0ry c4rd 1m463</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1353"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1500"/>
         <source>GameCube Memory Card Image</source>
         <translation>64m3cub3 m3m0ry c4rd 1m463</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1395"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1501"/>
+        <source>Dreamcast VMU Image</source>
+        <translation>dr34mc457 vmu 1m463</translation>
+    </message>
+    <message>
+        <location filename="../windows/McRecoverWindow.cpp" line="1596"/>
         <source>The database files should be located in the data subdirectory in
 mcrecover.exe&apos;s program directory.</source>
         <translation>7h3 d474b453 f1l35 5h0uld b3 l0c473d 1n 7h3 d474 5ubd1r3c70ry 1n
 mcr3c0v3r.3x3&apos;5 pr06r4m d1r3c70ry.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1399"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1600"/>
         <source>The database files should be located in %1.
 Alternatively, you can place your own version in ~/.config/mcrecover/data/</source>
         <translation>7h3 d474b453 f1l35 5h0uld b3 l0c473d 1n %1.
 4l73rn471v3ly, y0u c4n pl4c3 y0ur 0wn v3r510n 1n ~/.c0nf16/mcr3c0v3r/d474/</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1406"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1607"/>
         <source>Database Load Error</source>
         <translation>d474b453 l04d 3rr0r</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1407"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1608"/>
         <source>No GCN MemCard file databases were found.</source>
         <translation>n0 6cn m3mc4rd f1l3 d474b4535 w3r3 f0und.</translation>
     </message>
@@ -770,44 +923,44 @@ Alternatively, you can place your own version in ~/.config/mcrecover/data/</sour
 <context>
     <name>MemCardModel</name>
     <message>
-        <location filename="../card/MemCardModel.cpp" line="468"/>
+        <location filename="../card/MemCardModel.cpp" line="437"/>
         <source>Icon</source>
         <translation>1c0n</translation>
     </message>
     <message>
-        <location filename="../card/MemCardModel.cpp" line="469"/>
+        <location filename="../card/MemCardModel.cpp" line="438"/>
         <source>Banner</source>
         <translation>b4nn3r</translation>
     </message>
     <message>
-        <location filename="../card/MemCardModel.cpp" line="470"/>
+        <location filename="../card/MemCardModel.cpp" line="439"/>
         <source>Description</source>
         <translation>d35cr1p710n</translation>
     </message>
     <message>
-        <location filename="../card/MemCardModel.cpp" line="471"/>
+        <location filename="../card/MemCardModel.cpp" line="440"/>
         <source>Size</source>
         <translation>51z3</translation>
     </message>
     <message>
-        <location filename="../card/MemCardModel.cpp" line="472"/>
+        <location filename="../card/MemCardModel.cpp" line="441"/>
         <source>Last Modified</source>
         <translation>l457 m0d1f13d</translation>
     </message>
     <message>
-        <location filename="../card/MemCardModel.cpp" line="474"/>
+        <location filename="../card/MemCardModel.cpp" line="443"/>
         <source>Mode</source>
         <extracomment>File permissions. (Known as &quot;mode&quot; on Unix systems.)</extracomment>
         <translation>m0d3</translation>
     </message>
     <message>
-        <location filename="../card/MemCardModel.cpp" line="476"/>
+        <location filename="../card/MemCardModel.cpp" line="445"/>
         <source>Game ID</source>
         <extracomment>6-digit game ID, e.g. GALE01.</extracomment>
         <translation>64m3 1d</translation>
     </message>
     <message>
-        <location filename="../card/MemCardModel.cpp" line="477"/>
+        <location filename="../card/MemCardModel.cpp" line="446"/>
         <source>Filename</source>
         <translation>f1l3n4m3</translation>
     </message>
@@ -826,37 +979,1334 @@ Alternatively, you can place your own version in ~/.config/mcrecover/data/</sour
     </message>
 </context>
 <context>
+    <name>SAAdventure</name>
+    <message>
+        <location filename="../edit/SonicAdventure/SAAdventure.ui" line="19"/>
+        <source>Character:</source>
+        <translation>ch4r4c73r:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAAdventure.ui" line="29"/>
+        <source>Lives:</source>
+        <translation>l1v35:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAAdventure.ui" line="39"/>
+        <source>Completed:</source>
+        <translation>c0mpl373d:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAAdventure.ui" line="49"/>
+        <source>Time of Day:</source>
+        <translation>71m3 0f d4y:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAAdventure.ui" line="59"/>
+        <location filename="../edit/SonicAdventure/SAAdventure.ui" line="69"/>
+        <location filename="../edit/SonicAdventure/SAAdventure.ui" line="109"/>
+        <source>Unknown:</source>
+        <translation>unkn0wn:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAAdventure.ui" line="79"/>
+        <source>Entrance:</source>
+        <translation>3n7r4nc3:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAAdventure.ui" line="89"/>
+        <source>Level:</source>
+        <translation>l3v3l:</translation>
+    </message>
+</context>
+<context>
+    <name>SADXDataMissions</name>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="32"/>
+        <source>Bring the man who is standing in front of the hamburger shop!</source>
+        <translation>br1n6 7h3 m4n wh0 15 574nd1n6 1n fr0n7 0f 7h3 h4mbur63r 5h0p!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="33"/>
+        <source>Get the balloon in the skies of the Mystic Ruins!</source>
+        <translation>637 7h3 b4ll00n 1n 7h3 5k135 0f 7h3 my571c ru1n5!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="34"/>
+        <source>Collect 100 rings, and go to Sonic&apos;s billboard by the pool!</source>
+        <translation>c0ll3c7 100 r1n65, 4nd 60 70 50n1c&apos;5 b1llb04rd by 7h3 p00l!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="35"/>
+        <source>Weeds are growing all over my place! I must get rid of them!</source>
+        <translation>w33d5 4r3 6r0w1n6 4ll 0v3r my pl4c3! 1 mu57 637 r1d 0f 7h3m!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="36"/>
+        <source>I lost my balloon! It&apos;s way up there now!</source>
+        <translation>1 l057 my b4ll00n! 17&apos;5 w4y up 7h3r3 n0w!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="37"/>
+        <source>He is going to drown! Help the man in the water!</source>
+        <translation>h3 15 601n6 70 dr0wn! h3lp 7h3 m4n 1n 7h3 w473r!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="38"/>
+        <source>Lonely Metal Sonic needs a friend. Look carefully.</source>
+        <translation>l0n3ly m374l 50n1c n33d5 4 fr13nd. l00k c4r3fully.</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="39"/>
+        <source>The medallion fell under there! No illegal parking please!</source>
+        <translation>7h3 m3d4ll10n f3ll und3r 7h3r3! n0 1ll364l p4rk1n6 pl3453!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="40"/>
+        <source>Get the balloon floating behind the waterfall at the emerald sea.</source>
+        <translation>637 7h3 b4ll00n fl0471n6 b3h1nd 7h3 w473rf4ll 47 7h3 3m3r4ld 534.</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="41"/>
+        <source>What is that sparkling in the water?</source>
+        <translation>wh47 15 7h47 5p4rkl1n6 1n 7h3 w473r?</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="44"/>
+        <source>Destroy the windmill and proceed. Find the balloon in orbit!</source>
+        <translation>d357r0y 7h3 w1ndm1ll 4nd pr0c33d. f1nd 7h3 b4ll00n 1n 0rb17!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="45"/>
+        <source>Who is a Chao good friends with? And what is hidden underneath?</source>
+        <translation>wh0 15 4 ch40 600d fr13nd5 w17h? 4nd wh47 15 h1dd3n und3rn347h?</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="46"/>
+        <source>I can&apos;t take a shower like this! Do something!</source>
+        <translation>1 c4n&apos;7 74k3 4 5h0w3r l1k3 7h15! d0 50m37h1n6!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="47"/>
+        <source>I am the keeper of this hotel! Catch me if you can!</source>
+        <translation>1 4m 7h3 k33p3r 0f 7h15 h073l! c47ch m3 1f y0u c4n!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="48"/>
+        <source>My medallions got swept away by the tornado! Somebody help me get them back!</source>
+        <translation>my m3d4ll10n5 607 5w3p7 4w4y by 7h3 70rn4d0! 50m3b0dy h3lp m3 637 7h3m b4ck!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="49"/>
+        <source>Get the flags from the floating islands!</source>
+        <translation>637 7h3 fl465 fr0m 7h3 fl0471n6 15l4nd5!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="50"/>
+        <source>Aim and shoot all the medallions with a Sonic Ball.</source>
+        <translation>41m 4nd 5h007 4ll 7h3 m3d4ll10n5 w17h 4 50n1c b4ll.</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="51"/>
+        <source>During the night, at the amusement park, place your jumps on the top of one of the tables.</source>
+        <translation>dur1n6 7h3 n16h7, 47 7h3 4mu53m3n7 p4rk, pl4c3 y0ur jump5 0n 7h3 70p 0f 0n3 0f 7h3 74bl35.</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="52"/>
+        <source>What is that behind the mirror?</source>
+        <translation>wh47 15 7h47 b3h1nd 7h3 m1rr0r?</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="53"/>
+        <source>Get all the medallions within the time limit! It&apos;s real slippery, so be careful!</source>
+        <translation>637 4ll 7h3 m3d4ll10n5 w17h1n 7h3 71m3 l1m17! 17&apos;5 r34l 5l1pp3ry, 50 b3 c4r3ful!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="56"/>
+        <source>Protect the Sonic doll from the Spinners surrounding it!</source>
+        <translation>pr073c7 7h3 50n1c d0ll fr0m 7h3 5p1nn3r5 5urr0und1n6 17!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="57"/>
+        <source>Find the flag hidden in the secret passage under the emerald ocean!</source>
+        <translation>f1nd 7h3 fl46 h1dd3n 1n 7h3 53cr37 p455463 und3r 7h3 3m3r4ld 0c34n!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="58"/>
+        <source>Go around the wooden horse and collect 10 balloons.</source>
+        <translation>60 4r0und 7h3 w00d3n h0r53 4nd c0ll3c7 10 b4ll00n5.</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="59"/>
+        <source>&apos;I hate this dark and filthy place!&apos; Can you find it?</source>
+        <translation>&apos;1 h473 7h15 d4rk 4nd f1l7hy pl4c3!&apos; c4n y0u f1nd 17?</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="60"/>
+        <source>What is hidden under the lion&apos;s right hand?</source>
+        <translation>wh47 15 h1dd3n und3r 7h3 l10n&apos;5 r16h7 h4nd?</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="61"/>
+        <source>What is that on top of the ship&apos;s mast that the pirates are protecting?</source>
+        <translation>wh47 15 7h47 0n 70p 0f 7h3 5h1p&apos;5 m457 7h47 7h3 p1r4735 4r3 pr073c71n6?</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="62"/>
+        <source>Collect 100 rings and head to the heliport!</source>
+        <translation>c0ll3c7 100 r1n65 4nd h34d 70 7h3 h3l1p0r7!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="63"/>
+        <source>During the morning traffic, use the fountain to get the balloon.</source>
+        <translation>dur1n6 7h3 m0rn1n6 7r4ff1c, u53 7h3 f0un741n 70 637 7h3 b4ll00n.</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="64"/>
+        <source>I am the keeper of this canal! Catch me if you can!</source>
+        <translation>1 4m 7h3 k33p3r 0f 7h15 c4n4l! c47ch m3 1f y0u c4n!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="65"/>
+        <source>A fugitive have escaped from the jail of burning hell! Find the fugitive!</source>
+        <translation>4 fu6171v3 h4v3 35c4p3d fr0m 7h3 j41l 0f burn1n6 h3ll! f1nd 7h3 fu6171v3!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="68"/>
+        <source>Get the balloon as you float in the air along with the trash!</source>
+        <translation>637 7h3 b4ll00n 45 y0u fl047 1n 7h3 41r 4l0n6 w17h 7h3 7r45h!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="69"/>
+        <source>Can you get the balloon that is hidden under the bridge?</source>
+        <translation>c4n y0u 637 7h3 b4ll00n 7h47 15 h1dd3n und3r 7h3 br1d63?</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="70"/>
+        <source>Shoot yourself out of the cannon and get the balloon!</source>
+        <translation>5h007 y0ur53lf 0u7 0f 7h3 c4nn0n 4nd 637 7h3 b4ll00n!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="71"/>
+        <source>Can you find the balloon that is hidden on the ship&apos;s bridge?</source>
+        <translation>c4n y0u f1nd 7h3 b4ll00n 7h47 15 h1dd3n 0n 7h3 5h1p&apos;5 br1d63?</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="72"/>
+        <source>I am the keeper of this icy lake! Catch me if you can!</source>
+        <translation>1 4m 7h3 k33p3r 0f 7h15 1cy l4k3! c47ch m3 1f y0u c4n!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="73"/>
+        <source>Fighter aircraft are flying everywhere. Somebody get me out of here!</source>
+        <translation>f16h73r 41rcr4f7 4r3 fly1n6 3v3rywh3r3. 50m3b0dy 637 m3 0u7 0f h3r3!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="74"/>
+        <source>Fly over the jungle, and get all the balloons!</source>
+        <translation>fly 0v3r 7h3 jun6l3, 4nd 637 4ll 7h3 b4ll00n5!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="75"/>
+        <source>A message from an ancient people: In the direction where the burning arrow is pointing, you will see...</source>
+        <translation>4 m355463 fr0m 4n 4nc13n7 p30pl3: 1n 7h3 d1r3c710n wh3r3 7h3 burn1n6 4rr0w 15 p01n71n6, y0u w1ll 533...</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="76"/>
+        <source>Treasure hunt at the beach! Find all the medallions under a time limit!</source>
+        <translation>7r345ur3 hun7 47 7h3 b34ch! f1nd 4ll 7h3 m3d4ll10n5 und3r 4 71m3 l1m17!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="77"/>
+        <source>What is hidden in the area that the giant snake is staring at?</source>
+        <translation>wh47 15 h1dd3n 1n 7h3 4r34 7h47 7h3 614n7 5n4k3 15 574r1n6 47?</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="80"/>
+        <source>Look real carefully just as you fall from the waterfall!</source>
+        <translation>l00k r34l c4r3fully ju57 45 y0u f4ll fr0m 7h3 w473rf4ll!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="81"/>
+        <source>I can&apos;t get into the bathroom. How could I&apos;ve let something like this happen to me?</source>
+        <translation>1 c4n&apos;7 637 1n70 7h3 b47hr00m. h0w c0uld 1&apos;v3 l37 50m37h1n6 l1k3 7h15 h4pp3n 70 m3?</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="82"/>
+        <source>Fortress of steel. High Jump on 3 narrow paths. Be careful not to fall.</source>
+        <translation>f0r7r355 0f 5733l. h16h jump 0n 3 n4rr0w p47h5. b3 c4r3ful n07 70 f4ll.</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="83"/>
+        <source>I am the keeper of this ship! Catch me if you can!</source>
+        <translation>1 4m 7h3 k33p3r 0f 7h15 5h1p! c47ch m3 1f y0u c4n!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="84"/>
+        <source>Go to a place where the rings are laid in the shape of Sonic&apos;s face!</source>
+        <translation>60 70 4 pl4c3 wh3r3 7h3 r1n65 4r3 l41d 1n 7h3 5h4p3 0f 50n1c&apos;5 f4c3!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="85"/>
+        <source>A secret base full of mechanical traps. Pay attention, and you might see...</source>
+        <translation>4 53cr37 b453 full 0f m3ch4n1c4l 7r4p5. p4y 4773n710n, 4nd y0u m16h7 533...</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="86"/>
+        <source>Get 10 balloons on the field under the time limit!</source>
+        <translation>637 10 b4ll00n5 0n 7h3 f13ld und3r 7h3 71m3 l1m17!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="87"/>
+        <source>Can you get the medallion that the giant Sonic is staring at?</source>
+        <translation>c4n y0u 637 7h3 m3d4ll10n 7h47 7h3 614n7 50n1c 15 574r1n6 47?</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="88"/>
+        <source>Scorch through the track, and get all the flags!</source>
+        <translation>5c0rch 7hr0u6h 7h3 7r4ck, 4nd 637 4ll 7h3 fl465!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="89"/>
+        <source>Select a road that splits into 5 paths before time runs out!</source>
+        <translation>53l3c7 4 r04d 7h47 5pl175 1n70 5 p47h5 b3f0r3 71m3 run5 0u7!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="92"/>
+        <source>Gunman of the Windy Valley! Destroy all of the Spinners under a time limit!</source>
+        <translation>6unm4n 0f 7h3 w1ndy v4ll3y! d357r0y 4ll 0f 7h3 5p1nn3r5 und3r 4 71m3 l1m17!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="93"/>
+        <source>Get 3 flags in the jungle under the time limit!</source>
+        <translation>637 3 fl465 1n 7h3 jun6l3 und3r 7h3 71m3 l1m17!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="94"/>
+        <source>Pass the line of rings with 3 Super High Jumps on the ski slope!</source>
+        <translation>p455 7h3 l1n3 0f r1n65 w17h 3 5up3r h16h jump5 0n 7h3 5k1 5l0p3!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="95"/>
+        <source>Slide downhill in a blizzard and get all of the flags!</source>
+        <translation>5l1d3 d0wnh1ll 1n 4 bl1zz4rd 4nd 637 4ll 0f 7h3 fl465!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="96"/>
+        <source>Run down the building to get all the balloons!</source>
+        <translation>run d0wn 7h3 bu1ld1n6 70 637 4ll 7h3 b4ll00n5!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="97"/>
+        <source>Relentless eruptions occur in the flaming canyon. What could be hidden in the area she&apos;s staring at?</source>
+        <translation>r3l3n7l355 3rup710n5 0ccur 1n 7h3 fl4m1n6 c4ny0n. wh47 c0uld b3 h1dd3n 1n 7h3 4r34 5h3&apos;5 574r1n6 47?</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="98"/>
+        <source>Peak of the volcanic mountain! Watch out for the lava!</source>
+        <translation>p34k 0f 7h3 v0lc4n1c m0un741n! w47ch 0u7 f0r 7h3 l4v4!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="99"/>
+        <source>The big rock will start rolling after you! Try to get all the flags</source>
+        <translation>7h3 b16 r0ck w1ll 574r7 r0ll1n6 4f73r y0u! 7ry 70 637 4ll 7h3 fl465</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="100"/>
+        <source>Watch out for the barrels, and find the hidden flag inside the container!</source>
+        <translation>w47ch 0u7 f0r 7h3 b4rr3l5, 4nd f1nd 7h3 h1dd3n fl46 1n51d3 7h3 c0n741n3r!</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXDataMissions.c" line="101"/>
+        <source>Something is hidden inside the dinosaur&apos;s mouth. Can you find it?</source>
+        <translation>50m37h1n6 15 h1dd3n 1n51d3 7h3 d1n054ur&apos;5 m0u7h. c4n y0u f1nd 17?</translation>
+    </message>
+</context>
+<context>
+    <name>SADXMissionFlags</name>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXMissionFlags.cpp" line="78"/>
+        <source>Mission</source>
+        <translation>m15510n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXMissionFlags.cpp" line="91"/>
+        <source>Active</source>
+        <translation>4c71v3</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXMissionFlags.cpp" line="92"/>
+        <source>Unlocked</source>
+        <translation>unl0ck3d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADXMissionFlags.cpp" line="93"/>
+        <source>Completed</source>
+        <translation>c0mpl373d</translation>
+    </message>
+</context>
+<context>
+    <name>SADataEvents</name>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="39"/>
+        <source>Sonic unlocked in Adventure</source>
+        <translation>50n1c unl0ck3d 1n 4dv3n7ur3</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="40"/>
+        <source>Tails unlocked in Adventure</source>
+        <translation>741l5 unl0ck3d 1n 4dv3n7ur3</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="41"/>
+        <source>Knuckles unlocked in Adventure</source>
+        <translation>knuckl35 unl0ck3d 1n 4dv3n7ur3</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="42"/>
+        <source>Amy unlocked in Adventure</source>
+        <translation>4my unl0ck3d 1n 4dv3n7ur3</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="43"/>
+        <source>Gamma unlocked in Adventure</source>
+        <translation>64mm4 unl0ck3d 1n 4dv3n7ur3</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="44"/>
+        <source>Big unlocked in Adventure</source>
+        <translation>b16 unl0ck3d 1n 4dv3n7ur3</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="45"/>
+        <source>Super Sonic unlocked in Adventure</source>
+        <translation>5up3r 50n1c unl0ck3d 1n 4dv3n7ur3</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="46"/>
+        <source>Sonic&apos;s story complete</source>
+        <translation>50n1c&apos;5 570ry c0mpl373</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="47"/>
+        <source>Tails&apos; story complete</source>
+        <translation>741l5&apos; 570ry c0mpl373</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="48"/>
+        <source>Knuckles&apos; story complete</source>
+        <translation>knuckl35&apos; 570ry c0mpl373</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="49"/>
+        <source>Amy&apos;s story complete</source>
+        <translation>4my&apos;5 570ry c0mpl373</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="50"/>
+        <source>Gamma&apos;s story complete</source>
+        <translation>64mm4&apos;5 570ry c0mpl373</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="51"/>
+        <source>Big&apos;s story complete</source>
+        <translation>b16&apos;5 570ry c0mpl373</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="52"/>
+        <source>Super Sonic&apos;s story complete</source>
+        <translation>5up3r 50n1c&apos;5 570ry c0mpl373</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="53"/>
+        <source>Gold Chao egg taken</source>
+        <translation>60ld ch40 366 74k3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="54"/>
+        <source>Silver Chao egg taken</source>
+        <translation>51lv3r ch40 366 74k3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="55"/>
+        <source>Black Chao egg taken</source>
+        <translation>bl4ck ch40 366 74k3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="58"/>
+        <source>Police barricade removed</source>
+        <translation>p0l1c3 b4rr1c4d3 r3m0v3d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="59"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="109"/>
+        <source>Station Square hotel open</source>
+        <translation>574710n 5qu4r3 h073l 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="60"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="111"/>
+        <source>Station Square station open</source>
+        <translation>574710n 5qu4r3 574710n 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="61"/>
+        <source>Car covering sewer removed</source>
+        <translation>c4r c0v3r1n6 53w3r r3m0v3d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="62"/>
+        <source>Casino always open</source>
+        <translation>c451n0 4lw4y5 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="63"/>
+        <source>Ice stone available</source>
+        <translation>1c3 570n3 4v41l4bl3</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="64"/>
+        <source>Door from Hotel to Casino open</source>
+        <translation>d00r fr0m h073l 70 c451n0 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="65"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="110"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="133"/>
+        <source>Casinopolis open</source>
+        <translation>c451n0p0l15 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="66"/>
+        <source>Door from Station to Casino open</source>
+        <translation>d00r fr0m 574710n 70 c451n0 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="67"/>
+        <source>Twinkle Park open</source>
+        <translation>7w1nkl3 p4rk 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="68"/>
+        <source>Twinkle Circuit open</source>
+        <translation>7w1nkl3 c1rcu17 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="69"/>
+        <source>Speed Highway open</source>
+        <translation>5p33d h16hw4y 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="70"/>
+        <source>Light Speed Shoes obtained</source>
+        <translation>l16h7 5p33d 5h035 0b741n3d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="71"/>
+        <source>Crystal Ring obtained</source>
+        <translation>cry574l r1n6 0b741n3d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="72"/>
+        <source>Egg Carrier transformed</source>
+        <translation>366 c4rr13r 7r4n5f0rm3d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="73"/>
+        <source>Egg Carrier open</source>
+        <translation>366 c4rr13r 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="74"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="113"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="134"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="147"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="158"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="169"/>
+        <source>Egg Carrier sunk</source>
+        <translation>366 c4rr13r 5unk</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="75"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="114"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="159"/>
+        <source>Windy Valley open</source>
+        <translation>w1ndy v4ll3y 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="76"/>
+        <source>Angel Island open</source>
+        <translation>4n63l 15l4nd 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="77"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="115"/>
+        <source>Ice Cap open</source>
+        <translation>1c3 c4p 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="78"/>
+        <source>Red Mountain open</source>
+        <translation>r3d m0un741n 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="79"/>
+        <source>Door to Cliff open</source>
+        <translation>d00r 70 cl1ff 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="80"/>
+        <source>Mystic Ruins Jungle open</source>
+        <translation>my571c ru1n5 jun6l3 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="81"/>
+        <source>Lost World open</source>
+        <translation>l057 w0rld 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="82"/>
+        <source>Final Egg field open</source>
+        <translation>f1n4l 366 f13ld 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="83"/>
+        <source>Ancient Light obtained</source>
+        <translation>4nc13n7 l16h7 0b741n3d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="84"/>
+        <source>Final Egg open</source>
+        <translation>f1n4l 366 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="85"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="117"/>
+        <source>SS-MR Train open</source>
+        <translation>55-mr 7r41n 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="86"/>
+        <source>Boat to Egg Carrier open</source>
+        <translation>b047 70 366 c4rr13r 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="87"/>
+        <source>Raft to Egg Carrier open</source>
+        <translation>r4f7 70 366 c4rr13r 0p3n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="88"/>
+        <source>Gamma defeated</source>
+        <translation>64mm4 d3f3473d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="89"/>
+        <source>Knuckles defeated</source>
+        <translation>knuckl35 d3f3473d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="90"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="129"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="160"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="172"/>
+        <source>Emerald Coast clear</source>
+        <translation>3m3r4ld c0457 cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="91"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="118"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="161"/>
+        <source>Windy Valley clear</source>
+        <translation>w1ndy v4ll3y cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="92"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="119"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="137"/>
+        <source>Casinopolis clear</source>
+        <translation>c451n0p0l15 cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="93"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="149"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="174"/>
+        <source>Twinkle Park clear</source>
+        <translation>7w1nkl3 p4rk cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="94"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="120"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="138"/>
+        <source>Speed Highway clear</source>
+        <translation>5p33d h16hw4y cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="95"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="130"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="139"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="162"/>
+        <source>Red Mountain clear</source>
+        <translation>r3d m0un741n cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="96"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="121"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="175"/>
+        <source>Ice Cap clear</source>
+        <translation>1c3 c4p cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="97"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="122"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="144"/>
+        <source>Sky Deck clear</source>
+        <translation>5ky d3ck cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="98"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="140"/>
+        <source>Lost World clear</source>
+        <translation>l057 w0rld cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="99"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="151"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="164"/>
+        <source>Final Egg clear</source>
+        <translation>f1n4l 366 cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="100"/>
+        <source>Chaos 0 clear</source>
+        <translation>ch405 0 cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="101"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="124"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="143"/>
+        <source>Chaos 4 clear</source>
+        <translation>ch405 4 cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="102"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="142"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="176"/>
+        <source>Chaos 6 clear</source>
+        <translation>ch405 6 cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="103"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="126"/>
+        <source>Egg Hornet clear</source>
+        <translation>366 h0rn37 cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="104"/>
+        <source>Egg Viper clear</source>
+        <translation>366 v1p3r cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="105"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="127"/>
+        <source>Sky Chase Act 1 clear</source>
+        <translation>5ky ch453 4c7 1 cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="106"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="128"/>
+        <source>Sky Chase Act 2 clear</source>
+        <translation>5ky ch453 4c7 2 cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="112"/>
+        <source>Jet Anklet obtained</source>
+        <translation>j37 4nkl37 0b741n3d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="116"/>
+        <source>Rhythm Badge obtained</source>
+        <translation>rhy7hm b4d63 0b741n3d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="123"/>
+        <source>Sand Hill clear</source>
+        <translation>54nd h1ll cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="125"/>
+        <source>Egg Walker clear</source>
+        <translation>366 w4lk3r cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="135"/>
+        <source>Shovel Claw obtained</source>
+        <translation>5h0v3l cl4w 0b741n3d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="136"/>
+        <source>Fighting Gloves obtained</source>
+        <translation>f16h71n6 6l0v35 0b741n3d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="141"/>
+        <source>Chaos 2 clear</source>
+        <translation>ch405 2 cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="148"/>
+        <source>Warrior Feather obtained</source>
+        <translation>w4rr10r f347h3r 0b741n3d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="150"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="163"/>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="173"/>
+        <source>Hot Shelter clear</source>
+        <translation>h07 5h3l73r cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="152"/>
+        <source>Zero clear</source>
+        <translation>z3r0 cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="153"/>
+        <source>Long Hammer</source>
+        <translation>l0n6 h4mm3r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="156"/>
+        <source>Jet Booster obtained</source>
+        <translation>j37 b00573r 0b741n3d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="157"/>
+        <source>Laser Blaster obtained</source>
+        <translation>l453r bl4573r 0b741n3d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="165"/>
+        <source>E-101 clear</source>
+        <translation>3-101 cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="166"/>
+        <source>E-101mkII clear</source>
+        <translation>3-101mk11 cl34r</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="170"/>
+        <source>Life Ring obtained</source>
+        <translation>l1f3 r1n6 0b741n3d</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SADataEvents.c" line="171"/>
+        <source>Power Rod obtained</source>
+        <translation>p0w3r r0d 0b741n3d</translation>
+    </message>
+</context>
+<context>
+    <name>SAEditor</name>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEditor.ui" line="24"/>
+        <source>&amp;General</source>
+        <translation>&amp;63n3r4l</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEditor.ui" line="34"/>
+        <source>A&amp;dventure</source>
+        <translation>4&amp;dv3n7ur3</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEditor.ui" line="44"/>
+        <source>&amp;Action Stages</source>
+        <translation>&amp;4c710n 574635</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEditor.ui" line="54"/>
+        <source>&amp;Sub Games</source>
+        <translation>&amp;5ub 64m35</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEditor.ui" line="64"/>
+        <source>&amp;Misc Emblems</source>
+        <translation>&amp;m15c 3mbl3m5</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEditor.ui" line="74"/>
+        <source>&amp;Event Flags</source>
+        <translation>&amp;3v3n7 fl465</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEditor.ui" line="84"/>
+        <source>&amp;NPC Flags</source>
+        <translation>&amp;npc fl465</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEditor.ui" line="94"/>
+        <source>Level &amp;Clear Count</source>
+        <translation>l3v3l &amp;cl34r c0un7</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEditor.ui" line="104"/>
+        <location filename="../edit/SonicAdventure/SAEditor.cpp" line="224"/>
+        <source>M&amp;issions</source>
+        <translation>m&amp;15510n5</translation>
+    </message>
+</context>
+<context>
+    <name>SAEventFlags</name>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEventFlags.cpp" line="47"/>
+        <source>Event</source>
+        <translation>3v3n7</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEventFlags.cpp" line="72"/>
+        <source>Unused?</source>
+        <translation>unu53d?</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEventFlags.cpp" line="73"/>
+        <source>General</source>
+        <translation>63n3r4l</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEventFlags.cpp" line="74"/>
+        <source>Sonic</source>
+        <translation>50n1c</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEventFlags.cpp" line="75"/>
+        <source>Tails</source>
+        <translation>741l5</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEventFlags.cpp" line="76"/>
+        <source>Knuckles</source>
+        <translation>knuckl35</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEventFlags.cpp" line="77"/>
+        <source>Amy</source>
+        <translation>4my</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEventFlags.cpp" line="78"/>
+        <source>Gamma</source>
+        <translation>64mm4</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAEventFlags.cpp" line="79"/>
+        <source>Big</source>
+        <translation>b16</translation>
+    </message>
+</context>
+<context>
+    <name>SAGeneral</name>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="23"/>
+        <source>Play Time:</source>
+        <translation>pl4y 71m3:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="43"/>
+        <source>Messages:</source>
+        <translation>m3554635:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="60"/>
+        <source>Voice and Text</source>
+        <translation>v01c3 4nd 73x7</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="65"/>
+        <source>Voice Only</source>
+        <translation>v01c3 0nly</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="73"/>
+        <source>Voice Language:</source>
+        <translation>v01c3 l4n6u463:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="90"/>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="133"/>
+        <source>Default</source>
+        <translation>d3f4ul7</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="95"/>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="138"/>
+        <source>Japanese</source>
+        <translation>j4p4n353</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="104"/>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="147"/>
+        <source>English</source>
+        <translation>3n6l15h</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="116"/>
+        <source>Text Language:</source>
+        <translation>73x7 l4n6u463:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="156"/>
+        <source>French</source>
+        <translation>fr3nch</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="165"/>
+        <source>Spanish</source>
+        <translation>5p4n15h</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="174"/>
+        <source>German</source>
+        <translation>63rm4n</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="186"/>
+        <source>Rumble:</source>
+        <translation>rumbl3:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="199"/>
+        <source>Last Character:</source>
+        <translation>l457 ch4r4c73r:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="216"/>
+        <source>Sonic</source>
+        <translation>50n1c</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="225"/>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="252"/>
+        <source>Sonic (Default voice)</source>
+        <translation>50n1c (d3f4ul7 v01c3)</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="234"/>
+        <source>Tails</source>
+        <translation>741l5</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="243"/>
+        <source>Knuckles</source>
+        <translation>knuckl35</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="261"/>
+        <source>Amy</source>
+        <translation>4my</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="270"/>
+        <source>Gamma</source>
+        <translation>64mm4</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="279"/>
+        <source>Big</source>
+        <translation>b16</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="288"/>
+        <source>Sonic (Eggman&apos;s voice)</source>
+        <translation>50n1c (366m4n&apos;5 v01c3)</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="297"/>
+        <source>Sonic (Tikal&apos;s voice)</source>
+        <translation>50n1c (71k4l&apos;5 v01c3)</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="309"/>
+        <source>Last Level:</source>
+        <translation>l457 l3v3l:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAGeneral.ui" line="329"/>
+        <source>Black Market Rings:</source>
+        <translation>bl4ck m4rk37 r1n65:</translation>
+    </message>
+</context>
+<context>
+    <name>SALevelClearCount</name>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelClearCount.ui" line="28"/>
+        <source>Level:</source>
+        <translation>l3v3l:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelClearCount.ui" line="38"/>
+        <source>Sonic:</source>
+        <translation>50n1c:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelClearCount.ui" line="51"/>
+        <location filename="../edit/SonicAdventure/SALevelClearCount.ui" line="90"/>
+        <source>Unused:</source>
+        <translation>unu53d:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelClearCount.ui" line="64"/>
+        <source>Tails:</source>
+        <translation>741l5:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelClearCount.ui" line="77"/>
+        <source>Knuckles:</source>
+        <translation>knuckl35:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelClearCount.ui" line="103"/>
+        <source>Amy:</source>
+        <translation>4my:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelClearCount.ui" line="116"/>
+        <source>Gamma:</source>
+        <translation>64mm4:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelClearCount.ui" line="129"/>
+        <source>Big:</source>
+        <translation>b16:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelClearCount.cpp" line="203"/>
+        <source>Unused (%1)</source>
+        <translation>unu53d (%1)</translation>
+    </message>
+</context>
+<context>
+    <name>SALevelStats</name>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelStats.ui" line="19"/>
+        <source>&amp;Character:</source>
+        <translation>&amp;ch4r4c73r:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelStats.ui" line="36"/>
+        <source>Sonic</source>
+        <translation>50n1c</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelStats.ui" line="45"/>
+        <source>Tails</source>
+        <translation>741l5</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelStats.ui" line="54"/>
+        <source>Knuckles</source>
+        <translation>knuckl35</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelStats.ui" line="63"/>
+        <source>Amy</source>
+        <translation>4my</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelStats.ui" line="72"/>
+        <source>Gamma</source>
+        <translation>64mm4</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelStats.ui" line="81"/>
+        <source>Big</source>
+        <translation>b16</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelStats.ui" line="110"/>
+        <source>Level:</source>
+        <translation>l3v3l:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelStats.ui" line="120"/>
+        <source>High Score:</source>
+        <translation>h16h 5c0r3:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelStats.ui" line="130"/>
+        <source>Emblems:</source>
+        <translation>3mbl3m5:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelStats.ui" line="140"/>
+        <location filename="../edit/SonicAdventure/SALevelStats.cpp" line="335"/>
+        <source>Best Time:</source>
+        <translation>b357 71m3:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelStats.ui" line="150"/>
+        <source>Most Rings:</source>
+        <translation>m057 r1n65:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelStats.cpp" line="331"/>
+        <source>Best Weight:</source>
+        <translation>b357 w316h7:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SALevelStats.cpp" line="526"/>
+        <location filename="../edit/SonicAdventure/SALevelStats.cpp" line="647"/>
+        <source>Metal Sonic</source>
+        <translation>m374l 50n1c</translation>
+    </message>
+</context>
+<context>
+    <name>SAMiscEmblems</name>
+    <message>
+        <location filename="../edit/SonicAdventure/SAMiscEmblems.ui" line="17"/>
+        <source>Chao Race</source>
+        <translation>ch40 r4c3</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SAMiscEmblems.ui" line="25"/>
+        <source>Adventure Fields</source>
+        <translation>4dv3n7ur3 f13ld5</translation>
+    </message>
+</context>
+<context>
+    <name>SANPCFlags</name>
+    <message>
+        <location filename="../edit/SonicAdventure/SANPCFlags.cpp" line="45"/>
+        <source>NPC</source>
+        <translation>npc</translation>
+    </message>
+</context>
+<context>
+    <name>SASubGames</name>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="19"/>
+        <source>&amp;Character:</source>
+        <translation>&amp;ch4r4c73r:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="36"/>
+        <source>Sonic</source>
+        <translation>50n1c</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="45"/>
+        <source>Tails</source>
+        <translation>741l5</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="54"/>
+        <source>Knuckles</source>
+        <translation>knuckl35</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="63"/>
+        <source>Amy</source>
+        <translation>4my</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="72"/>
+        <source>Gamma</source>
+        <translation>64mm4</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="81"/>
+        <source>Big</source>
+        <translation>b16</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="108"/>
+        <source>Sky Chase (Best Scores)</source>
+        <translation>5ky ch453 (b357 5c0r35)</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="114"/>
+        <source>Act 1:</source>
+        <translation>4c7 1:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="160"/>
+        <source>Act 2:</source>
+        <translation>4c7 2:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="209"/>
+        <source>Ice Cap (Best Scores)</source>
+        <translation>1c3 c4p (b357 5c0r35)</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="248"/>
+        <source>Sand Hill (Best Scores)</source>
+        <translation>54nd h1ll (b357 5c0r35)</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="293"/>
+        <source>Hedgehog Hammer (Best Scores)</source>
+        <translation>h3d63h06 h4mm3r (b357 5c0r35)</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="340"/>
+        <source>Twinkle Circuit (Best Times)</source>
+        <translation>7w1nkl3 c1rcu17 (b357 71m35)</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="346"/>
+        <source>Best Times</source>
+        <translation>b357 71m35</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="385"/>
+        <source>Best Laps</source>
+        <translation>b357 l4p5</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="391"/>
+        <source>Lap 1:</source>
+        <translation>l4p 1:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="411"/>
+        <source>Lap 2:</source>
+        <translation>l4p 2:</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.ui" line="473"/>
+        <source>Boss Attack (Best Times)</source>
+        <translation>b055 4774ck (b357 71m35)</translation>
+    </message>
+    <message>
+        <location filename="../edit/SonicAdventure/SASubGames.cpp" line="506"/>
+        <location filename="../edit/SonicAdventure/SASubGames.cpp" line="618"/>
+        <source>Metal Sonic</source>
+        <translation>m374l 50n1c</translation>
+    </message>
+</context>
+<context>
     <name>StatusBarManager</name>
     <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="111"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="110"/>
         <source>Ready.</source>
         <translation>r34dy.</translation>
     </message>
     <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="135"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="134"/>
         <source>Scanning block #%L1 (%L2 scanned, %L3 remaining)...</source>
         <translation>5c4nn1n6 bl0ck #%L1 (%L2 5c4nn3d, %L3 r3m41n1n6)...</translation>
     </message>
     <message>
-        <source>Loaded GameCube Memory Card image %1</source>
-        <translation type="obsolete">l04d3d 64m3cub3 m3m0ry c4rd 1m463 %1</translation>
-    </message>
-    <message>
-        <source>GameCube Memory Card image closed.</source>
-        <translation type="obsolete">64m3cub3 m3m0ry c4rd 1m463 cl053d.</translation>
-    </message>
-    <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="351"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="350"/>
         <source>Loaded %1 image %2</source>
         <translation>l04d3d %1 1m463 %2</translation>
     </message>
     <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="369"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="368"/>
         <source>%1 image closed.</source>
         <translation>%1 1m463 cl053d.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../widgets/StatusBarManager.cpp" line="386"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="385"/>
         <source>%Ln file(s) saved to %1.</source>
         <translation>
             <numerusform>%Ln f1l3 54v3d 70 %1.</numerusform>
@@ -864,12 +2314,12 @@ Alternatively, you can place your own version in ~/.config/mcrecover/data/</sour
         </translation>
     </message>
     <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="448"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="447"/>
         <source>Scan cancelled.</source>
         <translation>5c4n c4nc3ll3d.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../widgets/StatusBarManager.cpp" line="468"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="467"/>
         <source>Scan complete. %Ln lost file(s) found.</source>
         <translation>
             <numerusform>5c4n c0mpl373. %Ln l057 f1l3 f0und.</numerusform>
@@ -877,7 +2327,7 @@ Alternatively, you can place your own version in ~/.config/mcrecover/data/</sour
         </translation>
     </message>
     <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="502"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="501"/>
         <source>An error occurred while scanning: %1</source>
         <translation>4n 3rr0r 0ccurr3d wh1l3 5c4nn1n6: %1</translation>
     </message>
@@ -927,7 +2377,7 @@ Alternatively, you can place your own version in ~/.config/mcrecover/data/</sour
 <context>
     <name>VmuCard</name>
     <message>
-        <location filename="../card/VmuCard.cpp" line="484"/>
+        <location filename="../card/VmuCard.cpp" line="596"/>
         <source>Dreamcast Visual Memory Unit</source>
         <translation>dr34mc457 v15u4l m3m0ry un17</translation>
     </message>
@@ -935,7 +2385,7 @@ Alternatively, you can place your own version in ~/.config/mcrecover/data/</sour
 <context>
     <name>VmuFile</name>
     <message>
-        <location filename="../card/VmuFile.cpp" line="256"/>
+        <location filename="../card/VmuFile.cpp" line="265"/>
         <source>Custom VMU icon file.</source>
         <translation>cu570m vmu 1c0n f1l3.</translation>
     </message>

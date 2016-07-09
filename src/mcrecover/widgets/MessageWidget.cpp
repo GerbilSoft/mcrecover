@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * MessageWidget.hpp: Message widget.                                      *
  *                                                                         *
- * Copyright (c) 2014 by David Korth.                                      *
+ * Copyright (c) 2014-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -225,7 +225,7 @@ int MessageWidgetPrivate::calcBestHeight(void) const
 /** MessageWidget **/
 
 MessageWidget::MessageWidget(QWidget *parent)
-	: QWidget(parent)
+	: super(parent)
 	, d_ptr(new MessageWidgetPrivate(this))
 {
 	Q_D(MessageWidget);
@@ -258,7 +258,7 @@ MessageWidget::~MessageWidget()
 void MessageWidget::paintEvent(QPaintEvent *event)
 {
 	// Call the superclass paintEvent first.
-	QWidget::paintEvent(event);
+	super::paintEvent(event);
 
 	QPainter painter(this);
 
@@ -304,7 +304,7 @@ void MessageWidget::paintEvent(QPaintEvent *event)
 void MessageWidget::showEvent(QShowEvent *event)
 {
 	// Call the superclass showEvent.
-	QWidget::showEvent(event);
+	super::showEvent(event);
 
 	Q_D(MessageWidget);
 	d->timeout = false;

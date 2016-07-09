@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * VmuCard.cpp: Dreamcast VMU memory card class.                           *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -25,6 +25,9 @@
 // VmuFile
 #include "VmuFile.hpp"
 
+// GcImage conversion.
+#include "GcToolsQt.hpp"
+
 // C includes. (C++ namespace)
 #include <cstring>
 #include <cstdio>
@@ -43,6 +46,8 @@
 #include "Card_p.hpp"
 class VmuCardPrivate : public CardPrivate
 {
+	typedef CardPrivate super;
+
 	public:
 		VmuCardPrivate(VmuCard *q);
 		virtual ~VmuCardPrivate();
@@ -110,7 +115,7 @@ class VmuCardPrivate : public CardPrivate
 };
 
 VmuCardPrivate::VmuCardPrivate(VmuCard *q)
-	: CardPrivate(q,
+	: super(q,
 		VMU_BLOCK_SIZE,	// 512-byte blocks.
 		256,	// Minimum card size, in blocks.
 		256,	// Maximum card size, in blocks.
@@ -269,6 +274,33 @@ int VmuCardPrivate::loadSysInfo(void)
 
 	// Set the format time.
 	this->formatTime.setVmuTimestamp(mc_root.timestamp);
+
+	// VMU icon.
+	if (mc_root.icon <= 123) {
+		char filename[64];
+		snprintf(filename, sizeof(filename), ":/vmu/bios/%03d.png", mc_root.icon);
+		QImage img(QString::fromLatin1(filename));
+
+		// The included icons use a black-and-white palette.
+		// Update it to match the VMU's LCD colors.
+		QVector<QRgb> colorTable = img.colorTable();
+		if (colorTable.count() == 2) {
+			for (int i = colorTable.count()-1; i >= 0; i--) {
+				QRgb color = colorTable[i] & 0xFFFFFF;
+				if (color == 0) {
+					// Black. Change to "blue".
+					colorTable[i] = qRgb(8, 24, 132);
+				} else {
+					// White. Change to "green".
+					colorTable[i] = qRgb(140, 206, 173);
+				}
+			}
+			img.setColorTable(colorTable);
+		}
+
+		// Convert to QPixmpa.
+		this->icon = QPixmap::fromImage(img);
+	}
 
 	// Load the FAT.
 	int ret = loadFat();
@@ -432,13 +464,29 @@ void VmuCardPrivate::loadFileList(void)
 			continue;
 
 		// Valid directory entry.
-		VmuFile *mcFile = new VmuFile(q, dirEntry, &mc_fat);
-		lstFiles_new.append(mcFile);
+		VmuFile *vmuFile = new VmuFile(q, dirEntry, &mc_fat);
+		lstFiles_new.append(vmuFile);
+
+		// Is this file ICONDATA_VMS?
+		if (vmuFile->filename() == QLatin1String("ICONDATA_VMS")) {
+			// Found ICONDATA_VMS.
+			const GcImage *img = vmuFile->vmu_icondata_color();
+			if (!img) {
+				// Color icon is missing.
+				// Check the monochrome icon.
+				img = vmuFile->vmu_icondata_mono();
+			}
+
+			if (img) {
+				// ICONDATA_VMS has an icon.
+				this->icon = QPixmap::fromImage(gcImageToQImage(img));
+			}
+		}
 
 		// Mark the file's blocks as used.
 		// TODO
 		/*
-		QVector<uint16_t> fatEntries = mcFile->fatEntries();
+		QVector<uint16_t> fatEntries = vmuFile->fatEntries();
 		foreach (uint16_t block, fatEntries) {
 			if (block >= 5 && block < usedBlockMap.size()) {
 				// Valid block.
@@ -469,7 +517,7 @@ void VmuCardPrivate::loadFileList(void)
 /** VmuCard **/
 
 VmuCard::VmuCard(QObject *parent)
-	: Card(new VmuCardPrivate(this), parent)
+	: super(new VmuCardPrivate(this), parent)
 { }
 
 VmuCard::~VmuCard()

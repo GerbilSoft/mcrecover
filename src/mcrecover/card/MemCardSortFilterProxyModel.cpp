@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * MemCardSortFilterProxyModel.hpp: MemCardModel sort filter proxy.        *
  *                                                                         *
- * Copyright (c) 2012-2014 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -22,12 +22,12 @@
 #include "MemCardSortFilterProxyModel.hpp"
 
 MemCardSortFilterProxyModel::MemCardSortFilterProxyModel(QObject *parent)
-	: QSortFilterProxyModel(parent)
+	: super(parent)
 { }
 
 bool MemCardSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
-	return QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
+	return super::filterAcceptsRow(source_row, source_parent);
 }
 
 bool MemCardSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
@@ -35,7 +35,7 @@ bool MemCardSortFilterProxyModel::lessThan(const QModelIndex &left, const QModel
 	if (!left.isValid() || !right.isValid()) {
 		// One or both indexes are invalid.
 		// Use the default lessThan().
-		return QSortFilterProxyModel::lessThan(left, right);
+		return super::lessThan(left, right);
 	}
 
 	const QVariant vLeft = left.data();
@@ -54,5 +54,5 @@ bool MemCardSortFilterProxyModel::lessThan(const QModelIndex &left, const QModel
 
 	// Unhandled type.
 	// Use the default lessThan().
-	return QSortFilterProxyModel::lessThan(left, right);
+	return super::lessThan(left, right);
 }

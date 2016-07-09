@@ -253,7 +253,7 @@ void EditorWindowPrivate::updateSaveSlotButtons(void)
  * @param parent Parent widget.
  */
 EditorWindow::EditorWindow(QWidget *parent)
-	: QMainWindow(parent,
+	: super(parent,
 		Qt::Dialog |
 		Qt::CustomizeWindowHint |
 		Qt::WindowTitleHint |

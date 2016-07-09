@@ -31,6 +31,7 @@ class McRecoverQApplicationPrivate;
 class McRecoverQApplication : public QApplication
 {
 	Q_OBJECT
+	typedef QApplication super;
 
 	public:
 		McRecoverQApplication(int &argc, char **argv);

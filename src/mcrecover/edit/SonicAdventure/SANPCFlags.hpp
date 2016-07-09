@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * SANPCFlags.hpp: Sonic Adventure - NPC flags.                            *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -22,9 +22,8 @@
 #ifndef __MCRECOVER_EDIT_SONICADVENTURE_SANPCFLAGS_HPP__
 #define __MCRECOVER_EDIT_SONICADVENTURE_SANPCFLAGS_HPP__
 
-#include "BitFlags.hpp"
+#include "../models/BitFlags.hpp"
 
-class SANPCFlagsPrivate;
 class SANPCFlags : public BitFlags
 {
 	// TODO: Should this actually inherit from QObject?
@@ -33,8 +32,6 @@ class SANPCFlags : public BitFlags
 	public:
 		SANPCFlags(QObject *parent = 0);
 
-	protected:
-		Q_DECLARE_PRIVATE(SANPCFlags)
 	private:
 		Q_DISABLE_COPY(SANPCFlags)
 

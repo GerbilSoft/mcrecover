@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnCard.hpp: GameCube file entry class.                                 *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -41,6 +41,7 @@ class GcnFilePrivate;
 class GcnFile : public File
 {
 	Q_OBJECT
+	typedef File super;
 
 	Q_PROPERTY(QString gameDesc READ gameDesc)
 	Q_PROPERTY(QString fileDesc READ fileDesc)

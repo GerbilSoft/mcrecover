@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * VmuFile.cpp: Dreamcast VMU file entry class.                            *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -33,11 +33,13 @@ class QIODevice;
 #include "Checksum.hpp"
 
 class VmuCard;
+class GcImage;
 
 class VmuFilePrivate;
 class VmuFile : public File
 {
 	Q_OBJECT
+	typedef File super;
 
 	public:
 		/**
@@ -94,6 +96,23 @@ class VmuFile : public File
 		 */
 		virtual int exportToFile(QIODevice *qioDevice) override;
 		// TODO: Move these down to File.
+
+	public:
+		/** DC-specific functions. **/
+
+		/**
+		 * Get the monochrome ICONDATA_VMS icon.
+		 * This is only valid for ICONDATA_VMS files.
+		 * @return Monochrome ICONDATA_VMS icon, or nullptr if not found.
+		 */
+		const GcImage *vmu_icondata_mono(void) const;
+
+		/**
+		 * Get the color ICONDATA_VMS icon.
+		 * This is only valid for ICONDATA_VMS files.
+		 * @return Color ICONDATA_VMS icon, or nullptr if not found.
+		 */
+		const GcImage *vmu_icondata_color(void) const;
 };
 
 #endif /* __MCRECOVER_CARD_VMUFILE_HPP__ */

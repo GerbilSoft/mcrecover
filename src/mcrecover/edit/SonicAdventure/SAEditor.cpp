@@ -37,12 +37,12 @@
 #include "sa_defs.h"
 
 // BitFlags
-#include "BitFlagsModel.hpp"
+#include "../models/BitFlagsModel.hpp"
 #include "SAEventFlags.hpp"
 #include "SANPCFlags.hpp"
 
 // ByteFlags
-#include "ByteFlagsModel.hpp"
+#include "../models/ByteFlagsModel.hpp"
 #include "SADXMissionFlags.hpp"
 
 // TODO: Put this in a common header file somewhere.
@@ -69,6 +69,10 @@ class SAEditorPrivate : public EditorWidgetPrivate
 		// sa_save_slot structs.
 		QVector<sa_save_slot*> data_main;
 		QVector<sadx_extra_save_slot*> data_sadx;
+
+		// Editor widgets. (non-flags)
+		QVector<SAEditWidget*> saEditWidgets;
+		QVector<SADXEditWidget*> sadxEditWidgets;
 
 		// BitFlagsModel objects.
 		// Used for event flags, NPC flags, etc.
@@ -186,12 +190,9 @@ void SAEditorPrivate::updateDisplay(void)
 
 	// Display the data.
 	const sa_save_slot *sa_save = data_main.at(this->currentSaveSlot);
-	ui.saGeneral->load(sa_save);
-	ui.saAdventure->load(sa_save);
-	ui.saLevelStats->load(sa_save);
-	ui.saSubGames->load(sa_save);
-	ui.saMiscEmblems->load(sa_save);
-	ui.saLevelClearCount->load(sa_save);
+	foreach (SAEditWidget *saEditWidget, saEditWidgets) {
+		saEditWidget->load(sa_save);
+	}
 
 	// Bit flags.
 	saEventFlags.setAllFlags(&sa_save->events.all[0], NUM_ELEMENTS(sa_save->events.all));
@@ -210,9 +211,9 @@ void SAEditorPrivate::updateDisplay(void)
 	}
 	if (sadx_extra_save) {
 		// SADX extra data found. Load it.
-		ui.saGeneral->loadDX(sadx_extra_save);
-		ui.saLevelStats->loadDX(sadx_extra_save);
-		ui.saSubGames->loadDX(sadx_extra_save);
+		foreach (SADXEditWidget *sadxEditWidget, sadxEditWidgets) {
+			sadxEditWidget->loadDX(sadx_extra_save);
+		}
 
 		// Missions.
 		sadxMissionFlags.setAllFlags(&sadx_extra_save->missions[0],
@@ -226,9 +227,9 @@ void SAEditorPrivate::updateDisplay(void)
 	} else {
 		// No SADX extra data.
 		// Make sure the SADX sections are hidden.
-		ui.saGeneral->loadDX(nullptr);
-		ui.saLevelStats->loadDX(nullptr);
-		ui.saSubGames->loadDX(nullptr);
+		foreach (SADXEditWidget *sadxEditWidget, sadxEditWidgets) {
+			sadxEditWidget->loadDX(nullptr);
+		}
 
 		if (missions_tab_idx >= 0) {
 			// Hide the "Missions" tab.
@@ -250,12 +251,9 @@ void SAEditorPrivate::saveCurrentSlot(void)
 
 	// Save the data.
 	sa_save_slot *sa_save = data_main.at(this->currentSaveSlot);
-	ui.saGeneral->save(sa_save);
-	ui.saAdventure->save(sa_save);
-	ui.saLevelStats->save(sa_save);
-	ui.saSubGames->save(sa_save);
-	ui.saMiscEmblems->save(sa_save);
-	ui.saLevelClearCount->save(sa_save);
+	foreach (SAEditWidget *saEditWidget, saEditWidgets) {
+		saEditWidget->save(sa_save);
+	}
 
 	// Bit flags.
 	saEventFlags.allFlags(&sa_save->events.all[0], NUM_ELEMENTS(sa_save->events.all));
@@ -268,9 +266,9 @@ void SAEditorPrivate::saveCurrentSlot(void)
 	}
 	if (sadx_extra_save) {
 		// SADX extra data found. Save it.
-		ui.saGeneral->saveDX(sadx_extra_save);
-		ui.saLevelStats->saveDX(sadx_extra_save);
-		ui.saSubGames->saveDX(sadx_extra_save);
+		foreach (SADXEditWidget *sadxEditWidget, sadxEditWidgets) {
+			sadxEditWidget->saveDX(sadx_extra_save);
+		}
 
 		// Missions.
 		sadxMissionFlags.allFlags(&sadx_extra_save->missions[0],
@@ -360,22 +358,32 @@ SAEditor::SAEditor(QWidget *parent)
 	Q_D(SAEditor);
 	d->ui.setupUi(this);
 
+	// Initialize the SAEditWidget vector.
+	d->saEditWidgets.append(d->ui.saGeneral);
+	d->saEditWidgets.append(d->ui.saAdventure);
+	d->saEditWidgets.append(d->ui.saLevelStats);
+	d->saEditWidgets.append(d->ui.saSubGames);
+	d->saEditWidgets.append(d->ui.saMiscEmblems);
+	d->saEditWidgets.append(d->ui.saLevelClearCount);
+
+	// Initialize the SADXEditWidget vector.
+	d->sadxEditWidgets.append(d->ui.saGeneral);
+	d->sadxEditWidgets.append(d->ui.saLevelStats);
+	d->sadxEditWidgets.append(d->ui.saSubGames);
+
 	// SAEventFlags model and widget.
 	d->saEventFlagsModel = new BitFlagsModel(this);
 	d->saEventFlagsModel->setBitFlags(&d->saEventFlags);
-	d->ui.saEventFlagsView->setPageSize(64);
 	d->ui.saEventFlagsView->setBitFlagsModel(d->saEventFlagsModel);
 
 	// SANPCFlags model and widget.
 	d->saNPCFlagsModel = new BitFlagsModel(this);
 	d->saNPCFlagsModel->setBitFlags(&d->saNPCFlags);
-	d->ui.saNPCFlagsView->setPageSize(0);
 	d->ui.saNPCFlagsView->setBitFlagsModel(d->saNPCFlagsModel);
 
 	// SADXMissionFlags model and widget.
 	d->sadxMissionFlagsModel = new ByteFlagsModel(this);
 	d->sadxMissionFlagsModel->setByteFlags(&d->sadxMissionFlags);
-	d->ui.sadxMissionFlagsView->setPageSize(0);
 	d->ui.sadxMissionFlagsView->setByteFlagsModel(d->sadxMissionFlagsModel);
 }
 
@@ -400,7 +408,7 @@ void SAEditor::changeEvent(QEvent *event)
 	}
 
 	// Pass the event to the base class.
-	this->QWidget::changeEvent(event);
+	super::changeEvent(event);
 }
 
 /** Public static functions. **/
@@ -409,12 +417,12 @@ void SAEditor::changeEvent(QEvent *event)
  * Is the specified file supported by this editor?
  * @return True if supported; false if not.
  */
-bool SAEditor::isFileSupported(File *file)
+bool SAEditor::isFileSupported(const File *file)
 {
 	bool ret = false;
 	const QString filename = file->filename();
 	// TODO: "PC" file for SADX PC?
-	if (qobject_cast<GcnFile*>(file) != nullptr) {
+	if (qobject_cast<const GcnFile*>(file) != nullptr) {
 		// GameCube file. (SADX)
 		if (file->gameID().left(3) == QLatin1String("GXS") &&
 		    filename.startsWith(QLatin1String("SONICADVENTURE_DX_PLAYRECORD_"))) {
@@ -426,7 +434,7 @@ bool SAEditor::isFileSupported(File *file)
 				ret = true;
 			}
 		}
-	} else if (qobject_cast<VmuFile*>(file) != nullptr) {
+	} else if (qobject_cast<const VmuFile*>(file) != nullptr) {
 		// Dreamcast file. (SA1)
 		if (filename == QLatin1String("SONICADV_SYS") ||
 		    filename == QLatin1String("SONICADV_INT"))

@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * File.hpp: Memory Card file entry. [base class]                          *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -41,6 +41,7 @@ class FilePrivate;
 class File : public QObject
 {
 	Q_OBJECT
+	typedef QObject super;
 
 	// File information.
 	Q_PROPERTY(QString filename READ filename)
