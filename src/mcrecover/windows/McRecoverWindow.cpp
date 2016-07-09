@@ -46,6 +46,13 @@
 #include "db/GcnSearchThread.hpp"
 #include "widgets/StatusBarManager.hpp"
 
+// Taskbar Button Manager.
+#include "TaskbarButtonManager/TaskbarButtonManager.hpp"
+#include "TaskbarButtonManager/TaskbarButtonManagerFactory.hpp"
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif /* Q_OS_WIN */
+
 // Translation Manager.
 #include "TranslationManager.hpp"
 
@@ -65,14 +72,15 @@ using std::vector;
 #include <QtCore/QSignalMapper>
 #include <QtCore/QLocale>
 #include <QtCore/QTextCodec>
-#include <QtGui/QAction>
-#include <QtGui/QActionGroup>
+#include <QtCore/QMimeData>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDropEvent>
-#include <QtGui/QFileDialog>
-#include <QtGui/QLabel>
-#include <QtGui/QMessageBox>
-#include <QtGui/QToolBar>
+#include <QAction>
+#include <QActionGroup>
+#include <QFileDialog>
+#include <QLabel>
+#include <QMessageBox>
+#include <QToolBar>
 
 // GcImageWriter.
 #include "GcImageWriter.hpp"
@@ -253,6 +261,9 @@ class McRecoverWindowPrivate
 		 * @return 0 for GCN; 1 for VMU; -1 for unknown.
 		 */
 		static int checkCardType(const QString &filename);
+
+		// Taskbar Button Manager.
+		TaskbarButtonManager *taskbarButtonManager;
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -275,6 +286,7 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, mapperAnimIconFormat(new QSignalMapper(q))
 	, cfg(new ConfigStore(q))
 	, herpDerp(new HerpDerpEggListener(q))
+	, taskbarButtonManager(nullptr)
 {
 	// Connect the MemCardModel slots.
 	QObject::connect(model, SIGNAL(layoutChanged()),
@@ -330,6 +342,7 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 
 	// TODO: Wait for searchThread to finish?
 	delete searchThread;
+	delete taskbarButtonManager;
 }
 
 /**
@@ -1114,6 +1127,12 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	QObject::connect(d->ui.lstFileList, SIGNAL(focusOut(QFocusEvent*)),
 			 d->herpDerp, SLOT(widget_focusOut(QFocusEvent*)));
 
+#ifndef Q_OS_WIN
+	// Initialize the Taskbar Button Manager. (Non-Windows systems)
+	d->taskbarButtonManager = TaskbarButtonManagerFactory::createManager(this);
+	d->statusBarManager->setTaskbarButtonManager(d->taskbarButtonManager);
+#endif /* Q_OS_WIN */
+
 	// Emit all configuration signals.
 	d->cfg->notifyAll();
 }
@@ -1442,6 +1461,29 @@ void McRecoverWindow::dropEvent(QDropEvent *event)
 	// Open the memory card file.
 	openCard(filename);
 }
+
+#ifdef Q_OS_WIN
+// Windows message handler. Used for TaskbarButtonManager.
+#if QT_VERSION >= 0x050000
+bool McRecoverWindow::nativeEvent(const QByteArray &eventType, void *message, long *result)
+#else /* QT_VERSION < 0x050000 */
+bool McRecoverWindow::winEvent(MSG *message, long *result)
+#endif
+{
+	// Reference: http://nicug.blogspot.com/2011/03/windows-7-taskbar-extensions-in-qt.html
+	// FIXME: winEvent() has been replaced by nativeEvent() in Qt 5.
+	Q_D(McRecoverWindow);
+	if (((MSG*)message)->message == McRecoverQApplication::WM_TaskbarButtonCreated()) {
+		// Initialize the Taskbar Button Manager.
+		d->taskbarButtonManager = TaskbarButtonManagerFactory::createManager(this);
+		if (d->taskbarButtonManager) {
+			d->taskbarButtonManager->setWindow(this);
+			d->statusBarManager->setTaskbarButtonManager(d->taskbarButtonManager);
+		}
+	}
+	return false;
+}
+#endif /* Q_OS_WIN */
 
 /**
  * Mark the UI as busy.

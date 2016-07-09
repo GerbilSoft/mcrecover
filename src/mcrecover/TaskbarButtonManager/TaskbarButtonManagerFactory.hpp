@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * AboutDialog.hpp: About Dialog.                                          *
+ * TaskbarButtonManagerFactory.hpp: TaskbarButtonManager factory class.    *
  *                                                                         *
- * Copyright (c) 2013-2016 by David Korth.                                 *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,36 +19,29 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_ABOUTDIALOG_HPP__
-#define __MCRECOVER_ABOUTDIALOG_HPP__
+#ifndef __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGERFACTORY_HPP__
+#define __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGERFACTORY_HPP__
 
-#include <QDialog>
+// for Q_DISABLE_COPY()
+#include <QtCore/qglobal.h>
+class QObject;
 
-// Qt classes.
-class QWidget;
-
-class AboutDialogPrivate;
-class AboutDialog : public QDialog
+class TaskbarButtonManager;
+class TaskbarButtonManagerFactory
 {
-	Q_OBJECT
-	typedef QDialog super;
-	
-	public:
-		static void ShowSingle(QWidget *parent = nullptr);
-
-	protected:
-		AboutDialog(QWidget *parent = nullptr);
-		virtual ~AboutDialog();
-
-	protected:
-		AboutDialogPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(AboutDialog)
 	private:
-		Q_DISABLE_COPY(AboutDialog)
+		TaskbarButtonManagerFactory();
+		~TaskbarButtonManagerFactory();
+	private:
+		Q_DISABLE_COPY(TaskbarButtonManagerFactory)
 
-	protected:
-		// State change event. (Used for switching the UI language at runtime.)
-		virtual void changeEvent(QEvent *event) final;
+	public:
+		/**
+		 * Create a TaskbarButtonManager.
+		 * @param parent Parent object.
+		 * @return System-specific TaskbarButtonManager, or nullptr on error.
+		 */
+		static TaskbarButtonManager *createManager(QObject *parent = 0);
 };
 
-#endif /* __MCRECOVER_ABOUTDIALOG_HPP__ */
+#endif /* __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGERFACTORY_HPP__ */

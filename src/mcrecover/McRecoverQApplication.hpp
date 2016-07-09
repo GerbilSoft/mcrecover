@@ -22,13 +22,12 @@
 #ifndef __MCRECOVER_MCRECOVERQAPPLICATION_HPP__
 #define __MCRECOVER_MCRECOVERQAPPLICATION_HPP__
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtGui/QIcon>
 #include <QtGui/QPixmap>
-#include <QtGui/QStyle>
+#include <QStyle>
 
 class McRecoverQApplicationPrivate;
-
 class McRecoverQApplication : public QApplication
 {
 	Q_OBJECT
@@ -36,8 +35,10 @@ class McRecoverQApplication : public QApplication
 
 	public:
 		McRecoverQApplication(int &argc, char **argv);
+#if QT_VERSION < 0x050000
 		McRecoverQApplication(int &argc, char **argv, bool GUIenabled);
 		McRecoverQApplication(int &argc, char **argv, Type type);
+#endif /* QT_VERSION < 0x050000 */
 		virtual ~McRecoverQApplication() { }
 
 	private:
@@ -94,18 +95,20 @@ class McRecoverQApplication : public QApplication
 		 * @return QIcon.
 		 */
 		static QIcon Win32Icon(Win32Icon_t icon, const QSize &size);
-#endif /* Q_OS_WIN */
 
-#ifdef Q_OS_WIN
 		// Win32 event filter.
 		bool winEventFilter(MSG *msg, long *result);
-#endif /* Q_OS_WIN */
 
-#ifdef Q_OS_WIN
 		/**
 		 * Set the Qt font to match the system font.
 		 */
 		static void SetFont_Win32(void);
+
+		/**
+		 * Get the message ID for TaskbarButtonCreated.
+		 * @return Message ID, or 0 if not registered.
+		 */
+		static unsigned int WM_TaskbarButtonCreated(void);
 #endif /* Q_OS_WIN */
 
 	signals:

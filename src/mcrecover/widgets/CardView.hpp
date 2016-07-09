@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_WIDGETS_CARDVIEW_HPP__
 #define __MCRECOVER_WIDGETS_CARDVIEW_HPP__
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class Card;
 

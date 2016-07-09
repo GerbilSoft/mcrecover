@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_FORMATNEWMEMCARDDIALOG_HPP__
 #define __MCRECOVER_FORMATNEWMEMCARDDIALOG_HPP__
 
-#include <QtGui/QDialog>
+#include <QDialog>
 
 // MemCard classes.
 class MemCardFile;

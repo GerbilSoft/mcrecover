@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_MESSAGEWIDGETSTACK_HPP__
 #define __MCRECOVER_MESSAGEWIDGETSTACK_HPP__
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "MessageWidget.hpp"
 
 class MessageWidgetStackPrivate;

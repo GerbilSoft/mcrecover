@@ -146,8 +146,9 @@ void FileViewPrivate::updateWidgetDisplay(void)
 		ui.lblFileBanner->clear();
 	}
 
-	// XML button.
+	// XML and Edit buttons.
 	ui.btnXML->setVisible(true);
+	ui.btnEdit->setVisible(true);
 
 	// Edit button.
 	ui.btnEdit->setVisible(EditorWidgetFactory::isEditorAvailable(file));

@@ -29,8 +29,8 @@ class QStatusBar;
 // Card definitions.
 #include "card.h"
 
-// GcnSearchThread.
 class GcnSearchThread;
+class TaskbarButtonManager;
 
 class StatusBarManagerPrivate;
 class StatusBarManager : public QObject
@@ -76,6 +76,18 @@ class StatusBarManager : public QObject
 		 * @param searchThread GcnSearchThread.
 		 */
 		void setSearchThread(GcnSearchThread *searchThread);
+
+		/**
+		 * Get the TaskbarButtonManager.
+		 * @return TaskbarButtonManager.
+		 */
+		TaskbarButtonManager *taskbarButtonManager(void) const;
+
+		/**
+		 * Set the TaskbarButtonManager.
+		 * @param taskbarButtonManager TaskbarButtonManager.
+		 */
+		void setTaskbarButtonManager(TaskbarButtonManager *taskbarButtonManager);
 
 	public slots:
 		/**

@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * DockManager.hpp: DockManager D-Bus implementation.                      *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -23,7 +23,7 @@
 
 // Qt includes.
 #include <QtCore/QTimer>
-#include <QtGui/QWidget>
+#include <QWidget>
 
 // QtDBus includes.
 #include <QtDBus/QDBusConnection>
@@ -38,16 +38,21 @@
 #include "dockmanagerinterface.h"
 #include "dockiteminterface.h"
 
-// C includes.
-#include <sys/types.h>
-#include <unistd.h>
+/** DockManagerPrivate **/
 
-class DockManagerPrivate
+#include "TaskbarButtonManager_p.hpp"
+class DockManagerPrivate : public TaskbarButtonManagerPrivate
 {
 	public:
 		DockManagerPrivate(DockManager *const q);
-		~DockManagerPrivate();
+		virtual ~DockManagerPrivate();
 
+	protected:
+		Q_DECLARE_PUBLIC(DockManager)
+	private:
+		Q_DISABLE_COPY(DockManagerPrivate)
+
+	public:
 		/**
 		 * Close all DockManager connections.
 		 */
@@ -58,7 +63,7 @@ class DockManagerPrivate
 		 * @param parent Parent for the DockManager interface object.
 		 * @return DockManager interface, or nullptr on error.
 		 */
-		static NetLaunchpadDockManagerInterface *GetDockManagerInterface(QObject *parent = 0);
+		static net::launchpad::DockManager *GetDockManagerInterface(QObject *parent = 0);
 
 		/**
 		 * Connect to the DockManager.
@@ -73,18 +78,13 @@ class DockManagerPrivate
 		void update(void);
 
 	private:
-		DockManager *const q;
-		Q_DISABLE_COPY(DockManagerPrivate);
-
-	private:
 		// DockManager.
-		NetLaunchpadDockManagerInterface *ifDockManager;
-		NetLaunchpadDockItemInterface *ifDockItem;
+		net::launchpad::DockManager *ifDockManager;
+		net::launchpad::DockItem *ifDockItem;
 };
 
-
 DockManagerPrivate::DockManagerPrivate(DockManager *const q)
-	: q(q)
+	: TaskbarButtonManagerPrivate(q)
 	, ifDockManager(nullptr)
 	, ifDockItem(nullptr)
 {
@@ -99,7 +99,6 @@ DockManagerPrivate::~DockManagerPrivate()
 	close();
 }
 
-
 /**
  * Close all DockManager connections.
  */
@@ -111,20 +110,19 @@ void DockManagerPrivate::close(void)
 	ifDockManager = nullptr;
 }
 
-
 /**
  * Get the DockManager interface.
  * @param parent Parent for the DockManager interface object.
  * @return DockManager interface, or nullptr on error.
  */
-NetLaunchpadDockManagerInterface *DockManagerPrivate::GetDockManagerInterface(QObject *parent)
+net::launchpad::DockManager *DockManagerPrivate::GetDockManagerInterface(QObject *parent)
 {
 	// Get the session bus.
 	QDBusConnection bus = QDBusConnection::sessionBus();
 
 	// Connect to the DockManager over D-Bus.
-	NetLaunchpadDockManagerInterface *ifDockManager;
-	ifDockManager = new NetLaunchpadDockManagerInterface(
+	net::launchpad::DockManager *ifDockManager;
+	ifDockManager = new net::launchpad::DockManager(
 				QLatin1String("net.launchpad.DockManager"),
 				QLatin1String("/net/launchpad/DockManager"),
 				bus, parent);
@@ -137,7 +135,6 @@ NetLaunchpadDockManagerInterface *DockManagerPrivate::GetDockManagerInterface(QO
 	return ifDockManager;
 }
 
-
 /**
  * Connect to the DockManager.
  * @return 0 on success; non-zero on error.
@@ -148,13 +145,14 @@ int DockManagerPrivate::connectToDockManager(void)
 	close();
 
 	// If we don't have a window specified, don't do anything.
-	if (!q->window())
+	if (!this->window)
 		return -1;
 
 	// Get the session bus.
 	QDBusConnection bus = QDBusConnection::sessionBus();
 
 	// Connect to the DockManager over D-Bus.
+	Q_Q(DockManager);
 	ifDockManager = GetDockManagerInterface(q);
 	if (!ifDockManager)
 		return 1;
@@ -164,10 +162,10 @@ int DockManagerPrivate::connectToDockManager(void)
 	// NOTE: GetItemByXid() is broken when using KDE's IconTasks.
 	// Use GetItemsByPid() instead, and take the first entry.
 	// TODO: Implement hacks from Quassel?
-	// https://github.com/agaida/quassel/blob/master/src/qtui/dockmanagernotificationbackend.cpp
+	// https://github.com/quassel/quassel/blob/master/src/qtui/dockmanagernotificationbackend.cpp
 	// TODO: How do we handle multiple windows per application?
-	pid_t pid = getpid();
-	QDBusPendingReply<QList<QDBusObjectPath> > reply = ifDockManager->GetItemsByPid(pid);
+	QDBusPendingReply<QList<QDBusObjectPath> > reply =
+		ifDockManager->GetItemsByPid(QCoreApplication::applicationPid());
 	reply.waitForFinished();
 	if (!reply.isValid()) {
 		// Cannot find the DockItem for this window.
@@ -182,7 +180,7 @@ int DockManagerPrivate::connectToDockManager(void)
 		return 3;
 	}
 
-	ifDockItem = new NetLaunchpadDockItemInterface(
+	ifDockItem = new net::launchpad::DockItem(
 			QLatin1String("net.launchpad.DockManager"),
 			paths.at(0).path(), bus, q);
 	if (!ifDockItem->isValid()) {
@@ -196,7 +194,6 @@ int DockManagerPrivate::connectToDockManager(void)
 	update();
 	return 0;
 }
-
 
 /**
  * Update the DockItem status.
@@ -216,8 +213,8 @@ void DockManagerPrivate::update(void)
 
 	// Progress.
 	int progress;
-	int curVal = q->progressBarValue();
-	int curMax = q->progressBarMax();
+	int curVal = this->progressBarValue;
+	int curMax = this->progressBarMax;
 	if (curVal < 0 || curMax <= 0) {
 		progress = -1;
 	} else if (curVal >= curMax) {
@@ -230,17 +227,17 @@ void DockManagerPrivate::update(void)
 	ifDockItem->UpdateDockItem(dockItemProps);
 }
 
-
 /** DockManager **/
 
-
 DockManager::DockManager(QObject* parent)
-	: TaskbarButtonManager(parent)
-	, d(new DockManagerPrivate(this))
+	: TaskbarButtonManager(new DockManagerPrivate(this), parent)
 { }
 
 DockManager::~DockManager()
-	{ delete d; }
+{
+	// d_ptr is deleted by ~TaskbarButtonManager().
+	// TODO: Remove this function?
+}
 
 /**
  * Is this TaskbarButtonManager usable?
@@ -248,13 +245,12 @@ DockManager::~DockManager()
  */
 bool DockManager::IsUsable(void)
 {
-	NetLaunchpadDockManagerInterface *ifDockManager =
+	net::launchpad::DockManager *ifDockManager =
 		DockManagerPrivate::GetDockManagerInterface();
 	bool isUsable = !!ifDockManager;
 	delete ifDockManager;
 	return isUsable;
 }
-
 
 /**
  * Set the window this TaskbarButtonManager should manage.
@@ -269,6 +265,8 @@ bool DockManager::IsUsable(void)
  */
 void DockManager::setWindow(QWidget *window)
 {
+	Q_D(DockManager);
+
 	// Disconnect any existing connections.
 	d->close();
 
@@ -282,16 +280,16 @@ void DockManager::setWindow(QWidget *window)
 	}
 }
 
-
 /**
  * Update the taskbar button.
  */
 void DockManager::update(void)
-	{ d->update(); }
-
+{
+	Q_D(DockManager);
+	d->update();
+}
 
 /** Slots **/
-
 
 /**
  * HACK: Timer for window initialization.
@@ -299,4 +297,7 @@ void DockManager::update(void)
  * window is fully initialized, we won't find it.
  */
 void DockManager::setWindow_timer_slot(void)
-	{ d->connectToDockManager(); }
+{
+	Q_D(DockManager);
+	d->connectToDockManager();
+}

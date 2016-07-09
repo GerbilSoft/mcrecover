@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * AboutDialog.hpp: About Dialog.                                          *
+ * TaskbarButtonManagerFactory.hpp: TaskbarButtonManager factory class.    *
  *                                                                         *
- * Copyright (c) 2013-2016 by David Korth.                                 *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,36 +19,49 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_ABOUTDIALOG_HPP__
-#define __MCRECOVER_ABOUTDIALOG_HPP__
+#include "TaskbarButtonManagerFactory.hpp"
+#include "TaskbarButtonManager.hpp"
 
-#include <QDialog>
+// TaskbarButtonManager subclasses.
+#include <config.mcrecover.h>
+#ifdef Q_OS_WIN32
+#include "Win7TaskbarList.hpp"
+#endif /* Q_OS_WIN32 */
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+#include "UnityLauncher.hpp"
+#endif
+#ifdef QtDBus_FOUND
+#include "DockManager.hpp"
+#endif /* QtDBus_FOUND */
 
-// Qt classes.
-class QWidget;
-
-class AboutDialogPrivate;
-class AboutDialog : public QDialog
+/**
+ * Create a TaskbarButtonManager.
+ * @param parent Parent object.
+ * @return System-specific TaskbarButtonManager, or nullptr on error.
+ */
+TaskbarButtonManager *TaskbarButtonManagerFactory::createManager(QObject *parent)
 {
-	Q_OBJECT
-	typedef QDialog super;
-	
-	public:
-		static void ShowSingle(QWidget *parent = nullptr);
+	// Check the various implementations.
+#ifdef Q_OS_WIN
+	if (Win7TaskbarList::IsUsable()) {
+		// Win7TaskbarList is usable.
+		return new Win7TaskbarList(parent);
+	}
+#endif /* Q_OS_WIN */
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+	// Unity Launcher
+	if (UnityLauncher::IsUsable()) {
+		// Unity Launcher is usable.
+		return new UnityLauncher(parent);
+	}
+#endif /* defined(Q_OS_UNIX) && !defined(Q_OS_MAC) */
+#ifdef QtDBus_FOUND
+	if (DockManager::IsUsable()) {
+		// DockManager is usable.
+		return new DockManager(parent);
+	}
+#endif /* QtDBus_FOUND */
 
-	protected:
-		AboutDialog(QWidget *parent = nullptr);
-		virtual ~AboutDialog();
-
-	protected:
-		AboutDialogPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(AboutDialog)
-	private:
-		Q_DISABLE_COPY(AboutDialog)
-
-	protected:
-		// State change event. (Used for switching the UI language at runtime.)
-		virtual void changeEvent(QEvent *event) final;
-};
-
-#endif /* __MCRECOVER_ABOUTDIALOG_HPP__ */
+	// No TaskbarButtonManager subclasses are available.
+	return nullptr;
+}

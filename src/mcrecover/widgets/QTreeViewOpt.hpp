@@ -24,7 +24,7 @@
 #define __MCRECOVER_QTREEVIEWOPT_HPP__
 
 // Qt includes and classes.
-#include <QtGui/QTreeView>
+#include <QTreeView>
 class QKeyEvent;
 class QFocusEvent;
 

@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * DockManager.cpp: DockManager D-Bus implementation.                      *
+ * UnityLauncher.cpp: Unity Launcher implementation.                       *
  *                                                                         *
  * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
@@ -19,24 +19,24 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_TASKBARBUTTONMANAGER_DOCKMANAGER_HPP__
-#define __MCRECOVER_TASKBARBUTTONMANAGER_DOCKMANAGER_HPP__
+#ifndef __MCRECOVER_TASKBARBUTTONMANAGER_UNITYLAUNCHER_HPP__
+#define __MCRECOVER_TASKBARBUTTONMANAGER_UNITYLAUNCHER_HPP__
 
 #include "TaskbarButtonManager.hpp"
 
-class DockManagerPrivate;
-class DockManager : public TaskbarButtonManager
+class UnityLauncherPrivate;
+class UnityLauncher : public TaskbarButtonManager
 {
 	Q_OBJECT
 
 	public:
-		DockManager(QObject *parent = 0);
-		virtual ~DockManager();
+		UnityLauncher(QObject *parent = 0);
+		virtual ~UnityLauncher();
 
 	protected:
-		Q_DECLARE_PRIVATE(DockManager)
+		Q_DECLARE_PRIVATE(UnityLauncher)
 	private:
-		Q_DISABLE_COPY(DockManager)
+		Q_DISABLE_COPY(UnityLauncher)
 
 	public:
 		/**
@@ -64,14 +64,6 @@ class DockManager : public TaskbarButtonManager
 		 * Update the taskbar button.
 		 */
 		virtual void update(void) override;
-
-	private slots:
-		/**
-		 * HACK: Timer for window initialization.
-		 * If we attempt to get the dock item before the
-		 * window is fully initialized, we won't find it.
-		 */
-		void setWindow_timer_slot(void);
 };
 
-#endif /* __MCRECOVER_TASKBARBUTTONMANAGER_DOCKMANAGER_HPP__ */
+#endif /* __MCRECOVER_TASKBARBUTTONMANAGER_UNITYLAUNCHER_HPP__ */

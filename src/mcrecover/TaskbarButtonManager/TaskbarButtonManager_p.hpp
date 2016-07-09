@@ -1,6 +1,6 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * DockManager.cpp: DockManager D-Bus implementation.                      *
+ * TaskbarButtonManager_p.hpp: Taskbar button manager base class. (PRIVATE)*
  *                                                                         *
  * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
@@ -19,59 +19,30 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_TASKBARBUTTONMANAGER_DOCKMANAGER_HPP__
-#define __MCRECOVER_TASKBARBUTTONMANAGER_DOCKMANAGER_HPP__
+#ifndef __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGER_P_HPP__
+#define __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGER_P_HPP__
 
 #include "TaskbarButtonManager.hpp"
 
-class DockManagerPrivate;
-class DockManager : public TaskbarButtonManager
+class TaskbarButtonManagerPrivate
 {
-	Q_OBJECT
-
 	public:
-		DockManager(QObject *parent = 0);
-		virtual ~DockManager();
+		TaskbarButtonManagerPrivate(TaskbarButtonManager *const q);
+		virtual ~TaskbarButtonManagerPrivate();
 
 	protected:
-		Q_DECLARE_PRIVATE(DockManager)
+		TaskbarButtonManager *const q_ptr;
+		Q_DECLARE_PUBLIC(TaskbarButtonManager)
 	private:
-		Q_DISABLE_COPY(DockManager)
+		Q_DISABLE_COPY(TaskbarButtonManagerPrivate)
 
 	public:
-		/**
-		 * Is this TaskbarButtonManager usable?
-		 * @return True if usable; false if not.
-		 */
-		static bool IsUsable(void);
+		// Window.
+		QWidget *window;
 
-	public:
-		/**
-		 * Set the window this TaskbarButtonManager should manage.
-		 * This must be a top-level window in order to work properly.
-		 *
-		 * Subclasses should reimplement this function if special
-		 * initialization is required to set up the taskbar button.
-		 *
-		 * TODO: Make a separate protected function that setWindow() calls?
-		 *
-		 * @param window Window.
-		 */
-		virtual void setWindow(QWidget *window) override;
-
-	protected:
-		/**
-		 * Update the taskbar button.
-		 */
-		virtual void update(void) override;
-
-	private slots:
-		/**
-		 * HACK: Timer for window initialization.
-		 * If we attempt to get the dock item before the
-		 * window is fully initialized, we won't find it.
-		 */
-		void setWindow_timer_slot(void);
+		// Status elements.
+		int progressBarValue;	// Current progress. (-1 for no bar)
+		int progressBarMax;	// Maximum progress.
 };
 
-#endif /* __MCRECOVER_TASKBARBUTTONMANAGER_DOCKMANAGER_HPP__ */
+#endif /* __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGER_P_HPP__ */

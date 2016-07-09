@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_EDIT_MODELS_BYTEFLAGSVIEW_HPP__
 #define __MCRECOVER_EDIT_MODELS_BYTEFLAGSVIEW_HPP__
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class ByteFlagsModel;
 

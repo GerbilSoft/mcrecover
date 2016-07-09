@@ -42,7 +42,7 @@
 #cmakedefine HAVE_QT_STATIC_PLUGIN_QJPCODECS 1
 
 /* Define to 1 if QtDBus was found. */
-#cmakedefine QT_QTDBUS_FOUND 1
+#cmakedefine QtDBus_FOUND 1
 
 /* Define to 1 if libpng was found. */
 #cmakedefine HAVE_PNG 1

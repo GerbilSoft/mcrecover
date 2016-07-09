@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_WIDGETS_FILEVIEW_HPP__
 #define __MCRECOVER_WIDGETS_FILEVIEW_HPP__
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class File;
 

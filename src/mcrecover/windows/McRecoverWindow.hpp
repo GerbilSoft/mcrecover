@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_MCRECOVERWINDOW_HPP__
 #define __MCRECOVER_MCRECOVERWINDOW_HPP__
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 
 // Qt includes.
 #include <QtCore/QString>
@@ -68,6 +68,15 @@ class McRecoverWindow : public QMainWindow
 		// QMainWindow virtual functions: drag and drop.
 		virtual void dragEnterEvent(QDragEnterEvent *event) final;
 		virtual void dropEvent(QDropEvent *event) final;
+
+#ifdef Q_OS_WIN
+		// Windows message handler. Used for TaskbarButtonManager.
+#if QT_VERSION >= 0x050000
+		virtual bool nativeEvent(const QByteArray &eventType, void *message, long *result) override;
+#else /* QT_VERSION < 0x050000 */
+		virtual bool winEvent(MSG *message, long *result) override;
+#endif
+#endif /* Q_OS_WIN */
 
 	protected slots:
 		// UI busy functions.

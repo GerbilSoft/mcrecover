@@ -42,11 +42,11 @@
 // Qt includes.
 #include <QtCore/QHash>
 #include <QtCore/QTimer>
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtGui/QColor>
 #include <QtGui/QFont>
 #include <QtGui/QPalette>
-#include <QtGui/QStyle>
+#include <QStyle>
 
 
 /** MemCardModelPrivate **/
@@ -581,7 +581,6 @@ void MemCardModel::resumeAnimation(void)
 
 /**
  * Animation timer slot.
- * Wrapper for MemCardModelPrivate::animTimerSlot().
  */
 void MemCardModel::animTimerSlot(void)
 {
@@ -604,7 +603,7 @@ void MemCardModel::animTimerSlot(void)
 		if (iconUpdated) {
 			// Icon has been updated.
 			// Notify the UI that the icon has changed.
-			QModelIndex iconIndex = createIndex(i, MemCardModel::COL_ICON, 0);
+			QModelIndex iconIndex = createIndex(i, MemCardModel::COL_ICON);
 			emit dataChanged(iconIndex, iconIndex);
 		}
 	}

@@ -28,8 +28,8 @@
 
 // Qt includes.
 #include <QtCore/QHash>
-#include <QtGui/QApplication>
-#include <QtGui/QStyle>
+#include <QApplication>
+#include <QStyle>
 
 // Event flags.
 #include "ByteFlags.hpp"

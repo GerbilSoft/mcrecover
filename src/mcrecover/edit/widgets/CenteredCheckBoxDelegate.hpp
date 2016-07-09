@@ -4,7 +4,7 @@
 #define CENTEREDCHECKBOXDELEGATE_HPP
 
 // Qt includes.
-#include <QtGui/QStyledItemDelegate>
+#include <QStyledItemDelegate>
 class QPainter;
 
 class CenteredCheckBoxDelegate : public QStyledItemDelegate

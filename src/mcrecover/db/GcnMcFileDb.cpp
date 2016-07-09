@@ -530,7 +530,7 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 	}
 
 	// Determine which checksum algorithm to use.
-	checksumDef.algorithm = Checksum::ChkAlgorithmFromString(algorithm.toAscii().constData());
+	checksumDef.algorithm = Checksum::ChkAlgorithmFromString(algorithm.toLatin1().constData());
 	switch (checksumDef.algorithm) {
 		case Checksum::CHKALG_CRC16:
 			checksumDef.param =

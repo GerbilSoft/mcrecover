@@ -22,10 +22,9 @@
 #ifndef __MCRECOVER_HACKDETECTION_HPP__
 #define __MCRECOVER_HACKDETECTION_HPP__
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class HackDetectionPrivate;
-
 class HackDetection : public QWidget
 {
 	Q_OBJECT

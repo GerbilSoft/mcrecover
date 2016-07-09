@@ -23,9 +23,9 @@
 #include "QTreeViewOpt.hpp"
 
 // Qt classes.
-#include <QtGui/QHeaderView>
-#include <QtGui/QMenu>
-#include <QtGui/QAction>
+#include <QHeaderView>
+#include <QMenu>
+#include <QAction>
 
 QTreeViewOpt::QTreeViewOpt(QWidget *parent)
 	: super(parent)

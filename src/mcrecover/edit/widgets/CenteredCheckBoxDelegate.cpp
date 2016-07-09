@@ -3,7 +3,7 @@
 #include "CenteredCheckBoxDelegate.hpp"
 
 // Qt includes.
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtCore/QEvent>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>

@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_EDIT_EDITORWINDOW_HPP__
 #define __MCRECOVER_EDIT_EDITORWINDOW_HPP__
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 
 class File;
 

@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_MESSAGEWIDGET_HPP__
 #define __MCRECOVER_MESSAGEWIDGET_HPP__
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class MessageWidgetPrivate;
 

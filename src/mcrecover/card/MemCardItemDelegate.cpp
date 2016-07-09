@@ -27,10 +27,10 @@
 
 // Qt includes.
 #include <QtGui/QPainter>
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtGui/QFont>
 #include <QtGui/QFontMetrics>
-#include <QtGui/QStyle>
+#include <QStyle>
 
 #ifdef Q_OS_WIN
 #define WIN32_LEAN_AND_MEAN

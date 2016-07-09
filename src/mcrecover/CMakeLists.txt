@@ -1,5 +1,6 @@
 PROJECT(mcrecover)
-cmake_minimum_required(VERSION 2.6)
+# QT4_ADD_DBUS_INTERFACES()'s NO_NAMESPACE and INCLUDE options were added in 2.8.7.
+cmake_minimum_required(VERSION 2.8.7)
 
 # mcrecover source and binary directories.
 # Binary directory is required for moc-generated headers.
@@ -26,42 +27,80 @@ ELSE()
 	SET(MCRECOVER_TRANSLATIONS_DIRECTORY "${CMAKE_INSTALL_PREFIX}/share/mcrecover/translations")
 ENDIF()
 
-# Find Qt4.
-# Components used:
-# - QtCore
-# - QtGui
-# - QtXml
-# - QtDBus (optional; used for DockManager / Unity API)
-SET(MCRECOVER_QT4_MIN_VERSION 4.6.0)
-SET(MCRECOVER_QT_COMPONENTS QtCore QtGui QtXml)
-IF(ENABLE_DBUS)
-	SET(MCRECOVER_QT_COMPONENTS ${MCRECOVER_QT_COMPONENTS} QtDBus)
-ENDIF(ENABLE_DBUS)
+IF(USE_QT4)
+	# Find Qt 4.
+	SET(MCRECOVER_QT4_MIN_VERSION 4.6.0)
+	SET(MCRECOVER_QT4_COMPONENTS QtCore QtGui QtXml)
+	IF(ENABLE_DBUS)
+		# QtDBus is used for DockManager.
+		# TODO: Unity API?
+		SET(MCRECOVER_QT4_COMPONENTS ${MCRECOVER_QT4_COMPONENTS} QtDBus)
+	ENDIF(ENABLE_DBUS)
 
-FIND_PACKAGE(Qt4 ${MCRECOVER_QT4_MIN_VERSION}
-	COMPONENTS ${MCRECOVER_QT_COMPONENTS})
-IF(NOT QT_QTCORE_FOUND)
-	MESSAGE(FATAL_ERROR "QtCore not found! Please install Qt ${MCRECOVER_QT4_MIN_VERSION} or higher.")
-ELSEIF(NOT QT_QTGUI_FOUND)
-	MESSAGE(FATAL_ERROR "QtGui not found! Please install Qt ${MCRECOVER_QT4_MIN_VERSION} or higher.")
+	FIND_PACKAGE(Qt4 ${MCRECOVER_QT4_MIN_VERSION}
+		COMPONENTS ${MCRECOVER_QT4_COMPONENTS})
+	IF(NOT QT_QTCORE_FOUND)
+		MESSAGE(FATAL_ERROR "QtCore not found! Please install Qt ${MCRECOVER_QT4_MIN_VERSION} or higher.")
+	ELSEIF(NOT QT_QTGUI_FOUND)
+		MESSAGE(FATAL_ERROR "QtGui not found! Please install Qt ${MCRECOVER_QT4_MIN_VERSION} or higher.")
+	ENDIF()
+
+	IF(QT_QTDBUS_FOUND)
+		SET(QtDBus_FOUND 1)
+	ENDIF(QT_QTDBUS_FOUND)
+
+	INCLUDE(${QT_USE_FILE})
+ELSEIF(USE_QT5)
+	# Find Qt 5.
+	# FIXME: Figure out a minimum Qt5 version.
+	SET(QT5_EXECUTABLE_COMPILE_FLAGS "")
+	FOREACH(QT5_MODULE Qt5Core Qt5Gui Qt5Widgets Qt5Xml)
+		FIND_PACKAGE(${QT5_MODULE} REQUIRED)
+		INCLUDE_DIRECTORIES(${${QT5_MODULE}_INCLUDE_DIRS})
+
+		# If Qt 5 is built with -reduce-relocations, we must build with -fPIC.
+		# Qt's CMake modules provide the CFLAGS for this.
+		SET(QT5_EXECUTABLE_COMPILE_FLAGS "${QT5_EXECUTABLE_COMPILE_FLAGS} ${${QT5_MODULE}_EXECUTABLE_COMPILE_FLAGS}")
+	ENDFOREACH()
+
+	IF(ENABLE_DBUS)
+		# QtDBus is used for DockManager.
+		FIND_PACKAGE(Qt5DBus)
+		# FIXME: HAVE_Qt5DBus isn't working...
+		IF(Qt5DBus_FOUND)
+			SET(QtDBus_FOUND 1)
+			INCLUDE_DIRECTORIES(${Qt5DBus_INCLUDE_DIRS})
+
+			# If Qt 5 is built with -reduce-relocations, we must build with -fPIC.
+			# Qt's CMake modules provide the CFLAGS for this.
+			SET(QT5_EXECUTABLE_COMPILE_FLAGS "${QT5_EXECUTABLE_COMPILE_FLAGS} ${Qt5DBus_EXECUTABLE_COMPILE_FLAGS}")
+		ENDIF(Qt5DBus_FOUND)
+	ENDIF(ENABLE_DBUS)
+
+	# Add Qt 5 compile flags.
+	# TODO: Also linker flags?
+	SET(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${QT5_EXECUTABLE_COMPILE_FLAGS}")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${QT5_EXECUTABLE_COMPILE_FLAGS}")
 ENDIF()
-
-INCLUDE(${QT_USE_FILE})
 
 ####################################
 # Qt plugins. (Static build only!) #
 ####################################
 IF(QT_IS_STATIC)
-	IF(QT_QTCORE_LIBRARY_DEBUG)
-		SET(QT_PLUGINS_SUFFIX "d")
-	ENDIF(QT_QTCORE_LIBRARY_DEBUG)
-	FIND_LIBRARY(QT_PLUGINS_CODECS_QJPCODECS
-		qjpcodecs${QT_PLUGINS_SUFFIX}
-		PATHS ${QT_PLUGINS_DIR}/codecs)
-	IF(QT_PLUGINS_CODECS_QJPCODECS)
-		SET(HAVE_QT_STATIC_PLUGIN_QJPCODECS 1)
-	ELSE()
-		MESSAGE(WARNING "qjpcodecs not found; Japanese text will not be decoded properly.")
+	IF(USE_QT4)
+		IF(QT_QTCORE_LIBRARY_DEBUG)
+			SET(QT_PLUGINS_SUFFIX "d")
+		ENDIF(QT_QTCORE_LIBRARY_DEBUG)
+		FIND_LIBRARY(QT_PLUGINS_CODECS_QJPCODECS
+			qjpcodecs${QT_PLUGINS_SUFFIX}
+			PATHS ${QT_PLUGINS_DIR}/codecs)
+		IF(QT_PLUGINS_CODECS_QJPCODECS)
+			SET(HAVE_QT_STATIC_PLUGIN_QJPCODECS 1)
+		ELSE()
+			MESSAGE(WARNING "qjpcodecs not found; Japanese text will not be decoded properly.")
+		ENDIF()
+	ELSEIF(USE_QT5)
+		MESSAGE(FATAL_ERROR "TODO: qjpcodecs static linkage for Qt 5.")
 	ENDIF()
 ENDIF(QT_IS_STATIC)
 
@@ -118,7 +157,6 @@ SET(mcrecover_SRCS
 	IconAnimHelper.cpp
 	McRecoverQApplication.cpp
 	VarReplace.cpp
-	TaskbarButtonManager/TaskbarButtonManager.cpp
 	GcToolsQt.cpp
 	TranslationManager.cpp
 	config/ConfigStore.cpp
@@ -219,7 +257,6 @@ ENDIF(WIN32)
 SET(mcrecover_MOC_H
 	IconAnimHelper.hpp
 	McRecoverQApplication.hpp
-	TaskbarButtonManager/TaskbarButtonManager.hpp
 	config/ConfigStore.hpp
 	)
 
@@ -321,14 +358,19 @@ SET(mcrecover_EDIT_UIS
 	)
 
 # Generate the header files from the UI files.
-QT4_WRAP_UI(mcrecover_UIS_H
+SET(mcrecover_UIS
 	${mcrecover_WINDOW_UIS}
 	${mcrecover_WIDGET_UIS}
 	${mcrecover_EDIT_UIS}
 	)
+IF(USE_QT4)
+	QT4_WRAP_UI(mcrecover_UIS_H ${mcrecover_UIS})
+ELSEIF(USE_QT5)
+	QT5_WRAP_UI(mcrecover_UIS_H ${mcrecover_UIS})
+ENDIF()
 
 # Create MOC source files for classes that need them.
-QT4_WRAP_CPP(mcrecover_MOC_SRCS
+SET(mcrecover_MOC_H
 	${mcrecover_MOC_H}
 	${mcrecover_DB_MOC_H}
 	${mcrecover_WINDOW_MOC_H}
@@ -337,33 +379,102 @@ QT4_WRAP_CPP(mcrecover_MOC_SRCS
 	${mcrecover_EDIT_MOC_H}
 	${mcrecover_SEKRIT_MOC_H}
 	)
+IF(USE_QT4)
+	QT4_WRAP_CPP(mcrecover_MOC_SRCS ${mcrecover_MOC_H})
+ELSEIF(USE_QT5)
+	QT5_WRAP_CPP(mcrecover_MOC_SRCS ${mcrecover_MOC_H})
+ENDIF()
 
-IF(QT_QTDBUS_FOUND)
-	# QtDBus found.
-	# Enable DockManager / Unity API support.
-	# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
-	# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
-	INCLUDE(QtDBusInterfaceNoNS)
-	QT4_ADD_DBUS_INTERFACES_NONS(
-		mcrecover_DBUS_SRCS
-		INCLUDE dbus/DBusMetatypes.hpp
-		dbus/net.launchpad.DockItem.xml
-		dbus/net.launchpad.DockManager.xml
+# TaskbarButtonManager
+SET(mcrecover_TBM_SRCS
+	TaskbarButtonManager/TaskbarButtonManager.cpp
+	TaskbarButtonManager/TaskbarButtonManagerFactory.cpp
+	)
+SET(mcrecover_TBM_MOC_H
+	TaskbarButtonManager/TaskbarButtonManager.hpp
+	)
+SET(mcrecover_TBM_H TaskbarButtonManager/TaskbarButtonManager_p.hpp)
+
+IF(WIN32)
+	# Windows: Use ITaskbarList3. (Win7+)
+	SET(mcrecover_TBM_SRCS
+		${mcrecover_TBM_SRCS}
+		TaskbarButtonManager/Win7TaskbarList.cpp
+		)
+	SET(mcrecover_TBM_MOC_H
+		${mcrecover_TBM_MOC_H}
+		TaskbarButtonManager/Win7TaskbarList.hpp
+		)
+ELSEIF(UNIX AND NOT APPLE)
+	# Unity Launcher API.
+	# dlopen() is required.
+	SET(mcrecover_NEEDS_DL 1)
+	SET(mcrecover_TBM_SRCS
+		${mcrecover_TBM_SRCS}
+		TaskbarButtonManager/UnityLauncher.cpp
+		)
+	SET(mcrecover_TBM_MOC_H
+		${mcrecover_TBM_MOC_H}
+		TaskbarButtonManager/UnityLauncher.hpp
 		)
 
-	IF(UNIX AND NOT APPLE)
-		SET(mcrecover_DBUS_SRCS
-			${mcrecover_DBUS_SRCS}
-			TaskbarButtonManager/DockManager.cpp
+	IF(QtDBus_FOUND)
+		SET(DBus_XML_SRCS
+			dbus/net.launchpad.DockItem.xml
+			dbus/net.launchpad.DockManager.xml
 			)
-		SET(mcrecover_DBUS_MOC_H
-			TaskbarButtonManager/DockManager.hpp
+		SET_SOURCE_FILES_PROPERTIES(${DBus_XML_SRCS} PROPERTIES
+			INCLUDE dbus/DBusMetatypes.hpp
 			)
 
-		# Create MOC source files for classes that need them.
-		QT4_WRAP_CPP(mcrecover_DBUS_MOC_SRCS ${mcrecover_DBUS_MOC_H})
-	ENDIF(UNIX AND NOT APPLE)
-ENDIF(QT_QTDBUS_FOUND)
+		IF(USE_QT4)
+			# Qt4: QtDBus found.
+			# Enable DockManager / Unity API support.
+			# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
+			# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
+			QT4_ADD_DBUS_INTERFACES(
+				mcrecover_DBUS_INTERFACE_SRCS
+				${DBus_XML_SRCS}
+				)
+			SET(mcrecover_TBM_SRCS
+				${mcrecover_TBM_SRCS}
+				${mcrecover_DBUS_INTERFACE_SRCS}
+				TaskbarButtonManager/DockManager.cpp
+				)
+			SET(mcrecover_TBM_MOC_H
+				${mcrecover_TBM_MOC_H}
+				TaskbarButtonManager/DockManager.hpp
+				)
+		ELSEIF(USE_QT5)
+			# Qt5: QtDBus found.
+			# Enable DockManager / Unity API support.
+			# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
+			# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
+			QT5_ADD_DBUS_INTERFACES(
+				mcrecover_DBUS_INTERFACE_SRCS
+				${DBus_XML_SRCS}
+				)
+			SET(mcrecover_TBM_SRCS
+				${mcrecover_TBM_SRCS}
+				${mcrecover_DBUS_INTERFACE_SRCS}
+				TaskbarButtonManager/DockManager.cpp
+				)
+			SET(mcrecover_TBM_MOC_H
+				${mcrecover_TBM_MOC_H}
+				TaskbarButtonManager/DockManager.hpp
+				)
+		ENDIF()
+	ENDIF(QtDBus_FOUND)
+ENDIF()
+
+IF(mcrecover_TBM_MOC_H)
+	# Create MOC source files for classes that need them.
+	IF(USE_QT4)
+		QT4_WRAP_CPP(mcrecover_TBM_MOC_SRCS ${mcrecover_TBM_MOC_H})
+	ELSEIF(USE_QT5)
+		QT5_WRAP_CPP(mcrecover_TBM_MOC_SRCS ${mcrecover_TBM_MOC_H})
+	ENDIF()
+ENDIF(mcrecover_TBM_MOC_H)
 
 #################
 # Translations. #
@@ -385,11 +496,17 @@ SET(mcrecover_RCC_SRCS
 	resources/vmu/vmu.qrc
 	)
 
-# Add the resource files to the project.
-QT4_ADD_RESOURCES(
-	mcrecover_RCC_O ${mcrecover_RCC_SRCS}
-	OPTIONS -no-compress
-	)
+IF(USE_QT4)
+	QT4_ADD_RESOURCES(
+		mcrecover_RCC_O ${mcrecover_RCC_SRCS}
+		OPTIONS -no-compress
+		)
+ELSEIF(USE_QT5)
+	QT5_ADD_RESOURCES(
+		mcrecover_RCC_O ${mcrecover_RCC_SRCS}
+		OPTIONS -no-compress
+		)
+ENDIF()
 
 #########################
 # Build the executable. #
@@ -409,8 +526,8 @@ ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_MOC_SRCS}
 	${mcrecover_UIS_H}
 	${mcrecover_RCC_O}
-	${mcrecover_DBUS_SRCS}
-	${mcrecover_DBUS_MOC_SRCS}
+	${mcrecover_TBM_SRCS} ${mcrecover_TBM_H}
+	${mcrecover_TBM_MOC_SRCS}
 	)
 INCLUDE(SetMSVCDebugPath)
 SET_MSVC_DEBUG_PATH(mcrecover)
@@ -434,16 +551,24 @@ ENDIF(HAVE_PCRE16)
 
 # Qt libraries
 # NOTE: Libraries have to be linked in reverse order.
-IF(QT_PLUGINS_CODECS_QJPCODECS)
-	TARGET_LINK_LIBRARIES(mcrecover ${QT_PLUGINS_CODECS_QJPCODECS})
-ENDIF(QT_PLUGINS_CODECS_QJPCODECS)
-IF(QT_QTDBUS_FOUND)
-	TARGET_LINK_LIBRARIES(mcrecover ${QT_QTDBUS_LIBRARY})
-ENDIF(QT_QTDBUS_FOUND)
-TARGET_LINK_LIBRARIES(mcrecover
-	${QT_QTGUI_LIBRARY}
-	${QT_QTCORE_LIBRARY}
-	)
+IF(USE_QT4)
+	IF(QT_PLUGINS_CODECS_QJPCODECS)
+		TARGET_LINK_LIBRARIES(mcrecover ${QT_PLUGINS_CODECS_QJPCODECS})
+	ENDIF(QT_PLUGINS_CODECS_QJPCODECS)
+	IF(QT_QTDBUS_FOUND)
+		TARGET_LINK_LIBRARIES(mcrecover ${QT_QTDBUS_LIBRARY})
+	ENDIF(QT_QTDBUS_FOUND)
+	TARGET_LINK_LIBRARIES(mcrecover
+		${QT_QTGUI_LIBRARY}
+		${QT_QTCORE_LIBRARY}
+		)
+ELSEIF(USE_QT5)
+	# TODO: qjpcodecs for static linkage.
+	IF(Qt5DBus_FOUND)
+		TARGET_LINK_LIBRARIES(mcrecover Qt5::DBus)
+	ENDIF(Qt5DBus_FOUND)
+	TARGET_LINK_LIBRARIES(mcrecover Qt5::Widgets Qt5::Gui Qt5::Core)
+ENDIF()
 
 # extlib (needed twice due to weird dependencies with Qt/static)
 TARGET_LINK_LIBRARIES(mcrecover ${MCRECOVER_EXTLIB})
@@ -453,6 +578,12 @@ TARGET_LINK_LIBRARIES(mcrecover
 	${WIN32_LIBS}
 	${APPLE_LIBS}
 	)
+
+# Link in libdl if it's required for dlopen()
+# and we have a component that uses it.
+IF(mcrecover_NEEDS_DL AND CMAKE_DL_LIBS)
+	TARGET_LINK_LIBRARIES(mcrecover ${CMAKE_DL_LIBS})
+ENDIF(mcrecover_NEEDS_DL AND CMAKE_DL_LIBS)
 
 # Translations.
 ADD_DEPENDENCIES(mcrecover translations_target)

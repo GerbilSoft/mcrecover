@@ -30,8 +30,8 @@
 
 // Qt includes.
 #include <QtGui/QKeyEvent>
-#include <QtGui/QApplication>
-#include <QtGui/QDesktopWidget>
+#include <QApplication>
+#include <QDesktopWidget>
 
 /** HerpDerpEggListenerPrivate **/
 

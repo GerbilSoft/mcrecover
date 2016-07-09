@@ -41,3 +41,13 @@ ELSE(NOT WIN32)
 	# TODO: Allow use of external giflib on Win32?
 	SET(USE_INTERNAL_GIF 1)
 ENDIF(NOT WIN32)
+
+# Qt version to use.
+OPTION(USE_QT4 "Use Qt 4." OFF)
+OPTION(USE_QT5 "Use Qt 5." OFF)
+IF(NOT USE_QT4 AND NOT USE_QT5)
+	# Default to Qt 4.
+	SET(USE_QT4 ON CACHE BOOL "Use Qt 4." FORCE)
+ELSEIF(USE_QT4 AND USE_QT5)
+	MESSAGE(FATAL_ERROR "Select either Qt 4 or Qt 5, not both.")
+ENDIF()

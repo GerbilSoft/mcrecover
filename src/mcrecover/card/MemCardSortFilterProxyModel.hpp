@@ -22,7 +22,7 @@
 #ifndef __MCRECOVER_MEMCARDSORTFILTERPROXYMODEL_HPP__
 #define __MCRECOVER_MEMCARDSORTFILTERPROXYMODEL_HPP__
 
-#include <QtGui/QSortFilterProxyModel>
+#include <QSortFilterProxyModel>
 
 class MemCardSortFilterProxyModel : public QSortFilterProxyModel
 {

@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * TaskbarButtonManager.cpp: Taskbar button manager base class.            *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -22,97 +22,42 @@
 #include "TaskbarButtonManager.hpp"
 
 // Qt includes.
-#include <QtGui/QWidget>
+#include <QWidget>
 
-// Available TaskbarButtonManager classes.
-#include <config.mcrecover.h>
-#ifdef QT_QTDBUS_FOUND
-#include "DockManager.hpp"
-#endif /* QT_QTDBUS_FOUND */
-
-class TaskbarButtonManagerPrivate
-{
-	public:
-		TaskbarButtonManagerPrivate(TaskbarButtonManager *const q);
-		~TaskbarButtonManagerPrivate();
-
-	private:
-		TaskbarButtonManager *const q;
-		Q_DISABLE_COPY(TaskbarButtonManagerPrivate);
-
-	public:
-		// Window.
-		QWidget *window;
-
-		// Status elements.
-		int progressBarValue;	// Current progress. (-1 for no bar)
-		int progressBarMax;	// Maximum progress.
-};
-
+/** TaskbarButtonManagerPrivate **/
+#include "TaskbarButtonManager_p.hpp"
 
 TaskbarButtonManagerPrivate::TaskbarButtonManagerPrivate(TaskbarButtonManager *const q)
-	: q(q)
+	: q_ptr(q)
 	, window(nullptr)
 	, progressBarValue(0)
 	, progressBarMax(100)
 { }
 
-
 TaskbarButtonManagerPrivate::~TaskbarButtonManagerPrivate()
 { }
 
-
 /** TaskbarButtonManager **/
 
-
-TaskbarButtonManager::TaskbarButtonManager(QObject* parent)
+TaskbarButtonManager::TaskbarButtonManager(TaskbarButtonManagerPrivate *d, QObject* parent)
 	: QObject(parent)
-	, d(new TaskbarButtonManagerPrivate(this))
+	, d_ptr(d)
 { }
 
 TaskbarButtonManager::~TaskbarButtonManager()
-	{ delete d; }
-
-
-/**
- * Is this TaskbarButtonManager usable?
- * @return True if usable; false if not.
- */
-bool TaskbarButtonManager::IsUsable(void)
 {
-	// Base class is not usable...
-	return false;
+	delete d_ptr;
 }
-
-
-/**
- * Get a system-specific TaskbarButtonManager.
- * @param parent Parent object.
- * @return System-specific TaskbarButtonManager, or nullptr on error.
- */
-TaskbarButtonManager *TaskbarButtonManager::Instance(QObject *parent)
-{
-	TaskbarButtonManager *mgr = nullptr;
-
-	// Check the various implementations.
-#ifdef QT_QTDBUS_FOUND
-	// DockManager
-	if (DockManager::IsUsable()) {
-		// DockManager is usable.
-		mgr = new DockManager(parent);
-	}
-#endif
-
-	return mgr;
-}
-
 
 /**
  * Get the window this TaskbarButtonManager is managing.
  * @return Window.
  */
 QWidget *TaskbarButtonManager::window(void) const
-	{ return d->window; }
+{
+	Q_D(const TaskbarButtonManager);
+	return d->window;
+}
 
 /**
  * Set the window this TaskbarButtonManager should manage.
@@ -121,6 +66,8 @@ QWidget *TaskbarButtonManager::window(void) const
  */
 void TaskbarButtonManager::setWindow(QWidget *window)
 {
+	Q_D(TaskbarButtonManager);
+
 	if (d->window) {
 		// Disconnect slots from the existing window.
 		disconnect(d->window, SIGNAL(destroyed(QObject*)),
@@ -136,12 +83,12 @@ void TaskbarButtonManager::setWindow(QWidget *window)
 	}
 }
 
-
 /**
  * Clear the progress bar.
  */
 void TaskbarButtonManager::clearProgressBar(void)
 {
+	Q_D(TaskbarButtonManager);
 	d->progressBarValue = -1;
 	d->progressBarMax = -1;
 	this->update();
@@ -152,7 +99,10 @@ void TaskbarButtonManager::clearProgressBar(void)
  * @return Value.
  */
 int TaskbarButtonManager::progressBarValue(void) const
-	{ return d->progressBarValue; }
+{
+	Q_D(const TaskbarButtonManager);
+	return d->progressBarValue;
+}
 
 /**
  * Set the progress bar value.
@@ -160,6 +110,7 @@ int TaskbarButtonManager::progressBarValue(void) const
  */
 void TaskbarButtonManager::setProgressBarValue(int value)
 {
+	Q_D(TaskbarButtonManager);
 	if (d->progressBarValue != value) {
 		d->progressBarValue = value;
 		this->update();
@@ -171,7 +122,10 @@ void TaskbarButtonManager::setProgressBarValue(int value)
  * @return Maximum value.
  */
 int TaskbarButtonManager::progressBarMax(void) const
-	{ return d->progressBarMax; }
+{
+	Q_D(const TaskbarButtonManager);
+	return d->progressBarMax;
+}
 
 /**
  * Set the progress bar's maximum value.
@@ -179,15 +133,14 @@ int TaskbarButtonManager::progressBarMax(void) const
  */
 void TaskbarButtonManager::setProgressBarMax(int max)
 {
+	Q_D(TaskbarButtonManager);
 	if (d->progressBarMax != max) {
 		d->progressBarMax = max;
 		this->update();
 	}
 }
 
-
 /** Slots **/
-
 
 /**
  * Window we're managing was destroyed.
@@ -195,6 +148,7 @@ void TaskbarButtonManager::setProgressBarMax(int max)
  */
 void TaskbarButtonManager::windowDestroyed_slot(QObject *obj)
 {
+	Q_D(TaskbarButtonManager);
 	if (!d->window || !obj)
 		return;
 

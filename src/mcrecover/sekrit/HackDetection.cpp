@@ -28,13 +28,13 @@
 // Qt includes.
 #include <QtCore/QEvent>
 #include <QtCore/QTimer>
-#include <QtGui/QApplication>
 #include <QtGui/QCloseEvent>
-#include <QtGui/QDesktopWidget>
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QFont>
 #include <QtGui/QFontMetrics>
+#include <QApplication>
+#include <QDesktopWidget>
 
 // QRawFont was added in qt-4.8
 #if QT_VERSION >= 0x040800
