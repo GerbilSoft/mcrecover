@@ -63,7 +63,7 @@ class DockManagerPrivate : public TaskbarButtonManagerPrivate
 		 * @param parent Parent for the DockManager interface object.
 		 * @return DockManager interface, or nullptr on error.
 		 */
-		static NetLaunchpadDockManagerInterface *GetDockManagerInterface(QObject *parent = 0);
+		static net::launchpad::DockManager *GetDockManagerInterface(QObject *parent = 0);
 
 		/**
 		 * Connect to the DockManager.
@@ -79,8 +79,8 @@ class DockManagerPrivate : public TaskbarButtonManagerPrivate
 
 	private:
 		// DockManager.
-		NetLaunchpadDockManagerInterface *ifDockManager;
-		NetLaunchpadDockItemInterface *ifDockItem;
+		net::launchpad::DockManager *ifDockManager;
+		net::launchpad::DockItem *ifDockItem;
 };
 
 DockManagerPrivate::DockManagerPrivate(DockManager *const q)
@@ -115,14 +115,14 @@ void DockManagerPrivate::close(void)
  * @param parent Parent for the DockManager interface object.
  * @return DockManager interface, or nullptr on error.
  */
-NetLaunchpadDockManagerInterface *DockManagerPrivate::GetDockManagerInterface(QObject *parent)
+net::launchpad::DockManager *DockManagerPrivate::GetDockManagerInterface(QObject *parent)
 {
 	// Get the session bus.
 	QDBusConnection bus = QDBusConnection::sessionBus();
 
 	// Connect to the DockManager over D-Bus.
-	NetLaunchpadDockManagerInterface *ifDockManager;
-	ifDockManager = new NetLaunchpadDockManagerInterface(
+	net::launchpad::DockManager *ifDockManager;
+	ifDockManager = new net::launchpad::DockManager(
 				QLatin1String("net.launchpad.DockManager"),
 				QLatin1String("/net/launchpad/DockManager"),
 				bus, parent);
@@ -180,7 +180,7 @@ int DockManagerPrivate::connectToDockManager(void)
 		return 3;
 	}
 
-	ifDockItem = new NetLaunchpadDockItemInterface(
+	ifDockItem = new net::launchpad::DockItem(
 			QLatin1String("net.launchpad.DockManager"),
 			paths.at(0).path(), bus, q);
 	if (!ifDockItem->isValid()) {
@@ -245,7 +245,7 @@ DockManager::~DockManager()
  */
 bool DockManager::IsUsable(void)
 {
-	NetLaunchpadDockManagerInterface *ifDockManager =
+	net::launchpad::DockManager *ifDockManager =
 		DockManagerPrivate::GetDockManagerInterface();
 	bool isUsable = !!ifDockManager;
 	delete ifDockManager;
