@@ -101,6 +101,7 @@ void FileViewPrivate::updateWidgetDisplay(void)
 		ui.lblFileIcon->clear();
 		ui.lblFileBanner->clear();
 		ui.btnXML->setVisible(false);
+		ui.btnEdit->setVisible(false);
 		ui.lblFilename->clear();
 		ui.lblModeTitle->setVisible(false);
 		ui.lblMode->setVisible(false);
@@ -134,8 +135,9 @@ void FileViewPrivate::updateWidgetDisplay(void)
 	else
 		ui.lblFileBanner->clear();
 
-	// XML button.
+	// XML and Edit buttons.
 	ui.btnXML->setVisible(true);
+	ui.btnEdit->setVisible(true);
 
 	// Filename.
 	ui.lblFilename->setText(file->filename());
@@ -348,6 +350,8 @@ void FileView::on_btnEdit_clicked(void)
 {
 	// Testing...
 	Q_D(FileView);
+	if (!d->file)
+		return;
 	// FIXME: File has to be changed to non-const...
 	EditorWindow *editor = EditorWindow::editFile(const_cast<File*>(d->file));
 	if (editor) {
