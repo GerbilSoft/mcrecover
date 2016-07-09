@@ -219,6 +219,9 @@ int VmuCardPrivate::loadSysInfo(void)
 	bat_info.active_hdr = 0;
 	bat_info.active = 0;
 	bat_info.valid = 1;
+	// NOTE: VMU doesn't store a free block count.
+	// TODO: Indicate this in a "supported features" flag.
+	bat_info.valid_freeblocks = 1;
 
 	// Root block.
 	file->seek(VMU_ROOT_BLOCK_ADDRESS * blockSize);

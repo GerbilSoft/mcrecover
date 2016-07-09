@@ -91,6 +91,7 @@ class CardPrivate
 			int active;	// Which table is active?
 			int active_hdr;	// Which table is active, according to the header.
 			uint32_t valid;	// Bitfield indicating valid tables.
+			uint32_t valid_freeblocks;	// Bitfield indicating valid free block counts.
 		};
 
 		tbl dat_info;	// Directory Table information.
@@ -102,6 +103,9 @@ class CardPrivate
 		}
 		inline bool isBatValid(int idx) const {
 			return !!(bat_info.valid & (1 << idx));
+		}
+		inline bool isFreeBlockCountValid(int idx) const {
+			return !!(bat_info.valid_freeblocks & (1 << idx));
 		}
 
 		// Files.

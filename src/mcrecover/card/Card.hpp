@@ -286,6 +286,13 @@ class Card : public QObject
 		 */
 		bool isBatValid(int idx) const;
 
+		/**
+		 * Is a Free Block count valid?
+		 * @param idx Block Table index.
+		 * @return True if the Free Block count is valid; false if not valid or idx is invalid.
+		 */
+		bool isFreeBlockCountValid(int idx) const;
+
 	public:
 		/** Card I/O **/
 

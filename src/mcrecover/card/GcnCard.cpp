@@ -182,6 +182,11 @@ int GcnCardPrivate::open(const QString &filename)
 
 	// Load the GCN-specific data.
 
+	// Total user blocks.
+	totalUserBlocks = (totalPhysBlocks - 5);
+	if (totalUserBlocks < 0)
+		totalUserBlocks = 0;
+
 	// Reset the used block map.
 	resetUsedBlockMap();
 
@@ -515,10 +520,32 @@ int GcnCardPrivate::loadSysInfo(void)
 		mc_bat_chk_expected[i] = (mc_bat_int[i].chksum1 << 16) |
 					 (mc_bat_int[i].chksum2);
 
-		// Check if the block table is valid.
-		if (mc_bat_chk_expected[i] == mc_bat_chk_actual[i]) {
+		// Check if the free blocks count is valid.
+		bool freeblocks_valid;
+		if (mc_bat_int[i].freeblocks > totalUserBlocks) {
+			// Free block count is higher than the total number
+			// of usable blocks.
+			freeblocks_valid = false;
+		} else {
+			// Check if the number of blocks marked as free in
+			// the block table matches the freeblocks value.
+			int actualFreeBlocks = 0;
+			for (int block = totalUserBlocks-1; block >= 0; block--) {
+				if (mc_bat_int[i].fat[block] == 0) {
+					actualFreeBlocks++;
+				}
+			}
+			freeblocks_valid = (actualFreeBlocks == mc_bat_int[i].freeblocks);
+		}
+
+		// Mark BAT/free blocks validity.
+		if (mc_bat_chk_expected[i] == mc_bat_chk_actual[i] && freeblocks_valid) {
 			// BAT is valid.
 			bat_info.valid |= (1 << i);
+		}
+		if (freeblocks_valid) {
+			// Free blocks count is valid.
+			bat_info.valid_freeblocks |= (1 << i);
 		}
 	}
 
@@ -670,9 +697,6 @@ int GcnCardPrivate::checkTables(void)
 	this->bat_info.active = idx;
 
 	// Update block counts.
-	totalUserBlocks = (totalPhysBlocks - 5);
-	if (totalUserBlocks < 0)
-		totalUserBlocks = 0;
 	freeBlocks = this->mc_bat->freeblocks;
 	Q_Q(GcnCard);
 	emit q->blockCountChanged(totalPhysBlocks, totalUserBlocks, freeBlocks);
