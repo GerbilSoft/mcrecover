@@ -96,6 +96,21 @@ void CardViewPrivate::updateBlockCountDisplay(void)
 		CardView::tr("%L1 block(s) (%L2 free)", "", totalUserBlocks)
 			.arg(totalUserBlocks)
 			.arg(card->freeBlocks()));
+
+	// Free Block count status.
+	// TODO: Check if the card supports this.
+	if (card->isFreeBlockCountValid(card->activeBatIdx())) {
+		// Free Block count is valid.
+		ui.lblCardHeaderStatus->setVisible(false);
+	} else {
+		// Free Block count is invalid.
+		// TODO: Get the actual free block count?
+		QIcon icon = McRecoverQApplication::IconFromTheme(QLatin1String("dialog-error"));
+		// TODO: What size?
+		ui.lblFreeBlockStatus->setPixmap(icon.pixmap(16, 16));
+		ui.lblFreeBlockStatus->setToolTip(CardView::tr("Free block count is incorrect."));
+		ui.lblFreeBlockStatus->setVisible(true);
+	}
 }
 
 /**
@@ -111,8 +126,9 @@ void CardViewPrivate::updateWidgetDisplay(void)
 		ui.formLayout->setContentsMargins(0, 0, 0, 0);
 		ui.lblCardIcon->setVisible(false);
 		ui.lblCardType->setVisible(false);
+		ui.lblCardHeaderStatus->setVisible(false);
 		ui.lblBlockCount->setVisible(false);
-		ui.lblStatusIcon->setVisible(false);
+		ui.lblFreeBlockStatus->setVisible(false);
 		ui.lblFormatTimeTitle->setVisible(false);
 		ui.lblFormatTime->setVisible(false);
 		ui.lblEncodingTitle->setVisible(false);
@@ -238,29 +254,20 @@ void CardViewPrivate::updateWidgetDisplay(void)
 		ui.lblChecksumExpected->setVisible(false);
 	}
 
-	// Validate some other aspects of the card header.
-	if (isCardHeaderValid) {
-		if (card->freeBlocks() > card->totalUserBlocks()) {
-			// Free blocks count is wrong.
-			isCardHeaderValid = false;
-		}
-		// TODO: Other aspects.
-	}
-
 	// Block count.
 	updateBlockCountDisplay();
 
-	// Status icon.
+	// Card header status.
 	if (isCardHeaderValid) {
 		// Card header is valid.
-		ui.lblStatusIcon->setVisible(false);
+		ui.lblCardHeaderStatus->setVisible(false);
 	} else {
 		// Card header is invalid.
 		QIcon icon = McRecoverQApplication::IconFromTheme(QLatin1String("dialog-error"));
 		// TODO: What size?
-		ui.lblStatusIcon->setPixmap(icon.pixmap(16, 16));
-		ui.lblStatusIcon->setToolTip(CardView::tr("Memory card header is corrupted."));
-		ui.lblStatusIcon->setVisible(true);
+		ui.lblCardHeaderStatus->setPixmap(icon.pixmap(16, 16));
+		ui.lblCardHeaderStatus->setToolTip(CardView::tr("Memory card header is corrupted."));
+		ui.lblCardHeaderStatus->setVisible(true);
 	}
 
 	// Encoding.

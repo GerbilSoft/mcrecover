@@ -502,6 +502,21 @@ bool Card::isBatValid(int idx) const
 	return d->isBatValid(idx);
 }
 
+/**
+ * Is a Free Block count valid?
+ * @param idx Block Table index.
+ * @return True if valid; false if not valid or idx is invalid.
+ */
+bool Card::isFreeBlockCountValid(int idx) const
+{
+	if (!isOpen())
+		return false;
+	Q_D(const Card);
+	if (idx < 0 || idx >= d->bat_info.count)
+		return false;
+	return d->isFreeBlockCountValid(idx);
+}
+
 /** Card I/O **/
 
 /**
