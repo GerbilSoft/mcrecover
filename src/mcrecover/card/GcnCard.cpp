@@ -520,7 +520,7 @@ int GcnCardPrivate::loadSysInfo(void)
 		mc_bat_chk_expected[i] = (mc_bat_int[i].chksum1 << 16) |
 					 (mc_bat_int[i].chksum2);
 
-		// Check if the free blocks count is valid.
+		// Check if the free block count is valid.
 		bool freeblocks_valid;
 		if (mc_bat_int[i].freeblocks > totalUserBlocks) {
 			// Free block count is higher than the total number
@@ -544,7 +544,7 @@ int GcnCardPrivate::loadSysInfo(void)
 			bat_info.valid |= (1 << i);
 		}
 		if (freeblocks_valid) {
-			// Free blocks count is valid.
+			// Free block count is valid.
 			bat_info.valid_freeblocks |= (1 << i);
 		}
 	}
