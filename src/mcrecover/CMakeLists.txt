@@ -1,5 +1,6 @@
 PROJECT(mcrecover)
-cmake_minimum_required(VERSION 2.6)
+# QT4_ADD_DBUS_INTERFACES()'s NO_NAMESPACE and INCLUDE options were added in 2.8.7.
+cmake_minimum_required(VERSION 2.8.7)
 
 # mcrecover source and binary directories.
 # Binary directory is required for moc-generated headers.
@@ -404,20 +405,26 @@ ELSEIF(UNIX AND NOT APPLE)
 		)
 
 	IF(QtDBus_FOUND)
+		SET(DBus_XML_SRCS
+			dbus/net.launchpad.DockItem.xml
+			dbus/net.launchpad.DockManager.xml
+			)
+		SET_SOURCE_FILES_PROPERTIES(${DBus_XML_SRCS} PROPERTIES
+			INCLUDE dbus/DBusMetatypes.hpp
+			)
+
 		IF(USE_QT4)
 			# Qt4: QtDBus found.
 			# Enable DockManager / Unity API support.
 			# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
 			# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
-			INCLUDE(QtDBusInterfaceNoNS)
-			QT4_ADD_DBUS_INTERFACES_NONS(
-				mcrecover_TBM_SRCS
-				INCLUDE dbus/DBusMetatypes.hpp
-				dbus/net.launchpad.DockItem.xml
-				dbus/net.launchpad.DockManager.xml
+			QT4_ADD_DBUS_INTERFACES(
+				mcrecover_DBUS_INTERFACE_SRCS
+				${DBus_XML_SRCS}
 				)
 			SET(mcrecover_TBM_SRCS
 				${mcrecover_TBM_SRCS}
+				${mcrecover_DBUS_INTERFACE_SRCS}
 				TaskbarButtonManager/DockManager.cpp
 				)
 			SET(mcrecover_TBM_MOC_H
@@ -429,25 +436,19 @@ ELSEIF(UNIX AND NOT APPLE)
 			# Enable DockManager / Unity API support.
 			# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
 			# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
-			INCLUDE(QtDBusInterfaceNoNS)
-			# TODO: Qt5 version.
-			IF(0)
-			INCLUDE(QtDBusInterfaceNoNS)
-			QT4_ADD_DBUS_INTERFACES_NONS(
-				mcrecover_TBM_SRCS
-				INCLUDE dbus/DBusMetatypes.hpp
-				dbus/net.launchpad.DockItem.xml
-				dbus/net.launchpad.DockManager.xml
+			QT5_ADD_DBUS_INTERFACES(
+				mcrecover_DBUS_INTERFACE_SRCS
+				${DBus_XML_SRCS}
 				)
 			SET(mcrecover_TBM_SRCS
 				${mcrecover_TBM_SRCS}
+				${mcrecover_DBUS_INTERFACE_SRCS}
 				TaskbarButtonManager/DockManager.cpp
 				)
 			SET(mcrecover_TBM_MOC_H
 				${mcrecover_TBM_MOC_H}
 				TaskbarButtonManager/DockManager.hpp
 				)
-			ENDIF(0)
 		ENDIF()
 	ENDIF(QtDBus_FOUND)
 ENDIF()
