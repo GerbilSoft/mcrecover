@@ -27,6 +27,7 @@
 
 // Qt includes.
 #include <QtCore/QHash>
+#include <QtCore/QString>
 
 class ConfigDefaults
 {
