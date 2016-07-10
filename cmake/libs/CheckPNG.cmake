@@ -22,7 +22,7 @@ IF(NOT PNG_FOUND)
 	# libpng wasn't found.
 	# NOTE: PNG_LIBRARY will need to be updated if upgrading past libpng-1.6.
 	SET(USE_INTERNAL_PNG 1)
-	SET(PNG_LIBRARY png16_static)
+	SET(PNG_LIBRARY png_static)
 	SET(PNG_DEFINITIONS -DPNG_STATIC)
 	SET(PNG_FOUND 1)
 	SET(HAVE_PNG 1)
