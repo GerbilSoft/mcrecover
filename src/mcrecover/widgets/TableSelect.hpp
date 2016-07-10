@@ -34,6 +34,8 @@ class TableSelect : public QWidget
 	typedef QWidget super;
 
 	Q_PROPERTY(GcnCard* card READ card WRITE setCard)
+	Q_PROPERTY(int activeDatIdx READ activeDatIdx WRITE setActiveDatIdx)
+	Q_PROPERTY(int activeBatIdx READ activeBatIdx WRITE setActiveBatIdx)
 
 	public:
 		TableSelect(QWidget *parent = 0);
@@ -58,34 +60,52 @@ class TableSelect : public QWidget
 		 */
 		void setCard(GcnCard *card);
 
+	protected:
 		/** Events. **/
 
-	protected:
 		// State change event. (Used for switching the UI language at runtime.)
 		void changeEvent(QEvent *event);
 
-		/** Slots. **/
+	public:
+		/** Properties. **/
+
+		/**
+		 * Get the selected directory table.
+		 * @return Selected directory table index, or -1 on error.
+		 */
+		int activeDatIdx(void) const;
+
+		/**
+		 * Get the selected block table.
+		 * @return Selected block table index, or -1 on error.
+		 */
+		int activeBatIdx(void) const;
 
 	protected slots:
+		/** Internal slots. **/
+
 		/**
 		 * GcnCard object was destroyed.
 		 * @param obj QObject that was destroyed.
 		 */
 		void memCard_destroyed_slot(QObject *obj = 0);
 
+	public slots:
+		/** Public slots. **/
+
 		/**
 		 * Set the active Directory Table index.
 		 * NOTE: This function reloads the file list, without lost files.
 		 * @param idx Active Directory Table index. (0 or 1)
 		 */
-		void setActiveDatIdx_slot(int idx);
+		void setActiveDatIdx(int idx);
 
 		/**
 		 * Set the active Block Table index.
 		 * NOTE: This function reloads the file list, without lost files.
 		 * @param idx Active Block Table index. (0 or 1)
 		 */
-		void setActiveBatIdx_slot(int idx);
+		void setActiveBatIdx(int idx);
 };
 
 #endif /* __MCRECOVER_TABLESELECT_HPP__ */

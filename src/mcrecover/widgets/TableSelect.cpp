@@ -90,9 +90,12 @@ TableSelectPrivate::TableSelectPrivate(TableSelect *q)
 {
 	// Connect the QSignalMapper slots.
 	QObject::connect(mapperDirTable, SIGNAL(mapped(int)),
-			 q, SLOT(setActiveDatIdx_slot(int)));
+			 q, SLOT(setActiveDatIdx(int)));
 	QObject::connect(mapperBlockTable, SIGNAL(mapped(int)),
-			 q, SLOT(setActiveBatIdx_slot(int)));
+			 q, SLOT(setActiveBatIdx(int)));
+
+	// TODO: Handle the case where active tables are changed in
+	// the card outside of TableSelect?
 }
 
 TableSelectPrivate::~TableSelectPrivate()
@@ -343,7 +346,33 @@ void TableSelect::changeEvent(QEvent *event)
 	super::changeEvent(event);
 }
 
-/** Slots. **/
+/** Properties. **/
+
+/**
+ * Get the selected directory table.
+ * @return Selected directory table index, or -1 on error.
+ */
+int TableSelect::activeDatIdx(void) const
+{
+	Q_D(const TableSelect);
+	if (!d->card)
+		return -1;
+	return d->card->activeDatIdx();
+}
+
+/**
+ * Get the selected block table.
+ * @return Selected block table index, or -1 on error.
+ */
+int TableSelect::activeBatIdx(void) const
+{
+	Q_D(const TableSelect);
+	if (!d->card)
+		return -1;
+	return d->card->activeBatIdx();
+}
+
+/** Internal slots. **/
 
 /**
  * GcnCard object was destroyed.
@@ -362,16 +391,18 @@ void TableSelect::memCard_destroyed_slot(QObject *obj)
 	}
 }
 
+/** Public slots. **/
+
 /**
  * Set the active Directory Table index.
  * NOTE: This function reloads the file list, without lost files.
  * @param idx Active Directory Table index. (0 or 1)
  */
-void TableSelect::setActiveDatIdx_slot(int idx)
+void TableSelect::setActiveDatIdx(int idx)
 {
-	if (idx < 0 || idx >= 2)
-		return;
 	Q_D(TableSelect);
+	if (!d->card || idx < 0 || idx >= 2)
+		return;
 	d->card->setActiveDatIdx(idx);
 }
 
@@ -380,10 +411,10 @@ void TableSelect::setActiveDatIdx_slot(int idx)
  * NOTE: This function reloads the file list, without lost files.
  * @param idx Active Block Table index. (0 or 1)
  */
-void TableSelect::setActiveBatIdx_slot(int idx)
+void TableSelect::setActiveBatIdx(int idx)
 {
-	if (idx < 0 || idx >= 2)
-		return;
 	Q_D(TableSelect);
+	if (!d->card || idx < 0 || idx >= 2)
+		return;
 	d->card->setActiveBatIdx(idx);
 }
