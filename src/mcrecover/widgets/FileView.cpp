@@ -146,12 +146,19 @@ void FileViewPrivate::updateWidgetDisplay(void)
 		ui.lblFileBanner->clear();
 	}
 
-	// XML and Edit buttons.
+	// XML button.
 	ui.btnXML->setVisible(true);
-	ui.btnEdit->setVisible(true);
 
 	// Edit button.
-	ui.btnEdit->setVisible(EditorWidgetFactory::isEditorAvailable(file));
+	// Only show this button if:
+	// - File isn't "lost".
+	// - An editor is available.
+	bool isEditVisible = false;
+	if (!file->isLostFile()) {
+		// File isn't "lost".
+		isEditVisible = EditorWidgetFactory::isEditorAvailable(file);
+	}
+	ui.btnEdit->setVisible(isEditVisible);
 
 	// Filename.
 	ui.lblFilename->setText(file->filename());
