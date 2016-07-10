@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Qt lupdate script for mcrecover.
 # Run this script to update the translations from the source code.
 # NOTE: This script must be run from the translations/ directory!

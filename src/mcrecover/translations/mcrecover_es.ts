@@ -41,47 +41,47 @@
 &lt;b&gt;MegaCard Engine&lt;/b&gt;™</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="281"/>
+        <location filename="../windows/AboutDialog.cpp" line="284"/>
         <source>Memory Card File Contributors:</source>
         <translation>Contribuciones de archivos de tarjeta: </translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="284"/>
+        <location filename="../windows/AboutDialog.cpp" line="287"/>
         <source>UI Translators:</source>
         <translation>Traductores de la IU:</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="328"/>
+        <location filename="../windows/AboutDialog.cpp" line="331"/>
         <source>Internal copy of %1.</source>
         <extracomment>Using an internal copy of a library.</extracomment>
         <translation>Copia interna de %1.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="330"/>
+        <location filename="../windows/AboutDialog.cpp" line="333"/>
         <source>Compiled with %1.</source>
         <extracomment>Compiled with a specific version of an external library.</extracomment>
         <translation>Compilado con %1.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="332"/>
+        <location filename="../windows/AboutDialog.cpp" line="335"/>
         <source>Using %1.</source>
         <extracomment>Using an external library, e.g. libpcre.so</extracomment>
         <translation>Usando %1.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="334"/>
+        <location filename="../windows/AboutDialog.cpp" line="337"/>
         <source>License: %1</source>
         <extracomment>License: (libraries with only a single license)</extracomment>
         <translation>Licencia: %1</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="336"/>
+        <location filename="../windows/AboutDialog.cpp" line="339"/>
         <source>Licenses: %1</source>
         <extracomment>Licenses: (libraries with multiple licenses)</extracomment>
         <translation>Licencias: %1</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="404"/>
+        <location filename="../windows/AboutDialog.cpp" line="407"/>
         <source>WARNING: PCRE does not have Unicode support.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -90,50 +90,50 @@
         <translation type="obsolete">ADVERTENCIA: PCRE no soporta UTF-8.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="407"/>
+        <location filename="../windows/AboutDialog.cpp" line="410"/>
         <source>WARNING: PCRE does not have Unicode character properties support.</source>
         <translation>ADVERTENCIA: PCRE no soporta propiedades de caracteres Unicode.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="437"/>
+        <location filename="../windows/AboutDialog.cpp" line="440"/>
         <source> (No APNG support)</source>
         <translation> (No hay soporte de APNG)</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="525"/>
+        <location filename="../windows/AboutDialog.cpp" line="528"/>
         <source>Available databases:</source>
         <translation>Bases de datos disponibles:</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="527"/>
+        <location filename="../windows/AboutDialog.cpp" line="530"/>
         <source>(none found)</source>
         <translation>(ninguno encontrado)</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="586"/>
+        <location filename="../windows/AboutDialog.cpp" line="589"/>
         <source>Unknown [GetCPInfoExA() failed]</source>
         <extracomment>GetCPInfoExA() call failed.</extracomment>
         <translation>Desconocido [GetCPInfoExA() falló]</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="624"/>
+        <location filename="../windows/AboutDialog.cpp" line="627"/>
         <source>Using Unicode strings for Win32 API.</source>
         <extracomment>Win32: Unicode strings are being used. (WinNT)</extracomment>
         <translation>Usando cadenas Unicode para la API Win32.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="627"/>
+        <location filename="../windows/AboutDialog.cpp" line="630"/>
         <source>Using ANSI strings for Win32 API.</source>
         <extracomment>Win32: ANSI strings are being used. (Win9x)</extracomment>
         <translation>Usando cadenas ANSI para la API Win32.</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="644"/>
+        <location filename="../windows/AboutDialog.cpp" line="647"/>
         <source>For technical support, you can visit the following websites:</source>
         <translation>Para obtener asistencia técnica, puedes visitar las siguientes páginas web:</translation>
     </message>
     <message>
-        <location filename="../windows/AboutDialog.cpp" line="676"/>
+        <location filename="../windows/AboutDialog.cpp" line="679"/>
         <source>You can also email the developer directly:</source>
         <translation>También puedes enviar un correo al desarrollador:</translation>
     </message>
@@ -189,31 +189,31 @@
 <context>
     <name>CardView</name>
     <message>
-        <location filename="../widgets/CardView.ui" line="82"/>
+        <location filename="../widgets/CardView.ui" line="163"/>
         <source>Timestamp:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/CardView.ui" line="102"/>
+        <location filename="../widgets/CardView.ui" line="183"/>
         <source>&amp;Encoding:</source>
         <translation>&amp;Codificación:</translation>
     </message>
     <message>
-        <location filename="../widgets/CardView.ui" line="134"/>
+        <location filename="../widgets/CardView.ui" line="215"/>
         <source>&amp;Calculated
 Checksum:</source>
         <translation>Verificador
 &amp;calculado:</translation>
     </message>
     <message>
-        <location filename="../widgets/CardView.ui" line="183"/>
+        <location filename="../widgets/CardView.ui" line="264"/>
         <source>E&amp;xpected
 Checksum:</source>
         <translation>Verificador
 Espe&amp;rado:</translation>
     </message>
     <message>
-        <location filename="../widgets/CardView.cpp" line="209"/>
+        <location filename="../widgets/CardView.cpp" line="225"/>
         <source>Unknown</source>
         <comment>checksum</comment>
         <translation>Desconocido</translation>
@@ -227,7 +227,12 @@ Espe&amp;rado:</translation>
         </translation>
     </message>
     <message>
-        <location filename="../widgets/CardView.cpp" line="262"/>
+        <location filename="../widgets/CardView.cpp" line="111"/>
+        <source>Free block count is incorrect.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgets/CardView.cpp" line="269"/>
         <source>Memory card header is corrupted.</source>
         <translation>El encabezado de la tarjeta no es válido.</translation>
     </message>
@@ -248,32 +253,32 @@ Espe&amp;rado:</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../edit/EditorWindow.ui" line="44"/>
+        <location filename="../edit/EditorWindow.ui" line="47"/>
         <source>&amp;Save</source>
         <translation type="unfinished">&amp;Guardar</translation>
     </message>
     <message>
-        <location filename="../edit/EditorWindow.ui" line="47"/>
+        <location filename="../edit/EditorWindow.ui" line="50"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../edit/EditorWindow.ui" line="56"/>
+        <location filename="../edit/EditorWindow.ui" line="59"/>
         <source>&amp;Reload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../edit/EditorWindow.ui" line="59"/>
+        <location filename="../edit/EditorWindow.ui" line="62"/>
         <source>Reload (discards changes)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../edit/EditorWindow.ui" line="67"/>
+        <location filename="../edit/EditorWindow.ui" line="70"/>
         <source>&amp;General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../edit/EditorWindow.ui" line="70"/>
+        <location filename="../edit/EditorWindow.ui" line="73"/>
         <source>General Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -308,8 +313,8 @@ Checksum:</source>
 Espe&amp;rado:</translation>
     </message>
     <message>
-        <location filename="../widgets/FileView.cpp" line="170"/>
-        <location filename="../widgets/FileView.cpp" line="194"/>
+        <location filename="../widgets/FileView.cpp" line="178"/>
+        <location filename="../widgets/FileView.cpp" line="202"/>
         <source>Unknown</source>
         <comment>checksum</comment>
         <translation>Desconocido</translation>
@@ -337,7 +342,7 @@ Espe&amp;rado:</translation>
 <context>
     <name>GcnCard</name>
     <message>
-        <location filename="../card/GcnCard.cpp" line="863"/>
+        <location filename="../card/GcnCard.cpp" line="887"/>
         <source>GameCube memory card</source>
         <translation type="unfinished"></translation>
     </message>
@@ -634,7 +639,7 @@ otra vez, para volver a comer el snack.</translation>
     </message>
     <message>
         <location filename="../windows/McRecoverWindow.ui" line="434"/>
-        <location filename="../windows/McRecoverWindow.cpp" line="536"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="549"/>
         <source>Preferred Region:</source>
         <translation>Región preferida:</translation>
     </message>
@@ -693,66 +698,65 @@ Some files with Japanese descriptions might not be found when scanning.</source>
 Algunos archivos con descripciones en japonés no podrían encontrarse durante el escaneo.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../windows/McRecoverWindow.cpp" line="398"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="411"/>
         <source>%Ln byte(s)</source>
         <translation>
-            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="400"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="413"/>
         <source>%L1 KB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="402"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="415"/>
         <source>%L1 MB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="404"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="417"/>
         <source>%L1 GB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="406"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="419"/>
         <source>%L1 TB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="408"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="421"/>
         <source>%L1 PB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="410"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="423"/>
         <source>%L1 EB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="420"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="433"/>
         <source>No memory card loaded.</source>
         <translation>No hay tarjeta cargada.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="646"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="659"/>
         <source>Save GCN Save File %1</source>
         <translation>Guardar partida GCN %1</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="650"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="663"/>
         <source>GameCube Save Files</source>
         <translation>Partidas guardadas de GameCube</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="651"/>
-        <location filename="../windows/McRecoverWindow.cpp" line="1502"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="664"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1544"/>
         <source>All Files</source>
         <translation>Todas las partidas</translation>
     </message>
     <message numerus="yes">
-        <location filename="../windows/McRecoverWindow.cpp" line="661"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="674"/>
         <source>Save %Ln GCN Save File(s)</source>
         <translation>
             <numerusform>Guardar %Ln partida GCN</numerusform>
@@ -760,12 +764,12 @@ Algunos archivos con descripciones en japonés no podrían encontrarse durante e
         </translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="686"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="699"/>
         <source>File Already Exists</source>
         <translation>El archivo ya existe</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="687"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="700"/>
         <source>A file named &quot;%1&quot; already exists in the specified directory.
 
 Do you want to overwrite it?</source>
@@ -774,7 +778,7 @@ Do you want to overwrite it?</source>
 ¿Quieres sobrescribirlo?</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="815"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="828"/>
         <source>System Default (%1)</source>
         <comment>ts-language</comment>
         <extracomment>Translation: System Default (retrieved from system settings)</extracomment>
@@ -795,99 +799,97 @@ Scanning for lost files will not work.</source>
 No funcionará el escaneo de archivos perdidos.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1172"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1191"/>
         <source>An error occurred while opening %1:</source>
         <translation>Ocurrió un error al abrir %1:</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1164"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1183"/>
         <source>GcnCard::open() failed.</source>
         <extracomment>Failure message for GcnCard.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="354"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="367"/>
         <source>The internal Qt library was not compiled with Shift-JIS support.</source>
         <extracomment>Statically-linked Qt is missing qjpcodecs.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="358"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="371"/>
         <source>The system Qt library was not compiled with Shift-JIS support.</source>
         <extracomment>Dyanmically-linked Qt is missing qjpcodecs.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="370"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="383"/>
         <source>The internal PCRE library was not compiled with Unicode character properties support.</source>
         <extracomment>Statically-linked PCRE is missing Unicode character properties support.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="374"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="387"/>
         <source>The system PCRE library was not compiled with Unicode character properties support.</source>
         <extracomment>Dynamically-linked PCRE is missing Unicode character properties support.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../windows/McRecoverWindow.cpp" line="381"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="394"/>
         <source>Error(s) occurred while attempting to decode Japanese text:
 %1
 Some files with Japanese descriptions might not be found when scanning.</source>
         <extracomment>Errors occurred while attempting to decode Japanese text.</extracomment>
         <translation type="unfinished">
             <numerusform></numerusform>
-            <numerusform></numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1101"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1114"/>
         <source>The internal PCRE library was not compiled with Unicode support.
 Scanning for lost files will not work.</source>
         <extracomment>Statically-linked PCRE is missing UTF-8 support.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1105"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1118"/>
         <source>The system PCRE library was not compiled with Unicode support.
 Scanning for lost files will not work.</source>
         <extracomment>Dynamically-linked PCRE is missing UTF-8 support.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1160"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1179"/>
         <source>VmuCard::open() failed.</source>
         <extracomment>Failure message for VmuCard.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1235"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1254"/>
         <source>The header appears to contain garbage. %1% of the %2 header is the same byte, 0x%3.</source>
         <extracomment>%1 is a percentage; %2 is a formatted size, e.g. &quot;100 bytes&quot; or &quot;2 MB&quot;; %3 is a two-digit hexadecimal number.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1245"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1264"/>
         <source>The card image is too small. (Card image is %1; should be at least %2.)</source>
         <extracomment>%1 and %2 are both formatted sizes, e.g. &quot;100 bytes&quot; or &quot;2 MB&quot;.</extracomment>
         <translation type="unfinished">La imagen de la tarjeta es demasiado pequeña. (La imagen de la tarjeta es %1; debe ser al menos de %2.)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1252"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1271"/>
         <source>The card image is too big. (Card image is %1; should be %2 or less.)</source>
         <translation type="unfinished">La imagen de la tarjeta es demasiado grande. (La imagen de la tarjeta es %1 bytes; debe ser a lo más %2.)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1259"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1278"/>
         <source>The card image size is not a power of two. (Card image is %1.)</source>
         <extracomment>%1 is a formatted size, e.g. &quot;100 bytes&quot; or &quot;2 MB&quot;.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../windows/McRecoverWindow.cpp" line="1277"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1296"/>
         <source>Error(s) have been detected in this %1 image:</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
@@ -904,17 +906,17 @@ Scanning for lost files will not work.</source>
         <translation type="obsolete">El tamaño de la imagen de la tarjeta no es una potencia de dos. (La imagen de la tarjeta es %L1 bytes.)</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1263"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1282"/>
         <source>The header checksum is invalid.</source>
         <translation>El verificador del encabezado no es válido.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1266"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1285"/>
         <source>Both directory tables are invalid.</source>
         <translation>Ambas tablas de directorio no son válidas.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1269"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1288"/>
         <source>Both block tables are invalid.</source>
         <translation>Ambas tablas de bloque no son válidas.</translation>
     </message>
@@ -926,41 +928,41 @@ Scanning for lost files will not work.</source>
         </translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1536"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1578"/>
         <source>Open GameCube Memory Card Image</source>
         <translation>Abrir imagen de tarjeta de GameCube</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1500"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1542"/>
         <source>GameCube Memory Card Image</source>
         <translation>Imagen de tarjeta de GameCube</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1501"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1543"/>
         <source>Dreamcast VMU Image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1596"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1638"/>
         <source>The database files should be located in the data subdirectory in
 mcrecover.exe&apos;s program directory.</source>
         <translation>Los archivos de base de datos deben estar ubicados en el subdirectorio data
 del directorio de programa de mcrecover.exe.</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1600"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1642"/>
         <source>The database files should be located in %1.
 Alternatively, you can place your own version in ~/.config/mcrecover/data/</source>
         <translation>Los archivos de base de datos deben estar ubicados en %1.
 Alternativamente, puedes poner tu propia versión en ~/.config/mcrecover/data/</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1607"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1649"/>
         <source>Database Load Error</source>
         <translation>Error al cargar base de datos</translation>
     </message>
     <message>
-        <location filename="../windows/McRecoverWindow.cpp" line="1608"/>
+        <location filename="../windows/McRecoverWindow.cpp" line="1650"/>
         <source>No GCN MemCard file databases were found.</source>
         <translation>No se han encontrado bases de datos de partidas de GCN.</translation>
     </message>
@@ -2336,7 +2338,7 @@ Alternativamente, puedes poner tu propia versión en ~/.config/mcrecover/data/</
         <translation>Listo.</translation>
     </message>
     <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="134"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="133"/>
         <source>Scanning block #%L1 (%L2 scanned, %L3 remaining)...</source>
         <translation>Escaneando bloque %L1 (%L2 escaneados, %L3 restantes)...</translation>
     </message>
@@ -2349,17 +2351,17 @@ Alternativamente, puedes poner tu propia versión en ~/.config/mcrecover/data/</
         <translation type="obsolete">Imagen de tarjeta GameCube cerrada.</translation>
     </message>
     <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="350"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="384"/>
         <source>Loaded %1 image %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="368"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="402"/>
         <source>%1 image closed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../widgets/StatusBarManager.cpp" line="385"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="419"/>
         <source>%Ln file(s) saved to %1.</source>
         <translation>
             <numerusform>%Ln archivo guardado a %1.</numerusform>
@@ -2367,12 +2369,12 @@ Alternativamente, puedes poner tu propia versión en ~/.config/mcrecover/data/</
         </translation>
     </message>
     <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="447"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="485"/>
         <source>Scan cancelled.</source>
         <translation>Escaneo cancelado</translation>
     </message>
     <message numerus="yes">
-        <location filename="../widgets/StatusBarManager.cpp" line="467"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="505"/>
         <source>Scan complete. %Ln lost file(s) found.</source>
         <translation>
             <numerusform>Escaneo completado: %Ln archivo perdido encontrado.</numerusform>
@@ -2380,7 +2382,7 @@ Alternativamente, puedes poner tu propia versión en ~/.config/mcrecover/data/</
         </translation>
     </message>
     <message>
-        <location filename="../widgets/StatusBarManager.cpp" line="501"/>
+        <location filename="../widgets/StatusBarManager.cpp" line="539"/>
         <source>An error occurred while scanning: %1</source>
         <translation>Ocurrió un error al escanear: %1</translation>
     </message>
@@ -2389,19 +2391,19 @@ Alternativamente, puedes poner tu propia versión en ~/.config/mcrecover/data/</
     <name>TableSelect</name>
     <message>
         <location filename="../widgets/TableSelect.ui" line="38"/>
-        <location filename="../widgets/TableSelect.cpp" line="225"/>
+        <location filename="../widgets/TableSelect.cpp" line="228"/>
         <source>Directory Table</source>
         <translation>tabla de directorio</translation>
     </message>
     <message>
         <location filename="../widgets/TableSelect.ui" line="191"/>
-        <location filename="../widgets/TableSelect.cpp" line="232"/>
+        <location filename="../widgets/TableSelect.cpp" line="235"/>
         <source>Block Table</source>
         <translation>tabla de bloque</translation>
     </message>
     <message>
-        <location filename="../widgets/TableSelect.cpp" line="179"/>
-        <location filename="../widgets/TableSelect.cpp" line="191"/>
+        <location filename="../widgets/TableSelect.cpp" line="182"/>
+        <location filename="../widgets/TableSelect.cpp" line="194"/>
         <source>%1 %2 is valid, and is the active table on the card.</source>
         <extracomment>%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == &apos;A&apos; or &apos;B&apos;.
 ----------
@@ -2409,8 +2411,8 @@ Alternativamente, puedes poner tu propia versión en ~/.config/mcrecover/data/</
         <translation>La %1 %2 es válida, y es la tabla activa de la tarjeta.</translation>
     </message>
     <message>
-        <location filename="../widgets/TableSelect.cpp" line="182"/>
-        <location filename="../widgets/TableSelect.cpp" line="194"/>
+        <location filename="../widgets/TableSelect.cpp" line="185"/>
+        <location filename="../widgets/TableSelect.cpp" line="197"/>
         <source>%1 %2 is valid.</source>
         <extracomment>%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == &apos;A&apos; or &apos;B&apos;.
 ----------
@@ -2418,8 +2420,8 @@ Alternativamente, puedes poner tu propia versión en ~/.config/mcrecover/data/</
         <translation>La %1 %2 es válida.</translation>
     </message>
     <message>
-        <location filename="../widgets/TableSelect.cpp" line="186"/>
-        <location filename="../widgets/TableSelect.cpp" line="198"/>
+        <location filename="../widgets/TableSelect.cpp" line="189"/>
+        <location filename="../widgets/TableSelect.cpp" line="201"/>
         <source>%1 %2 is invalid.</source>
         <extracomment>%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == &apos;A&apos; or &apos;B&apos;.
 ----------
@@ -2430,7 +2432,7 @@ Alternativamente, puedes poner tu propia versión en ~/.config/mcrecover/data/</
 <context>
     <name>VmuCard</name>
     <message>
-        <location filename="../card/VmuCard.cpp" line="596"/>
+        <location filename="../card/VmuCard.cpp" line="599"/>
         <source>Dreamcast Visual Memory Unit</source>
         <translation type="unfinished"></translation>
     </message>
