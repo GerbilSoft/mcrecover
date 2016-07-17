@@ -69,6 +69,12 @@ class SAEditor : public EditorWidget
 		 */
 		virtual int setFile(File *file) final;
 
+	public slots:
+		/**
+		 * Reload the save data.
+		 */
+		virtual void reload(void) override;
+
 	protected:
 		/**
 		 * Set the current save slot. [INTERNAL FUNCTION]

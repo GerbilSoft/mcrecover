@@ -402,3 +402,22 @@ void EditorWindow::toolBar_saveSlotButton_clicked(int saveSlot)
 	// TODO: More error checking?
 	d->editorWidget->setCurrentSaveSlot(saveSlot);
 }
+
+/**
+ * "Save" button was clicked.
+ */
+void EditorWindow::on_actionSave_triggered(void)
+{
+	// TODO
+}
+
+/**
+ * "Save" button was clicked.
+ */
+void EditorWindow::on_actionReload_triggered(void)
+{
+	// TODO: Prompt if the user really wants to reload the save data.
+	Q_D(EditorWindow);
+	assert(d->editorWidget);
+	d->editorWidget->reload();
+}

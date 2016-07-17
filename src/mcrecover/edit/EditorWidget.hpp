@@ -111,6 +111,11 @@ class EditorWidget : public QWidget
 		 */
 		void setCurrentSaveSlot(int saveSlot);
 
+		/**
+		 * Reload the save data.
+		 */
+		virtual void reload(void) = 0;
+
 	protected:
 		/**
 		 * Set the current save slot. [INTERNAL FUNCTION]

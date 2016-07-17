@@ -89,6 +89,16 @@ class EditorWindow : public QMainWindow
 		 * @param saveSlot Save slot number. (-1 for "general" settings)
 		 */
 		void toolBar_saveSlotButton_clicked(int saveSlot);
+
+		/**
+		 * "Save" button was clicked.
+		 */
+		void on_actionSave_triggered(void);
+
+		/**
+		 * "Reload" button was clicked.
+		 */
+		void on_actionReload_triggered(void);
 };
 
 #endif /* __MCRECOVER_EDIT_EDITORWINDOW_HPP__ */
