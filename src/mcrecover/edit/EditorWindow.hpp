@@ -85,6 +85,12 @@ class EditorWindow : public QMainWindow
 		void editorWidget_destroyed_slot(QObject *obj);
 
 		/**
+		 * EditorWidget has been modified.
+		 * @param modified New modified status.
+		 */
+		void editorWidget_hasBeenModified(bool modified);
+
+		/**
 		 * A save slot button on the toolbar was clicked.
 		 * @param saveSlot Save slot number. (-1 for "general" settings)
 		 */

@@ -89,6 +89,13 @@ class SAEditor : public EditorWidget
 		 * @return 0 on success; non-zero on error.
 		 */
 		virtual int setCurrentSaveSlot_int(int saveSlot) final;
+
+	protected slots:
+		/**
+		 * Widget's modified state has been changed.
+		 * @param modified New modified state.
+		 */
+		void widgetHasBeenModified(bool modified);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__ */

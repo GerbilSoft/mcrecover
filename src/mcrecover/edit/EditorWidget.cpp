@@ -90,8 +90,9 @@ void EditorWidgetPrivate::setGeneralSettings(bool generalSettings)
 EditorWidget::EditorWidget(EditorWidgetPrivate *d, QWidget *parent)
 	: super(parent)
 	, d_ptr(d)
+	, m_modified(false)
 {
-	// No extra initialization required here...
+	// No extra initialization is required here...
 }
 
 /**

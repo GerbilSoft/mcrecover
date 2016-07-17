@@ -484,6 +484,16 @@ SAEditor::SAEditor(QWidget *parent)
 	d->sadxMissionFlagsModel = new ByteFlagsModel(this);
 	d->sadxMissionFlagsModel->setByteFlags(&d->sadxMissionFlags);
 	d->ui.sadxMissionFlagsView->setByteFlagsModel(d->sadxMissionFlagsModel);
+
+	// Connect the widgetHasBeenModified() signals.
+	foreach (SAEditWidget *saEditWidget, d->saEditWidgets) {
+		connect(saEditWidget, SIGNAL(hasBeenModified(bool)),
+			this, SLOT(widgetHasBeenModified(bool)));
+	}
+	foreach (SADXEditWidget *sadxEditWidget, d->sadxEditWidgets) {
+		connect(sadxEditWidget, SIGNAL(hasBeenModified(bool)),
+			this, SLOT(widgetHasBeenModified(bool)));
+	}
 }
 
 /**
@@ -580,6 +590,9 @@ int SAEditor::setFile(File *file)
 
 	// Load data from the specified file.
 	return d->load(file);
+
+	// TODO: Set as not modified?
+	//this->setModified(false);
 }
 
 /** Public slots. **/
@@ -619,4 +632,19 @@ void SAEditor::reload(void)
 	// TODO: If modified, warn?
 	Q_D(SAEditor);
 	d->load(d->file);
+	this->setModified(false);
+}
+
+/**
+ * Widget's modified state has been changed.
+ * @param modified New modified status.
+ */
+void SAEditor::widgetHasBeenModified(bool modified)
+{
+	// This function only *sets* the editor modified state
+	// if a widget has been modified. Clearing the state
+	// requires a save and/or reload.
+	if (modified) {
+		this->setModified(true);
+	}
 }
