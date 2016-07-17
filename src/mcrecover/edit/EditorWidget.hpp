@@ -114,6 +114,12 @@ class EditorWidget : public QWidget
 		void setCurrentSaveSlot(int saveSlot);
 
 		/**
+		 * Save the data to the file.
+		 * @return 0 on success; negative POSIX error code on error.
+		 */
+		virtual int save(void) = 0;
+
+		/**
 		 * Reload the save data.
 		 */
 		virtual void reload(void) = 0;

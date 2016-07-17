@@ -195,7 +195,6 @@ int SAEditorPrivate::load(File *file)
 			memcpy(sa_save, src, SA_SAVE_SLOT_LEN);
 			data_main.append(sa_save);
 			data_sadx.append(nullptr);	// DC version - no SADX extras.
-
 #if MCRECOVER_BYTEORDER == MCRECOVER_BIG_ENDIAN
 			// Byteswap the data.
 			// Dreamcast's SH-4 is little-endian.
@@ -215,7 +214,7 @@ int SAEditorPrivate::load(File *file)
 
 #if MCRECOVER_BYTEORDER == MCRECOVER_LIL_ENDIAN
 		// Byteswap the data.
-		// GameCube's PowerPC 750CL is big-endian.
+		// GameCube's PowerPC 750 is big-endian.
 		byteswap_sa_save_slot(sa_save);
 #endif
 
@@ -225,10 +224,9 @@ int SAEditorPrivate::load(File *file)
 			sadx_extra_save_slot *sadx_extra_save = (sadx_extra_save_slot*)malloc(sizeof(*sadx_extra_save));
 			memcpy(sadx_extra_save, (data.data() + SA_SAVE_ADDRESS_GCN + SA_SAVE_SLOT_LEN), SADX_EXTRA_SAVE_SLOT_LEN);
 			data_sadx.append(sadx_extra_save);
-
 #if MCRECOVER_BYTEORDER == MCRECOVER_LIL_ENDIAN
 			// Byteswap the data.
-			// GameCube's PowerPC 750CL is big-endian.
+			// GameCube's PowerPC 750 is big-endian.
 			byteswap_sadx_extra_save_slot(sadx_extra_save);
 #endif
 		} else {
@@ -622,6 +620,106 @@ int SAEditor::setCurrentSaveSlot_int(int saveSlot)
 	d->currentSaveSlot = saveSlot;
 	d->updateDisplay();
 	return 0;
+}
+
+/**
+ * Save the data to the file.
+ * @return 0 on success; negative POSIX error code on error.
+ */
+int SAEditor::save(void)
+{
+	Q_D(SAEditor);
+	if (!d->file)
+		return -EBADF;
+	else if (d->file->isReadOnly())
+		return -EROFS;
+
+	// Make sure the current slot is saved.
+	d->saveCurrentSlot();
+
+	// Read the existing file data first.
+	QByteArray data = d->file->loadFileData();
+
+	// Determine which version of the game this save file is for.
+	// TODO: Test for GCN first, then DC?
+	int ret = -EINVAL;
+	if (qobject_cast<VmuFile*>(d->file) != nullptr) {
+		// DC version.
+
+		// Three, count 'em, *three* save slots!
+		char *dest = (data.data() + SA_SAVE_ADDRESS_DC_0);
+		for (int i = 0; i < 3; i++, dest += SA_SAVE_SLOT_LEN) {
+			sa_save_slot *sa_save = (sa_save_slot*)dest;
+			assert(d->data_main.size() > i);
+			if (d->data_main.size() > i) {
+				// Save the slot.
+				memcpy(sa_save, d->data_main.at(i), SA_SAVE_SLOT_LEN);
+#if MCRECOVER_BYTEORDER == MCRECOVER_BIG_ENDIAN
+				// Byteswap the data.
+				// Dreamcast's SH-4 is little-endian.
+				d->byteswap_sa_save_slot(sa_save);
+#endif
+			} else {
+				// No save slot available...
+				// Zero out the data.
+				memset(sa_save, 0, SA_SAVE_SLOT_LEN);
+			}
+
+			// FIXME: Update the checksum.
+			// Save slots copied.
+			// Now it needs to be written to the file.
+		}
+	} else if (qobject_cast<GcnFile*>(d->file) != nullptr) {
+		// GameCube verison.
+
+		// Only one save slot.
+		sa_save_slot *sa_save = (sa_save_slot*)(data.data() + SA_SAVE_ADDRESS_GCN);
+		assert(d->data_main.size() > 0);
+		if (d->data_main.size() > 0) {
+			memcpy(sa_save, d->data_main.at(0), SA_SAVE_SLOT_LEN);
+#if MCRECOVER_BYTEORDER == MCRECOVER_LIL_ENDIAN
+			// Byteswap the data.
+			// GameCube's PowerPC 750 is big-endian.
+			d->byteswap_sa_save_slot(sa_save);
+#endif
+		} else {
+			// No save slot available...
+			// Zero out the data.
+			memset(sa_save, 0, SA_SAVE_SLOT_LEN);
+		}
+
+		// Check for SADX extras.
+		sadx_extra_save_slot *sadx_extra_save = (sadx_extra_save_slot*)(data.data() + SA_SAVE_ADDRESS_GCN + SA_SAVE_SLOT_LEN);
+		if (d->data_sadx.size() > 0) {
+			// Found SADX extras.
+			memcpy(sadx_extra_save, d->data_sadx.at(0), SADX_EXTRA_SAVE_SLOT_LEN);
+#if MCRECOVER_BYTEORDER == MCRECOVER_LIL_ENDIAN
+			// Byteswap the data.
+			// GameCube's PowerPC 750 is big-endian.
+			d->byteswap_sadx_extra_save_slot(sadx_extra_save);
+#endif
+		} else {
+			// No SADX extras.
+			// Zero out the data.
+			memset(sadx_extra_save, 0, SADX_EXTRA_SAVE_SLOT_LEN);
+		}
+
+		// FIXME: Update the checksum.
+		// Save slots copied.
+		// Now it needs to be written to the file.
+		ret = 0;
+	} else {
+		// Unsupported file.
+		// TODO: Add support for the Windows version.
+		ret = -ENOSYS;
+		goto end;
+	}
+
+	// Write the data.
+	ret = d->file->write(0, data.data(), data.size());
+
+end:
+	return ret;
 }
 
 /**

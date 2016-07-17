@@ -432,7 +432,10 @@ void EditorWindow::toolBar_saveSlotButton_clicked(int saveSlot)
  */
 void EditorWindow::on_actionSave_triggered(void)
 {
-	// TODO
+	Q_D(EditorWindow);
+	assert(d->editorWidget);
+	// TODO: Show errors?
+	d->editorWidget->save();
 }
 
 /**

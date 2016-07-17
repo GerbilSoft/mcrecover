@@ -71,6 +71,12 @@ class SAEditor : public EditorWidget
 
 	public slots:
 		/**
+		 * Save the data to the file.
+		 * @return 0 on success; negative POSIX error code on error.
+		 */
+		virtual int save(void) override;
+
+		/**
 		 * Reload the save data.
 		 */
 		virtual void reload(void) override;
