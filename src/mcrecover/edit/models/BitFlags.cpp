@@ -251,8 +251,8 @@ int BitFlags::allFlags(uint8_t *data, int sz) const
 		}
 
 		// Get this flag.
-		*data <<= 1;
-		*data |= !!(*flagBool);
+		*data >>= 1;
+		*data |= (*flagBool ? 0x80 : 0);
 	}
 
 	return bits;
@@ -283,8 +283,6 @@ int BitFlags::setAllFlags(const uint8_t *data, int sz)
 	if (bits > d->flags.count())
 		bits = d->flags.count();
 
-	// TODO: Optimizations:
-	// - *flagBool++ = (curByte & 0x01)?
 	uint8_t curByte = 0;
 	bool *flagBool = d->flags.data();
 	for (int i = 0; i < bits; i++, flagBool++) {
