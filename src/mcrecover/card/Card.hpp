@@ -47,6 +47,11 @@ class Card : public QObject
 	Q_PROPERTY(bool open READ isOpen)
 	Q_PROPERTY(QString errorString READ errorString)
 
+	// File properties.
+	Q_PROPERTY(QString filename READ filename)
+	Q_PROPERTY(int filesize READ filesize)
+	Q_PROPERTY(bool readOnly READ isReadOnly WRITE setReadOnly NOTIFY readOnlyChanged)
+
 	// Card size.
 	Q_PROPERTY(int blockSize READ blockSize)
 	Q_PROPERTY(int totalPhysBlocks READ totalPhysBlocks)
@@ -55,8 +60,6 @@ class Card : public QObject
 
 	// Card information.
 	Q_PROPERTY(QString productName READ productName)
-	Q_PROPERTY(QString filename READ filename)
-	Q_PROPERTY(int filesize READ filesize)
 	Q_PROPERTY(Encoding encoding READ encoding)
 	Q_PROPERTY(QColor color READ color NOTIFY colorChanged)
 	Q_PROPERTY(GcnDateTime formatTime READ formatTime)
@@ -408,6 +411,37 @@ class Card : public QObject
 		 * (If bad bytes weren't detected, this function will fail.)
 		 */
 		int garbageInfo(uint8_t *bad_byte, int *count, int *total) const;
+
+		/** Writing functions. **/
+	signals:
+		/**
+		 * The card's readOnly property has changed.
+		 * @param readOnly New readOnly value.
+		 */
+		void readOnlyChanged(bool readOnly);
+
+	public:
+		/**
+		 * Is this card read-only?
+		 * This is true if the card has not been set to writable,
+		 * or if there are errors on the card and hence it cannot
+		 * be set to writable.
+		 * @return True if this card is read-only; false if not.
+		 */
+		bool isReadOnly(void) const;
+
+		/**
+		 * Attempt to switch the card from read-only to read-write or vice-versa.
+		 *
+		 * Note that this will fail with ENOTTY if any errors are detected
+		 * on the card, since writing to a card with errors can cause even
+		 * more problems.
+		 *
+		 * @param readOnly New readOnly value.
+		 * @return 0 on success; negative POSIX error code on error.
+		 * (Check this->errorString for more information.)
+		 */
+		int setReadOnly(bool readOnly);
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Card::Errors);

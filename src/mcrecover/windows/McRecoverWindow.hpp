@@ -157,6 +157,12 @@ class McRecoverWindow : public QMainWindow
 		 * @param checked True if checked; false if not.
 		 */
 		void searchUsedBlocks_cfg_slot(const QVariant &checked);
+
+		/**
+		 * "Allow Write" checkbox was changed by the user.
+		 * @param checked True if checked; false if not.
+		 */
+		void chkAllowWrite_clicked(bool checked);
 };
 
 #endif /* __MCRECOVER_MCRECOVERWINDOW_HPP__ */

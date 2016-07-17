@@ -442,7 +442,11 @@ void FilePrivate::calculateChecksum(void)
 File::File(FilePrivate *d, Card *card)
 	: super(card)
 	, d_ptr(d)
-{ }
+{
+	// Forward the card's readOnlyChanged signal.
+	connect(card, SIGNAL(readOnlyChanged(bool)),
+		this, SIGNAL(readOnlyChanged(bool)));
+}
 
 File::~File()
 {
@@ -882,4 +886,18 @@ QVector<QString> File::checksumValuesFormatted(void) const
 		ret.append(QString::fromStdString(vs[i]));
 	}
 	return ret;
+}
+
+/** Writing functions. **/
+
+/**
+ * Is this file read-only?
+ * This is true if either the underlying card is read-only,
+ * or this is a lost file.
+ * @return True if this file is read-only; false if not.
+ */
+bool File::isReadOnly(void) const
+{
+	Q_D(const File);
+	return (d->lostFile || d->card->isReadOnly());
 }

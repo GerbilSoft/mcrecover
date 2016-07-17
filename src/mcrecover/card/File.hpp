@@ -53,6 +53,8 @@ class File : public QObject
 	Q_PROPERTY(QString description READ description)
 	Q_PROPERTY(uint32_t mode READ mode)
 	Q_PROPERTY(int size READ size)
+	// NOTE: Individual files cannot be set readOnly; that depends on the card.
+	Q_PROPERTY(bool readOnly READ isReadOnly /*WRITE setReadOnly*/ NOTIFY readOnlyChanged)
 
 	// Icon and banner.
 	Q_PROPERTY(QPixmap banner READ banner)
@@ -312,6 +314,23 @@ class File : public QObject
 		 * - String 1, if present, contains the expected checksums.
 		 */
 		QVector<QString> checksumValuesFormatted(void) const;
+
+		/** Writing functions. **/
+	signals:
+		/**
+		 * The file's readOnly property has changed.
+		 * @param readOnly New readOnly value.
+		 */
+		void readOnlyChanged(bool readOnly);
+
+	public:
+		/**
+		 * Is this file read-only?
+		 * This is true if either the underlying card is read-only,
+		 * or this is a lost file.
+		 * @return True if this file is read-only; false if not.
+		 */
+		bool isReadOnly(void) const;
 };
 
 #endif /* __MCRECOVER_CARD_FILE_HPP__ */

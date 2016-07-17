@@ -69,6 +69,9 @@ class CardPrivate
 		QString filename;
 		QFile *file;
 		quint64 filesize;
+		bool readOnly;
+
+		// Card properties.
 		Card::Encoding encoding;
 		QColor color;
 		GcnDateTime formatTime;
@@ -131,10 +134,11 @@ class CardPrivate
 		 * totalPhysBlocks is initialized after the file is opened.
 		 * totalUserBlocks and freeBlocks must be initialized by the subclass.
 		 * @param filename Memory Card image filename.
-		 * @param mode File open mode.
+		 * @param openMode File open mode.
 		 * @return 0 on success; non-zero on error. (also check errorString)
+		 * (Check this->errorString for more information.)
 		 */
-		int open(const QString &filename, QIODevice::OpenModeFlag mode);
+		int open(const QString &filename, QIODevice::OpenModeFlag openMode);
 
 		/**
 		 * Close the currently-opened Memory Card image.
