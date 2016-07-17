@@ -304,9 +304,18 @@ class Card : public QObject
 		 * @param buf Buffer to read the block data into.
 		 * @param siz Size of buffer. (Must be >= blockSize.)
 		 * @param blockIdx Block index.
-		 * @return Bytes read on success; negative on error.
+		 * @return Bytes read on success; negative POSIX error code on error.
 		 */
 		int readBlock(void *buf, int siz, uint16_t blockIdx);
+
+		/**
+		 * Write a block.
+		 * @param buf Buffer containing the data to write.
+		 * @param siz Size of buffer. (Must be equal to blockSize.)
+		 * @param blockIdx Block index.
+		 * @return Bytes written on success; negative POSIX error code on error.
+		 */
+		int writeBlock(const void *buf, int siz, uint16_t blockIdx);
 
 		/** File management **/
 	signals:

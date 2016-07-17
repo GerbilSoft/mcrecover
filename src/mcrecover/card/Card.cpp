@@ -599,24 +599,55 @@ bool Card::isFreeBlockCountValid(int idx) const
  * @param buf Buffer to read the block data into.
  * @param siz Size of buffer. (Must be >= blockSize.)
  * @param blockIdx Block index.
- * @return Bytes read on success; negative on error.
+ * @return Bytes read on success; negative POSIX error code on error.
  */
 int Card::readBlock(void *buf, int siz, uint16_t blockIdx)
 {
 	if (!isOpen())
-		return -1;
-	if (siz < blockSize())
-		return -2;
+		return EBADF;
+	else if (siz < blockSize())
+		return -EINVAL;
+	else if (siz == 0)
+		return 0;
 
 	// Read the specified block.
 	Q_D(Card);
-	d->file->seek((int)blockIdx * blockSize());
-	return (int)d->file->read((char*)buf, blockSize());
+	if (!d->file->seek((int)blockIdx * blockSize()))
+		return -EIO;	// TODO: Proper error code?
+	int ret = (int)d->file->read((char*)buf, blockSize());
+	return (ret >= 0 ? ret : -EIO);
 }
 
-// TODO: Add a readBlocks() function?
+/**
+ * Write a block.
+ * @param buf Buffer containing the data to write.
+ * @param siz Size of buffer. (Must be equal to blockSize.)
+ * @param blockIdx Block index.
+ * @return Bytes written on success; negative POSIX error code on error.
+ */
+int Card::writeBlock(const void *buf, int siz, uint16_t blockIdx)
+{
+	if (!isOpen())
+		return -EBADF;
+	else if (siz < blockSize())
+		return -EINVAL;
+	else if (siz == 0)
+		return 0;
 
-// TODO: Add basic file functions, after creating a File class.
+	// Make sure the card isn't read-only.
+	Q_D(Card);
+	if (d->readOnly)
+		return -EROFS;
+
+	// Write the specified block.
+	if (!d->file->seek((int)blockIdx * blockSize()))
+		return -EIO;    // TODO: Proper error code?
+	// TODO: Check for errors?
+	int ret = (int)d->file->write((char*)buf, blockSize());
+	return (ret >= 0 ? ret : -EIO);
+}
+
+// TODO: Add readBlocks() and writeBlocks() functions?
 
 /** File management **/
 

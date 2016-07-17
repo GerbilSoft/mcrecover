@@ -122,6 +122,17 @@ class File : public QObject
 		 */
 		QByteArray loadFileData(void);
 
+		/**
+		 * Write data to the file.
+		 * NOTE: This function cannot expand files at the moment.
+		 * Length+size must be <= total file size.
+		 * @param address Address to write to.
+		 * @param data Data to write.
+		 * @param length Amount of data to write, in bytes.
+		 * @return Bytes written on success; negative POSIX error code on error.
+		 */
+		int write(uint32_t address, const void *data, uint32_t length);
+
 		/** TODO: Add a QFlags indicating which fields are valid. **/
 
 		/**
@@ -176,6 +187,7 @@ class File : public QObject
 		 */
 		int size(void) const;
 
+	public:
 		/** Icon and banner **/
 
 		/**
@@ -214,6 +226,7 @@ class File : public QObject
 		 */
 		int iconAnimMode(void) const;
 
+	public:
 		/** Lost File information **/
 
 		/**
@@ -222,6 +235,7 @@ class File : public QObject
 		 */
 		bool isLostFile(void) const;
 
+	public:
 		/** Export **/
 
 		/**
@@ -246,6 +260,7 @@ class File : public QObject
 		 */
 		virtual int exportToFile(QIODevice *qioDevice) = 0;
 
+	public:
 		/** Images **/
 
 		/**
@@ -274,6 +289,7 @@ class File : public QObject
 		int saveIcon(const QString &filenameNoExt,
 			     GcImageWriter::AnimImageFormat animImgf) const;
 
+	public:
 		/** Checksums **/
 
 		/**
