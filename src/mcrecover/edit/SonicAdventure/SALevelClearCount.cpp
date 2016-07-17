@@ -412,7 +412,11 @@ void SALevelClearCount::spnCount_mapped_slot(int spnId)
 		return;
 
 	Q_D(SALevelClearCount);
-	d->clear_count.all[chr][level] = d->levels[level].spnCount[chr]->value();
+	if (d->clear_count.all[chr][level] != d->levels[level].spnCount[chr]->value()) {
+		// Value has changed.
+		d->clear_count.all[chr][level] = d->levels[level].spnCount[chr]->value();
+		this->widgetModifiedSlot();
+	}
 }
 
 /**

@@ -62,10 +62,20 @@ SAGeneral::SAGeneral(QWidget *parent)
 	, d_ptr(new SAGeneralPrivate(this))
 {
 	Q_D(SAGeneral);
+
+	// Prevent modification signals from being emitted
+	// during initialization.
+	suspendHasBeenModified();
 	d->ui.setupUi(this);
 
 	// Show hours in the TimeCodeEdit.
 	d->ui.tcePlayTime->setDisplayMode(TimeCodeEdit::DM_HMSF);
+	// Signals for custom widgets aren't available in Qt Designer,
+	// so connect them here.
+	connect(d->ui.tcePlayTime, SIGNAL(valueChanged(int,int,int)),
+		this, SLOT(widgetModifiedSlot()));
+	connect(d->ui.tcePlayTime, SIGNAL(valueChangedHours(int)),
+		this, SLOT(widgetModifiedSlot()));
 
 	// Level names.
 	// Does NOT include Chao Gardens or Chao Race. (last 4 entries)
@@ -77,6 +87,9 @@ SAGeneral::SAGeneral(QWidget *parent)
 	// It'll be shown again if an SADX save is loaded.
 	d->ui.lblBlackMarketRings->hide();
 	d->ui.spnBlackMarketRings->hide();
+
+	// Finished initialization.
+	unsuspendHasBeenModified();
 }
 
 SAGeneral::~SAGeneral()
@@ -96,7 +109,15 @@ void SAGeneral::changeEvent(QEvent *event)
 	if (event->type() == QEvent::LanguageChange) {
 		// Retranslate the UI.
 		Q_D(SAGeneral);
+		// Prevent modification signals from being emitted
+		// during retranslation.
+		// FIXME: uic clears cboMessages and reinserts items,
+		// which causes it to lose the currentIndex.
+		suspendHasBeenModified();
+		const int cboMessages_currentIndex = d->ui.cboMessages->currentIndex();
 		d->ui.retranslateUi(this);
+		d->ui.cboMessages->setCurrentIndex(cboMessages_currentIndex);
+		unsuspendHasBeenModified();
 	}
 
 	// Pass the event to the base class.
@@ -114,6 +135,7 @@ void SAGeneral::changeEvent(QEvent *event)
 int SAGeneral::load(const sa_save_slot *sa_save)
 {
 	Q_D(SAGeneral);
+	suspendHasBeenModified();
 
 	// Play time.
 	// Stored in NTSC frames. (1/60th of a second)
@@ -137,6 +159,7 @@ int SAGeneral::load(const sa_save_slot *sa_save)
 		last_level = 0;
 	d->ui.cboLastLevel->setCurrentIndex(last_level);
 
+	unsuspendHasBeenModified();
 	setModified(false);
 	return 0;
 }
@@ -187,6 +210,7 @@ int SAGeneral::save(sa_save_slot *sa_save)
 int SAGeneral::loadDX(const sadx_extra_save_slot *sadx_extra_save)
 {
 	Q_D(SAGeneral);
+	suspendHasBeenModified();
 
 	if (sadx_extra_save) {
 		// The only SADX information here is the "Black Market Rings".
@@ -203,6 +227,7 @@ int SAGeneral::loadDX(const sadx_extra_save_slot *sadx_extra_save)
 		d->ui.spnBlackMarketRings->hide();
 	}
 
+	unsuspendHasBeenModified();
 	setModified(false);
 	return 0;
 }

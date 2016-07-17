@@ -207,6 +207,9 @@ void SASubGamesPrivate::switchCharacter(int character)
  */
 void SASubGamesPrivate::updateDisplay(void)
 {
+	Q_Q(SASubGames);
+	q->suspendHasBeenModified();
+
 	// TODO: Make character a parameter, or not?
 	// FIXME: Character enums or something.
 	// TODO: Optimize these?
@@ -320,6 +323,8 @@ void SASubGamesPrivate::updateDisplay(void)
 		ui.tceBossAttack_2->setValue(&boss_attack[1]);
 		ui.tceBossAttack_3->setValue(&boss_attack[2]);
 	}
+
+	q->unsuspendHasBeenModified();
 }
 
 /**
@@ -476,6 +481,29 @@ SASubGames::SASubGames(QWidget *parent)
 	d->ui.tceTwinkleCircuitBestLap_1->setDisplayMode(TimeCodeEdit::DM_MSC);
 	d->ui.tceTwinkleCircuitBestLap_2->setDisplayMode(TimeCodeEdit::DM_MSC);
 
+	// Signals for custom widgets aren't available in Qt Designer,
+	// so connect them here.
+	connect(d->ui.tceTwinkleCircuitBestTimes_1, SIGNAL(valueChanged(int,int,int)),
+		this, SLOT(widgetModifiedSlot()));
+	connect(d->ui.tceTwinkleCircuitBestTimes_1, SIGNAL(valueChangedHours(int)),
+		this, SLOT(widgetModifiedSlot()));
+	connect(d->ui.tceTwinkleCircuitBestTimes_2, SIGNAL(valueChanged(int,int,int)),
+		this, SLOT(widgetModifiedSlot()));
+	connect(d->ui.tceTwinkleCircuitBestTimes_2, SIGNAL(valueChangedHours(int)),
+		this, SLOT(widgetModifiedSlot()));
+	connect(d->ui.tceTwinkleCircuitBestTimes_3, SIGNAL(valueChanged(int,int,int)),
+		this, SLOT(widgetModifiedSlot()));
+	connect(d->ui.tceTwinkleCircuitBestTimes_3, SIGNAL(valueChangedHours(int)),
+		this, SLOT(widgetModifiedSlot()));
+	connect(d->ui.tceTwinkleCircuitBestLap_1, SIGNAL(valueChanged(int,int,int)),
+		this, SLOT(widgetModifiedSlot()));
+	connect(d->ui.tceTwinkleCircuitBestLap_1, SIGNAL(valueChangedHours(int)),
+		this, SLOT(widgetModifiedSlot()));
+	connect(d->ui.tceTwinkleCircuitBestLap_2, SIGNAL(valueChanged(int,int,int)),
+		this, SLOT(widgetModifiedSlot()));
+	connect(d->ui.tceTwinkleCircuitBestLap_2, SIGNAL(valueChangedHours(int)),
+		this, SLOT(widgetModifiedSlot()));
+
 	// TODO: Additional setup.
 
 	// Initialize the widgets.
@@ -535,6 +563,7 @@ void SASubGames::on_cboCharacter_currentIndexChanged(int index)
 int SASubGames::load(const sa_save_slot *sa_save)
 {
 	Q_D(SASubGames);
+	suspendHasBeenModified();
 	memcpy(&d->mini_game_scores, &sa_save->mini_game_scores, sizeof(d->mini_game_scores));
 	memcpy(&d->twinkle_circuit,  &sa_save->twinkle_circuit,  sizeof(d->twinkle_circuit));
 	memcpy(&d->boss_attack,      &sa_save->boss_attack,      sizeof(d->boss_attack));
@@ -555,6 +584,8 @@ int SASubGames::load(const sa_save_slot *sa_save)
 
 	// Update the display.
 	d->updateDisplay();
+	unsuspendHasBeenModified();
+	setModified(false);
 	return 0;
 }
 
@@ -606,6 +637,7 @@ int SASubGames::save(sa_save_slot *sa_save)
 int SASubGames::loadDX(const sadx_extra_save_slot *sadx_extra_save)
 {
 	Q_D(SASubGames);
+	suspendHasBeenModified();
 
 	if (sadx_extra_save) {
 		memcpy(&d->metal_sonic.mini_game_scores, &sadx_extra_save->mini_game_scores_metal, sizeof(d->metal_sonic.mini_game_scores));
@@ -632,6 +664,7 @@ int SASubGames::loadDX(const sadx_extra_save_slot *sadx_extra_save)
 	// isn't changed after it's loaded, and all slots either
 	// have SADX extras or don't have SADX extras.
 	d->updateDisplay();
+	unsuspendHasBeenModified();
 	setModified(false);
 	return 0;
 }

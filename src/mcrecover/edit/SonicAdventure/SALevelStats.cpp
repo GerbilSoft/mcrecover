@@ -253,6 +253,8 @@ void SALevelStatsPrivate::initLevels(void)
 		// TODO: Actual maximum?
 		levels[level].spnHighScore->setRange(0, 0x7FFFFFFF);
 		levels[level].spnHighScore->setSingleStep(1);
+		QObject::connect(levels[level].spnHighScore, SIGNAL(valueChanged(int)),
+				 q, SLOT(widgetModifiedSlot()));
 
 		// Emblems.
 		// FIXME: Possible memory leak? (does hboxEmblems get deleted?)
@@ -264,11 +266,17 @@ void SALevelStatsPrivate::initLevels(void)
 			levels[level].chkEmblems[j]->setStyleSheet(qsCssCheckBox);
 			levels[level].chkEmblems[j]->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 			levels[level].hboxEmblems->addWidget(levels[level].chkEmblems[j], 0, Qt::AlignLeft);
+			QObject::connect(levels[level].chkEmblems[j], SIGNAL(toggled(bool)),
+					q, SLOT(widgetModifiedSlot()));
 		}
 
 		// Best time.
 		levels[level].tceBestTime = new TimeCodeEdit(q);
 		levels[level].tceBestTime->hide();
+		QObject::connect(levels[level].tceBestTime, SIGNAL(valueChanged(int,int,int)),
+				q, SLOT(widgetModifiedSlot()));
+		QObject::connect(levels[level].tceBestTime, SIGNAL(valueChangedHours(int)),
+				q, SLOT(widgetModifiedSlot()));
 
 		// Most rings.
 		levels[level].spnMostRings = new QSpinBox(q);
@@ -276,6 +284,8 @@ void SALevelStatsPrivate::initLevels(void)
 		// TODO: Actual maximum?
 		levels[level].spnMostRings->setRange(0, 0x7FFF);
 		levels[level].spnMostRings->setSingleStep(1);
+		QObject::connect(levels[level].spnMostRings, SIGNAL(valueChanged(int)),
+				 q, SLOT(widgetModifiedSlot()));
 
 		// Add the widgets to the grid layout.
 		ui.gridLevels->addWidget(levels[level].lblLevel,     level+1, 0, Qt::AlignVCenter);
@@ -360,6 +370,10 @@ void SALevelStatsPrivate::switchLevels(int character)
  */
 void SALevelStatsPrivate::updateDisplay(void)
 {
+	// Prevent modification signals.
+	Q_Q(SALevelStats);
+	q->suspendHasBeenModified();
+
 	// TODO: Make character a parameter, or not?
 	// FIXME: Character enums or something.
 	if (character >= 0 && character <= 5) {
@@ -419,6 +433,8 @@ void SALevelStatsPrivate::updateDisplay(void)
 			levels[level].chkEmblems[2]->setChecked(metal_sonic.emblems[(saveIdx*3)+2]);
 		}
 	}
+
+	q->unsuspendHasBeenModified();
 }
 
 /**
@@ -556,6 +572,7 @@ void SALevelStats::on_cboCharacter_currentIndexChanged(int index)
 int SALevelStats::load(const sa_save_slot *sa_save)
 {
 	Q_D(SALevelStats);
+	suspendHasBeenModified();
 	memcpy(&d->scores,  &sa_save->scores,  sizeof(d->scores));
 	memcpy(&d->times,   &sa_save->times,   sizeof(d->times));
 	memcpy(&d->weights, &sa_save->weights, sizeof(d->weights));
@@ -574,6 +591,7 @@ int SALevelStats::load(const sa_save_slot *sa_save)
 
 	// Update the display.
 	d->updateDisplay();
+	unsuspendHasBeenModified();
 	setModified(false);
 	return 0;
 }
@@ -623,6 +641,7 @@ int SALevelStats::save(sa_save_slot *sa_save)
 int SALevelStats::loadDX(const sadx_extra_save_slot *sadx_extra_save)
 {
 	Q_D(SALevelStats);
+	suspendHasBeenModified();
 
 	if (sadx_extra_save) {
 		memcpy(&d->metal_sonic.scores, &sadx_extra_save->scores_metal, sizeof(d->metal_sonic.scores));
@@ -654,6 +673,7 @@ int SALevelStats::loadDX(const sadx_extra_save_slot *sadx_extra_save)
 		}
 	}
 
+	unsuspendHasBeenModified();
 	setModified(false);
 	return 0;
 }
