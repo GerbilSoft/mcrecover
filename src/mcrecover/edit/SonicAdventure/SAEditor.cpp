@@ -670,7 +670,8 @@ int SAEditor::save(void)
 			}
 
 			// Update the checksums.
-			// Note that there are two checksums:
+			// TODO: Not tested!
+			// Note that there are two sets of checksums:
 			// - Game checksum (CRC-16) [one per slot]
 			// - VMS checksum (custom)
 			uint8_t *src = (uint8_t*)data.data() + SA_SAVE_ADDRESS_DC_0;
