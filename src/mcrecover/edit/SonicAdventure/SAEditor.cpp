@@ -45,6 +45,9 @@
 #include "../models/ByteFlagsModel.hpp"
 #include "SADXMissionFlags.hpp"
 
+// Checksum algorithms.
+#include "libgctools/Checksum.hpp"
+
 // TODO: Put this in a common header file somewhere.
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
@@ -184,6 +187,7 @@ int SAEditorPrivate::load(File *file)
 
 	// Determine which version of the game this save file is for.
 	// TODO: Test for GCN first, then DC?
+	// TODO: Verify checksums?
 	int ret = -1;
 	if (qobject_cast<VmuFile*>(file) != nullptr) {
 		// DC version.
@@ -665,7 +669,22 @@ int SAEditor::save(void)
 				memset(sa_save, 0, SA_SAVE_SLOT_LEN);
 			}
 
-			// FIXME: Update the checksum.
+			// Update the checksums.
+			// Note that there are two checksums:
+			// - Game checksum (CRC-16) [one per slot]
+			// - VMS checksum (custom)
+			uint8_t *src = (uint8_t*)data.data() + SA_SAVE_ADDRESS_DC_0;
+			for (int i = 0; i < 3; i++, src += SA_SAVE_SLOT_LEN) {
+				uint16_t crc16 = Checksum::Crc16(src + 4, SA_SAVE_SLOT_LEN - 4);
+				crc16 = cpu_to_le16(crc16);
+				memcpy(src + 2, &crc16, sizeof(crc16));
+			}
+
+			// VMS checksum.
+			uint16_t vmschk = Checksum::DreamcastVMU(src, data.size(), 0x46);
+			vmschk = cpu_to_le16(vmschk);
+			memcpy(&src[0x46], &vmschk, sizeof(vmschk));
+
 			// Save slots copied.
 			// Now it needs to be written to the file.
 		}
@@ -704,7 +723,12 @@ int SAEditor::save(void)
 			memset(sadx_extra_save, 0, SADX_EXTRA_SAVE_SLOT_LEN);
 		}
 
-		// FIXME: Update the checksum.
+		// Update the checksum.
+		uint16_t crc16 = Checksum::Crc16((const uint8_t*)data.data() + SA_SAVE_ADDRESS_GCN + 4,
+			SA_SAVE_SLOT_LEN + SADX_EXTRA_SAVE_SLOT_LEN - 4);
+		crc16 = cpu_to_be16(crc16);
+		memcpy(data.data() + 0x1442, &crc16, sizeof(crc16));
+
 		// Save slots copied.
 		// Now it needs to be written to the file.
 		ret = 0;
