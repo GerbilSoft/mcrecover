@@ -192,7 +192,11 @@ void SAAdventurePrivate::initCharacters(void)
 	// and memory usage.
 	QString levelNames[SA_LEVEL_NAMES_ALL_COUNT];
 	for (int i = 0; i < SA_LEVEL_NAMES_ALL_COUNT; i++) {
-		levelNames[i] = QLatin1String(sa_level_names_all[i]);
+		// NOTE: Some level names have embedded newlines
+		// in order to show up properly in SALevelStats.
+		// FIXME: Remove the newlines from the source,
+		// and add them manually in SALevelStats?
+		levelNames[i] = QString::fromLatin1(sa_level_names_all[i]).replace(L'\n', L' ');
 	}
 
 	QString qsCssCheckBox = QLatin1String(sa_ui_css_emblem_checkbox);
