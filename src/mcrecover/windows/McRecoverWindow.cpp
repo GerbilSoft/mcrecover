@@ -2101,11 +2101,6 @@ void McRecoverWindow::chkAllowWrite_clicked(bool checked)
 		return;
 	}
 
-	if (checked == d->card->isReadOnly()) {
-		// Nothing to change...
-		return;
-	}
-
 	// Switch the read-only mode.
 	// NOTE: This box is true for "write", whereas setReadOnly is false for "write".
 	int ret = d->card->setReadOnly(!checked);
