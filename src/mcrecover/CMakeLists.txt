@@ -1,14 +1,15 @@
 PROJECT(mcrecover)
 
 # Data directory.
+INCLUDE(DirInstallPaths)
 IF(WIN32 OR APPLE)
 	# Win32 and Mac OS X don't use `make install`.
 	SET(MCRECOVER_DATA_DIRECTORY "")
 	SET(MCRECOVER_TRANSLATIONS_DIRECTORY "")
 ELSE()
 	# Unix system.
-	SET(MCRECOVER_DATA_DIRECTORY "${CMAKE_INSTALL_PREFIX}/share/mcrecover/data")
-	SET(MCRECOVER_TRANSLATIONS_DIRECTORY "${CMAKE_INSTALL_PREFIX}/share/mcrecover/translations")
+	SET(MCRECOVER_DATA_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${DIR_INSTALL_DATA}")
+	SET(MCRECOVER_TRANSLATIONS_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${DIR_INSTALL_TRANSLATIONS}")
 ENDIF()
 
 IF(USE_QT4)
@@ -498,7 +499,9 @@ ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_TBM_MOC_SRCS}
 	)
 INCLUDE(SetMSVCDebugPath)
-SET_MSVC_DEBUG_PATH(mcrecover)
+DO_SPLIT_DEBUG(mcrecover)
+SET_WINDOWS_SUBSYSTEM(mcrecover WIN32)
+SET_WINDOWS_NO_MANIFEST(mcrecover)
 
 TARGET_INCLUDE_DIRECTORIES(mcrecover
 	PUBLIC	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -557,17 +560,6 @@ ENDIF(mcrecover_NEEDS_DL AND CMAKE_DL_LIBS)
 # Translations.
 ADD_DEPENDENCIES(mcrecover translations_target)
 
-# NOTE: $<TARGET_FILE:mcrecover> is preferred,
-# but this doesn't seem to work on Ubuntu 10,04.
-# (cmake_2.8.0-5ubuntu1_i386)
-GET_PROPERTY(MCRECOVER_EXE_LOCATION TARGET mcrecover PROPERTY LOCATION)
-
-# Split debug information.
-IF(SPLIT_DEBUG)
-	INCLUDE(SplitDebugInformation)
-	SPLIT_DEBUG_INFORMATION(mcrecover)
-ENDIF(SPLIT_DEBUG)
-
 # Compress the EXE.
 IF(COMPRESS_EXE)
 	INCLUDE(CompressExeWithUpx)
@@ -607,8 +599,6 @@ SET(MACOSX_BUNDLE_LONG_VERSION_STRING "0.0.0")
 #################
 # Installation. #
 #################
-
-INCLUDE(DirInstallPaths)
 
 INSTALL(TARGETS mcrecover
 	RUNTIME DESTINATION "${DIR_INSTALL_EXE}"

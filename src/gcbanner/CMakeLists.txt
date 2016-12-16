@@ -1,16 +1,7 @@
 PROJECT(gcbanner)
 
-# Include the previous directory.
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/../")
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}/../")
-
-# libgctools source and binary directories.
-# Binary directory is needed for byteorder.h.
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/../libgctools")
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}/../libgctools")
-
 # Main binary directory. Needed for git_version.h
-INCLUDE_DIRECTORIES("${mcrecover_base_BINARY_DIR}")
+INCLUDE_DIRECTORIES("${CMAKE_BINARY_DIR}")
 
 # Check for getopt_long().
 INCLUDE(CheckIncludeFiles)
@@ -55,7 +46,10 @@ ADD_EXECUTABLE(gcbanner
 	${getopt_SRCS}
 	)
 INCLUDE(SetMSVCDebugPath)
-SET_MSVC_DEBUG_PATH(gcbanner)
+DO_SPLIT_DEBUG(gcbanner)
+SET_WINDOWS_SUBSYSTEM(gcbanner CONSOLE)
+SET_WINDOWS_NO_MANIFEST(gcbanner)
+
 TARGET_INCLUDE_DIRECTORIES(gcbanner
 	PUBLIC	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
@@ -67,12 +61,6 @@ TARGET_LINK_LIBRARIES(gcbanner gctools)
 # Win32: image version.
 INCLUDE(Win32ImageVersionLinkerFlags)
 WIN32_IMAGE_VERSION_LINKER_FLAGS(${VERSION_MAJOR} ${VERSION_MINOR})
-
-# Split debug information.
-IF(SPLIT_DEBUG)
-	INCLUDE(SplitDebugInformation)
-	SPLIT_DEBUG_INFORMATION(gcbanner)
-ENDIF(SPLIT_DEBUG)
 
 # Compress the EXE.
 IF(COMPRESS_EXE)

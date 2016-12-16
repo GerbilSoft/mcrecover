@@ -551,10 +551,6 @@ QString AboutDialogPrivate::GetDebugInfo(void)
 }
 
 #ifdef Q_OS_WIN
-#define WIN32_LEAN_AND_MEAN
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
 #include <windows.h>
 
 /**

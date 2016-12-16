@@ -21,7 +21,7 @@ IF(NOT MSVC)
 	ENDIF()
 ENDIF(NOT MSVC)
 
-MACRO(SPLIT_DEBUG_INFORMATION EXE_TARGET)
+FUNCTION(SPLIT_DEBUG_INFORMATION _target)
 SET(SPLIT_OK 1)
 IF(MSVC)
 	# MSVC splits debug information by itself.
@@ -35,10 +35,14 @@ ELSEIF(NOT CMAKE_STRIP)
 ENDIF()
 
 IF(SPLIT_OK)
-	# NOTE: $<TARGET_FILE:target> is preferred,
-	# but this doesn't seem to work on Ubuntu 10.04.
-	# (cmake_2.8.0-5ubuntu1_i386)
-	GET_PROPERTY(SPLITDEBUG_EXE_LOCATION TARGET ${EXE_TARGET} PROPERTY LOCATION)
+	# If a custom OUTPUT_NAME was specified, use it.
+	GET_PROPERTY(SPLITDEBUG_NAME TARGET ${_target} PROPERTY OUTPUT_NAME)
+	IF(NOT SPLITDEBUG_NAME)
+		SET(SPLITDEBUG_NAME "${_target}")
+	ENDIF(NOT SPLITDEBUG_NAME)
+
+	SET(SPLITDEBUG_SOURCE "$<TARGET_FILE:${_target}>")
+	SET(SPLITDEBUG_TARGET "$<TARGET_FILE_DIR:${_target}>/${SPLITDEBUG_NAME}.debug")
 
 	# NOTE: objcopy --strip-debug does NOT fully
 	# strip the binary; two sections are left:
@@ -46,15 +50,20 @@ IF(SPLIT_OK)
 	# - .strtab: String table.
 	# These sections are split into the .debug file, so there's
 	# no reason to keep them in the executable.
-	ADD_CUSTOM_COMMAND(TARGET ${EXE_TARGET} POST_BUILD
+	ADD_CUSTOM_COMMAND(TARGET ${_target} POST_BUILD
 		COMMAND ${CMAKE_OBJCOPY} --only-keep-debug
-			${SPLITDEBUG_EXE_LOCATION} ${CMAKE_CURRENT_BINARY_DIR}/${EXE_TARGET}.debug
+			${SPLITDEBUG_SOURCE} ${SPLITDEBUG_TARGET}
 		COMMAND ${CMAKE_STRIP}
-			${SPLITDEBUG_EXE_LOCATION}
-		COMMAND ${CMAKE_OBJCOPY} --add-gnu-debuglink=${EXE_TARGET}.debug
-			${SPLITDEBUG_EXE_LOCATION}
+			${SPLITDEBUG_SOURCE}
+		COMMAND ${CMAKE_OBJCOPY} --add-gnu-debuglink="${SPLITDEBUG_TARGET}"
+			${SPLITDEBUG_SOURCE}
 		)
 
-	UNSET(SPLITDEBUG_EXE_LOCATION)
+	# Set the target property to allow installation.
+	SET_TARGET_PROPERTIES(${_target} PROPERTIES PDB ${SPLITDEBUG_TARGET})
+
+	# Make sure the file is deleted on `make clean`.
+	SET_PROPERTY(DIRECTORY APPEND
+		PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${SPLITDEBUG_NAME}.debug")
 ENDIF(SPLIT_OK)
-ENDMACRO(SPLIT_DEBUG_INFORMATION)
+ENDFUNCTION(SPLIT_DEBUG_INFORMATION)

@@ -1,5 +1,4 @@
 PROJECT(mcrecover_translations)
-cmake_minimum_required(VERSION 2.6)
 
 # mcrecover translations subproject.
 IF(USE_QT4)

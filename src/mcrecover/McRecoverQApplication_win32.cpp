@@ -36,10 +36,6 @@
 #include <cstring>
 
 // Win32 includes.
-#define WIN32_LEAN_AND_MEAN
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
 #include <windows.h>
 #include <shlobj.h>
 
@@ -55,6 +51,14 @@
 #ifndef WM_THEMECHANGED
 #define WM_THEMECHANGED 0x031A
 #endif
+
+// MSGFLT_ADD (requires _WIN32_WINNT >= 0x0600)
+#ifndef MSGFLT_ADD
+#define MSGFLT_ADD 1
+#endif
+// FIXME: Use GetProcAddress().
+extern "C"
+WINUSERAPI BOOL WINAPI ChangeWindowMessageFilter(__in UINT message, __in DWORD dwFlag);
 
 // QtCore includes.
 #include <QtCore/qt_windows.h>
@@ -195,6 +199,8 @@ void McRecoverQApplicationWin32Private::RegisterTaskbarButtonCreatedMessage(void
 	WM_TaskbarButtonCreated = RegisterWindowMessageW(L"TaskbarButtonCreated");
 	// Enable taskbar messages even if running elevated.
 	// TODO: Why run mcrecover elevated?
+	// FIXME: This should be changed to use GetProcAddress(),
+	// since the function was added in Windows Vista.
 	ChangeWindowMessageFilter(WM_TaskbarButtonCreated, MSGFLT_ADD);
 	ChangeWindowMessageFilter(WM_COMMAND, MSGFLT_ADD);
 	ChangeWindowMessageFilter(WM_SYSCOMMAND, MSGFLT_ADD);
