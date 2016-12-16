@@ -32,12 +32,6 @@
 #include <dlfcn.h>
 #else
 // Windows LoadLibrary()
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
 #include <windows.h>
 #define dlopen(filename, flag)	LoadLibraryA(filename)
 #define dlsym(handle, symbol)	((void*)GetProcAddress(handle, symbol))
