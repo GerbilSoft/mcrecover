@@ -9,7 +9,7 @@ init:
   - git config --global core.autocrlf input
 
 # clone directory
-clone_folder: c:\projects\rom-properties
+clone_folder: c:\projects\mcrecover
 
 # Don't build if source files aren't modified.
 only_commits:
