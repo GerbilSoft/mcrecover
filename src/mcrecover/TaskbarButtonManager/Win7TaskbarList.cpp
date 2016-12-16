@@ -22,7 +22,7 @@
 #include "Win7TaskbarList.hpp"
 
 // Qt includes.
-#include <QtGui/QWidget>
+#include <QWidget>
 
 // Windows.
 // TODO: Compatibility for older Windows SDKs that
@@ -90,7 +90,7 @@ void Win7TaskbarListPrivate::update(void)
 		return;
 
 	// TODO: winId(), or effectiveWinId()?
-	HWND hWnd = window->winId();
+	HWND hWnd = reinterpret_cast<HWND>(window->winId());
 	if (!hWnd)
 		return;
 
