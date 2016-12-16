@@ -56,9 +56,6 @@
 #ifndef MSGFLT_ADD
 #define MSGFLT_ADD 1
 #endif
-// FIXME: Use GetProcAddress().
-extern "C"
-WINUSERAPI BOOL WINAPI ChangeWindowMessageFilter(__in UINT message, __in DWORD dwFlag);
 
 // QtCore includes.
 #include <QtCore/qt_windows.h>
@@ -100,6 +97,16 @@ class McRecoverQApplicationWin32Private
 		 */
 		static QPixmap GetIconFromModule(const QString &module, 
 					uint16_t resId, const QSize &size);
+
+		/**
+		 * ChangeWindowMessageFilter() wrapper.
+		 * Uses GetProcAddress() to dynamically call the function,
+		 * since it was added starting with Windows Vista.
+		 * @param message
+		 * @param dwFlag
+		 * @return TRUE if successful; otherwise, FALSE.
+		 */
+		static BOOL ChangeWindowMessageFilter_dl(UINT message, DWORD dwFlag);
 
 		/**
 		 * Register the "TaskbarButtonCreated" message.
@@ -190,6 +197,40 @@ QPixmap McRecoverQApplicationWin32Private::GetIconFromModule(
 }
 
 /**
+ * ChangeWindowMessageFilter() wrapper.
+ * Uses GetProcAddress() to dynamically call the function,
+ * since it was added starting with Windows Vista.
+ * @param message
+ * @param dwFlag
+ * @return TRUE if successful; otherwise, FALSE.
+ */
+BOOL McRecoverQApplicationWin32Private::ChangeWindowMessageFilter_dl(UINT message, DWORD dwFlag)
+{
+	// Reference: https://msdn.microsoft.com/en-us/library/windows/desktop/dd388202(v=vs.85).aspx
+	typedef BOOL (WINAPI *PFNCHANGEWINDOWMESSAGEFILTER)(__in UINT message, __in DWORD dwFlag);
+	static PFNCHANGEWINDOWMESSAGEFILTER pfn = nullptr;
+	static bool retrieved = false;
+
+	if (!retrieved) {
+		retrieved = true;
+		HMODULE hUser32 = GetModuleHandle("user32");
+		if (hUser32) {
+			pfn = reinterpret_cast<PFNCHANGEWINDOWMESSAGEFILTER>(GetProcAddress(hUser32, "ChangeWindowMessageFilter"));
+		}
+	}
+
+	if (pfn) {
+		return pfn(message, dwFlag);
+	}
+
+	// Could not obtain a handle to the function.
+	// NOTE: Not going to set ERROR_MOD_NOT_FOUND if
+	// user32 wasn't found, because that's not possible.
+	SetLastError(ERROR_PROC_NOT_FOUND);
+	return FALSE;
+}
+
+/**
  * Register the "TaskbarButtonCreated" message.
  * This is required in order to use ITaskbarList3 on Windows 7+.
  */
@@ -199,12 +240,10 @@ void McRecoverQApplicationWin32Private::RegisterTaskbarButtonCreatedMessage(void
 	WM_TaskbarButtonCreated = RegisterWindowMessageW(L"TaskbarButtonCreated");
 	// Enable taskbar messages even if running elevated.
 	// TODO: Why run mcrecover elevated?
-	// FIXME: This should be changed to use GetProcAddress(),
-	// since the function was added in Windows Vista.
-	ChangeWindowMessageFilter(WM_TaskbarButtonCreated, MSGFLT_ADD);
-	ChangeWindowMessageFilter(WM_COMMAND, MSGFLT_ADD);
-	ChangeWindowMessageFilter(WM_SYSCOMMAND, MSGFLT_ADD);
-	ChangeWindowMessageFilter(WM_ACTIVATE, MSGFLT_ADD);
+	ChangeWindowMessageFilter_dl(WM_TaskbarButtonCreated, MSGFLT_ADD);
+	ChangeWindowMessageFilter_dl(WM_COMMAND, MSGFLT_ADD);
+	ChangeWindowMessageFilter_dl(WM_SYSCOMMAND, MSGFLT_ADD);
+	ChangeWindowMessageFilter_dl(WM_ACTIVATE, MSGFLT_ADD);
 }
 
 /** McRecoverQApplication (Win32) **/
