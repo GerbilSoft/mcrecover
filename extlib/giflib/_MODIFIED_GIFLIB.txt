@@ -1,4 +1,4 @@
-This copy of giflib-5.1.2 is a modified version of the original.
+This copy of giflib-5.1.4 is a modified version of the original.
 
 The following changes have been made to the original:
 
@@ -9,5 +9,8 @@ The following changes have been made to the original:
 - Example images, the test suite, and utility programs
   have been removed.
 
-To obtain the original giflib-5.1.2, visit:
+- Some files have been updated to support building with older
+  versions of MSVC.
+
+To obtain the original giflib-5.1.4, visit:
 http://giflib.sourceforge.net/
