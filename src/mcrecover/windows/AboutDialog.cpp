@@ -227,7 +227,7 @@ QString AboutDialogPrivate::GetCredits(void)
 
 	QString credits;
 	credits.reserve(4096);
-	credits += QLatin1String("Copyright (c) 2012-2015 by David Korth.");
+	credits += QLatin1String("Copyright (c) 2012-2016 by David Korth.");
 
 	enum CreditType_t {
 		CT_CONTINUE = 0,	// Continue previous type.
@@ -367,7 +367,7 @@ QString AboutDialogPrivate::GetLibraries(void)
 	sLibraries += sUsingDll.arg(qtVersion);
 #endif /* QT_IS_STATIC */
 	sLibraries += QChar(L'\n') +
-		QLatin1String("Copyright (C) 1995-2013 Digita Plc and/or its subsidiaries.");
+		QLatin1String("Copyright (C) 1995-2016 The Qt Company Ltd. and/or its subsidiaries.");
 	// TODO: Check QT_VERSION at runtime?
 #if QT_VERSION >= 0x040500
 	sLibraries += QChar(L'\n') + sLicenses.arg(QLatin1String("GNU LGPL v2.1+, GNU GPL v2+"));
