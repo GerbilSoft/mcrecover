@@ -1,5 +1,8 @@
 PROJECT(mcrecover)
 
+# Main binary directory. Needed for git_version.h
+INCLUDE_DIRECTORIES("${CMAKE_BINARY_DIR}")
+
 # Data directory.
 INCLUDE(DirInstallPaths)
 IF(WIN32 OR APPLE)
@@ -95,9 +98,6 @@ IF(APPLE)
 		SET(APPLE_LIBS ${CARBON_LIBRARY})
 	ENDIF(QT_MAC_USE_COCOA)
 ENDIF(APPLE)
-
-# Main binary directory. Needed for git_version.h
-INCLUDE_DIRECTORIES("${mcrecover_base_BINARY_DIR}")
 
 # PCRE
 INCLUDE(CheckPCRE)

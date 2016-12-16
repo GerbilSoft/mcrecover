@@ -1,5 +1,8 @@
 PROJECT(libgctools)
 
+# Main binary directory. Needed for git_version.h
+INCLUDE_DIRECTORIES("${CMAKE_BINARY_DIR}")
+
 # Test system byteorder.
 # TODO: Universal Binary support; detect PDP endian.
 INCLUDE(TestBigEndian)
