@@ -421,11 +421,8 @@ if(PNG_SHARED)
     SET_MSVC_DEBUG_PATH(png)
   endif()
   target_link_libraries(png ${ZLIB_LIBRARY} ${M_LIBRARY})
-  # mcrecover: Exclude from ALL and DEFAULT builds.
-  SET_TARGET_PROPERTIES(${PNG_LIB_NAME} PROPERTIES
-       EXCLUDE_FROM_ALL TRUE
-       EXCLUDE_FROM_DEFAULT_BUILD TRUE
-       )
+  # mcrecover: Exclude from ALL builds.
+  SET_TARGET_PROPERTIES(${PNG_LIB_NAME} PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
   if(UNIX AND AWK)
     if(HAVE_LD_VERSION_SCRIPT)
@@ -464,11 +461,8 @@ if(PNG_STATIC)
     SET_MSVC_DEBUG_PATH(png_static)
   endif()
   target_link_libraries(png_static ${ZLIB_LIBRARY} ${M_LIBRARY})
-  # mcrecover: Exclude from ALL and DEFAULT builds.
-  SET_TARGET_PROPERTIES(${PNG_LIB_NAME_STATIC} PROPERTIES
-       EXCLUDE_FROM_ALL TRUE
-       EXCLUDE_FROM_DEFAULT_BUILD TRUE
-       )
+  # mcrecover: Exclude from ALL builds.
+  SET_TARGET_PROPERTIES(${PNG_LIB_NAME_STATIC} PROPERTIES EXCLUDE_FROM_ALL TRUE)
 endif()
 
 if(PNG_FRAMEWORK)
@@ -485,11 +479,8 @@ if(PNG_FRAMEWORK)
     XCODE_ATTRIBUTE_INSTALL_PATH "@rpath"
     PUBLIC_HEADER "${libpng_public_hdrs}"
     OUTPUT_NAME png)
-  # mcrecover: Exclude from ALL and DEFAULT builds.
-  SET_TARGET_PROPERTIES(png_framework PROPERTIES
-       EXCLUDE_FROM_ALL TRUE
-       EXCLUDE_FROM_DEFAULT_BUILD TRUE
-       )
+  # mcrecover: Exclude from ALL builds.
+  SET_TARGET_PROPERTIES(png_framework PROPERTIES EXCLUDE_FROM_ALL TRUE)
   target_link_libraries(png_framework ${ZLIB_LIBRARY} ${M_LIBRARY})
 endif()
 
