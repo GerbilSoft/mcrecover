@@ -107,9 +107,15 @@ SET_TARGET_PROPERTIES(gctools PROPERTIES EXCLUDE_FROM_ALL TRUE)
 IF(HAVE_PNG)
 	TARGET_LINK_LIBRARIES(gctools ${PNG_LIBRARY})
 ENDIF(HAVE_PNG)
-IF(USE_GIF AND USE_INTERNAL_GIF)
-	TARGET_LINK_LIBRARIES(gctools ${GIF_LIBRARY})
-ENDIF(USE_GIF AND USE_INTERNAL_GIF)
+IF(USE_GIF)
+	IF(USE_INTERNAL_GIF)
+		TARGET_LINK_LIBRARIES(gctools ${GIF_LIBRARY})
+	ELSE(USE_INTERNAL_GIF)
+		# quantize.c needs gif_lib.h, which might not
+		# be present on the build system.
+		TARGET_INCLUDE_DIRECTORIES(gctools PRIVATE "${CMAKE_SOURCE_DIR}/extlib/giflib/lib")
+	ENDIF()
+ENDIF(USE_GIF)
 
 # Link in libdl if it's required for dlopen()
 # and we have a component that uses it.
