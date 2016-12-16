@@ -584,6 +584,8 @@ SET(PCREPOSIX_SOURCES
 ENDIF (EXISTS ${PROJECT_SOURCE_DIR}/pcreposix.rc)
 ENDIF(MSVC AND NOT PCRE_STATIC)
 
+# mcrecover: We always want to use the MSVC DLL runtime.
+IF(0)
 # Fix static compilation with MSVC: https://bugs.exim.org/show_bug.cgi?id=1681
 # This code was taken from the CMake wiki, not from WebM.
 
@@ -597,6 +599,7 @@ IF(MSVC AND PCRE_STATIC)
     string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
   endforeach()
 ENDIF(MSVC AND PCRE_STATIC)
+ENDIF(0)
 
 SET(PCRECPP_HEADERS
   pcrecpp.h
