@@ -85,9 +85,10 @@ in a future version.
 3. How to compile GCN MemCard Recover
 
 GCN MemCard Recover requires the following libraries:
-- cmake 2.8.3 or later. (2.8.10.2+ recommended)
-- Qt 4.6.0 or later. (4.8.5+ recommended)
-  - NOTE: Qt 5 is not currently supported.
+- CMake 2.8.12 or later.
+- Qt 4 or Qt 5.
+  - Qt 4: 4.6.0 or later. (4.8.5+ recommended)
+  - Qt 5: 5.5.0 or later. (5.7.0+ recommended)
 - libpcre (8.30 or later recommended)
 - libpng (1.6 or later with APNG patch recommended)
 - zlib (1.2.5 or later recommended)

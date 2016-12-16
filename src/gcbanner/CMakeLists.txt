@@ -1,10 +1,4 @@
 PROJECT(gcbanner)
-cmake_minimum_required(VERSION 2.6)
-
-# gcbanner source and binary directories.
-# Binary directory is required for moc-generated headers.
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}")
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
 
 # Include the previous directory.
 INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/../")
@@ -61,7 +55,11 @@ ADD_EXECUTABLE(gcbanner
 	${getopt_SRCS}
 	)
 INCLUDE(SetMSVCDebugPath)
-SET_MSVC_DEBUG_PATH(mcrecover)
+SET_MSVC_DEBUG_PATH(gcbanner)
+TARGET_INCLUDE_DIRECTORIES(gcbanner
+	PUBLIC	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+	)
 
 # libgctools
 TARGET_LINK_LIBRARIES(gcbanner gctools)

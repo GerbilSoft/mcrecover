@@ -1,9 +1,7 @@
 PROJECT(mcrecover_base)
-
-# Version dependencies:
-# - BREAK(): CMake 2.6.0
-# - NASM: CMake 2.8.4
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0)
+# CMake 2.8.11 adds TARGET_INCLUDE_DIRECTORIES() and Qt4::xxx targets, similar to Qt5.
+# CMake 2.8.12 automates adding compile flags for Qt5, e.g. -fPIC on Linux.
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 
 # UNSET() was added in cmake-2.6.3.
 # Define an equivalent macro for older versions.

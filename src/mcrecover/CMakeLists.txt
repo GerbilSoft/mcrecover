@@ -1,20 +1,4 @@
 PROJECT(mcrecover)
-# QT4_ADD_DBUS_INTERFACES()'s NO_NAMESPACE and INCLUDE options were added in 2.8.7.
-cmake_minimum_required(VERSION 2.8.7)
-
-# mcrecover source and binary directories.
-# Binary directory is required for moc-generated headers.
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}")
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
-
-# Include the previous directory.
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/../")
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}/../")
-
-# libgctools source and binary directories.
-# Binary directory is needed for byteorder.h.
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/../libgctools")
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}/../libgctools")
 
 # Data directory.
 IF(WIN32 OR APPLE)
@@ -28,8 +12,8 @@ ELSE()
 ENDIF()
 
 IF(USE_QT4)
-	# Find Qt 4.
-	SET(MCRECOVER_QT4_MIN_VERSION 4.6.0)
+	# Find Qt4.
+	SET(QT4_NO_LINK_QTMAIN 1)
 	SET(MCRECOVER_QT4_COMPONENTS QtCore QtGui QtXml)
 	IF(ENABLE_DBUS)
 		# QtDBus is used for DockManager.
@@ -37,34 +21,24 @@ IF(USE_QT4)
 		SET(MCRECOVER_QT4_COMPONENTS ${MCRECOVER_QT4_COMPONENTS} QtDBus)
 	ENDIF(ENABLE_DBUS)
 
-	FIND_PACKAGE(Qt4 ${MCRECOVER_QT4_MIN_VERSION}
-		COMPONENTS ${MCRECOVER_QT4_COMPONENTS})
+	FIND_PACKAGE(Qt4 4.6.0 COMPONENTS ${MCRECOVER_QT4_COMPONENTS})
 	IF(NOT QT_QTCORE_FOUND)
-		MESSAGE(FATAL_ERROR "QtCore not found! Please install Qt ${MCRECOVER_QT4_MIN_VERSION} or higher.")
+		MESSAGE(FATAL_ERROR "QtCore not found! Please install Qt 4.6.0 or higher.")
 	ELSEIF(NOT QT_QTGUI_FOUND)
-		MESSAGE(FATAL_ERROR "QtGui not found! Please install Qt ${MCRECOVER_QT4_MIN_VERSION} or higher.")
+		MESSAGE(FATAL_ERROR "QtGui not found! Please install Qt 4.6.0 or higher.")
+	ELSEIF(NOT QT_QTXML_FOUND)
+		MESSAGE(FATAL_ERROR "QtXml not found! Please install Qt 4.6.0 or higher.")
 	ENDIF()
 
 	IF(QT_QTDBUS_FOUND)
 		SET(QtDBus_FOUND 1)
 	ENDIF(QT_QTDBUS_FOUND)
-
-	INCLUDE(${QT_USE_FILE})
 ELSEIF(USE_QT5)
-	# Find Qt 5.
+	# Find Qt5.
 	# FIXME: Figure out a minimum Qt5 version.
 	# QtWin::fromHICON was added in Qt 5.2.
-	SET(QT5_EXECUTABLE_COMPILE_FLAGS "")
-	FOREACH(QT5_MODULE Qt5Core Qt5Gui Qt5Widgets Qt5Xml)
-		FIND_PACKAGE(${QT5_MODULE} REQUIRED)
-		INCLUDE_DIRECTORIES(${${QT5_MODULE}_INCLUDE_DIRS})
-
-		# If Qt 5 is built with -reduce-relocations, we must build with -fPIC.
-		# Qt's CMake modules provide the CFLAGS for this.
-		IF(NOT WIN32)
-			SET(QT5_EXECUTABLE_COMPILE_FLAGS "${QT5_EXECUTABLE_COMPILE_FLAGS} ${${QT5_MODULE}_EXECUTABLE_COMPILE_FLAGS}")
-		ENDIF(NOT WIN32)
-	ENDFOREACH()
+	SET(Qt5_NO_LINK_QTMAIN 1)
+	FIND_PACKAGE(Qt5 REQUIRED COMPONENTS Core Gui Widgets Xml)
 
 	IF(ENABLE_DBUS)
 		# QtDBus is used for DockManager.
@@ -73,17 +47,8 @@ ELSEIF(USE_QT5)
 		IF(Qt5DBus_FOUND)
 			SET(QtDBus_FOUND 1)
 			INCLUDE_DIRECTORIES(${Qt5DBus_INCLUDE_DIRS})
-
-			# If Qt 5 is built with -reduce-relocations, we must build with -fPIC.
-			# Qt's CMake modules provide the CFLAGS for this.
-			SET(QT5_EXECUTABLE_COMPILE_FLAGS "${QT5_EXECUTABLE_COMPILE_FLAGS} ${Qt5DBus_EXECUTABLE_COMPILE_FLAGS}")
 		ENDIF(Qt5DBus_FOUND)
 	ENDIF(ENABLE_DBUS)
-
-	# Add Qt 5 compile flags.
-	# TODO: Also linker flags?
-	SET(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${QT5_EXECUTABLE_COMPILE_FLAGS}")
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${QT5_EXECUTABLE_COMPILE_FLAGS}")
 ENDIF()
 
 ####################################
@@ -535,6 +500,13 @@ ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 INCLUDE(SetMSVCDebugPath)
 SET_MSVC_DEBUG_PATH(mcrecover)
 
+TARGET_INCLUDE_DIRECTORIES(mcrecover
+	PUBLIC	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+	PRIVATE	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/..>
+	)
+
 # libgctools
 TARGET_LINK_LIBRARIES(mcrecover gctools)
 
@@ -559,28 +531,22 @@ IF(USE_QT4)
 		TARGET_LINK_LIBRARIES(mcrecover ${QT_PLUGINS_CODECS_QJPCODECS})
 	ENDIF(QT_PLUGINS_CODECS_QJPCODECS)
 	IF(QT_QTDBUS_FOUND)
-		TARGET_LINK_LIBRARIES(mcrecover ${QT_QTDBUS_LIBRARY})
+		TARGET_LINK_LIBRARIES(mcrecover Qt4::QtDBus)
 	ENDIF(QT_QTDBUS_FOUND)
-	TARGET_LINK_LIBRARIES(mcrecover
-		${QT_QTGUI_LIBRARY}
-		${QT_QTCORE_LIBRARY}
-		)
+	TARGET_LINK_LIBRARIES(mcrecover Qt4::QtGui Qt4::QtXml Qt4::QtCore)
 ELSEIF(USE_QT5)
 	# TODO: qjpcodecs for static linkage.
 	IF(Qt5DBus_FOUND)
 		TARGET_LINK_LIBRARIES(mcrecover Qt5::DBus)
 	ENDIF(Qt5DBus_FOUND)
-	TARGET_LINK_LIBRARIES(mcrecover Qt5::Widgets Qt5::Gui Qt5::Core)
+	TARGET_LINK_LIBRARIES(mcrecover Qt5::Widgets Qt5::Gui Qt5::Xml Qt5::Core)
 ENDIF()
 
 # extlib (needed twice due to weird dependencies with Qt/static)
 TARGET_LINK_LIBRARIES(mcrecover ${MCRECOVER_EXTLIB})
 
 # OS-specific libraries
-TARGET_LINK_LIBRARIES(mcrecover
-	${WIN32_LIBS}
-	${APPLE_LIBS}
-	)
+TARGET_LINK_LIBRARIES(mcrecover ${WIN32_LIBS} ${APPLE_LIBS})
 
 # Link in libdl if it's required for dlopen()
 # and we have a component that uses it.

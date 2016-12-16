@@ -1,10 +1,4 @@
 PROJECT(libgctools)
-cmake_minimum_required(VERSION 2.6.0)
-
-# McRecover source and binary directories.
-# Binary directory is needed for byteorder.h.
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 # Test system byteorder.
 # TODO: Universal Binary support; detect PDP endian.
@@ -100,6 +94,10 @@ ADD_LIBRARY(gctools STATIC
 	)
 INCLUDE(SetMSVCDebugPath)
 SET_MSVC_DEBUG_PATH(gctools)
+TARGET_INCLUDE_DIRECTORIES(gctools
+	PUBLIC	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+	)
 TARGET_LINK_LIBRARIES(gctools ${gctools_DL_LIBS})
 IF(HAVE_PNG)
 	TARGET_LINK_LIBRARIES(gctools ${PNG_LIBRARY})
