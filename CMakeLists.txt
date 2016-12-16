@@ -77,7 +77,7 @@ IF(POSIX_SH)
 ELSE(POSIX_SH)
 	# sh isn't available.
 	# Create a blank git_version.h.
-	FILE(WRITE "${mcrecover_base_BINARY_DIR}/git_version.h"
+	FILE(WRITE "${CMAKE_CURRENT_BINARY_DIR}/git_version.h"
 		"/* dummy file; POSIX sh is not available */\n")
 ENDIF(POSIX_SH)
 

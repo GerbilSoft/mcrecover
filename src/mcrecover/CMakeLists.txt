@@ -498,6 +498,7 @@ ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_TBM_SRCS} ${mcrecover_TBM_H}
 	${mcrecover_TBM_MOC_SRCS}
 	)
+ADD_DEPENDENCIES(mcrecover git_version)
 INCLUDE(SetMSVCDebugPath)
 DO_SPLIT_DEBUG(mcrecover)
 SET_WINDOWS_SUBSYSTEM(mcrecover WIN32)

@@ -93,6 +93,7 @@ ADD_LIBRARY(gctools STATIC
 	${libgctools_PNG_SRCS} ${libgctools_PNG_H}
 	${libgctools_GIF_SRCS} ${libgctools_GIF_H}
 	)
+ADD_DEPENDENCIES(gctools git_version)
 INCLUDE(SetMSVCDebugPath)
 SET_MSVC_DEBUG_PATH(gctools)
 TARGET_INCLUDE_DIRECTORIES(gctools

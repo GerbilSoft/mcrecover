@@ -45,6 +45,7 @@ ADD_EXECUTABLE(gcbanner
 	${gcbanner_OS_SRCS}
 	${getopt_SRCS}
 	)
+ADD_DEPENDENCIES(gcbanner git_version)
 INCLUDE(SetMSVCDebugPath)
 DO_SPLIT_DEBUG(gcbanner)
 SET_WINDOWS_SUBSYSTEM(gcbanner CONSOLE)
