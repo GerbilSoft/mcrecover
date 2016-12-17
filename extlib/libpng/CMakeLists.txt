@@ -416,9 +416,6 @@ if(PNG_SHARED)
     # msvc does not append 'lib' - do it here to have consistent name
     set_target_properties(png PROPERTIES PREFIX "lib")
     set_target_properties(png PROPERTIES IMPORT_PREFIX "lib")
-    # mcrecover: Set MSVC debug path.
-    INCLUDE(SetMSVCDebugPath)
-    SET_MSVC_DEBUG_PATH(png)
   endif()
   target_link_libraries(png ${ZLIB_LIBRARY} ${M_LIBRARY})
   # mcrecover: Exclude from ALL builds.
@@ -456,9 +453,6 @@ if(PNG_STATIC)
   if(MSVC)
     # msvc does not append 'lib' - do it here to have consistent name
     set_target_properties(png_static PROPERTIES PREFIX "lib")
-    # mcrecover: Set MSVC debug path.
-    INCLUDE(SetMSVCDebugPath)
-    SET_MSVC_DEBUG_PATH(png_static)
   endif()
   target_link_libraries(png_static ${ZLIB_LIBRARY} ${M_LIBRARY})
   # mcrecover: Exclude from ALL builds.

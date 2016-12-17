@@ -896,12 +896,6 @@ echo RunTest.bat tests successfully completed
 
 ENDIF(PCRE_BUILD_TESTS)
 
-# mcrecover: Set MSVC debug paths.
-INCLUDE(SetMSVCDebugPath)
-FOREACH(_target "${targets}")
-	SET_MSVC_DEBUG_PATH(${_target})
-ENDFOREACH()
-
 # mcrecover: Disable installation.
 IF(0)
 # Installation

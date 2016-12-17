@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.4.4)
+#cmake_minimum_required(VERSION 2.4.4)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 
 project(zlib C)
@@ -137,7 +137,6 @@ endif()
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
 	# mcrecover: cmake-2.8.4 is required for nasm.
-	cmake_minimum_required(VERSION 2.8.4)
 	if(ASM686)
 		set(ZLIB_ASMS contrib/asm686/match.S)
 	elseif (AMD64)
@@ -158,7 +157,6 @@ endif()
 
 if(MSVC)
 	# mcrecover: cmake-2.6.3 is required for masm.
-	cmake_minimum_required(VERSION 2.6.3)
 	if(ASM686)
 		ENABLE_LANGUAGE(ASM_MASM)
 		set(ZLIB_ASMS
@@ -213,14 +211,19 @@ set_target_properties(zlib PROPERTIES DEFINE_SYMBOL ZLIB_DLL)
 set_target_properties(zlib PROPERTIES SOVERSION 1)
 add_definitions(${ZLIB_DEFINITIONS})
 
-# mcrecover: Set the MSVC debug path.
-INCLUDE(SetMSVCDebugPath)
-SET_MSVC_DEBUG_PATH(zlib)
-SET_MSVC_DEBUG_PATH(zlibstatic)
+# mcrecover: Set target definitions.
+#target_compile_definitions(zlib PUBLIC -DZLIB_CONST)
+target_compile_definitions(zlibstatic PUBLIC -DZLIB_CONST)
 
-# mcrecover: Exclude from ALL builds.
-SET_TARGET_PROPERTIES(zlib PROPERTIES EXCLUDE_FROM_ALL TRUE)
-SET_TARGET_PROPERTIES(zlibstatic PROPERTIES EXCLUDE_FROM_ALL TRUE)
+# mcrecover: Set include directories.
+#TARGET_INCLUDE_DIRECTORIES(zlib
+#	PUBLIC	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+#		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+#	)
+TARGET_INCLUDE_DIRECTORIES(zlibstatic
+	PUBLIC	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+	)
 
 if(NOT CYGWIN)
     # This property causes shared libraries on Linux to have the full version
@@ -262,7 +265,7 @@ endif()
 
 #============================================================================
 # Example binaries
-# (disabled for Gens/GS II)
+# (disabled for mcrecover)
 #============================================================================
 set(SKIP_EXAMPLES 1)
 
