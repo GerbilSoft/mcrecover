@@ -269,6 +269,9 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 	McRecoverQApplicationWin32Private::SetSecurityOptions();
 
 	// NOTE: lpCmdLine does not include the program's name.
+	// NOTE 2: This is only used for argc/argv. QCoreApplication::arguments()
+	// handles Unicode arguments correctly on Windows.
+
 	// TODO: qtmain converts GetCommandLineW()'s output to local 8-bit.
 	// Should we just use GetCommandLineA() unconditionally?
 	Q_UNUSED(lpCmdLine)
