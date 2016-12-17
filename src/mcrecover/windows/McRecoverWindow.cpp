@@ -1185,8 +1185,9 @@ void McRecoverWindow::closeCard(bool noMsg)
 {
 	Q_D(McRecoverWindow);
 	QString productName;
-	if (d->card)
-		d->card->productName();
+	if (d->card) {
+		productName = d->card->productName();
+	}
 
 	d->model->setCard(nullptr);
 	d->ui.mcCardView->setCard(nullptr);
@@ -1200,8 +1201,9 @@ void McRecoverWindow::closeCard(bool noMsg)
 
 	// Update the UI.
 	d->updateLstFileList();
-	if (!noMsg)
+	if (!noMsg) {
 		d->statusBarManager->closed(productName);
+	}
 	d->updateWindowTitle();
 }
 
