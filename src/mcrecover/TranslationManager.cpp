@@ -211,27 +211,26 @@ QMap<QString, QString> TranslationManager::enumerate(void) const
 
 	// Search the paths for TS files.
 	static const QDir::Filters filters = (QDir::Files | QDir::Readable);
-#ifdef Q_OS_WIN
-	static const QDir::SortFlags sortFlags = (QDir::Name | QDir::IgnoreCase);
-#else /* !Q_OS_WIN */
-	static const QDir::SortFlags sortFlags = (QDir::Name);
-#endif /* Q_OS_WIN */
 
 	Q_D(const TranslationManager);
 	QMap<QString, QString> tsMap;
 	QTranslator tmpTs;
 	foreach (QString path, d->pathList) {
 		QDir dir(path);
-		QFileInfoList files = dir.entryInfoList(nameFilters, filters, sortFlags);
+		QFileInfoList files = dir.entryInfoList(nameFilters, filters);
 		foreach (QFileInfo file, files) {
 			// Get the locale information.
 			// TODO: Also get the author information?
 			if (tmpTs.load(file.absoluteFilePath())) {
-				QString tsLocale = tmpTs.translate("McRecoverQApplication", "C", "ts-locale");
-				if (!tsMap.contains(tsLocale)) {
+				QString locale = tmpTs.translate("McRecoverQApplication", "C", "ts-locale");
+				if (!tsMap.contains(locale)) {
 					// Add the translation to the map.
-					QString tsLanguage = tmpTs.translate("McRecoverQApplication", "Default", "ts-language");
-					tsMap.insert(tsLocale, tsLanguage);
+					if (tsMap.contains(locale)) {
+						// FIXME: Duplicate translation?
+						continue;
+					}
+					QString language = tmpTs.translate("McRecoverQApplication", "Default", "ts-language");
+					tsMap.insert(locale, language);
 				}
 			}
 		}
