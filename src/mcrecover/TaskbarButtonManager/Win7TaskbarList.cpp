@@ -90,7 +90,7 @@ void Win7TaskbarListPrivate::update(void)
 		return;
 
 	// TODO: winId(), or effectiveWinId()?
-	HWND hWnd = static_cast<HWND>(window->winId());
+	HWND hWnd = reinterpret_cast<HWND>(window->winId());
 	if (!hWnd)
 		return;
 
