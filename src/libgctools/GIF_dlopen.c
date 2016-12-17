@@ -165,14 +165,14 @@ static int init_giflib(void)
 	DLOPEN_GIF(common, EGifPutCodeNext);
 
 	// EGifPutImageDesc is slightly different on v4.2+.
-	if (giflib.version >= 42) {
+	if (giflib.version >= GIFLIB_42) {
 		DLOPEN_GIF(v42_bool, EGifPutImageDesc);
 	} else {
 		DLOPEN_GIF(v40_int, EGifPutImageDesc);
 	}
 	
 	// Common GIF symbols that were renamed in giflib-5.0.
-	if (giflib.version >= 50) {
+	if (giflib.version >= GIFLIB_50) {
 		DLOPEN_GIF(common, GifMakeMapObject);
 		DLOPEN_GIF(common, GifFreeMapObject);
 		DLOPEN_GIF(common, GifUnionColorMap);
