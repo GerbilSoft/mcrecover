@@ -260,6 +260,7 @@ QString AboutDialogPrivate::GetCredits(void)
 		{CT_CONTINUE,	"Typpex", nullptr, nullptr},			// NTSC-U, PAL
 		{CT_CONTINUE,	"JaxTH", nullptr, nullptr},			// NTSC-U
 		{CT_CONTINUE,	"SonicFreak94", nullptr, nullptr},		// NTSC-U
+		{CT_CONTINUE,	"gukid", nullptr, nullptr},			// NTSC-U
 
 		{CT_TRANSLATORS,	"Overlord", nullptr, "en_GB"},
 		{CT_CONTINUE,	"Kevin L\xC3\xB3pez", "http://kelopez.cl/", "es_CL"},
