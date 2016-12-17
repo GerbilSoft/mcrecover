@@ -113,7 +113,8 @@ unsigned start;         /* inflate()'s starting value for strm->avail_out */
 
 
 
-#if (defined( __GNUC__ ) && defined( __amd64__ ) && ! defined( __i386 )) || (defined(_MSC_VER) && defined(_M_AMD64))
+/* mcrecover: Added a check for __x86_64__. */
+#if (defined( __GNUC__ ) && (defined( __amd64__ ) || defined( __x86_64__ )) && ! defined( __i386 )) || (defined(_MSC_VER) && defined(_M_AMD64))
 #define PAD_AVAIL_IN 6
 #define PAD_AVAIL_OUT 258
 #else
