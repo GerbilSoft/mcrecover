@@ -345,8 +345,8 @@ QString AboutDialogPrivate::GetLibraries(void)
 
 	// Icon set.
 	sLibraries = QLatin1String(
-		"Icon set is based on KDE's Oxygen icons.\n"
-		"Copyright (C) 2005-2014 by David Vignoni.\n");
+		"Icon set is based on KDE's Oxygen icons. (5.29.0)\n"
+		"Copyright (C) 2005-2016 by David Vignoni.\n");
 	sLibraries += sLicenses.arg(QLatin1String("CC BY-SA 3.0, GNU LGPL v2.1+"));
 
 	// Flag icons.

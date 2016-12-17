@@ -375,7 +375,7 @@
    </property>
    <property name="icon">
     <iconset resource="../resources/flags/flags.qrc">
-     <normaloff>:/flags/flag-us.png</normaloff>:/flags/flag-us.png</iconset>
+     <normaloff>:/flags/us.png</normaloff>:/flags/us.png</iconset>
    </property>
    <property name="text">
     <string>&amp;USA</string>
@@ -390,7 +390,7 @@
    </property>
    <property name="icon">
     <iconset resource="../resources/flags/flags.qrc">
-     <normaloff>:/flags/flag-eu.png</normaloff>:/flags/flag-eu.png</iconset>
+     <normaloff>:/flags/eu.png</normaloff>:/flags/eu.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Europe</string>
@@ -405,7 +405,7 @@
    </property>
    <property name="icon">
     <iconset resource="../resources/flags/flags.qrc">
-     <normaloff>:/flags/flag-jp.png</normaloff>:/flags/flag-jp.png</iconset>
+     <normaloff>:/flags/jp.png</normaloff>:/flags/jp.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Japan</string>
@@ -420,7 +420,7 @@
    </property>
    <property name="icon">
     <iconset resource="../resources/flags/flags.qrc">
-     <normaloff>:/flags/flag-kr.png</normaloff>:/flags/flag-kr.png</iconset>
+     <normaloff>:/flags/kr.png</normaloff>:/flags/kr.png</iconset>
    </property>
    <property name="text">
     <string>South &amp;Korea</string>

@@ -96,7 +96,7 @@
       </property>
       <property name="icon">
        <iconset resource="../../resources/flags/flags.qrc">
-        <normaloff>:/flags/flag-jp.png</normaloff>:/flags/flag-jp.png</iconset>
+        <normaloff>:/flags/jp.png</normaloff>:/flags/jp.png</iconset>
       </property>
      </item>
      <item>
@@ -105,7 +105,7 @@
       </property>
       <property name="icon">
        <iconset resource="../../resources/flags/flags.qrc">
-        <normaloff>:/flags/flag-us.png</normaloff>:/flags/flag-us.png</iconset>
+        <normaloff>:/flags/us.png</normaloff>:/flags/us.png</iconset>
       </property>
      </item>
     </widget>
@@ -139,7 +139,7 @@
       </property>
       <property name="icon">
        <iconset resource="../../resources/flags/flags.qrc">
-        <normaloff>:/flags/flag-jp.png</normaloff>:/flags/flag-jp.png</iconset>
+        <normaloff>:/flags/jp.png</normaloff>:/flags/jp.png</iconset>
       </property>
      </item>
      <item>
@@ -148,7 +148,7 @@
       </property>
       <property name="icon">
        <iconset resource="../../resources/flags/flags.qrc">
-        <normaloff>:/flags/flag-us.png</normaloff>:/flags/flag-us.png</iconset>
+        <normaloff>:/flags/us.png</normaloff>:/flags/us.png</iconset>
       </property>
      </item>
      <item>
@@ -157,7 +157,7 @@
       </property>
       <property name="icon">
        <iconset resource="../../resources/flags/flags.qrc">
-        <normaloff>:/flags/flag-fr.png</normaloff>:/flags/flag-fr.png</iconset>
+        <normaloff>:/flags/fr.png</normaloff>:/flags/fr.png</iconset>
       </property>
      </item>
      <item>
@@ -166,7 +166,7 @@
       </property>
       <property name="icon">
        <iconset resource="../../resources/flags/flags.qrc">
-        <normaloff>:/flags/flag-es.png</normaloff>:/flags/flag-es.png</iconset>
+        <normaloff>:/flags/es.png</normaloff>:/flags/es.png</iconset>
       </property>
      </item>
      <item>
@@ -175,7 +175,7 @@
       </property>
       <property name="icon">
        <iconset resource="../../resources/flags/flags.qrc">
-        <normaloff>:/flags/flag-de.png</normaloff>:/flags/flag-de.png</iconset>
+        <normaloff>:/flags/de.png</normaloff>:/flags/de.png</iconset>
       </property>
      </item>
     </widget>

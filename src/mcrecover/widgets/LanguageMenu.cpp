@@ -131,7 +131,7 @@ QIcon LanguageMenuPrivate::iconForLocale(const QString &locale)
 	QStringList locale_parts = locale.split(QChar(L'_'), QString::SkipEmptyParts);
 	QIcon flagIcon;
 	for (int i = (locale_parts.size() - 1); i >= 0; i--) {
-		QString filename = QLatin1String(":/flags/flag-") +
+		QString filename = QLatin1String(":/flags/") +
 				   locale_parts.at(i).toLower() +
 				   QLatin1String(".png");
 		// TODO: Optimize by getting rid of QFile::exists()?
