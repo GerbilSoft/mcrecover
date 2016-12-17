@@ -1089,8 +1089,8 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_FILENAME, true);
 
 	// Connect the lstFileList slots.
-	connect(d->ui.lstFileList->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
-		this, SLOT(lstFileList_selectionModel_currentRowChanged(QModelIndex,QModelIndex)));
+	connect(d->ui.lstFileList->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+		this, SLOT(lstFileList_selectionModel_selectionChanged(QItemSelection,QItemSelection)));
 
 	// Initialize the UI.
 	d->updateLstFileList();
@@ -1896,26 +1896,42 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 
 /**
  * lstFileList selectionModel: Current row selection has changed.
- * @param current Current index.
- * @param previous Previous index.
+ * @param selected Selected index.
+ * @param deselected Deselected index.
  */
-void McRecoverWindow::lstFileList_selectionModel_currentRowChanged(
-	const QModelIndex& current, const QModelIndex& previous)
+void McRecoverWindow::lstFileList_selectionModel_selectionChanged(
+	const QItemSelection& selected, const QItemSelection& deselected)
 {
-	Q_UNUSED(previous)
+	Q_UNUSED(selected)
+	Q_UNUSED(deselected)
 	Q_D(McRecoverWindow);
 
-	QModelIndex srcCurrent = d->proxyModel->mapToSource(current);
+	// FIXME: QItemSelection::indexes() *crashes* in MSVC debug builds. (Qt 4.8.6)
+	// References: (search for "QModelIndexList assertion", no quotes)
+	// - http://www.qtforum.org/article/13355/qt4-qtableview-assertion-failure.html#post66572
+	// - http://www.qtcentre.org/threads/55614-QTableView-gt-selectionModel%20%20-gt-selection%20%20-indexes%20%20-crash#8766774666573257762
+	// - https://forum.qt.io/topic/24664/crash-with-qitemselectionmodel-selectedindexes
+	//QModelIndexList indexes = selected.indexes();
+	int file_idx = -1;
+	const File *file = nullptr;
+	QItemSelectionModel *const selectionModel = d->ui.lstFileList->selectionModel();
+	if (selectionModel->hasSelection()) {
+		// TODO: If multiple files are selected, and one of the
+		// files was just now unselected, this will still be the
+		// unselected file.
+		QModelIndex index = d->ui.lstFileList->selectionModel()->currentIndex();
+		if (index.isValid()) {
+			file_idx = d->proxyModel->mapToSource(index).row();
+			file = d->card->getFile(file_idx);
+		}
+	}
 
 	// If file(s) are selected, enable the Save action.
-	// FIXME: Selection model is empty due to the initial selection bug
-	// that happens if a file was specified on the command line.
-	//actionSave->setEnabled(lstFileList->selectionModel()->hasSelection());
-	d->ui.actionSave->setEnabled(srcCurrent.row() >= 0);
+	d->ui.actionSave->setEnabled(file_idx >= 0);
 
 	// Set the FileView's File to the
 	// selected file in the QTreeView.
-	const File *file = d->card->getFile(srcCurrent.row());
+	// NOTE: Only handles the first selected file.
 	d->ui.mcfFileView->setFile(file);
 
 	// Shh... it's a secret to everybody.

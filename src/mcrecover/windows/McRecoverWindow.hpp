@@ -26,7 +26,7 @@
 
 // Qt includes.
 #include <QtCore/QString>
-#include <QtCore/QModelIndex>
+#include <QItemSelection>
 
 // MemCard Recover classes.
 class MemCardFile;
@@ -118,7 +118,7 @@ class McRecoverWindow : public QMainWindow
 		void searchThread_searchFinished_slot(int lostFilesFound);
 
 		// lstFileList slots.
-		void lstFileList_selectionModel_currentRowChanged(const QModelIndex& current, const QModelIndex& previous);
+		void lstFileList_selectionModel_selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 		/**
 		 * Set the animated icon format.
