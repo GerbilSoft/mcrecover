@@ -31,11 +31,10 @@ class Win7TaskbarList : public TaskbarButtonManager
 
 	public:
 		explicit Win7TaskbarList(QObject *parent = 0);
-		virtual ~Win7TaskbarList();
 
-	protected:
-		Q_DECLARE_PRIVATE(Win7TaskbarList)
 	private:
+		typedef TaskbarButtonManager super;
+		Q_DECLARE_PRIVATE(Win7TaskbarList)
 		Q_DISABLE_COPY(Win7TaskbarList)
 
 	public:
@@ -54,18 +53,16 @@ class Win7TaskbarList : public TaskbarButtonManager
 		 * initialization is required to set up the taskbar button.
 		 *
 		 * TODO: Make a separate protected function that setWindow() calls?
-		 * TODO: Mark this (and in DockManager) as final?
 		 *
 		 * @param window Window.
 		 */
-		virtual void setWindow(QWidget *window) override;
+		virtual void setWindow(QWidget *window) final;
 
 	protected:
 		/**
 		 * Update the taskbar button.
-		 * TODO: Mark this (and in DockManager) as final?
 		 */
-		virtual void update(void) override;
+		virtual void update(void) final;
 };
 
 #endif /* __MCRECOVER_TASKBARBUTTONMANAGER_WIN7TASKBARLIST_HPP__ */

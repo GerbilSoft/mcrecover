@@ -37,9 +37,9 @@ class Win7TaskbarListPrivate : public TaskbarButtonManagerPrivate
 		explicit Win7TaskbarListPrivate(Win7TaskbarList *const q);
 		virtual ~Win7TaskbarListPrivate();
 
-	protected:
-		Q_DECLARE_PUBLIC(Win7TaskbarList)
 	private:
+		typedef TaskbarButtonManagerPrivate super;
+		Q_DECLARE_PUBLIC(Win7TaskbarList)
 		Q_DISABLE_COPY(Win7TaskbarListPrivate);
 
 	public:
@@ -59,7 +59,7 @@ class Win7TaskbarListPrivate : public TaskbarButtonManagerPrivate
 };
 
 Win7TaskbarListPrivate::Win7TaskbarListPrivate(Win7TaskbarList *const q)
-	: TaskbarButtonManagerPrivate(q)
+	: super(q)
 	, w7taskbar(nullptr)
 { }
 
@@ -111,14 +111,8 @@ void Win7TaskbarListPrivate::update(void)
 /** Win7TaskbarList **/
 
 Win7TaskbarList::Win7TaskbarList(QObject* parent)
-	: TaskbarButtonManager(new Win7TaskbarListPrivate(this), parent)
+	: super(new Win7TaskbarListPrivate(this), parent)
 { }
-
-Win7TaskbarList::~Win7TaskbarList()
-{
-	// d_ptr is deleted by ~TaskbarButtonManager.
-	// TODO: Remove this function?
-}
 
 /**
  * Is this TaskbarButtonManager usable?
@@ -130,7 +124,7 @@ bool Win7TaskbarList::IsUsable(void)
 
 	// Attempt to instantiate an ITaskbarList3.
 	ITaskbarList3 *obj;
-	HRESULT hr = CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER,
+	HRESULT hr = CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_INPROC_SERVER,
 			IID_ITaskbarList3, reinterpret_cast<LPVOID*>(&obj));
 	if (SUCCEEDED(hr)) {
 		hr = obj->HrInit();
@@ -165,12 +159,12 @@ void Win7TaskbarList::setWindow(QWidget *window)
 	d->close();
 
 	// Set the new window.
-	TaskbarButtonManager::setWindow(window);
+	super::setWindow(window);
 
 	if (window != nullptr) {
 		// Instantiate the ITaskbarList3.
 		// Reference: http://nicug.blogspot.com/2011/03/windows-7-taskbar-extensions-in-qt.html
-		HRESULT hr = CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER,
+		HRESULT hr = CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_INPROC_SERVER,
 				IID_ITaskbarList3, reinterpret_cast<LPVOID*>(&d->w7taskbar));
 		if (SUCCEEDED(hr)) {
 			hr = d->w7taskbar->HrInit();

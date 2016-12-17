@@ -31,11 +31,10 @@ class DockManager : public TaskbarButtonManager
 
 	public:
 		explicit DockManager(QObject *parent = 0);
-		virtual ~DockManager();
 
-	protected:
-		Q_DECLARE_PRIVATE(DockManager)
 	private:
+		typedef TaskbarButtonManager super;
+		Q_DECLARE_PRIVATE(DockManager)
 		Q_DISABLE_COPY(DockManager)
 
 	public:
@@ -57,13 +56,13 @@ class DockManager : public TaskbarButtonManager
 		 *
 		 * @param window Window.
 		 */
-		virtual void setWindow(QWidget *window) override;
+		virtual void setWindow(QWidget *window) final;
 
 	protected:
 		/**
 		 * Update the taskbar button.
 		 */
-		virtual void update(void) override;
+		virtual void update(void) final;
 
 	private slots:
 		/**

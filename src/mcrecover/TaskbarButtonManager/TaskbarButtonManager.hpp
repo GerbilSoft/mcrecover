@@ -43,6 +43,7 @@ class TaskbarButtonManager : public QObject
 		TaskbarButtonManagerPrivate *const d_ptr;
 		Q_DECLARE_PRIVATE(TaskbarButtonManager)
 	private:
+		typedef QObject super;
 		Q_DISABLE_COPY(TaskbarButtonManager)
 
 	public:
@@ -100,7 +101,7 @@ class TaskbarButtonManager : public QObject
 		 */
 		virtual void update(void) = 0;
 
-	protected slots:
+	private slots:
 		/**
 		 * Window we're managing was destroyed.
 		 * @param obj QObject that was destroyed.

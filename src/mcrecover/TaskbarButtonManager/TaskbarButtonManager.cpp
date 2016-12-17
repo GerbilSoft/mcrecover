@@ -35,12 +35,15 @@ TaskbarButtonManagerPrivate::TaskbarButtonManagerPrivate(TaskbarButtonManager *c
 { }
 
 TaskbarButtonManagerPrivate::~TaskbarButtonManagerPrivate()
-{ }
+{
+	// NOTE: This empty function must stay here
+	// in order to prevent vtable screwups.
+}
 
 /** TaskbarButtonManager **/
 
 TaskbarButtonManager::TaskbarButtonManager(TaskbarButtonManagerPrivate *d, QObject* parent)
-	: QObject(parent)
+	: super(parent)
 	, d_ptr(d)
 { }
 

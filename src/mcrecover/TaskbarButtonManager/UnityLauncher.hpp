@@ -31,11 +31,10 @@ class UnityLauncher : public TaskbarButtonManager
 
 	public:
 		explicit UnityLauncher(QObject *parent = 0);
-		virtual ~UnityLauncher();
 
-	protected:
-		Q_DECLARE_PRIVATE(UnityLauncher)
 	private:
+		typedef TaskbarButtonManager super;
+		Q_DECLARE_PRIVATE(UnityLauncher)
 		Q_DISABLE_COPY(UnityLauncher)
 
 	public:
@@ -57,13 +56,13 @@ class UnityLauncher : public TaskbarButtonManager
 		 *
 		 * @param window Window.
 		 */
-		virtual void setWindow(QWidget *window) override;
+		virtual void setWindow(QWidget *window) final;
 
 	protected:
 		/**
 		 * Update the taskbar button.
 		 */
-		virtual void update(void) override;
+		virtual void update(void) final;
 };
 
 #endif /* __MCRECOVER_TASKBARBUTTONMANAGER_UNITYLAUNCHER_HPP__ */

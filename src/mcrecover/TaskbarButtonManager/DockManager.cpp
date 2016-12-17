@@ -47,9 +47,9 @@ class DockManagerPrivate : public TaskbarButtonManagerPrivate
 		explicit DockManagerPrivate(DockManager *const q);
 		virtual ~DockManagerPrivate();
 
-	protected:
-		Q_DECLARE_PUBLIC(DockManager)
 	private:
+		typedef TaskbarButtonManagerPrivate super;
+		Q_DECLARE_PUBLIC(DockManager)
 		Q_DISABLE_COPY(DockManagerPrivate)
 
 	public:
@@ -84,7 +84,7 @@ class DockManagerPrivate : public TaskbarButtonManagerPrivate
 };
 
 DockManagerPrivate::DockManagerPrivate(DockManager *const q)
-	: TaskbarButtonManagerPrivate(q)
+	: super(q)
 	, ifDockManager(nullptr)
 	, ifDockItem(nullptr)
 {
@@ -230,14 +230,8 @@ void DockManagerPrivate::update(void)
 /** DockManager **/
 
 DockManager::DockManager(QObject* parent)
-	: TaskbarButtonManager(new DockManagerPrivate(this), parent)
+	: super(new DockManagerPrivate(this), parent)
 { }
-
-DockManager::~DockManager()
-{
-	// d_ptr is deleted by ~TaskbarButtonManager().
-	// TODO: Remove this function?
-}
 
 /**
  * Is this TaskbarButtonManager usable?
@@ -271,7 +265,7 @@ void DockManager::setWindow(QWidget *window)
 	d->close();
 
 	// Set the new window.
-	TaskbarButtonManager::setWindow(window);
+	super::setWindow(window);
 
 	if (window != nullptr) {
 		// Connect to the DockManager.

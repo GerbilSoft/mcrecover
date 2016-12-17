@@ -38,9 +38,9 @@ class UnityLauncherPrivate : public TaskbarButtonManagerPrivate
 		explicit UnityLauncherPrivate(UnityLauncher *const q);
 		virtual ~UnityLauncherPrivate();
 
-	protected:
-		Q_DECLARE_PUBLIC(UnityLauncher)
 	private:
+		typedef TaskbarButtonManagerPrivate super;
+		Q_DECLARE_PUBLIC(UnityLauncher)
 		Q_DISABLE_COPY(UnityLauncherPrivate)
 
 	public:
@@ -108,7 +108,7 @@ UnityLauncherPrivate::unity_launcher_entry_set_progress_visible_func
 	UnityLauncherPrivate::entry_set_progress_visible = nullptr;
 
 UnityLauncherPrivate::UnityLauncherPrivate(UnityLauncher *const q)
-	: TaskbarButtonManagerPrivate(q)
+	: super(q)
 	, entry(nullptr)
 {
 	// Make sure libunity is open.
@@ -255,14 +255,8 @@ void UnityLauncherPrivate::update(void)
 /** UnityLauncher **/
 
 UnityLauncher::UnityLauncher(QObject* parent)
-	: TaskbarButtonManager(new UnityLauncherPrivate(this), parent)
+	: super(new UnityLauncherPrivate(this), parent)
 { }
-
-UnityLauncher::~UnityLauncher()
-{
-	// d_ptr is deleted by ~TaskbarButtonManager().
-	// TODO: Remove this function?
-}
 
 /**
  * Is this TaskbarButtonManager usable?
