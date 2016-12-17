@@ -35,11 +35,12 @@
  */
 static inline uint32_t ARGB4444_to_ARGB32(uint16_t px16)
 {
-	uint32_t px32 = 0;
-	px32 |= (((px16 & 0x000F) << 4)  |  (px16 & 0x000F));		// B
-	px32 |= (((px16 & 0x00F0) << 4)  | ((px16 & 0x00F0) << 8));	// G
-	px32 |= (((px16 & 0x0F00) << 8)  | ((px16 & 0x0F00) << 12));	// R
-	px32 |= (((px16 & 0xF000) << 12) | ((px16 & 0xF000) << 16));	// A
+	uint32_t px32;
+	px32  =  (px16 & 0x000F);		// B
+	px32 |= ((px16 & 0x00F0) << 4);		// G
+	px32 |= ((px16 & 0x0F00) << 8);		// R
+	px32 |= ((px16 & 0xF000) << 12);	// A
+	px32 |=  (px32 << 4);			// Copy to the top nybble.
 	return px32;
 }
 

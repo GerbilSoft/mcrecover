@@ -48,9 +48,10 @@ static inline uint32_t RGB5A3_to_ARGB32(uint16_t px16)
 		px32 |= 0xFF000000U; // no alpha channel
 	} else {
 		// RGB4A3
-		px32 |= (((px16 & 0x000F) << 4) | (px16 & 0x000F));		// B
-		px32 |= (((px16 & 0x00F0) << 4) | ((px16 & 0x00F0) << 8));	// G
-		px32 |= (((px16 & 0x0F00) << 8) | ((px16 & 0x0F00) << 12));	// R
+		px32  =  (px16 & 0x000F);	// B
+		px32 |= ((px16 & 0x00F0) << 4);	// G
+		px32 |= ((px16 & 0x0F00) << 8);	// R
+		px32 |= (px32 << 4);		// Copy to the top nybble.
 
 		// Calculate the alpha channel.
 		uint8_t a = ((px16 >> 7) & 0xE0);
@@ -175,11 +176,11 @@ GcImage *GcImageLoader::fromRGB5A3(int w, int h, const uint16_t *img_buf, int im
 	d->init(w, h, GcImage::PXFMT_ARGB32);
 
 	// Temporary tile buffer.
-	uint32_t tileBuf[32];
+	uint32_t tileBuf[4*4];
 
 	for (int y = 0; y < tilesY; y++) {
 		for (int x = 0; x < tilesX; x++) {
-			// Convert each tile to ARGB888 manually.
+			// Convert each tile to ARGB32 manually.
 			// TODO: Optimize using pointers instead of indexes?
 			for (int i = 0; i < 4*4; i++, img_buf++) {
 				tileBuf[i] = RGB5A3_to_ARGB32(be16_to_cpu(*img_buf));
