@@ -351,6 +351,19 @@ class Card : public QObject
 		 */
 		File *getFile(int idx);
 
+		enum FileTypes {
+			FTYPE_NONE	= 0,	// Don't return any files.
+			FTYPE_NORMAL	= 1,	// Return normal files only.
+			FTYPE_LOST	= 2,	// Return lost files only.
+			FTYPE_ALL	= 3,	// Return all files.
+		};
+
+		/**
+		 * Get File objects that match the given types.
+		 * @param types Types of files to return. (default is FTYPE_ALL)
+		 */
+		QVector<File*> getFiles(FileTypes types = FTYPE_ALL);
+
 		/**
 		 * Remove all "lost" files.
 		 */

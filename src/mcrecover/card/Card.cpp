@@ -585,6 +585,54 @@ File *Card::getFile(int idx)
 }
 
 /**
+ * Get File objects that match the given types.
+ * @param types Types of files to return. (default is FTYPE_ALL)
+ */
+QVector<File*> Card::getFiles(FileTypes types)
+{
+	QVector<File*> ret;
+	if (!isOpen())
+		return ret;
+
+	Q_D(Card);
+	switch (types) {
+		case FTYPE_NONE:
+		default:
+			// Unhandled value.
+			assert(!"Unhandled \"types\" value.");
+			break;
+
+		case FTYPE_ALL:
+			// Return all of the files.
+			return d->lstFiles;
+
+		case FTYPE_NORMAL: {
+			// Return normal files only.
+			ret.reserve(d->lstFiles.size());
+			foreach (File *file, d->lstFiles) {
+				if (!file->isLostFile()) {
+					ret.append(file);
+				}
+			}
+			break;
+		}
+
+		case FTYPE_LOST: {
+			// Return "lost" files only.
+			ret.reserve(d->lstFiles.size());
+			foreach (File *file, d->lstFiles) {
+				if (file->isLostFile()) {
+					ret.append(file);
+				}
+			}
+			break;
+		}
+	}
+
+	return ret;
+}
+
+/**
  * Remove all "lost" files.
  */
 void Card::removeLostFiles(void)

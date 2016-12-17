@@ -1576,7 +1576,7 @@ void McRecoverWindow::on_actionOpen_triggered(void)
 			filters,				// Filters
 			&selectedFilter);			// Selected filter
 
-       if (!filename.isEmpty()) {
+	if (!filename.isEmpty()) {
 		// Filename is selected.
 
 		// Check the selected filename filter.
@@ -1743,18 +1743,11 @@ void McRecoverWindow::on_actionSaveAll_triggered(void)
 	if (numFiles <= 0)
 		return;
 
-	QVector<File*> files;
-	files.reserve(numFiles);
-
-	for (int i = 0; i < numFiles; i++) {
-		File *file = d->card->getFile(i);
-		if (file != nullptr)
-			files.append(file);
-	}
-
-	// If there's no files to save, don't do anything.
-	if (files.isEmpty())
+	QVector<File*> files = d->card->getFiles(Card::FTYPE_ALL);
+	if (files.isEmpty()) {
+		// No files to save...
 		return;
+	}
 
 	// Save the files.
 	d->saveFiles(files);
@@ -1778,7 +1771,7 @@ void McRecoverWindow::setPreferredRegion_slot(int preferredRegion)
 	 * - preferredRegion=@Variant(\0\0\0\a\0E)
 	 * Convert it to QString to avoid this problem.
 	 */
-	QString str = QChar((uint16_t)preferredRegion);
+	QString str = QChar(static_cast<uint16_t>(preferredRegion));
 	d->cfg->set(QLatin1String("preferredRegion"), str);
 }
 
@@ -2010,8 +2003,9 @@ void McRecoverWindow::setTranslation_cfg_slot(const QVariant &tsLocale)
 	Q_D(McRecoverWindow);
 	QString locale = tsLocale.toString();
 	QAction *action = d->hashActionsTS.value(locale);
-	if (!action)
-		locale = QString();
+	if (!action) {
+		locale.clear();
+	}
 
 	// Set the UI language.
 	TranslationManager::instance()->setTranslation(
@@ -2019,10 +2013,11 @@ void McRecoverWindow::setTranslation_cfg_slot(const QVariant &tsLocale)
 			? locale
 			: QLocale::system().name()));
 	// Mark the language as selected.
-	if (action)
+	if (action) {
 		action->setChecked(true);
-	else
+	} else {
 		d->actTsSysDefault->setChecked(true);
+	}
 }
 
 /**
