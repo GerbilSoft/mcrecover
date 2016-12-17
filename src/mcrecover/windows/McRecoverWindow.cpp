@@ -1067,10 +1067,6 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	d->proxyModel->setSourceModel(d->model);
 	d->ui.lstFileList->setModel(d->proxyModel);
 
-	// Don't expand the last header column to fill the QTreeView.
-	QHeaderView *header = d->ui.lstFileList->header();
-	header->setStretchLastSection(false);
-
 	// Sort by COL_DESCRIPTION by default.
 	// TODO: Disable sorting on specific columns.
 	//d->proxyModel->setDynamicSortFilter(true);
