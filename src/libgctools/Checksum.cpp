@@ -228,17 +228,17 @@ uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, C
 		case CHKALG_CRC16:
 			if (param == 0)
 				param = CRC16_POLY_CCITT;
-			return Crc16(reinterpret_cast<const uint8_t*>(buf),
+			return Crc16(static_cast<const uint8_t*>(buf),
 				     siz, (uint16_t)(param & 0xFFFF));
 
 		case CHKALG_ADDINVDUAL16:
-			return AddInvDual16(reinterpret_cast<const uint16_t*>(buf), siz, endian);
+			return AddInvDual16(static_cast<const uint16_t*>(buf), siz, endian);
 
 		case CHKALG_ADDBYTES32:
-			return AddBytes32(reinterpret_cast<const uint8_t*>(buf), siz);
+			return AddBytes32(static_cast<const uint8_t*>(buf), siz);
 
 		case CHKALG_SONICCHAOGARDEN:
-			return SonicChaoGarden(reinterpret_cast<const uint8_t*>(buf), siz);
+			return SonicChaoGarden(static_cast<const uint8_t*>(buf), siz);
 
 		case CHKALG_DREAMCASTVMU:
 			// If param is 0, assume a default CRC address of 0x46.
@@ -246,7 +246,7 @@ uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, C
 			//  but the CRC field is unused for game files.)
 			if (param == 0)
 				param = 0x46;
-			return DreamcastVMU(reinterpret_cast<const uint8_t*>(buf), siz, param);
+			return DreamcastVMU(static_cast<const uint8_t*>(buf), siz, param);
 
 		case CHKALG_CRC32:
 			// TODO: Implement CRC32 once I encounter a file that uses it.

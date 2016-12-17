@@ -143,8 +143,8 @@ void MessageWidgetStack::messageWidget_dismissed_slot(QWidget *widget)
 {
 	// Remove and delete the widget.
 	Q_D(MessageWidgetStack);
-	if (d->messageWidgets.contains(reinterpret_cast<MessageWidget*>(widget))) {
-		d->messageWidgets.remove(reinterpret_cast<MessageWidget*>(widget));
+	if (d->messageWidgets.contains(qobject_cast<MessageWidget*>(widget))) {
+		d->messageWidgets.remove(qobject_cast<MessageWidget*>(widget));
 		delete widget;
 	}
 }
@@ -157,6 +157,6 @@ void MessageWidgetStack::messageWidget_destroyed_slot(QObject *obj)
 {
 	// Remove the widget.
 	Q_D(MessageWidgetStack);
-	d->messageWidgets.remove(reinterpret_cast<MessageWidget*>(obj));
+	d->messageWidgets.remove(qobject_cast<MessageWidget*>(obj));
 }
 

@@ -121,7 +121,9 @@ XmlTemplateDialog *XmlTemplateDialogManager::create(const GcnFile *file, QWidget
  */
 void XmlTemplateDialogManager::file_destroyed_slot(QObject *obj)
 {
-	const GcnFile *file = reinterpret_cast<const GcnFile*>(obj);
+	// NOTE: Can't use qobject_cast<> here because the object
+	// is probably destroyed at this point.
+	const GcnFile *file = static_cast<const GcnFile*>(obj);
 
 	// GcnFile was destroyed.
 	Q_D(XmlTemplateDialogManager);
@@ -139,7 +141,9 @@ void XmlTemplateDialogManager::file_destroyed_slot(QObject *obj)
  */
 void XmlTemplateDialogManager::xmlTemplateDialog_destroyed_slot(QObject *obj)
 {
-	XmlTemplateDialog *dialog = reinterpret_cast<XmlTemplateDialog*>(obj);
+	// NOTE: Can't use qobject_cast<> here because the object
+	// is probably destroyed at this point.
+	XmlTemplateDialog *dialog = static_cast<XmlTemplateDialog*>(obj);
 
 	// XmlTemplateDialog was destroyed.
 	Q_D(XmlTemplateDialogManager);

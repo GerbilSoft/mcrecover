@@ -130,8 +130,8 @@ GcImage *GcImage::toRGB5A3(void) const
 			GcImagePrivate *const d_new = gcImage->d;
 			d_new->init(d->width, d->height, PXFMT_ARGB32);
 
-			const uint8_t *ci8 = reinterpret_cast<const uint8_t*>(d->imageData);
-			uint32_t *rgb5A3 = reinterpret_cast<uint32_t*>(d_new->imageData);
+			const uint8_t *ci8 = static_cast<const uint8_t*>(d->imageData);
+			uint32_t *rgb5A3 = static_cast<uint32_t*>(d_new->imageData);
 			size_t len = d->imageData_len;
 			for (; len >= 4; len -= 4, ci8 += 4, rgb5A3 += 4) {
 				*(rgb5A3 + 0) = d->palette[*(ci8 + 0)];

@@ -49,11 +49,11 @@
 
 // Regex type.
 #ifdef HAVE_PCRE16
-#define REGEX_CAST(x) (reinterpret_cast<pcre16*>(x))
+#define REGEX_CAST(x) (static_cast<pcre16*>(x))
 #define pcre_config(what, where) pcre16_config(what, where)
 #define pcre_free(ptr) pcre16_free(ptr)
 #else /* !HAVE_PCRE16 */
-#define REGEX_CAST(x) (reinterpret_cast<pcre*>(x))
+#define REGEX_CAST(x) (static_cast<pcre*>(x))
 #endif
 
 PcreRegex::PcreRegex()

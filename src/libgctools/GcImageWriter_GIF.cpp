@@ -63,7 +63,7 @@ int GcImageWriterPrivate::gif_output_func(GifFileType *gif, const GifByteType *b
 		return 0;
 
 	// Assuming the UserData is a vector<uint8_t>*.
-	vector<uint8_t> *gifBuffer = reinterpret_cast<vector<uint8_t>*>(userData);
+	vector<uint8_t> *gifBuffer = static_cast<vector<uint8_t>*>(userData);
 	size_t pos = gifBuffer->size();
 	gifBuffer->resize(pos + len);
 	memcpy(&gifBuffer->data()[pos], buf, len);

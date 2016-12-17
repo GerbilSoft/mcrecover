@@ -51,7 +51,7 @@ void GcImageWriterPrivate::png_io_write(png_structp png_ptr, png_bytep buf, png_
 		return;
 
 	// Assuming the io_ptr is a vector<uint8_t>*.
-	vector<uint8_t> *pngBuffer = reinterpret_cast<vector<uint8_t>*>(io_ptr);
+	vector<uint8_t> *pngBuffer = static_cast<vector<uint8_t>*>(io_ptr);
 	size_t pos = pngBuffer->size();
 	pngBuffer->resize(pos + len);
 	memcpy(&pngBuffer->data()[pos], buf, len);

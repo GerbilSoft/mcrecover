@@ -276,7 +276,7 @@ void SALevelClearCountPrivate::updateDisplay(void)
 void SALevelClearCountPrivate::scrollAreaResized(QEvent *event)
 {
 	if (event->type() == QEvent::Resize) {
-		QResizeEvent *resizeEvent = reinterpret_cast<QResizeEvent*>(event);
+		QResizeEvent *resizeEvent = static_cast<QResizeEvent*>(event);
 		if (resizeEvent->oldSize().width() == resizeEvent->size().width()) {
 			// Vertical resize only.
 			return;
