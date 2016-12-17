@@ -66,6 +66,11 @@ COMPILE_PCREx macro will already be appropriately set. */
 #endif
 
 
+/* FIXME: MSVC 2015 with /sdl complains about a potentially *
+ * uninitialized local pointer variable on line 7396.       *
+ * (pcre16_compile.c only...)                               */
+#pragma warning(disable: 4703)
+
 /* Macro for setting individual bits in class bitmaps. */
 
 #define SETBIT(a,b) a[(b)/8] |= (1 << ((b)&7))

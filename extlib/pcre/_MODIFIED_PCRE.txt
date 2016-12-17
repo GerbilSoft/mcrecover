@@ -10,5 +10,7 @@ The following changes have been made to the original:
 
 - Files not necessary for building pcre have been removed.
 
+- Fixed a warning (error) when using /sdl on MSVC 2015.
+
 To obtain the original pcre-8.39, visit:
 - http://www.pcre.org/
