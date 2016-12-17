@@ -114,6 +114,36 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Baten Kaitos Origins</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GK4E</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Baten Kaitos Origins$</gameDesc>
+			<fileDesc>^No\.(\d{3}) .*$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>filename</useAs>
+				<type>number</type>
+				<minWidth>3</minWidth>
+				<fillChar>0</fillChar>
+				<align>right</align>
+				<add>-1</add>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>BK2Dat-${F1}</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x01C0</iconAddress>
+			<iconFormat>0x55</iconFormat>
+			<iconSpeed>0xFCEB</iconSpeed>
+			<permission>0x04</permission>
+			<length>6</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Beyblade VForce - Super Tournament Battle</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GBTE</gamecode>
@@ -141,6 +171,26 @@
 			<iconSpeed>0xFFFF</iconSpeed>
 			<permission>0x04</permission>
 			<length>7</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Beyond Good and Evil</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GGEE</gamecode>
+		<company>41</company>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Beyond Good and Evil$</gameDesc>
+			<fileDesc>^Save File$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>JADEFILE</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x01</iconSpeed>
+			<permission>0x04</permission>
+			<length>55</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -786,6 +836,37 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Kirby Air Ride</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GKYE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Kirby Air Ride$</gameDesc>
+			<fileDesc>^SAVE DATA (\d{1,2})/(\d{1,2})/(\d{4})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>KA030621_0100_T030529_2154</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xEF55</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>LEGO Star Wars</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GL5E</gamecode>
@@ -1249,6 +1330,26 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Midway Arcade Treasures</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GAKE</gamecode>
+		<company>5D</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Midway Arcade Treasures$</gameDesc>
+			<fileDesc>^$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Midway Arcade Treasures</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Mortal Kombat: Deadly Alliance</gameName>
 		<fileInfo>Save File</fileInfo>
 		<gamecode>GMKE</gamecode>
@@ -1409,6 +1510,46 @@
 			<iconSpeed>0x0002</iconSpeed>
 			<permission>0x04</permission>
 			<length>7</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Odama</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GOOE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Odama$</gameDesc>
+			<fileDesc>^(\d{1,2})/(\d{1,2})/(\d{4}) (\d{1,2}):(\d{1,2}):(\d{1,2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>Odama</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x15</iconFormat>
+			<iconSpeed>0x2A</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -1665,6 +1806,26 @@
 			<iconSpeed>0x5555</iconSpeed>
 			<permission>0x1C</permission>
 			<length>43</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Prince of Persia</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GPTE</gamecode>
+		<company>41</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Prince of Persia$</gameDesc>
+			<fileDesc>^Save file$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Prince of Persia</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xFFFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>15</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -2308,6 +2469,26 @@
 			<iconSpeed>0x3F</iconSpeed>
 			<permission>0x04</permission>
 			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Star Fox Adventures</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GSAE</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Star Fox Adventures$</gameDesc>
+			<fileDesc>^Dinosaur Planet$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Star Fox Adventures</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x55</iconFormat>
+			<iconSpeed>0xFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
 		</dirEntry>
 	</file>
 	<file>

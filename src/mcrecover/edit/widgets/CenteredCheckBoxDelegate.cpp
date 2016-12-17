@@ -8,6 +8,13 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
 
+#if QT_VERSION > 0x050000
+// Qt5 deprecated QStyleOptionViewItemV4 in favor of
+// plain old QStyleOptionViewItem. However, for Qt4
+// compatibility, we still need to use V4.
+#define QStyleOptionViewItemV4 QStyleOptionViewItem
+#endif
+
 CenteredCheckBoxDelegate::CenteredCheckBoxDelegate(QObject *parent)
         : super(parent)
 { }
