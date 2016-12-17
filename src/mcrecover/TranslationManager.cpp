@@ -223,15 +223,14 @@ QMap<QString, QString> TranslationManager::enumerate(void) const
 			// TODO: Also get the author information?
 			if (tmpTs.load(file.absoluteFilePath())) {
 				QString locale = tmpTs.translate("McRecoverQApplication", "C", "ts-locale");
-				if (!tsMap.contains(locale)) {
-					// Add the translation to the map.
-					if (tsMap.contains(locale)) {
-						// FIXME: Duplicate translation?
-						continue;
-					}
-					QString language = tmpTs.translate("McRecoverQApplication", "Default", "ts-language");
-					tsMap.insert(locale, language);
+				if (tsMap.contains(locale)) {
+					// FIXME: Duplicate translation?
+					continue;
 				}
+
+				// Add the translation to the map.
+				QString language = tmpTs.translate("McRecoverQApplication", "Default", "ts-language");
+				tsMap.insert(locale, language);
 			}
 		}
 	}
