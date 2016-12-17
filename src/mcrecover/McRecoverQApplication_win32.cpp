@@ -128,7 +128,7 @@ UINT McRecoverQApplicationWin32Private::WM_TaskbarButtonCreated = 0;
  */
 int McRecoverQApplicationWin32Private::SetSecurityOptions(void)
 {
-	HMODULE hKernel32 = LoadLibraryA("kernel32.dll");
+	HMODULE hKernel32 = LoadLibrary(L"kernel32.dll");
 	if (!hKernel32)
 		return -1;
 
@@ -213,7 +213,7 @@ BOOL McRecoverQApplicationWin32Private::ChangeWindowMessageFilter_dl(UINT messag
 
 	if (!retrieved) {
 		retrieved = true;
-		HMODULE hUser32 = GetModuleHandle("user32");
+		HMODULE hUser32 = GetModuleHandle(L"user32");
 		if (hUser32) {
 			pfn = reinterpret_cast<PFNCHANGEWINDOWMESSAGEFILTER>(GetProcAddress(hUser32, "ChangeWindowMessageFilter"));
 		}
@@ -271,11 +271,11 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 	QByteArray cmdParam;
 	wchar_t *cmdLineW = GetCommandLineW();
 	if (cmdLineW) {
-		// NOTE: Qt/MSVC usually has wchar_t *not* defined as a native type,
+		// NOTE: Qt4/MSVC usually has wchar_t *not* defined as a native type,
 		// but MSVC defaults to wchar_t as a native type.
 		// Use the UTF-16 version to prevent compatibility issues.
 		// TODO: Convert to UTF-8 instead of "local 8-bit"?
-		cmdParam = QString::fromUtf16(reinterpret_cast<const uint16_t*>(cmdLineW)).toLocal8Bit();
+		cmdParam = QString(reinterpret_cast<const QChar*>(cmdLineW)).toLocal8Bit();
 	} else {
 		cmdParam = QByteArray(GetCommandLineA());
 	}

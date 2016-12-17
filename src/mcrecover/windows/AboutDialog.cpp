@@ -568,7 +568,7 @@ QString AboutDialogPrivate::GetCodePageInfo(void)
 		const char *cpStr;
 	};
 
-	cpInfo m_cpInfo[2] = {
+	static const cpInfo m_cpInfo[2] = {
 		//: Win32: ANSI code page. (e.g. 1252 for US/English, 932 for Japanese)
 		{CP_ACP,	QT_TRANSLATE_NOOP(AboutDialog, "System ANSI code page:")},
 		//: Win32: OEM code page. (e.g. 437 for US/English)
@@ -580,10 +580,10 @@ QString AboutDialogPrivate::GetCodePageInfo(void)
 
 		// Get the code page information.
 		CPINFOEX cpix;
-		BOOL bRet = GetCPInfoExA(m_cpInfo[i].cp, 0, &cpix);
+		BOOL bRet = GetCPInfoEx(m_cpInfo[i].cp, 0, &cpix);
 		if (!bRet) {
-			//: GetCPInfoExA() call failed.
-			sCodePageInfo += AboutDialog::tr("Unknown [GetCPInfoExA() failed]") + QChar(L'\n');
+			//: GetCPInfoEx() call failed.
+			sCodePageInfo += AboutDialog::tr("Unknown [GetCPInfoEx() failed]") + QChar(L'\n');
 			continue;
 		}
 
@@ -600,25 +600,27 @@ QString AboutDialogPrivate::GetCodePageInfo(void)
 
 		// Windows XP has the code page number in cpix.CodePageName,
 		// followed by two spaces, and then the code page name in parentheses.
-		char *parenStart = strchr(cpix.CodePageName, '(');
+		// FIXME: Qt4 uses /Zc:wchar_t-, so we can't use fromWCharArray().
+		wchar_t *parenStart = wcschr(cpix.CodePageName, '(');
 		if (!parenStart) {
 			// No parentheses. Use the code page name as-is.
-			sCodePageInfo += QString::fromLocal8Bit(cpix.CodePageName);
+			sCodePageInfo += QString(reinterpret_cast<const QChar*>(cpix.CodePageName));
 		} else {
 			// Found starting parenthesis. Check for ending parenthesis.
-			char *parenEnd = strrchr(parenStart, ')');
+			wchar_t *parenEnd = wcsrchr(parenStart, ')');
 			if (parenEnd) {
 				// Found ending parenthesis. Null it out.
 				*parenEnd = 0x00;
 			}
 
-			sCodePageInfo += QString::fromLocal8Bit(parenStart + 1);
+			sCodePageInfo += QString(reinterpret_cast<const QChar*>(parenStart + 1));
 		}
 
 		sCodePageInfo += QLatin1String(")\n");
 	}
 
-	// Is Gens/GS II using Unicode?
+	// Is GCN MemCard Recover using Unicode?
+	// FIXME: This may be incorrect...
 	if (GetModuleHandleW(nullptr) != nullptr) {
 		//: Win32: Unicode strings are being used. (WinNT)
 		sCodePageInfo += AboutDialog::tr("Using Unicode strings for Win32 API.");

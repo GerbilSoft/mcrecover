@@ -137,7 +137,7 @@ bool MemCardItemDelegatePrivate::resolveSymbols(void)
 {
 	static bool tried = false;
 	if (!tried) {
-		pUxThemeDll = LoadLibraryA("uxtheme");
+		pUxThemeDll = LoadLibraryW(L"uxtheme");
 		if (pUxThemeDll) {
 			pIsAppThemed = (PtrIsAppThemed)GetProcAddress(pUxThemeDll, "IsAppThemed");
 			if (pIsAppThemed) {
