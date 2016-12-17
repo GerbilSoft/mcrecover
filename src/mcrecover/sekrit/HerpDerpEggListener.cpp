@@ -38,7 +38,7 @@
 class HerpDerpEggListenerPrivate
 {
 	public:
-		HerpDerpEggListenerPrivate(HerpDerpEggListener *q);
+		explicit HerpDerpEggListenerPrivate(HerpDerpEggListener *q);
 		~HerpDerpEggListenerPrivate();
 
 	protected:

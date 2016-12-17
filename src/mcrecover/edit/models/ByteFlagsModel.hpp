@@ -36,7 +36,7 @@ class ByteFlagsModel : public QAbstractListModel
 	Q_PROPERTY(int pageSize READ pageSize)
 
 	public:
-		ByteFlagsModel(QObject *parent = 0);
+		explicit ByteFlagsModel(QObject *parent = 0);
 		virtual ~ByteFlagsModel();
 
 	protected:

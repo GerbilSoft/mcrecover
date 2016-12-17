@@ -48,7 +48,7 @@
 class SAMiscEmblemsPrivate
 {
 	public:
-		SAMiscEmblemsPrivate(SAMiscEmblems *q);
+		explicit SAMiscEmblemsPrivate(SAMiscEmblems *q);
 		~SAMiscEmblemsPrivate();
 
 	protected:

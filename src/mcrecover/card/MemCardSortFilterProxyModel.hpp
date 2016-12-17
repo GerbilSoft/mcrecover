@@ -30,7 +30,7 @@ class MemCardSortFilterProxyModel : public QSortFilterProxyModel
 	typedef QSortFilterProxyModel super;
 
 	public:
-		MemCardSortFilterProxyModel(QObject *parent = 0);
+		explicit MemCardSortFilterProxyModel(QObject *parent = 0);
 
 	private:
 		Q_DISABLE_COPY(MemCardSortFilterProxyModel)

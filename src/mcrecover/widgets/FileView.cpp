@@ -43,7 +43,7 @@
 class FileViewPrivate
 {
 	public:
-		FileViewPrivate(FileView *q);
+		explicit FileViewPrivate(FileView *q);
 		~FileViewPrivate();
 
 	protected:

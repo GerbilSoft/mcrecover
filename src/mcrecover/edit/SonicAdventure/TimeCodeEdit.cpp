@@ -30,7 +30,7 @@
 class TimeCodeEditPrivate
 {
 	public:
-		TimeCodeEditPrivate(TimeCodeEdit *q);
+		explicit TimeCodeEditPrivate(TimeCodeEdit *q);
 		~TimeCodeEditPrivate();
 
 	protected:

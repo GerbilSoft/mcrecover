@@ -32,7 +32,7 @@ class SADXEditWidget : public SAEditWidget
 	typedef SAEditWidget super;
 
 	public:
-		SADXEditWidget(QWidget *parent = 0)
+		explicit SADXEditWidget(QWidget *parent = 0)
 			: super(parent) { }
 
 	private:

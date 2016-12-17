@@ -34,7 +34,7 @@ class FormatNewMemCardDialog : public QDialog
 	typedef QDialog super;
 
 	public:
-		FormatNewMemCardDialog(QWidget *parent = nullptr);
+		explicit FormatNewMemCardDialog(QWidget *parent = nullptr);
 		virtual ~FormatNewMemCardDialog();
 	private:
 		void init(void);

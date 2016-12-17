@@ -40,7 +40,7 @@
 class StatusBarManagerPrivate
 {
 	public:
-		StatusBarManagerPrivate(StatusBarManager *q);
+		explicit StatusBarManagerPrivate(StatusBarManager *q);
 		~StatusBarManagerPrivate();
 
 	protected:

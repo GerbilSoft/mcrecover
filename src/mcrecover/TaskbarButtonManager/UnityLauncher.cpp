@@ -35,7 +35,7 @@
 class UnityLauncherPrivate : public TaskbarButtonManagerPrivate
 {
 	public:
-		UnityLauncherPrivate(UnityLauncher *const q);
+		explicit UnityLauncherPrivate(UnityLauncher *const q);
 		virtual ~UnityLauncherPrivate();
 
 	protected:

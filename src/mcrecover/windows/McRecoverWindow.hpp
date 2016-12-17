@@ -38,7 +38,7 @@ class McRecoverWindow : public QMainWindow
 	typedef QMainWindow super;
 	
 	public:
-		McRecoverWindow(QWidget *parent = 0);
+		explicit McRecoverWindow(QWidget *parent = 0);
 		virtual ~McRecoverWindow();
 
 	protected:

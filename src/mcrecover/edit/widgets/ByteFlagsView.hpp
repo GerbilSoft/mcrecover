@@ -36,7 +36,7 @@ class ByteFlagsView : public QWidget
 	Q_PROPERTY(int pageSize READ pageSize)
 
 	public:
-		ByteFlagsView(QWidget *parent = 0);
+		explicit ByteFlagsView(QWidget *parent = 0);
 		~ByteFlagsView();
 
 	protected:

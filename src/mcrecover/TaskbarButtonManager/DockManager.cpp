@@ -44,7 +44,7 @@
 class DockManagerPrivate : public TaskbarButtonManagerPrivate
 {
 	public:
-		DockManagerPrivate(DockManager *const q);
+		explicit DockManagerPrivate(DockManager *const q);
 		virtual ~DockManagerPrivate();
 
 	protected:

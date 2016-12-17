@@ -34,7 +34,7 @@ class SALevelStats : public SADXEditWidget
 	typedef SADXEditWidget super;
 
 	public:
-		SALevelStats(QWidget *parent = 0);
+		explicit SALevelStats(QWidget *parent = 0);
 		virtual ~SALevelStats();
 
 	protected:

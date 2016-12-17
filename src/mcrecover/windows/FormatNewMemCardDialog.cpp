@@ -27,7 +27,7 @@
 class FormatNewMemCardDialogPrivate
 {
 	public:
-		FormatNewMemCardDialogPrivate(FormatNewMemCardDialog *q);
+		explicit FormatNewMemCardDialogPrivate(FormatNewMemCardDialog *q);
 
 	protected:
 		FormatNewMemCardDialog *const q_ptr;

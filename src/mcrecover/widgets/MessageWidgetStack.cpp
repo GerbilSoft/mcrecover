@@ -35,7 +35,7 @@
 class MessageWidgetStackPrivate
 {
 	public:
-		MessageWidgetStackPrivate(MessageWidgetStack *q);
+		explicit MessageWidgetStackPrivate(MessageWidgetStack *q);
 		~MessageWidgetStackPrivate();
 
 	protected:

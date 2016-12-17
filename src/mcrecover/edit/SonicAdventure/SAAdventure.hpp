@@ -33,7 +33,7 @@ class SAAdventure : public SAEditWidget
 	typedef SAEditWidget super;
 
 	public:
-		SAAdventure(QWidget *parent = 0);
+		explicit SAAdventure(QWidget *parent = 0);
 		virtual ~SAAdventure();
 
 	protected:

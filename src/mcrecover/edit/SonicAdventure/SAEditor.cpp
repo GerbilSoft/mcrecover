@@ -55,7 +55,7 @@
 class SAEditorPrivate : public EditorWidgetPrivate
 {
 	public:
-		SAEditorPrivate(SAEditor *q);
+		explicit SAEditorPrivate(SAEditor *q);
 		virtual ~SAEditorPrivate();
 
 	protected:

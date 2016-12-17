@@ -37,7 +37,7 @@
 class BitFlagsModelPrivate
 {
 	public:
-		BitFlagsModelPrivate(BitFlagsModel *q);
+		explicit BitFlagsModelPrivate(BitFlagsModel *q);
 
 	protected:
 		BitFlagsModel *const q_ptr;

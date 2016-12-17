@@ -37,7 +37,7 @@ class BitFlagsModel : public QAbstractListModel
 	Q_PROPERTY(int pageSize READ pageSize)
 
 	public:
-		BitFlagsModel(QObject *parent = 0);
+		explicit BitFlagsModel(QObject *parent = 0);
 		virtual ~BitFlagsModel();
 
 	protected:

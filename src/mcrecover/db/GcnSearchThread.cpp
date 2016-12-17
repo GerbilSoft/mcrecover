@@ -38,7 +38,7 @@
 class GcnSearchThreadPrivate
 {
 	public:
-		GcnSearchThreadPrivate(GcnSearchThread *q);
+		explicit GcnSearchThreadPrivate(GcnSearchThread *q);
 		~GcnSearchThreadPrivate();
 
 	protected:

@@ -52,7 +52,7 @@
 class SAAdventurePrivate
 {
 	public:
-		SAAdventurePrivate(SAAdventure *q);
+		explicit SAAdventurePrivate(SAAdventure *q);
 		~SAAdventurePrivate();
 
 	protected:

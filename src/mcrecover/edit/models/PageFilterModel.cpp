@@ -29,7 +29,7 @@
 class PageFilterModelPrivate
 {
 	public:
-		PageFilterModelPrivate(PageFilterModel *q);
+		explicit PageFilterModelPrivate(PageFilterModel *q);
 
 	protected:
 		PageFilterModel *const q_ptr;

@@ -47,7 +47,7 @@ class GcImage;
 class GcImageWriterPrivate
 {
 	public:
-		GcImageWriterPrivate(GcImageWriter *const q);
+		explicit GcImageWriterPrivate(GcImageWriter *const q);
 		~GcImageWriterPrivate();
 
 	private:

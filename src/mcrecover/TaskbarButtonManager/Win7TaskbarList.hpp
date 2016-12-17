@@ -30,7 +30,7 @@ class Win7TaskbarList : public TaskbarButtonManager
 	Q_OBJECT
 
 	public:
-		Win7TaskbarList(QObject *parent = 0);
+		explicit Win7TaskbarList(QObject *parent = 0);
 		virtual ~Win7TaskbarList();
 
 	protected:

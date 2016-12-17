@@ -13,7 +13,7 @@ class CenteredCheckBoxDelegate : public QStyledItemDelegate
 	typedef QStyledItemDelegate super;
 
 	public:
-		CenteredCheckBoxDelegate(QObject *parent = 0);
+		explicit CenteredCheckBoxDelegate(QObject *parent = 0);
  
 		virtual void paint(QPainter *painter, const QStyleOptionViewItem &option,
 				   const QModelIndex &index) const final;

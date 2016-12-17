@@ -34,7 +34,7 @@
 class Win7TaskbarListPrivate : public TaskbarButtonManagerPrivate
 {
 	public:
-		Win7TaskbarListPrivate(Win7TaskbarList *const q);
+		explicit Win7TaskbarListPrivate(Win7TaskbarList *const q);
 		virtual ~Win7TaskbarListPrivate();
 
 	protected:

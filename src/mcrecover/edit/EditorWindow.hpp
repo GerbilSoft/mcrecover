@@ -33,7 +33,7 @@ class EditorWindow : public QMainWindow
 	typedef QMainWindow super;
 
 	protected:
-		EditorWindow(QWidget *parent = nullptr);
+		explicit EditorWindow(QWidget *parent = nullptr);
 	public:
 		~EditorWindow();
 

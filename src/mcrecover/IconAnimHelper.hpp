@@ -41,7 +41,7 @@ class IconAnimHelper : public QObject
 
 	public:
 		IconAnimHelper();
-		IconAnimHelper(const File *file);
+		explicit IconAnimHelper(const File *file);
 		virtual ~IconAnimHelper();
 
 	protected:

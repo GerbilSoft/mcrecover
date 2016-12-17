@@ -32,7 +32,7 @@ class MessageWidgetStack : public QWidget
 	typedef QWidget super;
 
 	public:
-		MessageWidgetStack(QWidget *parent = 0);
+		explicit MessageWidgetStack(QWidget *parent = 0);
 		virtual ~MessageWidgetStack();
 
 	protected:

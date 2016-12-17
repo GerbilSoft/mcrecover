@@ -33,7 +33,7 @@ class XmlTemplateDialog : public QDialog
 	typedef QDialog super;
 
 	public:
-		XmlTemplateDialog(QWidget *parent = nullptr);
+		explicit XmlTemplateDialog(QWidget *parent = nullptr);
 		XmlTemplateDialog(const GcnFile *file, QWidget *parent = nullptr);
 		virtual ~XmlTemplateDialog();
 	private:

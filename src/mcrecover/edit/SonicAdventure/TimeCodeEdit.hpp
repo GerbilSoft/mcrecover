@@ -42,7 +42,7 @@ class TimeCodeEdit : public QWidget
 	Q_PROPERTY(DisplayMode displayMode READ displayMode WRITE setDisplayMode NOTIFY displayModeChanged)
 
 	public:
-		TimeCodeEdit(QWidget *parent = 0);
+		explicit TimeCodeEdit(QWidget *parent = 0);
 		~TimeCodeEdit();
 
 	protected:

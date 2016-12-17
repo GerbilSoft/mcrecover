@@ -32,7 +32,7 @@ class ConfigStore : public QObject
 	Q_OBJECT
 	
 	public:
-		ConfigStore(QObject *parent = 0);
+		explicit ConfigStore(QObject *parent = 0);
 		~ConfigStore();
 
 	private:

@@ -33,7 +33,7 @@
 class TableSelectPrivate
 {
 	public:
-		TableSelectPrivate(TableSelect *q);
+		explicit TableSelectPrivate(TableSelect *q);
 		~TableSelectPrivate();
 
 	protected:

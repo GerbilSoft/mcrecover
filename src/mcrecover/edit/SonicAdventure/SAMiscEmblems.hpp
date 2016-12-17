@@ -33,7 +33,7 @@ class SAMiscEmblems : public SAEditWidget
 	typedef SAEditWidget super;
 
 	public:
-		SAMiscEmblems(QWidget *parent = 0);
+		explicit SAMiscEmblems(QWidget *parent = 0);
 		virtual ~SAMiscEmblems();
 
 	protected:

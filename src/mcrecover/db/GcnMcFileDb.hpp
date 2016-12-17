@@ -44,7 +44,7 @@ class GcnMcFileDb : public QObject
 	typedef QObject super;
 
 	public:
-		GcnMcFileDb(QObject *parent = 0);
+		explicit GcnMcFileDb(QObject *parent = 0);
 		virtual ~GcnMcFileDb();
 
 	protected:

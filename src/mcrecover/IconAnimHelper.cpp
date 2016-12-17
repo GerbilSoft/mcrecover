@@ -28,7 +28,7 @@
 class IconAnimHelperPrivate
 {
 	public:
-		IconAnimHelperPrivate(IconAnimHelper *q);
+		explicit IconAnimHelperPrivate(IconAnimHelper *q);
 
 	protected:
 		IconAnimHelper *const q_ptr;

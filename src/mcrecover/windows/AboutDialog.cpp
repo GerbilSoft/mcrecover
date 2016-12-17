@@ -64,7 +64,7 @@
 class AboutDialogPrivate
 {
 	public:
-		AboutDialogPrivate(AboutDialog *q);
+		explicit AboutDialogPrivate(AboutDialog *q);
 
 	protected:
 		AboutDialog *const q_ptr;

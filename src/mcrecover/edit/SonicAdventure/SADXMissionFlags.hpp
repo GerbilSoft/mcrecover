@@ -30,7 +30,7 @@ class SADXMissionFlags : public ByteFlags
 	Q_OBJECT
 
 	public:
-		SADXMissionFlags(QObject *parent = 0);
+		explicit SADXMissionFlags(QObject *parent = 0);
 		virtual ~SADXMissionFlags();
 
 	protected:

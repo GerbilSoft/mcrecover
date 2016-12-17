@@ -30,7 +30,7 @@ class SAEventFlags : public BitFlags
 	Q_OBJECT
 
 	public:
-		SAEventFlags(QObject *parent = 0);
+		explicit SAEventFlags(QObject *parent = 0);
 
 	private:
 		Q_DISABLE_COPY(SAEventFlags)

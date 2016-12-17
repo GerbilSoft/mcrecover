@@ -49,7 +49,7 @@ class VmuCardPrivate : public CardPrivate
 	typedef CardPrivate super;
 
 	public:
-		VmuCardPrivate(VmuCard *q);
+		explicit VmuCardPrivate(VmuCard *q);
 		virtual ~VmuCardPrivate();
 		void init(void);
 

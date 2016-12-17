@@ -27,7 +27,7 @@
 class TaskbarButtonManagerPrivate
 {
 	public:
-		TaskbarButtonManagerPrivate(TaskbarButtonManager *const q);
+		explicit TaskbarButtonManagerPrivate(TaskbarButtonManager *const q);
 		virtual ~TaskbarButtonManagerPrivate();
 
 	protected:

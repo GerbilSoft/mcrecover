@@ -38,7 +38,7 @@ class TableSelect : public QWidget
 	Q_PROPERTY(int activeBatIdx READ activeBatIdx WRITE setActiveBatIdx)
 
 	public:
-		TableSelect(QWidget *parent = 0);
+		explicit TableSelect(QWidget *parent = 0);
 		virtual ~TableSelect();
 
 	protected:

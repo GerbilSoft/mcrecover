@@ -45,7 +45,7 @@ using std::vector;
 class CardViewPrivate
 {
 	public:
-		CardViewPrivate(CardView *q);
+		explicit CardViewPrivate(CardView *q);
 		~CardViewPrivate();
 
 	protected:

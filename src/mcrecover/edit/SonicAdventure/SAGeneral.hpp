@@ -34,7 +34,7 @@ class SAGeneral : public SADXEditWidget
 	typedef SADXEditWidget super;
 
 	public:
-		SAGeneral(QWidget *parent = 0);
+		explicit SAGeneral(QWidget *parent = 0);
 		virtual ~SAGeneral();
 
 	protected:

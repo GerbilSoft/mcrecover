@@ -42,7 +42,7 @@ class GcnCardPrivate : public CardPrivate
 	typedef CardPrivate super;
 
 	public:
-		GcnCardPrivate(GcnCard *q);
+		explicit GcnCardPrivate(GcnCard *q);
 		virtual ~GcnCardPrivate();
 		void init(void);
 

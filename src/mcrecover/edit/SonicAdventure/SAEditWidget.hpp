@@ -34,7 +34,7 @@ class SAEditWidget : public QWidget
 	Q_PROPERTY(bool modified READ isModified NOTIFY hasBeenModified)
 
 	public:
-		SAEditWidget(QWidget *parent = 0)
+		explicit SAEditWidget(QWidget *parent = 0)
 			: super(parent)
 			, m_modified(false) { }
 

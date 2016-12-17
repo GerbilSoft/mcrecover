@@ -98,7 +98,7 @@ using std::vector;
 class McRecoverWindowPrivate
 {
 	public:
-		McRecoverWindowPrivate(McRecoverWindow *q);
+		explicit McRecoverWindowPrivate(McRecoverWindow *q);
 		~McRecoverWindowPrivate();
 
 	protected:

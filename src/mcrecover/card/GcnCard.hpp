@@ -45,7 +45,7 @@ class GcnCard : public Card
 	//Q_PROPERTY(Checksum::ChecksumValue headerChecksumValue READ headerChecksumValue)
 
 	protected:
-		GcnCard(QObject *parent = 0);
+		explicit GcnCard(QObject *parent = 0);
 	public:
 		virtual ~GcnCard();
 

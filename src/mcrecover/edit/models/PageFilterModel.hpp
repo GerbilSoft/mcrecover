@@ -37,7 +37,7 @@ class PageFilterModel : public QSortFilterProxyModel
 	Q_PROPERTY(int pageCount READ pageCount NOTIFY pageCountChanged STORED false)
 
 	public:
-		PageFilterModel(QObject *parent);
+		explicit PageFilterModel(QObject *parent);
 		virtual ~PageFilterModel();
 
 	protected:

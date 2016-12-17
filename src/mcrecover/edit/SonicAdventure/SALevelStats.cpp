@@ -45,7 +45,7 @@
 class SALevelStatsPrivate
 {
 	public:
-		SALevelStatsPrivate(SALevelStats *q);
+		explicit SALevelStatsPrivate(SALevelStats *q);
 		~SALevelStatsPrivate();
 
 	protected:

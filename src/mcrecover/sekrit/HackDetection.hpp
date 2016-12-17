@@ -35,7 +35,7 @@ class HackDetection : public QWidget
 		 * Uses the default screen.
 		 * @param parent Parent.
 		 */
-		HackDetection(QWidget *parent = nullptr);
+		explicit HackDetection(QWidget *parent = nullptr);
 
 		/**
 		 * Create a Hack Detection window.

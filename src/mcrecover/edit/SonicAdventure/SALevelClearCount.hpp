@@ -33,7 +33,7 @@ class SALevelClearCount : public SAEditWidget
 	typedef SAEditWidget super;
 
 	public:
-		SALevelClearCount(QWidget *parent = 0);
+		explicit SALevelClearCount(QWidget *parent = 0);
 		virtual ~SALevelClearCount();
 
 	protected:

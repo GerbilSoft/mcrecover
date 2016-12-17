@@ -37,7 +37,7 @@ class HerpDerpEggListener : public QObject
 	Q_OBJECT
 
 	public:
-		HerpDerpEggListener(QObject *parent = 0);
+		explicit HerpDerpEggListener(QObject *parent = 0);
 		~HerpDerpEggListener();
 
 	protected:

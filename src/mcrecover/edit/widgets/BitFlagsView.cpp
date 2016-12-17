@@ -37,7 +37,7 @@
 class BitFlagsViewPrivate
 {
 	public:
-		BitFlagsViewPrivate(BitFlagsView *q);
+		explicit BitFlagsViewPrivate(BitFlagsView *q);
 
 	protected:
 		BitFlagsView *const q_ptr;

@@ -30,7 +30,7 @@ class UnityLauncher : public TaskbarButtonManager
 	Q_OBJECT
 
 	public:
-		UnityLauncher(QObject *parent = 0);
+		explicit UnityLauncher(QObject *parent = 0);
 		virtual ~UnityLauncher();
 
 	protected:

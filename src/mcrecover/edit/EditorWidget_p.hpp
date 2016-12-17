@@ -30,7 +30,7 @@
 class EditorWidgetPrivate
 {
 	public:
-		EditorWidgetPrivate(EditorWidget *q);
+		explicit EditorWidgetPrivate(EditorWidget *q);
 		virtual ~EditorWidgetPrivate();
 
 	protected:

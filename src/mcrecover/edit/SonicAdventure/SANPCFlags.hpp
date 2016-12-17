@@ -30,7 +30,7 @@ class SANPCFlags : public BitFlags
 	Q_OBJECT
 
 	public:
-		SANPCFlags(QObject *parent = 0);
+		explicit SANPCFlags(QObject *parent = 0);
 
 	private:
 		Q_DISABLE_COPY(SANPCFlags)

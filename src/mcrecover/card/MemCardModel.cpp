@@ -54,7 +54,7 @@
 class MemCardModelPrivate
 {
 	public:
-		MemCardModelPrivate(MemCardModel *q);
+		explicit MemCardModelPrivate(MemCardModel *q);
 		~MemCardModelPrivate();
 
 	protected:

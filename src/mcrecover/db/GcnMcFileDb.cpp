@@ -53,7 +53,7 @@
 class GcnMcFileDbPrivate
 {
 	public:
-		GcnMcFileDbPrivate(GcnMcFileDb *q);
+		explicit GcnMcFileDbPrivate(GcnMcFileDb *q);
 		~GcnMcFileDbPrivate();
 
 	private:

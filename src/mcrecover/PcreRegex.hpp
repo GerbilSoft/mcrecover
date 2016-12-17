@@ -36,7 +36,7 @@ class PcreRegex
 {
 	public:
 		PcreRegex();
-		PcreRegex(const QString &regex);
+		explicit PcreRegex(const QString &regex);
 		~PcreRegex();
 
 	private:

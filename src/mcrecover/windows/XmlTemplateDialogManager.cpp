@@ -33,7 +33,7 @@
 class XmlTemplateDialogManagerPrivate
 {
 	public:
-		XmlTemplateDialogManagerPrivate(XmlTemplateDialogManager *q);
+		explicit XmlTemplateDialogManagerPrivate(XmlTemplateDialogManager *q);
 		~XmlTemplateDialogManagerPrivate();
 
 	protected:

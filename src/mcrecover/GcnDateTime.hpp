@@ -48,9 +48,9 @@ class GcnDateTime
 {
 	public:
 		GcnDateTime();
-		GcnDateTime(uint32_t gcnTimestamp);
-		GcnDateTime(const _vmu_timestamp &vmuTimestamp);
-		GcnDateTime(const QDateTime &other);
+		explicit GcnDateTime(uint32_t gcnTimestamp);
+		explicit GcnDateTime(const _vmu_timestamp &vmuTimestamp);
+		explicit GcnDateTime(const QDateTime &other);
 		GcnDateTime(const GcnDateTime &other);
 
 		/**

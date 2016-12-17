@@ -35,7 +35,7 @@ class FileView : public QWidget
 	Q_PROPERTY(const File* file READ file WRITE setFile)
 
 	public:
-		FileView(QWidget *parent = 0);
+		explicit FileView(QWidget *parent = 0);
 		virtual ~FileView();
 
 	protected:

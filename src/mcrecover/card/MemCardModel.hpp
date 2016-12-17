@@ -35,7 +35,7 @@ class MemCardModel : public QAbstractListModel
 	typedef QAbstractListModel super;
 	
 	public:
-		MemCardModel(QObject *parent = 0);
+		explicit MemCardModel(QObject *parent = 0);
 		virtual ~MemCardModel();
 
 	protected:

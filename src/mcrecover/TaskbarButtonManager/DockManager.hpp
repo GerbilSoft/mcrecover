@@ -30,7 +30,7 @@ class DockManager : public TaskbarButtonManager
 	Q_OBJECT
 
 	public:
-		DockManager(QObject *parent = 0);
+		explicit DockManager(QObject *parent = 0);
 		virtual ~DockManager();
 
 	protected:

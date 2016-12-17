@@ -34,7 +34,7 @@ class SASubGames : public SADXEditWidget
 	typedef SADXEditWidget super;
 
 	public:
-		SASubGames(QWidget *parent = 0);
+		explicit SASubGames(QWidget *parent = 0);
 		virtual ~SASubGames();
 
 	protected:

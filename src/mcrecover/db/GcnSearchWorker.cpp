@@ -45,7 +45,7 @@
 class GcnSearchWorkerPrivate
 {
 	public:
-		GcnSearchWorkerPrivate(GcnSearchWorker *q);
+		explicit GcnSearchWorkerPrivate(GcnSearchWorker *q);
 
 	protected:
 		GcnSearchWorker *const q_ptr;

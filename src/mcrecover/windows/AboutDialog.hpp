@@ -37,7 +37,7 @@ class AboutDialog : public QDialog
 		static void ShowSingle(QWidget *parent = nullptr);
 
 	protected:
-		AboutDialog(QWidget *parent = nullptr);
+		explicit AboutDialog(QWidget *parent = nullptr);
 		virtual ~AboutDialog();
 
 	protected:

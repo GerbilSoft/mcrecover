@@ -44,7 +44,7 @@
 class ConfigStorePrivate
 {
 	public:
-		ConfigStorePrivate(ConfigStore *q);
+		explicit ConfigStorePrivate(ConfigStore *q);
 		~ConfigStorePrivate();
 
 	private:

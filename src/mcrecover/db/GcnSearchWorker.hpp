@@ -56,7 +56,7 @@ class GcnSearchWorker : public QObject
 	Q_PROPERTY(QThread* origThread READ origThread WRITE setOrigThread)
 
 	public:
-		GcnSearchWorker(QObject *parent = 0);
+		explicit GcnSearchWorker(QObject *parent = 0);
 		virtual ~GcnSearchWorker();
 
 	protected:

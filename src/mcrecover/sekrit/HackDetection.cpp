@@ -47,7 +47,7 @@
 class HackDetectionPrivate
 {
 	public:
-		HackDetectionPrivate(HackDetection *q);
+		explicit HackDetectionPrivate(HackDetection *q);
 
 	protected:
 		HackDetection *const q_ptr;

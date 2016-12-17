@@ -39,7 +39,7 @@
 class TranslationManagerPrivate
 {
 	public:
-		TranslationManagerPrivate(TranslationManager *q);
+		explicit TranslationManagerPrivate(TranslationManager *q);
 		~TranslationManagerPrivate();
 
 	protected:

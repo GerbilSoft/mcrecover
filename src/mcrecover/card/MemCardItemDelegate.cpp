@@ -46,7 +46,7 @@
 class MemCardItemDelegatePrivate
 {
 	public:
-		MemCardItemDelegatePrivate(MemCardItemDelegate *q);
+		explicit MemCardItemDelegatePrivate(MemCardItemDelegate *q);
 
 	protected:
 		MemCardItemDelegate *const q_ptr;

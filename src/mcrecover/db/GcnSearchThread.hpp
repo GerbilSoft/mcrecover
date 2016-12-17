@@ -42,7 +42,7 @@ class GcnSearchThread : public QObject
 	typedef QObject super;
 
 	public:
-		GcnSearchThread(QObject *parent = 0);
+		explicit GcnSearchThread(QObject *parent = 0);
 		virtual ~GcnSearchThread();
 
 	protected:

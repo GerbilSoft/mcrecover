@@ -35,7 +35,7 @@ class XmlTemplateDialogManager : public QObject
 	typedef QObject super;
 
 	public:
-		XmlTemplateDialogManager(QObject *parent = nullptr);
+		explicit XmlTemplateDialogManager(QObject *parent = nullptr);
 		virtual ~XmlTemplateDialogManager();
 
 	protected:

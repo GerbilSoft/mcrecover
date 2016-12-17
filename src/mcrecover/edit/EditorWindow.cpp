@@ -41,7 +41,7 @@
 class EditorWindowPrivate
 {
 	public:
-		EditorWindowPrivate(EditorWindow *q);
+		explicit EditorWindowPrivate(EditorWindow *q);
 		~EditorWindowPrivate();
 
 	protected:

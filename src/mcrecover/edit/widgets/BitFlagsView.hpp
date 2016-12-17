@@ -36,7 +36,7 @@ class BitFlagsView : public QWidget
 	Q_PROPERTY(int pageSize READ pageSize)
 
 	public:
-		BitFlagsView(QWidget *parent = 0);
+		explicit BitFlagsView(QWidget *parent = 0);
 		~BitFlagsView();
 
 	protected:

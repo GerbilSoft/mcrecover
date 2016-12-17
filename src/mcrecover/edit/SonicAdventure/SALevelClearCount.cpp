@@ -51,7 +51,7 @@
 class SALevelClearCountPrivate
 {
 	public:
-		SALevelClearCountPrivate(SALevelClearCount *q);
+		explicit SALevelClearCountPrivate(SALevelClearCount *q);
 		~SALevelClearCountPrivate();
 
 	protected:

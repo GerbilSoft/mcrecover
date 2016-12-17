@@ -33,7 +33,7 @@ class SAEditor : public EditorWidget
 	typedef EditorWidget super;
 
 	public:
-		SAEditor(QWidget *parent = nullptr);
+		explicit SAEditor(QWidget *parent = nullptr);
 		virtual ~SAEditor();
 
 	protected:

@@ -41,7 +41,7 @@
 class MessageWidgetPrivate
 {
 	public:
-		MessageWidgetPrivate(MessageWidget *q);
+		explicit MessageWidgetPrivate(MessageWidget *q);
 		~MessageWidgetPrivate();
 
 	protected:

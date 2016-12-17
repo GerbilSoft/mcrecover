@@ -39,7 +39,7 @@
 class SAGeneralPrivate
 {
 	public:
-		SAGeneralPrivate(SAGeneral *q);
+		explicit SAGeneralPrivate(SAGeneral *q);
 
 	protected:
 		SAGeneral *const q_ptr;

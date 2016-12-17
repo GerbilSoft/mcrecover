@@ -38,7 +38,7 @@
 class ByteFlagsViewPrivate
 {
 	public:
-		ByteFlagsViewPrivate(ByteFlagsView *q);
+		explicit ByteFlagsViewPrivate(ByteFlagsView *q);
 
 	protected:
 		ByteFlagsView *const q_ptr;

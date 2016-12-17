@@ -40,7 +40,7 @@
 class SASubGamesPrivate
 {
 	public:
-		SASubGamesPrivate(SASubGames *q);
+		explicit SASubGamesPrivate(SASubGames *q);
 
 	protected:
 		SASubGames *const q_ptr;

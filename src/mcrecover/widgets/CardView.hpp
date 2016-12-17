@@ -35,7 +35,7 @@ class CardView : public QWidget
 	Q_PROPERTY(Card* card READ card WRITE setCard)
 
 	public:
-		CardView(QWidget *parent = 0);
+		explicit CardView(QWidget *parent = 0);
 		virtual ~CardView();
 
 	protected:

@@ -39,7 +39,7 @@
 class ByteFlagsModelPrivate
 {
 	public:
-		ByteFlagsModelPrivate(ByteFlagsModel *q);
+		explicit ByteFlagsModelPrivate(ByteFlagsModel *q);
 
 	protected:
 		ByteFlagsModel *const q_ptr;

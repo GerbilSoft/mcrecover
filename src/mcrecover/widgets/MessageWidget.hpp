@@ -34,7 +34,7 @@ class MessageWidget : public QWidget
 	Q_ENUMS(MsgIcon)
 
 	public:
-		MessageWidget(QWidget *parent = 0);
+		explicit MessageWidget(QWidget *parent = 0);
 		virtual ~MessageWidget();
 
 	protected:

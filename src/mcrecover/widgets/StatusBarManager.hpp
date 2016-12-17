@@ -42,7 +42,7 @@ class StatusBarManager : public QObject
 	Q_PROPERTY(GcnSearchThread* searchThread READ searchThread WRITE setSearchThread)
 
 	public:
-		StatusBarManager(QObject *parent = 0);
+		explicit StatusBarManager(QObject *parent = 0);
 		explicit StatusBarManager(QStatusBar *statusBar, QObject *parent = 0);
 		virtual ~StatusBarManager();
 

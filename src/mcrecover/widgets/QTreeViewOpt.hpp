@@ -34,7 +34,7 @@ class QTreeViewOpt : public QTreeView
 	typedef QTreeView super;
 
 	public:
-		QTreeViewOpt(QWidget *parent = 0);
+		explicit QTreeViewOpt(QWidget *parent = 0);
 
 	private:
 		Q_DISABLE_COPY(QTreeViewOpt);

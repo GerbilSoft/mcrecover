@@ -31,7 +31,7 @@ class VmuCard : public Card
 	typedef Card super;
 
 	protected:
-		VmuCard(QObject *parent = 0);
+		explicit VmuCard(QObject *parent = 0);
 	public:
 		virtual ~VmuCard();
 
