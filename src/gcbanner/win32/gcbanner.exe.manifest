@@ -3,8 +3,8 @@
 	<assemblyIdentity
 		type="win32"
 		name="GCN.MemCard.Recover.gcbanner"
-		version="0.2.0.0"
-		processorArchitecture="x86"
+		version="0.2.1.1"
+		processorArchitecture="*"
 	/>
 
 	<description>GameCube Banner Extraction Utility</description>
@@ -20,4 +20,15 @@
 			</requestedPrivileges>
 		</security>
 	</trustInfo>
+
+	<!-- Operating system compatibility. -->
+	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+		<application>
+			<!--The ID below indicates application support for Windows Vista -->
+			<supportedOS Id="{e2011457-1546-43c5-a5fe-008deee3d3f0}"/>
+
+			<!--The ID below indicates application support for Windows 7 -->
+			<supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}"/>
+		</application>
+	</compatibility>
 </assembly>  

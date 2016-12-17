@@ -2,8 +2,8 @@
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
 	<assemblyIdentity
 		type="win32"
-		name="GCN.MemCard.Recover"
-		version="0.2.1.0"
+		name="GCN MemCard Recover"
+		version="0.2.1.1"
 		processorArchitecture="x86"
 	/>
 
@@ -16,7 +16,7 @@
 				type="win32"
 				name="Microsoft.Windows.Common-Controls"
 				version="6.0.0.0"
-				processorArchitecture="x86"
+				processorArchitecture="*"
 				publicKeyToken="6595b64144ccf1df"
 				language="*"
 			/>
@@ -35,11 +35,22 @@
 		</security>
 	</trustInfo>
 
-	<!-- Mark this program as DPI-aware on Windows Vista and later. -->
-	<!-- FIXME: Not DPI-aware right now. Needs Qt 5.x. -->
+	<!-- Mark this program as *not* DPI-aware on Windows Vista and later. -->
+	<!-- FIXME: Make it DPI-aware. May need Qt5. -->
 	<asmv3:application>
 		<asmv3:windowsSettings xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">
 			<dpiAware>false</dpiAware>
 		</asmv3:windowsSettings>
 	</asmv3:application>
+
+	<!-- Operating system compatibility. -->
+	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+		<application>
+			<!--The ID below indicates application support for Windows Vista -->
+			<supportedOS Id="{e2011457-1546-43c5-a5fe-008deee3d3f0}"/>
+
+			<!--The ID below indicates application support for Windows 7 -->
+			<supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}"/>
+		</application>
+	</compatibility>
 </assembly>  
