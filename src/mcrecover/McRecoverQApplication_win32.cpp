@@ -213,9 +213,13 @@ BOOL McRecoverQApplicationWin32Private::ChangeWindowMessageFilter_dl(UINT messag
 
 	if (!retrieved) {
 		retrieved = true;
-		HMODULE hUser32 = GetModuleHandle(L"user32");
+		HMODULE hUser32 = LoadLibrary(L"user32.dll");
 		if (hUser32) {
 			pfn = reinterpret_cast<PFNCHANGEWINDOWMESSAGEFILTER>(GetProcAddress(hUser32, "ChangeWindowMessageFilter"));
+			if (!pfn) {
+				// Not found.
+				FreeLibrary(hUser32);
+			}
 		}
 	}
 
