@@ -349,11 +349,17 @@ QString AboutDialogPrivate::GetLibraries(void)
 		"Copyright (C) 2005-2016 by David Vignoni.\n");
 	sLibraries += sLicenses.arg(QLatin1String("CC BY-SA 3.0, GNU LGPL v2.1+"));
 
-	// Flag icons.
+	// Icon set.
+	sLibraries = QLatin1String(
+		"Icon set is based on KDE's Oxygen icons. (5.29.0)\n"
+		"Copyright (C) 2005-2016 by David Vignoni.\n");
+	sLibraries += sLicenses.arg(QLatin1String("CC BY-SA 3.0, GNU LGPL v2.1+"));
+
+	// EU flag icon.
 	sLibraries += sDLineBreak;
 	sLibraries += QLatin1String(
-		"Flag icons are based on KDE 4.13.3's locale icons.\n"
-		"EU flag icon is based on Dolphin Emulator 4.0's Flag_Europe.xpm icon.");
+		"EU flag icon is based on Dolphin Emulator 4.0's Flag_Europe.png icon.");
+	sLibraries += sLicenses.arg(QLatin1String("GNU GPL v2+"));
 
 	// TODO: Don't show compiled-with version if the same as in-use version?
 
