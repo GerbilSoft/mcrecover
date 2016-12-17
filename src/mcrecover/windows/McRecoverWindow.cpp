@@ -1326,7 +1326,6 @@ bool McRecoverWindow::winEvent(MSG *message, long *result)
 #endif
 {
 	// Reference: http://nicug.blogspot.com/2011/03/windows-7-taskbar-extensions-in-qt.html
-	// FIXME: winEvent() has been replaced by nativeEvent() in Qt 5.
 	Q_D(McRecoverWindow);
 	if (((MSG*)message)->message == McRecoverQApplication::WM_TaskbarButtonCreated()) {
 		// Initialize the Taskbar Button Manager.
