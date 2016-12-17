@@ -684,55 +684,55 @@ void McRecoverWindowPrivate::saveFiles(const QVector<File*> &files, QString path
 	GcImageWriter::AnimImageFormat animImgf = animIconFormat();
 
 	foreach (File *file, files) {
-		if (!singleFile)
-			filename = path + QChar(L'/') + file->defaultExportFilename();
-		QFile qfile(filename);
+		if (!singleFile) {
+			const QString exportFilename = file->defaultExportFilename();
+			filename = path + QChar(L'/') + exportFilename;
 
-		// Check if the file exists.
-		if (qfile.exists()) {
-			if (overwriteAll == OVERWRITEALL_UNKNOWN) {
-				bool overwrite = false;
-				QString onlyFilename;
-				int slashPos = filename.lastIndexOf(QChar(L'/'));
-				onlyFilename = (slashPos >= 0 ? filename.mid(slashPos + 1) : filename);
-				int ret = QMessageBox::warning(q,
-					McRecoverWindow::tr("File Already Exists"),
-					McRecoverWindow::tr("A file named \"%1\" already exists in the specified directory.\n\n"
-							    "Do you want to overwrite it?")
-							.arg(filename),
-					(QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll),
-					QMessageBox::No);
-				switch (ret) {
-					case QMessageBox::Yes:
-						// Overwrite this file.
-						overwrite = true;
-						break;
+			// Check if the file exists.
+			// NOTE: Not done in the case of a single file because
+			// the "Save" dialog already prompted the user.
+			if (QFile::exists(filename)) {
+				if (overwriteAll == OVERWRITEALL_UNKNOWN) {
+					bool overwrite = false;
+					int ret = QMessageBox::warning(q,
+						McRecoverWindow::tr("File Already Exists"),
+						McRecoverWindow::tr("A file named \"%1\" already exists in the specified directory.\n\n"
+								    "Do you want to overwrite it?")
+								.arg(exportFilename),
+						(QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll),
+						QMessageBox::No);
+					switch (ret) {
+						case QMessageBox::Yes:
+							// Overwrite this file.
+							overwrite = true;
+							break;
 
-					default:
-					case QMessageBox::No:
-					case QMessageBox::Escape:
-						// Don't overwrite this file.
-						overwrite = false;
-						break;
+						default:
+						case QMessageBox::No:
+						case QMessageBox::Escape:
+							// Don't overwrite this file.
+							overwrite = false;
+							break;
 
-					case QMessageBox::YesToAll:
-						// Overwrite this file and all other files.
-						overwriteAll = OVERWRITEALL_YESTOALL;
-						overwrite = true;
-						break;
+						case QMessageBox::YesToAll:
+							// Overwrite this file and all other files.
+							overwriteAll = OVERWRITEALL_YESTOALL;
+							overwrite = true;
+							break;
 
-					case QMessageBox::NoToAll:
-						// Don't overwrite this file or any other files.
-						overwriteAll = OVERWRITEALL_NOTOALL;
-						overwrite = false;
-						break;
-				}
+						case QMessageBox::NoToAll:
+							// Don't overwrite this file or any other files.
+							overwriteAll = OVERWRITEALL_NOTOALL;
+							overwrite = false;
+							break;
+					}
 
-				if (!overwrite)
+					if (!overwrite)
+						continue;
+				} else if (overwriteAll == OVERWRITEALL_NOTOALL) {
+					// Don't overwrite any files.
 					continue;
-			} else if (overwriteAll == OVERWRITEALL_NOTOALL) {
-				// Don't overwrite any files.
-				continue;
+				}
 			}
 		}
 
