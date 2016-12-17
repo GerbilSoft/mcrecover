@@ -64,7 +64,6 @@ bool EditorWidgetFactory::isEditorAvailable(const File *file)
 	// TODO: Register all editor widgets somewhere?
 
 	// Check if the file is supported by the various editors.
-	EditorWidget *widget = nullptr;
 	if (SAEditor::isFileSupported(file)) {
 		return true;
 	}
