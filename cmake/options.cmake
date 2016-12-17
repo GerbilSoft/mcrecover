@@ -43,11 +43,14 @@ ELSE(NOT WIN32)
 ENDIF(NOT WIN32)
 
 # Qt version to use.
-OPTION(USE_QT4 "Use Qt 4." OFF)
-OPTION(USE_QT5 "Use Qt 5." OFF)
-IF(NOT USE_QT4 AND NOT USE_QT5)
-	# Default to Qt 4.
-	SET(USE_QT4 ON CACHE BOOL "Use Qt 4." FORCE)
-ELSEIF(USE_QT4 AND USE_QT5)
-	MESSAGE(FATAL_ERROR "Select either Qt 4 or Qt 5, not both.")
+OPTION(USE_QT "Specify Qt version. (4 or 5; default is 0 for auto-detect)" 0)
+IF(NOT USE_QT)
+	# Auto-detect, preferring Qt5 to Qt4.
+	UNSET(QT_VERSION)
+ELSEIF(USE_QT EQUAL 5)
+	SET(QT_VERSION 5)
+ELSEIF(USE_QT EQUAL 4)
+	SET(QT_VERSION 4)
+ELSE()
+	MESSAGE(FATAL_ERROR "Unsupported Qt version ${USE_QT}.")
 ENDIF()

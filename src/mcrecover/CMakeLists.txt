@@ -15,7 +15,47 @@ ELSE()
 	SET(MCRECOVER_TRANSLATIONS_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${DIR_INSTALL_TRANSLATIONS}")
 ENDIF()
 
-IF(USE_QT4)
+IF(QT_VERSION)
+	SET(QT_REQUIRED "REQUIRED")
+ELSE()
+	UNSET(QT_REQUIRED)
+ENDIF(QT_VERSION)
+
+# Qt5 build.
+IF(QT_VERSION EQUAL 5 OR NOT QT_VERSION)
+	# Find Qt5.
+	# FIXME: Figure out a minimum Qt5 version.
+	# QtWin::fromHICON was added in Qt 5.2.
+	SET(Qt5_NO_LINK_QTMAIN 1)
+	FIND_PACKAGE(Qt5 ${QT_REQUIRED} COMPONENTS Core Gui Widgets Xml)
+	IF(Qt5Core_FOUND)
+		SET(QT_VERSION 5)
+
+		IF(ENABLE_DBUS)
+			# QtDBus is used for DockManager.
+			FIND_PACKAGE(Qt5DBus)
+			# FIXME: HAVE_Qt5DBus isn't working...
+			SET(QtDBus_FOUND ${Qt5DBus_FOUND})
+		ENDIF(ENABLE_DBUS)
+
+		# Version-specific macros.
+		MACRO(QTX_WRAP_UI)
+			QT5_WRAP_UI(${ARGV})
+		ENDMACRO(QTX_WRAP_UI)
+		MACRO(QTX_WRAP_CPP)
+			QT5_WRAP_CPP(${ARGV})
+		ENDMACRO(QTX_WRAP_CPP)
+		MACRO(QTX_ADD_DBUS_INTERFACES)
+			QT5_ADD_DBUS_INTERFACES(${ARGV})
+		ENDMACRO(QTX_ADD_DBUS_INTERFACES)
+		MACRO(QTX_ADD_RESOURCES)
+			QT5_ADD_RESOURCES(${ARGV})
+		ENDMACRO(QTX_ADD_RESOURCES)
+	ENDIF(Qt5Core_FOUND)
+ENDIF()
+
+# Qt4 build.
+IF(QT_VERSION EQUAL 4 OR NOT QT_VERSION)
 	# Find Qt4.
 	SET(QT4_NO_LINK_QTMAIN 1)
 	SET(MCRECOVER_QT4_COMPONENTS QtCore QtGui QtXml)
@@ -26,40 +66,48 @@ IF(USE_QT4)
 	ENDIF(ENABLE_DBUS)
 
 	FIND_PACKAGE(Qt4 4.6.0 COMPONENTS ${MCRECOVER_QT4_COMPONENTS})
-	IF(NOT QT_QTCORE_FOUND)
-		MESSAGE(FATAL_ERROR "QtCore not found! Please install Qt 4.6.0 or higher.")
-	ELSEIF(NOT QT_QTGUI_FOUND)
-		MESSAGE(FATAL_ERROR "QtGui not found! Please install Qt 4.6.0 or higher.")
-	ELSEIF(NOT QT_QTXML_FOUND)
-		MESSAGE(FATAL_ERROR "QtXml not found! Please install Qt 4.6.0 or higher.")
-	ENDIF()
 
-	IF(QT_QTDBUS_FOUND)
-		SET(QtDBus_FOUND 1)
-	ENDIF(QT_QTDBUS_FOUND)
-ELSEIF(USE_QT5)
-	# Find Qt5.
-	# FIXME: Figure out a minimum Qt5 version.
-	# QtWin::fromHICON was added in Qt 5.2.
-	SET(Qt5_NO_LINK_QTMAIN 1)
-	FIND_PACKAGE(Qt5 REQUIRED COMPONENTS Core Gui Widgets Xml)
+	IF(QT_REQUIRED)
+		IF(NOT QT_QTCORE_FOUND)
+			MESSAGE(FATAL_ERROR "QtCore not found! Please install Qt 4.6.0 or higher.")
+		ELSEIF(NOT QT_QTGUI_FOUND)
+			MESSAGE(FATAL_ERROR "QtGui not found! Please install Qt 4.6.0 or higher.")
+		ELSEIF(NOT QT_QTXML_FOUND)
+			MESSAGE(FATAL_ERROR "QtXml not found! Please install Qt 4.6.0 or higher.")
+		ENDIF()
+	ENDIF(QT_REQUIRED)
 
-	IF(ENABLE_DBUS)
-		# QtDBus is used for DockManager.
-		FIND_PACKAGE(Qt5DBus)
-		# FIXME: HAVE_Qt5DBus isn't working...
-		IF(Qt5DBus_FOUND)
-			SET(QtDBus_FOUND 1)
-			INCLUDE_DIRECTORIES(${Qt5DBus_INCLUDE_DIRS})
-		ENDIF(Qt5DBus_FOUND)
-	ENDIF(ENABLE_DBUS)
-ENDIF()
+	IF(QT_QTCORE_FOUND)
+		SET(QT_VERSION 4)
+		SET(QtDBus_FOUND ${QT_QTDBUS_FOUND})
+
+		# Version-specific macros.
+		MACRO(QTX_WRAP_UI)
+			QT4_WRAP_UI(${ARGV})
+		ENDMACRO(QTX_WRAP_UI)
+		MACRO(QTX_WRAP_CPP)
+			QT4_WRAP_CPP(${ARGV})
+		ENDMACRO(QTX_WRAP_CPP)
+		MACRO(QTX_ADD_DBUS_INTERFACES)
+			QT4_ADD_DBUS_INTERFACES(${ARGV})
+		ENDMACRO(QTX_ADD_DBUS_INTERFACES)
+		MACRO(QTX_ADD_RESOURCES)
+			QT4_ADD_RESOURCES(${ARGV})
+		ENDMACRO(QTX_ADD_RESOURCES)
+	ENDIF(QT_QTCORE_FOUND)
+ENDIF(QT_VERSION EQUAL 4 OR NOT QT_VERSION)
+
+IF(NOT Qt5Core_FOUND AND NOT QT_QTCORE_FOUND)
+	MESSAGE(FATAL_ERROR "Could not find either Qt5 or Qt4.")
+ENDIF(NOT Qt5Core_FOUND AND NOT QT_QTCORE_FOUND)
 
 ####################################
 # Qt plugins. (Static build only!) #
 ####################################
 IF(QT_IS_STATIC)
-	IF(USE_QT4)
+	IF(QT_VERSION EQUAL 5)
+		MESSAGE(FATAL_ERROR "TODO: qjpcodecs static linkage for Qt 5.")
+	ELSEIF(QT_VERSION EQUAL 4)
 		IF(QT_QTCORE_LIBRARY_DEBUG)
 			SET(QT_PLUGINS_SUFFIX "d")
 		ENDIF(QT_QTCORE_LIBRARY_DEBUG)
@@ -71,8 +119,6 @@ IF(QT_IS_STATIC)
 		ELSE()
 			MESSAGE(WARNING "qjpcodecs not found; Japanese text will not be decoded properly.")
 		ENDIF()
-	ELSEIF(USE_QT5)
-		MESSAGE(FATAL_ERROR "TODO: qjpcodecs static linkage for Qt 5.")
 	ENDIF()
 ENDIF(QT_IS_STATIC)
 
@@ -222,7 +268,7 @@ IF(WIN32)
 		)
 ENDIF(WIN32)
 
-# Headers with Qt4 objects.
+# Headers with Qt objects.
 SET(mcrecover_MOC_H
 	IconAnimHelper.hpp
 	McRecoverQApplication.hpp
@@ -332,11 +378,7 @@ SET(mcrecover_UIS
 	${mcrecover_WIDGET_UIS}
 	${mcrecover_EDIT_UIS}
 	)
-IF(USE_QT4)
-	QT4_WRAP_UI(mcrecover_UIS_H ${mcrecover_UIS})
-ELSEIF(USE_QT5)
-	QT5_WRAP_UI(mcrecover_UIS_H ${mcrecover_UIS})
-ENDIF()
+QTX_WRAP_UI(mcrecover_UIS_H ${mcrecover_UIS})
 
 # Create MOC source files for classes that need them.
 SET(mcrecover_MOC_H
@@ -348,11 +390,7 @@ SET(mcrecover_MOC_H
 	${mcrecover_EDIT_MOC_H}
 	${mcrecover_SEKRIT_MOC_H}
 	)
-IF(USE_QT4)
-	QT4_WRAP_CPP(mcrecover_MOC_SRCS ${mcrecover_MOC_H})
-ELSEIF(USE_QT5)
-	QT5_WRAP_CPP(mcrecover_MOC_SRCS ${mcrecover_MOC_H})
-ENDIF()
+QTX_WRAP_CPP(mcrecover_MOC_SRCS ${mcrecover_MOC_H})
 
 # TaskbarButtonManager
 SET(mcrecover_TBM_SRCS
@@ -396,53 +434,28 @@ ELSEIF(UNIX AND NOT APPLE)
 			INCLUDE dbus/DBusMetatypes.hpp
 			)
 
-		IF(USE_QT4)
-			# Qt4: QtDBus found.
-			# Enable DockManager / Unity API support.
-			# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
-			# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
-			QT4_ADD_DBUS_INTERFACES(
-				mcrecover_DBUS_INTERFACE_SRCS
-				${DBus_XML_SRCS}
-				)
-			SET(mcrecover_TBM_SRCS
-				${mcrecover_TBM_SRCS}
-				${mcrecover_DBUS_INTERFACE_SRCS}
-				TaskbarButtonManager/DockManager.cpp
-				)
-			SET(mcrecover_TBM_MOC_H
-				${mcrecover_TBM_MOC_H}
-				TaskbarButtonManager/DockManager.hpp
-				)
-		ELSEIF(USE_QT5)
-			# Qt5: QtDBus found.
-			# Enable DockManager / Unity API support.
-			# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
-			# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
-			QT5_ADD_DBUS_INTERFACES(
-				mcrecover_DBUS_INTERFACE_SRCS
-				${DBus_XML_SRCS}
-				)
-			SET(mcrecover_TBM_SRCS
-				${mcrecover_TBM_SRCS}
-				${mcrecover_DBUS_INTERFACE_SRCS}
-				TaskbarButtonManager/DockManager.cpp
-				)
-			SET(mcrecover_TBM_MOC_H
-				${mcrecover_TBM_MOC_H}
-				TaskbarButtonManager/DockManager.hpp
-				)
-		ENDIF()
+		# Enable DockManager / Unity API support.
+		# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
+		# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
+		QTX_ADD_DBUS_INTERFACES(
+			mcrecover_DBUS_INTERFACE_SRCS
+			${DBus_XML_SRCS}
+			)
+		SET(mcrecover_TBM_SRCS
+			${mcrecover_TBM_SRCS}
+			${mcrecover_DBUS_INTERFACE_SRCS}
+			TaskbarButtonManager/DockManager.cpp
+			)
+		SET(mcrecover_TBM_MOC_H
+			${mcrecover_TBM_MOC_H}
+			TaskbarButtonManager/DockManager.hpp
+			)
 	ENDIF(QtDBus_FOUND)
 ENDIF()
 
 IF(mcrecover_TBM_MOC_H)
 	# Create MOC source files for classes that need them.
-	IF(USE_QT4)
-		QT4_WRAP_CPP(mcrecover_TBM_MOC_SRCS ${mcrecover_TBM_MOC_H})
-	ELSEIF(USE_QT5)
-		QT5_WRAP_CPP(mcrecover_TBM_MOC_SRCS ${mcrecover_TBM_MOC_H})
-	ENDIF()
+	QTX_WRAP_CPP(mcrecover_TBM_MOC_SRCS ${mcrecover_TBM_MOC_H})
 ENDIF(mcrecover_TBM_MOC_H)
 
 #################
@@ -465,17 +478,10 @@ SET(mcrecover_RCC_SRCS
 	resources/vmu/vmu.qrc
 	)
 
-IF(USE_QT4)
-	QT4_ADD_RESOURCES(
-		mcrecover_RCC_O ${mcrecover_RCC_SRCS}
-		OPTIONS -no-compress
-		)
-ELSEIF(USE_QT5)
-	QT5_ADD_RESOURCES(
-		mcrecover_RCC_O ${mcrecover_RCC_SRCS}
-		OPTIONS -no-compress
-		)
-ENDIF()
+QTX_ADD_RESOURCES(
+	mcrecover_RCC_O ${mcrecover_RCC_SRCS}
+	OPTIONS -no-compress
+	)
 
 #########################
 # Build the executable. #
@@ -529,20 +535,20 @@ ENDIF(HAVE_PCRE16)
 
 # Qt libraries
 # NOTE: Libraries have to be linked in reverse order.
-IF(USE_QT4)
-	IF(QT_PLUGINS_CODECS_QJPCODECS)
-		TARGET_LINK_LIBRARIES(mcrecover ${QT_PLUGINS_CODECS_QJPCODECS})
-	ENDIF(QT_PLUGINS_CODECS_QJPCODECS)
-	IF(QT_QTDBUS_FOUND)
-		TARGET_LINK_LIBRARIES(mcrecover Qt4::QtDBus)
-	ENDIF(QT_QTDBUS_FOUND)
-	TARGET_LINK_LIBRARIES(mcrecover Qt4::QtGui Qt4::QtXml Qt4::QtCore)
-ELSEIF(USE_QT5)
+IF(QT_PLUGINS_CODECS_QJPCODECS)
+	TARGET_LINK_LIBRARIES(mcrecover ${QT_PLUGINS_CODECS_QJPCODECS})
+ENDIF(QT_PLUGINS_CODECS_QJPCODECS)
+IF(QT_VERSION EQUAL 5)
 	# TODO: qjpcodecs for static linkage.
 	IF(Qt5DBus_FOUND)
 		TARGET_LINK_LIBRARIES(mcrecover Qt5::DBus)
 	ENDIF(Qt5DBus_FOUND)
-	TARGET_LINK_LIBRARIES(mcrecover Qt5::Widgets Qt5::Gui Qt5::Xml Qt5::Core)
+	TARGET_LINK_LIBRARIES(mcrecover Qt5::Widgets Qt5::Gui Qt5::Core)
+ELSEIF(QT_VERSION EQUAL 4)
+	IF(Qt5DBus_FOUND)
+		TARGET_LINK_LIBRARIES(mcrecover Qt4::QtDBus)
+	ENDIF(Qt5DBus_FOUND)
+	TARGET_LINK_LIBRARIES(mcrecover Qt4::QtGui Qt4::QtXml Qt4::QtCore)
 ENDIF()
 
 # extlib (needed twice due to weird dependencies with Qt/static)
