@@ -40,10 +40,11 @@ static inline uint32_t RGB5A3_to_ARGB32(uint16_t px16)
 
 	// NOTE: Pixels are byteswapped.
 	if (px16 & 0x8000) {
-		// RGB5
+		// RGB555: xRRRRRGG GGGBBBBB
+		// ARGB32: AAAAAAAA RRRRRRRR GGGGGGGG BBBBBBBB
 		px32 |= (((px16 << 3) & 0x0000F8) | ((px16 >> 2) & 0x000007));	// B
-		px32 |= (((px16 << 6) & 0x00F800) | ((px16 << 3) & 0x000700));	// G
-		px32 |= (((px16 << 9) & 0xF80000) | ((px16 << 6) & 0x070000));	// R
+		px32 |= (((px16 << 6) & 0x00F800) | ((px16 << 1) & 0x000700));	// G
+		px32 |= (((px16 << 9) & 0xF80000) | ((px16 << 4) & 0x070000));	// R
 		px32 |= 0xFF000000U; // no alpha channel
 	} else {
 		// RGB4A3
