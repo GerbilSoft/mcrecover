@@ -31,13 +31,17 @@
 #include "GcImageLoader.hpp"
 #include "GcImageWriter.hpp"
 
+// C includes.
+#include <stdlib.h>
+
 // C includes. (C++ namespace)
 #include <cstdio>
 #include <cerrno>
 #include <cstring>
 
-// C includes.
-#include <stdlib.h>
+// C++ includes.
+#include <locale>
+using std::locale;
 
 // getopt_long()
 #ifdef HAVE_GETOPT_H
@@ -575,6 +579,9 @@ static void show_usage(const char *argv0)
  */
 int main(int argc, char *argv[])
 {
+	// Set the C and C++ locales.
+	locale::global(locale(""));
+
 	/**
 	 * Syntax:
 	 * ./gcbanner opening.bnr [image.png]
