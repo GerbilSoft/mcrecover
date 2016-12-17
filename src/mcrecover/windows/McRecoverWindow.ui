@@ -228,7 +228,7 @@
     <addaction name="actionExtractIcons"/>
     <addaction name="menuAnimIconFormat"/>
    </widget>
-   <widget class="QMenu" name="menuLanguage">
+   <widget class="LanguageMenu" name="menuLanguage">
     <property name="title">
      <string>&amp;Language</string>
     </property>
@@ -525,6 +525,14 @@
    <extends>QWidget</extends>
    <header>widgets/MessageWidgetStack.hpp</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LanguageMenu</class>
+   <extends>QMenu</extends>
+   <header>widgets/LanguageMenu.hpp</header>
+   <slots>
+    <signal>languageChanged(QString)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <tabstops>

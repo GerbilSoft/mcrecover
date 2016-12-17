@@ -136,15 +136,15 @@ class McRecoverWindow : public QMainWindow
 
 		/**
 		 * UI language was changed by the user.
-		 * @param tsLocale Translation to use. (locale tag)
+		 * @param locale Locale tag, e.g. "en_US".
 		 */
-		void setTranslation_slot(const QString &tsLocale);
+		void on_menuLanguage_languageChanged(const QString &locale);
 
 		/**
 		 * UI language was changed by the configuration.
-		 * @param tsLocale Translation to use. (locale tag)
+		 * @param locale Locale tag, e.g. "en_US".
 		 */
-		void setTranslation_cfg_slot(const QVariant &tsLocale);
+		void setTranslation_cfg_slot(const QVariant &locale);
 
 		/**
 		 * "Search Used Blocks" was changed by the user.

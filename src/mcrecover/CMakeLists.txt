@@ -204,6 +204,7 @@ SET(mcrecover_WIDGET_SRCS
 	widgets/MessageWidget.cpp
 	widgets/TableSelect.cpp
 	widgets/MessageWidgetStack.cpp
+	widgets/LanguageMenu.cpp
 	)
 
 SET(mcrecover_CARD_SRCS
@@ -296,6 +297,7 @@ SET(mcrecover_WIDGET_MOC_H
 	widgets/MessageWidget.hpp
 	widgets/TableSelect.hpp
 	widgets/MessageWidgetStack.hpp
+	widgets/LanguageMenu.hpp
 	)
 
 SET(mcrecover_CARD_MOC_H

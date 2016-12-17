@@ -53,9 +53,6 @@
 #include <windows.h>
 #endif /* Q_OS_WIN */
 
-// Translation Manager.
-#include "TranslationManager.hpp"
-
 // C includes. (C++ namespace)
 #include <cstdio>
 #include <cassert>
@@ -196,30 +193,6 @@ class McRecoverWindowPrivate
 		QActionGroup *actgrpRegion;
 		QSignalMapper *mapperPreferredRegion;
 
-		// Translations.
-		QAction *actTsSysDefault;
-		// Key: Locale ID; value: QAction
-		QHash<QString, QAction*> hashActionsTS;
-		QActionGroup *actgrpTS;
-		QSignalMapper *mapperTS;
-
-		/**
-		 * Get an icon for a given locale.
-		 * @param locale Locale name, e.g. "en_US".
-		 * @return Icon, or null QIcon if not found.
-		 */
-		static QIcon IconForLocale(const QString &locale);
-
-		/**
-		 * Retranslate the "System Default" language action.
-		 */
-		void rets_actTsSysDefault(void);
-
-		/**
-		 * Initialize the Translations menu.
-		 */
-		void initTsMenu(void);
-
 		/**
 		 * "Animated Icon Format" selection.
 		 */
@@ -279,9 +252,6 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, lblPreferredRegion(nullptr)
 	, actgrpRegion(new QActionGroup(q))
 	, mapperPreferredRegion(new QSignalMapper(q))
-	, actTsSysDefault(nullptr)
-	, actgrpTS(nullptr)
-	, mapperTS(new QSignalMapper(q))
 	, actgrpAnimIconFormat(new QActionGroup(q))
 	, mapperAnimIconFormat(new QSignalMapper(q))
 	, cfg(new ConfigStore(q))
@@ -315,10 +285,6 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	// Connect the QSignalMapper slot for the animated icon format selection.
 	QObject::connect(mapperAnimIconFormat, SIGNAL(mapped(int)),
 			 q, SLOT(setAnimIconFormat_slot(int)));
-
-	// Connect the QSignalMapper slot for translations.
-	QObject::connect(mapperTS, SIGNAL(mapped(QString)),
-			 q, SLOT(setTranslation_slot(QString)));
 
 	// Configuration signals.
 	cfg->registerChangeNotification(QLatin1String("preferredRegion"),
@@ -785,103 +751,6 @@ void McRecoverWindowPrivate::saveFiles(const QVector<File*> &files, QString path
 }
 
 /**
- * Get an icon for a given locale.
- * @param locale Locale name, e.g. "en_US".
- * @return Icon, or null QIcon if not found.
- */
-QIcon McRecoverWindowPrivate::IconForLocale(const QString &locale)
-{
-	// Check for an icon.
-	// Check region, then language.
-	QStringList tsParts = locale.split(QChar(L'_'), QString::SkipEmptyParts);
-	QIcon flagIcon;
-	for (int i = (tsParts.size() - 1); i >= 0; i--) {
-		QString filename = QLatin1String(":/flags/flag-") +
-				   tsParts.at(i).toLower() +
-				   QLatin1String(".png");
-		if (QFile::exists(filename)) {
-			flagIcon = QIcon(filename);
-			break;
-		}
-	}
-
-	return flagIcon;
-}
-
-/**
- * Retranslate the "System Default" language action.
- */
-void McRecoverWindowPrivate::rets_actTsSysDefault(void)
-{
-	if (!actTsSysDefault) {
-		Q_Q(McRecoverWindow);
-		actTsSysDefault = new QAction(q);
-		actTsSysDefault->setCheckable(true);
-		QObject::connect(actTsSysDefault, SIGNAL(triggered()),
-				 mapperTS, SLOT(map()));
-	}
-
-	QString tsLocale = QLocale::system().name();
-
-	//: Translation: System Default (retrieved from system settings)
-	actTsSysDefault->setText(
-		McRecoverWindow::tr("System Default (%1)", "ts-language")
-				.arg(QLocale::system().name()));
-	mapperTS->setMapping(actTsSysDefault, QString());
-
-	// Check for an icon.
-	QIcon flagIcon = IconForLocale(tsLocale);
-	if (!flagIcon.isNull())
-		actTsSysDefault->setIcon(flagIcon);
-}
-
-/**
- * Initialize the Translations menu.
- */
-void McRecoverWindowPrivate::initTsMenu(void)
-{
-	Q_Q(McRecoverWindow);
-
-	// Clear the Translations menu first.
-	ui.menuLanguage->clear();
-	if (actgrpTS)
-		delete actgrpTS;
-	qDeleteAll(hashActionsTS);
-	hashActionsTS.clear();
-	actgrpTS = new QActionGroup(q);
-
-	// Add the system default translation.
-	rets_actTsSysDefault();
-	actgrpTS->addAction(actTsSysDefault);
-	ui.menuLanguage->addAction(actTsSysDefault);
-
-	// Add all other translations.
-	ui.menuLanguage->addSeparator();
-	QMap<QString, QString> tsMap = TranslationManager::instance()->enumerate();
-	hashActionsTS.reserve(tsMap.size());
-	foreach (QString tsLocale, tsMap.keys()) {
-		QString tsLanguage = tsMap.value(tsLocale);
-		QAction *actTs = new QAction(tsLanguage, q);
-		actTs->setCheckable(true);
-
-		// Check for an icon.
-		QIcon flagIcon = IconForLocale(tsLocale);
-		if (!flagIcon.isNull())
-			actTs->setIcon(flagIcon);
-
-		hashActionsTS.insert(tsLocale, actTs);
-		actgrpTS->addAction(actTs);
-		QObject::connect(actTs, SIGNAL(triggered()),
-				 mapperTS, SLOT(map()));
-		mapperTS->setMapping(actTs, tsLocale);
-		ui.menuLanguage->addAction(actTs);
-	}
-
-	// Initial language is set by a ConfigStore notification,
-	// connected to setTranslation_cfg_slot().
-}
-
-/**
  * Get the last path.
  * @return Last path.
  */
@@ -1091,7 +960,6 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	// Initialize the UI.
 	d->updateLstFileList();
 	d->initToolbar();
-	d->initTsMenu();
 	d->statusBarManager = new StatusBarManager(d->ui.statusBar, this);
 	d->updateWindowTitle();
 
@@ -1352,16 +1220,7 @@ void McRecoverWindow::changeEvent(QEvent *event)
 			d->updateLstFileList();
 			d->updateWindowTitle();
 			d->retranslateToolbar();
-			d->rets_actTsSysDefault();
 			break;
-
-		case QEvent::LocaleChange: {
-			// Locale change usually requires a UI retranslation.
-			QAction *actionTS = d->actgrpTS->checkedAction();
-			if (actionTS)
-				actionTS->trigger();
-			break;
-		}
 
 		case QEvent::WindowStateChange: {
 			// TODO: Add onMinimized() / onMaximized() signals/slots to a base class?
@@ -1981,43 +1840,25 @@ void McRecoverWindow::setAnimIconFormat_cfg_slot(const QVariant &animIconFormat)
 
 /**
  * UI language was changed by the user.
- * @param tsLocale Translation to use. (locale tag)
+ * @param locale Locale tag, e.g. "en_US".
  */
-void McRecoverWindow::setTranslation_slot(const QString &tsLocale)
+void McRecoverWindow::on_menuLanguage_languageChanged(const QString &locale)
 {
 	Q_D(McRecoverWindow);
-	// If the locale isn't available, use the default.
-	QString locale = (d->hashActionsTS.contains(tsLocale)
-			  ? tsLocale
-			  : QString());
+	// TODO: Verify that the specified locale is valid.
+	// (LanguageMenu::isLanguageSupported() or something?)
 	// d->cfg->set() will trigger a notification.
 	d->cfg->set(QLatin1String("language"), locale);
 }
 
 /**
  * UI language was changed by the configuration.
- * @param tsLocale Translation to use. (locale tag)
+ * @param locale Locale tag, e.g. "en_US".
  */
-void McRecoverWindow::setTranslation_cfg_slot(const QVariant &tsLocale)
+void McRecoverWindow::setTranslation_cfg_slot(const QVariant &locale)
 {
 	Q_D(McRecoverWindow);
-	QString locale = tsLocale.toString();
-	QAction *action = d->hashActionsTS.value(locale);
-	if (!action) {
-		locale.clear();
-	}
-
-	// Set the UI language.
-	TranslationManager::instance()->setTranslation(
-		(!locale.isEmpty()
-			? locale
-			: QLocale::system().name()));
-	// Mark the language as selected.
-	if (action) {
-		action->setChecked(true);
-	} else {
-		d->actTsSysDefault->setChecked(true);
-	}
+	d->ui.menuLanguage->setLanguage(locale.toString());
 }
 
 /**
