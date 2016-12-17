@@ -485,9 +485,9 @@ QString AboutDialogPrivate::GetLibraries(void)
 
 #ifdef USE_GIF
 	/** giflib **/
-	sLibraries += sDLineBreak;
 	// TODO: Constant string instead of .arg()?
 #ifdef USE_INTERNAL_GIF
+	sLibraries += sDLineBreak;
 	QString gifVersion = QString::fromLatin1("giflib %1.%2.%3")
 			.arg(GIFLIB_MAJOR)
 			.arg(GIFLIB_MINOR)
@@ -499,6 +499,7 @@ QString AboutDialogPrivate::GetLibraries(void)
 	int giflib_version = GifDlVersion();
 	if (giflib_version > 0) {
 		// TODO: Get the revision number somehow?
+		sLibraries += sDLineBreak;
 		QString gifVersion = QString::fromLatin1("giflib %1.%2")
 				.arg(giflib_version / 10)
 				.arg(giflib_version % 10);
