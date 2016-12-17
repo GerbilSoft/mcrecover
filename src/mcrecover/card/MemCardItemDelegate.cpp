@@ -246,9 +246,23 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	if (textAlignment == 0)
 		textAlignment = option.displayAlignment;
 
+	QRect textRect = option.rect;
+	QStyleOptionViewItemV4 bgOption = option;
+
+	// Horizontal margins.
+	// Reference: http://doc.qt.io/qt-4.8/qitemdelegate.html#sizeHint
+	QStyle *style = bgOption.widget ? bgOption.widget->style() : QApplication::style();
+	//const int hmargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &option) * 2;
+
+	// Reduce the text rectangle by the hmargin.
+	// TODO: vmargin?
+	// FIXME: This cuts off the text and doesn't match the alignment
+	// of the other columns... (Maybe it's only useful if we're showing
+	// an icon in the same column as the text?)
+	//textRect.adjust(hmargin, 0, -hmargin, 0);
+
 	// Get the fonts.
 	Q_D(const MemCardItemDelegate);
-	QStyleOptionViewItemV4 bgOption = option;
 	QFont fontGameDesc = d->fontGameDesc(bgOption.widget);
 	QFont fontFileDesc = d->fontFileDesc(bgOption.widget);
 
@@ -260,8 +274,8 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	// weird wordwrapping issues.
 	const QFontMetrics fmGameDesc(fontGameDesc);
 	QString gameDescElided = fmGameDesc.elidedText(
-		gameDesc, Qt::ElideRight, option.rect.width()-1);
-	QRect rectGameDesc = option.rect;
+		gameDesc, Qt::ElideRight, textRect.width()-1);
+	QRect rectGameDesc = textRect;
 	rectGameDesc.setHeight(fmGameDesc.height());
 	textHeight += fmGameDesc.height();
 	rectGameDesc = fmGameDesc.boundingRect(
@@ -271,8 +285,8 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	painter->setFont(fontFileDesc);
 	const QFontMetrics fmFileDesc(fontFileDesc);
 	QString fileDescElided = fmFileDesc.elidedText(
-		fileDesc, Qt::ElideRight, option.rect.width()-1);
-	QRect rectFileDesc = option.rect;
+		fileDesc, Qt::ElideRight, textRect.width()-1);
+	QRect rectFileDesc = textRect;
 	rectFileDesc.setHeight(fmFileDesc.height());
 	rectFileDesc.setY(rectGameDesc.y() + textHeight);
 	textHeight += fmFileDesc.height();
@@ -289,12 +303,12 @@ void MemCardItemDelegate::paint(QPainter *painter,
 
 		case Qt::AlignBottom:
 			// Bottom alignment.
-			diff = (option.rect.height() - textHeight);
+			diff = (textRect.height() - textHeight);
 			break;
 
 		case Qt::AlignVCenter:
 			// Center alignment.
-			diff = (option.rect.height() - textHeight);
+			diff = (textRect.height() - textHeight);
 			diff /= 2;
 			break;
 	}
@@ -321,7 +335,6 @@ void MemCardItemDelegate::paint(QPainter *painter,
 		bgOption.backgroundBrush = bg;
 
 	// Draw the style element.
-	QStyle *style = bgOption.widget ? bgOption.widget->style() : QApplication::style();
 	style->drawControl(QStyle::CE_ItemViewItem, &bgOption, painter, bgOption.widget);
 	bgOption.backgroundBrush = QBrush();
 
@@ -338,10 +351,11 @@ void MemCardItemDelegate::paint(QPainter *painter,
 #endif
 
 	// Font color.
-	if (option.state & QStyle::State_Selected)
+	if (bgOption.state & QStyle::State_Selected) {
 		painter->setPen(bgOption.palette.highlightedText().color());
-	else
+	} else {
 		painter->setPen(bgOption.palette.text().color());
+	}
 
 	painter->setFont(fontGameDesc);
 	painter->drawText(rectGameDesc, gameDescElided);
