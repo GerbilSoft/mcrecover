@@ -79,6 +79,8 @@ ELSE(POSIX_SH)
 	# Create a blank git_version.h.
 	FILE(WRITE "${CMAKE_CURRENT_BINARY_DIR}/git_version.h"
 		"/* dummy file; POSIX sh is not available */\n")
+	# Dummy target for dependencies.
+	ADD_CUSTOM_TARGET(git_version)
 ENDIF(POSIX_SH)
 
 # If no build type is set, default to "debug".
