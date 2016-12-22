@@ -58,13 +58,11 @@ class ByteFlagsPrivate
 		// TODO: Shared copy shared by a specific derived
 		// class that's only deleted once all instances
 		// of said class are deleted?
-		// TODO: An array might be more efficient, even if
-		// it wastes some memory...
-		QHash<int, const char*> objs_desc;
+		QVector<const char*> objs_desc;
 
 		// Objects, each with 8 flags.
 		QVector<uint8_t> objs;
-		
+
 		// Translation context for bit flags.
 		const char *tr_ctx;
 };
@@ -92,7 +90,7 @@ ByteFlagsPrivate::ByteFlagsPrivate(int total_flags, const char *tr_ctx,
 	// Initialize flags_desc.
 	// TODO: Once per derived class, rather than once per instance?
 	objs_desc.clear();
-	objs_desc.reserve(count);
+	objs_desc.resize(total_flags);
 	for (int i = 0; i < count; i++, byte_flags++) {
 		if (byte_flags->event < 0 || !byte_flags->description) {
 			// End of list.
@@ -100,7 +98,7 @@ ByteFlagsPrivate::ByteFlagsPrivate(int total_flags, const char *tr_ctx,
 			break;
 		}
 
-		objs_desc.insert(byte_flags->event, byte_flags->description);
+		objs_desc[byte_flags->event] = byte_flags->description;
 	}
 }
 
@@ -168,7 +166,7 @@ QString ByteFlags::description(int id) const
 		return tr("Invalid object ID");
 
 	Q_D(const ByteFlags);
-	const char *desc = d->objs_desc.value(id);
+	const char *desc = d->objs_desc[id];
 	if (!desc) {
 		// No flag description is available.
 		return tr("Unknown");

@@ -56,9 +56,7 @@ class BitFlagsPrivate
 		// TODO: Shared copy shared by a specific derived
 		// class that's only deleted once all instances
 		// of said class are deleted?
-		// TODO: An array might be more efficient, even if
-		// it wastes some memory...
-		QHash<int, const char*> flags_desc;
+		QVector<const char*> flags_desc;
 
 		// Flags.
 		// NOTE: QVector<bool> does not have bit "optimization".
@@ -91,7 +89,7 @@ BitFlagsPrivate::BitFlagsPrivate(int total_flags, const char *tr_ctx,
 	// Initialize flags_desc.
 	// TODO: Once per derived class, rather than once per instance?
 	flags_desc.clear();
-	flags_desc.reserve(count);
+	flags_desc.resize(total_flags);
 	for (int i = 0; i < count; i++, bit_flags++) {
 		if (bit_flags->event < 0 || !bit_flags->description) {
 			// End of list.
@@ -99,7 +97,7 @@ BitFlagsPrivate::BitFlagsPrivate(int total_flags, const char *tr_ctx,
 			break;
 		}
 
-		flags_desc.insert(bit_flags->event, bit_flags->description);
+		flags_desc[bit_flags->event] = bit_flags->description;
 	}
 }
 
@@ -167,7 +165,7 @@ QString BitFlags::description(int flag) const
 		return tr("Invalid flag ID");
 
 	Q_D(const BitFlags);
-	const char *desc = d->flags_desc.value(flag);
+	const char *desc = d->flags_desc[flag];
 	if (!desc) {
 		// No flag description is available.
 		return tr("Unknown");
