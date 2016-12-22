@@ -30,7 +30,6 @@ class ByteFlagsViewPrivate;
 class ByteFlagsView : public QWidget
 {
 	Q_OBJECT
-	typedef QWidget super;
 
 	Q_PROPERTY(ByteFlagsModel* byteFlagsModel READ byteFlagsModel WRITE setByteFlagsModel)
 	Q_PROPERTY(int pageSize READ pageSize)
@@ -39,10 +38,10 @@ class ByteFlagsView : public QWidget
 		explicit ByteFlagsView(QWidget *parent = 0);
 		~ByteFlagsView();
 
-	protected:
+	private:
+		typedef QWidget super;
 		ByteFlagsViewPrivate *const d_ptr;
 		Q_DECLARE_PRIVATE(ByteFlagsView)
-	private:
 		Q_DISABLE_COPY(ByteFlagsView)
 
 	protected:

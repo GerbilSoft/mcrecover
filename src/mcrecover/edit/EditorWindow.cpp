@@ -44,10 +44,9 @@ class EditorWindowPrivate
 		explicit EditorWindowPrivate(EditorWindow *q);
 		~EditorWindowPrivate();
 
-	protected:
+	private:
 		EditorWindow *const q_ptr;
 		Q_DECLARE_PUBLIC(EditorWindow)
-	private:
 		Q_DISABLE_COPY(EditorWindowPrivate)
 
 	public:

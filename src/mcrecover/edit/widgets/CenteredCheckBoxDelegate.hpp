@@ -10,7 +10,10 @@ class QPainter;
 class CenteredCheckBoxDelegate : public QStyledItemDelegate
 {
 	Q_OBJECT
-	typedef QStyledItemDelegate super;
+
+	private:
+		typedef QStyledItemDelegate super;
+		Q_DISABLE_COPY(CenteredCheckBoxDelegate)
 
 	public:
 		explicit CenteredCheckBoxDelegate(QObject *parent = 0);

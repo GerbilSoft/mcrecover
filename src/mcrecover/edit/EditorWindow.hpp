@@ -30,17 +30,16 @@ class EditorWindowPrivate;
 class EditorWindow : public QMainWindow
 {
 	Q_OBJECT
-	typedef QMainWindow super;
 
 	protected:
 		explicit EditorWindow(QWidget *parent = nullptr);
 	public:
 		~EditorWindow();
 
-	protected:
+	private:
+		typedef QMainWindow super;
 		EditorWindowPrivate *const d_ptr;
 		Q_DECLARE_PRIVATE(EditorWindow)
-	private:
 		Q_DISABLE_COPY(EditorWindow)
 
 	protected:

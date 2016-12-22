@@ -30,7 +30,6 @@ class BitFlagsViewPrivate;
 class BitFlagsView : public QWidget
 {
 	Q_OBJECT
-	typedef QWidget super;
 
 	Q_PROPERTY(BitFlagsModel* bitFlagsModel READ bitFlagsModel WRITE setBitFlagsModel)
 	Q_PROPERTY(int pageSize READ pageSize)
@@ -39,10 +38,10 @@ class BitFlagsView : public QWidget
 		explicit BitFlagsView(QWidget *parent = 0);
 		~BitFlagsView();
 
-	protected:
+	private:
+		typedef QWidget super;
 		BitFlagsViewPrivate *const d_ptr;
 		Q_DECLARE_PRIVATE(BitFlagsView)
-	private:
 		Q_DISABLE_COPY(BitFlagsView)
 
 	protected:
