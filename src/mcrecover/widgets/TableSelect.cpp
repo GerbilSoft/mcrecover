@@ -26,10 +26,14 @@
 
 // Qt includes.
 #include <QtCore/QSignalMapper>
+#include <QFrame>
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPushButton>
 
 /** TableSelectPrivate **/
 
-#include "ui_TableSelect.h"
 class TableSelectPrivate
 {
 	public:
@@ -43,8 +47,31 @@ class TableSelectPrivate
 		Q_DISABLE_COPY(TableSelectPrivate)
 
 	public:
-		// UI
-		Ui::TableSelect ui;
+		struct Ui_TableSelect {
+			QHBoxLayout *hboxMain;
+
+			// Directory table.
+			QFrame *fraDirTable;
+			QGridLayout *gridDirTable;
+			QLabel *lblDirImage;
+			QLabel *lblDirAStatus;
+			QLabel *lblDirBStatus;
+			QPushButton *btnDirA;
+			QPushButton *btnDirB;
+
+			// Block table.
+			QFrame *fraBlockTable;
+			QGridLayout *gridBlockTable;
+			QLabel *lblBlockImage;
+			QLabel *lblBlockAStatus;
+			QLabel *lblBlockBStatus;
+			QPushButton *btnBlockA;
+			QPushButton *btnBlockB;
+
+			void setupUi(QWidget *TableSelect);
+			void retranslateUi(QWidget *TableSelect);
+		};
+		Ui_TableSelect ui;
 
 		GcnCard *card;
 
@@ -100,6 +127,159 @@ TableSelectPrivate::TableSelectPrivate(TableSelect *q)
 
 TableSelectPrivate::~TableSelectPrivate()
 { }
+
+/**
+ * Initialize the UI.
+ * @param TableSelect TableSelect.
+ */
+void TableSelectPrivate::Ui_TableSelect::setupUi(QWidget *TableSelect)
+{
+	if (TableSelect->objectName().isEmpty())
+		TableSelect->setObjectName(QLatin1String("TableSelect"));
+
+	// Icon size. [TODO: Where to determine icon size?]
+	const QSize qIconSz(TableSelectPrivate::iconSz, TableSelectPrivate::iconSz);
+
+	hboxMain = new QHBoxLayout(TableSelect);
+	hboxMain->setContentsMargins(0, 0, 0, 0);
+	hboxMain->setObjectName(QLatin1String("hboxMain"));
+
+	// Directory table selection.
+	fraDirTable = new QFrame(TableSelect);
+	fraDirTable->setObjectName(QLatin1String("fraDirTable"));
+	fraDirTable->setFrameShape(QFrame::NoFrame);
+	fraDirTable->setFrameShadow(QFrame::Plain);
+
+	gridDirTable = new QGridLayout(fraDirTable);
+	gridDirTable->setObjectName(QLatin1String("gridDirTable"));
+	gridDirTable->setContentsMargins(0, 0, 0, 0);
+	gridDirTable->setVerticalSpacing(0);
+
+	lblDirImage = new QLabel(fraDirTable);
+	lblDirImage->setObjectName(QLatin1String("lblDirImage"));
+	gridDirTable->addWidget(lblDirImage, 0, 0, 1, 1);
+
+	QIcon iconDirTable = McRecoverQApplication::StandardIcon(
+		QStyle::SP_DirClosedIcon, nullptr, lblDirImage);
+	lblDirImage->setPixmap(iconDirTable.pixmap(qIconSz));
+
+	// TODO: Dynamically generate buttons and status labels
+	// depending on the number of dir/block tables.
+	btnDirA = new QPushButton(fraDirTable);
+	btnDirA->setObjectName(QLatin1String("btnDirA"));
+	QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	sizePolicy.setHorizontalStretch(0);
+	sizePolicy.setVerticalStretch(0);
+	sizePolicy.setHeightForWidth(btnDirA->sizePolicy().hasHeightForWidth());
+	btnDirA->setSizePolicy(sizePolicy);
+	btnDirA->setMinimumSize(QSize(23, 23));
+	btnDirA->setMaximumSize(QSize(23, 23));
+	btnDirA->setBaseSize(QSize(23, 23));
+	btnDirA->setText(QLatin1String("A"));
+	btnDirA->setCheckable(true);
+	btnDirA->setAutoExclusive(true);
+	gridDirTable->addWidget(btnDirA, 0, 1, 1, 1);
+
+	btnDirB = new QPushButton(fraDirTable);
+	btnDirB->setObjectName(QLatin1String("btnDirB"));
+	sizePolicy.setHeightForWidth(btnDirB->sizePolicy().hasHeightForWidth());
+	btnDirB->setSizePolicy(sizePolicy);
+	btnDirB->setMinimumSize(QSize(23, 23));
+	btnDirB->setMaximumSize(QSize(23, 23));
+	btnDirB->setBaseSize(QSize(23, 23));
+	btnDirB->setText(QLatin1String("B"));
+	btnDirB->setCheckable(true);
+	btnDirB->setAutoExclusive(true);
+	gridDirTable->addWidget(btnDirB, 1, 1, 1, 1);
+
+	lblDirAStatus = new QLabel(fraDirTable);
+	lblDirAStatus->setObjectName(QLatin1String("lblDirAStatus"));
+	gridDirTable->addWidget(lblDirAStatus, 0, 2, 1, 1);
+
+	lblDirBStatus = new QLabel(fraDirTable);
+	lblDirBStatus->setObjectName(QLatin1String("lblDirBStatus"));
+	gridDirTable->addWidget(lblDirBStatus, 1, 2, 1, 1);
+
+	// Block table selection.
+	fraBlockTable = new QFrame(TableSelect);
+	fraBlockTable->setObjectName(QLatin1String("fraBlockTable"));
+	fraBlockTable->setFrameShape(QFrame::NoFrame);
+	fraBlockTable->setFrameShadow(QFrame::Plain);
+
+	gridBlockTable = new QGridLayout(fraBlockTable);
+	gridBlockTable->setObjectName(QLatin1String("gridBlockTable"));
+	gridBlockTable->setContentsMargins(0, 0, 0, 0);
+	gridBlockTable->setVerticalSpacing(0);
+
+	lblBlockImage = new QLabel(fraBlockTable);
+	lblBlockImage->setObjectName(QLatin1String("lblBlockImage"));
+	gridBlockTable->addWidget(lblBlockImage, 0, 0, 1, 1);
+
+	QIcon iconBlockTable;
+#ifdef Q_OS_WIN
+	// Win32: Get the icon from Windows Defragmenter.
+	iconBlockTable = McRecoverQApplication::Win32Icon(
+		McRecoverQApplication::W32ICON_DEFRAG, qIconSz);
+	if (iconBlockTable.isNull())
+#endif /* Q_OS_WIN */
+	{
+		iconBlockTable = McRecoverQApplication::IconFromTheme(
+			QLatin1String("partitionmanager"));
+	}
+	lblBlockImage->setPixmap(iconBlockTable.pixmap(qIconSz));
+
+	// TODO: Dynamically generate buttons and status labels
+	// depending on the number of Block/block tables.
+	btnBlockA = new QPushButton(fraBlockTable);
+	btnBlockA->setObjectName(QLatin1String("btnBlockA"));
+	sizePolicy.setHeightForWidth(btnBlockA->sizePolicy().hasHeightForWidth());
+	btnBlockA->setSizePolicy(sizePolicy);
+	btnBlockA->setMinimumSize(QSize(23, 23));
+	btnBlockA->setMaximumSize(QSize(23, 23));
+	btnBlockA->setBaseSize(QSize(23, 23));
+	btnBlockA->setText(QLatin1String("A"));
+	btnBlockA->setCheckable(true);
+	btnBlockA->setAutoExclusive(true);
+	gridBlockTable->addWidget(btnBlockA, 0, 1, 1, 1);
+
+	btnBlockB = new QPushButton(fraBlockTable);
+	btnBlockB->setObjectName(QLatin1String("btnBlockB"));
+	sizePolicy.setHeightForWidth(btnBlockB->sizePolicy().hasHeightForWidth());
+	btnBlockB->setSizePolicy(sizePolicy);
+	btnBlockB->setMinimumSize(QSize(23, 23));
+	btnBlockB->setMaximumSize(QSize(23, 23));
+	btnBlockB->setBaseSize(QSize(23, 23));
+	btnBlockB->setText(QLatin1String("B"));
+	btnBlockB->setCheckable(true);
+	btnBlockB->setAutoExclusive(true);
+	gridBlockTable->addWidget(btnBlockB, 1, 1, 1, 1);
+
+	lblBlockAStatus = new QLabel(fraBlockTable);
+	lblBlockAStatus->setObjectName(QLatin1String("lblBlockAStatus"));
+	gridBlockTable->addWidget(lblBlockAStatus, 0, 2, 1, 1);
+
+	lblBlockBStatus = new QLabel(fraBlockTable);
+	lblBlockBStatus->setObjectName(QLatin1String("lblBlockBStatus"));
+	gridBlockTable->addWidget(lblBlockBStatus, 1, 2, 1, 1);
+
+	hboxMain->addWidget(fraDirTable);
+	hboxMain->addWidget(fraBlockTable);
+
+	retranslateUi(TableSelect);
+}
+
+/**
+ * Initialize the UI.
+ * @param TableSelect TableSelect.
+ */
+void TableSelectPrivate::Ui_TableSelect::retranslateUi(QWidget *TableSelect)
+{
+#ifndef QT_NO_TOOLTIP
+        lblDirImage->setToolTip(TableSelect::tr("Directory Table"));
+	lblBlockImage->setToolTip(TableSelect::tr("Block Table"));
+#endif // QT_NO_TOOLTIP
+        Q_UNUSED(TableSelect);
+}
 
 /**
  * Update the display for a set of items.
@@ -247,26 +427,6 @@ TableSelect::TableSelect(QWidget *parent)
 {
 	Q_D(TableSelect);
 	d->ui.setupUi(this);
-
-	// Set the icons.
-	// TODO: Where to determine icon size?
-	QSize qIconSz(TableSelectPrivate::iconSz, TableSelectPrivate::iconSz);
-
-	QIcon iconDirTable = McRecoverQApplication::StandardIcon(
-		QStyle::SP_DirClosedIcon, nullptr, d->ui.lblDirImage);
-	d->ui.lblDirImage->setPixmap(iconDirTable.pixmap(qIconSz));
-
-	QIcon iconBlockTable;
-#ifdef Q_OS_WIN
-	// Win32: Get the icon from Windows Defragmenter.
-	iconBlockTable = McRecoverQApplication::Win32Icon(
-		McRecoverQApplication::W32ICON_DEFRAG, qIconSz);
-#endif /* Q_OS_WIN */
-	if (iconBlockTable.isNull()) {
-		iconBlockTable = McRecoverQApplication::IconFromTheme(
-			QLatin1String("partitionmanager"));
-	}
-	d->ui.lblBlockImage->setPixmap(iconBlockTable.pixmap(qIconSz));
 
 	// Connect QAction signals to the QSignalMappers.
 	QObject::connect(d->ui.btnDirA, SIGNAL(clicked()),

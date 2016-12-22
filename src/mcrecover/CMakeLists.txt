@@ -355,7 +355,6 @@ SET(mcrecover_WINDOW_UIS
 SET(mcrecover_WIDGET_UIS
 	widgets/FileView.ui
 	widgets/CardView.ui
-	widgets/TableSelect.ui
 	)
 
 # File edtors.
