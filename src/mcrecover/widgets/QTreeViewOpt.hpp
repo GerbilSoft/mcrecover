@@ -43,10 +43,10 @@ class QTreeViewOpt : public QTreeView
 #if QT_VERSION >= 0x050000
 		virtual void dataChanged(const QModelIndex &topLeft,
 			const QModelIndex &bottomRight,
-			const QVector<int> &roles = QVector<int>()) override;
+			const QVector<int> &roles = QVector<int>()) final;
 #else /* QT_VERSION < 0x050000 */
 		virtual void dataChanged(const QModelIndex &topLeft,
-			const QModelIndex &bottomRight) override;
+			const QModelIndex &bottomRight) final;
 #endif
 
 	protected slots:
@@ -54,8 +54,8 @@ class QTreeViewOpt : public QTreeView
 
 	/** Shh... it's a secret to everybody. **/
 	protected:
-		virtual void keyPressEvent(QKeyEvent *event) override;
-		virtual void focusOutEvent(QFocusEvent *event) override;
+		virtual void keyPressEvent(QKeyEvent *event) final;
+		virtual void focusOutEvent(QFocusEvent *event) final;
 	signals:
 		void keyPress(QKeyEvent *event);
 		void focusOut(QFocusEvent *event);
