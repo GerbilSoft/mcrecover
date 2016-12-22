@@ -30,15 +30,13 @@ class SAEditorPrivate;
 class SAEditor : public EditorWidget
 {
 	Q_OBJECT
-	typedef EditorWidget super;
 
 	public:
 		explicit SAEditor(QWidget *parent = nullptr);
-		virtual ~SAEditor();
 
-	protected:
-		Q_DECLARE_PRIVATE(SAEditor)
 	private:
+		typedef EditorWidget super;
+		Q_DECLARE_PRIVATE(SAEditor)
 		Q_DISABLE_COPY(SAEditor)
 
 	protected:

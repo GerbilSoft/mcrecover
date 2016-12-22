@@ -29,7 +29,6 @@ struct _sa_save_slot;
 class SAEditWidget : public QWidget
 {
 	Q_OBJECT
-	typedef QWidget super;
 
 	Q_PROPERTY(bool modified READ isModified NOTIFY hasBeenModified)
 
@@ -39,6 +38,7 @@ class SAEditWidget : public QWidget
 			, m_modified(false) { }
 
 	private:
+		typedef QWidget super;
 		Q_DISABLE_COPY(SAEditWidget)
 
 	signals:

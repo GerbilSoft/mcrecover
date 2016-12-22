@@ -31,16 +31,15 @@ class SASubGamesPrivate;
 class SASubGames : public SADXEditWidget
 {
 	Q_OBJECT
-	typedef SADXEditWidget super;
 
 	public:
 		explicit SASubGames(QWidget *parent = 0);
 		virtual ~SASubGames();
 
-	protected:
+	private:
+		typedef SADXEditWidget super;
 		SASubGamesPrivate *const d_ptr;
 		Q_DECLARE_PRIVATE(SASubGames)
-	private:
 		Q_DISABLE_COPY(SASubGames)
 
 	protected:

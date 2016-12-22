@@ -33,6 +33,7 @@ class SANPCFlags : public BitFlags
 		explicit SANPCFlags(QObject *parent = 0);
 
 	private:
+		typedef BitFlags super;
 		Q_DISABLE_COPY(SANPCFlags)
 
 	public:
@@ -40,7 +41,7 @@ class SANPCFlags : public BitFlags
 		 * Get a description of the type of flag that is represented by the class.
 		 * @return Flag type, e.g. "Event".
 		 */
-		virtual QString flagType(void) const override;
+		virtual QString flagType(void) const final;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SANPCFLAGS_HPP__ */

@@ -58,9 +58,9 @@ class SAEditorPrivate : public EditorWidgetPrivate
 		explicit SAEditorPrivate(SAEditor *q);
 		virtual ~SAEditorPrivate();
 
-	protected:
-		Q_DECLARE_PUBLIC(SAEditor)
 	private:
+		typedef EditorWidgetPrivate super;
+		Q_DECLARE_PUBLIC(SAEditor)
 		Q_DISABLE_COPY(SAEditorPrivate)
 
 	public:
@@ -117,7 +117,7 @@ class SAEditorPrivate : public EditorWidgetPrivate
 };
 
 SAEditorPrivate::SAEditorPrivate(SAEditor* q)
-	: EditorWidgetPrivate(q)
+	: super(q)
 	, saEventFlagsModel(nullptr)
 	, saNPCFlagsModel(nullptr)
 	, sadxMissionFlagsModel(nullptr)
@@ -353,12 +353,13 @@ void SAEditorPrivate::byteswap_sadx_extra_save_slot(sadx_extra_save_slot *sadx_e
  * @param parent Parent widget.
  */
 SAEditor::SAEditor(QWidget *parent)
-	: EditorWidget(new SAEditorPrivate(this), parent)
+	: super(new SAEditorPrivate(this), parent)
 {
 	Q_D(SAEditor);
 	d->ui.setupUi(this);
 
 	// Initialize the SAEditWidget vector.
+	d->saEditWidgets.reserve(6);
 	d->saEditWidgets.append(d->ui.saGeneral);
 	d->saEditWidgets.append(d->ui.saAdventure);
 	d->saEditWidgets.append(d->ui.saLevelStats);
@@ -367,6 +368,7 @@ SAEditor::SAEditor(QWidget *parent)
 	d->saEditWidgets.append(d->ui.saLevelClearCount);
 
 	// Initialize the SADXEditWidget vector.
+	d->saEditWidgets.reserve(3);
 	d->sadxEditWidgets.append(d->ui.saGeneral);
 	d->sadxEditWidgets.append(d->ui.saLevelStats);
 	d->sadxEditWidgets.append(d->ui.saSubGames);
@@ -385,14 +387,6 @@ SAEditor::SAEditor(QWidget *parent)
 	d->sadxMissionFlagsModel = new ByteFlagsModel(this);
 	d->sadxMissionFlagsModel->setByteFlags(&d->sadxMissionFlags);
 	d->ui.sadxMissionFlagsView->setByteFlagsModel(d->sadxMissionFlagsModel);
-}
-
-/**
- * Shut down the Sonic Adventure save file editor.
- */
-SAEditor::~SAEditor()
-{
-	// EditorWidget base class deletes d_ptr.
 }
 
 /**

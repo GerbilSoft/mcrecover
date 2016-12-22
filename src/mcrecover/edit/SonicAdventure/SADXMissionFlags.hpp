@@ -33,10 +33,10 @@ class SADXMissionFlags : public ByteFlags
 		explicit SADXMissionFlags(QObject *parent = 0);
 		virtual ~SADXMissionFlags();
 
-	protected:
+	private:
+		typedef ByteFlags super;
 		SADXMissionFlagsPrivate *d_ptr;
 		Q_DECLARE_PRIVATE(SADXMissionFlags)
-	private:
 		Q_DISABLE_COPY(SADXMissionFlags)
 
 	public:
@@ -44,14 +44,14 @@ class SADXMissionFlags : public ByteFlags
 		 * Get a description of the type of object that is represented by the class.
 		 * @return Flag type, e.g. "Mission".
 		 */
-		virtual QString objectType(void) const override;
+		virtual QString objectType(void) const final;
 
 		/**
 		 * Get a description of the type of flag represented by a given bit.
 		 * @param bit Bit index. (LSB == 0)
 		 * @return Flag type, e.g. "Completed". (If bit is unused, empty QString is returned.)
 		 */
-		virtual QString flagType(int bit) const override;
+		virtual QString flagType(int bit) const final;
 
 		/**
 		 * Get a character icon representing a flag.
@@ -59,7 +59,7 @@ class SADXMissionFlags : public ByteFlags
 		 * @param id Object ID.
 		 * @return Character icon.
 		 */
-		virtual QPixmap icon(int id) const;
+		virtual QPixmap icon(int id) const final;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SADXMISSIONFLAGS_HPP__ */

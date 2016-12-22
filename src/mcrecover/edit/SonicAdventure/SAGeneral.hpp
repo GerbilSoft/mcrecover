@@ -31,16 +31,15 @@ class SAGeneralPrivate;
 class SAGeneral : public SADXEditWidget
 {
 	Q_OBJECT
-	typedef SADXEditWidget super;
 
 	public:
 		explicit SAGeneral(QWidget *parent = 0);
 		virtual ~SAGeneral();
 
-	protected:
+	private:
+		typedef SADXEditWidget super;
 		SAGeneralPrivate *const d_ptr;
 		Q_DECLARE_PRIVATE(SAGeneral)
-	private:
 		Q_DISABLE_COPY(SAGeneral)
 
 	protected:

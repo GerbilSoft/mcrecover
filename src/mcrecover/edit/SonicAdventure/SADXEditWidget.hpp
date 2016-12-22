@@ -29,13 +29,13 @@ struct _sadx_extra_save_slot;
 class SADXEditWidget : public SAEditWidget
 {
 	Q_OBJECT
-	typedef SAEditWidget super;
 
 	public:
 		explicit SADXEditWidget(QWidget *parent = 0)
 			: super(parent) { }
 
 	private:
+		typedef SAEditWidget super;
 		Q_DISABLE_COPY(SADXEditWidget)
 
 	public:

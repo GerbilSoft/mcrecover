@@ -30,16 +30,15 @@ class SAAdventurePrivate;
 class SAAdventure : public SAEditWidget
 {
 	Q_OBJECT
-	typedef SAEditWidget super;
 
 	public:
 		explicit SAAdventure(QWidget *parent = 0);
 		virtual ~SAAdventure();
 
-	protected:
+	private:
+		typedef SAEditWidget super;
 		SAAdventurePrivate *const d_ptr;
 		Q_DECLARE_PRIVATE(SAAdventure)
-	private:
 		Q_DISABLE_COPY(SAAdventure)
 
 	protected:

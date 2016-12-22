@@ -31,16 +31,15 @@ class SALevelStatsPrivate;
 class SALevelStats : public SADXEditWidget
 {
 	Q_OBJECT
-	typedef SADXEditWidget super;
 
 	public:
 		explicit SALevelStats(QWidget *parent = 0);
 		virtual ~SALevelStats();
 
-	protected:
+	private:
+		typedef SADXEditWidget super;
 		SALevelStatsPrivate *const d_ptr;
 		Q_DECLARE_PRIVATE(SALevelStats)
-	private:
 		Q_DISABLE_COPY(SALevelStats)
 
 	protected:

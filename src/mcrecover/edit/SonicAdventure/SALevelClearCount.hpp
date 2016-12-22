@@ -30,16 +30,15 @@ class SALevelClearCountPrivate;
 class SALevelClearCount : public SAEditWidget
 {
 	Q_OBJECT
-	typedef SAEditWidget super;
 
 	public:
 		explicit SALevelClearCount(QWidget *parent = 0);
 		virtual ~SALevelClearCount();
 
-	protected:
+	private:
+		typedef SAEditWidget super;
 		SALevelClearCountPrivate *const d_ptr;
 		Q_DECLARE_PRIVATE(SALevelClearCount)
-	private:
 		Q_DISABLE_COPY(SALevelClearCount)
 
 	protected:

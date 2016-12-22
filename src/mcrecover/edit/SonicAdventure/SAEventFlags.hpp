@@ -33,6 +33,7 @@ class SAEventFlags : public BitFlags
 		explicit SAEventFlags(QObject *parent = 0);
 
 	private:
+		typedef BitFlags super;
 		Q_DISABLE_COPY(SAEventFlags)
 
 	public:
@@ -40,13 +41,13 @@ class SAEventFlags : public BitFlags
 		 * Get a description of the type of flag that is represented by the class.
 		 * @return Flag type, e.g. "Event".
 		 */
-		virtual QString flagType(void) const override;
+		virtual QString flagType(void) const final;
 
 		/**
 		 * Get the desired page size for the BitFlagsModel.
 		 * @return Page size.
 		 */
-		virtual int pageSize(void) const override;
+		virtual int pageSize(void) const final;
 
 		/**
 		 * Get the name for a given page of data.
@@ -57,7 +58,7 @@ class SAEventFlags : public BitFlags
 		 * @param page Page number.
 		 * @return Page name.
 		 */
-		virtual QString pageName(int page) const override;
+		virtual QString pageName(int page) const final;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAEVENTFLAGS_HPP__ */

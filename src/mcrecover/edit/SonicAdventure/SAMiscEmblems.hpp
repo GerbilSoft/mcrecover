@@ -30,16 +30,15 @@ class SAMiscEmblemsPrivate;
 class SAMiscEmblems : public SAEditWidget
 {
 	Q_OBJECT
-	typedef SAEditWidget super;
 
 	public:
 		explicit SAMiscEmblems(QWidget *parent = 0);
 		virtual ~SAMiscEmblems();
 
-	protected:
+	private:
+		typedef SAEditWidget super;
 		SAMiscEmblemsPrivate *const d_ptr;
 		Q_DECLARE_PRIVATE(SAMiscEmblems)
-	private:
 		Q_DISABLE_COPY(SAMiscEmblems)
 
 	protected:

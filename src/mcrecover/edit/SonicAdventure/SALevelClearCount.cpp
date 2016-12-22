@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * SALevelClearCount.hpp: Sonic Adventure - Level Clear Count editor.      *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2016 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -54,10 +54,9 @@ class SALevelClearCountPrivate
 		explicit SALevelClearCountPrivate(SALevelClearCount *q);
 		~SALevelClearCountPrivate();
 
-	protected:
+	private:
 		SALevelClearCount *const q_ptr;
 		Q_DECLARE_PUBLIC(SALevelClearCount)
-	private:
 		Q_DISABLE_COPY(SALevelClearCountPrivate)
 
 	public:
