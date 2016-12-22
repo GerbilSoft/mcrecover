@@ -38,10 +38,18 @@ QTreeViewOpt::QTreeViewOpt(QWidget *parent)
 
 /**
  * Data has changed in the item model.
- * @param topLeft Top-left item.
- * @param bottomRight Bottom-right item.
+ * @param topLeft	[in] Top-left item.
+ * @param bottomRight	[in] Bottom-right item.
+ * @param roles		[in] (Qt5) Roles that have changed.
  */
-void QTreeViewOpt::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+#if QT_VERSION >= 0x050000
+void QTreeViewOpt::dataChanged(const QModelIndex &topLeft,
+	const QModelIndex &bottomRight,
+	const QVector<int> &roles)
+#else /* QT_VERSION < 0x050000 */
+void QTreeViewOpt::dataChanged(const QModelIndex &topLeft,
+	const QModelIndex &bottomRight)
+#endif
 {
 	bool propagateEvent = true;
 	// TODO: Support for checking multiple items.
@@ -61,7 +69,11 @@ void QTreeViewOpt::dataChanged(const QModelIndex &topLeft, const QModelIndex &bo
 
 	if (propagateEvent) {
 		// Propagate the dataChanged() event.
+#if QT_VERSION >= 0x050000
+		super::dataChanged(topLeft, bottomRight, roles);
+#else /* QT_VERSION < 0x050000 */
 		super::dataChanged(topLeft, bottomRight);
+#endif
 	}
 }
 

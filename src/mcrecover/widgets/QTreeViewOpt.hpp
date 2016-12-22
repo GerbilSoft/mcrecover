@@ -40,7 +40,14 @@ class QTreeViewOpt : public QTreeView
 		Q_DISABLE_COPY(QTreeViewOpt);
 
 	public:
-		virtual void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+#if QT_VERSION >= 0x050000
+		virtual void dataChanged(const QModelIndex &topLeft,
+			const QModelIndex &bottomRight,
+			const QVector<int> &roles = QVector<int>()) override;
+#else /* QT_VERSION < 0x050000 */
+		virtual void dataChanged(const QModelIndex &topLeft,
+			const QModelIndex &bottomRight) override;
+#endif
 
 	protected slots:
 		void showColumnContextMenu(const QPoint &point);
