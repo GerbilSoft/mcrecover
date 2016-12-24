@@ -140,7 +140,7 @@ int CardPrivate::open(const QString &filename, QIODevice::OpenModeFlag mode)
 		// Too many blocks.
 		// Only read up to maxBlocks.
 		this->errors |= Card::MCE_SZ_TOO_BIG;
-		this->filesize = (maxBlocks * blockSize);
+		this->filesize = (static_cast<quint64>(maxBlocks) * blockSize);
 	}
 
 	if (!isPow2(this->filesize)) {
