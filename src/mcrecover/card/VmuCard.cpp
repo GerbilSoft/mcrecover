@@ -563,13 +563,13 @@ VmuCard *VmuCard::format(const QString& filename, QObject *parent)
 /**
  * Set the active Directory Table index.
  * NOTE: This function reloads the file list, without lost files.
- * @param idx Active Directory Table index. (0 or 1)
+ * @param idx Active Directory Table index.
  */
 void VmuCard::setActiveDatIdx(int idx)
 {
 	if (!isOpen())
 		return;
-	// FIXME: Does DC have multiple directory tables?
+	// DC has a single directory table.
 	Q_UNUSED(idx)
 }
 
@@ -582,7 +582,7 @@ void VmuCard::setActiveBatIdx(int idx)
 {
 	if (!isOpen())
 		return;
-	// FIXME: Does DC have multiple block tables?
+	// DC has a single block table.
 	Q_UNUSED(idx)
 }
 

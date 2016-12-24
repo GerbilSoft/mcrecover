@@ -64,10 +64,10 @@ class Card : public QObject
 	// File system.
 	// TODO: Notify signals for activeDatIdx / activeBatIdx?
 	Q_PROPERTY(int datCount READ datCount)
-	Q_PROPERTY(int activeDatIdx READ activeDatIdx WRITE setActiveDatIdx /*NOTIFY activeDatIdxChanged*/)
+	Q_PROPERTY(int activeDatIdx READ activeDatIdx WRITE setActiveDatIdx NOTIFY activeDatIdxChanged)
 	Q_PROPERTY(int activeDatHdrIdx READ activeDatHdrIdx)
 	Q_PROPERTY(int batCount READ batCount)
-	Q_PROPERTY(int activeBatIdx READ activeBatIdx WRITE setActiveBatIdx /*NOTIFY activeBatIdxChanged*/)
+	Q_PROPERTY(int activeBatIdx READ activeBatIdx WRITE setActiveBatIdx NOTIFY activeBatIdxChanged)
 	Q_PROPERTY(int activeBatHdrIdx READ activeBatHdrIdx)
 
 	// File management.
@@ -103,6 +103,18 @@ class Card : public QObject
 		 * @param color New color.
 		 */
 		void colorChanged(const QColor &color);
+
+		/**
+		 * Active Directory Table index has changed.
+		 * @param idx New active Directory Table index.
+		 */
+		void activeDatIdxChanged(int idx);
+
+		/**
+		 * Active Block Table index has changed.
+		 * @param idx New active Block Table index.
+		 */
+		void activeBatIdxChanged(int idx);
 
 	public:
 		/**

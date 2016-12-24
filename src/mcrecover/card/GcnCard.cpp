@@ -854,8 +854,12 @@ void GcnCard::setActiveDatIdx(int idx)
 	Q_D(GcnCard);
 	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_dat_int))
 		return;
+	const int old_idx = d->dat_info.active;
 	d->mc_dat = &d->mc_dat_int[idx];
 	d->loadGcnFileList();
+	if (old_idx != idx) {
+		emit activeDatIdxChanged(idx);
+	}
 }
 
 /**
@@ -870,8 +874,12 @@ void GcnCard::setActiveBatIdx(int idx)
 	Q_D(GcnCard);
 	if (idx < 0 || idx >= NUM_ELEMENTS(d->mc_bat_int))
 		return;
+	const int old_idx = d->dat_info.active;
 	d->mc_bat = &d->mc_bat_int[idx];
 	d->loadGcnFileList();
+	if (old_idx != idx) {
+		emit activeBatIdxChanged(idx);
+	}
 }
 
 /** Card information **/
