@@ -291,18 +291,9 @@ void CardViewPrivate::updateWidgetDisplay(void)
 	}
 	ui.lblEncoding->setText(encoding);
 
-	// FIXME: Move dir/block table selection down to Card,
-	// and add a way for each Card subclass to indicate
-	// how many of each table it has.
-	if (gcnCard) {
-		// Show the dir/block table select widget.
-		ui.tableSelect->setCard(gcnCard);
-		ui.tableSelect->setVisible(true);
-	} else {
-		// Not a GCN card.
-		ui.tableSelect->setVisible(false);
-		ui.tableSelect->setCard(nullptr);
-	}
+	// Show the dir/block table select widget.
+	ui.tableSelect->setCard(card);
+	ui.tableSelect->setVisible(true);
 }
 
 /** MemCardFileView **/

@@ -24,16 +24,15 @@
 
 #include <QWidget>
 
-class GcnCard;
+class Card;
 
 class TableSelectPrivate;
-
 class TableSelect : public QWidget
 {
 	Q_OBJECT
 	typedef QWidget super;
 
-	Q_PROPERTY(GcnCard* card READ card WRITE setCard)
+	Q_PROPERTY(Card* card READ card WRITE setCard)
 	Q_PROPERTY(int activeDatIdx READ activeDatIdx WRITE setActiveDatIdx)
 	Q_PROPERTY(int activeBatIdx READ activeBatIdx WRITE setActiveBatIdx)
 
@@ -49,16 +48,16 @@ class TableSelect : public QWidget
 
 	public:
 		/**
-		 * Get the GcnCard being displayed.
-		 * @return GcnCard.
+		 * Get the Card being displayed.
+		 * @return Card.
 		 */
-		GcnCard *card(void) const;
+		Card *card(void) const;
 
 		/**
-		 * Set the GcnCard being displayed.
-		 * @param file GcnCard.
+		 * Set the Card being displayed.
+		 * @param file Card.
 		 */
-		void setCard(GcnCard *card);
+		void setCard(Card *card);
 
 	protected:
 		/** Events. **/
@@ -85,7 +84,7 @@ class TableSelect : public QWidget
 		/** Internal slots. **/
 
 		/**
-		 * GcnCard object was destroyed.
+		 * Card object was destroyed.
 		 * @param obj QObject that was destroyed.
 		 */
 		void memCard_destroyed_slot(QObject *obj = 0);

@@ -21,7 +21,7 @@
 
 #include "TableSelect.hpp"
 
-#include "card/GcnCard.hpp"
+#include "card/Card.hpp"
 #include "McRecoverQApplication.hpp"
 
 // Qt includes.
@@ -69,14 +69,14 @@ class TableSelectPrivate
 		};
 		Ui_TableSelect ui;
 
-		GcnCard *card;
+		Card *card;
 
 		// Icon size.
 		static const int iconSz = 16;
 
 	protected:
 		/**
-		 * Update the DAT/BAT widget count based on the active GcnCard.
+		 * Update the DAT/BAT widget count based on the active Card.
 		 */
 		void updateWidgetCount(void);
 
@@ -209,12 +209,12 @@ void TableSelectPrivate::Ui_TableSelect::retranslateUi(QWidget *TableSelect)
 }
 
 /**
- * Update the DAT/BAT widget count based on the active GcnCard.
+ * Update the DAT/BAT widget count based on the active Card.
  */
 void TableSelectPrivate::updateWidgetCount(void)
 {
 	if (!card) {
-		// No GcnCard.
+		// No Card.
 		return;
 	}
 
@@ -263,7 +263,7 @@ void TableSelectPrivate::updateWidgetCount(void)
 
 	// Check if we need to update Block widgets.
 	const int batCount = card->batCount();
-	if (batCount < ui.btnDir.size()) {
+	if (batCount < ui.btnBlock.size()) {
 		// Too many Block widgets.
 		// Remove unneeded ones.
 		for (int i = ui.btnBlock.size()-1; i >= batCount; i--) {
@@ -481,24 +481,24 @@ TableSelect::~TableSelect()
 }
 
 /**
- * Get the GcnCard being displayed.
- * @return GcnCard.
+ * Get the Card being displayed.
+ * @return Card.
  */
-GcnCard *TableSelect::card(void) const
+Card *TableSelect::card(void) const
 {
 	Q_D(const TableSelect);
 	return d->card;
 }
 
 /**
- * Set the GcnCard being displayed.
- * @param card GcnCard.
+ * Set the Card being displayed.
+ * @param card Card.
  */
-void TableSelect::setCard(GcnCard *card)
+void TableSelect::setCard(Card *card)
 {
 	Q_D(TableSelect);
 
-	// Disconnect the GcnCard's destroyed() signal if a GcnCard is already set.
+	// Disconnect the Card's destroyed() signal if a Card is already set.
 	if (d->card) {
 		disconnect(d->card, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(memCard_destroyed_slot(QObject*)));
@@ -506,7 +506,7 @@ void TableSelect::setCard(GcnCard *card)
 
 	d->card = card;
 
-	// Connect the GcnCard's destroyed() signal.
+	// Connect the Card's destroyed() signal.
 	if (d->card) {
 		connect(d->card, SIGNAL(destroyed(QObject*)),
 			this, SLOT(memCard_destroyed_slot(QObject*)));
@@ -564,7 +564,7 @@ int TableSelect::activeBatIdx(void) const
 /** Internal slots. **/
 
 /**
- * GcnCard object was destroyed.
+ * Card object was destroyed.
  * @param obj QObject that was destroyed.
  */
 void TableSelect::memCard_destroyed_slot(QObject *obj)
@@ -572,7 +572,7 @@ void TableSelect::memCard_destroyed_slot(QObject *obj)
 	Q_D(TableSelect);
 
 	if (obj == d->card) {
-		// Our GcnCard was destroyed.
+		// Our Card was destroyed.
 		d->card = nullptr;
 
 		// Update the widget display.
