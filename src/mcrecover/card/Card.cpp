@@ -68,7 +68,7 @@ CardPrivate::CardPrivate(Card *q, uint32_t blockSize,
 	dat_info.valid = 0;
 
 	// Block Table information.
-	bat_info.count = dat_count;
+	bat_info.count = bat_count;
 	bat_info.active = -1;
 	bat_info.active_hdr = 0;
 	bat_info.valid = 0;
