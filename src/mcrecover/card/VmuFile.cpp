@@ -162,22 +162,34 @@ VmuFilePrivate::VmuFilePrivate(VmuFile *q, VmuCard *card,
 	// the filesystem is heavily corrupted, or the file
 	// isn't actually a GCN Memory Card image.
 	int size = dirEntry->size;
-	if (size > card->totalUserBlocks())
+	if (size > card->totalUserBlocks()) {
 		size = card->totalUserBlocks();
+	}
 
 	// Load the FAT entries.
 	fatEntries.clear();
 	fatEntries.reserve(size);
+
 	// TODO: Add a 'lastValidBlock' function?
-	uint16_t totalUserBlocks = card->totalUserBlocks();
-	uint16_t next_block = dirEntry->address;
-	if (next_block < totalUserBlocks && next_block != VMU_FAT_BLOCK_LAST_IN_FILE) {
+	int totalUserBlocks = card->totalUserBlocks();
+	if (totalUserBlocks <= 0) {
+		// Invalid block count.
+		this->dirEntry = nullptr;
+		this->mc_fat = nullptr;
+		return;
+	}
+
+	// NOTE: DC uses 8-bit block indexes, but the
+	// starting address is 16-bit.
+	uint32_t next_block = dirEntry->address;
+	if (next_block < (uint32_t)totalUserBlocks && next_block != VMU_FAT_BLOCK_LAST_IN_FILE) {
 		fatEntries.append(next_block);
 
 		// Go through the rest of the blocks.
 		for (int i = size; i > 1; i--) {
-			next_block = mc_fat->fat[next_block];
-			if (next_block >= totalUserBlocks ||
+			// NOTE: FAT only has enough entries for 256 blocks.
+			next_block = mc_fat->fat[next_block & 0xFF];
+			if (next_block >= (uint32_t)totalUserBlocks ||
 			    next_block == VMU_FAT_BLOCK_LAST_IN_FILE)
 			{
 				// Next block is invalid.
