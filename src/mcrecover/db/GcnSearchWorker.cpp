@@ -467,6 +467,7 @@ int GcnSearchWorker::searchMemCard(void)
 
 	fprintf(stderr, "Finished scanning memory card.\n");
 	fprintf(stderr, "--------------------------------\n");
+	free(buf);
 	return d->filesFoundList.size();
 }
 
