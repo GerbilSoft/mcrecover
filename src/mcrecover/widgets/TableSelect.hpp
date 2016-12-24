@@ -89,6 +89,18 @@ class TableSelect : public QWidget
 		 */
 		void memCard_destroyed_slot(QObject *obj = 0);
 
+		/**
+		 * Card's active Directory Table index was changed.
+		 * @param idx New active Directory Table index.
+		 */
+		void memCard_activeDatIdxChanged_slot(int idx);
+
+		/**
+		 * Card's active Block Table index was changed.
+		 * @param idx New active Block Table index.
+		 */
+		void memCard_activeBatIdxChanged_slot(int idx);
+
 	public slots:
 		/** Public slots. **/
 

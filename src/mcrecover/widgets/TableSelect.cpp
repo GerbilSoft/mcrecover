@@ -38,12 +38,10 @@ class TableSelectPrivate
 {
 	public:
 		explicit TableSelectPrivate(TableSelect *q);
-		~TableSelectPrivate();
 
-	protected:
+	private:
 		TableSelect *const q_ptr;
 		Q_DECLARE_PUBLIC(TableSelect)
-	private:
 		Q_DISABLE_COPY(TableSelectPrivate)
 
 	public:
@@ -98,12 +96,6 @@ class TableSelectPrivate
 TableSelectPrivate::TableSelectPrivate(TableSelect *q)
 	: q_ptr(q)
 	, card(nullptr)
-{
-	// TODO: Handle the case where active tables are changed in
-	// the card outside of TableSelect?
-}
-
-TableSelectPrivate::~TableSelectPrivate()
 { }
 
 /**
@@ -473,18 +465,26 @@ void TableSelect::setCard(Card *card)
 {
 	Q_D(TableSelect);
 
-	// Disconnect the Card's destroyed() signal if a Card is already set.
+	// Disconnect the Card's signals if a Card is already set.
 	if (d->card) {
 		disconnect(d->card, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(memCard_destroyed_slot(QObject*)));
+		disconnect(d->card, SIGNAL(activeDatIdxChanged(int)),
+			   this, SLOT(memCard_activeDatIdxChanged_slot(int)));
+		disconnect(d->card, SIGNAL(activeBatIdxChanged(int)),
+			   this, SLOT(memCard_activeBatIdxChanged_slot(int)));
 	}
 
 	d->card = card;
 
-	// Connect the Card's destroyed() signal.
+	// Connect the Card's signals.
 	if (d->card) {
 		connect(d->card, SIGNAL(destroyed(QObject*)),
 			this, SLOT(memCard_destroyed_slot(QObject*)));
+		connect(d->card, SIGNAL(activeDatIdxChanged(int)),
+			this, SLOT(memCard_activeDatIdxChanged_slot(int)));
+		connect(d->card, SIGNAL(activeBatIdxChanged(int)),
+			this, SLOT(memCard_activeBatIdxChanged_slot(int)));
 	}
 
 	// Update the widget display.
@@ -552,6 +552,34 @@ void TableSelect::memCard_destroyed_slot(QObject *obj)
 
 		// Update the widget display.
 		d->updateWidgetDisplay();
+	}
+}
+
+/**
+ * Card's active Directory Table index was changed.
+ * @param idx New active Directory Table index.
+ */
+void TableSelect::memCard_activeDatIdxChanged_slot(int idx)
+{
+	// Update the Directory Table buttons without emitting signals.
+	// TODO: VERIFY!
+	Q_D(TableSelect);
+	if (idx >= 0 && idx < d->ui.btnDir.size()) {
+		d->ui.btnDir[idx]->setChecked(true);
+	}
+}
+
+/**
+ * Card's active Block Table index was changed.
+ * @param idx New active Block Table index.
+ */
+void TableSelect::memCard_activeBatIdxChanged_slot(int idx)
+{
+	// Update the Directory Table buttons without emitting signals.
+	// TODO: VERIFY!
+	Q_D(TableSelect);
+	if (idx >= 0 && idx < d->ui.btnBlock.size()) {
+		d->ui.btnBlock[idx]->setChecked(true);
 	}
 }
 
