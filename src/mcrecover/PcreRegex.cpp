@@ -61,6 +61,7 @@ PcreRegex::PcreRegex()
 { }
 
 PcreRegex::PcreRegex(const QString &regex)
+	: m_regex(nullptr)
 {
 	// NOTE: If regex compilation fails, no error will be returned.
 	setRegex(regex);
@@ -69,8 +70,9 @@ PcreRegex::PcreRegex(const QString &regex)
 PcreRegex::~PcreRegex()
 {
 	// Free the compiled PCRE regex if one was allocated.
-	if (m_regex)
+	if (m_regex) {
 		pcre_free(m_regex);
+	}
 }
 
 /**
