@@ -8,8 +8,8 @@ extern "C" {
 #endif
 
 void aes_set_key(const uint8_t *key);
-void aes_decrypt(uint8_t *iv, uint8_t *inbuf, uint8_t *outbuf, unsigned long long len);
-void aes_encrypt(uint8_t *iv, uint8_t *inbuf, uint8_t *outbuf, unsigned long long len);
+void aes_decrypt(uint8_t *iv, const uint8_t *inbuf, uint8_t *outbuf, unsigned long long len);
+void aes_encrypt(uint8_t *iv, const uint8_t *inbuf, uint8_t *outbuf, unsigned long long len);
 
 #ifdef __cplusplus
 }

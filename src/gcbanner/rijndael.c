@@ -368,7 +368,7 @@ void aes_set_key(const uint8_t *key)
 }
 
 // CBC mode decryption
-void aes_decrypt(uint8_t *iv, uint8_t *inbuf, uint8_t *outbuf, unsigned long long len)
+void aes_decrypt(uint8_t *iv, const uint8_t *inbuf, uint8_t *outbuf, unsigned long long len)
 {
 	uint8_t block[16];
 	unsigned int blockno = 0, i;
@@ -378,7 +378,7 @@ void aes_decrypt(uint8_t *iv, uint8_t *inbuf, uint8_t *outbuf, unsigned long lon
 	for (blockno = 0; blockno <= (len / sizeof(block)); blockno++)
 	{
 		unsigned int fraction;
-		uint8_t *ctext_ptr; // Moved here for MSVC compatibility.
+		const uint8_t *ctext_ptr; // Moved here for MSVC compatibility.
 		if (blockno == (len / sizeof(block))) // last block
 		{
 			fraction = len % sizeof(block);
@@ -403,7 +403,7 @@ void aes_decrypt(uint8_t *iv, uint8_t *inbuf, uint8_t *outbuf, unsigned long lon
 }
 
 // CBC mode encryption
-void aes_encrypt(uint8_t *iv, uint8_t *inbuf, uint8_t *outbuf, unsigned long long len)
+void aes_encrypt(uint8_t *iv, const uint8_t *inbuf, uint8_t *outbuf, unsigned long long len)
 {
 	uint8_t block[16];
 	unsigned int blockno = 0, i;
