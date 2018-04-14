@@ -5,9 +5,10 @@ compiler:
   - clang
   - gcc
 
-# Use Ubuntu 14.04 as the build environment.
+# Use Ubuntu 16.04 as the build environment.
+# Ubuntu 14.04's qttools5-dev-tools is missing FindQt5LinguistTools.cmake.
 sudo: required
-dist: trusty
+dist: xenial
 
 # Build dependencies.
 addons:
