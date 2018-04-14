@@ -56,9 +56,6 @@
 /* Define to 1 if we're using our own zlib. */
 #cmakedefine USE_INTERNAL_ZLIB 1
 
-/* Define to 1 if we have pcre16. */
-#cmakedefine HAVE_PCRE16 1
-
 /* Define to 1 if we should enable GIF support using giflib. */
 #cmakedefine USE_GIF 1
 

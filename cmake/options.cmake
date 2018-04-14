@@ -30,9 +30,6 @@ ELSE(NOT WIN32)
 	SET(USE_INTERNAL_PNG 1)
 ENDIF(NOT WIN32)
 
-# Internal PCRE.
-OPTION(USE_INTERNAL_PCRE	"Always use the internal copy of PCRE." 0)
-
 # giflib.
 OPTION(USE_GIF			"Use giflib for GIF exports." 1)
 IF(NOT WIN32)

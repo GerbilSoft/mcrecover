@@ -56,11 +56,6 @@ IF(APPLE)
 	ENDIF(QT_MAC_USE_COCOA)
 ENDIF(APPLE)
 
-# PCRE
-INCLUDE(CheckPCRE)
-INCLUDE_DIRECTORIES(${PCRE_INCLUDE_DIR})
-ADD_DEFINITIONS(${PCRE_DEFINITIONS})
-
 # libpng (AboutDialog only; linked indirectly through libgctools)
 INCLUDE(CheckPNG)
 INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
@@ -78,7 +73,6 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.mcrecover.h.in" "${CMAKE_CURR
 # Sources.
 SET(mcrecover_SRCS
 	mcrecover.cpp
-	PcreRegex.cpp
 	GcnDateTime.cpp
 	IconAnimHelper.cpp
 	McRecoverQApplication.cpp
@@ -442,13 +436,6 @@ SET(MCRECOVER_EXTLIB
 	${ZLIB_LIBRARY}	# Required for zlib info in AboutDialog.
 	)
 TARGET_LINK_LIBRARIES(mcrecover ${MCRECOVER_EXTLIB})
-
-# PCRE
-IF(HAVE_PCRE16)
-	TARGET_LINK_LIBRARIES(mcrecover ${PCRE_PCRE16_LIBRARY})
-ELSE(HAVE_PCRE16)
-	TARGET_LINK_LIBRARIES(mcrecover ${PCRE_PCRE_LIBRARY})
-ENDIF(HAVE_PCRE16)
 
 # Qt libraries
 # NOTE: Libraries have to be linked in reverse order.

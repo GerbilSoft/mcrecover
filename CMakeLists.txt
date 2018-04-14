@@ -99,7 +99,6 @@ SET_PROPERTY(DIRECTORY APPEND
 # NOTE: This has to be done here in addition to
 # the project subdirectories; otherwise, the
 # results may be lost.
-INCLUDE(CheckPCRE)
 INCLUDE(CheckPNG)
 INCLUDE(CheckGIF)
 

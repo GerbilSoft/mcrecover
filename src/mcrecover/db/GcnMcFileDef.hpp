@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnMcFileDef.hpp: GCN Memory Card File Definition class.                *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #ifndef __MCRECOVER_GCNMCFILEDEF_HPP__
@@ -29,8 +28,8 @@
 // Qt includes.
 #include <QtCore/QString>
 #include <QtCore/QHash>
+#include <QtCore/QRegularExpression>
 
-#include "PcreRegex.hpp"
 #include "Checksum.hpp"
 #include "VarModifierDef.hpp"
 
@@ -73,9 +72,9 @@ class GcnMcFileDef {
 			QString gameDesc;	// regex
 			QString fileDesc;	// regex
 
-			// Compiled regular expressions.
-			PcreRegex gameDesc_regex;
-			PcreRegex fileDesc_regex;
+			// Regular expressions.
+			QRegularExpression gameDesc_regex;
+			QRegularExpression fileDesc_regex;
 		} search;
 
 		/**

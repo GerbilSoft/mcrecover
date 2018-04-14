@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * VarReplace.cpp: Variable replacement functions.                         *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #include "VarReplace.hpp"
@@ -205,29 +204,29 @@ QString VarReplace::Exec(const QString &str, const QHash<QString, QString> &vars
 }
 
 /**
- * Combine vectors of GameDesc variables and FileDesc variables into a QHash.
+ * Combine QStringLists of GameDesc variables and FileDesc variables into a QHash.
  * @param gameDescVars GameDesc variables.
  * @param fileDescVars FileDesc variables.
  *
- * NOTE: The first variable in each QVector ($G0, $F0) is
+ * NOTE: The first variable in each match ($G0, $F0) is
  * the full match from PCRE. This usually won't be used,
  * but is included in the variable hash anyway.
  *
  * @return QHash containing the variables. (key == ID)
  */
-QHash<QString, QString> VarReplace::VecsToHash(
-			const QVector<QString> &gameDescVars,
-			const QVector<QString> &fileDescVars)
+QHash<QString, QString> VarReplace::StringListsToHash(
+	const QStringList &gameDescVars,
+	const QStringList &fileDescVars)
 {
 	QHash<QString, QString> vars;
 	QString varName;
 	varName.reserve(4);
 
-	for (int i = 0; i < gameDescVars.size(); i++) {
+	for (int i = gameDescVars.size()-1; i >= 0; i--) {
 		varName = QChar(L'G') + QString::number(i);
 		vars.insert(varName, gameDescVars.at(i));
 	}
-	for (int i = 0; i < fileDescVars.size(); i++) {
+	for (int i = fileDescVars.size()-1; i >= 0; i--) {
 		varName = QChar(L'F') + QString::number(i);
 		vars.insert(varName, fileDescVars.at(i));
 	}

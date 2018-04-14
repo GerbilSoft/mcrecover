@@ -66,13 +66,6 @@ IF(USE_INTERNAL_PNG)
 	SET_EXTLIB_PROPERTIES(png_static)
 ENDIF(USE_INTERNAL_PNG)
 
-IF(USE_INTERNAL_PCRE)
-	# Use the internal copy of pcre. (statically-linked)
-	# PCRE options are defined in pcre/pcre.mcrecover.options.cmake.
-	ADD_SUBDIRECTORY(pcre)
-	SET_EXTLIB_PROPERTIES(pcre16)
-ENDIF(USE_INTERNAL_PCRE)
-
 IF(USE_INTERNAL_GIF)
 	# Use the internal copy of giflib. (statically-linked)
 	ADD_SUBDIRECTORY(giflib)

@@ -25,9 +25,6 @@
 #include "McRecoverQApplication.hpp"
 #include "AboutDialog.hpp"
 
-// PcreRegex is needed to access pcre configuration.
-#include "PcreRegex.hpp"
-
 // GcnCard classes.
 #include "card/GcnCard.hpp"
 #include "card/GcnFile.hpp"
@@ -107,21 +104,10 @@ class McRecoverWindowPrivate
 	public:
 		Ui::McRecoverWindow ui;
 
-		// Is scanning disabled?
-		// (Usually due to PCRE not supporting UTF-8.)
-		bool scanningDisabled;
-
 		// Memory Card.
 		Card *card;
 		MemCardModel *model;
 		MemCardSortFilterProxyModel *proxyModel;
-
-		/**
-		 * Show a warning if the card (or files on the card) are Japanese,
-		 * but either Qt doesn't support Shift-JIS or PCRE doesn't have
-		 * Unicode character properties support.
-		 */
-		void showJpWarning(void);
 
 		/**
 		 * Format a file size
@@ -247,7 +233,6 @@ class McRecoverWindowPrivate
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	: q_ptr(q)
-	, scanningDisabled(false)
 	, card(nullptr)
 	, model(new MemCardModel(q))
 	, proxyModel(new MemCardSortFilterProxyModel(q))
@@ -316,60 +301,6 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 	// TODO: Wait for searchThread to finish?
 	delete searchThread;
 	delete taskbarButtonManager;
-}
-
-/**
- * Show a warning if the card (or files on the card) are Japanese,
- * but either Qt doesn't support Shift-JIS or PCRE doesn't have
- * Unicode character properties support.
- */
-void McRecoverWindowPrivate::showJpWarning(void)
-{
-	const QString prefix = QChar(0x2022) + QChar(L' ');
-	QString msg;
-	int err_count = 0;
-
-	// FIXME: MessageWidget text cannot be retranslated while it's still visible.
-	// FIXME: Mac OS X will use a dylib in the application framework.
-
-	if (!QTextCodec::codecForName("Shift-JIS")) {
-		// Qt doesn't support Shift-JIS.
-		err_count++;
-#ifdef QT_IS_STATIC
-		//: Statically-linked Qt is missing qjpcodecs.
-		msg = prefix + McRecoverWindow::tr(
-			"The internal Qt library was not compiled with Shift-JIS support.");
-#else /* !QT_IS_STATIC */
-		//: Dyanmically-linked Qt is missing qjpcodecs.
-		msg = prefix + McRecoverWindow::tr(
-			"The system Qt library was not compiled with Shift-JIS support.");
-#endif /* QT_IS_STATIC */
-	}
-
-	if (!PcreRegex::PCRE_has_UCP()) {
-		if (err_count > 0) {
-			msg += QChar(L'\n');
-		}
-		err_count++;
-#ifdef PCRE_STATIC
-		//: Statically-linked PCRE is missing Unicode character properties support.
-		msg += prefix + McRecoverWindow::tr(
-			"The internal PCRE library was not compiled with Unicode character properties support.");
-#else /* !PCRE_STATIC */
-		//: Dynamically-linked PCRE is missing Unicode character properties support.
-		msg += prefix + McRecoverWindow::tr(
-			"The system PCRE library was not compiled with Unicode character properties support.");
-#endif /* PCRE_STATIC */
-	}
-
-	if (err_count > 0) {
-		//: Errors occurred while attempting to decode Japanese text.
-		QString osd = McRecoverWindow::tr(
-			"Error(s) occurred while attempting to decode Japanese text:\n%1\n"
-			"Some files with Japanese descriptions might not be found when scanning.", 0, err_count)
-				.arg(msg);
-		ui.msgWidget->showMessage(osd, MessageWidget::ICON_WARNING, 0, card);
-	}
 }
 
 /**
@@ -552,8 +483,7 @@ void McRecoverWindowPrivate::updateActionEnableStatus(void)
 		// Memory card image is loaded.
 		// TODO: Disable open, scan, and save (all) if we're scanning.
 		ui.actionClose->setEnabled(true);
-		if (!scanningDisabled)
-			ui.actionScan->setEnabled(true);
+		ui.actionScan->setEnabled(true);
 		ui.actionSave->setEnabled(
 			ui.lstFileList->selectionModel()->hasSelection());
 		ui.actionSaveAll->setEnabled(card->fileCount() > 0);
@@ -985,28 +915,6 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	d->statusBarManager = new StatusBarManager(d->ui.statusBar, this);
 	d->updateWindowTitle();
 
-	// Check if PCRE supports Unicode.
-	// This means UTF-8 for regular pcre,
-	// and UTF-16 for pcre16.
-	if (!PcreRegex::PCRE_has_Unicode()) {
-		// Unicode is not supported. Disable scanning.
-		d->scanningDisabled = true;
-		d->ui.actionScan->setEnabled(false);
-
-		// FIXME: MessageWidget text cannot be retranslated while it's still visible.
-		// FIXME: Mac OS X will use a dylib in the application framework.
-#ifdef PCRE_STATIC
-		//: Statically-linked PCRE is missing UTF-8 support.
-		QString msg = tr("The internal PCRE library was not compiled with Unicode support.\n"
-				"Scanning for lost files will not work.");
-#else /* !PCRE_STATIC */
-		//: Dynamically-linked PCRE is missing UTF-8 support.
-		QString msg = tr("The system PCRE library was not compiled with Unicode support.\n"
-				"Scanning for lost files will not work.");
-#endif /* PCRE_STATIC */
-		d->ui.msgWidget->showMessage(msg, MessageWidget::ICON_CRITICAL);
-	}
-
 	// Shh... it's a secret to everybody.
 	QObject::connect(d->ui.lstFileList, SIGNAL(keyPress(QKeyEvent*)),
 			 d->herpDerp, SLOT(widget_keyPress(QKeyEvent*)));
@@ -1108,35 +1016,6 @@ void McRecoverWindow::openCard(const QString &filename, int type)
 	// Set the CardView's Card to the
 	// selected card in the QTreeView.
 	d->ui.mcCardView->setCard(d->card);
-
-	// Check if any of the files are Japanese.
-	bool isJapanese = false;
-	if (d->card->encoding() == Card::ENCODING_SHIFTJIS) {
-		isJapanese = true;
-	} else {
-		// TODO: Add a "hasJapaneseCharacters" function.
-		// Files don't have an inherent encoding, and we're
-		// not simply going to check the region value, since
-		// that's GameCube-specific.
-		// Also, optimize this by skipping the whole thing if
-		// PCRE does support UCP.
-#if 0
-		for (int i = 0; i < d->card->fileCount(); i++) {
-			const GcnFile *file = qobject_cast<GcnFile*>(d->card->getFile(i));
-			if (file && file->encoding() == Card::ENCODING_SHIFTJIS) {
-				isJapanese = true;
-				break;
-			}
-		}
-#endif
-	}
-
-	// If the card encoding or any files are Japanese,
-	// show a warning if either Qt doesn't support Shift-JIS
-	// or if PCRE doesn't support UCP.
-	if (isJapanese) {
-		d->showJpWarning();
-	}
 
 	// Check for other card errors.
 	// NOTE: These aren't retranslated if the UI is retranslated.
@@ -1530,7 +1409,7 @@ void McRecoverWindow::on_actionClose_triggered(void)
 void McRecoverWindow::on_actionScan_triggered(void)
 {
 	Q_D(McRecoverWindow);
-	if (!d->card || d->scanningDisabled)
+	if (!d->card)
 		return;
 	// FIXME: Disable the button if the loaded card doesn't support scanning.
 	GcnCard *gcnCard = qobject_cast<GcnCard*>(d->card);
@@ -1768,29 +1647,6 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 
 	// Add the directory entries.
 	QList<GcnFile*> files = gcnCard->addLostFiles(filesFoundList);
-
-	// TODO: Add a "hasJapaneseCharacters" function.
-	// Files don't have an inherent encoding, and we're
-	// not simply going to check the region value, since
-	// that's GameCube-specific.
-	// Also, optimize this by skipping the whole thing if
-	// PCRE does support UCP.
-#if 0
-	// Check for any Japanese files.
-	bool isJapanese = false;
-	foreach (const GcnFile *file, files) {
-		if (file->encoding() == Card::ENCODING_SHIFTJIS) {
-			// Found a Japanese file.
-			isJapanese = true;
-			break;
-		}
-	}
-
-	// If the card encoding or any files are Japanese,
-	// show a warning if PCRE doesn't support UCP.
-	if (isJapanese || d->card->encoding() == Card::ENCODING_SHIFTJIS)
-		d->showJpWarning();
-#endif
 }
 
 /**

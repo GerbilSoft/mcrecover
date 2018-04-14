@@ -37,14 +37,6 @@
 // Path functions.
 #include "PathFuncs.hpp"
 
-// Third-party libraries.
-#include <pcre.h>
-#include "PcreRegex.hpp"
-// TODO: Move pcre_version() to PcreRegex() as a wrapper?
-#ifdef HAVE_PCRE16
-#define pcre_version() pcre16_version()
-#endif
-
 #ifdef HAVE_ZLIB
 #include <zlib.h>
 #endif /* HAVE_ZLIB */
@@ -371,43 +363,6 @@ QString AboutDialogPrivate::GetLibraries(void)
 	sLibraries += QChar(L'\n') +
 		QLatin1String("Copyright (C) 1995-2016 The Qt Company Ltd. and/or its subsidiaries.");
 	sLibraries += QChar(L'\n') + sLicenses.arg(QLatin1String("GNU LGPL v2.1+, GNU GPL v2+"));
-
-	/** PCRE **/
-	sLibraries += sDLineBreak;
-
-	QString pcreVersion = QLatin1String(pcre_version());
-	int pcre_space = pcreVersion.indexOf(QChar(L' '));
-	if (pcre_space > 0)
-		pcreVersion.resize(pcre_space);
-	pcreVersion.prepend(QLatin1String("PCRE "));
-	// Indicate 8-bit or 16-bit.
-#ifdef HAVE_PCRE16
-	pcreVersion.append(QLatin1String(" (UTF-16)"));
-#else /* !HAVE_PCRE16 */
-	pcreVersion.append(QLatin1String(" (UTF-8)"));
-#endif /* HAVE_PCRE16 */
-
-	// TODO: USE_INTERNAL_PCRE?
-#ifdef PCRE_STATIC
-	sLibraries += sIntCopyOf.arg(pcreVersion) + QChar(L'\n');
-#else /* !PCRE_STATIC */
-	// TODO: Handle PCRE_PRERELEASE. (It's defined, but empty!)
-	QString pcreVersionCompiled = QLatin1String("PCRE %1.%2");
-	pcreVersionCompiled = pcreVersionCompiled
-				.arg(PCRE_MAJOR).arg(PCRE_MINOR);
-	sLibraries += sCompiledWith.arg(pcreVersionCompiled) + QChar(L'\n');
-	sLibraries += sUsingDll.arg(pcreVersion) + QChar(L'\n');
-#endif /* PCRE_STATIC */
-	// Check PCRE properties.
-	// TODO: Show all PCRE properties as "flags".
-	if (!PcreRegex::PCRE_has_Unicode())
-		sLibraries += AboutDialog::tr("WARNING: PCRE does not have Unicode support.") + QChar(L'\n');
-	// TODO: Don't show this warning if we already displayed the Unicode warning?
-	if (!PcreRegex::PCRE_has_UCP())
-		sLibraries += AboutDialog::tr("WARNING: PCRE does not have Unicode character properties support.") + QChar(L'\n');
-	// PCRE copyright and license.
-	sLibraries += QLatin1String("Copyright (C) 1997-2014 University of Cambridge.");
-	sLibraries += QChar(L'\n') + sLicense.arg(QLatin1String("BSD (3-clause)"));
 
 	/** zlib **/
 #ifdef HAVE_ZLIB

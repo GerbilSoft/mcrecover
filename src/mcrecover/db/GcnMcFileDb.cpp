@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnMcFileDb.cpp: GCN Memory Card File Database class.                   *
  *                                                                         *
- * Copyright (c) 2013-2016 by David Korth.                                 *
+ * Copyright (c) 2013-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 /**
@@ -426,10 +425,11 @@ void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDe
 		xml.readNext();
 	}
 
-	// Attempt to compile the regular expressions.
-	// TODO: Display errors if setRegex() fails.
-	gcnMcFileDef->search.gameDesc_regex.setRegex(gcnMcFileDef->search.gameDesc);
-	gcnMcFileDef->search.fileDesc_regex.setRegex(gcnMcFileDef->search.fileDesc);
+	// Set the regular expressions.
+	gcnMcFileDef->search.gameDesc_regex.setPattern(gcnMcFileDef->search.gameDesc);
+	gcnMcFileDef->search.gameDesc_regex.optimize();
+	gcnMcFileDef->search.fileDesc_regex.setPattern(gcnMcFileDef->search.fileDesc);
+	gcnMcFileDef->search.fileDesc_regex.optimize();
 }
 
 
@@ -936,70 +936,50 @@ QVector<GcnSearchData> GcnMcFileDb::checkBlock(const void *buf, int siz) const
 			continue;
 
 		// Get the game description and file description.
-		const char *commentData = ((const char*)buf + address);
-		QString gameDescUS = d->GetGcnCommentUtf16(commentData, 32, d->textCodecUS);
-		QString gameDescJP = d->GetGcnCommentUtf16(commentData, 32, d->textCodecJP);
-		QString fileDescUS = d->GetGcnCommentUtf16(commentData+32, 32, d->textCodecUS);
-		QString fileDescJP = d->GetGcnCommentUtf16(commentData+32, 32, d->textCodecJP);
-#if !defined(HAVE_PCRE16)
-		// Convert to UTF-8.
-		QByteArray pcreGameDescUS = gameDescUS.toUtf8();
-		QByteArray pcreGameDescJP = gameDescJP.toUtf8();
-		QByteArray pcreFileDescUS = fileDescUS.toUtf8();
-		QByteArray pcreFileDescJP = fileDescJP.toUtf8();
-#else /* defined(HAVE_PCRE16) */
-		// Use the UTF-16 as-is.
-		// TODO: Better option than #define?
-		#define pcreGameDescUS gameDescUS
-		#define pcreGameDescJP gameDescJP
-		#define pcreFileDescUS fileDescUS
-		#define pcreFileDescJP fileDescJP
-#endif
+		const char *const commentData = ((const char*)buf + address);
+		const QString gameDescUS = d->GetGcnCommentUtf16(commentData, 32, d->textCodecUS);
+		const QString gameDescJP = d->GetGcnCommentUtf16(commentData, 32, d->textCodecJP);
+		const QString fileDescUS = d->GetGcnCommentUtf16(commentData+32, 32, d->textCodecUS);
+		const QString fileDescJP = d->GetGcnCommentUtf16(commentData+32, 32, d->textCodecJP);
 
 		QVector<GcnMcFileDef*> *vec = d->addr_file_defs.value(address);
 		foreach (const GcnMcFileDef *gcnMcFileDef, *vec) {
-			bool gameDescMatch = false, fileDescMatch = false;
-			int rc;
-
-			// Substring matches.
-			// TODO: Only copy substrings if both regexes match?
-			QVector<QString> gameDescVars, fileDescVars;
-
 			// Check if the Game Description (US) matches.
-			rc = gcnMcFileDef->search.gameDesc_regex.exec(pcreGameDescUS, &gameDescVars);
-			if (rc > 0) {
-				gameDescMatch = true;
-			} else {
+			QRegularExpressionMatch gameDescMatch =
+				gcnMcFileDef->search.gameDesc_regex.match(gameDescUS);
+			if (!gameDescMatch.hasMatch()) {
+				// No match for US.
 				// Check if the Game Description (JP) matches.
-				rc = gcnMcFileDef->search.gameDesc_regex.exec(pcreGameDescJP, &gameDescVars);
-				if (rc > 0)
-					gameDescMatch = true;
+				gameDescMatch = gcnMcFileDef->search.gameDesc_regex.match(gameDescJP);
+				if (!gameDescMatch.hasMatch()) {
+					// No match for JP.
+					continue;
+				}
 			}
 
 			// Check if the File Description (US) matches.
-			rc = gcnMcFileDef->search.fileDesc_regex.exec(pcreFileDescUS, &fileDescVars);
-			if (rc > 0) {
-				fileDescMatch = true;
-			} else {
-				// Check if the File Description (JP) matches.
-				rc = gcnMcFileDef->search.fileDesc_regex.exec(pcreFileDescJP, &fileDescVars);
-				if (rc > 0)
-					fileDescMatch = true;
+			QRegularExpressionMatch fileDescMatch =
+				gcnMcFileDef->search.fileDesc_regex.match(fileDescUS);
+			if (!fileDescMatch.hasMatch()) {
+				// No match for US.
+				// Check if the Game Description (JP) matches.
+				fileDescMatch = gcnMcFileDef->search.fileDesc_regex.match(fileDescJP);
+				if (!fileDescMatch.hasMatch()) {
+					// No match for JP.
+					continue;
+				}
 			}
 
-			if (gameDescMatch && fileDescMatch) {
-				// Found a match.
-				QHash<QString, QString> vars;
-				GcnDateTime gcnDateTime;
-
-				// Attempt to apply variable modifiers.
-				vars = VarReplace::VecsToHash(gameDescVars, fileDescVars);
-				int ret = VarReplace::ApplyModifiers(gcnMcFileDef->varModifiers, vars, &gcnDateTime);
-				if (ret == 0) {
-					// Variable modifiers applied successfully.
-					// Construct a GcnSearchData struct for this file entry.
-					fileMatches.append(d->constructSearchData(gcnMcFileDef, vars, gcnDateTime));
-				}
+			// Found a match.
+			// Attempt to apply variable modifiers.
+			GcnDateTime gcnDateTime;
+			QHash<QString, QString> vars = VarReplace::StringListsToHash(
+				gameDescMatch.capturedTexts(), fileDescMatch.capturedTexts());
+			int ret = VarReplace::ApplyModifiers(gcnMcFileDef->varModifiers, vars, &gcnDateTime);
+			if (ret == 0) {
+				// Variable modifiers applied successfully.
+				// Construct a GcnSearchData struct for this file entry.
+				fileMatches.append(d->constructSearchData(gcnMcFileDef, vars, gcnDateTime));
 			}
 		}
 	}
