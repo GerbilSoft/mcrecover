@@ -5,6 +5,7 @@ cd "${TRAVIS_BUILD_DIR}/build"
 cmake .. \
 	-DCMAKE_INSTALL_PREFIX=/usr \
 	-DCMAKE_BUILD_TYPE=Release \
+	-DENABLE_NLS=OFF \
 	|| exit 1
 make || RET=1
 # No tests yet...

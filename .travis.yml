@@ -5,10 +5,11 @@ compiler:
   - clang
   - gcc
 
-# Use Ubuntu 16.04 as the build environment.
-# Ubuntu 14.04's qttools5-dev-tools is missing FindQt5LinguistTools.cmake.
+# NOTE: Ubuntu 14.04's qttools5-dev-tools is missing FindQt5LinguistTools.cmake.
+# However, travis-ci's Ubuntu 16.04 environment doesn't let us install Qt at all,
+# so we'll need to use 14.04 with localization disabled for now.
 sudo: required
-dist: xenial
+dist: trusty
 
 # Build dependencies.
 addons:

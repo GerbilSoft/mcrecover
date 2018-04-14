@@ -107,7 +107,7 @@ SET(mcrecover_WINDOW_SRCS
 	windows/XmlTemplateDialogManager.cpp
 	windows/FormatNewMemCardDialog.cpp
 	)
-	
+
 SET(mcrecover_WIDGET_SRCS
 	widgets/StatusBarManager.cpp
 	widgets/FileView.cpp
@@ -374,7 +374,12 @@ ENDIF(mcrecover_TBM_MOC_H)
 # Translations. #
 #################
 
-ADD_SUBDIRECTORY(translations)
+IF(ENABLE_NLS)
+	# NOTE: ENABLE_NLS only controls whether or not translations
+	# are built. TranslationManager and related are always built
+	# regardless.
+	ADD_SUBDIRECTORY(translations)
+ENDIF(ENABLE_NLS)
 # TODO: Mac OS X bundle location.
 # TODO: "make install" location.
 

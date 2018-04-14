@@ -14,9 +14,9 @@ OPTION(COMPRESS_EXE	"Compress the executable with UPX." 0)
 
 # Enable DBus for DockManager / Unity API.
 IF(UNIX AND NOT APPLE)
-OPTION(ENABLE_DBUS	"Enable DBUS support for DockManager / Unity API." 1)
+	OPTION(ENABLE_DBUS	"Enable DBUS support for DockManager / Unity API." 1)
 ELSE(UNIX AND NOT APPLE)
-SET(ENABLE_DBUS 0)
+	SET(ENABLE_DBUS 0)
 ENDIF(UNIX AND NOT APPLE)
 
 # Internal libpng.
@@ -41,3 +41,6 @@ ELSE(NOT WIN32)
 	# TODO: Allow use of external giflib on Win32?
 	SET(USE_INTERNAL_GIF 1)
 ENDIF(NOT WIN32)
+
+# Translations.
+OPTION(ENABLE_NLS	"Enable NLS using Qt's built-in localization system." ON)
