@@ -3,18 +3,6 @@ PROJECT(libgctools)
 # Main binary directory. Needed for git_version.h
 INCLUDE_DIRECTORIES("${CMAKE_BINARY_DIR}")
 
-# Test system byteorder.
-# TODO: Universal Binary support; detect PDP endian.
-INCLUDE(TestBigEndian)
-TEST_BIG_ENDIAN(IS_BIG_ENDIAN)
-IF(IS_BIG_ENDIAN)
-        SET(MCRECOVER_BYTEORDER "MCRECOVER_BIG_ENDIAN")
-ELSE(IS_BIG_ENDIAN)
-        SET(MCRECOVER_BYTEORDER "MCRECOVER_LIL_ENDIAN")
-ENDIF(IS_BIG_ENDIAN)
-UNSET(IS_BIG_ENDIAN)
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/util/byteorder.h.in" "${CMAKE_CURRENT_BINARY_DIR}/util/byteorder.h")
-
 # libpng
 INCLUDE(CheckPNG)
 INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})

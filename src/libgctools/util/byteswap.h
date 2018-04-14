@@ -1,8 +1,8 @@
 /***************************************************************************
- * GameCube Memory Card Recovery Program.                                  *
+ * GameCube Tools Library.                                                 *
  * byteswap.h: Byteswapping functions.                                     *
  *                                                                         *
- * Copyright (c) 2008-2011 by David Korth                                  *
+ * Copyright (c) 2008-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,35 +14,57 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_BYTESWAP_H__
-#define __MCRECOVER_BYTESWAP_H__
+#ifndef __LIBGCTOOLS_UTIL_BYTESWAP_H__
+#define __LIBGCTOOLS_UTIL_BYTESWAP_H__
 
-// NOTE: This file is generated at compile-time.
-// It's located in the binary directory.
-#include "util/byteorder.h"
+/* C includes. */
+#include <stdint.h>
 
-#define __swab16(x) (((x) << 8) | ((x) >> 8))
+/* Get the system byte order. */
+#include "byteorder.h"
+
+#if defined(_MSC_VER)
+
+/* Use the MSVC byteswap intrinsics. */
+#include <stdlib.h>
+#define __swab16(x) _byteswap_ushort(x)
+#define __swab32(x) _byteswap_ulong(x)
+#define __swab64(x) _byteswap_uint64(x)
+
+#elif defined(__GNUC__)
+
+/* Use the gcc byteswap intrinsics. */
+#define __swab16(x) __builtin_bswap16(x)
+#define __swab32(x) __builtin_bswap32(x)
+#define __swab64(x) __builtin_bswap64(x)
+
+#else
+
+/* Use the macros. */
+#warning No intrinsics defined for this compiler. Byteswapping may be slow.
+
+#define __swab16(x) ((uint16_t)(((x) << 8) | ((x) >> 8)))
 
 #define __swab32(x) \
-	(((x) << 24) | ((x) >> 24) | \
+	((uint32_t)(((x) << 24) | ((x) >> 24) | \
 		(((x) & 0x0000FF00UL) << 8) | \
-		(((x) & 0x00FF0000UL) >> 8))
+		(((x) & 0x00FF0000UL) >> 8)))
 
 #define __swab64(x) \
-	(((x) << 56) | ((x) >> 56) | \
+	((uint64_t)(((x) << 56) | ((x) >> 56) | \
 		(((x) & 0x000000000000FF00ULL) << 40) | \
 		(((x) & 0x0000000000FF0000ULL) << 24) | \
 		(((x) & 0x00000000FF000000ULL) << 8) | \
 		(((x) & 0x000000FF00000000ULL) >> 8) | \
 		(((x) & 0x0000FF0000000000ULL) >> 24) | \
-		(((x) & 0x00FF000000000000ULL) >> 40))
+		(((x) & 0x00FF000000000000ULL) >> 40)))
+#endif
 
-#if MCRECOVER_BYTEORDER == MCRECOVER_LIL_ENDIAN
+#if SYS_BYTEORDER == SYS_LIL_ENDIAN
 	#define be16_to_cpu(x)	__swab16(x)
 	#define be32_to_cpu(x)	__swab32(x)
 	#define be64_to_cpu(x)	__swab64(x)
@@ -56,7 +78,7 @@
 	#define cpu_to_le16(x)	(x)
 	#define cpu_to_le32(x)	(x)
 	#define cpu_to_le64(x)	(x)
-#else /* MCRECOVER_BYTEORDER == MCRECOVER_BIG_ENDIAN */
+#else /* SYS_BYTEORDER == SYS_BIG_ENDIAN */
 	#define be16_to_cpu(x)	(x)
 	#define be32_to_cpu(x)	(x)
 	#define be64_to_cpu(x)	(x)
@@ -72,4 +94,4 @@
 	#define cpu_to_le64(x)	__swab64(x)
 #endif
 
-#endif /* __MCRECOVER_BYTESWAP_H__ */
+#endif /* __LIBGCTOOLS_UTIL_BYTESWAP_H__ */

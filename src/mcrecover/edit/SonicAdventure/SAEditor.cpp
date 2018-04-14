@@ -199,11 +199,11 @@ int SAEditorPrivate::load(File *file)
 			memcpy(sa_save, src, SA_SAVE_SLOT_LEN);
 			data_main.append(sa_save);
 			data_sadx.append(nullptr);	// DC version - no SADX extras.
-#if MCRECOVER_BYTEORDER == MCRECOVER_BIG_ENDIAN
+#if SYS_BYTEORDER == SYS_BIG_ENDIAN
 			// Byteswap the data.
 			// Dreamcast's SH-4 is little-endian.
 			byteswap_sa_save_slot(sa_save);
-#endif
+#endif /* SYS_BYTEORDER == SYS_BIG_ENDIAN */
 
 			// Loaded successfully.
 			ret = 0;
@@ -216,11 +216,11 @@ int SAEditorPrivate::load(File *file)
 		memcpy(sa_save, (data.data() + SA_SAVE_ADDRESS_GCN), SA_SAVE_SLOT_LEN);
 		data_main.append(sa_save);
 
-#if MCRECOVER_BYTEORDER == MCRECOVER_LIL_ENDIAN
+#if SYS_BYTEORDER == SYS_LIL_ENDIAN
 		// Byteswap the data.
 		// GameCube's PowerPC 750 is big-endian.
 		byteswap_sa_save_slot(sa_save);
-#endif
+#endif /* SYS_BYTEORDER == SYS_LIL_ENDIAN */
 
 		// Check for SADX extras.
 		if (data.size() >= (SA_SAVE_ADDRESS_GCN + SA_SAVE_SLOT_LEN + SADX_EXTRA_SAVE_SLOT_LEN)) {
@@ -228,11 +228,11 @@ int SAEditorPrivate::load(File *file)
 			sadx_extra_save_slot *sadx_extra_save = (sadx_extra_save_slot*)malloc(sizeof(*sadx_extra_save));
 			memcpy(sadx_extra_save, (data.data() + SA_SAVE_ADDRESS_GCN + SA_SAVE_SLOT_LEN), SADX_EXTRA_SAVE_SLOT_LEN);
 			data_sadx.append(sadx_extra_save);
-#if MCRECOVER_BYTEORDER == MCRECOVER_LIL_ENDIAN
+#if SYS_BYTEORDER == SYS_LIL_ENDIAN
 			// Byteswap the data.
 			// GameCube's PowerPC 750 is big-endian.
 			byteswap_sadx_extra_save_slot(sadx_extra_save);
-#endif
+#endif /* SYS_BYTEORDER == SYS_LIL_ENDIAN */
 		} else {
 			// No SADX extras.
 			data_sadx.append(nullptr);
@@ -652,11 +652,11 @@ int SAEditor::save(void)
 			if (d->data_main.size() > i) {
 				// Save the slot.
 				memcpy(sa_save, d->data_main.at(i), SA_SAVE_SLOT_LEN);
-#if MCRECOVER_BYTEORDER == MCRECOVER_BIG_ENDIAN
+#if SYS_BYTEORDER == SYS_BIG_ENDIAN
 				// Byteswap the data.
 				// Dreamcast's SH-4 is little-endian.
 				d->byteswap_sa_save_slot(sa_save);
-#endif
+#endif /* SYS_BYTEORDER == SYS_BIG_ENDIAN */
 			} else {
 				// No save slot available...
 				// Zero out the data.
@@ -691,11 +691,11 @@ int SAEditor::save(void)
 		assert(d->data_main.size() > 0);
 		if (d->data_main.size() > 0) {
 			memcpy(sa_save, d->data_main.at(0), SA_SAVE_SLOT_LEN);
-#if MCRECOVER_BYTEORDER == MCRECOVER_LIL_ENDIAN
+#if SYS_BYTEORDER == SYS_LIL_ENDIAN
 			// Byteswap the data.
 			// GameCube's PowerPC 750 is big-endian.
 			d->byteswap_sa_save_slot(sa_save);
-#endif
+#endif /* SYS_BYTEORDER == SYS_LIL_ENDIAN */
 		} else {
 			// No save slot available...
 			// Zero out the data.
@@ -707,11 +707,11 @@ int SAEditor::save(void)
 		if (d->data_sadx.size() > 0) {
 			// Found SADX extras.
 			memcpy(sadx_extra_save, d->data_sadx.at(0), SADX_EXTRA_SAVE_SLOT_LEN);
-#if MCRECOVER_BYTEORDER == MCRECOVER_LIL_ENDIAN
+#if SYS_BYTEORDER == SYS_LIL_ENDIAN
 			// Byteswap the data.
 			// GameCube's PowerPC 750 is big-endian.
 			d->byteswap_sadx_extra_save_slot(sadx_extra_save);
-#endif
+#endif /* SYS_BYTEORDER == SYS_LIL_ENDIAN */
 		} else {
 			// No SADX extras.
 			// Zero out the data.
