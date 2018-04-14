@@ -3,7 +3,7 @@
  * McRecoverQApplication_win32.cpp: QApplication subclass.                 *
  * Win32-specific functions.                                               *
  *                                                                         *
- * Copyright (c) 2013-2016 by David Korth.                                 *
+ * Copyright (c) 2013-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -15,9 +15,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #ifndef _WIN32
@@ -61,12 +60,10 @@
 #include <QtCore/qt_windows.h>
 #include <QtCore/QVector>
 
-#if QT_VERSION >= 0x050000
 // QtWinExtras provides the QtWin::fromHICON() function,
 // which calls qt_pixmapFromWinHICON(). To reduce code size,
 // just use qt_pixmapFromWinHICON() directly.
 Q_GUI_EXPORT QPixmap qt_pixmapFromWinHICON(HICON icon);
-#endif /* QT_VERSION >= 0x050000 */
 
 // qWinMain declaration.
 extern void qWinMain(HINSTANCE, HINSTANCE, LPSTR, int, int &, QVector<char *> &);
@@ -184,11 +181,7 @@ QPixmap McRecoverQApplicationWin32Private::GetIconFromModule(
 	HICON hIcon = (HICON)LoadImageW(hDll, MAKEINTRESOURCEW(resId),
 	IMAGE_ICON, size.width(), size.height(), 0);
 	if (hIcon) {
-#if QT_VERSION >= 0x050000
 		pixmap = qt_pixmapFromWinHICON(hIcon);
-#else /* !QT_VERSION >= 0x050000 */
-		pixmap = QPixmap::fromWinHICON(hIcon);
-#endif /* QT_VERSION >= 0x050000 */
 		DestroyIcon(hIcon);
 	}
 

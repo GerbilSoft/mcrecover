@@ -8,13 +8,6 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
 
-#if QT_VERSION > 0x050000
-// Qt5 deprecated QStyleOptionViewItemV4 in favor of
-// plain old QStyleOptionViewItem. However, for Qt4
-// compatibility, we still need to use V4.
-#define QStyleOptionViewItemV4 QStyleOptionViewItem
-#endif
-
 CenteredCheckBoxDelegate::CenteredCheckBoxDelegate(QObject *parent)
         : super(parent)
 { }
@@ -34,7 +27,7 @@ void CenteredCheckBoxDelegate::paint(QPainter *painter,
 	// TODO: Verify that "pressed" works correctly?
 
 	// Draw the ItemView background.
-	QStyleOptionViewItemV4 viewItemOption(option);
+	QStyleOptionViewItem viewItemOption(option);
 	QStyle *style = viewItemOption.widget ? viewItemOption.widget->style() : QApplication::style();
 	style->drawControl(QStyle::CE_ItemViewItem, &viewItemOption, painter, viewItemOption.widget);
 
@@ -72,7 +65,7 @@ bool CenteredCheckBoxDelegate::editorEvent(QEvent *event,
 	// make sure that we have the right event type
 	// TODO: Verify that "pressed" works correctly?
 	if (event->type() == QEvent::MouseButtonRelease) {
-		QStyleOptionViewItemV4 viewItemOption(option);
+		QStyleOptionViewItem viewItemOption(option);
 		QStyle *style = viewItemOption.widget ? viewItemOption.widget->style() : QApplication::style();
 
 		// Calculate the checkbox rectangle.

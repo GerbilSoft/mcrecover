@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * MemCardItemDelegate.cpp: MemCard item delegate for QListView.           *
  *                                                                         *
- * Copyright (c) 2013-2016 by David Korth.                                 *
+ * Copyright (c) 2013-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #include "MemCardItemDelegate.hpp"
@@ -35,13 +34,6 @@
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif /* Q_OS_WIN */
-
-#if QT_VERSION > 0x050000
-// Qt5 deprecated QStyleOptionViewItemV4 in favor of
-// plain old QStyleOptionViewItem. However, for Qt4
-// compatibility, we still need to use V4.
-#define QStyleOptionViewItemV4 QStyleOptionViewItem
-#endif
 
 class MemCardItemDelegatePrivate
 {
@@ -247,7 +239,7 @@ void MemCardItemDelegate::paint(QPainter *painter,
 		textAlignment = option.displayAlignment;
 
 	QRect textRect = option.rect;
-	QStyleOptionViewItemV4 bgOption = option;
+	QStyleOptionViewItem bgOption = option;
 
 	// Horizontal margins.
 	// Reference: http://doc.qt.io/qt-4.8/qitemdelegate.html#sizeHint
@@ -405,7 +397,7 @@ QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 
 	// Get the fonts.
 	Q_D(const MemCardItemDelegate);
-	QStyleOptionViewItemV4 bgOption = option;
+	QStyleOptionViewItem bgOption = option;
 	QFont fontGameDesc = d->fontGameDesc(bgOption.widget);
 	QFont fontFileDesc = d->fontFileDesc(bgOption.widget);
 

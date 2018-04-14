@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * McRecoverQApplication.cpp: QApplication subclass.                       *
  *                                                                         *
- * Copyright (c) 2013-2016 by David Korth.                                 *
+ * Copyright (c) 2013-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #include "config.mcrecover.h"
@@ -75,7 +74,6 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 	QIcon mcrIcon = McRecoverQApplication::IconFromProgram(QLatin1String("mcrecover"));
 	McRecoverQApplication::setWindowIcon(mcrIcon);
 
-#if QT_VERSION >= 0x040600
 	// Check if an icon theme is available.
 	if (!QIcon::hasThemeIcon(QLatin1String("application-exit"))) {
 		// Icon theme is not available.
@@ -83,7 +81,6 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 		// Reference: http://tkrotoff.blogspot.com/2010/02/qiconfromtheme-under-windows.html
 		QIcon::setThemeName(QLatin1String("oxygen"));
 	}
-#endif
 
 	// Register custom types for QVariant.
 	qRegisterMetaType<GcnDateTime>("GcnDateTime");
@@ -101,20 +98,6 @@ McRecoverQApplication::McRecoverQApplication(int &argc, char **argv)
 	McRecoverQApplicationPrivate::mcrqaInit();
 }
 
-#if QT_VERSION < 0x050000
-McRecoverQApplication::McRecoverQApplication(int &argc, char **argv, bool GUIenabled)
-	: super(argc, argv, GUIenabled)
-{
-	McRecoverQApplicationPrivate::mcrqaInit();
-}
-
-McRecoverQApplication::McRecoverQApplication(int &argc, char **argv, Type type)
-	: super(argc, argv, type)
-{
-	McRecoverQApplicationPrivate::mcrqaInit();
-}
-#endif /* QT_VERSION < 0x050000 */
-
 /**
  * Get an icon from the system theme.
  * @param name Icon name.
@@ -122,10 +105,8 @@ McRecoverQApplication::McRecoverQApplication(int &argc, char **argv, Type type)
  */
 QIcon McRecoverQApplication::IconFromTheme(const QString &name)
 {
-#if QT_VERSION >= 0x040600
 	if (QIcon::hasThemeIcon(name))
 		return QIcon::fromTheme(name);
-#endif
 
 	// System icon doesn't exist.
 	// Get the fallback icon.
@@ -163,10 +144,8 @@ QIcon McRecoverQApplication::IconFromTheme(const QString &name)
  */
 QIcon McRecoverQApplication::IconFromProgram(const QString &name)
 {
-#if QT_VERSION >= 0x040600
 	if (QIcon::hasThemeIcon(name))
 		return QIcon::fromTheme(name);
-#endif
 
 	// System icon doesn't exist.
 	// Get the fallback icon.

@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * AboutDialog.cpp: About Dialog.                                          *
  *                                                                         *
- * Copyright (c) 2013-2016 by David Korth.                                 *
+ * Copyright (c) 2013-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #include "config.mcrecover.h"
@@ -133,11 +132,7 @@ void AboutDialogPrivate::initAboutDialogText(void)
 	// Set the "MegaCard Engine" text.
 	sPrgTitle += sLineBreak + sLineBreak +
 		QApplication::translate("AboutDialog",
-			"Powered by the<br/>\n<b>MegaCard Engine</b>™", 0
-#if QT_VERSION < 0x050000
-			, QApplication::UnicodeUTF8
-#endif /* QT_VERSION < 0x050000 */
-		);
+			"Powered by the<br/>\n<b>MegaCard Engine</b>™", 0);
 #endif
 
 	// Set the program title text.
@@ -375,12 +370,7 @@ QString AboutDialogPrivate::GetLibraries(void)
 #endif /* QT_IS_STATIC */
 	sLibraries += QChar(L'\n') +
 		QLatin1String("Copyright (C) 1995-2016 The Qt Company Ltd. and/or its subsidiaries.");
-	// TODO: Check QT_VERSION at runtime?
-#if QT_VERSION >= 0x040500
 	sLibraries += QChar(L'\n') + sLicenses.arg(QLatin1String("GNU LGPL v2.1+, GNU GPL v2+"));
-#else
-	sLibraries += QChar(L'\n') + sLicense.arg(QLatin1String("GNU GPL v2+"));
-#endif /* QT_VERSION */
 
 	/** PCRE **/
 	sLibraries += sDLineBreak;

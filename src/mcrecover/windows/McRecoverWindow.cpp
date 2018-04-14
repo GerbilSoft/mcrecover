@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * McRecoverWindow.cpp: Main window.                                       *
  *                                                                         *
- * Copyright (c) 2012-2016 by David Korth.                                 *
+ * Copyright (c) 2012-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #include "config.mcrecover.h"
@@ -1376,11 +1375,7 @@ void McRecoverWindow::dropEvent(QDropEvent *event)
 
 #ifdef Q_OS_WIN
 // Windows message handler. Used for TaskbarButtonManager.
-#if QT_VERSION >= 0x050000
 bool McRecoverWindow::nativeEvent(const QByteArray &eventType, void *message, long *result)
-#else /* QT_VERSION < 0x050000 */
-bool McRecoverWindow::winEvent(MSG *message, long *result)
-#endif
 {
 	// Reference: http://nicug.blogspot.com/2011/03/windows-7-taskbar-extensions-in-qt.html
 	Q_D(McRecoverWindow);

@@ -1,5 +1,4 @@
 PROJECT(mcrecover_base)
-# CMake 2.8.11 adds TARGET_INCLUDE_DIRECTORIES() and Qt4::xxx targets, similar to Qt5.
 # CMake 2.8.12 automates adding compile flags for Qt5, e.g. -fPIC on Linux.
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 
@@ -177,4 +176,5 @@ SET(CPACK_COMPONENT_DOC_DISPLAY_NAME "Documentation")
 SET(CPACK_COMPONENT_DESKTOP-ICON_DISPLAY_NAME "XDG Desktop File")
 
 # Initialize CPack.
-INCLUDE(CPack)
+# FIXME: Use a debian/ directory instead of cpack.
+#INCLUDE(CPack)

@@ -1,9 +1,9 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
  * QTreeViewOpt.cpp: QTreeView with drawing optimizations.                 *
- * Specifically, don't update rows that are offscreen.			   *
+ * Specifically, don't update rows that are offscreen.                     *
  *                                                                         *
- * Copyright (c) 2013-2016 by David Korth.                                 *
+ * Copyright (c) 2013-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -15,9 +15,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #include "QTreeViewOpt.hpp"
@@ -42,14 +41,9 @@ QTreeViewOpt::QTreeViewOpt(QWidget *parent)
  * @param bottomRight	[in] Bottom-right item.
  * @param roles		[in] (Qt5) Roles that have changed.
  */
-#if QT_VERSION >= 0x050000
 void QTreeViewOpt::dataChanged(const QModelIndex &topLeft,
 	const QModelIndex &bottomRight,
 	const QVector<int> &roles)
-#else /* QT_VERSION < 0x050000 */
-void QTreeViewOpt::dataChanged(const QModelIndex &topLeft,
-	const QModelIndex &bottomRight)
-#endif
 {
 	bool propagateEvent = true;
 	// TODO: Support for checking multiple items.
@@ -69,11 +63,7 @@ void QTreeViewOpt::dataChanged(const QModelIndex &topLeft,
 
 	if (propagateEvent) {
 		// Propagate the dataChanged() event.
-#if QT_VERSION >= 0x050000
 		super::dataChanged(topLeft, bottomRight, roles);
-#else /* QT_VERSION < 0x050000 */
-		super::dataChanged(topLeft, bottomRight);
-#endif
 	}
 }
 

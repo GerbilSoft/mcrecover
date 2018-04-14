@@ -41,16 +41,3 @@ ELSE(NOT WIN32)
 	# TODO: Allow use of external giflib on Win32?
 	SET(USE_INTERNAL_GIF 1)
 ENDIF(NOT WIN32)
-
-# Qt version to use.
-OPTION(USE_QT "Specify Qt version. (4 or 5; default is 0 for auto-detect)" 0)
-IF(NOT USE_QT)
-	# Auto-detect, preferring Qt5 to Qt4.
-	UNSET(QT_VERSION)
-ELSEIF(USE_QT EQUAL 5)
-	SET(QT_VERSION 5)
-ELSEIF(USE_QT EQUAL 4)
-	SET(QT_VERSION 4)
-ELSE()
-	MESSAGE(FATAL_ERROR "Unsupported Qt version ${USE_QT}.")
-ENDIF()

@@ -1,8 +1,8 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program.                                  *
- * HackDetection.cpp: About Dialog.                                          *
+ * HackDetection.cpp: * HACK DETECTION *                                   *
  *                                                                         *
- * Copyright (c) 2013-2014 by David Korth.                                 *
+ * Copyright (c) 2013-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #include "HackDetection.hpp"
@@ -33,14 +32,9 @@
 #include <QtGui/QPaintEvent>
 #include <QtGui/QFont>
 #include <QtGui/QFontMetrics>
+#include <QtGui/QRawFont>
 #include <QApplication>
 #include <QDesktopWidget>
-
-// QRawFont was added in qt-4.8
-#if QT_VERSION >= 0x040800
-#define HAVE_QRAWFONT
-#include <QtGui/QRawFont>
-#endif
 
 /** HackDetectionPrivate **/
 
@@ -213,7 +207,6 @@ void HackDetectionPrivate::initFont(void)
 	fntHackText.setItalic(true);
 
 	// Check if either the italic or normal font has "BLACK STAR" (U+2605).
-#ifdef HAVE_QRAWFONT
 	QRawFont rawFont = QRawFont::fromFont(fntHackText);
 	if (rawFont.supportsCharacter(0x2605)) {
 		chrStar = QChar(0x2605);
@@ -229,13 +222,6 @@ void HackDetectionPrivate::initFont(void)
 			fntHackStar = fntHackText;
 		}
 	}
-#else /* !HAVE_QRAWFONT */
-	// QRawFont is not available.
-	// Assume the normal font has "BLACK STAR",
-	// since this is most likely the Linux build.
-	chrStar = QChar(0x2605);
-	fntHackStar = fntHack;
-#endif /* HAVE_QRAWFONT */
 }
 
 /**

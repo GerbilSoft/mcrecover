@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * mcrecover.cpp: Main program.                                            *
  *                                                                         *
- * Copyright (c) 2011-2016 by David Korth.                                 *
+ * Copyright (c) 2011-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #include "mcrecover.hpp"
@@ -39,7 +38,6 @@
  */
 int mcrecover_main(int argc, char *argv[])
 {
-#if QT_VERSION >= 0x050000
 	// Enable High DPI.
 	McRecoverQApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
 #if QT_VERSION >= 0x050600
@@ -50,7 +48,6 @@ int mcrecover_main(int argc, char *argv[])
 	// http://doc.qt.io/qt-5/qt.html#ApplicationAttribute-enum
 	McRecoverQApplication::setAttribute((Qt::ApplicationAttribute)13, true);
 #endif /* QT_VERSION >= 0x050600 */
-#endif /* QT_VERSION >= 0x050000 */
 
 	McRecoverQApplication *mcApp = new McRecoverQApplication(argc, argv);
 

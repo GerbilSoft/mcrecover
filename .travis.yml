@@ -10,13 +10,13 @@ sudo: required
 dist: trusty
 
 # Build dependencies.
-# NOTE: Qt5 is not available on Ubuntu 14.04.
 addons:
   apt:
     packages:
       - libpng-dev
-      - libqt4-dev
       - libpcre3-dev
+      - qtbase5-dev
+      - qttools5-dev-tools
 
 # Run the build script.
 script: ./travis.sh

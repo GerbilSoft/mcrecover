@@ -1,21 +1,7 @@
 PROJECT(mcrecover_translations)
 
 # mcrecover translations subproject.
-IF(QT_VERSION EQUAL 5)
-	FIND_PACKAGE(Qt5LinguistTools REQUIRED)
-	# Version-specific macros.
-	MACRO(QTX_ADD_TRANSLATION)
-		QT5_ADD_TRANSLATION(${ARGV})
-	ENDMACRO(QTX_ADD_TRANSLATION)
-ELSEIF(QT_VERSION EQUAL 4)
-	FIND_PACKAGE(Qt4 COMPONENTS QtCore REQUIRED)
-	# Version-specific macros.
-	MACRO(QTX_ADD_TRANSLATION)
-		QT4_ADD_TRANSLATION(${ARGV})
-	ENDMACRO(QTX_ADD_TRANSLATION)
-ELSE()
-	MESSAGE(FATAL_ERROR "Unsupported Qt version: ${QT_VERSION}")
-ENDIF()
+FIND_PACKAGE(Qt5LinguistTools REQUIRED)
 
 # Compile the translations.
 SET(TRANSLATION_FILES
@@ -26,7 +12,7 @@ SET(TRANSLATION_FILES
 	mcrecover_ru.ts
 	)
 
-QTX_ADD_TRANSLATION(QM_FILES ${TRANSLATION_FILES})
+QT5_ADD_TRANSLATION(QM_FILES ${TRANSLATION_FILES})
 
 # Make the destination files available in parent score.
 SET(QM_FILES ${QM_FILES} PARENT_SCOPE)
