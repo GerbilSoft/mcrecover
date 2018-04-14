@@ -1,7 +1,7 @@
 /***************************************************************************
  * c++11-compat.h: C++ 2011 compatibility header.                          *
  *                                                                         *
- * Copyright (c) 2011-2015 by David Korth.                                 *
+ * Copyright (c) 2011-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -13,9 +13,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #ifndef __CXX11_COMPAT_H__
@@ -27,6 +26,7 @@
  * Provide replacements for C++ 2011 functionality.
  */
 #define CXX11_COMPAT_NULLPTR
+#define CXX11_COMPAT_CONSTEXPR
 #define CXX11_COMPAT_OVERRIDE
 #define CXX11_COMPAT_CHARTYPES
 
@@ -81,6 +81,12 @@ namespace std {
 }
 #endif /* __cplusplus */
 #endif /* CXX11_COMPAT_CHARTYPES */
+
+/* constexpr */
+/* NOTE: This might not work in all cases. */
+#ifdef CXX11_COMPAT_CONSTEXPR
+#define constexpr const
+#endif
 
 /* Explicit override/final. */
 #ifdef CXX11_COMPAT_OVERRIDE

@@ -1,7 +1,7 @@
 /***************************************************************************
  * c++11-compat.msvc.h: C++ 2011 compatibility header. (MSVC)              *
  *                                                                         *
- * Copyright (c) 2011-2015 by David Korth.                                 *
+ * Copyright (c) 2011-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -13,9 +13,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #ifndef __CXX11_COMPAT_MSVC_H__
@@ -34,6 +33,8 @@
  * present in older versions of MSVC.
  *
  * These are all automatically enabled when compiling C code.
+ *
+ * Reference: https://msdn.microsoft.com/en-us/library/hh567368.aspx
  */
 
 #if (_MSC_VER < 1900)
@@ -42,6 +43,11 @@
  * (char16_t, char32_t, related string types)
  */
 #define CXX11_COMPAT_CHARTYPES
+
+/**
+ * MSVC 2015 also added support for constexpr.
+ */
+#define CXX11_COMPAT_CONSTEXPR
 #endif
 
 #if (_MSC_VER < 1700)
@@ -69,42 +75,6 @@
 #endif
 
 #endif /* __cplusplus */
-
-/** C99 **/
-
-/**
- * C library functions that have different names in MSVCRT
- * compared to POSIX and C99.
- *
- * Note that later versions of MSVC (esp. 2013 and 2015)
- * have added more C99 functionality, since C99 is included
- * in C++ 2011.
- */
-
-/** strcasecmp(), strncasecmp() **/
-
-/**
- * MSVC does not, and probably never will, define these functions.
- * It has equivalent functions with different names, though.
- */
-#define strcasecmp(s1, s2)     _stricmp(s1, s2)
-#define strncasecmp(s1, s2, n) _strnicmp(s1, s2, n)
-#define wcscasecmp(s1, s2)     _wcsicmp(s1, s2)
-#define wcsncasecmp(s1, s2, n) _wcsnicmp(s1, s2, n)
-
-/** strtoll(), strtoull() **/
-
-/**
- * MSVC 2013 (12.0) added proper support for strtoll() and strtoull().
- * Older verisons don't have these functions, but they do have
- * the equivalent functions _strtoi64() and _strtoui64().
- */
-#if _MSC_VER < 1800
-#define strtoll(nptr, endptr, base)  _strtoi64(nptr, endptr, base)
-#define strtoull(nptr, endptr, base) _strtoui64(nptr, endptr, base)
-#define wcstoll(nptr, endptr, base)  _wcstoi64(nptr, endptr, base)
-#define wcstoull(nptr, endptr, base) _wcstoui64(nptr, endptr, base)
-#endif /* _MSC_VER < 1800 */
 
 /**
  * MSVC doesn't have typeof(), but as of MSVC 2010,

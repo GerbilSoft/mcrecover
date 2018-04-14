@@ -1,7 +1,7 @@
 /***************************************************************************
- * c++11-compat.gcc.h: C++ 2011 compatibility header. (gcc)                *
+ * c++11-compat.clang.h: C++ 2011 compatibility header. (clang)            *
  *                                                                         *
- * Copyright (c) 2011-2015 by David Korth.                                 *
+ * Copyright (c) 2011-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -13,9 +13,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #ifndef __CXX11_COMPAT_GCC_H__
@@ -34,6 +33,8 @@
  * present in older versions of gcc.
  *
  * These are all automatically enabled when compiling C code.
+ *
+ * Reference: https://gcc.gnu.org/projects/cxx-status.html
  */
 
 /* For gcc-4.7+, make sure we're compiling with -std=c++11 or -std=gnu++11. */
@@ -44,22 +45,23 @@
 #endif /* __cplusplus */
 #endif /* __GNUC__ */
 
-/* Explicit virtual override: Added in gcc-4.7. */
+/* gcc-4.7: Explicit virtual override */
 #if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 7))
 #define CXX11_COMPAT_OVERRIDE
 #endif
 
-/* nullptr: Added in gcc-4.6 */
+/* gcc-4.6: nullptr, constexpr */
 #if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 6))
 #define CXX11_COMPAT_NULLPTR
+#define CXX11_COMPAT_CONSTEXPR
 #endif
 
-/* New character types: Added in gcc-4.4 */
+/* gcc-4.4: New character types */
 #if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 4))
 #define CXX11_COMPAT_CHARTYPES
 #endif
 
-/* Static assertions: Added in gcc-4.3 (first version to support C++11) */
+/* gcc-4.3: Static assertions (first version to support C++11) */
 #if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 3))
 #define CXX11_COMPAT_STATIC_ASSERT
 #endif
