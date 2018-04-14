@@ -1,8 +1,8 @@
 /***************************************************************************
- * GameCube Memory Card Recovery Program.                                  *
+ * GameCube Memory Card Recovery Program [libmemcard]                      *
  * File_p.hpp: Memory Card file entry. [base class] (PRIVATE)              *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,13 +14,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_CARD_FILE_P_HPP__
-#define __MCRECOVER_CARD_FILE_P_HPP__
+#ifndef __LIBMEMCARD_FILE_P_HPP__
+#define __LIBMEMCARD_FILE_P_HPP__
 
 #include "File.hpp"
 class Card;
@@ -154,4 +153,4 @@ class FilePrivate
 		void calculateChecksum(void);
 };
 
-#endif /* __MCRECOVER_CARD_FILE_P_HPP__ */
+#endif /* __LIBMEMCARD_FILE_P_HPP__ */

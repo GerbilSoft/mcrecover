@@ -1,5 +1,5 @@
 /***************************************************************************
- * GameCube Memory Card Recovery Program.                                  *
+ * GameCube Memory Card Recovery Program [libmemcard]                      *
  * MemCardModel.hpp: QAbstractListModel for Card.                          *
  *                                                                         *
  * Copyright (c) 2012-2018 by David Korth.                                 *

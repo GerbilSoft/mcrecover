@@ -1,8 +1,8 @@
 /***************************************************************************
- * GameCube Memory Card Recovery Program.                                  *
- * MemCardModel.cpp: QAbstractListModel for GcnCard.                       *
+ * GameCube Memory Card Recovery Program [libmemcard]                      *
+ * MemCardModel.cpp: QAbstractListModel for Card.                          *
  *                                                                         *
- * Copyright (c) 2012-2016 by David Korth.                                 *
+ * Copyright (c) 2012-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,18 +14,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #include "MemCardModel.hpp"
-#include "McRecoverQApplication.hpp"
 
 // Card classes.
 #include "Card.hpp"
 #include "File.hpp"
-#include "McRecoverQApplication.hpp"
 
 // TODO: Get correct icon size from the Card object.
 #include "card.h"
@@ -172,11 +169,25 @@ void MemCardModelPrivate::style_t::init(void)
 	brush_lostFile_alt = QBrush(bgColor_lostFile_alt);
 
 	// Initialize the COL_ISVALID pixmaps.
-	pxmIsValid_unknown = McRecoverQApplication::StandardIcon(QStyle::SP_MessageBoxQuestion)
+	// TODO: Move McRecoverQApplication::StandardIcon() to a separate library?
+	// TODO: Also McRecoverQApplication::IconFromTheme().
+	QStyle *const style = QApplication::style();
+
+#ifndef Q_OS_WIN
+	if (QIcon::hasThemeIcon(QLatin1String("dialog-question"))) {
+		pxmIsValid_unknown = QIcon::fromTheme(QLatin1String("dialog-question"))
+					.pixmap(pxmIsValid_width, pxmIsValid_height);
+	} else
+#else /* Q_OS_WIN */
+	{
+		pxmIsValid_unknown = style->standardIcon(QStyle::SP_MessageBoxQuestion)
+					.pixmap(pxmIsValid_width, pxmIsValid_height);
+	}
+#endif
+
+	pxmIsValid_invalid = style->standardIcon(QStyle::SP_MessageBoxCritical)
 				.pixmap(pxmIsValid_width, pxmIsValid_height);
-	pxmIsValid_invalid = McRecoverQApplication::StandardIcon(QStyle::SP_MessageBoxCritical)
-				.pixmap(pxmIsValid_width, pxmIsValid_height);
-	pxmIsValid_good    = McRecoverQApplication::StandardIcon(QStyle::SP_DialogApplyButton)
+	pxmIsValid_good    = style->standardIcon(QStyle::SP_DialogApplyButton)
 				.pixmap(pxmIsValid_width, pxmIsValid_height);
 }
 
@@ -255,11 +266,8 @@ MemCardModel::MemCardModel(QObject *parent)
 	, d_ptr(new MemCardModelPrivate(this))
 {
 	// Connect the "themeChanged" signal.
-	McRecoverQApplication *mcrqa = qobject_cast<McRecoverQApplication*>(McRecoverQApplication::instance());
-	if (mcrqa) {
-		connect(mcrqa, &McRecoverQApplication::themeChanged,
-			this, &MemCardModel::themeChanged_slot);
-	}
+	connect(qApp, SIGNAL(themeChanged()),
+		this, SLOT(themeChanged_slot()));
 }
 
 MemCardModel::~MemCardModel()

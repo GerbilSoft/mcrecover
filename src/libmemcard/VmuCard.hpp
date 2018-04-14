@@ -1,5 +1,5 @@
 /***************************************************************************
- * GameCube Memory Card Recovery Program.                                  *
+ * GameCube Memory Card Recovery Program [libmemcard]                      *
  * VmuCard.hpp: Dreamcast VMU memory card class.                           *
  *                                                                         *
  * Copyright (c) 2015-2018 by David Korth.                                 *
@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_CARD_VMUCARD_HPP__
-#define __MCRECOVER_CARD_VMUCARD_HPP__
+#ifndef __LIBMEMCARD_VMUCARD_HPP__
+#define __LIBMEMCARD_VMUCARD_HPP__
 
 #include "Card.hpp"
 
@@ -83,4 +83,4 @@ class VmuCard : public Card
 		QString productName(void) const final;
 };
 
-#endif /* __MCRECOVER_CARD_VMUCARD_HPP__ */
+#endif /* __LIBMEMCARD_VMUCARD_HPP__ */

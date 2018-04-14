@@ -22,8 +22,8 @@
 #include "CardView.hpp"
 #include "McRecoverQApplication.hpp"
 
-#include "card/Card.hpp"
-#include "card/GcnCard.hpp"
+#include "libmemcard/Card.hpp"
+#include "libmemcard/GcnCard.hpp"
 #include "GcnDateTime.hpp"
 #include "Checksum.hpp"
 

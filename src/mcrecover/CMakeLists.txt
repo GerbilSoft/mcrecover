@@ -73,11 +73,8 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.mcrecover.h.in" "${CMAKE_CURR
 # Sources.
 SET(mcrecover_SRCS
 	mcrecover.cpp
-	GcnDateTime.cpp
-	IconAnimHelper.cpp
 	McRecoverQApplication.cpp
 	VarReplace.cpp
-	GcToolsQt.cpp
 	TranslationManager.cpp
 	config/ConfigStore.cpp
 	config/ConfigDefaults.cpp
@@ -91,7 +88,6 @@ SET(mcrecover_DB_SRCS
 	)
 SET(mcrecover_DB_H
 	db/GcnMcFileDef.hpp
-	db/GcnSearchData.hpp
 	)
 
 SET(mcrecover_WINDOW_SRCS
@@ -111,18 +107,6 @@ SET(mcrecover_WIDGET_SRCS
 	widgets/TableSelect.cpp
 	widgets/MessageWidgetStack.cpp
 	widgets/LanguageMenu.cpp
-	)
-
-SET(mcrecover_CARD_SRCS
-	card/Card.cpp
-	card/GcnCard.cpp
-	card/File.cpp
-	card/GcnFile.cpp
-	card/MemCardModel.cpp
-	card/MemCardItemDelegate.cpp
-	card/MemCardSortFilterProxyModel.cpp
-	card/VmuCard.cpp
-	card/VmuFile.cpp
 	)
 
 # File edtors.
@@ -176,7 +160,6 @@ ENDIF(WIN32)
 
 # Headers with Qt objects.
 SET(mcrecover_MOC_H
-	IconAnimHelper.hpp
 	McRecoverQApplication.hpp
 	config/ConfigStore.hpp
 	)
@@ -204,18 +187,6 @@ SET(mcrecover_WIDGET_MOC_H
 	widgets/TableSelect.hpp
 	widgets/MessageWidgetStack.hpp
 	widgets/LanguageMenu.hpp
-	)
-
-SET(mcrecover_CARD_MOC_H
-	card/Card.hpp
-	card/GcnCard.hpp
-	card/File.hpp
-	card/GcnFile.hpp
-	card/MemCardModel.hpp
-	card/MemCardItemDelegate.hpp
-	card/MemCardSortFilterProxyModel.hpp
-	card/VmuCard.hpp
-	card/VmuFile.hpp
 	)
 
 # File edtors.
@@ -292,7 +263,6 @@ SET(mcrecover_MOC_H
 	${mcrecover_DB_MOC_H}
 	${mcrecover_WINDOW_MOC_H}
 	${mcrecover_WIDGET_MOC_H}
-	${mcrecover_CARD_MOC_H}
 	${mcrecover_EDIT_MOC_H}
 	${mcrecover_SEKRIT_MOC_H}
 	)
@@ -405,7 +375,6 @@ ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_DB_SRCS} ${mcrecover_DB_H}
 	${mcrecover_WINDOW_SRCS}
 	${mcrecover_WIDGET_SRCS}
-	${mcrecover_CARD_SRCS}
 	${mcrecover_EDIT_SRCS} ${mcrecover_EDIT_H}
 	${mcrecover_SEKRIT_SRCS}
 	${mcrecover_OS_SRCS}
@@ -428,8 +397,8 @@ TARGET_INCLUDE_DIRECTORIES(mcrecover
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/..>
 	)
 
-# libgctools
-TARGET_LINK_LIBRARIES(mcrecover gctools)
+# Other GCN MemCard Reocver libraries.
+TARGET_LINK_LIBRARIES(mcrecover gctools memcard)
 
 # extlib
 SET(MCRECOVER_EXTLIB

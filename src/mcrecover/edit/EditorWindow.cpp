@@ -29,7 +29,7 @@
 #include <QAction>
 
 // Files.
-#include "card/File.hpp"
+#include "libmemcard/File.hpp"
 
 // EditorWidget.
 #include "EditorWidget.hpp"

@@ -1,8 +1,8 @@
 /***************************************************************************
- * GameCube Memory Card Recovery Program.                                  *
- * MemCardSortFilterProxyModel.hpp: MemCardModel sort filter proxy.        *
+ * GameCube Memory Card Recovery Program [libmemcard]                      *
+ * MemCardItemDelegate.hpp: MemCard item delegate for QTreeView.           *
  *                                                                         *
- * Copyright (c) 2012-2018 by David Korth.                                 *
+ * Copyright (c) 2013-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -18,25 +18,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MEMCARDSORTFILTERPROXYMODEL_HPP__
-#define __MCRECOVER_MEMCARDSORTFILTERPROXYMODEL_HPP__
+#ifndef __MCRECOVER_MEMCARDITEMDELEGATE_HPP__
+#define __MCRECOVER_MEMCARDITEMDELEGATE_HPP__
 
-#include <QSortFilterProxyModel>
+// Qt includes.
+#include <QStyledItemDelegate>
 
-class MemCardSortFilterProxyModel : public QSortFilterProxyModel
+class MemCardItemDelegatePrivate;
+class MemCardItemDelegate : public QStyledItemDelegate
 {
 	Q_OBJECT
-	typedef QSortFilterProxyModel super;
+	typedef QStyledItemDelegate super;
 
 	public:
-		explicit MemCardSortFilterProxyModel(QObject *parent = 0);
+		explicit MemCardItemDelegate(QObject *parent);
+		virtual ~MemCardItemDelegate();
 
+	protected:
+		MemCardItemDelegatePrivate *const d_ptr;
+		Q_DECLARE_PRIVATE(MemCardItemDelegate)
 	private:
-		Q_DISABLE_COPY(MemCardSortFilterProxyModel)
+		Q_DISABLE_COPY(MemCardItemDelegate)
 
 	public:
-		bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const final;
-		bool lessThan(const QModelIndex &left, const QModelIndex &right) const final;
+		void paint(QPainter *painter, const QStyleOptionViewItem &option,
+			   const QModelIndex &index) const final;
+		QSize sizeHint(const QStyleOptionViewItem &option,
+			       const QModelIndex &index) const final;
+
+	private slots:
+		/**
+		 * The system theme has changed.
+		 */
+		void themeChanged_slot(void);
 };
 
-#endif /* __MCRECOVER_MEMCARDSORTFILTERPROXYMODEL_HPP__ */
+#endif /* __MCRECOVER_MEMCARDITEMDELEGATE_HPP__ */

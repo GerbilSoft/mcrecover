@@ -23,7 +23,7 @@
 #include "EditorWidget.hpp"
 
 // Files.
-#include "card/File.hpp"
+#include "libmemcard/File.hpp"
 
 // Editor widgets.
 #include "SonicAdventure/SAEditor.hpp"

@@ -1,8 +1,8 @@
 /***************************************************************************
- * GameCube Memory Card Recovery Program.                                  *
- * GcToolsQt.hpp: libgctools Qt wrappers.                                  *
+ * GameCube Memory Card Recovery Program [libmemcard]                      *
+ * MemCardSortFilterProxyModel.hpp: MemCardModel sort filter proxy.        *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2012-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,28 +14,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_GCTOOLSQT_HPP__
-#define __MCRECOVER_GCTOOLSQT_HPP__
+#ifndef __MCRECOVER_MEMCARDSORTFILTERPROXYMODEL_HPP__
+#define __MCRECOVER_MEMCARDSORTFILTERPROXYMODEL_HPP__
 
-// libgctools classes.
-class GcImage;
+#include <QSortFilterProxyModel>
 
-// Qt includes.
-#include <QtGui/QImage>
+class MemCardSortFilterProxyModel : public QSortFilterProxyModel
+{
+	Q_OBJECT
+	typedef QSortFilterProxyModel super;
 
-/**
- * Convert a GcImage to QImage.
- * NOTE: The resulting QImage will depend on the
- * GcImage for the actual data. Do not delete the
- * GcImage until you're done using the QImage!
- * @param gcImage GcImage.
- * @return QImage using the GcImage data, or null QImage on error.
- */
-QImage gcImageToQImage(const GcImage *gcImage);
+	public:
+		explicit MemCardSortFilterProxyModel(QObject *parent = 0);
 
-#endif /* __MCRECOVER_GCTOOLSQT_HPP__ */
+	private:
+		Q_DISABLE_COPY(MemCardSortFilterProxyModel)
+
+	public:
+		bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const final;
+		bool lessThan(const QModelIndex &left, const QModelIndex &right) const final;
+};
+
+#endif /* __MCRECOVER_MEMCARDSORTFILTERPROXYMODEL_HPP__ */

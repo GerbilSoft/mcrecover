@@ -22,7 +22,7 @@
 #include "XmlTemplateDialog.hpp"
 
 // MemCard
-#include "card/GcnFile.hpp"
+#include "libmemcard/GcnFile.hpp"
 
 // Qt includes.
 #include <QtCore/QXmlStreamWriter>

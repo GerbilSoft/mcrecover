@@ -1,5 +1,5 @@
 /***************************************************************************
- * GameCube Memory Card Recovery Program.                                  *
+ * GameCube Memory Card Recovery Program [libmemcard]                      *
  * GcnCard.hpp: GameCube memory card class.                                *
  *                                                                         *
  * Copyright (c) 2012-2018 by David Korth.                                 *
@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_CARD_GCNCARD_HPP__
-#define __MCRECOVER_CARD_GCNCARD_HPP__
+#ifndef __LIBMEMCARD_GCNCARD_HPP__
+#define __LIBMEMCARD_GCNCARD_HPP__
 
 #include "Card.hpp"
 
@@ -28,7 +28,7 @@
 
 #include "card.h"
 #include "Checksum.hpp"
-#include "db/GcnSearchData.hpp"
+#include "GcnSearchData.hpp"
 
 class GcnFile;
 
@@ -136,4 +136,4 @@ class GcnCard : public Card
 		Checksum::ChecksumValue headerChecksumValue(void) const;
 };
 
-#endif /* __MCRECOVER_CARD_GCNCARD_HPP__ */
+#endif /* __LIBMEMCARD_GCNCARD_HPP__ */

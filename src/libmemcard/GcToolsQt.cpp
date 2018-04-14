@@ -1,5 +1,5 @@
 /***************************************************************************
- * GameCube Memory Card Recovery Program.                                  *
+ * GameCube Memory Card Recovery Program [libmemcard]                      *
  * GcToolsQt.cpp: libgctools Qt wrappers.                                  *
  *                                                                         *
  * Copyright (c) 2012-2013 by David Korth.                                 *

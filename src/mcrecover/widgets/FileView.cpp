@@ -21,9 +21,9 @@
 
 #include "FileView.hpp"
 
-#include "card/File.hpp"
-#include "card/GcnFile.hpp" /* FIXME: Remove later */
-#include "card/VmuFile.hpp" /* FIXME: Remove later */
+#include "libmemcard/File.hpp"
+#include "libmemcard/GcnFile.hpp" /* FIXME: Remove later */
+#include "libmemcard/VmuFile.hpp" /* FIXME: Remove later */
 #include "IconAnimHelper.hpp"
 
 // XML template dialog.

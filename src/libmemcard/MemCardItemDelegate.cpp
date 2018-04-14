@@ -1,6 +1,6 @@
 /***************************************************************************
- * GameCube Memory Card Recovery Program.                                  *
- * MemCardItemDelegate.cpp: MemCard item delegate for QListView.           *
+ * GameCube Memory Card Recovery Program [libmemcard]                      *
+ * MemCardItemDelegate.cpp: MemCard item delegate for QTreeView.           *
  *                                                                         *
  * Copyright (c) 2013-2018 by David Korth.                                 *
  *                                                                         *
@@ -22,7 +22,6 @@
 
 #include "MemCardModel.hpp"
 #include "card.h"
-#include "McRecoverQApplication.hpp"
 
 // Qt includes.
 #include <QtGui/QPainter>
@@ -178,11 +177,8 @@ MemCardItemDelegate::MemCardItemDelegate(QObject *parent)
 	, d_ptr(new MemCardItemDelegatePrivate(this))
 {
 	// Connect the "themeChanged" signal.
-	McRecoverQApplication *mcrqa = qobject_cast<McRecoverQApplication*>(McRecoverQApplication::instance());
-	if (mcrqa) {
-		connect(mcrqa, &McRecoverQApplication::themeChanged,
-			this, &MemCardItemDelegate::themeChanged_slot);
-	}
+	connect(qApp, SIGNAL(themeChanged()),
+		this, SLOT(themeChanged_slot()));
 }
 
 MemCardItemDelegate::~MemCardItemDelegate()

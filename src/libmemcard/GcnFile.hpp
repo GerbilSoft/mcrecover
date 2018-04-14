@@ -1,5 +1,5 @@
 /***************************************************************************
- * GameCube Memory Card Recovery Program.                                  *
+ * GameCube Memory Card Recovery Program [libmemcard]                      *
  * GcnCard.hpp: GameCube file entry class.                                 *
  *                                                                         *
  * Copyright (c) 2012-2018 by David Korth.                                 *
@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_CARD_GCNFILE_HPP__
-#define __MCRECOVER_CARD_GCNFILE_HPP__
+#ifndef __LIBMEMCARD_GCNFILE_HPP__
+#define __LIBMEMCARD_GCNFILE_HPP__
 
 #include "File.hpp"
 // TODO: Remove card.h from here.
@@ -130,4 +130,4 @@ class GcnFile : public File
 		const card_direntry *dirEntry(void) const;
 };
 
-#endif /* __MCRECOVER_CARD_GCNFILE_HPP__ */
+#endif /* __LIBMEMCARD_GCNFILE_HPP__ */

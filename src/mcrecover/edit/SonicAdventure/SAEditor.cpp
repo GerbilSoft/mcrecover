@@ -29,9 +29,9 @@
 #include <QtCore/QEvent>
 
 // Files.
-#include "card/File.hpp"
-#include "card/GcnFile.hpp"
-#include "card/VmuFile.hpp"
+#include "libmemcard/File.hpp"
+#include "libmemcard/GcnFile.hpp"
+#include "libmemcard/VmuFile.hpp"
 
 #include "util/byteswap.h"
 #include "sa_defs.h"

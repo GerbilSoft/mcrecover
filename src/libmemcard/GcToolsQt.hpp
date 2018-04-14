@@ -1,8 +1,8 @@
 /***************************************************************************
- * GameCube Memory Card Recovery Program.                                  *
- * MemCardItemDelegate.hpp: MemCard item delegate for QListView.           *
+ * GameCube Memory Card Recovery Program [libmemcard]                      *
+ * GcToolsQt.hpp: libgctools Qt wrappers.                                  *
  *                                                                         *
- * Copyright (c) 2013-2016 by David Korth.                                 *
+ * Copyright (c) 2012-2013 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -19,39 +19,23 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MEMCARDITEMDELEGATE_HPP__
-#define __MCRECOVER_MEMCARDITEMDELEGATE_HPP__
+#ifndef __MCRECOVER_GCTOOLSQT_HPP__
+#define __MCRECOVER_GCTOOLSQT_HPP__
+
+// libgctools classes.
+class GcImage;
 
 // Qt includes.
-#include <QStyledItemDelegate>
+#include <QtGui/QImage>
 
-class MemCardItemDelegatePrivate;
-class MemCardItemDelegate : public QStyledItemDelegate
-{
-	Q_OBJECT
-	typedef QStyledItemDelegate super;
+/**
+ * Convert a GcImage to QImage.
+ * NOTE: The resulting QImage will depend on the
+ * GcImage for the actual data. Do not delete the
+ * GcImage until you're done using the QImage!
+ * @param gcImage GcImage.
+ * @return QImage using the GcImage data, or null QImage on error.
+ */
+QImage gcImageToQImage(const GcImage *gcImage);
 
-	public:
-		explicit MemCardItemDelegate(QObject *parent);
-		virtual ~MemCardItemDelegate();
-
-	protected:
-		MemCardItemDelegatePrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(MemCardItemDelegate)
-	private:
-		Q_DISABLE_COPY(MemCardItemDelegate)
-
-	public:
-		void paint(QPainter *painter, const QStyleOptionViewItem &option,
-			   const QModelIndex &index) const final;
-		QSize sizeHint(const QStyleOptionViewItem &option,
-			       const QModelIndex &index) const final;
-
-	private slots:
-		/**
-		 * The system theme has changed.
-		 */
-		void themeChanged_slot(void);
-};
-
-#endif /* __MCRECOVER_MEMCARDITEMDELEGATE_HPP__ */
+#endif /* __MCRECOVER_GCTOOLSQT_HPP__ */
