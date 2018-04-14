@@ -12,11 +12,19 @@ LIST(APPEND CMAKE_MODULE_PATH
 # TODO: Default to "Release"?
 STRING(TOLOWER "${CMAKE_BUILD_TYPE}" TMP_BUILD_TYPE)
 IF(TMP_BUILD_TYPE STREQUAL "")
-	SET(CMAKE_BUILD_TYPE "Debug")
+	SET(CMAKE_BUILD_TYPE "Release")
 ELSEIF(TMP_BUILD_TYPE MATCHES "none")
-	SET(CMAKE_BUILD_TYPE "Debug")
+	SET(CMAKE_BUILD_TYPE "Release")
 ENDIF()
 UNSET(TMP_BUILD_TYPE)
+
+# Put all the binaries and libraries into a single directory.
+# NOTE: CACHE INTERNAL is required in order to get this to work
+# for KDE5 for some reason. (and maybe that's why KDE4 did this
+# layout by default?)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin" CACHE INTERNAL "Put all binaries in a single directory.")
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" CACHE INTERNAL "Put all libraries in a single directory.")
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" CACHE INTERNAL "Put all archives in a single directory.")
 
 # Set default build options.
 INCLUDE(cmake/options.cmake)
@@ -93,7 +101,7 @@ ENDIF()
 
 # Make sure the file is deleted on `make clean`.
 SET_PROPERTY(DIRECTORY APPEND
-	PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/git_version.h")
+	PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${CMAKE_BINARY_DIR}/git_version.h")
 
 # Check for required libraries.
 # NOTE: This has to be done here in addition to
@@ -101,6 +109,17 @@ SET_PROPERTY(DIRECTORY APPEND
 # results may be lost.
 INCLUDE(CheckPNG)
 INCLUDE(CheckGIF)
+
+# Reference: https://cmake.org/Wiki/RecipeAddUninstallTarget
+########### Add uninstall target ###############
+CONFIGURE_FILE(
+	"${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+	"${CMAKE_CURRENT_BINARY_DIR}/cmake/cmake_uninstall.cmake"
+	IMMEDIATE @ONLY)
+ADD_CUSTOM_TARGET(uninstall
+	"${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake/cmake_uninstall.cmake")
+
+### Subdirectories. ###
 
 # Project subdirectories.
 ADD_SUBDIRECTORY(extlib)
