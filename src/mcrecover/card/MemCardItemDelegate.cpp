@@ -180,8 +180,8 @@ MemCardItemDelegate::MemCardItemDelegate(QObject *parent)
 	// Connect the "themeChanged" signal.
 	McRecoverQApplication *mcrqa = qobject_cast<McRecoverQApplication*>(McRecoverQApplication::instance());
 	if (mcrqa) {
-		connect(mcrqa, SIGNAL(themeChanged()),
-			this, SLOT(themeChanged_slot()));
+		connect(mcrqa, &McRecoverQApplication::themeChanged,
+			this, &MemCardItemDelegate::themeChanged_slot);
 	}
 }
 

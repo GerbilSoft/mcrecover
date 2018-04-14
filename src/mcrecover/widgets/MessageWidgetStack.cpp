@@ -121,10 +121,10 @@ void MessageWidgetStack::showMessage(const QString &msg, MessageWidget::MsgIcon 
 	d->messageWidgets.insert(messageWidget);
 
 	// Connect the signals.
-	QObject::connect(messageWidget, SIGNAL(destroyed(QObject*)),
-			 this, SLOT(messageWidget_destroyed_slot(QObject*)));
+	QObject::connect(messageWidget, &QObject::destroyed,
+		this, &MessageWidgetStack::messageWidget_destroyed_slot);
 	QObject::connect(messageWidget, SIGNAL(dismissed(bool)),
-			 d->mapperMessageWidgets, SLOT(map()));
+		d->mapperMessageWidgets, SLOT(map()));
 	d->mapperMessageWidgets->setMapping(messageWidget, messageWidget);
 
 	// Show the message.

@@ -112,8 +112,8 @@ StatusBarManagerPrivate::StatusBarManagerPrivate(StatusBarManager *q)
 	// Initialize the timer.
 	tmrHideProgressBar.setInterval(SECONDS_TO_HIDE_PROGRESS_BAR * 1000);
 	tmrHideProgressBar.setSingleShot(true);
-	QObject::connect(&tmrHideProgressBar, SIGNAL(timeout()),
-			 q, SLOT(hideProgressBar_slot()));
+	QObject::connect(&tmrHideProgressBar, &QTimer::timeout,
+		q, &StatusBarManager::hideProgressBar_slot);
 }
 
 StatusBarManagerPrivate::~StatusBarManagerPrivate()
@@ -220,12 +220,12 @@ void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 
 	if (d->statusBar) {
 		// Disconnect signals from the current statusBar.
-		disconnect(d->statusBar, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(object_destroyed_slot(QObject*)));
-		disconnect(d->lblMessage, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(object_destroyed_slot(QObject*)));
-		disconnect(d->progressBar, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(object_destroyed_slot(QObject*)));
+		disconnect(d->statusBar, &QObject::destroyed,
+			   this, &StatusBarManager::object_destroyed_slot);
+		disconnect(d->lblMessage, &QObject::destroyed,
+			   this, &StatusBarManager::object_destroyed_slot);
+		disconnect(d->progressBar, &QObject::destroyed,
+			   this, &StatusBarManager::object_destroyed_slot);
 
 		// Delete the progress bar.
 		delete d->progressBar;
@@ -236,21 +236,21 @@ void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 
 	if (d->statusBar) {
 		// Connect signals to the new statusBar.
-		connect(d->statusBar, SIGNAL(destroyed(QObject*)),
-			this, SLOT(object_destroyed_slot(QObject*)));
+		connect(d->statusBar, &QObject::destroyed,
+			this, &StatusBarManager::object_destroyed_slot);
 
 		// Create a new message label.
 		d->lblMessage = new QLabel();
 		d->lblMessage->setTextFormat(Qt::PlainText);
-		connect(d->lblMessage, SIGNAL(destroyed(QObject*)),
-			this, SLOT(object_destroyed_slot(QObject*)));
+		connect(d->lblMessage, &QObject::destroyed,
+			this, &StatusBarManager::object_destroyed_slot);
 		d->statusBar->addWidget(d->lblMessage);
 
 		// Create a new progress bar.
 		d->progressBar = new QProgressBar();
 		d->progressBar->setVisible(false);
-		connect(d->progressBar, SIGNAL(destroyed(QObject*)),
-			this, SLOT(object_destroyed_slot(QObject*)));
+		connect(d->progressBar, &QObject::destroyed,
+			this, &StatusBarManager::object_destroyed_slot);
 		d->statusBar->addPermanentWidget(d->progressBar, 1);
 
 		// Set the progress bar's size so it doesn't randomly resize.
@@ -284,36 +284,36 @@ void StatusBarManager::setSearchThread(GcnSearchThread *searchThread)
 
 	if (d->searchThread) {
 		// Disconnect signals from the current searchThread.
-		disconnect(d->searchThread, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(object_destroyed_slot(QObject*)));
-		disconnect(d->searchThread, SIGNAL(searchStarted(int,int,int)),
-			   this, SLOT(searchStarted_slot(int,int,int)));
-		disconnect(d->searchThread, SIGNAL(searchCancelled()),
-			   this, SLOT(searchCancelled_slot()));
-		disconnect(d->searchThread, SIGNAL(searchFinished(int)),
-			   this, SLOT(searchFinished_slot(int)));
-		disconnect(d->searchThread, SIGNAL(searchUpdate(int,int,int)),
-			   this, SLOT(searchUpdate_slot(int,int,int)));
-		disconnect(d->searchThread, SIGNAL(searchError(QString)),
-			   this, SLOT(searchError_slot(QString)));
+		disconnect(d->searchThread, &QObject::destroyed,
+			   this, &StatusBarManager::object_destroyed_slot);
+		disconnect(d->searchThread, &GcnSearchThread::searchStarted,
+			   this, &StatusBarManager::searchStarted_slot);
+		disconnect(d->searchThread, &GcnSearchThread::searchCancelled,
+			   this, &StatusBarManager::searchCancelled_slot);
+		disconnect(d->searchThread, &GcnSearchThread::searchFinished,
+			   this, &StatusBarManager::searchFinished_slot);
+		disconnect(d->searchThread, &GcnSearchThread::searchUpdate,
+			   this, &StatusBarManager::searchUpdate_slot);
+		disconnect(d->searchThread, &GcnSearchThread::searchError,
+			   this, &StatusBarManager::searchError_slot);
 	}
 
 	d->searchThread = searchThread;
 
 	if (searchThread) {
 		// Connect signals to the new searchThread.
-		connect(searchThread, SIGNAL(destroyed(QObject*)),
-			this, SLOT(object_destroyed_slot(QObject*)));
-		connect(searchThread, SIGNAL(searchStarted(int,int,int)),
-			this, SLOT(searchStarted_slot(int,int,int)));
-		connect(searchThread, SIGNAL(searchCancelled()),
-			this, SLOT(searchCancelled_slot()));
-		connect(searchThread, SIGNAL(searchFinished(int)),
-			this, SLOT(searchFinished_slot(int)));
-		connect(searchThread, SIGNAL(searchUpdate(int,int,int)),
-			this, SLOT(searchUpdate_slot(int,int,int)));
-		connect(searchThread, SIGNAL(searchError(QString)),
-			this, SLOT(searchError_slot(QString)));
+		connect(d->searchThread, &QObject::destroyed,
+			this, &StatusBarManager::object_destroyed_slot);
+		connect(d->searchThread, &GcnSearchThread::searchStarted,
+			this, &StatusBarManager::searchStarted_slot);
+		connect(d->searchThread, &GcnSearchThread::searchCancelled,
+			this, &StatusBarManager::searchCancelled_slot);
+		connect(d->searchThread, &GcnSearchThread::searchFinished,
+			this, &StatusBarManager::searchFinished_slot);
+		connect(d->searchThread, &GcnSearchThread::searchUpdate,
+			this, &StatusBarManager::searchUpdate_slot);
+		connect(d->searchThread, &GcnSearchThread::searchError,
+			this, &StatusBarManager::searchError_slot);
 	}
 
 	// TODO: Get current status from the new searchThread.
@@ -349,16 +349,16 @@ void StatusBarManager::setTaskbarButtonManager(TaskbarButtonManager *taskbarButt
 
 	if (d->taskbarButtonManager) {
 		// Disconnect the "destroyed" slot.
-		disconnect(d->taskbarButtonManager, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(object_destroyed_slot(QObject*)));
+		disconnect(d->taskbarButtonManager, &QObject::destroyed,
+			   this, &StatusBarManager::object_destroyed_slot);
 	}
 
 	d->taskbarButtonManager = taskbarButtonManager;
 
 	if (taskbarButtonManager) {
 		// Connect the "destroyed" slot.
-		connect(taskbarButtonManager, SIGNAL(destroyed(QObject*)),
-			this, SLOT(object_destroyed_slot(QObject*)));
+		connect(taskbarButtonManager, &QObject::destroyed,
+			this, &StatusBarManager::object_destroyed_slot);
 
 		// Update the status.
 		d->updateStatusBar();

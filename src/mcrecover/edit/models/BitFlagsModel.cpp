@@ -239,12 +239,12 @@ void BitFlagsModel::setBitFlags(BitFlags *bitFlags)
 			beginRemoveRows(QModelIndex(), 0, (flagCount - 1));
 
 		// Disconnect the BitFlags's signals.
-		disconnect(d->bitFlags, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(bitFlags_destroyed_slot(QObject*)));
-		disconnect(d->bitFlags, SIGNAL(flagChanged(int,bool)),
-			   this, SLOT(bitFlags_flagChanged_slot(int)));
-		disconnect(d->bitFlags, SIGNAL(flagsChanged(int,int)),
-			   this, SLOT(bitFlags_flagsChanged_slot(int,int)));
+		disconnect(d->bitFlags, &QObject::destroyed,
+			   this, &BitFlagsModel::bitFlags_destroyed_slot);
+		disconnect(d->bitFlags, &BitFlags::flagChanged,
+			   this, &BitFlagsModel::bitFlags_flagChanged_slot);
+		disconnect(d->bitFlags, &BitFlags::flagsChanged,
+			   this, &BitFlagsModel::bitFlags_flagsChanged_slot);
 
 		d->bitFlags = nullptr;
 
@@ -265,12 +265,12 @@ void BitFlagsModel::setBitFlags(BitFlags *bitFlags)
 		d->bitFlags = bitFlags;
 
 		// Connect the BitFlags's signals.
-		connect(d->bitFlags, SIGNAL(destroyed(QObject*)),
-			this, SLOT(bitFlags_destroyed_slot(QObject*)));
-		connect(d->bitFlags, SIGNAL(flagChanged(int,bool)),
-			this, SLOT(bitFlags_flagChanged_slot(int)));
-		connect(d->bitFlags, SIGNAL(flagsChanged(int,int)),
-			this, SLOT(bitFlags_flagsChanged_slot(int,int)));
+		connect(d->bitFlags, &QObject::destroyed,
+			this, &BitFlagsModel::bitFlags_destroyed_slot);
+		connect(d->bitFlags, &BitFlags::flagChanged,
+			this, &BitFlagsModel::bitFlags_flagChanged_slot);
+		connect(d->bitFlags, &BitFlags::flagsChanged,
+			this, &BitFlagsModel::bitFlags_flagsChanged_slot);
 
 		// Done adding rows.
 		if (flagCount > 0) {

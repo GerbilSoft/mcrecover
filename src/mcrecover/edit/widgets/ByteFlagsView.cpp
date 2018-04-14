@@ -177,10 +177,10 @@ ByteFlagsView::ByteFlagsView(QWidget *parent)
 	d->updateDisplay();
 
 	// Connect tabBar's signals.
-	connect(d->ui.tabBar, SIGNAL(currentChanged(int)),
-		d->pageFilterModel, SLOT(setCurrentPage(int)));
-	connect(d->pageFilterModel, SIGNAL(currentPageChanged(int)),
-		d->ui.tabBar, SLOT(setCurrentIndex(int)));
+	connect(d->ui.tabBar, &QTabBar::currentChanged,
+		d->pageFilterModel, &PageFilterModel::setCurrentPage);
+	connect(d->pageFilterModel, &PageFilterModel::currentPageChanged,
+		d->ui.tabBar, &QTabBar::setCurrentIndex);
 }
 
 ByteFlagsView::~ByteFlagsView()

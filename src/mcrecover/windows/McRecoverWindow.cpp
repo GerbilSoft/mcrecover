@@ -251,24 +251,24 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, taskbarButtonManager(nullptr)
 {
 	// Connect the MemCardModel slots.
-	QObject::connect(model, SIGNAL(layoutChanged()),
-			 q, SLOT(memCardModel_layoutChanged()));
-	QObject::connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)),
-			 q, SLOT(memCardModel_rowsInserted()));
+	QObject::connect(model, &MemCardModel::layoutChanged,
+			 q, &McRecoverWindow::memCardModel_layoutChanged);
+	QObject::connect(model, &MemCardModel::rowsInserted,
+			 q, &McRecoverWindow::memCardModel_rowsInserted);
 
 	// Connect the SearchThread slots.
-	QObject::connect(searchThread, SIGNAL(searchFinished(int)),
-			 q, SLOT(searchThread_searchFinished_slot(int)));
+	QObject::connect(searchThread, &GcnSearchThread::searchFinished,
+			 q, &McRecoverWindow::searchThread_searchFinished_slot);
 
 	// Connect searchThread to the mark-as-busy slots.
-	QObject::connect(searchThread, SIGNAL(searchStarted(int,int,int)),
-			 q, SLOT(markUiBusy()));
-	QObject::connect(searchThread, SIGNAL(searchFinished(int)),
-			 q, SLOT(markUiNotBusy()));
-	QObject::connect(searchThread, SIGNAL(searchError(QString)),
-			 q, SLOT(markUiNotBusy()));
-	QObject::connect(searchThread, SIGNAL(destroyed(QObject*)),
-			 q, SLOT(markUiNotBusy()));
+	QObject::connect(searchThread, &GcnSearchThread::searchStarted,
+			 q, &McRecoverWindow::markUiBusy);
+	QObject::connect(searchThread, &GcnSearchThread::searchFinished,
+			 q, &McRecoverWindow::markUiNotBusy);
+	QObject::connect(searchThread, &GcnSearchThread::searchError,
+			 q, &McRecoverWindow::markUiNotBusy);
+	QObject::connect(searchThread, &QObject::destroyed,
+			 q, &McRecoverWindow::markUiNotBusy);
 
 	// Connect the QSignalMapper slot for "Preferred Region" selection.
 	QObject::connect(mapperPreferredRegion, SIGNAL(mapped(int)),
@@ -906,8 +906,8 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_FILENAME, true);
 
 	// Connect the lstFileList slots.
-	connect(d->ui.lstFileList->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-		this, SLOT(lstFileList_selectionModel_selectionChanged(QItemSelection,QItemSelection)));
+	connect(d->ui.lstFileList->selectionModel(), &QItemSelectionModel::selectionChanged,
+		this, &McRecoverWindow::lstFileList_selectionModel_selectionChanged);
 
 	// Initialize the UI.
 	d->updateLstFileList();
@@ -916,10 +916,10 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	d->updateWindowTitle();
 
 	// Shh... it's a secret to everybody.
-	QObject::connect(d->ui.lstFileList, SIGNAL(keyPress(QKeyEvent*)),
-			 d->herpDerp, SLOT(widget_keyPress(QKeyEvent*)));
-	QObject::connect(d->ui.lstFileList, SIGNAL(focusOut(QFocusEvent*)),
-			 d->herpDerp, SLOT(widget_focusOut(QFocusEvent*)));
+	connect(d->ui.lstFileList, &QTreeViewOpt::keyPress,
+		d->herpDerp, &HerpDerpEggListener::widget_keyPress);
+	connect(d->ui.lstFileList, &QTreeViewOpt::focusOut,
+		d->herpDerp, &HerpDerpEggListener::widget_focusOut);
 
 #ifndef Q_OS_WIN
 	// Initialize the Taskbar Button Manager. (Non-Windows systems)

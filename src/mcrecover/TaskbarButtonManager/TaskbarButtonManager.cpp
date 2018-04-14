@@ -73,16 +73,16 @@ void TaskbarButtonManager::setWindow(QWidget *window)
 
 	if (d->window) {
 		// Disconnect slots from the existing window.
-		disconnect(d->window, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(windowDestroyed_slot(QObject*)));
+		disconnect(d->window, &QObject::destroyed,
+			   this, &TaskbarButtonManager::windowDestroyed_slot);
 	}
 
 	d->window = window;
 
 	if (d->window) {
 		// Connect slots to the new window.
-		connect(d->window, SIGNAL(destroyed(QObject*)),
-			this, SLOT(windowDestroyed_slot(QObject*)));
+		connect(d->window, &QObject::destroyed,
+			this, &TaskbarButtonManager::windowDestroyed_slot);
 	}
 }
 

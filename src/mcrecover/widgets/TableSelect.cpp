@@ -435,10 +435,10 @@ TableSelect::TableSelect(QWidget *parent)
 	d->ui.setupUi(this);
 
 	// Connect button group signals.
-	QObject::connect(d->ui.btnDirGroup, SIGNAL(buttonClicked(int)),
-			 this, SLOT(setActiveDatIdx(int)));
-	QObject::connect(d->ui.btnBlockGroup, SIGNAL(buttonClicked(int)),
-			 this, SLOT(setActiveBatIdx(int)));
+	connect(d->ui.btnDirGroup, SIGNAL(buttonClicked(int)),
+		this, SLOT(setActiveDatIdx(int)));
+	connect(d->ui.btnBlockGroup, SIGNAL(buttonClicked(int)),
+		this, SLOT(setActiveBatIdx(int)));
 }
 
 TableSelect::~TableSelect()
@@ -467,15 +467,15 @@ void TableSelect::setCard(Card *card)
 
 	// Disconnect the Card's signals if a Card is already set.
 	if (d->card) {
-		disconnect(d->card, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(memCard_destroyed_slot(QObject*)));
+		disconnect(d->card, &QObject::destroyed,
+			   this, &TableSelect::memCard_destroyed_slot);
 		// NOTE: On application close, these sometimes don't work
 		// because the card is just a QObject. Not sure why...
 		if (qobject_cast<Card*>(d->card) != nullptr) {
-			disconnect(d->card, SIGNAL(activeDatIdxChanged(int)),
-				   this, SLOT(memCard_activeDatIdxChanged_slot(int)));
-			disconnect(d->card, SIGNAL(activeBatIdxChanged(int)),
-				   this, SLOT(memCard_activeBatIdxChanged_slot(int)));
+			disconnect(d->card, &Card::activeDatIdxChanged,
+				   this, &TableSelect::memCard_activeDatIdxChanged_slot);
+			disconnect(d->card, &Card::activeBatIdxChanged,
+				   this, &TableSelect::memCard_activeBatIdxChanged_slot);
 		}
 	}
 
@@ -483,12 +483,12 @@ void TableSelect::setCard(Card *card)
 
 	// Connect the Card's signals.
 	if (d->card) {
-		connect(d->card, SIGNAL(destroyed(QObject*)),
-			this, SLOT(memCard_destroyed_slot(QObject*)));
-		connect(d->card, SIGNAL(activeDatIdxChanged(int)),
-			this, SLOT(memCard_activeDatIdxChanged_slot(int)));
-		connect(d->card, SIGNAL(activeBatIdxChanged(int)),
-			this, SLOT(memCard_activeBatIdxChanged_slot(int)));
+		connect(d->card, &QObject::destroyed,
+			this, &TableSelect::memCard_destroyed_slot);
+		connect(d->card, &Card::activeDatIdxChanged,
+			this, &TableSelect::memCard_activeDatIdxChanged_slot);
+		connect(d->card, &Card::activeBatIdxChanged,
+			this, &TableSelect::memCard_activeBatIdxChanged_slot);
 	}
 
 	// Update the widget display.

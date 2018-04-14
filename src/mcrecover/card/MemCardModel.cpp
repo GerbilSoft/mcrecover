@@ -133,8 +133,8 @@ MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	, insertEnd(-1)
 {
 	// Connect animTimer's timeout() signal.
-	QObject::connect(animTimer, SIGNAL(timeout()),
-			 q, SLOT(animTimerSlot()));
+	QObject::connect(animTimer, &QTimer::timeout,
+			 q, &MemCardModel::animTimerSlot);
 
 	// Initialize the style variables.
 	style.init();
@@ -257,8 +257,8 @@ MemCardModel::MemCardModel(QObject *parent)
 	// Connect the "themeChanged" signal.
 	McRecoverQApplication *mcrqa = qobject_cast<McRecoverQApplication*>(McRecoverQApplication::instance());
 	if (mcrqa) {
-		connect(mcrqa, SIGNAL(themeChanged()),
-			this, SLOT(themeChanged_slot()));
+		connect(mcrqa, &McRecoverQApplication::themeChanged,
+			this, &MemCardModel::themeChanged_slot);
 	}
 }
 
@@ -492,16 +492,16 @@ void MemCardModel::setCard(Card *card)
 			beginRemoveRows(QModelIndex(), 0, (fileCount - 1));
 
 		// Disconnect the Card's signals.
-		disconnect(d->card, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(card_destroyed_slot(QObject*)));
-		disconnect(d->card, SIGNAL(filesAboutToBeInserted(int,int)),
-			   this, SLOT(card_filesAboutToBeInserted_slot(int,int)));
-		disconnect(d->card, SIGNAL(filesInserted()),
-			   this, SLOT(card_filesInserted_slot()));
-		disconnect(d->card, SIGNAL(filesAboutToBeRemoved(int,int)),
-			   this, SLOT(card_filesAboutToBeRemoved_slot(int,int)));
-		disconnect(d->card, SIGNAL(filesRemoved()),
-			   this, SLOT(card_filesRemoved_slot()));
+		disconnect(d->card, &QObject::destroyed,
+			   this, &MemCardModel::card_destroyed_slot);
+		disconnect(d->card, &Card::filesAboutToBeInserted,
+			   this, &MemCardModel::card_filesAboutToBeInserted_slot);
+		disconnect(d->card, &Card::filesInserted,
+			   this, &MemCardModel::card_filesInserted_slot);
+		disconnect(d->card, &Card::filesAboutToBeRemoved,
+			   this, &MemCardModel::card_filesAboutToBeRemoved_slot);
+		disconnect(d->card, &Card::filesRemoved,
+			   this, &MemCardModel::card_filesRemoved_slot);
 
 		d->card = nullptr;
 
@@ -526,16 +526,16 @@ void MemCardModel::setCard(Card *card)
 		d->initAnimState();
 
 		// Connect the Card's signals.
-		connect(d->card, SIGNAL(destroyed(QObject*)),
-			this, SLOT(card_destroyed_slot(QObject*)));
-		connect(d->card, SIGNAL(filesAboutToBeInserted(int,int)),
-			this, SLOT(card_filesAboutToBeInserted_slot(int,int)));
-		connect(d->card, SIGNAL(filesInserted()),
-			this, SLOT(card_filesInserted_slot()));
-		connect(d->card, SIGNAL(filesAboutToBeRemoved(int,int)),
-			this, SLOT(card_filesAboutToBeRemoved_slot(int,int)));
-		connect(d->card, SIGNAL(filesRemoved()),
-			this, SLOT(card_filesRemoved_slot()));
+		connect(d->card, &QObject::destroyed,
+			this, &MemCardModel::card_destroyed_slot);
+		connect(d->card, &Card::filesAboutToBeInserted,
+			this, &MemCardModel::card_filesAboutToBeInserted_slot);
+		connect(d->card, &Card::filesInserted,
+			this, &MemCardModel::card_filesInserted_slot);
+		connect(d->card, &Card::filesAboutToBeRemoved,
+			this, &MemCardModel::card_filesAboutToBeRemoved_slot);
+		connect(d->card, &Card::filesRemoved,
+			this, &MemCardModel::card_filesRemoved_slot);
 
 		// Done adding rows.
 		if (fileCount > 0)

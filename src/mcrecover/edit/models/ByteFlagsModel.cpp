@@ -310,12 +310,12 @@ void ByteFlagsModel::setByteFlags(ByteFlags *byteFlags)
 			beginRemoveRows(QModelIndex(), 0, (flagCount - 1));
 
 		// Disconnect the ByteFlags's signals.
-		disconnect(d->byteFlags, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(byteFlags_destroyed_slot(QObject*)));
-		disconnect(d->byteFlags, SIGNAL(flagChanged(int,uint8_t)),
-			   this, SLOT(byteFlags_flagChanged_slot(int)));
-		disconnect(d->byteFlags, SIGNAL(flagsChanged(int,int)),
-			   this, SLOT(byteFlags_flagsChanged_slot(int,int)));
+		disconnect(d->byteFlags, &QObject::destroyed,
+			   this, &ByteFlagsModel::byteFlags_destroyed_slot);
+		disconnect(d->byteFlags, &ByteFlags::flagChanged,
+			   this, &ByteFlagsModel::byteFlags_flagChanged_slot);
+		disconnect(d->byteFlags, &ByteFlags::flagsChanged,
+			   this, &ByteFlagsModel::byteFlags_flagsChanged_slot);
 
 		d->byteFlags = nullptr;
 
@@ -336,12 +336,12 @@ void ByteFlagsModel::setByteFlags(ByteFlags *byteFlags)
 		d->byteFlags = byteFlags;
 
 		// Connect the ByteFlags's signals.
-		connect(d->byteFlags, SIGNAL(destroyed(QObject*)),
-			this, SLOT(byteFlags_destroyed_slot(QObject*)));
-		connect(d->byteFlags, SIGNAL(flagChanged(int,uint8_t)),
-			this, SLOT(byteFlags_flagChanged_slot(int)));
-		connect(d->byteFlags, SIGNAL(flagsChanged(int,int)),
-			this, SLOT(byteFlags_flagsChanged_slot(int,int)));
+		connect(d->byteFlags, &QObject::destroyed,
+			this, &ByteFlagsModel::byteFlags_destroyed_slot);
+		connect(d->byteFlags, &ByteFlags::flagChanged,
+			this, &ByteFlagsModel::byteFlags_flagChanged_slot);
+		connect(d->byteFlags, &ByteFlags::flagsChanged,
+			this, &ByteFlagsModel::byteFlags_flagsChanged_slot);
 
 		// Done adding rows.
 		if (flagCount > 0) {

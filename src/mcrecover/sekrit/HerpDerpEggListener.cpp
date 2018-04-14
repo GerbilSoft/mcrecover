@@ -90,8 +90,8 @@ void HerpDerpEggListenerPrivate::doHackDetection(void)
 	for (int i = 0; i < desktop->numScreens(); i++) {
 		HackDetection *hd = new HackDetection(i, parent);
 		hd->setDetectType(this->detectType);
-		QObject::connect(hd, SIGNAL(destroyed(QObject*)),
-				 q, SLOT(hd_destroyed(QObject*)));
+		QObject::connect(hd, &QObject::destroyed,
+			q, &HerpDerpEggListener::hd_destroyed);
 		hdSet.insert(hd);
 		hd->show();
 	}

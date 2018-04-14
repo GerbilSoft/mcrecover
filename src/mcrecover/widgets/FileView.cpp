@@ -91,8 +91,8 @@ FileViewPrivate::FileViewPrivate(FileView *q)
 	, xmlTemplateDialogManager(new XmlTemplateDialogManager(q))
 {
 	// Connect animTimer's timeout() signal.
-	QObject::connect(animTimer, SIGNAL(timeout()),
-			 q, SLOT(animTimer_slot()));
+	QObject::connect(animTimer, &QTimer::timeout,
+		q, &FileView::animTimer_slot);
 }
 
 FileViewPrivate::~FileViewPrivate()
@@ -290,16 +290,16 @@ void FileView::setFile(const File *file)
 
 	// Disconnect the File's destroyed() signal if a File is already set.
 	if (d->file) {
-		disconnect(d->file, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(file_destroyed_slot(QObject*)));
+		disconnect(d->file, &QObject::destroyed,
+			   this, &FileView::file_destroyed_slot);
 	}
 
 	d->file = file;
 
 	// Connect the File's destroyed() signal.
 	if (d->file) {
-		connect(d->file, SIGNAL(destroyed(QObject*)),
-			this, SLOT(file_destroyed_slot(QObject*)));
+		connect(d->file, &QObject::destroyed,
+			this, &FileView::file_destroyed_slot);
 	}
 
 	// Update the widget display.

@@ -71,19 +71,19 @@ GcnSearchThreadPrivate::GcnSearchThreadPrivate(GcnSearchThread* q)
 	, workerThread(nullptr)
 {
 	// Signal passthrough.
-	QObject::connect(worker, SIGNAL(searchStarted(int,int,int)),
-			 q, SIGNAL(searchStarted(int,int,int)));
-	QObject::connect(worker, SIGNAL(searchUpdate(int,int,int)),
-			 q, SIGNAL(searchUpdate(int,int,int)));
+	QObject::connect(worker, &GcnSearchWorker::searchStarted,
+			 q, &GcnSearchThread::searchStarted);
+	QObject::connect(worker, &GcnSearchWorker::searchUpdate,
+			 q, &GcnSearchThread::searchUpdate);
 
 	// We have to handle these signals in order to move
 	// the worker object back to the main thread.
-	QObject::connect(worker, SIGNAL(searchCancelled()),
-			 q, SLOT(searchCancelled_slot()));
-	QObject::connect(worker, SIGNAL(searchFinished(int)),
-			 q, SLOT(searchFinished_slot(int)));
-	QObject::connect(worker, SIGNAL(searchError(QString)),
-			 q, SLOT(searchError_slot(QString)));
+	QObject::connect(worker, &GcnSearchWorker::searchCancelled,
+			 q, &GcnSearchThread::searchCancelled_slot);
+	QObject::connect(worker, &GcnSearchWorker::searchFinished,
+			 q, &GcnSearchThread::searchFinished_slot);
+	QObject::connect(worker, &GcnSearchWorker::searchError,
+			 q, &GcnSearchThread::searchError_slot);
 }	
 
 GcnSearchThreadPrivate::~GcnSearchThreadPrivate()
@@ -260,8 +260,8 @@ int GcnSearchThread::searchMemCard_async(GcnCard *card, char preferredRegion, bo
 	d->worker->setSearchUsedBlocks(searchUsedBlocks);
 	d->worker->setOrigThread(QThread::currentThread());
 
-	connect(d->workerThread, SIGNAL(started()),
-		d->worker, SLOT(searchMemCard_threaded()));
+	connect(d->workerThread, &QThread::started,
+		d->worker, &GcnSearchWorker::searchMemCard_threaded);
 
 	// Start the thread.
 	d->workerThread->start();

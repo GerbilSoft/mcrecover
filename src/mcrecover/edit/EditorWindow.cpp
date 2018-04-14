@@ -88,7 +88,7 @@ EditorWindowPrivate::EditorWindowPrivate(EditorWindow* q)
 {
 	// Connect the save slot button signal mapper.
 	QObject::connect(signalMapper, SIGNAL(mapped(int)),
-			 q, SLOT(toolBar_saveSlotButton_clicked(int)));
+		q, SLOT(toolBar_saveSlotButton_clicked(int)));
 }
 
 EditorWindowPrivate::~EditorWindowPrivate()
@@ -119,16 +119,16 @@ void EditorWindowPrivate::setEditorWidget(EditorWidget *editorWidget)
 	if (editorWidget != nullptr) {
 		// Connect various signals.
 		Q_Q(EditorWindow);
-		QObject::connect(editorWidget, SIGNAL(saveSlotsChanged(int)),
-				 q, SLOT(saveSlotsChanged_slot(int)));
-		QObject::connect(editorWidget, SIGNAL(generalSettingsChanged(bool)),
-				 q, SLOT(generalSettingsChanged_slot(bool)));
-		QObject::connect(editorWidget, SIGNAL(currentSaveSlotChanged(int)),
-				 q, SLOT(currentSaveSlotChanged_slot(int)));
-		QObject::connect(editorWidget, SIGNAL(destroyed(QObject*)),
-				 q, SLOT(editorWidget_destroyed_slot(QObject*)));
-		QObject::connect(editorWidget, SIGNAL(hasBeenModified(bool)),
-				 q, SLOT(editorWidget_hasBeenModified(bool)));
+		QObject::connect(editorWidget, &EditorWidget::saveSlotsChanged,
+				 q, &EditorWindow::saveSlotsChanged_slot);
+		QObject::connect(editorWidget, &EditorWidget::generalSettingsChanged,
+				 q, &EditorWindow::generalSettingsChanged_slot);
+		QObject::connect(editorWidget, &EditorWidget::currentSaveSlotChanged,
+				 q, &EditorWindow::currentSaveSlotChanged_slot);
+		QObject::connect(editorWidget, &EditorWidget::destroyed,
+				 q, &EditorWindow::editorWidget_destroyed_slot);
+		QObject::connect(editorWidget, &EditorWidget::hasBeenModified,
+				 q, &EditorWindow::editorWidget_hasBeenModified);
 
 #ifndef NDEBUG
 		// DEBUGGING: Make sure we initialize the modified state.
@@ -173,7 +173,7 @@ void EditorWindowPrivate::initToolbar(void)
 	// Connect the "General" settings button to the signal mapper.
 	signalMapper->setMapping(ui.actionGeneralSettings, -1);
 	QObject::connect(ui.actionGeneralSettings, SIGNAL(triggered()),
-			 signalMapper, SLOT(map()));
+		signalMapper, SLOT(map()));
 
 	// Update the save slot buttons.
 	updateSaveSlotButtons();
@@ -221,7 +221,7 @@ void EditorWindowPrivate::updateSaveSlotButtons(void)
 			// Connect the signal mapper.
 			signalMapper->setMapping(action, i);
 			QObject::connect(action, SIGNAL(triggered()),
-						signalMapper, SLOT(map()));
+				signalMapper, SLOT(map()));
 		}
 	} else if (saveSlots < saveSlotButtons.size()) {
 		// Remove buttons.

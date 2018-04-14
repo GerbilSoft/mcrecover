@@ -346,24 +346,24 @@ void CardView::setCard(Card *card)
 
 	// Disconnect the Card's destroyed() signal if a Card is already set.
 	if (d->card) {
-		disconnect(d->card, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(card_destroyed_slot(QObject*)));
-		disconnect(d->card, SIGNAL(blockCountChanged(int,int,int)),
-			   this, SLOT(card_blockCountChanged_slot()));
-		disconnect(d->card, SIGNAL(colorChanged(QColor)),
-			   this, SLOT(card_colorChanged_slot(QColor)));
+		disconnect(d->card, &QObject::destroyed,
+			   this, &CardView::card_destroyed_slot);
+		disconnect(d->card, &Card::blockCountChanged,
+			   this, &CardView::card_blockCountChanged_slot);
+		disconnect(d->card, &Card::colorChanged,
+			   this, &CardView::card_colorChanged_slot);
 	}
 
 	d->card = card;
 
 	// Connect the Card's destroyed() signal.
 	if (d->card) {
-		connect(d->card, SIGNAL(destroyed(QObject*)),
-			this, SLOT(card_destroyed_slot(QObject*)));
-		connect(d->card, SIGNAL(blockCountChanged(int,int,int)),
-			   this, SLOT(card_blockCountChanged_slot()));
-		connect(d->card, SIGNAL(colorChanged(QColor)),
-			   this, SLOT(card_colorChanged_slot(QColor)));
+		connect(d->card, &QObject::destroyed,
+			this, &CardView::card_destroyed_slot);
+		connect(d->card, &Card::blockCountChanged,
+			this, &CardView::card_blockCountChanged_slot);
+		connect(d->card, &Card::colorChanged,
+			this, &CardView::card_colorChanged_slot);
 	}
 
 	// Update the widget display.

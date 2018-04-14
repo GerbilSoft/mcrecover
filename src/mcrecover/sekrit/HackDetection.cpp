@@ -94,8 +94,8 @@ HackDetectionPrivate::HackDetectionPrivate(HackDetection* q)
 	winRect = QRect(0, 0, 640, 480);
 
 	// Connect the timer signal.
-	QObject::connect(tmrEscapeBlink, SIGNAL(timeout()),
-			 q, SLOT(tmrEscapeBlink_timeout()));
+	QObject::connect(tmrEscapeBlink, &QTimer::timeout,
+		q, &HackDetection::tmrEscapeBlink_timeout);
 }
 
 /**

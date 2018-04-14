@@ -31,8 +31,8 @@ QTreeViewOpt::QTreeViewOpt(QWidget *parent)
 {
 	// Connect the signal for hiding/showing columns.
 	this->header()->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(this->header(), SIGNAL(customContextMenuRequested(QPoint)),
-		this, SLOT(showColumnContextMenu(QPoint)));
+	connect(this->header(), &QHeaderView::customContextMenuRequested,
+		this, &QTreeViewOpt::showColumnContextMenu);
 }
 
 /**

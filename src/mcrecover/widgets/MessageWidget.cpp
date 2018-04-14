@@ -233,14 +233,14 @@ MessageWidget::MessageWidget(QWidget *parent)
 	d->setIcon(d->icon);
 
 	// Connect the timer signal.
-	QObject::connect(d->tmrTimeout, SIGNAL(timeout()),
-			 this, SLOT(tmrTimeout_timeout()));
+	QObject::connect(d->tmrTimeout, &QTimer::timeout,
+		this, &MessageWidget::tmrTimeout_timeout);
 
 	// Connect the timeline signals.
-	QObject::connect(d->timeLine, SIGNAL(valueChanged(qreal)),
-			 this, SLOT(timeLineChanged_slot(qreal)));
-	QObject::connect(d->timeLine, SIGNAL(finished()),
-			 this, SLOT(timeLineFinished_slot()));
+	connect(d->timeLine, &QTimeLine::valueChanged,
+		this, &MessageWidget::timeLineChanged_slot);
+	connect(d->timeLine, &QTimeLine::finished,
+		this, &MessageWidget::timeLineFinished_slot);
 }
 
 MessageWidget::~MessageWidget()
@@ -339,8 +339,8 @@ void MessageWidget::showMessage(const QString &msg, MsgIcon icon, int timeout, Q
 
 	// Close the widget when the specified QObject is destroyed.
 	if (closeOnDestroy) {
-		connect(closeOnDestroy, SIGNAL(destroyed()),
-			this, SLOT(on_btnDismiss_clicked()),
+		connect(closeOnDestroy, &QObject::destroyed,
+			this, &MessageWidget::on_btnDismiss_clicked,
 			Qt::UniqueConnection);
 	}
 

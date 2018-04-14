@@ -213,16 +213,16 @@ void IconAnimHelper::setFile(const File *file)
 
 	// Disconnect the File's destroyed() signal if a File is already set.
 	if (d->file) {
-		disconnect(d->file, SIGNAL(destroyed(QObject*)),
-			   this, SLOT(file_destroyed_slot(QObject*)));
+		disconnect(d->file, &QObject::destroyed,
+			   this, &IconAnimHelper::file_destroyed_slot);
 	}
 
 	d->file = file;
 
 	// Connect the File's destroyed() signal.
 	if (d->file) {
-		connect(d->file, SIGNAL(destroyed(QObject*)),
-			this, SLOT(file_destroyed_slot(QObject*)));
+		connect(d->file, &QObject::destroyed,
+			this, &IconAnimHelper::file_destroyed_slot);
 	}
 
 	// Reset the animation state.

@@ -106,10 +106,10 @@ XmlTemplateDialog *XmlTemplateDialogManager::create(const GcnFile *file, QWidget
 		d->dialogHashRev.insert(dialog, file);
 
 		// Make sure we know if either the file or the dialog are destroyed.
-		QObject::connect(file, SIGNAL(destroyed(QObject*)),
-				 this, SLOT(file_destroyed_slot(QObject*)));
-		QObject::connect(dialog, SIGNAL(destroyed(QObject*)),
-				 this, SLOT(xmlTemplateDialog_destroyed_slot(QObject*)));
+		connect(file, &QObject::destroyed,
+			this, &XmlTemplateDialogManager::file_destroyed_slot);
+		connect(dialog, &QObject::destroyed,
+			this, &XmlTemplateDialogManager::xmlTemplateDialog_destroyed_slot);
 	}
 
 	return dialog;
@@ -151,8 +151,8 @@ void XmlTemplateDialogManager::xmlTemplateDialog_destroyed_slot(QObject *obj)
 	d->dialogHashRev.remove(dialog);
 	if (file) {
 		// We don't own the GcnFile, so don't delete it.
-		QObject::disconnect(file, SIGNAL(destroyed(QObject*)),
-				    this, SLOT(file_destroyed_slot(QObject*)));
+		disconnect(file, &QObject::destroyed,
+			   this, &XmlTemplateDialogManager::file_destroyed_slot);
 		d->dialogHash.remove(file);
 	}
 }
