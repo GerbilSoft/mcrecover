@@ -427,9 +427,15 @@ void GcnMcFileDbPrivate::parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDe
 
 	// Set the regular expressions.
 	gcnMcFileDef->search.gameDesc_regex.setPattern(gcnMcFileDef->search.gameDesc);
-	gcnMcFileDef->search.gameDesc_regex.optimize();
 	gcnMcFileDef->search.fileDesc_regex.setPattern(gcnMcFileDef->search.fileDesc);
+#if QT_VERSION >= QT_VERSION_CHECK(5,4,0)
+	// TODO: If compiling with older Qt, set QRegularExpression::OptimizeOnFirstUsageOption.
+	// This will allow optimization if used with newer Qt without recompiling.
+	// QRegularExpression::PatternOption enum value 0x0080
+	// QRegularExpression::setPatternOptions()
+	gcnMcFileDef->search.gameDesc_regex.optimize();
 	gcnMcFileDef->search.fileDesc_regex.optimize();
+#endif /* QT_VERSION >= QT_VERSION_CHECK(5,4,0) */
 }
 
 
