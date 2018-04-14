@@ -1,17 +1,19 @@
 # CMakeLists.txt
 
-# Copyright (C) 2007,2009-2016 Glenn Randers-Pehrson
+# Copyright (C) 2007,2009-2017 Glenn Randers-Pehrson
 # Written by Christian Ehrlicher, 2007
 # Revised by Roger Lowman, 2009-2010
 # Revised by Clifford Yapp, 2011-2012
 # Revised by Roger Leigh, 2016
+# Revised by Andreas Franek, 2016
 
 # This code is released under the libpng license.
 # For conditions of distribution and use, see the disclaimer
 # and license in png.h
 
-cmake_minimum_required(VERSION 2.8.3)
-cmake_policy(VERSION 2.8.3)
+# mcrecover: Disabled; use the main project policies.
+#cmake_minimum_required(VERSION 3.0.2)
+#cmake_policy(VERSION 3.0.2)
 
 # Set MacOSX @rpath usage globally.
 if (POLICY CMP0020)
@@ -30,7 +32,7 @@ endif(POLICY CMP0054)
 
 set(CMAKE_CONFIGURATION_TYPES "Release;Debug;MinSizeRel;RelWithDebInfo")
 
-project(libpng C)
+project(libpng ASM C)
 # mcrecover: Disable libpng testing.
 IF(0)
 enable_testing()
@@ -38,16 +40,24 @@ ENDIF(0)
 
 set(PNGLIB_MAJOR 1)
 set(PNGLIB_MINOR 6)
-set(PNGLIB_RELEASE 23)
+set(PNGLIB_RELEASE 34)
 set(PNGLIB_NAME libpng${PNGLIB_MAJOR}${PNGLIB_MINOR})
 set(PNGLIB_VERSION ${PNGLIB_MAJOR}.${PNGLIB_MINOR}.${PNGLIB_RELEASE})
 
+# mcrecover: Not used.
+#include(GNUInstallDirs)
+
 # needed packages
-# mcrecover: Disable FIND_PACKAGE(); this is handled in CheckPNG.
-IF(0)
-find_package(ZLIB REQUIRED)
-ENDIF(0)
-include_directories(${ZLIB_INCLUDE_DIR})
+
+#Allow users to specify location of Zlib,
+# Useful if zlib is being built alongside this as a sub-project
+# mcrecover: Don't use option() here; it's set by extlib.
+#option(PNG_BUILD_ZLIB "Custom zlib Location, else find_package is used" OFF)
+
+IF(NOT PNG_BUILD_ZLIB)
+  find_package(ZLIB REQUIRED)
+  include_directories(${ZLIB_INCLUDE_DIR})
+ENDIF(NOT PNG_BUILD_ZLIB)
 
 if(NOT WIN32)
   find_library(M_LIBRARY
@@ -71,15 +81,123 @@ option(PNG_TESTS  "Build libpng tests" ON)
 ENDIF(0)
 
 # mcrecover: Disable libpng options.
+# Intel SSE2 optimizations are enabled manually later on.
 IF(0)
 # Many more configuration options could be added here
 option(PNG_FRAMEWORK "Build OS X framework" OFF)
 option(PNG_DEBUG     "Build with debug output" OFF)
 option(PNGARG        "Disable ANSI-C prototypes" OFF)
+
+option(PNG_HARDWARE_OPTIMIZATIONS "Enable Hardware Optimizations" ON)
 ENDIF(0)
+
 
 set(PNG_PREFIX "" CACHE STRING "Prefix to add to the API function names")
 set(DFA_XTRA "" CACHE FILEPATH "File containing extra configuration settings")
+
+if(PNG_HARDWARE_OPTIMIZATIONS)
+# set definitions and sources for arm
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm" OR
+  CMAKE_SYSTEM_PROCESSOR MATCHES "^aarch64")
+  set(PNG_ARM_NEON_POSSIBLE_VALUES check on off)
+  set(PNG_ARM_NEON "check" CACHE STRING "Enable ARM NEON optimizations:
+     check: (default) use internal checking code;
+     off: disable the optimizations;
+     on: turn on unconditionally.")
+  set_property(CACHE PNG_ARM_NEON PROPERTY STRINGS
+     ${PNG_ARM_NEON_POSSIBLE_VALUES})
+  list(FIND PNG_ARM_NEON_POSSIBLE_VALUES ${PNG_ARM_NEON} index)
+  if(index EQUAL -1)
+    message(FATAL_ERROR
+      " PNG_ARM_NEON must be one of [${PNG_ARM_NEON_POSSIBLE_VALUES}]")
+  elseif(NOT ${PNG_ARM_NEON} STREQUAL "no")
+    set(libpng_arm_sources
+      arm/arm_init.c
+      arm/filter_neon.S
+      arm/filter_neon_intrinsics.c)
+
+    if(${PNG_ARM_NEON} STREQUAL "on")
+      add_definitions(-DPNG_ARM_NEON_OPT=2)
+    elseif(${PNG_ARM_NEON} STREQUAL "check")
+      add_definitions(-DPNG_ARM_NEON_CHECK_SUPPORTED)
+    endif()
+  else()
+    add_definitions(-DPNG_ARM_NEON_OPT=0)
+  endif()
+endif()
+
+# set definitions and sources for powerpc
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^powerpc*" OR
+	CMAKE_SYSTEM_PROCESSOR MATCHES "^ppc64*" )
+  set(PNG_POWERPC_VSX_POSSIBLE_VALUES on off)
+  set(PNG_POWERPC_VSX "on" CACHE STRING "Enable POWERPC VSX optimizations:
+     off: disable the optimizations.")
+  set_property(CACHE PNG_POWERPC_VSX PROPERTY STRINGS
+     ${PNG_POWERPC_VSX_POSSIBLE_VALUES})
+  list(FIND PNG_POWERPC_VSX_POSSIBLE_VALUES ${PNG_POWERPC_VSX} index)
+  if(index EQUAL -1)
+    message(FATAL_ERROR
+      " PNG_POWERPC_VSX must be one of [${PNG_POWERPC_VSX_POSSIBLE_VALUES}]")
+  elseif(NOT ${PNG_POWERPC_VSX} STREQUAL "no")
+    set(libpng_powerpc_sources
+      powerpc/powerpc_init.c
+      powerpc/filter_vsx_intrinsics.c)
+    if(${PNG_POWERPC_VSX} STREQUAL "on")
+      add_definitions(-DPNG_POWERPC_VSX_OPT=2)
+    endif()
+  else()
+    add_definitions(-DPNG_POWERPC_VSX_OPT=0)
+  endif()
+endif()
+
+# set definitions and sources for intel
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^i?86" OR
+	CMAKE_SYSTEM_PROCESSOR MATCHES "^x86_64*" )
+  set(PNG_INTEL_SSE_POSSIBLE_VALUES on off)
+  set(PNG_INTEL_SSE "on" CACHE STRING "Enable INTEL_SSE optimizations:
+     off: disable the optimizations")
+  set_property(CACHE PNG_INTEL_SSE PROPERTY STRINGS
+     ${PNG_INTEL_SSE_POSSIBLE_VALUES})
+  list(FIND PNG_INTEL_SSE_POSSIBLE_VALUES ${PNG_INTEL_SSE} index)
+  if(index EQUAL -1)
+    message(FATAL_ERROR
+      " PNG_INTEL_SSE must be one of [${PNG_INTEL_SSE_POSSIBLE_VALUES}]")
+  elseif(NOT ${PNG_INTEL_SSE} STREQUAL "no")
+    set(libpng_intel_sources
+      intel/intel_init.c
+      intel/filter_sse2_intrinsics.c)
+    if(${PNG_INTEL_SSE} STREQUAL "on")
+      add_definitions(-DPNG_INTEL_SSE_OPT=1)
+    endif()
+  else()
+    add_definitions(-DPNG_INTEL_SSE_OPT=0)
+  endif()
+endif()
+
+# set definitions and sources for MIPS
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "mipsel*" OR
+	CMAKE_SYSTEM_PROCESSOR MATCHES "mips64el*" )
+  set(PNG_MIPS_MSA_POSSIBLE_VALUES on off)
+  set(PNG_MIPS_MSA "on" CACHE STRING "Enable MIPS_MSA optimizations:
+     off: disable the optimizations")
+  set_property(CACHE PNG_MIPS_MSA PROPERTY STRINGS
+     ${PNG_MIPS_MSA_POSSIBLE_VALUES})
+  list(FIND PNG_MIPS_MSA_POSSIBLE_VALUES ${PNG_MIPS_MSA} index)
+  if(index EQUAL -1)
+    message(FATAL_ERROR
+      " PNG_MIPS_MSA must be one of [${PNG_MIPS_MSA_POSSIBLE_VALUES}]")
+  elseif(NOT ${PNG_MIPS_MSA} STREQUAL "no")
+    set(libpng_mips_sources
+      mips/mips_init.c
+      mips/filter_msa_intrinsics.c)
+    if(${PNG_MIPS_MSA} STREQUAL "on")
+      add_definitions(-DPNG_MIPS_MSA_OPT=2)
+    endif()
+  else()
+    add_definitions(-DPNG_MIPS_MSA_OPT=0)
+  endif()
+endif()
+endif(PNG_HARDWARE_OPTIMIZATIONS)
 
 # SET LIBNAME
 set(PNG_LIB_NAME png${PNGLIB_MAJOR}${PNGLIB_MINOR})
@@ -157,7 +275,7 @@ find_program(AWK NAMES gawk awk)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-if(NOT AWK)
+if(NOT AWK OR ANDROID)
   # No awk available to generate sources; use pre-built pnglibconf.h
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/scripts/pnglibconf.h.prebuilt
                  ${CMAKE_CURRENT_BINARY_DIR}/pnglibconf.h)
@@ -336,7 +454,7 @@ else()
     "${CMAKE_CURRENT_BINARY_DIR}/scripts/symbols.chk"
     "${CMAKE_CURRENT_BINARY_DIR}/scripts/symbols.out"
     "${CMAKE_CURRENT_BINARY_DIR}/scripts/vers.out")
-endif(NOT AWK)
+endif(NOT AWK OR ANDROID)
 
 # OUR SOURCES
 set(libpng_public_hdrs
@@ -350,7 +468,7 @@ set(libpng_private_hdrs
   pnginfo.h
   pngstruct.h
 )
-if(AWK)
+if(AWK AND NOT ANDROID)
   list(APPEND libpng_private_hdrs "${CMAKE_CURRENT_BINARY_DIR}/pngprefix.h")
 endif()
 set(libpng_sources
@@ -371,7 +489,40 @@ set(libpng_sources
   pngwrite.c
   pngwtran.c
   pngwutil.c
+  ${libpng_arm_sources}
+  ${libpng_intel_sources}
+  ${libpng_mips_sources}
+  ${libpng_powerpc_sources}
 )
+
+# mcrecover: Enable Intel SSE2 optimizations on x86.
+STRING(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch)
+IF(arch MATCHES "^(i.|x)86$|^x86_64$|^amd64$")
+	SET(libpng_sources
+		${libpng_sources}
+		intel/filter_sse2_intrinsics.c
+		intel/intel_init.c
+		)
+	ADD_DEFINITIONS(-DPNG_INTEL_SSE)
+	# Enable SSE2 for filter_sse2_intrinsics.c only.
+	# NOTE: SSE2 is always enabled on AMD64.
+	IF(MSVC AND NOT CMAKE_CL_64)
+		SET(SSE2_FLAG "/arch:SSE2")
+		IF(MSVC_VERSION LESS 1900)
+			# NOTE: We have to compile as C++ in versions
+			# of MSVC older than 2015 due to declarations
+			# of variables after code.
+			SET_SOURCE_FILES_PROPERTIES(intel/filter_sse2_intrinsics.c
+				PROPERTIES LANGUAGE CXX)
+		ENDIF(MSVC_VERSION LESS 1900)
+	ELSEIF(NOT MSVC)
+		# TODO: Other compilers?
+		SET(SSE2_FLAG "-msse2")
+	ENDIF()
+	SET_SOURCE_FILES_PROPERTIES(intel/filter_sse2_intrinsics.c
+		APPEND_STRING PROPERTIES COMPILE_FLAGS " ${SSE2_FLAG} ")
+ENDIF(arch MATCHES "^(i.|x)86$|^x86_64$|^amd64$")
+
 set(pngtest_sources
   pngtest.c
 )
@@ -398,9 +549,11 @@ if(MSVC)
   add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
 endif(MSVC)
 
-if(PNG_DEBUG)
-  add_definitions(-DPNG_DEBUG)
-endif()
+# mcrecover: Add -DPNG_DEBUG=0 in debug builds.
+#if(PNG_DEBUG)
+#  add_definitions(-DPNG_DEBUG)
+#endif()
+SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DPNG_DEBUG=0")
 
 # NOW BUILD OUR TARGET
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${ZLIB_INCLUDE_DIR})
@@ -408,6 +561,14 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${ZLIB_INCLUDE_DIR})
 unset(PNG_LIB_TARGETS)
 
 if(PNG_SHARED)
+  # mcrecover: Add the resource script on Windows.
+  IF(WIN32)
+    # mcrecover: CMake-3.7.2 doesn't add include paths to windres.
+    IF(MINGW)
+      SET(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} -I \"${CMAKE_CURRENT_BINARY_DIR}\"")
+    ENDIF(MINGW)
+    SET(libpng_sources ${libpng_sources} scripts/pngwin.rc)
+  ENDIF(WIN32)
   add_library(png SHARED ${libpng_sources})
   set(PNG_LIB_TARGETS png)
   set_target_properties(png PROPERTIES OUTPUT_NAME ${PNG_LIB_NAME})
@@ -418,8 +579,9 @@ if(PNG_SHARED)
     set_target_properties(png PROPERTIES IMPORT_PREFIX "lib")
   endif()
   target_link_libraries(png ${ZLIB_LIBRARY} ${M_LIBRARY})
-  # mcrecover: Exclude from ALL builds.
-  SET_TARGET_PROPERTIES(${PNG_LIB_NAME} PROPERTIES EXCLUDE_FROM_ALL TRUE)
+  # mcrecover: Split debug functionality; Windows subsystem.
+  DO_SPLIT_DEBUG(png)
+  SET_WINDOWS_SUBSYSTEM(png WIN32)
 
   if(UNIX AND AWK)
     if(HAVE_LD_VERSION_SCRIPT)
@@ -455,8 +617,8 @@ if(PNG_STATIC)
     set_target_properties(png_static PROPERTIES PREFIX "lib")
   endif()
   target_link_libraries(png_static ${ZLIB_LIBRARY} ${M_LIBRARY})
-  # mcrecover: Exclude from ALL builds.
-  SET_TARGET_PROPERTIES(${PNG_LIB_NAME_STATIC} PROPERTIES EXCLUDE_FROM_ALL TRUE)
+  # mcrecover: Set the MSVC debug path.
+  SET_MSVC_DEBUG_PATH(png_static)
 endif()
 
 if(PNG_FRAMEWORK)
@@ -473,8 +635,6 @@ if(PNG_FRAMEWORK)
     XCODE_ATTRIBUTE_INSTALL_PATH "@rpath"
     PUBLIC_HEADER "${libpng_public_hdrs}"
     OUTPUT_NAME png)
-  # mcrecover: Exclude from ALL builds.
-  SET_TARGET_PROPERTIES(png_framework PROPERTIES EXCLUDE_FROM_ALL TRUE)
   target_link_libraries(png_framework ${ZLIB_LIBRARY} ${M_LIBRARY})
 endif()
 
@@ -489,6 +649,8 @@ if(PNG_SHARED AND WIN32)
   set_target_properties(png PROPERTIES DEFINE_SYMBOL PNG_BUILD_DLL)
 endif()
 
+# mcrecover: Disable tests.
+IF(0)
 function(png_add_test)
   set(options)
   set(oneValueArgs NAME COMMAND)
@@ -641,7 +803,10 @@ if(PNG_TESTS AND PNG_SHARED)
   png_add_test(NAME pngimage-quick COMMAND pngimage OPTIONS --list-combos --log FILES ${PNGSUITE_PNGS})
   png_add_test(NAME pngimage-full COMMAND pngimage OPTIONS --exhaustive --list-combos --log FILES ${PNGSUITE_PNGS})
 endif()
+ENDIF(0) # mcrecover
 
+# mcrecover: Disable these tools.
+IF(0)
 if(PNG_SHARED)
   add_executable(pngfix ${pngfix_sources})
   target_link_libraries(pngfix png)
@@ -651,32 +816,60 @@ if(PNG_SHARED)
   target_link_libraries(png-fix-itxt ${ZLIB_LIBRARY} ${M_LIBRARY})
   list(APPEND PNG_BIN_TARGETS png-fix-itxt)
 endif()
-
-# Ensure the CMAKE_LIBRARY_OUTPUT_DIRECTORY is set
-IF(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
-  SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib")
-ENDIF(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+ENDIF(0)
 
 # Set a variable with CMake code which:
 # Creates a symlink from src to dest (if possible) or alternatively
 # copies if different.
-macro(CREATE_SYMLINK SRC_FILE DEST_FILE)
-  FILE(REMOVE ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${DEST_FILE})
-  if(WIN32 AND NOT CYGWIN AND NOT MSYS)
-    ADD_CUSTOM_COMMAND(
-        OUTPUT ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${DEST_FILE}   ${CMAKE_CURRENT_BINARY_DIR}/${DEST_FILE}
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different  "${SRC_FILE}" ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${DEST_FILE}
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different  "${SRC_FILE}" ${CMAKE_CURRENT_BINARY_DIR}/${DEST_FILE}
-        DEPENDS ${PNG_LIB_TARGETS}
-        )
-    ADD_CUSTOM_TARGET(${DEST_FILE}_COPY ALL DEPENDS ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${DEST_FILE})
-  else(WIN32 AND NOT CYGWIN AND NOT MSYS)
-    get_filename_component(LINK_TARGET "${SRC_FILE}" NAME)
-    execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink "${LINK_TARGET}" ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${DEST_FILE} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink "${LINK_TARGET}" ${DEST_FILE} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-  endif(WIN32 AND NOT CYGWIN AND NOT MSYS)
-endmacro()
+include(CMakeParseArguments)
+
+function(CREATE_SYMLINK DEST_FILE)
+
+  cmake_parse_arguments(S "" "FILE;TARGET" "" ${ARGN})
+
+  if(NOT S_TARGET AND NOT S_FILE)
+    message(FATAL_ERROR "Specify either a TARGET or a FILE for CREATE_SYMLINK to link to.")
+  endif(NOT S_TARGET AND NOT S_FILE)
+
+  if(S_TARGET AND S_FILE)
+    message(FATAL_ERROR "CREATE_SYMLINK called with both source file ${S_FILE} and build target ${S_TARGET} arguments - can only handle 1 type per call.")
+  endif(S_TARGET AND S_FILE)
+
+  if(S_FILE)
+    # If we don't need to symlink something that's coming from a build target,
+    # we can go ahead and symlink/copy at configure time.
+
+    if(CMAKE_HOST_WIN32 AND NOT CYGWIN AND NOT MSYS)
+      execute_process(
+	COMMAND "${CMAKE_COMMAND}" -E copy_if_different ${S_FILE} ${DEST_FILE}
+	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+	)
+    else(CMAKE_HOST_WIN32 AND NOT CYGWIN AND NOT MSYS)
+      execute_process(
+	COMMAND ${CMAKE_COMMAND} -E create_symlink ${S_FILE} ${DEST_FILE}
+	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+	)
+    endif(CMAKE_HOST_WIN32 AND NOT CYGWIN AND NOT MSYS)
+  endif(S_FILE)
+
+  if(S_TARGET)
+    # We need to use generator expressions, which can be a bit tricky, so for
+    # simplicity make the symlink a POST_BUILD step and use the TARGET
+    # signature of add_custom_command.
+
+    if(CMAKE_HOST_WIN32 AND NOT CYGWIN AND NOT MSYS)
+      add_custom_command(TARGET ${S_TARGET} POST_BUILD
+	COMMAND "${CMAKE_COMMAND}" -E copy_if_different $<TARGET_LINKER_FILE_NAME:${S_TARGET}> $<TARGET_LINKER_FILE_DIR:${S_TARGET}>/${DEST_FILE}
+	)
+    else(CMAKE_HOST_WIN32 AND NOT CYGWIN AND NOT MSYS)
+      add_custom_command(TARGET ${S_TARGET} POST_BUILD
+	COMMAND "${CMAKE_COMMAND}" -E create_symlink $<TARGET_LINKER_FILE_NAME:${S_TARGET}> $<TARGET_LINKER_FILE_DIR:${S_TARGET}>/${DEST_FILE}
+	)
+    endif(CMAKE_HOST_WIN32 AND NOT CYGWIN AND NOT MSYS)
+
+  endif(S_TARGET)
+
+endfunction()
 
 # Create source generation scripts.
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/scripts/genchk.cmake.in
@@ -704,22 +897,25 @@ if(NOT WIN32 OR CYGWIN OR MINGW)
   set(LIBS        "-lz -lm")
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libpng.pc.in
     ${CMAKE_CURRENT_BINARY_DIR}/${PNGLIB_NAME}.pc @ONLY)
-  CREATE_SYMLINK(${PNGLIB_NAME}.pc libpng.pc)
+  CREATE_SYMLINK(libpng.pc FILE ${PNGLIB_NAME}.pc)
 
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libpng-config.in
     ${CMAKE_CURRENT_BINARY_DIR}/${PNGLIB_NAME}-config @ONLY)
-  CREATE_SYMLINK(${PNGLIB_NAME}-config libpng-config)
+  CREATE_SYMLINK(libpng-config FILE ${PNGLIB_NAME}-config)
 endif(NOT WIN32 OR CYGWIN OR MINGW)
 
 # SET UP LINKS
 if(PNG_SHARED)
   set_target_properties(png PROPERTIES
-#   VERSION 16.${PNGLIB_RELEASE}.1.6.23
+#   VERSION 16.${PNGLIB_RELEASE}.1.6.34
     VERSION 16.${PNGLIB_RELEASE}.0
     SOVERSION 16
     CLEAN_DIRECT_OUTPUT 1)
 endif()
 
+# mcrecover: Disable EXPORT, since it causes problems
+# when building DLLs for Windows
+IF(0)
 # If CMake > 2.4.x, we set a variable used below to export
 # targets to an export file.
 # TODO: Use VERSION_GREATER after our cmake_minimum_required >= 2.6.2
@@ -728,41 +924,61 @@ if(CMAKE_MAJOR_VERSION GREATER 1 AND CMAKE_MINOR_VERSION GREATER 4)
 elseif(CMAKE_MAJOR_VERSION GREATER 2) # future proof
   set(PNG_EXPORT_RULE EXPORT libpng)
 endif()
+ENDIF(0)
 
 # INSTALL
 if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL )
+  # mcrecover:
+  # - Disabled installation of import libraries.
+  # - Use the correct RUNTIME destination.
+  # - Install PDB files.
   install(TARGETS ${PNG_LIB_TARGETS}
       ${PNG_EXPORT_RULE}
-      RUNTIME DESTINATION bin
-      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      RUNTIME DESTINATION ${INSTALL_BIN_DIR}
+      #LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      #ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
       FRAMEWORK DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  IF(INSTALL_DEBUG)
+	# FIXME: Generator expression $<TARGET_PROPERTY:${_target},PDB> didn't work with CPack-3.6.1.
+	INCLUDE(DirInstallPaths)
+	IF(PNG_SHARED)
+		# TODO: Test on MinGW.
+		# FIXME: Generator PDB expression doesn't have the debug postfix for some reason,
+		# so cpack fails in debug builds if we get the PDB property.
+		SET(PDB_FILENAME_D "$<TARGET_FILE_DIR:png>/lib${PNG_LIB_NAME}${CMAKE_DEBUG_POSTFIX}.pdb")
+		SET(PDB_FILENAME_R "$<TARGET_FILE_DIR:png>/lib${PNG_LIB_NAME}${CMAKE_RELEASE_POSTFIX}.pdb")
+		INSTALL(FILES "${PDB_FILENAME_D}" "${PDB_FILENAME_R}"
+			DESTINATION "${DIR_INSTALL_DLL_DEBUG}"
+			COMPONENT "debug"
+			OPTIONAL
+			)
+		UNSET(PDB_FILENAME_D)
+		UNSET(PDB_FILENAME_R)
+	ENDIF(PNG_SHARED)
+  ENDIF(INSTALL_DEBUG)
 
+  # mcrecover: Disable this stuff.
+  IF(0)
   if(PNG_SHARED)
     # Create a symlink for libpng.dll.a => libpng16.dll.a on Cygwin
     if(CYGWIN OR MINGW)
-       get_target_property(BUILD_TARGET_LOCATION png LOCATION_${CMAKE_BUILD_TYPE})
-       CREATE_SYMLINK(${BUILD_TARGET_LOCATION} libpng${CMAKE_IMPORT_LIBRARY_SUFFIX})
-       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpng${CMAKE_IMPORT_LIBRARY_SUFFIX}
-         DESTINATION ${CMAKE_INSTALL_LIBDIR})
+      CREATE_SYMLINK(libpng${CMAKE_IMPORT_LIBRARY_SUFFIX} TARGET png)
+      install(FILES $<TARGET_LINKER_FILE_DIR:png>/libpng${CMAKE_IMPORT_LIBRARY_SUFFIX} DESTINATION ${CMAKE_INSTALL_LIBDIR})
     endif(CYGWIN OR MINGW)
 
     if(NOT WIN32)
-      get_target_property(BUILD_TARGET_LOCATION png LOCATION_${CMAKE_BUILD_TYPE})
-      CREATE_SYMLINK(${BUILD_TARGET_LOCATION} libpng${CMAKE_SHARED_LIBRARY_SUFFIX})
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpng${CMAKE_SHARED_LIBRARY_SUFFIX}
-         DESTINATION ${CMAKE_INSTALL_LIBDIR})
+      CREATE_SYMLINK(libpng${CMAKE_SHARED_LIBRARY_SUFFIX} TARGET png)
+      install(FILES $<TARGET_LINKER_FILE_DIR:png>/libpng${CMAKE_SHARED_LIBRARY_SUFFIX} DESTINATION ${CMAKE_INSTALL_LIBDIR})
     endif(NOT WIN32)
   endif(PNG_SHARED)
 
   if(PNG_STATIC)
     if(NOT WIN32 OR CYGWIN OR MINGW)
-      get_target_property(BUILD_TARGET_LOCATION png_static LOCATION_${CMAKE_BUILD_TYPE})
-      CREATE_SYMLINK(${BUILD_TARGET_LOCATION} libpng${CMAKE_STATIC_LIBRARY_SUFFIX})
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpng${CMAKE_STATIC_LIBRARY_SUFFIX}
-         DESTINATION ${CMAKE_INSTALL_LIBDIR})
+      CREATE_SYMLINK( libpng${CMAKE_STATIC_LIBRARY_SUFFIX} TARGET png_static)
+      install(FILES $<TARGET_LINKER_FILE_DIR:png_static>/libpng${CMAKE_STATIC_LIBRARY_SUFFIX} DESTINATION ${CMAKE_INSTALL_LIBDIR})
     endif(NOT WIN32 OR CYGWIN OR MINGW)
- endif()
+  endif()
+  ENDIF(0)
 endif()
 
 if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL )
@@ -790,7 +1006,7 @@ if(NOT SKIP_INSTALL_FILES AND NOT SKIP_INSTALL_ALL )
   install(FILES libpng.3 libpngpf.3      DESTINATION ${PNG_MAN_DIR}/man3)
   install(FILES png.5                    DESTINATION ${PNG_MAN_DIR}/man5)
   # Install pkg-config files
-  if(NOT WIN32 OR CYGWIN OR MINGW)
+  if(NOT CMAKE_HOST_WIN32 OR CYGWIN OR MINGW)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpng.pc
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
     install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/libpng-config
@@ -799,7 +1015,7 @@ if(NOT SKIP_INSTALL_FILES AND NOT SKIP_INSTALL_ALL )
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
     install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PNGLIB_NAME}-config
             DESTINATION bin)
-  endif(NOT WIN32 OR CYGWIN OR MINGW)
+  endif(NOT CMAKE_HOST_WIN32 OR CYGWIN OR MINGW)
 endif()
 
 # On versions of CMake that support it, create an export file CMake
@@ -819,4 +1035,3 @@ endif()
 # to create msvc import lib for mingw compiled shared lib
 # pexports libpng.dll > libpng.def
 # lib /def:libpng.def /machine:x86
-

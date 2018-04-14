@@ -59,6 +59,12 @@ IF(USE_INTERNAL_ZLIB)
 ENDIF(USE_INTERNAL_ZLIB)
 
 IF(USE_INTERNAL_PNG)
+	IF(USE_INTERNAL_ZLIB)
+		# Using internal ZLIB.
+		# Don't search for ZLIB using FIND_PACKAGE().
+		SET(PNG_BUILD_ZLIB ON)
+	ENDIF(USE_INTERNAL_ZLIB)
+
 	# Use the internal copy of libpng. (statically-linked)
 	SET(PNG_SHARED OFF)
 	SET(PNG_STATIC ON)
