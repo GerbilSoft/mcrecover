@@ -360,11 +360,13 @@ void GifDlSetColorMapCount(ColorMapObject *Object, int colorCount)
 		case GIFLIB_51:
 		case GIFLIB_50:
 			((ColorMapObject_v50*)Object)->ColorCount = colorCount;
+			break;
 
 		case GIFLIB_42:
 		case GIFLIB_41:
 		case GIFLIB_40:
 			((ColorMapObject_v40*)Object)->ColorCount = colorCount;
+			break;
 
 		default:
 			break;
