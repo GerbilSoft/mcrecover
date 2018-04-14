@@ -469,10 +469,14 @@ void TableSelect::setCard(Card *card)
 	if (d->card) {
 		disconnect(d->card, SIGNAL(destroyed(QObject*)),
 			   this, SLOT(memCard_destroyed_slot(QObject*)));
-		disconnect(d->card, SIGNAL(activeDatIdxChanged(int)),
-			   this, SLOT(memCard_activeDatIdxChanged_slot(int)));
-		disconnect(d->card, SIGNAL(activeBatIdxChanged(int)),
-			   this, SLOT(memCard_activeBatIdxChanged_slot(int)));
+		// NOTE: On application close, these sometimes don't work
+		// because the card is just a QObject. Not sure why...
+		if (qobject_cast<Card*>(d->card) != nullptr) {
+			disconnect(d->card, SIGNAL(activeDatIdxChanged(int)),
+				   this, SLOT(memCard_activeDatIdxChanged_slot(int)));
+			disconnect(d->card, SIGNAL(activeBatIdxChanged(int)),
+				   this, SLOT(memCard_activeBatIdxChanged_slot(int)));
+		}
 	}
 
 	d->card = card;
