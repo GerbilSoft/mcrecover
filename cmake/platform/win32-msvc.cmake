@@ -33,8 +33,6 @@ ELSE(CMAKE_CL_64)
 		# MSVC 2012 or later.
 		# Minimum target version is Windows XP.
 		SET(MCR_WIN32_SUBSYSTEM_VERSION "5.01")
-		SET(MCR_LINKER_FLAGS_WIN32_EXE "/SUBSYSTEM:WINDOWS,5.01")
-		SET(MCR_LINKER_FLAGS_CONSOLE_EXE "/SUBSYSTEM:CONSOLE,5.01")
 	ELSE()
 		# MSVC 2010 or earlier.
 		# Minimum target version is Windows 2000.
