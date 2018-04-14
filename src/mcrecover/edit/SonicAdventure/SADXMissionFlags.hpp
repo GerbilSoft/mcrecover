@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * SADXMissionFlags.hpp: Sonic Adventure DX - Mission flags.               *
  *                                                                         *
- * Copyright (c) 2015-2016 by David Korth.                                 *
+ * Copyright (c) 2015-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #ifndef __MCRECOVER_EDIT_SONICADVENTURE_SADXMISSIONFLAGS_HPP__
@@ -44,14 +43,14 @@ class SADXMissionFlags : public ByteFlags
 		 * Get a description of the type of object that is represented by the class.
 		 * @return Flag type, e.g. "Mission".
 		 */
-		virtual QString objectType(void) const final;
+		QString objectType(void) const final;
 
 		/**
 		 * Get a description of the type of flag represented by a given bit.
 		 * @param bit Bit index. (LSB == 0)
 		 * @return Flag type, e.g. "Completed". (If bit is unused, empty QString is returned.)
 		 */
-		virtual QString flagType(int bit) const final;
+		QString flagType(int bit) const final;
 
 		/**
 		 * Get a character icon representing a flag.
@@ -59,7 +58,7 @@ class SADXMissionFlags : public ByteFlags
 		 * @param id Object ID.
 		 * @return Character icon.
 		 */
-		virtual QPixmap icon(int id) const final;
+		QPixmap icon(int id) const final;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SADXMISSIONFLAGS_HPP__ */

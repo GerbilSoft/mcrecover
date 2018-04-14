@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * SASubGames.hpp: Sonic Adventure - Sub Games editor.                     *
  *                                                                         *
- * Copyright (c) 2015-2016 by David Korth.                                 *
+ * Copyright (c) 2015-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -44,13 +44,13 @@ class SASubGames : public SADXEditWidget
 
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
-		virtual void changeEvent(QEvent *event) final;
+		void changeEvent(QEvent *event) final;
 
 	public:
 		/**
 		 * Clear the loaded data.
 		 */
-		virtual void clear(void) final;
+		void clear(void) final;
 
 	public:
 		/**
@@ -59,7 +59,7 @@ class SASubGames : public SADXEditWidget
 		 * The data must have already been byteswapped to host-endian.
 		 * @return 0 on success; non-zero on error.
 		 */
-		virtual int load(const _sa_save_slot *sa_save) final;
+		int load(const _sa_save_slot *sa_save) final;
 
 		/**
 		 * Save data to a Sonic Adventure save slot.
@@ -67,7 +67,7 @@ class SASubGames : public SADXEditWidget
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		virtual int save(_sa_save_slot *sa_save) final;
+		int save(_sa_save_slot *sa_save) final;
 
 	public:
 		/**
@@ -77,7 +77,7 @@ class SASubGames : public SADXEditWidget
 		 * If nullptr, SADX editor components will be hidden.
 		 * @return 0 on success; non-zero on error.
 		 */
-		virtual int loadDX(const _sadx_extra_save_slot *sadx_extra_save) final;
+		int loadDX(const _sadx_extra_save_slot *sadx_extra_save) final;
 
 		/**
 		 * Save data to a Sonic Adventure DX extra save slot.
@@ -85,7 +85,7 @@ class SASubGames : public SADXEditWidget
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		virtual int saveDX(_sadx_extra_save_slot *sadx_extra_save) final;
+		int saveDX(_sadx_extra_save_slot *sadx_extra_save) final;
 
 	protected slots:
 		/**

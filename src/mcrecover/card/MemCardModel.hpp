@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * MemCardModel.hpp: QAbstractListModel for Card.                          *
  *                                                                         *
- * Copyright (c) 2012-2016 by David Korth.                                 *
+ * Copyright (c) 2012-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #ifndef __MCRECOVER_MEMCARDMODEL_HPP__
@@ -60,11 +59,11 @@ class MemCardModel : public QAbstractListModel
 		};
 
 		// Qt Model/View interface.
-		virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-		virtual int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+		int rowCount(const QModelIndex& parent = QModelIndex()) const final;
+		int columnCount(const QModelIndex& parent = QModelIndex()) const final;
 
-		virtual QVariant data(const QModelIndex& index, int role) const override;
-		virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+		QVariant data(const QModelIndex& index, int role) const final;
+		QVariant headerData(int section, Qt::Orientation orientation, int role) const final;
 
 		/**
 		 * Set the memory card to use in this model.

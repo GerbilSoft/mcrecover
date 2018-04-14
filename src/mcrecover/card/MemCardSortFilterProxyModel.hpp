@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * MemCardSortFilterProxyModel.hpp: MemCardModel sort filter proxy.        *
  *                                                                         *
- * Copyright (c) 2012-2016 by David Korth.                                 *
+ * Copyright (c) 2012-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #ifndef __MCRECOVER_MEMCARDSORTFILTERPROXYMODEL_HPP__
@@ -36,8 +35,8 @@ class MemCardSortFilterProxyModel : public QSortFilterProxyModel
 		Q_DISABLE_COPY(MemCardSortFilterProxyModel)
 
 	public:
-		virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
-		virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
+		bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const final;
+		bool lessThan(const QModelIndex &left, const QModelIndex &right) const final;
 };
 
 #endif /* __MCRECOVER_MEMCARDSORTFILTERPROXYMODEL_HPP__ */

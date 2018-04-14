@@ -39,7 +39,7 @@ class QTreeViewOpt : public QTreeView
 		Q_DISABLE_COPY(QTreeViewOpt);
 
 	public:
-		virtual void dataChanged(const QModelIndex &topLeft,
+		void dataChanged(const QModelIndex &topLeft,
 			const QModelIndex &bottomRight,
 			const QVector<int> &roles = QVector<int>()) final;
 
@@ -48,8 +48,8 @@ class QTreeViewOpt : public QTreeView
 
 	/** Shh... it's a secret to everybody. **/
 	protected:
-		virtual void keyPressEvent(QKeyEvent *event) final;
-		virtual void focusOutEvent(QFocusEvent *event) final;
+		void keyPressEvent(QKeyEvent *event) final;
+		void focusOutEvent(QFocusEvent *event) final;
 	signals:
 		void keyPress(QKeyEvent *event);
 		void focusOut(QFocusEvent *event);

@@ -62,15 +62,15 @@ class McRecoverWindow : public QMainWindow
 
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
-		virtual void changeEvent(QEvent *event) final;
+		void changeEvent(QEvent *event) final;
 
 		// QMainWindow virtual functions: drag and drop.
-		virtual void dragEnterEvent(QDragEnterEvent *event) final;
-		virtual void dropEvent(QDropEvent *event) final;
+		void dragEnterEvent(QDragEnterEvent *event) final;
+		void dropEvent(QDropEvent *event) final;
 
 #ifdef Q_OS_WIN
 		// Windows message handler. Used for TaskbarButtonManager.
-		virtual bool nativeEvent(const QByteArray &eventType, void *message, long *result) override;
+		bool nativeEvent(const QByteArray &eventType, void *message, long *result) final;
 #endif /* Q_OS_WIN */
 
 	protected slots:

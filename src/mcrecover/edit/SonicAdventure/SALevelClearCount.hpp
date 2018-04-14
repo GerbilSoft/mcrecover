@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * SALevelClearCount.hpp: Sonic Adventure - Level Clear Count editor.      *
  *                                                                         *
- * Copyright (c) 2015-2016 by David Korth.                                 *
+ * Copyright (c) 2015-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #ifndef __MCRECOVER_EDIT_SONICADVENTURE_SALEVELCLEARCOUNT_HPP__
@@ -43,13 +42,13 @@ class SALevelClearCount : public SAEditWidget
 
 	protected:
 		// State change event. (Used for switching the UI language at runtime.)
-		virtual void changeEvent(QEvent *event) final;
+		void changeEvent(QEvent *event) final;
 
 	public:
 		/**
 		 * Clear the loaded data.
 		 */
-		virtual void clear(void) final;
+		void clear(void) final;
 
 	public:
 		/**
@@ -58,7 +57,7 @@ class SALevelClearCount : public SAEditWidget
 		 * The data must have already been byteswapped to host-endian.
 		 * @return 0 on success; non-zero on error.
 		 */
-		virtual int load(const _sa_save_slot *sa_save) final;
+		int load(const _sa_save_slot *sa_save) final;
 
 		/**
 		 * Save data to a Sonic Adventure save slot.
@@ -66,7 +65,7 @@ class SALevelClearCount : public SAEditWidget
 		 * The data will be in host-endian format.
 		 * @return 0 on success; non-zero on error.
 		 */
-		virtual int save(_sa_save_slot *sa_save) final;
+		int save(_sa_save_slot *sa_save) final;
 
 	protected slots:
 		/**
@@ -83,7 +82,7 @@ class SALevelClearCount : public SAEditWidget
 		 * @param event QEvent.
 		 * @return True to stop the event from being handled further; false to pass it down.
 		 */
-		virtual bool eventFilter(QObject *watched, QEvent *event);
+		bool eventFilter(QObject *watched, QEvent *event) final;
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SALEVELCLEARCOUNT_HPP__ */

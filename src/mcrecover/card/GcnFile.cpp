@@ -120,13 +120,13 @@ class GcnFilePrivate : public FilePrivate
 		 * Load the banner image.
 		 * @return GcImage containing the banner image, or nullptr on error.
 		 */
-		virtual GcImage *loadBannerImage(void) override;
+		GcImage *loadBannerImage(void) final;
 
 		/**
 		 * Load the icon images.
 		 * @return QVector<GcImage*> containing the icon images, or empty QVector on error.
 		 */
-		virtual QVector<GcImage*> loadIconImages(void) override;
+		QVector<GcImage*> loadIconImages(void) final;
 };
 
 /**

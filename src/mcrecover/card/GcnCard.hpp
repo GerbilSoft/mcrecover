@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnCard.hpp: GameCube memory card class.                                *
  *                                                                         *
- * Copyright (c) 2012-2016 by David Korth.                                 *
+ * Copyright (c) 2012-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #ifndef __MCRECOVER_CARD_GCNCARD_HPP__
@@ -79,14 +78,14 @@ class GcnCard : public Card
 		 * NOTE: This function reloads the file list, without lost files.
 		 * @param idx Active Directory Table index.
 		 */
-		virtual void setActiveDatIdx(int idx) override;
+		void setActiveDatIdx(int idx) final;
 
 		/**
 		 * Set the active Block Table index.
 		 * NOTE: This function reloads the file list, without lost files.
 		 * @param idx Active Block Table index.
 		 */
-		virtual void setActiveBatIdx(int idx) override;
+		void setActiveBatIdx(int idx) final;
 
 	public:
 		/** Card information **/
@@ -97,7 +96,7 @@ class GcnCard : public Card
 		 * and does not change based on size.
 		 * @return Product name.
 		 */
-		virtual QString productName(void) const override;
+		QString productName(void) const final;
 
 		/**
 		 * Get the used block map.

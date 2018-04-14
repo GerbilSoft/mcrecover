@@ -42,9 +42,9 @@ class MemCardItemDelegate : public QStyledItemDelegate
 		Q_DISABLE_COPY(MemCardItemDelegate)
 
 	public:
-		virtual void paint(QPainter *painter, const QStyleOptionViewItem &option,
+		void paint(QPainter *painter, const QStyleOptionViewItem &option,
 			   const QModelIndex &index) const final;
-		virtual QSize sizeHint(const QStyleOptionViewItem &option,
+		QSize sizeHint(const QStyleOptionViewItem &option,
 			       const QModelIndex &index) const final;
 
 	private slots:

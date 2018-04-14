@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * SAEditor.hpp: Sonic Adventure - save file editor.                       *
  *                                                                         *
- * Copyright (c) 2015-2016 by David Korth.                                 *
+ * Copyright (c) 2015-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #ifndef __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__
@@ -65,19 +64,19 @@ class SAEditor : public EditorWidget
 		 * @return 0 on success; non-zero on error (and file will not be set).
 		 * TODO: Error code constants?
 		 */
-		virtual int setFile(File *file) final;
+		int setFile(File *file) final;
 
 	public slots:
 		/**
 		 * Save the data to the file.
 		 * @return 0 on success; negative POSIX error code on error.
 		 */
-		virtual int save(void) override;
+		int save(void) final;
 
 		/**
 		 * Reload the save data.
 		 */
-		virtual void reload(void) override;
+		void reload(void) final;
 
 	protected:
 		/**
@@ -92,7 +91,7 @@ class SAEditor : public EditorWidget
 		 *
 		 * @return 0 on success; non-zero on error.
 		 */
-		virtual int setCurrentSaveSlot_int(int saveSlot) final;
+		int setCurrentSaveSlot_int(int saveSlot) final;
 
 	protected slots:
 		/**

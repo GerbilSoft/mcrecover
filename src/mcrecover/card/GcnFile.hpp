@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnCard.hpp: GameCube file entry class.                                 *
  *                                                                         *
- * Copyright (c) 2012-2016 by David Korth.                                 *
+ * Copyright (c) 2012-2018 by David Korth.                                 *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published by the   *
@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
  * GNU General Public License for more details.                            *
  *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * You should have received a copy of the GNU General Public License       *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
 #ifndef __MCRECOVER_CARD_GCNFILE_HPP__
@@ -96,7 +95,7 @@ class GcnFile : public File
 		 * This is system-specific.
 		 * @return File mode as a string.
 		 */
-		virtual QString modeAsString(void) const override;
+		QString modeAsString(void) const final;
 
 		/** Lost File information **/
 
@@ -104,7 +103,7 @@ class GcnFile : public File
 		 * Get the default export filename.
 		 * @return Default export filename.
 		 */
-		virtual QString defaultExportFilename(void) const override;
+		QString defaultExportFilename(void) const final;
 
 		// TODO: Function to get format/extension of exported file.
 
@@ -114,7 +113,7 @@ class GcnFile : public File
 		 * @return 0 on success; non-zero on error.
 		 * TODO: Error code constants.
 		 */
-		virtual int exportToFile(const QString &filename) override;
+		int exportToFile(const QString &filename) final;
 
 		/**
 		 * Export the file.
@@ -122,7 +121,7 @@ class GcnFile : public File
 		 * @return 0 on success; non-zero on error.
 		 * TODO: Error code constants.
 		 */
-		virtual int exportToFile(QIODevice *qioDevice) override;
+		int exportToFile(QIODevice *qioDevice) final;
 
 		/**
 		 * Get the directory entry.
