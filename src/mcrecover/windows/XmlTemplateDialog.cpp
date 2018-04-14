@@ -267,6 +267,7 @@ void XmlTemplateDialog::init(void)
 	// so we have to initialize the font family to ""
 	// and set the style hint to QFont::TypeWriter.
 	// FIXME: Font is a bit small on Windows...
+	// FIXME: Not working on Qt5/Windows - enumerate fonts...
 	QFont fntMonospace(QLatin1String(""));
 	fntMonospace.setStyleHint(QFont::TypeWriter);
 	d->ui.txtTemplate->setFont(fntMonospace);
