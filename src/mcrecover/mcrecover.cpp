@@ -48,7 +48,7 @@ int mcrecover_main(int argc, char *argv[])
 #else
 	// Hardcode the value in case the user upgrades to Qt 5.6 later.
 	// http://doc.qt.io/qt-5/qt.html#ApplicationAttribute-enum
-	McRecoverQApplication::setAttribute(13, true);
+	McRecoverQApplication::setAttribute((Qt::ApplicationAttribute)13, true);
 #endif /* QT_VERSION >= 0x050600 */
 #endif /* QT_VERSION >= 0x050000 */
 
