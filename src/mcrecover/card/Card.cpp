@@ -46,6 +46,7 @@ CardPrivate::CardPrivate(Card *q, uint32_t blockSize,
 	, errors(0)
 	, file(nullptr)
 	, filesize(0)
+	, readOnly(true)
 	, encoding(Card::ENCODING_UNKNOWN)
 	, blockSize(blockSize)
 	, minBlocks(minBlocks)
@@ -91,10 +92,10 @@ CardPrivate::~CardPrivate()
  * totalPhysBlocks is initialized after the file is opened.
  * totalUserBlocks and freeBlocks must be initialized by the subclass.
  * @param filename Memory Card image filename.
- * @param mode File open mode.
+ * @param openMode File open mode.
  * @return 0 on success; non-zero on error. (also check errorString)
  */
-int CardPrivate::open(const QString &filename, QIODevice::OpenModeFlag mode)
+int CardPrivate::open(const QString &filename, QIODevice::OpenModeFlag openMode)
 {
 	if (file) {
 		// File is already open.
@@ -105,14 +106,15 @@ int CardPrivate::open(const QString &filename, QIODevice::OpenModeFlag mode)
 	if (filename.isEmpty()) {
 		// No filename specified.
 		// TODO: Translate the error message.
-		this->errorString = QLatin1String("No filename specified");
+		// NOTE: Same message as Qt. (note the space between "file" and "name")
+		this->errorString = QLatin1String("No file name specified");
 		return -1;
 	}
 
 	// Open the file.
 	Q_Q(Card);
 	QFile *tmp_file = new QFile(filename, q);
-	if (!tmp_file->open(mode)) {
+	if (!tmp_file->open(openMode)) {
 		// Error opening the file.
 		// NOTE: Qt doesn't return the raw error number.
 		// QFile::error() has a useless generic error number.
@@ -123,6 +125,9 @@ int CardPrivate::open(const QString &filename, QIODevice::OpenModeFlag mode)
 	}
 	this->file = tmp_file;
 	this->filename = filename;
+
+	// Save the readOnly flag.
+	this->readOnly = !(openMode & QIODevice::WriteOnly);
 
 	// TODO: If formatting the card, skip all of this.
 
@@ -249,6 +254,76 @@ QString Card::errorString(void) const
 {
 	Q_D(const Card);
 	return d->errorString;
+}
+
+/** Writing functions. **/
+
+/**
+ * Is this card read-only?
+ * This is true if the card has not been set to writable,
+ * or if there are errors on the card and hence it cannot
+ * be set to writable.
+ * @return True if this card is read-only; false if not.
+ */
+bool Card::isReadOnly(void) const
+{
+	Q_D(const Card);
+	if (!isOpen())
+		return true;
+	return d->readOnly;
+}
+
+/**
+ * Attempt to switch the card from read-only to read-write or vice-versa.
+ *
+ * Note that this will fail with ENOTTY if any errors are detected
+ * on the card, since writing to a card with errors can cause even
+ * more problems.
+ *
+ * @param readOnly New readOnly value.
+ * @return 0 on success; negative POSIX error code on error.
+ * (Check this->errorString for more information.)
+ */
+int Card::setReadOnly(bool readOnly)
+{
+	Q_D(Card);
+	if (!isOpen())
+		return -EBADF;
+	if (d->readOnly == readOnly)
+		return 0;
+
+	// Check if any errors are present.
+	if (d->errors != 0) {
+		// Errors are present.
+		// Cannot reopen.
+		return -ENOTTY;
+	}
+
+	// Open mode.
+	QIODevice::OpenMode openMode = (readOnly ? QIODevice::ReadOnly : QIODevice::ReadWrite);
+
+	// Attempt to open the file using a new QFile.
+	// FIXME: Do we need to close the first QFile due to sharing?
+	// Open the file.
+	QFile *tmp_file = new QFile(d->filename, this);
+	if (!tmp_file->open(openMode)) {
+		// Error opening the file.
+		// NOTE: Qt doesn't return the raw error number.
+		// QFile::error() has a useless generic error number.
+		// TODO: Translate the error message.
+		// TODO: Convert into a POSIX error code?
+		d->errorString = tmp_file->errorString();
+		delete tmp_file;
+		return -EIO;
+	}
+
+	// TODO: Validate that this file is the same as the one we had before.
+	// TODO: Atomic swap of d->file and tmp_file.
+	std::swap(d->file, tmp_file);
+	d->readOnly = readOnly;
+	tmp_file->close();
+	delete tmp_file;
+	return 0;
 }
 
 /** Card information **/
@@ -524,24 +599,55 @@ bool Card::isFreeBlockCountValid(int idx) const
  * @param buf Buffer to read the block data into.
  * @param siz Size of buffer. (Must be >= blockSize.)
  * @param blockIdx Block index.
- * @return Bytes read on success; negative on error.
+ * @return Bytes read on success; negative POSIX error code on error.
  */
 int Card::readBlock(void *buf, int siz, uint16_t blockIdx)
 {
 	if (!isOpen())
-		return -1;
-	if (siz < blockSize())
-		return -2;
+		return EBADF;
+	else if (siz < blockSize())
+		return -EINVAL;
+	else if (siz == 0)
+		return 0;
 
 	// Read the specified block.
 	Q_D(Card);
-	d->file->seek((int)blockIdx * blockSize());
-	return (int)d->file->read((char*)buf, blockSize());
+	if (!d->file->seek((int)blockIdx * blockSize()))
+		return -EIO;	// TODO: Proper error code?
+	int ret = (int)d->file->read((char*)buf, blockSize());
+	return (ret >= 0 ? ret : -EIO);
 }
 
-// TODO: Add a readBlocks() function?
+/**
+ * Write a block.
+ * @param buf Buffer containing the data to write.
+ * @param siz Size of buffer. (Must be equal to blockSize.)
+ * @param blockIdx Block index.
+ * @return Bytes written on success; negative POSIX error code on error.
+ */
+int Card::writeBlock(const void *buf, int siz, uint16_t blockIdx)
+{
+	if (!isOpen())
+		return -EBADF;
+	else if (siz < blockSize())
+		return -EINVAL;
+	else if (siz == 0)
+		return 0;
 
-// TODO: Add basic file functions, after creating a File class.
+	// Make sure the card isn't read-only.
+	Q_D(Card);
+	if (d->readOnly)
+		return -EROFS;
+
+	// Write the specified block.
+	if (!d->file->seek((int)blockIdx * blockSize()))
+		return -EIO;    // TODO: Proper error code?
+	// TODO: Check for errors?
+	int ret = (int)d->file->write((char*)buf, blockSize());
+	return (ret >= 0 ? ret : -EIO);
+}
+
+// TODO: Add readBlocks() and writeBlocks() functions?
 
 /** File management **/
 

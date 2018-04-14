@@ -84,10 +84,26 @@ class EditorWindow : public QMainWindow
 		void editorWidget_destroyed_slot(QObject *obj);
 
 		/**
+		 * EditorWidget has been modified.
+		 * @param modified New modified status.
+		 */
+		void editorWidget_hasBeenModified(bool modified);
+
+		/**
 		 * A save slot button on the toolbar was clicked.
 		 * @param saveSlot Save slot number. (-1 for "general" settings)
 		 */
 		void toolBar_saveSlotButton_clicked(int saveSlot);
+
+		/**
+		 * "Save" button was clicked.
+		 */
+		void on_actionSave_triggered(void);
+
+		/**
+		 * "Reload" button was clicked.
+		 */
+		void on_actionReload_triggered(void);
 };
 
 #endif /* __MCRECOVER_EDIT_EDITORWINDOW_HPP__ */

@@ -127,6 +127,15 @@ void EditorWindowPrivate::setEditorWidget(EditorWidget *editorWidget)
 				 q, SLOT(currentSaveSlotChanged_slot(int)));
 		QObject::connect(editorWidget, SIGNAL(destroyed(QObject*)),
 				 q, SLOT(editorWidget_destroyed_slot(QObject*)));
+		QObject::connect(editorWidget, SIGNAL(hasBeenModified(bool)),
+				 q, SLOT(editorWidget_hasBeenModified(bool)));
+
+#ifndef NDEBUG
+		// DEBUGGING: Make sure we initialize the modified state.
+		// Ideally, this should be false on initial load, but due
+		// to various widgets emitting signals, this might be true.
+		q->editorWidget_hasBeenModified(editorWidget->isModified());
+#endif /* NDEBUG */
 
 		// Set the central widget.
 		// QMainWindow takes ownership of the widget.
@@ -149,8 +158,10 @@ void EditorWindowPrivate::initToolbar(void)
 	ui.actionReload->setIcon(
 		McRecoverQApplication::IconFromTheme(QLatin1String("edit-undo")));
 
-	// Disable save actions by default.
+	// Disable save and reload actions by default.
+	// They're enabled if the file is modified.
 	ui.actionSave->setEnabled(false);
+	ui.actionReload->setEnabled(false);
 
 	// Cache the separator action.
 	QList<QAction*> actions = ui.toolBar->actions();
@@ -391,6 +402,19 @@ void EditorWindow::editorWidget_destroyed_slot(QObject *obj)
 }
 
 /**
+ * EditorWidget has been modified.
+ * @param modified New modified status.
+ */
+void EditorWindow::editorWidget_hasBeenModified(bool modified)
+{
+	// Save and Reload buttons are enabled if modified,
+	// and disabled if not modified.
+	Q_D(EditorWindow);
+	d->ui.actionSave->setEnabled(modified);
+	d->ui.actionReload->setEnabled(modified);
+}
+
+/**
  * A save slot button on the toolbar was clicked.
  * @param saveSlot Save slot number. (-1 for "general" settings)
  */
@@ -400,4 +424,26 @@ void EditorWindow::toolBar_saveSlotButton_clicked(int saveSlot)
 	assert(d->editorWidget);
 	// TODO: More error checking?
 	d->editorWidget->setCurrentSaveSlot(saveSlot);
+}
+
+/**
+ * "Save" button was clicked.
+ */
+void EditorWindow::on_actionSave_triggered(void)
+{
+	Q_D(EditorWindow);
+	assert(d->editorWidget);
+	// TODO: Show errors?
+	d->editorWidget->save();
+}
+
+/**
+ * "Save" button was clicked.
+ */
+void EditorWindow::on_actionReload_triggered(void)
+{
+	// TODO: Prompt if the user really wants to reload the save data.
+	Q_D(EditorWindow);
+	assert(d->editorWidget);
+	d->editorWidget->reload();
 }

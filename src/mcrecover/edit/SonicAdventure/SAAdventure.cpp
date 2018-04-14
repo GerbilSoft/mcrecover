@@ -192,7 +192,11 @@ void SAAdventurePrivate::initCharacters(void)
 	// and memory usage.
 	QString levelNames[SA_LEVEL_NAMES_ALL_COUNT];
 	for (int i = 0; i < SA_LEVEL_NAMES_ALL_COUNT; i++) {
-		levelNames[i] = QLatin1String(sa_level_names_all[i]);
+		// NOTE: Some level names have embedded newlines
+		// in order to show up properly in SALevelStats.
+		// FIXME: Remove the newlines from the source,
+		// and add them manually in SALevelStats?
+		levelNames[i] = QString::fromLatin1(sa_level_names_all[i]).replace(L'\n', L' ');
 	}
 
 	QString qsCssCheckBox = QLatin1String(sa_ui_css_emblem_checkbox);
@@ -227,12 +231,16 @@ void SAAdventurePrivate::initCharacters(void)
 			characters[chr].spnLives->setSingleStep(1);
 			characters[chr].spnLives->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 			ui.gridLevels->addWidget(characters[chr].spnLives, chr+1, 1, Qt::AlignCenter);
+			QObject::connect(characters[chr].spnLives, SIGNAL(valueChanged(int)),
+					 q, SLOT(widgetModifiedSlot()));
 
 			// Completed?
 			characters[chr].chkCompleted = new QCheckBox(q);
 			characters[chr].chkCompleted->setStyleSheet(qsCssCheckBox);
 			characters[chr].chkCompleted->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 			ui.gridLevels->addWidget(characters[chr].chkCompleted, chr+1, 2, Qt::AlignCenter);
+			QObject::connect(characters[chr].chkCompleted, SIGNAL(clicked(bool)),
+					 q, SLOT(widgetModifiedSlot()));
 		} else {
 			// "Unused" character doesn't have a life counter
 			// or "completed" emblem.
@@ -247,6 +255,8 @@ void SAAdventurePrivate::initCharacters(void)
 		characters[chr].cboTimeOfDay->addItem(QLatin1String("Night"));
 		characters[chr].cboTimeOfDay->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 		ui.gridLevels->addWidget(characters[chr].cboTimeOfDay, chr+1, 3, Qt::AlignCenter);
+		QObject::connect(characters[chr].cboTimeOfDay, SIGNAL(currentIndexChanged(int)),
+				 q, SLOT(widgetModifiedSlot()));
 
 #ifdef DONT_SHOW_UNKNOWN
 		const int idx = 4;
@@ -260,6 +270,8 @@ void SAAdventurePrivate::initCharacters(void)
 		characters[chr].spnEntrance->setSingleStep(1);
 		characters[chr].spnEntrance->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 		ui.gridLevels->addWidget(characters[chr].spnEntrance, chr+1, idx, Qt::AlignVCenter);
+		QObject::connect(characters[chr].spnEntrance, SIGNAL(valueChanged(int)),
+				 q, SLOT(widgetModifiedSlot()));
 
 		// NOTE: I originally had spnLevelAct in an HBox with cboLevelName,
 		// but the stretch options didn't work right.
@@ -272,6 +284,8 @@ void SAAdventurePrivate::initCharacters(void)
 		}
 		characters[chr].cboLevelName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 		ui.gridLevels->addWidget(characters[chr].cboLevelName, chr+1, idx+1, Qt::AlignVCenter);
+		QObject::connect(characters[chr].cboLevelName, SIGNAL(currentIndexChanged(int)),
+				 q, SLOT(widgetModifiedSlot()));
 
 		// Level act.
 		characters[chr].spnLevelAct = new QSpinBox(q);
@@ -279,6 +293,8 @@ void SAAdventurePrivate::initCharacters(void)
 		characters[chr].spnLevelAct->setSingleStep(1);
 		characters[chr].spnLevelAct->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 		ui.gridLevels->addWidget(characters[chr].spnLevelAct, chr+1, idx+2, Qt::AlignVCenter);
+		QObject::connect(characters[chr].spnLevelAct, SIGNAL(valueChanged(int)),
+				 q, SLOT(widgetModifiedSlot()));
 
 #ifndef DONT_SHOW_UNKNOWN
 		// Unknown items.
@@ -288,6 +304,8 @@ void SAAdventurePrivate::initCharacters(void)
 			characters[chr].spnUnknown[i]->setSingleStep(1);
 			characters[chr].spnUnknown[i]->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 			ui.gridLevels->addWidget(characters[chr].spnUnknown[i], chr+1, (i >= 2 ? i+7 : i+4), Qt::AlignVCenter);
+			QObject::connect(characters[chr].spnUnknown[i], SIGNAL(valueChanged(int)),
+					q, SLOT(widgetModifiedSlot()));
 		}
 #endif
 	}
@@ -341,6 +359,7 @@ void SAAdventure::changeEvent(QEvent *event)
 int SAAdventure::load(const sa_save_slot *sa_save)
 {
 	Q_D(SAAdventure);
+	suspendHasBeenModified();
 
 	// Life counters.
 	for (int i = TOTAL_CHARACTERS-1; i >= 0; i--) {
@@ -390,6 +409,7 @@ int SAAdventure::load(const sa_save_slot *sa_save)
 #endif
 	}
 
+	unsuspendHasBeenModified();
 	setModified(false);
 	return 0;
 }

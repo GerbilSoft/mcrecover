@@ -23,6 +23,7 @@
 #define __MCRECOVER_EDIT_SONICADVENTURE_SAEDITWIDGET_HPP__
 
 #include <QWidget>
+#include <cassert>
 
 struct _sa_save_slot;
 
@@ -35,7 +36,8 @@ class SAEditWidget : public QWidget
 	public:
 		explicit SAEditWidget(QWidget *parent = 0)
 			: super(parent)
-			, m_modified(false) { }
+			, m_modified(false)
+			, m_suspendHasBeenModified(0) { }
 
 	private:
 		typedef QWidget super;
@@ -68,6 +70,34 @@ class SAEditWidget : public QWidget
 		 * @param modified New 'modified' state.
 		 */
 		inline void setModified(bool modified);
+
+	protected slots:
+		/**
+		 * Connect a widget's modified signal to this slot
+		 * to automatically set the modified state.
+		 */
+		inline void widgetModifiedSlot(void);
+
+	private:
+		// Temporarily suspend modification signals.
+		// Increment this when loading data,
+		// and decrement when finished.
+		int m_suspendHasBeenModified;
+
+	protected:
+		/**
+		 * Suspend the hasBeenModified signal.
+		 * Increments a counter; call the unsuspend
+		 * function the same number of times.
+		 */
+		inline void suspendHasBeenModified(void);
+
+		/**
+		 * Unsuspend the hasBeenModified signal.
+		 * Decrements a counter; when it reaches 0,
+		 * the signal is re-enabled.
+		 */
+		inline void unsuspendHasBeenModified(void);
 
 	public:
 		/**
@@ -115,6 +145,38 @@ inline void SAEditWidget::setModified(bool modified)
 		return;
 	m_modified = modified;
 	emit hasBeenModified(modified);
+}
+
+/**
+ * Connect a widget's modified signal to this slot
+ * to automatically set the modified state.
+ */
+inline void SAEditWidget::widgetModifiedSlot(void)
+{
+	if (m_suspendHasBeenModified <= 0) {
+		setModified(true);
+	}
+}
+
+/**
+ * Suspend the hasBeenModified signal.
+ * Increments a counter; call the unsuspend
+ * function the same number of times.
+ */
+inline void SAEditWidget::suspendHasBeenModified(void)
+{
+	m_suspendHasBeenModified++;
+}
+
+/**
+* Unsuspend the hasBeenModified signal.
+* Decrements a counter; when it reaches 0,
+* the signal is re-enabled.
+*/
+inline void SAEditWidget::unsuspendHasBeenModified(void)
+{
+	assert(m_suspendHasBeenModified > 0);
+	m_suspendHasBeenModified--;
 }
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SAEDITWIDGET_HPP__ */

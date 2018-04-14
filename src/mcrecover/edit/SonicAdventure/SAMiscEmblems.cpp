@@ -105,6 +105,8 @@ void SAMiscEmblemsPrivate::initWidgets(void)
 		chkChaoRace[i]->setStyleSheet(qsCssCheckBox);
 		chkChaoRace[i]->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 		ui.hboxChaoRace->addWidget(chkChaoRace[i], 0, Qt::AlignCenter);
+		QWidget::connect(chkChaoRace[i], SIGNAL(toggled(bool)),
+				 q, SLOT(widgetModifiedSlot()));
 	}
 
 	// Adventure Field emblems.
@@ -114,6 +116,8 @@ void SAMiscEmblemsPrivate::initWidgets(void)
 		chkAdvField[i]->setStyleSheet(qsCssCheckBox);
 		chkAdvField[i]->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 		ui.gridAdventureFields->addWidget(chkAdvField[i], i/4, i%4+1, Qt::AlignCenter);
+		QWidget::connect(chkAdvField[i], SIGNAL(toggled(bool)),
+				 q, SLOT(widgetModifiedSlot()));
 	}
 }
 
@@ -165,6 +169,7 @@ void SAMiscEmblems::changeEvent(QEvent *event)
 int SAMiscEmblems::load(const sa_save_slot *sa_save)
 {
 	Q_D(SAMiscEmblems);
+	suspendHasBeenModified();
 
 	// Chao Race emblems.
 	d->chkChaoRace[0]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 106));
@@ -187,6 +192,7 @@ int SAMiscEmblems::load(const sa_save_slot *sa_save)
 	d->chkAdvField[10]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 128));
 	d->chkAdvField[11]->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 129));
 
+	unsuspendHasBeenModified();
 	setModified(false);
 	return 0;
 }

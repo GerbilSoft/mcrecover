@@ -74,6 +74,7 @@ using std::vector;
 #include <QtGui/QDropEvent>
 #include <QAction>
 #include <QActionGroup>
+#include <QCheckBox>
 #include <QFileDialog>
 #include <QLabel>
 #include <QMessageBox>
@@ -220,6 +221,12 @@ class McRecoverWindowPrivate
 		 */
 		GcImageWriter::AnimImageFormat animIconFormat(void) const;
 
+		/**
+		 * "Allow Write" checkbox in the toolbar.
+		 * TODO: Better name, and/or change to "Read Only"?
+		 */
+		QCheckBox *chkAllowWrite;
+
 		// Shh... it's a secret to everybody.
 		HerpDerpEggListener *herpDerp;
 
@@ -255,6 +262,7 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, actgrpAnimIconFormat(new QActionGroup(q))
 	, mapperAnimIconFormat(new QSignalMapper(q))
 	, cfg(new ConfigStore(q))
+	, chkAllowWrite(nullptr)
 	, herpDerp(new HerpDerpEggListener(q))
 	, taskbarButtonManager(nullptr)
 {
@@ -500,6 +508,21 @@ void McRecoverWindowPrivate::initToolbar(void)
 	QWidget *spacer = new QWidget(q);
 	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	ui.toolBar->insertWidget(ui.actionAbout, spacer);
+
+	// "Allow Write" checkbox.
+	// Disabled by default; enabled if a card with no errors is loaded.
+	chkAllowWrite = new QCheckBox(McRecoverWindow::tr("Allow Writing"), q);
+	chkAllowWrite->setObjectName(QLatin1String("chkAllowWrite"));
+	chkAllowWrite->setToolTip(McRecoverWindow::tr(
+		"If checked, enables writing to the memory card by importing\n"
+		"files and/or using the built-in editors. This is a potentially\n"
+		"dangerous operation, and can result in the corruption of files\n"
+		"that have not been recovered.\n\n"
+		"This option is not available if the opened memory card has errors."));
+	chkAllowWrite->setEnabled(false);
+	QObject::connect(chkAllowWrite, SIGNAL(clicked(bool)),
+			 q, SLOT(chkAllowWrite_clicked(bool)));
+	ui.toolBar->insertWidget(ui.actionAbout, chkAllowWrite);
 
 	// Retranslate the toolbar.
 	retranslateToolbar();
@@ -1019,6 +1042,8 @@ void McRecoverWindow::openCard(const QString &filename, int type)
 		d->model->setCard(nullptr);
 		d->ui.mcCardView->setCard(nullptr);
 		d->ui.mcfFileView->setFile(nullptr);
+		d->chkAllowWrite->setEnabled(false);
+		d->chkAllowWrite->setChecked(false);
 		delete d->card;
 	}
 
@@ -1052,10 +1077,21 @@ void McRecoverWindow::openCard(const QString &filename, int type)
 		// Could not open the card.
 		static const QChar chrBullet(0x2022);  // U+2022: BULLET
 		QString filename_noPath = QFileInfo(filename).fileName();
+
+		QString errorString;
+		if (d->card) {
+			errorString = d->card->errorString();
+			if (!errorString.isEmpty()) {
+				// Qt error strings don't have a trailing '.'
+				// TODO: Move this to Card's error string functions?
+				errorString += QChar(L'.');
+			}
+		}
+
 		QString errMsg = tr("An error occurred while opening %1:")
 					.arg(filename_noPath) +
 				QChar(L'\n') + chrBullet + QChar(L' ') +
-				(d->card ? d->card->errorString() : unkErrMsg);
+				(!errorString.isEmpty() ? errorString : unkErrMsg);
 		d->ui.msgWidget->showMessage(errMsg, MessageWidget::ICON_WARNING);
 		closeCard(true);
 		return;
@@ -1167,6 +1203,17 @@ void McRecoverWindow::openCard(const QString &filename, int type)
 		d->ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING, 0, d->card);
 	}
 
+	// Can we allow writing to this memory card?
+	if (!cardErrors) {
+		// No errors.
+		d->chkAllowWrite->setChecked(!d->card->isReadOnly());
+		d->chkAllowWrite->setEnabled(true);
+	} else {
+		// Card has errors.
+		d->chkAllowWrite->setEnabled(false);
+		d->chkAllowWrite->setChecked(false);
+	}
+
 	// Update the UI.
 	d->updateLstFileList();
 	d->statusBarManager->opened(filename, d->card->productName());
@@ -1194,6 +1241,10 @@ void McRecoverWindow::closeCard(bool noMsg)
 	d->ui.mcfFileView->setFile(nullptr);
 	delete d->card;
 	d->card = nullptr;
+
+	// Disable the "Allow Write" checkbox.
+	d->chkAllowWrite->setEnabled(false);
+	d->chkAllowWrite->setChecked(false);
 
 	// Clear the filenames.
 	d->filename.clear();
@@ -1882,4 +1933,49 @@ void McRecoverWindow::searchUsedBlocks_cfg_slot(const QVariant &checked)
 {
 	Q_D(McRecoverWindow);
 	d->ui.actionSearchUsedBlocks->setChecked(checked.toBool());
+}
+
+/**
+ * "Allow Write" checkbox was changed by the user.
+ * @param checked True if checked; false if not.
+ */
+void McRecoverWindow::chkAllowWrite_clicked(bool checked)
+{
+	Q_D(McRecoverWindow);
+	if (!d->card || d->card->errors() != 0) {
+		// Card isn't present, or card has errors.
+		// This slot shouldn't have been triggered.
+		d->chkAllowWrite->setEnabled(false);
+		d->chkAllowWrite->setChecked(false);
+		return;
+	}
+
+	// Switch the read-only mode.
+	// NOTE: This box is true for "write", whereas setReadOnly is false for "write".
+	int ret = d->card->setReadOnly(!checked);
+	if (ret != 0) {
+		// Could not switch the read-only mode.
+		d->chkAllowWrite->setEnabled(false);
+		d->chkAllowWrite->setChecked(!checked);
+
+		static const QChar chrBullet(0x2022);  // U+2022: BULLET
+		QString errMsg;
+		if (checked) {
+			errMsg = tr("An error occurred while attempting to allow writing:");
+		} else {
+			errMsg = tr("An error occurred while attempting to disallow writing:");
+		}
+		errMsg += QChar(L'\n') + chrBullet + QChar(L' ');
+
+		QString errorString = d->card->errorString();
+		if (!errorString.isEmpty()) {
+			// Qt error strings don't have a trailing '.'
+			// TODO: Move this to Card's error string functions?
+			errMsg += errorString + QChar(L'.');
+		} else {
+			// Use strerror().
+			errMsg += QLatin1String(strerror(-ret)) + QChar(L'.');
+		}
+		d->ui.msgWidget->showMessage(errMsg, MessageWidget::ICON_WARNING);
+	}
 }

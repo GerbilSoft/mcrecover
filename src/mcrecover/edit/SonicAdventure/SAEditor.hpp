@@ -67,6 +67,18 @@ class SAEditor : public EditorWidget
 		 */
 		virtual int setFile(File *file) final;
 
+	public slots:
+		/**
+		 * Save the data to the file.
+		 * @return 0 on success; negative POSIX error code on error.
+		 */
+		virtual int save(void) override;
+
+		/**
+		 * Reload the save data.
+		 */
+		virtual void reload(void) override;
+
 	protected:
 		/**
 		 * Set the current save slot. [INTERNAL FUNCTION]
@@ -81,6 +93,13 @@ class SAEditor : public EditorWidget
 		 * @return 0 on success; non-zero on error.
 		 */
 		virtual int setCurrentSaveSlot_int(int saveSlot) final;
+
+	protected slots:
+		/**
+		 * Widget's modified state has been changed.
+		 * @param modified New modified state.
+		 */
+		void widgetHasBeenModified(bool modified);
 };
 
 #endif /* __MCRECOVER_EDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__ */

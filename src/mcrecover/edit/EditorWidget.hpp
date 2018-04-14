@@ -42,6 +42,8 @@ class EditorWidget : public QWidget
 	Q_PROPERTY(int saveSlots READ saveSlots NOTIFY saveSlotsChanged)
 	Q_PROPERTY(bool generalSettings READ hasGeneralSettings NOTIFY generalSettingsChanged)
 
+	Q_PROPERTY(bool modified READ isModified NOTIFY hasBeenModified)
+
 	protected:
 		/**
 		 * Create an EditorWidget.
@@ -112,6 +114,17 @@ class EditorWidget : public QWidget
 		 */
 		void setCurrentSaveSlot(int saveSlot);
 
+		/**
+		 * Save the data to the file.
+		 * @return 0 on success; negative POSIX error code on error.
+		 */
+		virtual int save(void) = 0;
+
+		/**
+		 * Reload the save data.
+		 */
+		virtual void reload(void) = 0;
+
 	protected:
 		/**
 		 * Set the current save slot. [INTERNAL FUNCTION]
@@ -145,6 +158,56 @@ class EditorWidget : public QWidget
 		 * @param saveSlot New save slot. (-1 for "general" settings)
 		 */
 		void currentSaveSlotChanged(int saveSlot);
+
+		/** File modified state. **/
+	signals:
+		/**
+		 * Modification status has changed.
+		 * @param modified New modified status.
+		 */
+		void hasBeenModified(bool modified);
+
+	public:
+		/**
+		 * Has this widget been modified?
+		 * @return True if modified; false if not.
+		 */
+		inline bool isModified(void) const;
+
+	protected:
+		/**
+		 * Change the 'modified' state.
+		 * This function must be called instead of modifying
+		 * the variable directly in order to handle signals.
+		 * @param modified New 'modified' state.
+		 */
+		inline void setModified(bool modified);
+
+	private:
+		bool m_modified;
 };
+
+/**
+ * Has this widget been modified?
+ * @return True if modified; false if not.
+ */
+inline bool EditorWidget::isModified(void) const
+{
+	return m_modified;
+}
+
+/**
+ * Change the 'modified' state.
+ * This function must be called instead of modifying
+ * the variable directly in order to handle signals.
+ * @param modified New 'modified' state.
+ */
+inline void EditorWidget::setModified(bool modified)
+{
+	if (m_modified == modified)
+		return;
+	m_modified = modified;
+	emit hasBeenModified(modified);
+}
 
 #endif /* __MCRECOVER_EDIT_EDITORWIDGET_HPP__ */

@@ -354,5 +354,121 @@
   <include location="../../resources/flags/flags.qrc"/>
   <include location="../../resources/sonic/sonic.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>cboMessages</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SAGeneral</receiver>
+   <slot>widgetModifiedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>35</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>340</x>
+     <y>31</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cboVoiceLanguage</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SAGeneral</receiver>
+   <slot>widgetModifiedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>245</x>
+     <y>58</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>340</x>
+     <y>64</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cboTextLanguage</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SAGeneral</receiver>
+   <slot>widgetModifiedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>237</x>
+     <y>90</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>316</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkRumble</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SAGeneral</receiver>
+   <slot>widgetModifiedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>151</x>
+     <y>120</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>301</x>
+     <y>116</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cboLastCharacter</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SAGeneral</receiver>
+   <slot>widgetModifiedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>337</x>
+     <y>151</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>337</x>
+     <y>176</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cboLastLevel</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SAGeneral</receiver>
+   <slot>widgetModifiedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>204</x>
+     <y>173</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>173</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spnBlackMarketRings</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>SAGeneral</receiver>
+   <slot>widgetModifiedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>226</x>
+     <y>201</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>307</x>
+     <y>203</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>widgetModifiedSlot()</slot>
+ </slots>
 </ui>

@@ -442,7 +442,11 @@ void FilePrivate::calculateChecksum(void)
 File::File(FilePrivate *d, Card *card)
 	: super(card)
 	, d_ptr(d)
-{ }
+{
+	// Forward the card's readOnlyChanged signal.
+	connect(card, SIGNAL(readOnlyChanged(bool)),
+		this, SIGNAL(readOnlyChanged(bool)));
+}
 
 File::~File()
 {
@@ -478,6 +482,84 @@ QByteArray File::loadFileData(void)
 {
 	Q_D(File);
 	return d->loadFileData();
+}
+
+/**
+ * Write data to the file.
+ * NOTE: This function cannot expand files at the moment.
+ * Length+size must be <= total file size.
+ * @param address Address to write to.
+ * @param data Data to write.
+ * @param length Amount of data to write, in bytes.
+ * @return Bytes written on success; negative POSIX error code on error.
+ */
+int File::write(uint32_t address, const void *const data, uint32_t length)
+{
+	if (isReadOnly())
+		return -EROFS;
+
+	Q_D(File);
+	const uint8_t *data_u8 = static_cast<const uint8_t*>(data);
+	const int blockSize = d->card->blockSize();
+
+	// Make sure address + length <= file size.
+	if (address + length > d->size() * blockSize)
+		return -ERANGE;
+
+	// Temporary block buffer.
+	// NOTE: Only resized (allocated) if necessary.
+	std::vector<uint8_t> block;
+
+	// Check if we're not starting on a block boundary.
+	const uint32_t blockStartOffset = (address % blockSize);
+	if (blockStartOffset != 0) {
+		// Not a block boundary.
+		// Read the block first.
+		block.resize(blockSize);
+		const uint16_t physBlockStartIdx = d->fileBlockAddrToPhysBlockAddr(address / blockSize);
+		d->card->readBlock(block.data(), blockSize, physBlockStartIdx);
+
+		// Bytes remaining in the block.
+		const uint32_t remaining = blockSize - (blockStartOffset);
+		if (length <= remaining) {
+			// This is the only block being written.
+			memcpy(block.data() + blockStartOffset, data_u8, length);
+			d->card->writeBlock(block.data(), blockSize, physBlockStartIdx);
+			// FIXME: Trigger card metadata update.
+			return 0;
+		}
+
+		// Write 'remaining' bytes worth of data.
+		memcpy(block.data() + blockStartOffset, data_u8, remaining);
+		d->card->writeBlock(block.data(), blockSize, physBlockStartIdx);
+
+		// Adjust for the remaining blocks.
+		address += remaining;
+		data_u8 += remaining;
+		length -= remaining;
+	}
+
+	// Write entire blocks.
+	for (; length >= (uint32_t)blockSize; length -= blockSize, data_u8 += blockSize, address += blockSize) {
+		const uint16_t physBlockIdx = d->fileBlockAddrToPhysBlockAddr(address / blockSize);
+		d->card->writeBlock(data, blockSize, physBlockIdx);
+	}
+
+	// Check if we still have data left (not a full block).
+	if (length != 0) {
+		// Not a full block.
+		// Read the block first.
+		block.resize(blockSize);
+		const uint16_t physBlockEndIdx = d->fileBlockAddrToPhysBlockAddr(address / blockSize);
+		d->card->readBlock(block.data(), blockSize, physBlockEndIdx);
+
+		// Copy data into the block and write it back.
+		memcpy(block.data(), data_u8, length);
+		d->card->writeBlock(block.data(), blockSize, physBlockEndIdx);
+	}
+
+	// Data written successfully.
+	return 0;
 }
 
 /**
@@ -882,4 +964,18 @@ QVector<QString> File::checksumValuesFormatted(void) const
 		ret.append(QString::fromStdString(vs[i]));
 	}
 	return ret;
+}
+
+/** Writing functions. **/
+
+/**
+ * Is this file read-only?
+ * This is true if either the underlying card is read-only,
+ * or this is a lost file.
+ * @return True if this file is read-only; false if not.
+ */
+bool File::isReadOnly(void) const
+{
+	Q_D(const File);
+	return (d->lostFile || d->card->isReadOnly());
 }
