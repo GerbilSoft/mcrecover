@@ -3,7 +3,7 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 
 project(zlib C)
 
-set(VERSION "1.2.8")
+set(VERSION "1.2.11")
 
 # mcrecover: Disable zlib options.
 IF(0)
@@ -136,7 +136,6 @@ if(NOT MINGW)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
-	# mcrecover: cmake-2.8.4 is required for nasm.
 	if(ASM686)
 		set(ZLIB_ASMS contrib/asm686/match.S)
 	elseif (AMD64)
@@ -156,7 +155,6 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CX
 endif()
 
 if(MSVC)
-	# mcrecover: cmake-2.6.3 is required for masm.
 	if(ASM686)
 		ENABLE_LANGUAGE(ASM_MASM)
 		set(ZLIB_ASMS
@@ -202,28 +200,51 @@ if(MINGW)
     set(ZLIB_DLL_SRCS ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj)
 endif(MINGW)
 
-# mcrecover: Don't build zlib as a shared library.
-# mcrecover: Added ${ZLIB_ASM_C_SRCS} for 64-bit MSVC builds.
-#add_library(zlib SHARED ${ZLIB_SRCS} ${ZLIB_ASMS} ${ZLIB_ASM_C_SRCS} ${ZLIB_DLL_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
-add_custom_target(zlib)
-add_library(zlibstatic STATIC ${ZLIB_SRCS} ${ZLIB_ASMS} ${ZLIB_ASM_C_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
-set_target_properties(zlib PROPERTIES DEFINE_SYMBOL ZLIB_DLL)
-set_target_properties(zlib PROPERTIES SOVERSION 1)
+# mcrecover:
+# - Added ${ZLIB_ASM_C_SRCS} for 64-bit MSVC builds.
+# - If BUILD_SHARED_LIBS: Only build zlib.
+# - If not BUILD_SHARED_LIBS: Only build zlibstatic.
+IF(BUILD_SHARED_LIBS)
+	add_library(zlib SHARED ${ZLIB_SRCS} ${ZLIB_ASMS} ${ZLIB_ASM_C_SRCS} ${ZLIB_DLL_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
+	set_target_properties(zlib PROPERTIES DEFINE_SYMBOL ZLIB_DLL)
+	set_target_properties(zlib PROPERTIES SOVERSION 1)
+ELSE(BUILD_SHARED_LIBS)
+	add_custom_target(zlib)
+ENDIF(BUILD_SHARED_LIBS)
+IF(BUILD_STATIC_LIBS)
+	add_library(zlibstatic STATIC ${ZLIB_SRCS} ${ZLIB_ASMS} ${ZLIB_ASM_C_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
+ELSE(BUILD_STATIC_LIBS)
+	add_custom_target(zlibstatic)
+ENDIF(BUILD_STATIC_LIBS)
 add_definitions(${ZLIB_DEFINITIONS})
 
-# mcrecover: Set target definitions.
-#target_compile_definitions(zlib PUBLIC -DZLIB_CONST)
-target_compile_definitions(zlibstatic PUBLIC -DZLIB_CONST)
+# mcrecover: Set target definitions and include directories.
+IF(BUILD_SHARED_LIBS)
+	target_compile_definitions(zlib PUBLIC -DZLIB_CONST)
+	TARGET_INCLUDE_DIRECTORIES(zlib
+		PUBLIC  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+			$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+		)
+ENDIF(BUILD_SHARED_LIBS)
+IF(BUILD_STATIC_LIBS)
+	target_compile_definitions(zlibstatic PUBLIC -DZLIB_CONST)
+	TARGET_INCLUDE_DIRECTORIES(zlibstatic
+		PUBLIC  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+			$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+		)
+ENDIF(BUILD_STATIC_LIBS)
 
-# mcrecover: Set include directories.
-#TARGET_INCLUDE_DIRECTORIES(zlib
-#	PUBLIC	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-#		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-#	)
-TARGET_INCLUDE_DIRECTORIES(zlibstatic
-	PUBLIC	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-	)
+# mcrecover: Split debug functionality; Windows subsystem.
+# NOTE: Do NOT use DO_SPLIT_DEBUG on static library targets,
+# since it results in the entire thing being split out on Linux.
+IF(BUILD_SHARED_LIBS)
+	DO_SPLIT_DEBUG(zlib)
+	SET_WINDOWS_SUBSYSTEM(zlib WIN32)
+ENDIF(BUILD_SHARED_LIBS)
+IF(BUILD_STATIC_LIBS)
+	INCLUDE(SetMSVCDebugPath)
+	SET_MSVC_DEBUG_PATH(zlibstatic)
+ENDIF(BUILD_STATIC_LIBS)
 
 if(NOT CYGWIN)
     # This property causes shared libraries on Linux to have the full version
@@ -244,14 +265,46 @@ if(UNIX)
    endif()
 elseif(BUILD_SHARED_LIBS AND WIN32)
     # Creates zlib1.dll when building shared library version
-    set_target_properties(zlib PROPERTIES SUFFIX "1.dll")
+    # mcrecover: MSVC builds: Append to POSTFIX instead of setting SUFFIX.
+    #set_target_properties(zlib PROPERTIES SUFFIX "1.dll")
+    SET_TARGET_PROPERTIES(zlib PROPERTIES DEBUG_POSTFIX "1${CMAKE_DEBUG_POSTFIX}")
+    SET_TARGET_PROPERTIES(zlib PROPERTIES RELEASE_POSTFIX "1${CMAKE_RELEASE_POSTFIX}")
 endif()
 
 if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL )
-    install(TARGETS zlib zlibstatic
-        RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
-        ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
-        LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
+    # mcrecover:
+    # - Removed zlibstatic from INSTALL().
+    # - Disabled installation of import libraries.
+    # - Install PDB files.
+    install(TARGETS zlib
+        RUNTIME DESTINATION "${INSTALL_BIN_DIR}" )
+        #ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
+        #LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
+    IF(INSTALL_DEBUG)
+	# FIXME: Generator expression $<TARGET_PROPERTY:${_target},PDB> didn't work with CPack-3.6.1.
+	INCLUDE(DirInstallPaths)
+	GET_TARGET_PROPERTY(DEBUG_FILENAME zlib PDB)
+	IF(WIN32)
+		# TODO: Test on MinGW.
+		# FIXME: Generator PDB expression doesn't have the debug postfix for some reason,
+		# so cpack fails in debug builds if we get the PDB property.
+		SET(PDB_FILENAME_D "$<TARGET_FILE_DIR:zlib>/zlib1${CMAKE_DEBUG_POSTFIX}.pdb")
+		SET(PDB_FILENAME_R "$<TARGET_FILE_DIR:zlib>/zlib1${CMAKE_RELEASE_POSTFIX}.pdb")
+		INSTALL(FILES "${PDB_FILENAME_D}" "${PDB_FILENAME_R}"
+			DESTINATION "${DIR_INSTALL_DLL_DEBUG}"
+			COMPONENT "debug"
+			OPTIONAL
+			)
+		UNSET(PDB_FILENAME_D)
+		UNSET(PDB_FILENAME_R)
+	ELSE(WIN32)
+		INSTALL(FILES "${DEBUG_FILENAME}"
+			DESTINATION "${DIR_INSTALL_DLL_DEBUG}"
+			COMPONENT "debug"
+			)
+	ENDIF(WIN32)
+	UNSET(DEBUG_FILENAME)
+     ENDIF(INSTALL_DEBUG)
 endif()
 if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL )
     install(FILES ${ZLIB_PUBLIC_HDRS} DESTINATION "${INSTALL_INC_DIR}")
