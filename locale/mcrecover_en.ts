@@ -778,20 +778,6 @@ Do you want to overwrite it?</source>
         <extracomment>Failure message for GcnCard.</extracomment>
         <translation></translation>
     </message>
-    <message numerus="yes">
-        <source>Error(s) occurred while attempting to decode Japanese text:
-%1
-Some files with Japanese descriptions might not be found when scanning.</source>
-        <extracomment>Errors occurred while attempting to decode Japanese text.</extracomment>
-        <translation type="obsolete">
-            <numerusform>An error occurred while attempting to decode Japanese text:
-%1
-Some files with Japanese descriptions might not be found when scanning.</numerusform>
-            <numerusform>Errors occurred while attempting to decode Japanese text:
-%1
-Some files with Japanese descriptions might not be found when scanning.</numerusform>
-        </translation>
-    </message>
     <message>
         <location filename="../src/mcrecover/windows/McRecoverWindow.cpp" line="975"/>
         <source>VmuCard::open() failed.</source>

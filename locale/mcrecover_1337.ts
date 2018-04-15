@@ -801,30 +801,6 @@ d0 y0u w4n7 70 0v3rwr173 17?</translation>
         <translation>6cnc4rd::0p3n() f41l3d.</translation>
     </message>
     <message>
-        <source>The internal Qt library was not compiled with Shift-JIS support.</source>
-        <extracomment>Statically-linked Qt is missing qjpcodecs.</extracomment>
-        <translation type="obsolete">7h3 1n73rn4l q7 l1br4ry w45 n07 c0mp1l3d w17h 5h1f7-j15 5upp0r7.</translation>
-    </message>
-    <message>
-        <source>The system Qt library was not compiled with Shift-JIS support.</source>
-        <extracomment>Dyanmically-linked Qt is missing qjpcodecs.</extracomment>
-        <translation type="obsolete">7h3 5y573m q7 l1br4ry w45 n07 c0mp1l3d w17h 5h1f7-j15 5upp0r7.</translation>
-    </message>
-    <message numerus="yes">
-        <source>Error(s) occurred while attempting to decode Japanese text:
-%1
-Some files with Japanese descriptions might not be found when scanning.</source>
-        <extracomment>Errors occurred while attempting to decode Japanese text.</extracomment>
-        <translation type="obsolete">
-            <numerusform>4n 3rr0r 0ccurr3d wh1l3 4773mp71n6 70 d3c0d3 j4p4n353 73x7:
-%1
-50m3 f1l35 w17h j4p4n353 d35cr1p710n5 m16h7 n07 b3 f0und wh3n 5c4nn1n6.</numerusform>
-            <numerusform>3rr0r5 0ccurr3d wh1l3 4773mp71n6 70 d3c0d3 j4p4n353 73x7:
-%1
-50m3 f1l35 w17h j4p4n353 d35cr1p710n5 m16h7 n07 b3 f0und wh3n 5c4nn1n6.</numerusform>
-        </translation>
-    </message>
-    <message>
         <location filename="../src/mcrecover/windows/McRecoverWindow.cpp" line="975"/>
         <source>VmuCard::open() failed.</source>
         <extracomment>Failure message for VmuCard.</extracomment>
