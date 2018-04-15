@@ -1043,8 +1043,8 @@ void McRecoverWindow::openCard(const QString &filename, int type)
 			.arg(cardSz).arg(minSz);
 	}
 	if (cardErrors & GcnCard::MCE_SZ_TOO_BIG) {
-		//: %1 and %2 are both formatted sizes, e.g. "100 bytes" or "2 MB".
 		QString maxSz = d->formatFileSize(d->card->maxBlocks() * d->card->blockSize());
+		//: %1 and %2 are both formatted sizes, e.g. "100 bytes" or "2 MB".
 		sl_cardErrors +=
 			tr("The card image is too big. (Card image is %1; should be %2 or less.)")
 			.arg(cardSz).arg(maxSz);
