@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="en_US">
+<TS version="2.1" language="en_US">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -33,10 +33,11 @@
         <source>Version %1</source>
         <translation>v3r510n %1</translation>
     </message>
-    <message utf8="true">
+    <message>
+        <location filename="../src/mcrecover/windows/AboutDialog.cpp" line="126"/>
         <source>Powered by the&lt;br/&gt;
 &lt;b&gt;MegaCard Engine&lt;/b&gt;™</source>
-        <translation type="obsolete">p0w3r3d by 7h3&lt;br/&gt;
+        <translation type="unfinished">p0w3r3d by 7h3&lt;br/&gt;
 &lt;b&gt;m364c4rd 3n61n3&lt;/b&gt;™</translation>
     </message>
     <message>
@@ -78,12 +79,6 @@
         <source>Licenses: %1</source>
         <extracomment>Licenses: (libraries with multiple licenses)</extracomment>
         <translation>l1c3n535: %1</translation>
-    </message>
-    <message>
-        <location filename="../src/mcrecover/windows/AboutDialog.cpp" line="126"/>
-        <source>Powered by the&lt;br/&gt;
-&lt;b&gt;MegaCard Engine&lt;/b&gt;â¢</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mcrecover/windows/AboutDialog.cpp" line="392"/>
@@ -456,7 +451,6 @@ r3c1p3 4641n, 70 c0n71nu3 70 347 7h3 5n4ck.</translation>
         <location filename="../src/mcrecover/TranslationManager.cpp" line="232"/>
         <source>Default</source>
         <comment>ts-language</comment>
-        <extracomment>Language this translation provides, e.g. &quot;English (US)&quot;.</extracomment>
         <translatorcomment>http://www.robertecker.com/hp/research/leet-converter.php?lang=en (&quot;basic leet&quot; mode)</translatorcomment>
         <translation>1337 5p34k</translation>
     </message>
@@ -465,7 +459,6 @@ r3c1p3 4641n, 70 c0n71nu3 70 347 7h3 5n4ck.</translation>
         <location filename="../src/mcrecover/TranslationManager.cpp" line="225"/>
         <source>C</source>
         <comment>ts-locale</comment>
-        <extracomment>Locale name, e.g. &quot;en_US&quot;.</extracomment>
         <translation>1337</translation>
     </message>
 </context>
@@ -2349,27 +2342,21 @@ Alternatively, you can place your own version in ~/.config/mcrecover/data/</sour
         <location filename="../src/mcrecover/widgets/TableSelect.cpp" line="309"/>
         <location filename="../src/mcrecover/widgets/TableSelect.cpp" line="377"/>
         <source>%1 %2 is valid, and is the active table on the card.</source>
-        <extracomment>%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == table ID (&apos;A&apos;, &apos;B&apos;, etc.)
-----------
-%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == table ID (&apos;A&apos;, &apos;B&apos;, etc.)</extracomment>
+        <extracomment>%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == table ID (&apos;A&apos;, &apos;B&apos;, etc.)</extracomment>
         <translation>%1 %2 15 v4l1d, 4nd 15 7h3 4c71v3 74bl3 0n 7h3 c4rd.</translation>
     </message>
     <message>
         <location filename="../src/mcrecover/widgets/TableSelect.cpp" line="312"/>
         <location filename="../src/mcrecover/widgets/TableSelect.cpp" line="380"/>
         <source>%1 %2 is valid.</source>
-        <extracomment>%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == table ID (&apos;A&apos;, &apos;B&apos;, etc.)
-----------
-%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == table ID (&apos;A&apos;, &apos;B&apos;, etc.)</extracomment>
+        <extracomment>%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == table ID (&apos;A&apos;, &apos;B&apos;, etc.)</extracomment>
         <translation>%1 %2 15 v4l1d.</translation>
     </message>
     <message>
         <location filename="../src/mcrecover/widgets/TableSelect.cpp" line="316"/>
         <location filename="../src/mcrecover/widgets/TableSelect.cpp" line="384"/>
         <source>%1 %2 is invalid.</source>
-        <extracomment>%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == table ID (&apos;A&apos;, &apos;B&apos;, etc.)
-----------
-%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == table ID (&apos;A&apos;, &apos;B&apos;, etc.)</extracomment>
+        <extracomment>%1 == &quot;Block Table&quot; or &quot;Directory Table&quot;; %2 == table ID (&apos;A&apos;, &apos;B&apos;, etc.)</extracomment>
         <translation>%1 %2 15 1nv4l1d.</translation>
     </message>
 </context>
