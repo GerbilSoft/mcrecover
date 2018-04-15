@@ -299,12 +299,12 @@ int VarReplace::strToInt(const QString &str)
  * Apply variable modifiers to a QHash containing variables.
  * @param varModifierDefs	[in] Variable modifier definitions.
  * @param vars			[in, out] Variables to modify.
- * @param gcnDateTime		[out, opt] If specified, GcnDateTime for the timestamp.
+ * @param qDateTime		[out, opt] If specified, QDateTime for the timestamp.
  * @return 0 on success; non-zero if any modifiers failed.
  */
 int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifierDefs,
 			       QHash<QString, QString> &vars,
-			       GcnDateTime *gcnDateTime)
+			       QDateTime *qDateTime)
 {
 	// Timestamp construction.
 	int year = -1, month = -1, day = -1;
@@ -366,11 +366,11 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifier
 			}
 		}
 
-		// Check if this variable should be used in the GcnDateTime.
+		// Check if this variable should be used in the QDateTime.
 		switch (varModifierDef.useAs) {
 			default:
 			case VarModifierDef::USEAS_FILENAME:
-				// Not a GcnDateTime component.
+				// Not a QDateTime component.
 				break;
 
 			case VarModifierDef::USEAS_TS_YEAR:
@@ -432,58 +432,66 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifier
 		vars.insert(id, var);
 	}
 
-	if (gcnDateTime) {
-		// Set the GcnDateTime to the current time for now.
-		const GcnDateTime currentDateTime(GcnDateTime::currentDateTime());
-		*gcnDateTime = currentDateTime;
+	if (qDateTime) {
+		// Set the QDateTime to the current time for now.
+		const QDateTime currentDateTime(QDateTime::currentDateTime());
+		*qDateTime = currentDateTime;
 
 		// Adjust the date.
-		QDate date = gcnDateTime->date();
+		QDate date = qDateTime->date();
 		const bool isDateSet = (year != -1 || month != -1 || day != -1);
-		if (year == -1)
+		if (year == -1) {
 			year = date.year();
-		if (month == -1)
+		}
+		if (month == -1) {
 			month = date.month();
-		if (day == -1)
+		}
+		if (day == -1) {
 			day = date.day();
+		}
 		date.setDate(year, month, day);
-		gcnDateTime->setDate(date);
+		qDateTime->setDate(date);
 
 		// Adjust the time.
-		QTime time = gcnDateTime->time();
+		QTime time = qDateTime->time();
 		const bool isTimeSet = (hour != -1 || minute != -1);
 		if (isDateSet && !isTimeSet) {
 			// Date was set by the file, but time wasn't.
 			// Assume default of 12:00 AM.
 			time.setHMS(0, 0, 0);
 		} else {
-			if (hour == -1)
+			if (hour == -1) {
 				hour = time.hour();
-			if (minute == -1)
+			}
+			if (minute == -1) {
 				minute = time.minute();
-			if (second == -1)
+			}
+			if (second == -1) {
 				second = 0;	// Don't bother using the current second.
+			}
 			if (ampm != -1) {
 				hour %= 12;
 				hour += ampm;
 			}
 			time.setHMS(hour, minute, second);
 		}
-		gcnDateTime->setTime(time);
+		qDateTime->setTime(time);
 
-		// If the GcnDateTime is more than one day
+		// If the QDateTime is more than one day
 		// in the future, adjust its years value.
 		// (One-day variance is allowed due to timezone differences.)
-		const uint32_t gcnTS = currentDateTime.gcnTimestamp() + 86400;
-		const GcnDateTime adjCurrentDateTime(gcnTS);
-		if (*gcnDateTime > adjCurrentDateTime) {
-			QDate gcnDate = gcnDateTime->date();
-			int curYear = currentDateTime.date().year();
-			if (curYear > 2000)
-				gcnDate.setDate(curYear - 1, gcnDate.month(), gcnDate.day());
+		const QDateTime tomorrow = QDateTime::fromMSecsSinceEpoch(
+			currentDateTime.toMSecsSinceEpoch() + (86400*1000), Qt::UTC);
 
-			// Update the GcnDateTime.
-			gcnDateTime->setDate(gcnDate);
+		if (*qDateTime > tomorrow) {
+			QDate adjDate = qDateTime->date();
+			int curYear = currentDateTime.date().year();
+			// NOTE: Minimum year of 2000 for GCN,
+			// but Dreamcast was released in 1998.
+			if (curYear > 1995) {
+				// Update the QDateTime.
+				qDateTime->setDate(adjDate.addYears(-1));
+			}
 		}
 	}
 

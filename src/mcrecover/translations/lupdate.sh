@@ -18,5 +18,5 @@ for TS_FILE in ${TS_FILES}; do
 	if [ ! -s "${TS_FILE}" ]; then
 		rm -f "${TS_FILE}"
 	fi
-	lupdate -extensions "${SRC_EXTS}" ../ -ts "${TS_FILE}"
+	lupdate -extensions "${SRC_EXTS}" ../../ -ts "${TS_FILE}"
 done

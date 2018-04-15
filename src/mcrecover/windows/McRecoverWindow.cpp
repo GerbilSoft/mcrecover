@@ -26,14 +26,14 @@
 #include "AboutDialog.hpp"
 
 // GcnCard classes.
-#include "card/GcnCard.hpp"
-#include "card/GcnFile.hpp"
-#include "card/MemCardModel.hpp"
-#include "card/MemCardItemDelegate.hpp"
-#include "card/MemCardSortFilterProxyModel.hpp"
+#include "libmemcard/GcnCard.hpp"
+#include "libmemcard/GcnFile.hpp"
+#include "libmemcard/MemCardModel.hpp"
+#include "libmemcard/MemCardItemDelegate.hpp"
+#include "libmemcard/MemCardSortFilterProxyModel.hpp"
 
 // VmuCard
-#include "card/VmuCard.hpp"
+#include "libmemcard/VmuCard.hpp"
 
 // File database.
 #include "db/GcnMcFileDb.hpp"

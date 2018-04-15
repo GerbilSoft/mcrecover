@@ -23,10 +23,10 @@
 
 // MemCard Recover includes.
 #include "VarModifierDef.hpp"
-#include "GcnDateTime.hpp"
 
 // Qt includes.
 #include <QtCore/qglobal.h>
+#include <QtCore/QDateTime>
 #include <QtCore/QHash>
 #include <QtCore/QString>
 #include <QtCore/QRegularExpression>
@@ -81,12 +81,12 @@ class VarReplace
 		* Apply variable modifiers to a QHash containing variables.
 		* @param varModifierDefs	[in] Variable modifier definitions.
 		* @param vars			[in, out] Variables to modify.
-		* @param gcnDateTime		[out, opt] If specified, GcnDateTime for the timestamp.
+		* @param qDateTime		[out, opt] If specified, QDateTime for the timestamp.
 		* @return 0 on success; non-zero if any modifiers failed.
 		*/
 		static int ApplyModifiers(const QHash<QString, VarModifierDef> &varModifierDefs,
 					  QHash<QString, QString> &vars,
-					  GcnDateTime *gcnDateTime);
+					  QDateTime *qDateTime);
 };
 
 #endif /* __MCRECOVER_VARREPLACE_HPP__ */

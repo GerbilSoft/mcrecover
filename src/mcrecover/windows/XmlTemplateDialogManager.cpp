@@ -22,7 +22,7 @@
 #include "XmlTemplateDialogManager.hpp"
 
 // Classes this class manages.
-#include "card/GcnFile.hpp"
+#include "libmemcard/GcnFile.hpp"
 #include "XmlTemplateDialog.hpp"
 
 // Qt includes.

@@ -73,11 +73,8 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.mcrecover.h.in" "${CMAKE_CURR
 # Sources.
 SET(mcrecover_SRCS
 	mcrecover.cpp
-	GcnDateTime.cpp
-	IconAnimHelper.cpp
 	McRecoverQApplication.cpp
 	VarReplace.cpp
-	GcToolsQt.cpp
 	TranslationManager.cpp
 	config/ConfigStore.cpp
 	config/ConfigDefaults.cpp
@@ -91,7 +88,6 @@ SET(mcrecover_DB_SRCS
 	)
 SET(mcrecover_DB_H
 	db/GcnMcFileDef.hpp
-	db/GcnSearchData.hpp
 	)
 
 SET(mcrecover_WINDOW_SRCS
@@ -113,53 +109,6 @@ SET(mcrecover_WIDGET_SRCS
 	widgets/LanguageMenu.cpp
 	)
 
-SET(mcrecover_CARD_SRCS
-	card/Card.cpp
-	card/GcnCard.cpp
-	card/File.cpp
-	card/GcnFile.cpp
-	card/MemCardModel.cpp
-	card/MemCardItemDelegate.cpp
-	card/MemCardSortFilterProxyModel.cpp
-	card/VmuCard.cpp
-	card/VmuFile.cpp
-	)
-
-# File edtors.
-SET(mcrecover_EDIT_SRCS
-	edit/EditorWindow.cpp
-	edit/EditorWidget.cpp
-	edit/EditorWidgetFactory.cpp
-	edit/models/BitFlags.cpp
-	edit/models/BitFlagsModel.cpp
-	edit/models/ByteFlags.cpp
-	edit/models/ByteFlagsModel.cpp
-	edit/models/PageFilterModel.cpp
-	edit/widgets/BitFlagsView.cpp
-	edit/widgets/ByteFlagsView.cpp
-	edit/widgets/CenteredCheckBoxDelegate.cpp
-	edit/SonicAdventure/SAEditor.cpp
-	edit/SonicAdventure/SALevelStats.cpp
-	edit/SonicAdventure/SALevelClearCount.cpp
-	edit/SonicAdventure/SAEventFlags.cpp
-	edit/SonicAdventure/SANPCFlags.cpp
-	edit/SonicAdventure/SADXMissionFlags.cpp
-	edit/SonicAdventure/SAGeneral.cpp
-	edit/SonicAdventure/SADataEvents.c
-	edit/SonicAdventure/SADXDataMissions.c
-	edit/SonicAdventure/SADataLevels.c
-	edit/SonicAdventure/SADataUI.c
-	edit/SonicAdventure/SAAdventure.cpp
-	edit/SonicAdventure/SAMiscEmblems.cpp
-	edit/SonicAdventure/TimeCodeEdit.cpp
-	edit/SonicAdventure/SASubGames.cpp
-	)
-SET(mcrecover_EDIT_H
-	edit/EditorWidgetFactory.hpp
-	edit/models/bit_flag.h
-	edit/SonicAdventure/SAData.h
-	)
-
 # Shh... it's a secret to everybody.
 SET(mcrecover_SEKRIT_SRCS
 	sekrit/HerpDerpEggListener.cpp
@@ -176,7 +125,6 @@ ENDIF(WIN32)
 
 # Headers with Qt objects.
 SET(mcrecover_MOC_H
-	IconAnimHelper.hpp
 	McRecoverQApplication.hpp
 	config/ConfigStore.hpp
 	)
@@ -206,45 +154,6 @@ SET(mcrecover_WIDGET_MOC_H
 	widgets/LanguageMenu.hpp
 	)
 
-SET(mcrecover_CARD_MOC_H
-	card/Card.hpp
-	card/GcnCard.hpp
-	card/File.hpp
-	card/GcnFile.hpp
-	card/MemCardModel.hpp
-	card/MemCardItemDelegate.hpp
-	card/MemCardSortFilterProxyModel.hpp
-	card/VmuCard.hpp
-	card/VmuFile.hpp
-	)
-
-# File edtors.
-SET(mcrecover_EDIT_MOC_H
-	edit/EditorWindow.hpp
-	edit/EditorWidget.hpp
-	edit/models/BitFlags.hpp
-	edit/models/BitFlagsModel.hpp
-	edit/models/ByteFlags.hpp
-	edit/models/ByteFlagsModel.hpp
-	edit/models/PageFilterModel.hpp
-	edit/widgets/BitFlagsView.hpp
-	edit/widgets/ByteFlagsView.hpp
-	edit/widgets/CenteredCheckBoxDelegate.hpp
-	edit/SonicAdventure/SAEditor.hpp
-	edit/SonicAdventure/SALevelStats.hpp
-	edit/SonicAdventure/SALevelClearCount.hpp
-	edit/SonicAdventure/SAEventFlags.hpp
-	edit/SonicAdventure/SANPCFlags.hpp
-	edit/SonicAdventure/SADXMissionFlags.hpp
-	edit/SonicAdventure/SAGeneral.hpp
-	edit/SonicAdventure/SAAdventure.hpp
-	edit/SonicAdventure/SAMiscEmblems.hpp
-	edit/SonicAdventure/TimeCodeEdit.hpp
-	edit/SonicAdventure/SASubGames.hpp
-	edit/SonicAdventure/SAEditWidget.hpp
-	edit/SonicAdventure/SADXEditWidget.hpp
-	)
-
 SET(mcrecover_SEKRIT_MOC_H
 	sekrit/HerpDerpEggListener.hpp
 	sekrit/HackDetection.hpp
@@ -263,21 +172,6 @@ SET(mcrecover_WIDGET_UIS
 	widgets/CardView.ui
 	)
 
-# File edtors.
-SET(mcrecover_EDIT_UIS
-	edit/EditorWindow.ui
-	edit/widgets/BitFlagsView.ui
-	edit/widgets/ByteFlagsView.ui
-	edit/SonicAdventure/SAEditor.ui
-	edit/SonicAdventure/SALevelStats.ui
-	edit/SonicAdventure/SALevelClearCount.ui
-	edit/SonicAdventure/SAGeneral.ui
-	edit/SonicAdventure/SAAdventure.ui
-	edit/SonicAdventure/SAMiscEmblems.ui
-	edit/SonicAdventure/TimeCodeEdit.ui
-	edit/SonicAdventure/SASubGames.ui
-	)
-
 # Generate the header files from the UI files.
 SET(mcrecover_UIS
 	${mcrecover_WINDOW_UIS}
@@ -292,7 +186,6 @@ SET(mcrecover_MOC_H
 	${mcrecover_DB_MOC_H}
 	${mcrecover_WINDOW_MOC_H}
 	${mcrecover_WIDGET_MOC_H}
-	${mcrecover_CARD_MOC_H}
 	${mcrecover_EDIT_MOC_H}
 	${mcrecover_SEKRIT_MOC_H}
 	)
@@ -405,7 +298,6 @@ ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_DB_SRCS} ${mcrecover_DB_H}
 	${mcrecover_WINDOW_SRCS}
 	${mcrecover_WIDGET_SRCS}
-	${mcrecover_CARD_SRCS}
 	${mcrecover_EDIT_SRCS} ${mcrecover_EDIT_H}
 	${mcrecover_SEKRIT_SRCS}
 	${mcrecover_OS_SRCS}
@@ -428,8 +320,9 @@ TARGET_INCLUDE_DIRECTORIES(mcrecover
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/..>
 	)
 
-# libgctools
-TARGET_LINK_LIBRARIES(mcrecover gctools)
+# Other GCN MemCard Reocver libraries.
+# TODO: Make libsaveedit optional?
+TARGET_LINK_LIBRARIES(mcrecover gctools memcard saveedit)
 
 # extlib
 SET(MCRECOVER_EXTLIB

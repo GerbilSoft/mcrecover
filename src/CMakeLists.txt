@@ -15,6 +15,8 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MCR_CXX11_COMPAT_HEADER}")
 
 # Source Code subdirectories.
 ADD_SUBDIRECTORY(libgctools)
+ADD_SUBDIRECTORY(libsaveedit)
+ADD_SUBDIRECTORY(libmemcard)
 ADD_SUBDIRECTORY(mcrecover)
 ADD_SUBDIRECTORY(gcbanner)
 
