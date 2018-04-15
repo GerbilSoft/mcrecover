@@ -37,7 +37,7 @@
         <location filename="../src/mcrecover/windows/AboutDialog.cpp" line="126"/>
         <source>Powered by the&lt;br/&gt;
 &lt;b&gt;MegaCard Engine&lt;/b&gt;™</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/mcrecover/windows/AboutDialog.cpp" line="272"/>
@@ -204,7 +204,7 @@ Checksum:</source>
     <message numerus="yes">
         <location filename="../src/mcrecover/widgets/CardView.cpp" line="95"/>
         <source>%L1 block(s) (%L2 free)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%L1 block (%L2 free)</numerusform>
             <numerusform>%L1 blocks (%L2 free)</numerusform>
         </translation>
@@ -713,7 +713,7 @@ recipe again, to continue to eat the snack.</source>
     <message>
         <location filename="../src/mcrecover/windows/McRecoverWindow.cpp" line="444"/>
         <source>Allow Writing</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/mcrecover/windows/McRecoverWindow.cpp" line="446"/>
@@ -723,7 +723,7 @@ dangerous operation, and can result in the corruption of files
 that have not been recovered.
 
 This option is not available if the opened memory card has errors.</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/mcrecover/windows/McRecoverWindow.cpp" line="577"/>
@@ -769,12 +769,12 @@ Do you want to overwrite it?</source>
     <message>
         <location filename="../src/mcrecover/windows/McRecoverWindow.cpp" line="1819"/>
         <source>An error occurred while attempting to allow writing:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/mcrecover/windows/McRecoverWindow.cpp" line="1821"/>
         <source>An error occurred while attempting to disallow writing:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/mcrecover/windows/McRecoverWindow.cpp" line="979"/>
