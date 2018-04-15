@@ -49,14 +49,13 @@ the development headers required for compiling the program:
 * qtbase5-dev
 * qttools5-dev
 
-NOTE: Debian and Ubuntu Linux have not yet upgraded past libpng-1.2,
-and they do not have the APNG patch. If you want APNG support, you
-should configure GCN MemCard Recover to use its built-in libpng by
-specifying -DUSE_INTERNAL_PNG on the cmake command line.
+NOTE: Most Linux distributions do not have the APNG patch in their packages
+for libpng. If you want APNG support, you should configure GCN MemCard
+Recover to use its built-in libpng by specifying `-DUSE_INTERNAL_PNG` on the
+`cmake` command line.
 
-GCN MemCard Recover has been compiled with gcc-4.4 and 4.8.
-Other versions should work, though versions earlier than 4.4
-may encounter problems.
+GCN MemCard Recover is known to compile with gcc5, MSVC 2010, and later
+versions. Older versions may have issues.
 
 To compile GCN MemCard Recover on Linux, run the following commands
 in a terminal window:
