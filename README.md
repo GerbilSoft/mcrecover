@@ -1,33 +1,21 @@
-GCN MemCard Recover
-Version 0.2.1
+# GCN MemCard Recover
 
-Copyright (c) 2012-2015 by David Korth.
+Version 0.2.1+
+
+Copyright (c) 2012-2018 by David Korth.
 Email: gerbilsoft@gerbilsoft.com
 
 This program is licensed under the GNU General Public License v2.
-See Section X for more information.
+See [doc/gpl-2.0.txt](doc/gpl-2.0.txt) for more information.
 
-================================================================
+[![Travis Build Status](https://travis-ci.org/GerbilSoft/mcrecover.svg?branch=master)](https://travis-ci.org/GerbilSoft/mcrecover)
+[![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/grxmj5520cbw9wwd/branch/master?svg=true)](https://ci.appveyor.com/project/GerbilSoft/mcrecover/branch/master)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/11187/badge.svg)](https://scan.coverity.com/projects/11187)
 
-Table of Contents
-
-1. What is GCN MemCard Recover?
-2. System Requirements
-3. How to compile GCN MemCard Recover
-4. How to use GCN MemCard Recover
-5. File Search Limitations
-6. UI Language Translations
-7. Additional Tools
-8. External Resources
-X. License
-Y. Trademarks
-
-================================================================
-
-1. What is GCN MemCard Recover?
+## What is GCN MemCard Recover?
 
 GCN MemCard Recover is a program that can recover save files from
-corrupted Nintendo GameCube memory cards. Usually when GameCube
+corrupted Nintendo GameCube memory cards. Usually, when GameCube
 software indicates that a memory card is corrupted, only a few system
 areas are affected; the data area, where the actual save files are
 stored, is left intact. GCN MemCard Recover works by searching for
@@ -39,59 +27,13 @@ erases the directory and block tables; as long as no new save files
 are written, there's a high chance that the deleted files can be
 recovered successfully.
 
-================================================================
+## How to compile GCN MemCard Recover
 
-2. System Requirements
-
-GCN MemCard Recover has no specific minimum hardware requirements;
-however, faster computers will obviously be able to scan through
-memory card images faster. The program was developed on a system
-with the following specifications:
-
-ThinkPad T60p:
-- Intel Core 2 Duo T7200 (2.0 GHz)
-- 3.0 GB DDR2 SDRAM
-- Gentoo Linux with Linux Kernel 3.10.0
-
-The program will likely work well on systems with specifications as
-low as Intel Pentium II with 256 MB RAM.
-
-Supported operating systems:
-- Microsoft Windows XP SP3, Vista SP1, 7
-- Microsoft Windows Server 2003, 2008, 2008 R2
-- Ubuntu Linux 10.04+ (i386, amd64)
-- Gentoo Linux (i386, amd64)
-- Other Linux 2.6.x / 3.x systems
-
-Windows 2000 may work; however, the Qt runtime lists Windows XP SP3
-as its oldest-supported Windows operating system. If you are
-attempting to run GCN MemCard Recover on Windows 2000 and
-encounter issues, please let me know.
-
-Windows XP and Windows Vista are only supported with thier latest
-service packs. Older service packs may work, but you may encounter
-issues.
-
-Windows 8.x is not officially supported, though GCN MemCard Recover
-should run as long as the Win32 subsystem is working.
-
-Windows RT is not supported.
-
-Mac OS X is not currently supported; however, support will be added
-in a future version.
-
-================================================================
-
-3. How to compile GCN MemCard Recover
-
-GCN MemCard Recover requires the following libraries:
-- CMake 2.8.12 or later.
-- Qt 4 or Qt 5.
-  - Qt 4: 4.6.0 or later. (4.8.5+ recommended)
-  - Qt 5: 5.5.0 or later. (5.7.0+ recommended)
-- libpcre (8.30 or later recommended)
-- libpng (1.6 or later with APNG patch recommended)
-- zlib (1.2.5 or later recommended)
+GCN MemCard Recover requires the following packages:
+* CMake 2.8.12 or later.
+* Qt 5.5.0 or later. (5.7.0+ recommended)
+* libpng (1.6 or later with APNG patch recommended)
+* zlib (1.2.5 or later recommended)
 
 If you do not have libpcre, libpng, or zlib, GCN MemCard Recover
 includes copies of each of these libraries. They will be used
@@ -99,12 +41,13 @@ automatically.
 
 On Debian and Ubuntu Linux systems, the following packages contain
 the development headers required for compiling the program:
-- build-essential
-- cmake
-- libqt4-dev
-- libpcre3-dev
-- libpng12-dev
-- zlib1g-dev
+* build-essential
+* cmake
+* libpcre3-dev
+* libpng12-dev
+* zlib1g-dev
+* qtbase5-dev
+* qttools5-dev
 
 NOTE: Debian and Ubuntu Linux have not yet upgraded past libpng-1.2,
 and they do not have the APNG patch. If you want APNG support, you
@@ -125,24 +68,19 @@ $ cmake ../
 $ make
 $ sudo make install
 
-To compile GCN MemCard Recover on Windows, you will need a
-MinGW-w64 compile environment. Setting up MinGW-w64 is beyond
-the scope of this README. See External Resources for more
-information on setting up MinGW-w64.
+To compile GCN MemCard Recover on Windows, you will need to install
+the following: (minimum versions)
+* CMake 2.8.12
+* Microsoft Visual C++ 2010, or MinGW-w64
 
-================================================================
-
-4. How to use GCN MemCard Recover
+## How to use GCN MemCard Recover
 
 In order to recover files from a GCN memory card, you will first
 need to dump the memory card image to a computer-readable format
 using a Nintendo Wii. Two programs are available for this purpose:
 
-- GCMM: GameCube Memory Card Manager
-  http://wiibrew.org/wiki/GCMM
-
-- ctr-gcs-DacoTaco-Edition
-  http://wiibrew.org/wiki/Ctr-Gcs-DacoTaco-Edition
+* GCMM: GameCube Memory Card Manager - http://wiibrew.org/wiki/GCMM
+* ctr-gcs-DacoTaco-Edition - http://wiibrew.org/wiki/Ctr-Gcs-DacoTaco-Edition
 
 Installing and using these programs requires installing homebrew
 software on the Wii console. A tutorial for setting up homebrew
@@ -197,13 +135,15 @@ be saved with the same name as the files, but with a different extension.
 
 Banners and non-animated icons will always be saved in PNG format.
 
-Animated icons can be extracted in one of four formats:
-- APNG
-- PNG (file per frame): Each frame is saved in its own file.
-- PNG (vertical strip): Each frame is stored one above another.
-- PNG (horizontal strip): Each frame is stored next to each other.
+Animated icons can be extracted in one of five formats:
+* APNG
+* GIF
+* PNG (file per frame): Each frame is saved in its own file.
+* PNG (vertical strip): Each frame is stored one above another.
+* PNG (horizontal strip): Each frame is stored next to each other.
 
-================================================================
+Note that GIF support on Linux requires a copy of giflib v4.0 or later
+to be installed. giflib v5.1.4 is included with the Windows version.
 
 5. File Search Limitations
 
@@ -218,10 +158,10 @@ that file recovery has a few limitations:
 
    GCN MemCard Recover does support verifying the checksums of some files,
    which is indicated by the icon in the rightmost column:
-   - Checkmark: Checksum is known and is valid. File can be recovered.
-   - X: Checksum is known and is invalid. File cannot be recovered
+   * Checkmark: Checksum is known and is valid. File can be recovered.
+   * X: Checksum is known and is invalid. File cannot be recovered
         using the current version of GCN MemCard Recover.
-   - ?: Checksum is unknown. If you know the correct checksum algorithm
+   * ?: Checksum is unknown. If you know the correct checksum algorithm
         for this file, please email me so I can add support for the
         algorithm in the next version.
 
@@ -247,44 +187,34 @@ that file recovery has a few limitations:
    copies of the GCI files so I can add support for these games to the
    databases.
 
-================================================================
-
-6. UI Language Translations
+# UI Language Translations
 
 GCN MemCard Recover has a fully-localizable user interface.
 The following translations are included with v0.2.1:
 
-- English (US): Base translation.
-
-- English (GB): British English translation.
-  Provided by Overlord.
-
-- Español (CL): Spanish translation.
-  Provided by Kevin López.
-
-- "1337 5p34k": Basic en_US to 1337 conversion.
-  The following converter was used in "basic leet" mode:
-  http://www.robertecker.com/hp/research/leet-converter.php?lang=en
+* English (US): Base translation.
+* English (GB): British English translation. Provided by Overlord.
+* Español (CL): Spanish translation. Provided by Kevin López.
+* Русский (RU): Russian translation. Provided by Egor.
+* "1337 5p34k": Basic en_US to 1337 conversion.
+  * The following converter was used in "basic leet" mode:
+    http://www.robertecker.com/hp/research/leet-converter.php?lang=en
 
 If you are a fluent speaker of English and another language and
 would like to contribute a translation, please let me know.
 
-================================================================
-
-7. Additional Tools
+# Additional Tools
 
 GCN MemCard Recover includes a command-line utility called "gcbanner".
-This utility lets you extract GameCube disc banner images
-from opening.bnr files (both BNR1 and BNR2 format), as well
-as Wii save banner and icon images from Wii save files (both
-Dolphin banner.bin and encrypted Wii save formats).
+This utility lets you extract GameCube disc banner images from opening.bnr
+files (both BNR1 and BNR2 format), as well as Wii save banner and icon
+images from Wii save files (both Dolphin banner.bin and encrypted Wii
+save formats).
 
 For more information, see gcbanner's built-in help:
 $ gcbanner --help
 
-================================================================
-
-8. External Resources
+# External Resources
 
 A basic tutorial for setting up MinGW-w64 on Windows is available at:
 http://kemovitra.blogspot.com/2012/11/installing-mingw-w64-on-windows.html
@@ -294,51 +224,18 @@ structure of GameCube memory card images:
 http://hitmen.c02.at/files/yagcd/yagcd/chap12.html
 
 Finally, support for GCN MemCard Recover is available at:
-- Sonic Retro: http://forums.sonicretro.org/index.php?showtopic=32621
-- GBAtemp: http://gbatemp.net/threads/gcn-memcard-recover.349406/
-- Email: gerbilsoft@gerbilsoft.com
-- IRC: irc.badnik.net #retrotech
+* Sonic Retro: http://forums.sonicretro.org/index.php?showtopic=32621
+* GBAtemp: http://gbatemp.net/threads/gcn-memcard-recover.349406/
+* Email: gerbilsoft@gerbilsoft.com
+* IRC: [irc://irc.badnik.zone/GensGS](irc://irc.badnik.zone/GensGS)
 
-================================================================
-
-X. License
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; either version 2 of the License, or (at your
-option) any later version.
-
-This program is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along *
-with this program; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
-================================================================
-
-Y. Trademarks
+# Trademarks
 
 Nintendo, GameCube, Wii, Mario Kart, Mario Kart: Double Dash!!,
 The Legend of Zelda, The Legend of Zelda: Twilight Princess,
 and Animal Crossing are either trademarks or registered trademarks
 of Nintendo Co., Ltd.
 
-ThinkPad is a registered trademark of Lenovo Group, Ltd.
+Microsoft, Windows is a registered trademarks of Microsoft Corporation.
 
-Intel is a registered trademark of Intel Corporation.
-
-Microsoft, Windows, Windows 2000, Windows XP, Windows Vista,
-Windows 7, Windows Server 2003, Windows Server 2008,
-Windows Server 2008 R2, Windows 8, and Windows RT are either
-trademarks or registered trademarks of Microsoft Corporation.
-
-Mac OS is a registered trademark of Apple, Inc.
-
-Qt is a registered trademark of Digia PLC.
-
-================================================================
-
-EOF
+Qt is a registered trademark of The Qt Company.
