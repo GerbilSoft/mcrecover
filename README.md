@@ -51,8 +51,8 @@ the development headers required for compiling the program:
 
 NOTE: Most Linux distributions do not have the APNG patch in their packages
 for libpng. If you want APNG support, you should configure GCN MemCard
-Recover to use its built-in libpng by specifying `-DUSE_INTERNAL_PNG` on the
-`cmake` command line.
+Recover to use its built-in libpng by specifying `-DUSE_INTERNAL_PNG=ON`
+on the `cmake` command line.
 
 GCN MemCard Recover is known to compile with gcc5, MSVC 2010, and later
 versions. Older versions may have issues.
