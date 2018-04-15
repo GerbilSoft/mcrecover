@@ -30,9 +30,6 @@
 #include <QtGui/QIcon>
 #include <QStyle>
 
-// Custom types for QVariant.
-#include "GcnDateTime.hpp"
-
 // Translation Manager.
 #include "TranslationManager.hpp"
 
@@ -81,9 +78,6 @@ void McRecoverQApplicationPrivate::mcrqaInit(void)
 		// Reference: http://tkrotoff.blogspot.com/2010/02/qiconfromtheme-under-windows.html
 		QIcon::setThemeName(QLatin1String("oxygen"));
 	}
-
-	// Register custom types for QVariant.
-	qRegisterMetaType<GcnDateTime>("GcnDateTime");
 
 	// Initialize the TranslationManager.
 	TranslationManager *tsm = TranslationManager::instance();

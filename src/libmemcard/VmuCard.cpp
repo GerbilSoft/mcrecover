@@ -21,11 +21,9 @@
 #include "VmuCard.hpp"
 #include "util/byteswap.h"
 
-// VmuFile
 #include "VmuFile.hpp"
-
-// GcImage conversion.
 #include "GcToolsQt.hpp"
+#include "TimeFuncs.hpp"
 
 // C includes. (C++ namespace)
 #include <cstring>
@@ -275,7 +273,7 @@ int VmuCardPrivate::loadSysInfo(void)
 	}
 
 	// Set the format time.
-	this->formatTime.setVmuTimestamp(mc_root.timestamp);
+	this->formatTime = TimeFuncs::fromVmuTimestamp(mc_root.timestamp);
 
 	// VMU icon.
 	if (mc_root.icon <= 123) {

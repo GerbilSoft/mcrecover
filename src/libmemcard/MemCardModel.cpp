@@ -310,7 +310,7 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 				case COL_SIZE:
 					return file->size();
 				case COL_MTIME:
-					return file->mtime().qDateTime();
+					return file->mtime();
 				case COL_MODE:
 					return file->modeAsString();
 				case COL_GAMEID:

@@ -58,7 +58,7 @@ class FilePrivate
 		QString filename;	// Internal filename.
 		// TODO: Add a QFlags indicating which fields are valid.
 		QString gameID;		// Game ID, e.g. GALE01
-		GcnDateTime mtime;	// Last Modified time.
+		QDateTime mtime;	// Last Modified time.
 		QString description;	// Description.
 		uint32_t mode;		// Mode. (attributes, permissions)
 		// Size is calculated using fatEntries.size().

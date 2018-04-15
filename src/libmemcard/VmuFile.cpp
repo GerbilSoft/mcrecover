@@ -23,11 +23,9 @@
 #include "vmu.h"
 #include "util/byteswap.h"
 
-// VmuCard class.
 #include "VmuCard.hpp"
-
-// GcImage class.
 #include "DcImageLoader.hpp"
+#include "TimeFuncs.hpp"
 
 // C includes. (C++ namespace)
 #include <cerrno>
@@ -233,7 +231,7 @@ void VmuFilePrivate::loadFileInfo(void)
 
 	// Timestamp.
 	// FIXME: This might be ctime, not mtime...
-	mtime.setVmuTimestamp(dirEntry->ctime);
+	mtime = TimeFuncs::fromVmuTimestamp(dirEntry->ctime);
 
 	// Mode.
 	this->mode = 0;

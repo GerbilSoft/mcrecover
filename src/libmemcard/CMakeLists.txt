@@ -20,9 +20,9 @@ ENDIF(ENABLE_DBUS)
 # Sources.
 SET(libmemcard_SRCS
 	# Miscellaneous
-	GcnDateTime.cpp
 	GcToolsQt.cpp
 	IconAnimHelper.cpp
+	TimeFuncs.cpp
 
 	# Memory Card model
 	MemCardModel.cpp
@@ -41,8 +41,8 @@ SET(libmemcard_SRCS
 SET(libmemcard_H
 	# Miscellaneous
 	GcToolsQt.hpp
-	GcnDateTime.hpp
 	GcnSearchData.hpp
+	TimeFuncs.hpp
 	)
 # Headers with Qt objects.
 SET(libmemcard_MOC_H

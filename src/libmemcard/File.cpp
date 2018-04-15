@@ -575,7 +575,7 @@ QString File::gameID(void) const
  * Get the last modified time.
  * @return Last modified time.
  */
-GcnDateTime File::mtime(void) const
+QDateTime File::mtime(void) const
 {
 	Q_D(const File);
 	return d->mtime;

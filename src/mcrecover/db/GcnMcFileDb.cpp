@@ -27,12 +27,9 @@
 #include "GcnMcFileDb.hpp"
 #include "config/ConfigStore.hpp"
 
-// GCN Memory Card File Definition class.
 #include "GcnMcFileDef.hpp"
-
-// Variable Replacement.
 #include "VarReplace.hpp"
-#include "GcnDateTime.hpp"
+#include "libmemcard/TimeFuncs.hpp"
 
 // C includes.
 #include <stdint.h>
@@ -132,13 +129,13 @@ class GcnMcFileDbPrivate
 		 * Construct a GcnSearchData entry.
 		 * @param matchFileDef	[in] File definition.
 		 * @param vars		[in] Variables.
-		 * @param gcnDateTime	[in] GCN timestamp.
+		 * @param qDateTime	[in] Timestamp.
 		 * @return GcnSearchData entry.
 		 */
 		GcnSearchData constructSearchData(
 			const GcnMcFileDef *matchFileDef,
 			const QHash<QString, QString> &vars,
-			const GcnDateTime &gcnDateTime) const;
+			const QDateTime &qDateTime) const;
 };
 
 GcnMcFileDbPrivate::GcnMcFileDbPrivate(GcnMcFileDb *q)
@@ -813,13 +810,13 @@ QByteArray GcnMcFileDbPrivate::GetGcnCommentUtf8(const char *buf, int siz, QText
  * Construct a GcnSearchData entry.
  * @param matchFileDef	[in] File definition.
  * @param vars		[in] Variables.
- * @param gcnDateTime	[in] GCN timestamp.
+ * @param qDateTime	[in] Timestamp.
  * @return GcnSearchData entry.
  */
 GcnSearchData GcnMcFileDbPrivate::constructSearchData(
 	const GcnMcFileDef *matchFileDef,
 	const QHash<QString, QString> &vars,
-	const GcnDateTime &gcnDateTime) const
+	const QDateTime &qDateTime) const
 {
 	// TODO: Implicitly share GcnSearchData?
 	GcnSearchData searchData;
@@ -866,7 +863,7 @@ GcnSearchData GcnMcFileDbPrivate::constructSearchData(
 	 */
 	dirEntry->pad_00	= 0xFF;
 	dirEntry->bannerfmt	= matchFileDef->dirEntry.bannerFormat;
-	dirEntry->lastmodified	= gcnDateTime.gcnTimestamp();
+	dirEntry->lastmodified	= TimeFuncs::toGcnTimestamp(qDateTime);
 	dirEntry->iconaddr	= matchFileDef->dirEntry.iconAddress;
 	dirEntry->iconfmt	= matchFileDef->dirEntry.iconFormat;
 	dirEntry->iconspeed	= matchFileDef->dirEntry.iconSpeed;
@@ -978,14 +975,14 @@ QVector<GcnSearchData> GcnMcFileDb::checkBlock(const void *buf, int siz) const
 
 			// Found a match.
 			// Attempt to apply variable modifiers.
-			GcnDateTime gcnDateTime;
+			QDateTime qDateTime;
 			QHash<QString, QString> vars = VarReplace::StringListsToHash(
 				gameDescMatch.capturedTexts(), fileDescMatch.capturedTexts());
-			int ret = VarReplace::ApplyModifiers(gcnMcFileDef->varModifiers, vars, &gcnDateTime);
+			int ret = VarReplace::ApplyModifiers(gcnMcFileDef->varModifiers, vars, &qDateTime);
 			if (ret == 0) {
 				// Variable modifiers applied successfully.
 				// Construct a GcnSearchData struct for this file entry.
-				fileMatches.append(d->constructSearchData(gcnMcFileDef, vars, gcnDateTime));
+				fileMatches.append(d->constructSearchData(gcnMcFileDef, vars, qDateTime));
 			}
 		}
 	}

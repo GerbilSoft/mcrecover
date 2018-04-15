@@ -23,12 +23,10 @@
 #include "card.h"
 #include "util/byteswap.h"
 
-// GcnCard class.
 #include "GcnCard.hpp"
-
-// GcImage class.
 #include "GcImage.hpp"
 #include "GcImageLoader.hpp"
+#include "TimeFuncs.hpp"
 
 // C includes. (C++ namespace)
 #include <cerrno>
@@ -315,7 +313,7 @@ void GcnFilePrivate::loadFileInfo(void)
 	}
 
 	// Timestamp.
-	mtime.setGcnTimestamp(dirEntry->lastmodified);
+	mtime = TimeFuncs::fromGcnTimestamp(dirEntry->lastmodified);
 
 	// Mode.
 	// GCN permission bits map nicely to File::ModeBits.

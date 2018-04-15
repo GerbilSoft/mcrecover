@@ -22,7 +22,6 @@
 #define __LIBMEMCARD_FILE_HPP__
 
 #include "Card.hpp"
-#include "GcnDateTime.hpp"
 
 // TODO: "Generic" image writer?
 #include "GcImageWriter.hpp"
@@ -31,6 +30,8 @@
 #include "Checksum.hpp"
 
 // Qt includes.
+#include <QtCore/QDateTime>
+#include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QVector>
 #include <QtCore/QIODevice>
@@ -48,7 +49,7 @@ class File : public QObject
 	// TODO: Switch back to QDateTime?
 	// Add an attribute indicating "no timezone"?
 	Q_PROPERTY(QString gameID READ gameID)
-	Q_PROPERTY(GcnDateTime mtime READ mtime)
+	Q_PROPERTY(QDateTime mtime READ mtime)
 	Q_PROPERTY(QString description READ description)
 	Q_PROPERTY(uint32_t mode READ mode)
 	Q_PROPERTY(int size READ size)
@@ -144,7 +145,7 @@ class File : public QObject
 		 * Get the last modified time.
 		 * @return Last modified time.
 		 */
-		GcnDateTime mtime(void) const;
+		QDateTime mtime(void) const;
 
 		/**
 		 * Get the file's description.

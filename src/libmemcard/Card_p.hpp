@@ -73,7 +73,7 @@ class CardPrivate
 		// Card properties.
 		Card::Encoding encoding;
 		QColor color;
-		GcnDateTime formatTime;
+		QDateTime formatTime;
 		QPixmap icon;
 
 		// Card size information.

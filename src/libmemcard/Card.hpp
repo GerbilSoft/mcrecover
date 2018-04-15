@@ -25,12 +25,11 @@
 #include <stdint.h>
 
 // Qt includes and classes.
+#include <QtCore/QDateTime>
 #include <QtCore/QObject>
+#include <QtCore/QString>
 #include <QtCore/QTextCodec>
 #include <QtGui/QColor>
-
-// Date/Time
-#include "GcnDateTime.hpp"
 
 class File;
 
@@ -61,7 +60,7 @@ class Card : public QObject
 	Q_PROPERTY(QString productName READ productName)
 	Q_PROPERTY(Encoding encoding READ encoding)
 	Q_PROPERTY(QColor color READ color NOTIFY colorChanged)
-	Q_PROPERTY(GcnDateTime formatTime READ formatTime)
+	Q_PROPERTY(QDateTime formatTime READ formatTime)
 
 	// File system.
 	// TODO: Notify signals for activeDatIdx / activeBatIdx?
@@ -224,7 +223,7 @@ class Card : public QObject
 		 * Get the card's format time.
 		 * @return Format time. (If not available, will return Unix epoch.)
 		 */
-		GcnDateTime formatTime(void) const;
+		QDateTime formatTime(void) const;
 
 		/**
 		 * Get the card's icon.

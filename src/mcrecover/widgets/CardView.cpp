@@ -24,7 +24,6 @@
 
 #include "libmemcard/Card.hpp"
 #include "libmemcard/GcnCard.hpp"
-#include "GcnDateTime.hpp"
 #include "Checksum.hpp"
 
 // C includes.
@@ -61,7 +60,7 @@ class CardViewPrivate
 		Card *card;
 
 		// Format time.
-		GcnDateTime formatTime;
+		QDateTime formatTime;
 		// Card color (border).
 		QColor color;
 		int cardBorder;
@@ -171,7 +170,7 @@ void CardViewPrivate::updateWidgetDisplay(void)
 		// Card's format time has changed.
 		this->formatTime = card->formatTime();
 
-		if (formatTime.unixTimestamp() == 0) {
+		if (!formatTime.isValid() || formatTime.toMSecsSinceEpoch() == 0) {
 			// Invalid format time.
 			ui.lblFormatTimeTitle->setVisible(false);
 			ui.lblFormatTime->setVisible(false);
