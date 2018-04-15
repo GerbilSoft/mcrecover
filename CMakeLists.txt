@@ -121,6 +121,14 @@ ADD_CUSTOM_TARGET(uninstall
 
 ### Subdirectories. ###
 
+# Translations.
+IF(ENABLE_NLS)
+	# NOTE: ENABLE_NLS only controls whether or not translations
+	# are built. TranslationManager and related are always built
+	# regardless.
+	ADD_SUBDIRECTORY(locale)
+ENDIF(ENABLE_NLS)
+
 # Project subdirectories.
 ADD_SUBDIRECTORY(extlib)
 ADD_SUBDIRECTORY(src)
