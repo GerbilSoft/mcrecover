@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SAGeneral</class>
+ <widget class="QWidget" name="SAGeneral">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>364</width>
+    <height>214</height>
+   </rect>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::ExpandingFieldsGrow</enum>
+   </property>
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="lblPlayTime">
+     <property name="text">
+      <string>Play Time:</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="TimeCodeEdit" name="tcePlayTime" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>16</width>
+       <height>0</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="lblMessages">
+     <property name="text">
+      <string>Messages:</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="cboMessages">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <item>
+      <property name="text">
+       <string>Voice and Text</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Voice Only</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="lblVoiceLanguage">
+     <property name="text">
+      <string>Voice Language:</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QComboBox" name="cboVoiceLanguage">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <item>
+      <property name="text">
+       <string>Default</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Japanese</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/flags/flags.qrc">
+        <normaloff>:/flags/jp.png</normaloff>:/flags/jp.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>English</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/flags/flags.qrc">
+        <normaloff>:/flags/us.png</normaloff>:/flags/us.png</iconset>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="lblTextLanguage">
+     <property name="text">
+      <string>Text Language:</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QComboBox" name="cboTextLanguage">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <item>
+      <property name="text">
+       <string>Default</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Japanese</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/flags/flags.qrc">
+        <normaloff>:/flags/jp.png</normaloff>:/flags/jp.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>English</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/flags/flags.qrc">
+        <normaloff>:/flags/us.png</normaloff>:/flags/us.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>French</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/flags/flags.qrc">
+        <normaloff>:/flags/fr.png</normaloff>:/flags/fr.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Spanish</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/flags/flags.qrc">
+        <normaloff>:/flags/es.png</normaloff>:/flags/es.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>German</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/flags/flags.qrc">
+        <normaloff>:/flags/de.png</normaloff>:/flags/de.png</iconset>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="lblRumble">
+     <property name="text">
+      <string>Rumble:</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QCheckBox" name="chkRumble"/>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="lblLastCharacter">
+     <property name="text">
+      <string>Last Character:</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QComboBox" name="cboLastCharacter">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <item>
+      <property name="text">
+       <string>Sonic</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/sonic.png</normaloff>:/sonic/SA1/sonic.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Sonic (Default voice)</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/sonic.png</normaloff>:/sonic/SA1/sonic.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Tails</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/tails.png</normaloff>:/sonic/SA1/tails.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Knuckles</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/knuckles.png</normaloff>:/sonic/SA1/knuckles.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Sonic (Default voice)</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/sonic.png</normaloff>:/sonic/SA1/sonic.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Amy</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/amy.png</normaloff>:/sonic/SA1/amy.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Gamma</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/gamma.png</normaloff>:/sonic/SA1/gamma.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Big</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/big.png</normaloff>:/sonic/SA1/big.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Sonic (Eggman's voice)</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/sonic.png</normaloff>:/sonic/SA1/sonic.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Sonic (Tikal's voice)</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/sonic/sonic.qrc">
+        <normaloff>:/sonic/SA1/sonic.png</normaloff>:/sonic/SA1/sonic.png</iconset>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="lblLastLevel">
+     <property name="text">
+      <string>Last Level:</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QComboBox" name="cboLastLevel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="lblBlackMarketRings">
+     <property name="text">
+      <string>Black Market Rings:</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="QSpinBox" name="spnBlackMarketRings">
+     <property name="maximum">
+      <number>2147483647</number>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TimeCodeEdit</class>
+   <extends>QWidget</extends>
+   <header>SonicAdventure/TimeCodeEdit.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../resources/flags/flags.qrc"/>
+  <include location="../../resources/sonic/sonic.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>cboMessages</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SAGeneral</receiver>
+   <slot>widgetModifiedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>35</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>340</x>
+     <y>31</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cboVoiceLanguage</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SAGeneral</receiver>
+   <slot>widgetModifiedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>245</x>
+     <y>58</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>340</x>
+     <y>64</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cboTextLanguage</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SAGeneral</receiver>
+   <slot>widgetModifiedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>237</x>
+     <y>90</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>316</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkRumble</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SAGeneral</receiver>
+   <slot>widgetModifiedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>151</x>
+     <y>120</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>301</x>
+     <y>116</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cboLastCharacter</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SAGeneral</receiver>
+   <slot>widgetModifiedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>337</x>
+     <y>151</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>337</x>
+     <y>176</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cboLastLevel</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SAGeneral</receiver>
+   <slot>widgetModifiedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>204</x>
+     <y>173</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>173</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spnBlackMarketRings</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>SAGeneral</receiver>
+   <slot>widgetModifiedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>226</x>
+     <y>201</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>307</x>
+     <y>203</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>widgetModifiedSlot()</slot>
+ </slots>
+</ui>

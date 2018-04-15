@@ -109,41 +109,6 @@ SET(mcrecover_WIDGET_SRCS
 	widgets/LanguageMenu.cpp
 	)
 
-# File edtors.
-SET(mcrecover_EDIT_SRCS
-	edit/EditorWindow.cpp
-	edit/EditorWidget.cpp
-	edit/EditorWidgetFactory.cpp
-	edit/models/BitFlags.cpp
-	edit/models/BitFlagsModel.cpp
-	edit/models/ByteFlags.cpp
-	edit/models/ByteFlagsModel.cpp
-	edit/models/PageFilterModel.cpp
-	edit/widgets/BitFlagsView.cpp
-	edit/widgets/ByteFlagsView.cpp
-	edit/widgets/CenteredCheckBoxDelegate.cpp
-	edit/SonicAdventure/SAEditor.cpp
-	edit/SonicAdventure/SALevelStats.cpp
-	edit/SonicAdventure/SALevelClearCount.cpp
-	edit/SonicAdventure/SAEventFlags.cpp
-	edit/SonicAdventure/SANPCFlags.cpp
-	edit/SonicAdventure/SADXMissionFlags.cpp
-	edit/SonicAdventure/SAGeneral.cpp
-	edit/SonicAdventure/SADataEvents.c
-	edit/SonicAdventure/SADXDataMissions.c
-	edit/SonicAdventure/SADataLevels.c
-	edit/SonicAdventure/SADataUI.c
-	edit/SonicAdventure/SAAdventure.cpp
-	edit/SonicAdventure/SAMiscEmblems.cpp
-	edit/SonicAdventure/TimeCodeEdit.cpp
-	edit/SonicAdventure/SASubGames.cpp
-	)
-SET(mcrecover_EDIT_H
-	edit/EditorWidgetFactory.hpp
-	edit/models/bit_flag.h
-	edit/SonicAdventure/SAData.h
-	)
-
 # Shh... it's a secret to everybody.
 SET(mcrecover_SEKRIT_SRCS
 	sekrit/HerpDerpEggListener.cpp
@@ -189,33 +154,6 @@ SET(mcrecover_WIDGET_MOC_H
 	widgets/LanguageMenu.hpp
 	)
 
-# File edtors.
-SET(mcrecover_EDIT_MOC_H
-	edit/EditorWindow.hpp
-	edit/EditorWidget.hpp
-	edit/models/BitFlags.hpp
-	edit/models/BitFlagsModel.hpp
-	edit/models/ByteFlags.hpp
-	edit/models/ByteFlagsModel.hpp
-	edit/models/PageFilterModel.hpp
-	edit/widgets/BitFlagsView.hpp
-	edit/widgets/ByteFlagsView.hpp
-	edit/widgets/CenteredCheckBoxDelegate.hpp
-	edit/SonicAdventure/SAEditor.hpp
-	edit/SonicAdventure/SALevelStats.hpp
-	edit/SonicAdventure/SALevelClearCount.hpp
-	edit/SonicAdventure/SAEventFlags.hpp
-	edit/SonicAdventure/SANPCFlags.hpp
-	edit/SonicAdventure/SADXMissionFlags.hpp
-	edit/SonicAdventure/SAGeneral.hpp
-	edit/SonicAdventure/SAAdventure.hpp
-	edit/SonicAdventure/SAMiscEmblems.hpp
-	edit/SonicAdventure/TimeCodeEdit.hpp
-	edit/SonicAdventure/SASubGames.hpp
-	edit/SonicAdventure/SAEditWidget.hpp
-	edit/SonicAdventure/SADXEditWidget.hpp
-	)
-
 SET(mcrecover_SEKRIT_MOC_H
 	sekrit/HerpDerpEggListener.hpp
 	sekrit/HackDetection.hpp
@@ -232,21 +170,6 @@ SET(mcrecover_WINDOW_UIS
 SET(mcrecover_WIDGET_UIS
 	widgets/FileView.ui
 	widgets/CardView.ui
-	)
-
-# File edtors.
-SET(mcrecover_EDIT_UIS
-	edit/EditorWindow.ui
-	edit/widgets/BitFlagsView.ui
-	edit/widgets/ByteFlagsView.ui
-	edit/SonicAdventure/SAEditor.ui
-	edit/SonicAdventure/SALevelStats.ui
-	edit/SonicAdventure/SALevelClearCount.ui
-	edit/SonicAdventure/SAGeneral.ui
-	edit/SonicAdventure/SAAdventure.ui
-	edit/SonicAdventure/SAMiscEmblems.ui
-	edit/SonicAdventure/TimeCodeEdit.ui
-	edit/SonicAdventure/SASubGames.ui
 	)
 
 # Generate the header files from the UI files.
@@ -398,7 +321,8 @@ TARGET_INCLUDE_DIRECTORIES(mcrecover
 	)
 
 # Other GCN MemCard Reocver libraries.
-TARGET_LINK_LIBRARIES(mcrecover gctools memcard)
+# TODO: Make libsaveedit optional?
+TARGET_LINK_LIBRARIES(mcrecover gctools memcard saveedit)
 
 # extlib
 SET(MCRECOVER_EXTLIB
