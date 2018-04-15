@@ -143,7 +143,7 @@ typedef PNG_CALLBACK(void, *png_progressive_row_ptr, (png_structp, png_bytep,
 	png_read_frame_head(png_ptr, info_ptr)
 #ifdef PNG_PROGRESSIVE_READ_SUPPORTED
 #define APNG_png_set_progressive_frame_fn(png_ptr, frame_info_fn, frame_end_fn) \
-	png_set_progressive_frame_fnpng_ptr, frame_info_fn, frame_end_fn)
+	png_set_progressive_frame_fn(png_ptr, frame_info_fn, frame_end_fn)
 #endif /* PNG_PROGRESSIVE_READ_SUPPORTED */
 #endif /* PNG_READ_APNG_SUPPORTED */
 
