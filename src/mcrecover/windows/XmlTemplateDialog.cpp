@@ -26,6 +26,7 @@
 
 // Qt includes.
 #include <QtCore/QXmlStreamWriter>
+#include <QtGui/QFontDatabase>
 
 // C includes. (C++ namespace)
 #include <cstdio>
@@ -263,19 +264,10 @@ void XmlTemplateDialog::init(void)
 #endif
 
 	// Set the correct font on the QPlainTextEdit widget.
-	// Qt/Windows doesn't recognize the Monospace font,
-	// so we have to initialize the font family to ""
-	// and set the style hint to QFont::TypeWriter.
-	// FIXME: Font is a bit small on Windows...
-	// FIXME: Not working on Qt5/Windows - enumerate fonts...
-#ifdef Q_OS_WIN
-	static const QLatin1String monofont("Courier New");
-#else /* !Q_OS_WIN */
-	static const QLatin1String monofont("Monospace");
-#endif /* Q_OS_WIN */
-	QFont fntMonospace(monofont);
-	fntMonospace.setStyleHint(QFont::TypeWriter);
-	d->ui.txtTemplate->setFont(fntMonospace);
+	// References:
+	// - https://stackoverflow.com/questions/1468022/how-to-specify-monospace-fonts-for-cross-platform-qt-applications
+	// - https://stackoverflow.com/a/27609198
+	d->ui.txtTemplate->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
 
 	// FIXME: QPlainTextEdit cursor doesn't show up when readOnly.
 
