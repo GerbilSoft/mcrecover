@@ -99,8 +99,7 @@ class MemCardModelPrivate
 			QBrush brush_lostFile_alt;
 
 			// Pixmaps for COL_ISVALID.
-			static const int pxmIsValid_width = 16;
-			static const int pxmIsValid_height = 16;
+			static const QSize szPxmIsValid;
 			QPixmap pxmIsValid_unknown;
 			QPixmap pxmIsValid_invalid;
 			QPixmap pxmIsValid_good;
@@ -119,6 +118,8 @@ class MemCardModelPrivate
 		int insertStart;
 		int insertEnd;
 };
+
+const QSize MemCardModelPrivate::style_t::szPxmIsValid = QSize(16, 16);
 
 MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	: q_ptr(q)
@@ -176,19 +177,19 @@ void MemCardModelPrivate::style_t::init(void)
 #ifndef Q_OS_WIN
 	if (QIcon::hasThemeIcon(QLatin1String("dialog-question"))) {
 		pxmIsValid_unknown = QIcon::fromTheme(QLatin1String("dialog-question"))
-					.pixmap(pxmIsValid_width, pxmIsValid_height);
-	} else
-#else /* Q_OS_WIN */
+					.pixmap(szPxmIsValid);
+	}
+	else
+#endif /* !Q_OS_WIN */
 	{
 		pxmIsValid_unknown = style->standardIcon(QStyle::SP_MessageBoxQuestion)
-					.pixmap(pxmIsValid_width, pxmIsValid_height);
+					.pixmap(szPxmIsValid);
 	}
-#endif
 
 	pxmIsValid_invalid = style->standardIcon(QStyle::SP_MessageBoxCritical)
-				.pixmap(pxmIsValid_width, pxmIsValid_height);
+				.pixmap(szPxmIsValid);
 	pxmIsValid_good    = style->standardIcon(QStyle::SP_DialogApplyButton)
-				.pixmap(pxmIsValid_width, pxmIsValid_height);
+				.pixmap(szPxmIsValid);
 }
 
 MemCardModelPrivate::~MemCardModelPrivate()
@@ -419,8 +420,8 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 				case COL_BANNER:
 					return QSize(CARD_BANNER_W + iconWadj, (CARD_BANNER_H + 4));
 				case COL_ISVALID:
-					return QSize(d->style.pxmIsValid_width,
-						     (d->style.pxmIsValid_height + 4));
+					return QSize(d->style.szPxmIsValid.width(),
+						     (d->style.szPxmIsValid.height() + 4));
 				default:
 					break;
 			}
