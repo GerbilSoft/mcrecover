@@ -268,7 +268,12 @@ void XmlTemplateDialog::init(void)
 	// and set the style hint to QFont::TypeWriter.
 	// FIXME: Font is a bit small on Windows...
 	// FIXME: Not working on Qt5/Windows - enumerate fonts...
-	QFont fntMonospace(QLatin1String(""));
+#ifdef Q_OS_WIN
+	static const QLatin1String monofont("Courier New");
+#else /* !Q_OS_WIN */
+	static const QLatin1String monofont("Monospace");
+#endif /* Q_OS_WIN */
+	QFont fntMonospace(monofont);
 	fntMonospace.setStyleHint(QFont::TypeWriter);
 	d->ui.txtTemplate->setFont(fntMonospace);
 
