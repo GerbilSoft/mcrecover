@@ -202,8 +202,8 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	// If no '\0' is present, assume this is regular text
 	// and use the default paint().
 	QString fileComments = index.data().toString();
-	int split = fileComments.indexOf(QChar(L'\0'));
-	if (split < 0) {
+	QStringList desc = fileComments.split(QChar(L'\0'));
+	if (desc.size() != 2) {
 		// No '\0' is present.
 		// Use the default paint().
 		super::paint(painter, option, index);
@@ -211,10 +211,8 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	}
 
 	// TODO: Combine code with sizeHint().
-	QString gameDesc, fileDesc;
-	// TODO: Optimize with QStringRef?
-	gameDesc = fileComments.left(split);
-	fileDesc = fileComments.mid(split + 1);
+	const QString &gameDesc = desc[0];
+	const QString &fileDesc = desc[1];
 
 	// Alignment flags.
 	static const int HALIGN_FLAGS =
@@ -372,8 +370,8 @@ QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 	// If no '\0' is present, assume this is regular text
 	// and use the default sizeHint().
 	QString fileComments = index.data().toString();
-	int split = fileComments.indexOf(QChar(L'\0'));
-	if (split < 0) {
+	QStringList desc = fileComments.split(QChar(L'\0'));
+	if (desc.size() != 2) {
 		// No '\0' is present.
 		// TODO: Combine with !index.isValid() case.
 		QSize sz = super::sizeHint(option, index);
@@ -386,10 +384,8 @@ QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 	}
 
 	// TODO: Combine code with paint().
-	QString gameDesc, fileDesc;
-	// TODO: Optimize with QStringRef?
-	gameDesc = fileComments.left(split);
-	fileDesc = fileComments.mid(split + 1);
+	const QString &gameDesc = desc[0];
+	const QString &fileDesc = desc[1];
 
 	// Get the fonts.
 	Q_D(const MemCardItemDelegate);
