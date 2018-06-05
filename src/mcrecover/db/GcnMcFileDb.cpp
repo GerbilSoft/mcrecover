@@ -313,6 +313,8 @@ GcnMcFileDef *GcnMcFileDbPrivate::parseXml_file(QXmlStreamReader &xml)
 	GcnMcFileDef *gcnMcFileDef = new GcnMcFileDef;
 	QString regionStr;
 
+	// TODO: Combine gamecode/company into ID6.
+
 	// Iterate over the properties.
 	xml.readNext();
 	while (!xml.hasError() &&
@@ -1113,14 +1115,11 @@ bool GcnMcFileDb::addChecksumDefs(GcnFile *file) const
 
 	// TODO: QHash<> with the game ID?
 	const QString gameID = file->gameID();
-	// TODO: Store ID6 instead of split ID4/company.
 	Q_D(const GcnMcFileDb);
 	foreach (QVector<GcnMcFileDef*>* vec, d->addr_file_defs) {
 		foreach (GcnMcFileDef* gcnMcFileDef, *vec) {
 			// Check if this file matches.
-			char buf[7];
-			snprintf(buf, sizeof(buf), "%.4s%.2s", gcnMcFileDef->gamecode, gcnMcFileDef->company);
-			if (gameID != QLatin1String(buf)) {
+			if (gameID != QLatin1String(gcnMcFileDef->id6, sizeof(gcnMcFileDef->id6))) {
 				// No match.
 				continue;
 			}

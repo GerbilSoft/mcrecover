@@ -54,10 +54,14 @@ class GcnMcFileDef {
 		// of files saved by a single game.
 		QString fileInfo;
 
-		// Gamecode.
-		char gamecode[4];
-		// Company ID.
-		char company[2];
+		// ID6. (gamecode, company)
+		union {
+			char id6[6];
+			struct {
+				char gamecode[4];
+				char company[2];
+			};
+		};
 
 		// Regions this file definition applies to.
 		uint8_t regions;
@@ -107,8 +111,7 @@ class GcnMcFileDef {
 		GcnMcFileDef()
 		{
 			this->regions = 0;
-			memset(gamecode, 0x00, sizeof(gamecode));
-			memset(company, 0x00, sizeof(company));
+			memset(id6, 0, sizeof(id6));
 
 			search.address = 0;
 
