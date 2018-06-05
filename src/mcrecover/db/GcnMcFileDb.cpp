@@ -31,11 +31,17 @@
 #include "VarReplace.hpp"
 #include "libmemcard/TimeFuncs.hpp"
 
+// GcnFile
+#include "libmemcard/GcnFile.hpp"
+
 // C includes.
 #include <stdint.h>
+
+// C includes. (C++ namespace)
+#include <cassert>
+#include <cctype>
 #include <cstdio>
 #include <cstring>
-#include <cctype>
 
 // Qt includes.
 #include <QtCore/QCoreApplication>
@@ -1072,4 +1078,76 @@ QVector<QString> GcnMcFileDb::GetDbFilenames(void)
 	}
 
 	return xmlFileList;
+}
+
+/**
+ * Add checksum definitions to an open file.
+ *
+ * NOTE: The file must NOT have checksum definitions before calling
+ * this function.
+ *
+ * @param file GcnFile
+ * @return True if definitions were added by this class; false if not.
+ */
+bool GcnMcFileDb::addChecksumDefs(GcnFile *file) const
+{
+	assert(file->checksumStatus() == Checksum::CHKST_UNKNOWN);
+	if (file->checksumStatus() != Checksum::CHKST_UNKNOWN) {
+		// Checksum has already been obtained for this file.
+		return true;
+	}
+
+	// TODO: Filename regex?
+
+	// GCN file comments: "GameDesc\0FileDesc"
+	// If no '\0' is present, this is an error.
+	QStringList desc = file->description().split(QChar(L'\0'));
+	if (desc.size() != 2) {
+		// No '\0' is present.
+		// Can't process this file.
+		return false;
+	}
+
+	const QString &gameDesc = desc[0];
+	const QString &fileDesc = desc[1];
+
+	// TODO: QHash<> with the game ID?
+	const QString gameID = file->gameID();
+	// TODO: Store ID6 instead of split ID4/company.
+	Q_D(const GcnMcFileDb);
+	foreach (QVector<GcnMcFileDef*>* vec, d->addr_file_defs) {
+		foreach (GcnMcFileDef* gcnMcFileDef, *vec) {
+			// Check if this file matches.
+			char buf[7];
+			snprintf(buf, sizeof(buf), "%.4s%.2s", gcnMcFileDef->gamecode, gcnMcFileDef->company);
+			if (gameID != QLatin1String(buf)) {
+				// No match.
+				continue;
+			}
+
+			// Make sure the GameDesc matches.
+			QRegularExpressionMatch gameDescMatch =
+				gcnMcFileDef->search.gameDesc_regex.match(gameDesc);
+			if (!gameDescMatch.hasMatch()) {
+				// Not a match.
+				continue;
+			}
+
+			// Make sure the FileDesc matches.
+			QRegularExpressionMatch fileDescMatch =
+				gcnMcFileDef->search.fileDesc_regex.match(fileDesc);
+			if (!fileDescMatch.hasMatch()) {
+				// Not a match.
+				continue;
+			}
+
+			// File matches.
+			// Copy the checksum definitions.
+			file->setChecksumDefs(gcnMcFileDef->checksumDefs);
+			return true;
+		}
+	}
+
+	// File information not found.
+	return false;
 }

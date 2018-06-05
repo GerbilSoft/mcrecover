@@ -37,6 +37,7 @@
 
 // File database.
 #include "db/GcnMcFileDb.hpp"
+#include "db/GcnCheckFiles.hpp"
 
 // Search classes.
 #include "db/GcnSearchThread.hpp"
@@ -1005,6 +1006,24 @@ void McRecoverWindow::openCard(const QString &filename, int type)
 	}
 
 	d->filename = filename;
+
+	// If GCN, check file checksums.
+	// TODO: Run this in a separate thread after loading?
+	if (type == 0) {
+		// TODO: Singleton database management class.
+		// Get the database filenames.
+		QVector<QString> dbFilenames = GcnMcFileDb::GetDbFilenames();
+		if (!dbFilenames.isEmpty()) {
+			// Load the databases.
+			GcnCheckFiles checkFiles;
+			int ret = checkFiles.loadGcnMcFileDbs(dbFilenames);
+			if (ret == 0) {
+				// Check the files.
+				checkFiles.addChecksumDefs(qobject_cast<GcnCard*>(d->card));
+			}
+		}
+	}
+
 	d->model->setCard(d->card);
 
 	// Extract the filename from the path.
@@ -1441,6 +1460,7 @@ void McRecoverWindow::on_actionScan_triggered(void)
 	// TODO: Optimize database loading:
 	// - Only if the database is not loaded,
 	//   or if the database file has been changed.
+	// TODO: Singleton database management class.
 	int ret = d->searchThread->loadGcnMcFileDbs(dbFilenames);
 	if (ret != 0)
 		return;

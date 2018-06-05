@@ -79,6 +79,7 @@ SET(mcrecover_DB_SRCS
 	db/GcnMcFileDb.cpp
 	db/GcnSearchThread.cpp
 	db/GcnSearchWorker.cpp
+	db/GcnCheckFiles.cpp
 	)
 SET(mcrecover_DB_H
 	db/GcnMcFileDef.hpp
@@ -127,6 +128,7 @@ SET(mcrecover_DB_MOC_H
 	db/GcnMcFileDb.hpp
 	db/GcnSearchThread.hpp
 	db/GcnSearchWorker.hpp
+	db/GcnCheckFiles.hpp
 	)
 
 SET(mcrecover_WINDOW_MOC_H

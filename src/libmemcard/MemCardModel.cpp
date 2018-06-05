@@ -342,11 +342,6 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 					return file->banner();
 
 				case COL_ISVALID:
-					if (!file->isLostFile()) {
-						// Regular files aren't checked right now.
-						break;
-					}
-
 					switch (file->checksumStatus()) {
 						default:
 						case Checksum::CHKST_UNKNOWN:
