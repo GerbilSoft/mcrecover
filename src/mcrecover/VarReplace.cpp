@@ -31,9 +31,11 @@ class VarReplacePrivate
 
 	public:
 		static inline bool isValidVarNameChr(QChar chr)
-			{ return (chr.isLetterOrNumber() || chr == QChar(L'_')); }
+		{
+			return (chr.isLetterOrNumber() || chr == QChar(L'_'));
+		}
 
-		static inline bool isValidVarName(QString varName)
+		static inline bool isValidVarName(const QString &varName)
 		{
 			for (int i = (varName.size() - 1); i >= 0; i--) {
 				if (!isValidVarNameChr(varName.at(i)))

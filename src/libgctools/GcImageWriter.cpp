@@ -52,9 +52,9 @@ GcImageWriterPrivate::~GcImageWriterPrivate()
 {
 	// Delete all files.
 	// WARNING: Not thread-safe!
-	for (int i = 0; i < (int)memBuffer.size(); i++)
-		delete memBuffer[i];
-	memBuffer.clear();
+	for (auto iter = memBuffer.begin(); iter != memBuffer.end(); ++iter) {
+		delete *iter;
+	}
 }
 
 /**
@@ -64,16 +64,20 @@ GcImageWriterPrivate::~GcImageWriterPrivate()
  */
 bool GcImageWriterPrivate::is_gcImages_CI8_UNIQUE(const vector<const GcImage*> *gcImages)
 {
-	const GcImage *gcImage0 = gcImages->at(0);
+	if (gcImages->size() <= 1) {
+		// One frame or less. Assume CI8 SHARED.
+		return false;
+	}
+
+	const GcImage *const gcImage0 = gcImages->at(0);
 	const GcImage::PxFmt pxFmt = gcImage0->pxFmt();
 
 	bool is_CI8_UNIQUE = false;
 	if (pxFmt == GcImage::PXFMT_CI8) {
 		// Check if all the palettes are identical.
-		const uint32_t *palette0 = gcImage0->palette();
-		for (int i = 1; i < (int)gcImages->size(); i++) {
-			const GcImage *gcImageN = gcImages->at(i);
-			const uint32_t *paletteN = gcImageN->palette();
+		const uint32_t *const palette0 = gcImage0->palette();
+		for (auto iter = gcImages->cbegin() + 1; iter != gcImages->cend(); ++iter) {
+			const uint32_t *const paletteN = (*iter)->palette();
 			if (memcmp(palette0, paletteN, (256*sizeof(*paletteN))) != 0) {
 				// CI8_UNIQUE.
 				is_CI8_UNIQUE = true;
@@ -100,12 +104,13 @@ vector<const GcImage*> *GcImageWriterPrivate::gcImages_from_CI8_UNIQUE(const vec
 	vector<const GcImage*> *gcImagesARGB32 = nullptr;
 	if (is_gcImages_CI8_UNIQUE(gcImages)) {
 		// CI8_UNIQUE. Convert to ARGB32.
-		gcImagesARGB32 = new vector<const GcImage*>(gcImages->size());
-		for (int i = 0; i < (int)gcImages->size(); i++) {
-			const GcImage *gcImageN = gcImages->at(i);
+		gcImagesARGB32 = new vector<const GcImage*>();
+		gcImagesARGB32->reserve(gcImages->size());
+		for (auto iter = gcImages->cbegin(); iter != gcImages->cend(); ++iter) {
+			const GcImage *gcImageN = *iter;
 			if (gcImageN)
 				gcImageN = gcImageN->toRGB5A3();
-			gcImagesARGB32->at(i) = gcImageN;
+			gcImagesARGB32->push_back(gcImageN);
 		}
 	}
 
@@ -362,8 +367,9 @@ int GcImageWriter::numFiles(void) const
 void GcImageWriter::clearMemBuffer(void)
 {
 	// WARNING: Not thread-safe!
-	for (int i = 0; i < (int)d->memBuffer.size(); i++)
-		delete d->memBuffer[i];
+	for (auto iter = d->memBuffer.begin(); iter != d->memBuffer.end(); ++iter) {
+		delete *iter;
+	}
 	d->memBuffer.clear();
 }
 

@@ -818,15 +818,17 @@ int File::saveIcon(const QString &filenameNoExt,
 		const int maxIcons = (d->gcIcons.size() * 2 - 2);
 		gcImages.reserve(maxIcons);
 		gcImages.resize(d->gcIcons.size());
-		for (int i = 0; i < d->gcIcons.size(); i++)
+		for (int i = 0; i < d->gcIcons.size(); i++) {
 			gcImages[i] = d->gcIcons[i];
+		}
 
 		// Icon speed.
 		vector<int> gcIconDelays;
 		gcIconDelays.reserve(maxIcons);
 		gcIconDelays.resize(d->gcIcons.size());
-		for (int i = 0; i < d->gcIcons.size(); i++)
+		for (int i = 0; i < d->gcIcons.size(); i++) {
 			gcIconDelays[i] = iconDelay(i);
+		}
 
 		if (gcImages.size() > 1 && iconAnimMode() == CARD_ANIM_BOUNCE) {
 			// BOUNCE animation.
@@ -959,8 +961,8 @@ QVector<QString> File::checksumValuesFormatted(void) const
 	vector<string> vs = Checksum::ChecksumValuesFormatted(d->checksumValues.toStdVector());
 	QVector<QString> ret;
 	ret.reserve((int)vs.size());
-	for (int i = 0; i < (int)vs.size(); i++) {
-		ret.append(QString::fromStdString(vs[i]));
+	for (auto iter = vs.cbegin(); iter != vs.cend(); ++iter) {
+		ret.append(QString::fromStdString(*iter));
 	}
 	return ret;
 }
