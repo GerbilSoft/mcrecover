@@ -335,7 +335,7 @@ const vector<uint8_t> *GcImageWriter::memBuffer(void) const
  */
 const std::vector<uint8_t> *GcImageWriter::memBuffer(int idx) const
 {
-	if (idx < 0 || idx > (int)d->memBuffer.size())
+	if (idx < 0 || idx >= (int)d->memBuffer.size())
 		return nullptr;
 	return d->memBuffer[idx];
 }
