@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ***************************************************************************/
 
+/** TODO: Synchronize with rom-properties. **/
+
 #include "config.mcrecover.h"
 #include "AboutDialog.hpp"
 #include "util/git.h"
@@ -103,7 +105,7 @@ AboutDialogPrivate::AboutDialogPrivate(AboutDialog* q)
 void AboutDialogPrivate::initAboutDialogText(void)
 {
 	// Line break string.
-	static const QString sLineBreak = QLatin1String("<br/>\n");
+	const QLatin1String sLineBreak("<br/>\n");
 
 	// Build the program title text.
 	QString sPrgTitle;
@@ -207,8 +209,8 @@ void AboutDialogPrivate::initAboutDialogText(void)
  */
 QString AboutDialogPrivate::GetCredits(void)
 {
-	static const QString sLineBreak = QLatin1String("<br/>\n");
-	static const QString sIndent = QLatin1String("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+	const QLatin1String sLineBreak("<br/>\n");
+	const QLatin1String sIndent("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 	static const QChar chrBullet(0x2022);  // U+2022: BULLET
 
 	QString credits;
@@ -308,7 +310,7 @@ QString AboutDialogPrivate::GetCredits(void)
 QString AboutDialogPrivate::GetLibraries(void)
 {
 	// Double linebreak.
-	static const QString sDLineBreak = QLatin1String("\n\n");
+	const QLatin1String sDLineBreak("\n\n");
 
 	// NOTE: These strings can NOT be static.
 	// Otherwise, they won't be retranslated if the UI language
@@ -589,7 +591,7 @@ QString AboutDialogPrivate::GetCodePageInfo(void)
  */
 QString AboutDialogPrivate::GetSupport(void)
 {
-	static const QString sLineBreak = QLatin1String("<br/>\n");
+	const QLatin1String sLineBreak("<br/>\n");
 	static const QChar chrBullet(0x2022);  // U+2022: BULLET
 
 	QString strSupport;
@@ -604,7 +606,7 @@ QString AboutDialogPrivate::GetSupport(void)
 	};
 
 	// Support sites.
-	const supportSite_t supportSites[] = {
+	static const supportSite_t supportSites[] = {
 		{QT_TRANSLATE_NOOP(AboutDialog, "Sonic Retro"), "http://forums.sonicretro.org/index.php?showtopic=32621"},
 		{QT_TRANSLATE_NOOP(AboutDialog, "GBAtemp"), "http://gbatemp.net/threads/gcn-memcard-recover.349406/"},
 		{nullptr, nullptr}
