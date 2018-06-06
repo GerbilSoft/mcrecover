@@ -317,7 +317,7 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifier
 	// were present in vars.
 
 	QList<QString> varIDs = vars.keys();
-	foreach (QString id, varIDs) {
+	foreach (const QString &id, varIDs) {
 		if (!varModifierDefs.contains(id))
 			continue;
 

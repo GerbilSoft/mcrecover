@@ -1058,8 +1058,9 @@ QVector<QString> GcnMcFileDb::GetDbFilenames(void)
 	};
 
 	QStringList nameFilters;
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 8; i++) {
 		nameFilters << QLatin1String(nameFilters_c[i]);
+	}
 
 	// Search the paths for XML files.
 	QVector<QString> xmlFileList;
@@ -1071,10 +1072,10 @@ QVector<QString> GcnMcFileDb::GetDbFilenames(void)
 	static const QDir::SortFlags sortFlags = (QDir::Name);
 #endif /* Q_OS_WIN */
 
-	foreach (QString path, pathList) {
+	foreach (const QString &path, pathList) {
 		QDir dir(path);
 		QFileInfoList files = dir.entryInfoList(nameFilters, filters, sortFlags);
-		foreach (QFileInfo file, files) {
+		foreach (const QFileInfo &file, files) {
 			xmlFileList.append(file.absoluteFilePath());
 		}
 	}

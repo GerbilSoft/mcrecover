@@ -163,17 +163,19 @@ void TranslationManager::setTranslation(const QString &locale)
 	if (!isQtSysTranslator) {
 		// System-wide translations aren't installed.
 		// Check other paths.
-		foreach (QString path, d->pathList) {
-			if (d->qtTranslator->load(qtLocale, path))
+		foreach (const QString &path, d->pathList) {
+			if (d->qtTranslator->load(qtLocale, path)) {
 				break;
+			}
 		}
 	}
 
 	// Initialize the application translator.
 	QString prgLocale = QLatin1String("mcrecover_") + locale;
-	foreach (QString path, d->pathList) {
-		if (d->prgTranslator->load(prgLocale, path))
+	foreach (const QString &path, d->pathList) {
+		if (d->prgTranslator->load(prgLocale, path)) {
 			break;
+		}
 	}
 
 	/** Translation file information. **/
@@ -215,10 +217,10 @@ QMap<QString, QString> TranslationManager::enumerate(void) const
 	Q_D(const TranslationManager);
 	QMap<QString, QString> tsMap;
 	QTranslator tmpTs;
-	foreach (QString path, d->pathList) {
+	foreach (const QString &path, d->pathList) {
 		QDir dir(path);
 		QFileInfoList files = dir.entryInfoList(nameFilters, filters);
-		foreach (QFileInfo file, files) {
+		foreach (const QFileInfo &file, files) {
 			// Get the locale information.
 			// TODO: Also get the author information?
 			if (tmpTs.load(file.absoluteFilePath())) {
