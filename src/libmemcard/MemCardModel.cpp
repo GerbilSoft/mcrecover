@@ -170,26 +170,18 @@ void MemCardModelPrivate::style_t::init(void)
 	brush_lostFile_alt = QBrush(bgColor_lostFile_alt);
 
 	// Initialize the COL_ISVALID pixmaps.
-	// TODO: Move McRecoverQApplication::StandardIcon() to a separate library?
-	// TODO: Also McRecoverQApplication::IconFromTheme().
-	QStyle *const style = QApplication::style();
-
-#ifndef Q_OS_WIN
-	if (QIcon::hasThemeIcon(QLatin1String("dialog-question"))) {
-		pxmIsValid_unknown = QIcon::fromTheme(QLatin1String("dialog-question"))
-					.pixmap(szPxmIsValid);
-	}
-	else
-#endif /* !Q_OS_WIN */
-	{
-		pxmIsValid_unknown = style->standardIcon(QStyle::SP_MessageBoxQuestion)
-					.pixmap(szPxmIsValid);
-	}
-
-	pxmIsValid_invalid = style->standardIcon(QStyle::SP_MessageBoxCritical)
-				.pixmap(szPxmIsValid);
-	pxmIsValid_good    = style->standardIcon(QStyle::SP_DialogApplyButton)
-				.pixmap(szPxmIsValid);
+	// NOTE: Using Oxygen icons for all systems.
+	// TODO: Better dialog-question icon.
+	// TODO: Hi-DPI icon handling.
+	static const QSize sz(16, 16);
+	const QString s_sz = QString::number(sz.width()) +
+		QChar(L'x') + QString::number(sz.height());
+	pxmIsValid_unknown = QPixmap(QLatin1String(":/oxygen/") + s_sz +
+		QLatin1String("/dialog-question.png"));
+	pxmIsValid_invalid = QPixmap(QLatin1String(":/oxygen/") + s_sz +
+		QLatin1String("/dialog-error.png"));
+	pxmIsValid_good    = QPixmap(QLatin1String(":/oxygen/") + s_sz +
+		QLatin1String("/dialog-ok-apply.png"));
 }
 
 MemCardModelPrivate::~MemCardModelPrivate()
