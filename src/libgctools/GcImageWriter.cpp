@@ -97,7 +97,7 @@ vector<const GcImage*> *GcImageWriterPrivate::gcImages_from_CI8_UNIQUE(const vec
 	vector<const GcImage*> *gcImagesARGB32 = nullptr;
 	if (is_gcImages_CI8_UNIQUE(gcImages)) {
 		// CI8_UNIQUE. Convert to ARGB32.
-		gcImagesARGB32->resize(gcImages->size());
+		gcImagesARGB32 = new vector<const GcImage*>(gcImages->size());
 		for (int i = 0; i < (int)gcImages->size(); i++) {
 			const GcImage *gcImageN = gcImages->at(i);
 			if (gcImageN)
