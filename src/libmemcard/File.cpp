@@ -443,8 +443,8 @@ File::File(FilePrivate *d, Card *card)
 	, d_ptr(d)
 {
 	// Forward the card's readOnlyChanged signal.
-	connect(card, SIGNAL(readOnlyChanged(bool)),
-		this, SIGNAL(readOnlyChanged(bool)));
+	connect(card, &Card::readOnlyChanged,
+		this, &File::readOnlyChanged);
 }
 
 File::~File()
