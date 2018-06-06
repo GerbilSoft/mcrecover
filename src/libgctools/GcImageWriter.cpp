@@ -31,9 +31,12 @@
 #endif /* USE_GIF */
 
 // C includes.
-#include <errno.h>
 #include <stdint.h>
 #include <stdlib.h>
+
+// C includes. (C++ namespace)
+#include <cassert>
+#include <cerrno>
 
 // C++ includes.
 #include <vector>
@@ -323,6 +326,7 @@ GcImageWriter::AnimImageFormat GcImageWriter::animImageFormatFromName(const char
  */
 const vector<uint8_t> *GcImageWriter::memBuffer(void) const
 {
+	assert(!d->memBuffer.empty());
 	if (d->memBuffer.empty())
 		return nullptr;
 	return d->memBuffer[0];
@@ -335,6 +339,9 @@ const vector<uint8_t> *GcImageWriter::memBuffer(void) const
  */
 const std::vector<uint8_t> *GcImageWriter::memBuffer(int idx) const
 {
+	assert(!d->memBuffer.empty());
+	assert(idx >= 0);
+	assert(idx < (int)d->memBuffer.size());
 	if (idx < 0 || idx >= (int)d->memBuffer.size())
 		return nullptr;
 	return d->memBuffer[idx];
@@ -392,6 +399,9 @@ int GcImageWriter::write(const vector<const GcImage*> *gcImages,
 			 const vector<int> *gcIconDelays,
 			 AnimImageFormat animImgf)
 {
+	assert(gcImages != nullptr);
+	assert(!gcImages->empty());
+	assert(gcImages->at(0) != nullptr);
 	if (!gcImages || gcImages->empty() || !gcImages->at(0))
 		return -EINVAL;
 	if (!isAnimImageFormatSupported(animImgf))
