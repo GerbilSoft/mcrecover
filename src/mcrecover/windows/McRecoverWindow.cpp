@@ -315,17 +315,17 @@ QString McRecoverWindowPrivate::formatFileSize(quint64 size)
 	if (size < (2ULL << 10))
 		return McRecoverWindow::tr("%Ln byte(s)", "", (int)size).arg(size);
 	else if (size < (2ULL << 20))
-		return McRecoverWindow::tr("%L1 KB").arg(size >> 10);
+		return McRecoverWindow::tr("%L1 KiB").arg(size >> 10);
 	else if (size < (2ULL << 30))
-		return McRecoverWindow::tr("%L1 MB").arg(size >> 20);
+		return McRecoverWindow::tr("%L1 MiB").arg(size >> 20);
 	else if (size < (2ULL << 40))
-		return McRecoverWindow::tr("%L1 GB").arg(size >> 30);
+		return McRecoverWindow::tr("%L1 GiB").arg(size >> 30);
 	else if (size < (2ULL << 50))
-		return McRecoverWindow::tr("%L1 TB").arg(size >> 40);
+		return McRecoverWindow::tr("%L1 TiB").arg(size >> 40);
 	else if (size < (2ULL << 60))
-		return McRecoverWindow::tr("%L1 PB").arg(size >> 50);
+		return McRecoverWindow::tr("%L1 PiB").arg(size >> 50);
 	else /*if (size < (2ULL << 70))*/
-		return McRecoverWindow::tr("%L1 EB").arg(size >> 60);
+		return McRecoverWindow::tr("%L1 EiB").arg(size >> 60);
 }
 
 /**
