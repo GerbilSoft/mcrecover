@@ -359,22 +359,6 @@ void McRecoverWindowPrivate::updateLstFileList(void)
  */
 void McRecoverWindowPrivate::initToolbar(void)
 {
-	// Set action icons.
-	ui.actionOpen->setIcon(
-		McRecoverQApplication::IconFromTheme(QLatin1String("document-open")));
-	ui.actionClose->setIcon(
-		McRecoverQApplication::IconFromTheme(QLatin1String("document-close")));
-	ui.actionScan->setIcon(
-		McRecoverQApplication::IconFromTheme(QLatin1String("edit-find")));
-	ui.actionSave->setIcon(
-		McRecoverQApplication::IconFromTheme(QLatin1String("document-save")));
-	ui.actionSaveAll->setIcon(
-		McRecoverQApplication::IconFromTheme(QLatin1String("document-save-all")));
-	ui.actionExit->setIcon(
-		McRecoverQApplication::IconFromTheme(QLatin1String("application-exit")));
-	ui.actionAbout->setIcon(
-		McRecoverQApplication::IconFromTheme(QLatin1String("help-about")));
-
 	// Disable save actions by default.
 	ui.actionSave->setEnabled(false);
 	ui.actionSaveAll->setEnabled(false);

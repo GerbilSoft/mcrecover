@@ -92,12 +92,21 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>375</width>
-              <height>183</height>
+              <width>372</width>
+              <height>164</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="vboxScrlMemCardInfo">
-             <property name="margin">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
               <number>0</number>
              </property>
              <item>
@@ -140,12 +149,21 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>375</width>
-              <height>183</height>
+              <width>372</width>
+              <height>164</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="vboxScrlFileInfo">
-             <property name="margin">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
               <number>0</number>
              </property>
              <item>
@@ -180,7 +198,7 @@
      <x>0</x>
      <y>0</y>
      <width>890</width>
-     <height>22</height>
+     <height>32</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -278,8 +296,7 @@
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset resource="../resources/oxygen/oxygen.qrc">
-     <normaloff>:/oxygen/16x16/document-open.png</normaloff>:/oxygen/16x16/document-open.png</iconset>
+    <iconset theme="document-open"/>
    </property>
    <property name="text">
     <string>&amp;Open</string>
@@ -293,8 +310,7 @@
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset resource="../resources/oxygen/oxygen.qrc">
-     <normaloff>:/oxygen/16x16/document-save.png</normaloff>:/oxygen/16x16/document-save.png</iconset>
+    <iconset theme="document-save"/>
    </property>
    <property name="text">
     <string>&amp;Save</string>
@@ -308,8 +324,7 @@
   </action>
   <action name="actionSaveAll">
    <property name="icon">
-    <iconset resource="../resources/oxygen/oxygen.qrc">
-     <normaloff>:/oxygen/16x16/document-save-all.png</normaloff>:/oxygen/16x16/document-save-all.png</iconset>
+    <iconset theme="document-save-all"/>
    </property>
    <property name="text">
     <string>Save &amp;All</string>
@@ -320,8 +335,7 @@
   </action>
   <action name="actionExit">
    <property name="icon">
-    <iconset resource="../resources/oxygen/oxygen.qrc">
-     <normaloff>:/oxygen/16x16/application-exit.png</normaloff>:/oxygen/16x16/application-exit.png</iconset>
+    <iconset theme="application-exit"/>
    </property>
    <property name="text">
     <string>E&amp;xit</string>
@@ -332,8 +346,7 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset resource="../resources/oxygen/oxygen.qrc">
-     <normaloff>:/oxygen/16x16/help-about.png</normaloff>:/oxygen/16x16/help-about.png</iconset>
+    <iconset theme="help-about"/>
    </property>
    <property name="text">
     <string>&amp;About</string>
@@ -344,8 +357,7 @@
   </action>
   <action name="actionScan">
    <property name="icon">
-    <iconset resource="../resources/oxygen/oxygen.qrc">
-     <normaloff>:/oxygen/16x16/edit-find.png</normaloff>:/oxygen/16x16/edit-find.png</iconset>
+    <iconset theme="edit-find"/>
    </property>
    <property name="text">
     <string>S&amp;can for Lost Files</string>
@@ -356,8 +368,7 @@
   </action>
   <action name="actionClose">
    <property name="icon">
-    <iconset resource="../resources/oxygen/oxygen.qrc">
-     <normaloff>:/oxygen/16x16/document-close.png</normaloff>:/oxygen/16x16/document-close.png</iconset>
+    <iconset theme="document-close"/>
    </property>
    <property name="text">
     <string>&amp;Close</string>
