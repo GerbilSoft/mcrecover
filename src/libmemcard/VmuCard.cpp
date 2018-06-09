@@ -277,9 +277,11 @@ int VmuCardPrivate::loadSysInfo(void)
 
 	// VMU icon.
 	if (mc_root.icon <= 123) {
-		char filename[64];
-		snprintf(filename, sizeof(filename), ":/vmu/bios/%03d.png", mc_root.icon);
-		QImage img(QString::fromLatin1(filename));
+		// Extract the icon from the sprite sheet.
+		// TODO: Load the sprite sheet once and save it as a static variable?
+		QImage sprsheet(QLatin1String(":/hw/bios.png"));
+		QRect rect(mc_root.icon / 16, mc_root.icon % 16, VMU_ICON_W, VMU_ICON_H);
+		QImage img = sprsheet.copy(rect);
 
 		// The included icons use a black-and-white palette.
 		// Update it to match the VMU's LCD colors.
@@ -298,7 +300,7 @@ int VmuCardPrivate::loadSysInfo(void)
 			img.setColorTable(colorTable);
 		}
 
-		// Convert to QPixmpa.
+		// Convert to QPixmap.
 		this->icon = QPixmap::fromImage(img);
 	}
 

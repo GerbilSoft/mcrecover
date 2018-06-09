@@ -262,7 +262,7 @@ SET(mcrecover_RCC_SRCS
 	resources/oxygen/oxygen.qrc
 	resources/flags/flags.qrc
 	resources/sonic/sonic.qrc
-	resources/vmu/vmu.qrc
+	resources/hw/hw.qrc
 	)
 
 QT5_ADD_RESOURCES(
@@ -303,7 +303,7 @@ TARGET_INCLUDE_DIRECTORIES(mcrecover
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/..>
 	)
 
-# Other GCN MemCard Reocver libraries.
+# Other GCN MemCard Recover libraries.
 # TODO: Make libsaveedit optional?
 TARGET_LINK_LIBRARIES(mcrecover gctools memcard saveedit)
 
