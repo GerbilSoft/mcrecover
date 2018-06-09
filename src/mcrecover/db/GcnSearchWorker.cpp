@@ -35,6 +35,8 @@
 
 // C++ includes.
 #include <limits>
+#include <memory>
+using std::unique_ptr;
 
 // Qt includes.
 #include <QtCore/QLinkedList>
@@ -313,7 +315,7 @@ int GcnSearchWorker::searchMemCard(void)
 
 	// Block buffer.
 	const int blockSize = d->card->blockSize();
-	void *buf = malloc(blockSize);
+	unique_ptr<uint8_t[]> buf(new uint8_t[blockSize]);
 
 	fprintf(stderr, "--------------------------------\n");
 	fprintf(stderr, "SCANNING MEMORY CARD...\n");
@@ -328,7 +330,7 @@ int GcnSearchWorker::searchMemCard(void)
 		fprintf(stderr, "Searching block: %d...\n", currentPhysBlock);
 		emit searchUpdate(currentPhysBlock, currentSearchBlock, d->filesFoundList.size());
 
-		int ret = d->card->readBlock(buf, blockSize, currentPhysBlock);
+		int ret = d->card->readBlock(buf.get(), blockSize, currentPhysBlock);
 		if (ret != blockSize) {
 			// Error reading block.
 			fprintf(stderr, "ERROR reading block %d - readBlock() returned %d.\n", currentPhysBlock, ret);
@@ -338,7 +340,7 @@ int GcnSearchWorker::searchMemCard(void)
 		// Check the block in the databases.
 		QVector<GcnSearchData> searchDataEntries;
 		foreach (GcnMcFileDb *db, d->databases) {
-			QVector<GcnSearchData> curEntries = db->checkBlock(buf, blockSize);
+			QVector<GcnSearchData> curEntries = db->checkBlock(buf.get(), blockSize);
 			searchDataEntries += curEntries;
 		}
 
@@ -466,7 +468,6 @@ int GcnSearchWorker::searchMemCard(void)
 
 	fprintf(stderr, "Finished scanning memory card.\n");
 	fprintf(stderr, "--------------------------------\n");
-	free(buf);
 	return d->filesFoundList.size();
 }
 

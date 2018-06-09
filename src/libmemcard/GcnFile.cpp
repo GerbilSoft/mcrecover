@@ -33,9 +33,11 @@
 #include <cassert>
 
 // C++ includes.
+#include <memory>
 #include <string>
 #include <vector>
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 // Qt includes.
@@ -326,12 +328,11 @@ void GcnFilePrivate::loadFileInfo(void)
 	const int commentBlock = (dirEntry->commentaddr / blockSize);
 	const int commentOffset = (dirEntry->commentaddr % blockSize);
 
-	char *commentData = (char*)malloc(blockSize);
-	int ret = card->readBlock(commentData, blockSize, fileBlockAddrToPhysBlockAddr(commentBlock));
+	unique_ptr<char[]> commentData(new char[blockSize]);
+	int ret = card->readBlock(commentData.get(), blockSize, fileBlockAddrToPhysBlockAddr(commentBlock));
 	if (ret != blockSize) {
 		// Read error.
 		// File is probably invalid.
-		free(commentData);
 		return;
 	}
 
@@ -341,7 +342,6 @@ void GcnFilePrivate::loadFileInfo(void)
 	// 0x20: File description.
 	QByteArray gameDescData(&commentData[commentOffset], 32);
 	QByteArray fileDescData(&commentData[commentOffset+32], 32);
-	free(commentData);
 
 	// Remove trailing NULL characters before converting to UTF-8.
 	nullChr = gameDescData.indexOf('\0');

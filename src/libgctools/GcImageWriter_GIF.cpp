@@ -31,7 +31,9 @@
 #include <stdlib.h>
 
 // C++ includes.
+#include <memory>
 #include <vector>
+using std::unique_ptr;
 using std::vector;
 
 #ifndef USE_INTERNAL_GIF
@@ -203,10 +205,9 @@ int GcImageWriterPrivate::gif_writeARGB32Image(GifFileType *gif,
 	// TODO: Transparency?
 	const size_t bufSz = gcImage->width() * gcImage->height();
 	const size_t fullBufSz = bufSz * 4;
-	// TODO: std::unique_ptr<>?
-	GifByteType *full = (GifByteType*)malloc(fullBufSz);
-	GifByteType *red = full;
-	GifByteType *green = full + bufSz;
+	unique_ptr<GifByteType[]> full(new GifByteType[fullBufSz]);
+	GifByteType *red = full.get();
+	GifByteType *green = red + bufSz;
 	GifByteType *blue = green + bufSz;
 	GifByteType *out = blue + bufSz;
 
@@ -218,8 +219,8 @@ int GcImageWriterPrivate::gif_writeARGB32Image(GifFileType *gif,
 	}
 
 	// Reset the buffer pointers.
-	red = full;
-	green = full + bufSz;
+	red = full.get();
+	green = red + bufSz;
 	blue = green + bufSz;
 
 	// Quantize the image buffer.
@@ -231,7 +232,6 @@ int GcImageWriterPrivate::gif_writeARGB32Image(GifFileType *gif,
 	GifDlSetColorMapCount(colorMap, colorCount);
 	if (ret != GIF_OK) {
 		// Error!
-		free(full);
 		return ret;
 	}
 
@@ -239,7 +239,6 @@ int GcImageWriterPrivate::gif_writeARGB32Image(GifFileType *gif,
 	ret = EGifDlPutImageDesc(gif, 0, 0, gcImage->width(), gcImage->height(), false, colorMap);
 	if (ret != GIF_OK) {
 		// Error!
-		free(full);
 		return ret;
 	}
 
@@ -247,12 +246,10 @@ int GcImageWriterPrivate::gif_writeARGB32Image(GifFileType *gif,
 	ret = EGifDlPutLine(gif, out, bufSz);
 	if (ret != GIF_OK) {
 		// Error!
-		free(full);
 		return ret;
 	}
 
 	// Image written.
-	free(full);
 	return GIF_OK;
 }
 
