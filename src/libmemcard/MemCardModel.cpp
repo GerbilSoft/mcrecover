@@ -31,11 +31,9 @@
 // Icon animation helper.
 #include "IconAnimHelper.hpp"
 
-// C includes.
-#include <limits.h>
-
-// C++ includes.
-#include <bitset>
+// C includes. (C++ namespace)
+#include <cassert>
+#include <climits>
 
 // Qt includes.
 #include <QtCore/QHash>
