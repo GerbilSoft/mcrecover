@@ -32,9 +32,11 @@
 #include <cstdlib>
 
 // C++ includes.
+#include <memory>
 #include <string>
 #include <vector>
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 // Qt includes.
@@ -244,12 +246,11 @@ void VmuFilePrivate::loadFileInfo(void)
 
 	// Load the block containing the file header.
 	const int blockSize = card->blockSize();
-	char *data = (char*)malloc(blockSize);
-	int ret = card->readBlock(data, blockSize, fileBlockAddrToPhysBlockAddr(dirEntry->header_addr));
+	unique_ptr<uint8_t[]> data(new uint8_t[blockSize]);
+	int ret = card->readBlock(data.get(), blockSize, fileBlockAddrToPhysBlockAddr(dirEntry->header_addr));
 	if (ret != blockSize) {
 		// Read error.
 		// File is probably invalid.
-		free(data);
 		return;
 	}
 
@@ -260,13 +261,13 @@ void VmuFilePrivate::loadFileInfo(void)
 		// Icon data.
 		// Reference: http://mc.pp.se/dc/vms/icondata.html
 		isIconData = true;
-		const vmu_card_icon_header *fileHeader = (vmu_card_icon_header*)data;
+		const vmu_card_icon_header *iconHeader = reinterpret_cast<vmu_card_icon_header*>(data.get());
 		// TODO: Load icons and stuff.
 
 		// File description.
 		// NOTE: Only a VMU description is present, since the file
 		// isn't visible in the DC file manager.
-		vmu_desc = decodeText_SJISorCP1252(fileHeader->desc_vmu, sizeof(fileHeader->desc_vmu)).trimmed();
+		vmu_desc = decodeText_SJISorCP1252(iconHeader->desc_vmu, sizeof(iconHeader->desc_vmu)).trimmed();
 		dc_desc.clear();
 
 		// TODO: Retranslate the description on language change.
@@ -278,7 +279,7 @@ void VmuFilePrivate::loadFileInfo(void)
 		isIconData = false;
 		if (!fileHeader)
 			fileHeader = (vmu_file_header*)malloc(sizeof(*fileHeader));
-		memcpy(fileHeader, data, sizeof(*fileHeader));
+		memcpy(fileHeader, data.get(), sizeof(*fileHeader));
 
 		// Byteswap the header.
 		fileHeader->icon_count		= le16_to_cpu(fileHeader->icon_count);
