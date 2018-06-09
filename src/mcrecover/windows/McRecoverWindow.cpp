@@ -121,6 +121,9 @@ class McRecoverWindowPrivate
 		QString filename;
 		QString displayFilename;	// filename without subdirectories
 
+		// Initialized columns?
+		bool cols_init;
+
 		/**
 		 * Update the memory card's QTreeView.
 		 */
@@ -237,6 +240,7 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, card(nullptr)
 	, model(new MemCardModel(q))
 	, proxyModel(new MemCardSortFilterProxyModel(q))
+	, cols_init(false)
 	, searchThread(new GcnSearchThread(q))
 	, statusBarManager(nullptr)
 	, uiBusyCounter(0)
@@ -878,22 +882,6 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	//d->proxyModel->setDynamicSortFilter(true);
 	//d->ui.lstFileList->sortByColumn(MemCardModel::COL_DESCRIPTION, Qt::AscendingOrder);
 
-	// Show icon, description, size, mtime, permission, and gamecode by default.
-	// TODO: Allow the user to customize the columns, and save the
-	// customized columns somewhere.
-	// FIXME: May need to move this to d->updateLstFileList() like in qrvthtool.
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_ICON, false);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_BANNER, true);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_DESCRIPTION, false);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_SIZE, false);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_MTIME, false);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_MODE, false);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_GAMEID, false);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_FILENAME, true);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_ISVALID, false);
-	static_assert(MemCardModel::COL_ISVALID + 1 == MemCardModel::COL_MAX,
-		"Default column visibility status needs to be updated!");
-
 	// Connect the lstFileList slots.
 	connect(d->ui.lstFileList->selectionModel(), &QItemSelectionModel::selectionChanged,
 		this, &McRecoverWindow::lstFileList_selectionModel_selectionChanged);
@@ -1257,6 +1245,34 @@ void McRecoverWindow::dropEvent(QDropEvent *event)
 
 	// Open the memory card file.
 	openCard(filename);
+}
+
+/**
+ * Window show event.
+ * @param event Window show event.
+ */
+void McRecoverWindow::showEvent(QShowEvent *event)
+{
+	Q_UNUSED(event);
+	Q_D(McRecoverWindow);
+
+	// Show icon, description, size, mtime, permission, and gamecode by default.
+	// TODO: Allow the user to customize the columns, and save the
+	// customized columns somewhere.
+	if (!d->cols_init) {
+		d->cols_init = true;
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_ICON, false);
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_BANNER, true);
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_DESCRIPTION, false);
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_SIZE, false);
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_MTIME, false);
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_MODE, false);
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_GAMEID, false);
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_FILENAME, true);
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_ISVALID, false);
+		static_assert(MemCardModel::COL_ISVALID + 1 == MemCardModel::COL_MAX,
+			"Default column visibility status needs to be updated!");
+	}
 }
 
 #ifdef Q_OS_WIN
