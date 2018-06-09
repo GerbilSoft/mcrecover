@@ -280,7 +280,10 @@ int MemCardModel::rowCount(const QModelIndex& parent) const
 int MemCardModel::columnCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
-	return COL_MAX;
+	if (d->card) {
+		return COL_MAX;
+	}
+	return 0;
 }
 
 QVariant MemCardModel::data(const QModelIndex& index, int role) const
