@@ -352,7 +352,6 @@ int GcnSearchWorker::searchMemCard(void)
 			} else {
 				// Find an entry matching the preferred region.
 				bool isMatch = false;
-				printf("\n");
 				for (int i = 0; i < searchDataEntries.size(); i++) {
 					const GcnSearchData &schk = searchDataEntries.at(i);
 					if (schk.dirEntry.gamecode[3] == d->preferredRegion) {
