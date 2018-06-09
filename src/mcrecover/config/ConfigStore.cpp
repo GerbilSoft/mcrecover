@@ -623,7 +623,7 @@ void ConfigStore::notifyAll(void)
 	Q_D(ConfigStore);
 	QMutexLocker mtxLocker(&d->mtxSignalMaps);
 
-	foreach (QString property, d->signalMaps.keys()) {
+	foreach (const QString &property, d->signalMaps.keys()) {
 		QVector<ConfigStorePrivate::SignalMap> *signalMapVector =
 			d->signalMaps.value(property);
 		if (signalMapVector->isEmpty())

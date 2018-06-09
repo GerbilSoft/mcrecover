@@ -40,7 +40,6 @@ class LanguageMenuPrivate
 {
 	public:
 		explicit LanguageMenuPrivate(LanguageMenu *q);
-		~LanguageMenuPrivate();
 
 	private:
 		LanguageMenu *const q_ptr;
@@ -91,15 +90,6 @@ LanguageMenuPrivate::LanguageMenuPrivate(LanguageMenu *q)
 	, mapper(nullptr)
 {
 	init();
-}
-
-LanguageMenuPrivate::~LanguageMenuPrivate()
-{
-	clear();
-
-	// NOTE: actLanguageSysDefault is deleted by q->clear(),
-	// since it's owned by the QMenu and not displayed
-	// anywhere else.
 }
 
 /**

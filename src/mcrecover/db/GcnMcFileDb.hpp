@@ -36,8 +36,9 @@
 #include <QtCore/QString>
 #include <QtCore/QVector>
 
-class GcnMcFileDbPrivate;
+class GcnFile;
 
+class GcnMcFileDbPrivate;
 class GcnMcFileDb : public QObject
 {
 	Q_OBJECT
@@ -85,6 +86,17 @@ class GcnMcFileDb : public QObject
 		 * @return List of database files.
 		 */
 		static QVector<QString> GetDbFilenames(void);
+
+		/**
+		 * Add checksum definitions to an open file.
+		 *
+		 * NOTE: The file must NOT have checksum definitions before calling
+		 * this function.
+		 *
+		 * @param file GcnFile
+		 * @return True if definitions were added by this class; false if not.
+		 */
+		bool addChecksumDefs(GcnFile *file) const;
 };
 
 #endif /* __MCRECOVER_GCNMCFILEDB_HPP__ */

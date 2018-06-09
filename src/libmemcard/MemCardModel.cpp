@@ -26,15 +26,14 @@
 
 // TODO: Get correct icon size from the Card object.
 #include "card.h"
+#include "util/array_size.h"
 
 // Icon animation helper.
 #include "IconAnimHelper.hpp"
 
-// C includes.
-#include <limits.h>
-
-// C++ includes.
-#include <bitset>
+// C includes. (C++ namespace)
+#include <cassert>
+#include <climits>
 
 // Qt includes.
 #include <QtCore/QHash>
@@ -98,11 +97,32 @@ class MemCardModelPrivate
 			QBrush brush_lostFile;
 			QBrush brush_lostFile_alt;
 
-			// Pixmaps for COL_ISVALID.
-			static const QSize szPxmIsValid;
-			QPixmap pxmIsValid_unknown;
-			QPixmap pxmIsValid_invalid;
-			QPixmap pxmIsValid_good;
+			// Icon IDs.
+			enum IconID {
+				ICON_UNKNOWN,	// Checksum is unknown
+				ICON_INVALID,	// Checksum is invalid
+				ICON_GOOD,	// Checksum is good
+
+				ICON_MAX
+			};
+
+			/**
+			 * Load an icon.
+			 * @param id Icon ID.
+			 * @return Icon.
+			 */
+			QIcon getIcon(IconID id) const;
+
+		private:
+			/**
+			 * Load an icon from the Qt resources.
+			 * @param dir Base directory.
+			 * @param name Icon name.
+			 */
+			static QIcon loadIcon(const QString &dir, const QString &name);
+
+			// Icons for COL_TYPE.
+			mutable QIcon m_icons[ICON_MAX];
 		};
 		style_t style;
 
@@ -118,8 +138,6 @@ class MemCardModelPrivate
 		int insertStart;
 		int insertEnd;
 };
-
-const QSize MemCardModelPrivate::style_t::szPxmIsValid = QSize(16, 16);
 
 MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
 	: q_ptr(q)
@@ -168,28 +186,60 @@ void MemCardModelPrivate::style_t::init(void)
 	// Save the background colors in QBrush objects.
 	brush_lostFile = QBrush(bgColor_lostFile);
 	brush_lostFile_alt = QBrush(bgColor_lostFile_alt);
+}
 
-	// Initialize the COL_ISVALID pixmaps.
-	// TODO: Move McRecoverQApplication::StandardIcon() to a separate library?
-	// TODO: Also McRecoverQApplication::IconFromTheme().
-	QStyle *const style = QApplication::style();
-
-#ifndef Q_OS_WIN
-	if (QIcon::hasThemeIcon(QLatin1String("dialog-question"))) {
-		pxmIsValid_unknown = QIcon::fromTheme(QLatin1String("dialog-question"))
-					.pixmap(szPxmIsValid);
-	}
-	else
-#endif /* !Q_OS_WIN */
-	{
-		pxmIsValid_unknown = style->standardIcon(QStyle::SP_MessageBoxQuestion)
-					.pixmap(szPxmIsValid);
+/**
+ * Load an icon.
+ * @param id Icon ID.
+ * @return Icon.
+ */
+QIcon MemCardModelPrivate::style_t::getIcon(IconID id) const
+{
+	assert(id >= 0);
+	assert(id < ICON_MAX);
+	if (id < 0 || id >= ICON_MAX) {
+		return QIcon();
 	}
 
-	pxmIsValid_invalid = style->standardIcon(QStyle::SP_MessageBoxCritical)
-				.pixmap(szPxmIsValid);
-	pxmIsValid_good    = style->standardIcon(QStyle::SP_DialogApplyButton)
-				.pixmap(szPxmIsValid);
+	if (m_icons[id].isNull()) {
+		static const char *const names[] = {
+			"dialog-question",
+			"dialog-error",
+			"dialog-ok-apply"
+		};
+		static_assert(ARRAY_SIZE(names) == ICON_MAX, "names[] needs to be updated!");
+		m_icons[id] = loadIcon(QLatin1String("oxygen"), QLatin1String(names[id]));
+		assert(!m_icons[id].isNull());
+	}
+
+	return m_icons[id];
+}
+
+/**
+ * Load an icon from the Qt resources.
+ * @param dir Base directory.
+ * @param name Icon name.
+ */
+QIcon MemCardModelPrivate::style_t::loadIcon(const QString &dir, const QString &name)
+{
+	// Icon sizes.
+	// NOTE: Not including 256x256 here.
+	static const unsigned int icoSz[] = {16, 22, 24, 32, 48, 64, 128, 0};
+
+	QIcon icon;
+	for (const unsigned int *p = icoSz; *p != 0; p++) {
+		const QString s_sz = QString::number(*p);
+		QString full_path = QLatin1String(":/") +
+			dir + QChar(L'/') +
+			s_sz + QChar(L'x') + s_sz + QChar(L'/') +
+			name + QLatin1String(".png");;
+		QPixmap pxm(full_path);
+		if (!pxm.isNull()) {
+			icon.addPixmap(pxm);
+		}
+	}
+
+	return icon;
 }
 
 MemCardModelPrivate::~MemCardModelPrivate()
@@ -288,7 +338,11 @@ int MemCardModel::rowCount(const QModelIndex& parent) const
 int MemCardModel::columnCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
-	return COL_MAX;
+	Q_D(const MemCardModel);
+	if (d->card) {
+		return COL_MAX;
+	}
+	return 0;
 }
 
 QVariant MemCardModel::data(const QModelIndex& index, int role) const
@@ -342,19 +396,14 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 					return file->banner();
 
 				case COL_ISVALID:
-					if (!file->isLostFile()) {
-						// Regular files aren't checked right now.
-						break;
-					}
-
 					switch (file->checksumStatus()) {
 						default:
 						case Checksum::CHKST_UNKNOWN:
-							return d->style.pxmIsValid_unknown;
+							return d->style.getIcon(MemCardModelPrivate::style_t::ICON_UNKNOWN);
 						case Checksum::CHKST_INVALID:
-							return d->style.pxmIsValid_invalid;
+							return  d->style.getIcon(MemCardModelPrivate::style_t::ICON_INVALID);
 						case Checksum::CHKST_GOOD:
-							return d->style.pxmIsValid_good;
+							return  d->style.getIcon(MemCardModelPrivate::style_t::ICON_GOOD);
 					}
 
 				default:
@@ -411,17 +460,21 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 			// TODO: Get correct icon size from the Card object.
 		#ifdef Q_OS_WIN
 			static const int iconWadj = 8;
+			static const int bannerWadj = 8;
 		#else
 			static const int iconWadj = 0;
+			static const int bannerWadj = 8;
 		#endif
 			switch (index.column()) {
 				case COL_ICON:
 					return QSize(CARD_ICON_W + iconWadj, (CARD_ICON_H + 4));
 				case COL_BANNER:
-					return QSize(CARD_BANNER_W + iconWadj, (CARD_BANNER_H + 4));
-				case COL_ISVALID:
-					return QSize(d->style.szPxmIsValid.width(),
-						     (d->style.szPxmIsValid.height() + 4));
+					return QSize(CARD_BANNER_W + bannerWadj, (CARD_BANNER_H + 4));
+				case COL_ISVALID: {
+					// Using 32x32 icons.
+					// (Hi-DPI is handled by Qt automatically.)
+					return QSize(32, 32+4);
+				}
 				default:
 					break;
 			}

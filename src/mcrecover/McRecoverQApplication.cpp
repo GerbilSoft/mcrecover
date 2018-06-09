@@ -105,27 +105,27 @@ QIcon McRecoverQApplication::IconFromTheme(const QString &name)
 	// System icon doesn't exist.
 	// Get the fallback icon.
 	struct IconSz_t {
-		QString path;
+		const char *path;
 		int sz;
 	};
 
 	static const IconSz_t iconSz[] = {
-		{QLatin1String(":/oxygen/256x256/"), 256},
-		{QLatin1String(":/oxygen/128x128/"), 128},
-		{QLatin1String(":/oxygen/64x64/"), 64},
-		{QLatin1String(":/oxygen/48x48/"), 48},
-		{QLatin1String(":/oxygen/32x32/"), 32},
-		{QLatin1String(":/oxygen/24x24/"), 24},
-		{QLatin1String(":/oxygen/22x22/"), 22},
-		{QLatin1String(":/oxygen/16x16/"), 16}
+		{":/oxygen/256x256/", 256},
+		{":/oxygen/128x128/", 128},
+		{":/oxygen/64x64/", 64},
+		{":/oxygen/48x48/", 48},
+		{":/oxygen/32x32/", 32},
+		{":/oxygen/24x24/", 24},
+		{":/oxygen/22x22/", 22},
+		{":/oxygen/16x16/", 16}
 	};
-	static const QString pngExt = QLatin1String(".png");
 
 	QIcon icon;
 	for (int i = 0; i < ARRAY_SIZE(iconSz); i++) {
-		QPixmap pxm(iconSz[i].path + name + pngExt);
-		if (!pxm.isNull())
+		QPixmap pxm(QLatin1String(iconSz[i].path) + name + QLatin1String(".png"));
+		if (!pxm.isNull()) {
 			icon.addPixmap(pxm);
+		}
 	}
 
 	return icon;
@@ -144,27 +144,27 @@ QIcon McRecoverQApplication::IconFromProgram(const QString &name)
 	// System icon doesn't exist.
 	// Get the fallback icon.
 	struct IconSz_t {
-		QString path;
+		const char *path;
 		int sz;
 	};
 
 	static const IconSz_t iconSz[] = {
-		{QLatin1String(":/mcrecover/256x256/"), 256},
-		{QLatin1String(":/mcrecover/128x128/"), 128},
-		{QLatin1String(":/mcrecover/64x64/"), 64},
-		{QLatin1String(":/mcrecover/48x48/"), 48},
-		{QLatin1String(":/mcrecover/32x32/"), 32},
-		{QLatin1String(":/mcrecover/24x24/"), 24},
-		{QLatin1String(":/mcrecover/22x22/"), 22},
-		{QLatin1String(":/mcrecover/16x16/"), 16}
+		{":/mcrecover/256x256/", 256},
+		{":/mcrecover/128x128/", 128},
+		{":/mcrecover/64x64/", 64},
+		{":/mcrecover/48x48/", 48},
+		{":/mcrecover/32x32/", 32},
+		{":/mcrecover/24x24/", 24},
+		{":/mcrecover/22x22/", 22},
+		{":/mcrecover/16x16/", 16}
 	};
-	static const QString pngExt = QLatin1String(".png");
 
 	QIcon icon;
 	for (int i = 0; i < ARRAY_SIZE(iconSz); i++) {
-		QPixmap pxm(iconSz[i].path + name + pngExt);
-		if (!pxm.isNull())
+		QPixmap pxm(QLatin1String(iconSz[i].path) + name + QLatin1String(".png"));
+		if (!pxm.isNull()) {
 			icon.addPixmap(pxm);
+		}
 	}
 
 	return icon;

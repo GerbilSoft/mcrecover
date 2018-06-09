@@ -229,15 +229,16 @@ static int read_icon_WIBN_internal(const banner_wibn_t *banner, GcImageWriter *g
 		gcIconDelays.push_back(animSpeed & CARD_SPEED_MASK);
 	}
 
-	// Save the number of allocated icons for later.
-	const int alloc_icons = gcImages.size();
-
 	if (failed) {
 		// Icon conversion failed.
-		for (int i = 0; i < (int)gcImages.size(); i++)
-			delete gcImages[i];
+		for (auto iter = gcImages.begin(); iter != gcImages.end(); ++iter) {
+			delete *iter;
+		}
 		return -EINVAL;
 	}
+
+	// Save the number of allocated icons for later.
+	const int alloc_icons = gcImages.size();
 
 	const uint32_t flags = be32_to_cpu(banner->flags);
 	if (alloc_icons > 1 && (flags & BANNER_WIBN_FLAGS_ICON_BOUNCE)) {

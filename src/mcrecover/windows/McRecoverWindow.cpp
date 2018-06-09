@@ -37,6 +37,7 @@
 
 // File database.
 #include "db/GcnMcFileDb.hpp"
+#include "db/GcnCheckFiles.hpp"
 
 // Search classes.
 #include "db/GcnSearchThread.hpp"
@@ -119,6 +120,9 @@ class McRecoverWindowPrivate
 		// Filename.
 		QString filename;
 		QString displayFilename;	// filename without subdirectories
+
+		// Initialized columns?
+		bool cols_init;
 
 		/**
 		 * Update the memory card's QTreeView.
@@ -236,6 +240,7 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, card(nullptr)
 	, model(new MemCardModel(q))
 	, proxyModel(new MemCardSortFilterProxyModel(q))
+	, cols_init(false)
 	, searchThread(new GcnSearchThread(q))
 	, statusBarManager(nullptr)
 	, uiBusyCounter(0)
@@ -314,17 +319,17 @@ QString McRecoverWindowPrivate::formatFileSize(quint64 size)
 	if (size < (2ULL << 10))
 		return McRecoverWindow::tr("%Ln byte(s)", "", (int)size).arg(size);
 	else if (size < (2ULL << 20))
-		return McRecoverWindow::tr("%L1 KB").arg(size >> 10);
+		return McRecoverWindow::tr("%L1 KiB").arg(size >> 10);
 	else if (size < (2ULL << 30))
-		return McRecoverWindow::tr("%L1 MB").arg(size >> 20);
+		return McRecoverWindow::tr("%L1 MiB").arg(size >> 20);
 	else if (size < (2ULL << 40))
-		return McRecoverWindow::tr("%L1 GB").arg(size >> 30);
+		return McRecoverWindow::tr("%L1 GiB").arg(size >> 30);
 	else if (size < (2ULL << 50))
-		return McRecoverWindow::tr("%L1 TB").arg(size >> 40);
+		return McRecoverWindow::tr("%L1 TiB").arg(size >> 40);
 	else if (size < (2ULL << 60))
-		return McRecoverWindow::tr("%L1 PB").arg(size >> 50);
+		return McRecoverWindow::tr("%L1 PiB").arg(size >> 50);
 	else /*if (size < (2ULL << 70))*/
-		return McRecoverWindow::tr("%L1 EB").arg(size >> 60);
+		return McRecoverWindow::tr("%L1 EiB").arg(size >> 60);
 }
 
 /**
@@ -358,22 +363,6 @@ void McRecoverWindowPrivate::updateLstFileList(void)
  */
 void McRecoverWindowPrivate::initToolbar(void)
 {
-	// Set action icons.
-	ui.actionOpen->setIcon(
-		McRecoverQApplication::IconFromTheme(QLatin1String("document-open")));
-	ui.actionClose->setIcon(
-		McRecoverQApplication::IconFromTheme(QLatin1String("document-close")));
-	ui.actionScan->setIcon(
-		McRecoverQApplication::IconFromTheme(QLatin1String("edit-find")));
-	ui.actionSave->setIcon(
-		McRecoverQApplication::IconFromTheme(QLatin1String("document-save")));
-	ui.actionSaveAll->setIcon(
-		McRecoverQApplication::IconFromTheme(QLatin1String("document-save-all")));
-	ui.actionExit->setIcon(
-		McRecoverQApplication::IconFromTheme(QLatin1String("application-exit")));
-	ui.actionAbout->setIcon(
-		McRecoverQApplication::IconFromTheme(QLatin1String("help-about")));
-
 	// Disable save actions by default.
 	ui.actionSave->setEnabled(false);
 	ui.actionSaveAll->setEnabled(false);
@@ -893,18 +882,6 @@ McRecoverWindow::McRecoverWindow(QWidget *parent)
 	//d->proxyModel->setDynamicSortFilter(true);
 	//d->ui.lstFileList->sortByColumn(MemCardModel::COL_DESCRIPTION, Qt::AscendingOrder);
 
-	// Show icon, description, size, mtime, permission, and gamecode by default.
-	// TODO: Allow the user to customize the columns, and save the 
-	// customized columns somewhere.
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_ICON, false);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_BANNER, true);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_DESCRIPTION, false);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_SIZE, false);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_MTIME, false);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_MODE, false);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_GAMEID, false);
-	d->ui.lstFileList->setColumnHidden(MemCardModel::COL_FILENAME, true);
-
 	// Connect the lstFileList slots.
 	connect(d->ui.lstFileList->selectionModel(), &QItemSelectionModel::selectionChanged,
 		this, &McRecoverWindow::lstFileList_selectionModel_selectionChanged);
@@ -1005,6 +982,24 @@ void McRecoverWindow::openCard(const QString &filename, int type)
 	}
 
 	d->filename = filename;
+
+	// If GCN, check file checksums.
+	// TODO: Run this in a separate thread after loading?
+	if (type == 0) {
+		// TODO: Singleton database management class.
+		// Get the database filenames.
+		QVector<QString> dbFilenames = GcnMcFileDb::GetDbFilenames();
+		if (!dbFilenames.isEmpty()) {
+			// Load the databases.
+			GcnCheckFiles checkFiles;
+			int ret = checkFiles.loadGcnMcFileDbs(dbFilenames);
+			if (ret == 0) {
+				// Check the files.
+				checkFiles.addChecksumDefs(qobject_cast<GcnCard*>(d->card));
+			}
+		}
+	}
+
 	d->model->setCard(d->card);
 
 	// Extract the filename from the path.
@@ -1252,6 +1247,34 @@ void McRecoverWindow::dropEvent(QDropEvent *event)
 	openCard(filename);
 }
 
+/**
+ * Window show event.
+ * @param event Window show event.
+ */
+void McRecoverWindow::showEvent(QShowEvent *event)
+{
+	Q_UNUSED(event);
+	Q_D(McRecoverWindow);
+
+	// Show icon, description, size, mtime, permission, and gamecode by default.
+	// TODO: Allow the user to customize the columns, and save the
+	// customized columns somewhere.
+	if (!d->cols_init) {
+		d->cols_init = true;
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_ICON, false);
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_BANNER, true);
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_DESCRIPTION, false);
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_SIZE, false);
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_MTIME, false);
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_MODE, false);
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_GAMEID, false);
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_FILENAME, true);
+		d->ui.lstFileList->setColumnHidden(MemCardModel::COL_ISVALID, false);
+		static_assert(MemCardModel::COL_ISVALID + 1 == MemCardModel::COL_MAX,
+			"Default column visibility status needs to be updated!");
+	}
+}
+
 #ifdef Q_OS_WIN
 // Windows message handler. Used for TaskbarButtonManager.
 bool McRecoverWindow::nativeEvent(const QByteArray &eventType, void *message, long *result)
@@ -1441,6 +1464,7 @@ void McRecoverWindow::on_actionScan_triggered(void)
 	// TODO: Optimize database loading:
 	// - Only if the database is not loaded,
 	//   or if the database file has been changed.
+	// TODO: Singleton database management class.
 	int ret = d->searchThread->loadGcnMcFileDbs(dbFilenames);
 	if (ret != 0)
 		return;

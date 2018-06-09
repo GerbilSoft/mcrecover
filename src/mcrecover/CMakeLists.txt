@@ -79,6 +79,7 @@ SET(mcrecover_DB_SRCS
 	db/GcnMcFileDb.cpp
 	db/GcnSearchThread.cpp
 	db/GcnSearchWorker.cpp
+	db/GcnCheckFiles.cpp
 	)
 SET(mcrecover_DB_H
 	db/GcnMcFileDef.hpp
@@ -127,6 +128,7 @@ SET(mcrecover_DB_MOC_H
 	db/GcnMcFileDb.hpp
 	db/GcnSearchThread.hpp
 	db/GcnSearchWorker.hpp
+	db/GcnCheckFiles.hpp
 	)
 
 SET(mcrecover_WINDOW_MOC_H
@@ -260,7 +262,7 @@ SET(mcrecover_RCC_SRCS
 	resources/oxygen/oxygen.qrc
 	resources/flags/flags.qrc
 	resources/sonic/sonic.qrc
-	resources/vmu/vmu.qrc
+	resources/hw/hw.qrc
 	)
 
 QT5_ADD_RESOURCES(
@@ -301,7 +303,7 @@ TARGET_INCLUDE_DIRECTORIES(mcrecover
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/..>
 	)
 
-# Other GCN MemCard Reocver libraries.
+# Other GCN MemCard Recover libraries.
 # TODO: Make libsaveedit optional?
 TARGET_LINK_LIBRARIES(mcrecover gctools memcard saveedit)
 

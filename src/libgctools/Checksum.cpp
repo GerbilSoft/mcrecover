@@ -363,9 +363,10 @@ int Checksum::ChecksumFieldWidth(const vector<ChecksumValue>& checksumValues)
 	if (checksumValues.empty())
 		return 4;
 
-	for (int i = ((int)checksumValues.size() - 1); i >= 0; i--) {
-		const Checksum::ChecksumValue &value = checksumValues.at(i);
-		if (value.expected > 0xFFFF || value.actual > 0xFFFF) {
+	for (auto iter = checksumValues.cbegin();
+	     iter != checksumValues.cend(); ++iter)
+	{
+		if (iter->expected > 0xFFFF || iter->actual > 0xFFFF) {
 			// Checksums are 32-bit.
 			return 8;
 		}
@@ -386,9 +387,10 @@ Checksum::ChkStatus Checksum::ChecksumStatus(const vector<ChecksumValue>& checks
 	if (checksumValues.empty())
 		return Checksum::CHKST_UNKNOWN;
 
-	for (int i = ((int)checksumValues.size() - 1); i >= 0; i--) {
-		const Checksum::ChecksumValue &checksumValue = checksumValues.at(i);
-		if (checksumValue.expected != checksumValue.actual)
+	for (auto iter = checksumValues.cbegin();
+	     iter != checksumValues.cend(); ++iter)
+	{
+		if (iter->expected != iter->actual)
 			return Checksum::CHKST_INVALID;
 	}
 
@@ -423,9 +425,10 @@ vector<string> Checksum::ChecksumValuesFormatted(const vector<ChecksumValue>& ch
 	if (checksumStatus == Checksum::CHKST_INVALID)
 		s_chkExpected_all.reserve(reserveSize);
 
-	for (int i = 0; i < (int)checksumValues.size(); i++) {
-		const Checksum::ChecksumValue &value = checksumValues.at(i);
-
+	int i = 0;
+	for (auto iter = checksumValues.cbegin();
+	     iter != checksumValues.cend(); ++iter, ++i)
+	{
 		if (i > 0) {
 			// Add linebreaks or spaces to the checksum strings.
 			if ((i % 2) && fieldWidth <= 4) {
@@ -442,16 +445,11 @@ vector<string> Checksum::ChecksumValuesFormatted(const vector<ChecksumValue>& ch
 
 		char s_chkActual[12];
 		char s_chkExpected[12];
-		if (fieldWidth <= 4) {
-			snprintf(s_chkActual, sizeof(s_chkActual), "%04X", value.actual);
-			snprintf(s_chkExpected, sizeof(s_chkExpected), "%04X", value.expected);
-		} else {
-			snprintf(s_chkActual, sizeof(s_chkActual), "%08X", value.actual);
-			snprintf(s_chkExpected, sizeof(s_chkExpected), "%08X", value.expected);
-		}
+		snprintf(s_chkActual, sizeof(s_chkActual), "%0*X", fieldWidth, iter->actual);
+		snprintf(s_chkExpected, sizeof(s_chkExpected), "%0*X", fieldWidth, iter->expected);
 
 		// Check if the checksum is valid.
-		if (value.actual == value.expected) {
+		if (iter->actual == iter->expected) {
 			// Checksum is valid.
 			s_chkActual_all += "<span style='color: #080'>";
 			s_chkActual_all += + s_chkActual;

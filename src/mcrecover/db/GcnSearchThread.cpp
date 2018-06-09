@@ -154,13 +154,14 @@ int GcnSearchThread::loadGcnMcFileDbs(const QVector<QString> &dbFilenames)
 		return 0;
 
 	// Load the databases.
-	foreach (QString dbFilename, dbFilenames) {
+	foreach (const QString &dbFilename, dbFilenames) {
 		GcnMcFileDb *db = new GcnMcFileDb(this);
 		int ret = db->load(dbFilename);
-		if (!ret)
+		if (!ret) {
 			d->dbs.append(db);
-		else
+		} else {
 			delete db;
+		}
 	}
 
 	// TODO: Report if any DBs were unable to be loaded.
