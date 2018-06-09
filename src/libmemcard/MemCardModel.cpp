@@ -402,14 +402,16 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 			// TODO: Get correct icon size from the Card object.
 		#ifdef Q_OS_WIN
 			static const int iconWadj = 8;
+			static const int bannerWadj = 8;
 		#else
 			static const int iconWadj = 0;
+			static const int bannerWadj = 8;
 		#endif
 			switch (index.column()) {
 				case COL_ICON:
 					return QSize(CARD_ICON_W + iconWadj, (CARD_ICON_H + 4));
 				case COL_BANNER:
-					return QSize(CARD_BANNER_W + iconWadj, (CARD_BANNER_H + 4));
+					return QSize(CARD_BANNER_W + bannerWadj, (CARD_BANNER_H + 4));
 				case COL_ISVALID:
 					return QSize(d->style.szPxmIsValid.width(),
 						     (d->style.szPxmIsValid.height() + 4));
