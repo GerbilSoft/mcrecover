@@ -203,7 +203,7 @@ int GcImageWriterPrivate::gif_writeARGB32Image(GifFileType *gif,
 	// TODO: Transparency?
 	const size_t bufSz = gcImage->width() * gcImage->height();
 	const size_t fullBufSz = bufSz * 4;
-	// TODO: std::auto_ptr?
+	// TODO: std::unique_ptr<>?
 	GifByteType *full = (GifByteType*)malloc(fullBufSz);
 	GifByteType *red = full;
 	GifByteType *green = full + bufSz;

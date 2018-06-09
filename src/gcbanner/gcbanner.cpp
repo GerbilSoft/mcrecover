@@ -64,7 +64,7 @@ static vlc_getopt_t vlc_getopt_state;
 #include <memory>
 using std::vector;
 using std::string;
-using std::auto_ptr;
+using std::unique_ptr;
 
 // Wii banner handler.
 #include "wibn.hpp"
@@ -293,7 +293,7 @@ static int extract_banner(FILE *f, filetype_t ft,
 		const char *banner_png_filename)
 {
 	fseek(f, 0, SEEK_SET);
-	std::auto_ptr<GcImage> gcBanner(nullptr);
+	unique_ptr<GcImage> gcBanner(nullptr);
 	switch (ft) {
 		case FT_BNR1:
 		case FT_BNR2:
