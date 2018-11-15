@@ -74,47 +74,49 @@ uint16_t Checksum::Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly)
  */
 uint32_t Checksum::AddInvDual16(const uint16_t *buf, uint32_t siz, ChkEndian endian)
 {
+        // We're operating on words, not bytes.
+        // siz is in bytes, so we have to divide it by two.
+        siz /= 2;
+	
 	// NOTE: Integer overflow/underflow is expected here.
 	uint16_t chk1 = 0;
-	uint16_t chk2 = 0;
-
-	// We're operating on words, not bytes.
-	// siz is in bytes, so we have to divide it by two.
-	siz /= 2;
+	uint16_t chk2 = -siz;
 
 	if (endian != CHKENDIAN_LITTLE) {
 		// Big-endian system. (PowerPC, etc.)
 		// Do four words at a time.
 		// TODO: Optimize byteswapping?
 		for (; siz > 4; siz -= 4, buf += 4) {
-			chk1 += be16_to_cpu(buf[0]); chk2 += (be16_to_cpu(buf[0]) ^ 0xFFFF);
-			chk1 += be16_to_cpu(buf[1]); chk2 += (be16_to_cpu(buf[1]) ^ 0xFFFF);
-			chk1 += be16_to_cpu(buf[2]); chk2 += (be16_to_cpu(buf[2]) ^ 0xFFFF);
-			chk1 += be16_to_cpu(buf[3]); chk2 += (be16_to_cpu(buf[3]) ^ 0xFFFF);
+			chk1 += be16_to_cpu(buf[0]);
+			chk1 += be16_to_cpu(buf[1]);
+			chk1 += be16_to_cpu(buf[2]);
+			chk1 += be16_to_cpu(buf[3]);
 		}
 
 		// Remaining words.
 		for (; siz != 0; siz--, buf++) {
 			chk1 += be16_to_cpu(*buf);
-			chk2 += (be16_to_cpu(*buf) ^ 0xFFFF);
 		}
 	} else {
 		// Little-endian system. (x86, SH-4, etc.)
 		// Do four words at a time.
 		// TODO: Optimize byteswapping?
 		for (; siz > 4; siz -= 4, buf += 4) {
-			chk1 += le16_to_cpu(buf[0]); chk2 += (le16_to_cpu(buf[0]) ^ 0xFFFF);
-			chk1 += le16_to_cpu(buf[1]); chk2 += (le16_to_cpu(buf[1]) ^ 0xFFFF);
-			chk1 += le16_to_cpu(buf[2]); chk2 += (le16_to_cpu(buf[2]) ^ 0xFFFF);
-			chk1 += le16_to_cpu(buf[3]); chk2 += (le16_to_cpu(buf[3]) ^ 0xFFFF);
+			chk1 += le16_to_cpu(buf[0]);
+			chk1 += le16_to_cpu(buf[1]);
+			chk1 += le16_to_cpu(buf[2]);
+			chk1 += le16_to_cpu(buf[3]);
 		}
 
 		// Remaining words.
 		for (; siz != 0; siz--, buf++) {
 			chk1 += le16_to_cpu(*buf);
-			chk2 += (le16_to_cpu(*buf) ^ 0xFFFF);
 		}
 	}
+	
+	// sum(word ^ 0xFFFF) = sum(0xFFFF - word) = 0xFFFF * siz - sum(word)
+	// On 16 bits using two's complement, 0xFFFF = -1, so chk2 can be simplified as -siz - chk1.
+	chk2 -= chk1;
 
 	// 0xFFFF is an invalid checksum value.
 	// Reset it to 0 if it shows up.
