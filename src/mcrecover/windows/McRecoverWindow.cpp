@@ -1273,6 +1273,26 @@ void McRecoverWindow::showEvent(QShowEvent *event)
 		static_assert(MemCardModel::COL_ISVALID + 1 == MemCardModel::COL_MAX,
 			"Default column visibility status needs to be updated!");
 	}
+
+	// Pass the event to the base class.
+	super::showEvent(event);
+}
+
+/**
+ * Window close event.
+ * @param event Window close event.
+ */
+void McRecoverWindow::closeEvent(QCloseEvent *event)
+{
+	Q_D(McRecoverWindow);
+	if (d->uiBusyCounter > 0) {
+		// UI is busy. Ignore the close event.
+		event->ignore();
+		return;
+	}
+
+	// Pass the event to the base class.
+	super::closeEvent(event);
 }
 
 #ifdef Q_OS_WIN
@@ -1308,6 +1328,8 @@ void McRecoverWindow::markUiBusy(void)
 		d->ui.menuBar->setEnabled(false);
 		d->ui.toolBar->setEnabled(false);
 		this->centralWidget()->setEnabled(false);
+
+		// TODO: Disable the close button?
 	}
 }
 
