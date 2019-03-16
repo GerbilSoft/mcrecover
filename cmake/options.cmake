@@ -12,9 +12,9 @@ OPTION(INSTALL_DEBUG	"Install the split debug file." 1)
 # Compress the executable with UPX.
 OPTION(COMPRESS_EXE	"Compress the executable with UPX." 0)
 
-# Enable DBus for DockManager / Unity API.
+# Enable D-Bus for DockManager / Unity API.
 IF(UNIX AND NOT APPLE)
-	OPTION(ENABLE_DBUS	"Enable DBUS support for DockManager / Unity API." 1)
+	OPTION(ENABLE_DBUS	"Enable D-Bus support for DockManager / Unity API." 1)
 ELSE(UNIX AND NOT APPLE)
 	SET(ENABLE_DBUS 0)
 ENDIF(UNIX AND NOT APPLE)
