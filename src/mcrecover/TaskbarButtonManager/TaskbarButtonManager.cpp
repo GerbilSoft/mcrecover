@@ -30,8 +30,8 @@
 TaskbarButtonManagerPrivate::TaskbarButtonManagerPrivate(TaskbarButtonManager *const q)
 	: q_ptr(q)
 	, window(nullptr)
-	, progressBarValue(0)
-	, progressBarMax(100)
+	, progressBarValue(-1)
+	, progressBarMax(-1)
 { }
 
 TaskbarButtonManagerPrivate::~TaskbarButtonManagerPrivate()
