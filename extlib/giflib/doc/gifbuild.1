@@ -1,7 +1,7 @@
 '\" t
 .\"     Title: gifbuild
 .\"    Author: [see the "Author" section]
-.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
 .\"      Date: 2 May 2012
 .\"    Manual: GIFLIB Documentation
 .\"    Source: GIFLIB
@@ -34,7 +34,7 @@ gifbuild \- dump GIF data in a textual format, or undump it to a GIF
 \fBgifbuild\fR [\-v] [\-a] [\-d] [\-t\ \fItranslation\-table\fR] [\-h] [\fIgif\-file\fR]
 .SH "OPTIONS"
 .PP
-A program to convert a series of editable text GIF icon specifications and named GIF files into a multi\-image GIF, usable as a graphic resource file\&. It can also dump existing GIFs in this format\&.
+A program to convert a series of editable text GIF icon specifications and named GIF files into a multi\-image GIF, usable as a graphic resource file\&. It can also dump existing GIFs in this format\&. When dumping a GIF, certain sanity checks are performed which may result in a warning emitted to standard error\&.
 .PP
 If no GIF file is given, gifbuild will try to read a text input from stdin\&.
 .SH "SPECIFICATION SYNTAX"
@@ -115,10 +115,11 @@ raster block uses hex digit pairs instead (used for a color map with more than 9
 declaration that leads it\&. Raster blocks from interlaced GIFs are dumped with the lines in non\-interlaced order\&.
 .PP
 The
-\(lqcomment\(rq
-or
+\(lqcomment\(rq,
 \(lqplaintext\(rq
-keywords lead defined GIF89 extension record data (the other two GIF89 types, graphics control and application block, are not yet supported)\&. You can also say
+or
+\(lqggraphics control\(rq
+keywords lead defined GIF89 extension record data\&. The final GIF89 type, graphics control and application block, are not yet supported, but the code does recognize a Netscape loop block\&. You can also say
 \(lqextension\(rq
 followed by a hexadecimal record type\&. All of these extension declarations must be followed by an extension block, which is terminated by the keyword
 \(lqend\(rq
@@ -142,9 +143,8 @@ declaration includes a named GIF as the next image\&. The global color maps of i
 \(lqscreen color\(rq
 declaration\&. All images of an included multi\-image GIF will be included in order\&.
 .PP
-Comments may be preceded with
-\(lq#\(rq
-and will be ignored\&.
+Comments (preceded with
+\(lq#\(rq) will be ignored\&.
 .SH "OPTIONS"
 .PP
 \-v

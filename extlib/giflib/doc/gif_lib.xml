@@ -770,18 +770,6 @@ not recommended.</para>
 
 <para>Returns GIF_ERROR if something went wrong, GIF_OK otherwise.</para>
 
-<programlisting id="DGifGetComment">
-int DGifGetComment(GifFileType *GifFile, char *GifComment)
-</programlisting>
-
-<para>Load a comment from the GIF file.  Because DGifGetRecordType will
-only tell if the record is of type extension, this routine should be
-called iff it is known %100 that is must be a comment.</para>
-
-<para>For the definition of a comment, see <link
-linkend="EGifPutComment">EGifPutComment()</link>.  Returns GIF_ERROR
-if something went wrong, GIF_OK otherwise.</para>
-
 <programlisting>
 int DGifGetExtension(
         GifFileType *GifFile,
@@ -852,6 +840,16 @@ absent and the GifFile structure was not freed so that the
 diagnostic error code will remain accessible in GifFile->Error.
 This behavior was changed because it caused problems for the
 implementation of library wrappers in dynamic languages.)</para>
+
+<programlisting id="DGetGifVersion">
+const char * DGifGetGifVersion(GifFileType *GifFile)
+</programlisting>
+
+<para>Get the GIF version collected during sequential read. This is
+handy for sequential API users who want to set an encoder's version
+from a decoder (e.g. for gif resizing). For the all-at-once users this
+isn't necessary because gif encoder inspects all the extension blocks,
+but sequential users do not have that luxury.</para>
 
 </sect2>
 <sect2><title>Sequential writing</title>
@@ -1099,6 +1097,8 @@ NEWS file in the GIFLIB distribution to track API changes.</para>
 <listitem><para>New functions DGifSavedExtensionToGCB() and
 EGifGCBToSavedExtension() make it easy to read and edit GIF89 graphics
 control blocks in saved images.</para></listitem>
+<listitem><para>The new function DGifGetGifVersion() is convenient
+for people doing sequential reads.</para></listitem>
 </itemizedlist>
 
 <para>A few changes in behavior were introduced in 5.0:</para>

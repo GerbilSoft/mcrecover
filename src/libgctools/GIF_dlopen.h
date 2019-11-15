@@ -41,7 +41,7 @@
 #define GifDlSetColorMapCount(Object, colorCount) (Object)->ColorCount = (colorCount)
 #endif /* USE_INTERNAL_GIF */
 
-// API is based on giflib-5.1.2.
+// API is based on giflib-5.2.1.
 // Older versions of giflib will have compatibility functions
 // applied to make thme work like newer versions.
 

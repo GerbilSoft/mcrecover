@@ -2,21 +2,8 @@
  * GameCube Tools Library.                                                 *
  * GcImageWriter_GIF.cpp: GameCube image writer. (GIF functions)           *
  *                                                                         *
- * Copyright (c) 2012-2016 by David Korth.                                 *
- *                                                                         *
- * This program is free software; you can redistribute it and/or modify it *
- * under the terms of the GNU General Public License as published by the   *
- * Free Software Foundation; either version 2 of the License, or (at your  *
- * option) any later version.                                              *
- *                                                                         *
- * This program is distributed in the hope that it will be useful, but     *
- * WITHOUT ANY WARRANTY; without even the implied warranty of              *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
- * GNU General Public License for more details.                            *
- *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * Copyright (c) 2012-2019 by David Korth.                                 *
+ * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
 #include <config.libgctools.h>
@@ -36,10 +23,13 @@
 using std::unique_ptr;
 using std::vector;
 
-#ifndef USE_INTERNAL_GIF
+#ifdef USE_INTERNAL_GIF
+// giflib-5.2.1 declares GifQuantizeBuffer in getarg.h.
+#include "getarg.h"
+#else /* !USE_INTERNAL_GIF */
 // giflib-4.2 doesn't have QuantizeBuffer().
 // To prevent issues, we're including our own copy of
-// giflib-5.1.2's GifQuantizeBuffer() if we're not
+// giflib-5.2.1's GifQuantizeBuffer() if we're not
 // using an internal copy of giflib.
 extern "C"
 int gcn_GifQuantizeBuffer(unsigned int Width, unsigned int Height,
@@ -49,7 +39,7 @@ int gcn_GifQuantizeBuffer(unsigned int Width, unsigned int Height,
                    GifColorType * OutputColorMap);
 #define GifQuantizeBuffer(Width, Height, ColorMapSize, RedInput, GreenInput, BlueInput, OutputBuffer, OutputColorMap) \
 	gcn_GifQuantizeBuffer((Width), (Height), (ColorMapSize), (RedInput), (GreenInput), (BlueInput), (OutputBuffer), (OutputColorMap))
-#endif /* USE_INTERNAL_GIF */
+#endif /* !USE_INTERNAL_GIF */
 
 /**
  * GIF write function.

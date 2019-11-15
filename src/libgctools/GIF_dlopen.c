@@ -2,20 +2,8 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GIF_dlopen.h: giflib dlopen() wrapper.                                  *
  *                                                                         *
- * Copyright (c) 2014-2018 by David Korth.                                 *
- *                                                                         *
- * This program is free software; you can redistribute it and/or modify it *
- * under the terms of the GNU General Public License as published by the   *
- * Free Software Foundation; either version 2 of the License, or (at your  *
- * option) any later version.                                              *
- *                                                                         *
- * This program is distributed in the hope that it will be useful, but     *
- * WITHOUT ANY WARRANTY; without even the implied warranty of              *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
- * GNU General Public License for more details.                            *
- *                                                                         *
- * You should have received a copy of the GNU General Public License       *
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
+ * Copyright (c) 2014-2019 by David Korth.                                 *
+ * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
 #include "config.libgctools.h"
@@ -80,7 +68,7 @@ static struct {
 static int init_giflib(void)
 {
 	// Check for giflib .so versions 7 through 3.
-	// This corresponds to 5.1, 5.0, 4.2, 4.1, and 4.0.
+	// This corresponds to 5.2/5.1, 5.0, 4.2, 4.1, and 4.0.
 	// NOTE: .so version 5 doesn't exist (4.2 is still v4),
 	char giflib_dll_filename[32];
 	int i;

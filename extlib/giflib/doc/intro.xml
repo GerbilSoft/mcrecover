@@ -195,11 +195,14 @@ url="gif_lib.html">gif_lib.html</ulink>.</para>
 </sect1>
 <sect1><title>The GIF Standard</title>
 
-<para>The doc subdirectory includes flat-ASCII descriptions of <ulink
-url="gif89.txt">GIF89 format</ulink> and <ulink
-url="lzgif.txt">Lempel-Ziv Compression</ulink>. For historical
+<para>The doc subdirectory includes an <ulink
+url="gifstandard/GIF89a.html">HTML presentation of the GIF
+standard</ulink>; an <ulink url="gifstandard/
+LZW-and-GIF-explained.html">explanation of Lempel-Ziv
+compression</ulink>, and the original flat-ASCII description of <ulink
+url="gifstandard/gif89.txt">GIF89 format</ulink> . For historical
 completeness, we also include a copy of the <ulink
-url="gif87.txt">GIF87 standard.</ulink></para>
+url="gifstandard/gif87.txt">GIF87 standard.</ulink></para>
 
 <para>You can also read a <ulink url="whatsinagif/index.html">
 detailed narrative description</ulink> of how GIFs are laid out.  It

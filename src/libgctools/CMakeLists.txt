@@ -96,7 +96,7 @@ IF(HAVE_PNG)
 ENDIF(HAVE_PNG)
 IF(USE_GIF)
 	IF(USE_INTERNAL_GIF)
-		TARGET_LINK_LIBRARIES(gctools ${GIF_LIBRARY})
+		TARGET_LINK_LIBRARIES(gctools ${GIF_LIBRARY} ${GIFUTIL_LIBRARY})
 	ELSE(USE_INTERNAL_GIF)
 		# quantize.c needs gif_lib.h, which might not
 		# be present on the build system.

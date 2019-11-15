@@ -1,6 +1,5 @@
 shipper: ignore this.
-	It's retained for archival purposes only, and because
-autotools throws a hissy fit if there isn't one.  The single point of
+	It's retained for archival purposes only.  The single point of
 truth about changes and the reasons for them is the repository.
 
 2007-11-10 14:50  abadger1999

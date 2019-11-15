@@ -34,7 +34,9 @@
 
 <para>A program to convert a series of editable text GIF icon specifications and
 named GIF files into a multi-image GIF, usable as a graphic resource file.
-It can also dump existing GIFs in this format.</para>
+It can also dump existing GIFs in this format.  When dumping a GIF,
+certain sanity checks are performed which may result in a warning
+emitted to standard error.</para>
 
 <para>If no GIF file is given, gifbuild will try to read a text input
 from stdin.</para>
@@ -115,13 +117,14 @@ should be sized correctly for the <quote>image bits</quote>
 declaration that leads it. Raster blocks from interlaced GIFs are
 dumped with the lines in non-interlaced order.</para>
 
-<para>The <quote>comment</quote> or <quote>plaintext</quote> keywords
-lead defined GIF89 extension record data (the other two GIF89 types,
-graphics control and application block, are not yet supported).  You
-can also say <quote>extension</quote> followed by a hexadecimal record
-type.  All of these extension declarations must be followed by an
-extension block, which is terminated by the keyword <quote>end</quote>
-on its own line.</para>
+<para>The <quote>comment</quote>, <quote>plaintext</quote> or
+<quote>ggraphics control</quote> keywords lead defined GIF89 extension
+record data. The final GIF89 type, graphics control and application
+block, are not yet supported, but the code does recognize a Netscape
+loop block.  You can also say <quote>extension</quote> followed by a
+hexadecimal record type.  All of these extension declarations must be
+followed by an extension block, which is terminated by the keyword
+<quote>end</quote> on its own line.</para>
 
 <para>An extension block is a series of text lines, each interpreted
 as a string of bytes to fill an extension block (the terminating
@@ -154,7 +157,7 @@ with the base table defined by any <quote>screen color</quote>
 declaration.  All images of an included multi-image GIF will be
 included in order.</para>
 
-<para>Comments may be preceded with <quote>#</quote> and will be ignored.</para>
+<para>Comments (preceded with <quote>#</quote>) will be ignored.</para>
 
 </refsect1>
 <refsect1><title>Options</title>

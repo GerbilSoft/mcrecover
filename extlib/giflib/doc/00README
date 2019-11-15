@@ -6,10 +6,7 @@ An introduction to the package is in intro.xml
 
 API documentation lives in gif_lib.xml
 
-gif89.txt and lzgif.txt are the relevant format and compression standards.
-
-For completeness, the original GIF87 specification is also included as
-gif87.txt.
+GIF standards documents can be found in the directory gifstandard/
 
 
 

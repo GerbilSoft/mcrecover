@@ -2,21 +2,8 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GIF_dlopen.h: giflib dlopen() wrapper. (struct definitions)             *
  *                                                                         *
- * Copyright (c) 2014-2016 by David Korth.                                 *
- *                                                                         *
- * This program is free software; you can redistribute it and/or modify it *
- * under the terms of the GNU General Public License as published by the   *
- * Free Software Foundation; either version 2 of the License, or (at your  *
- * option) any later version.                                              *
- *                                                                         *
- * This program is distributed in the hope that it will be useful, but     *
- * WITHOUT ANY WARRANTY; without even the implied warranty of              *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
- * GNU General Public License for more details.                            *
- *                                                                         *
- * You should have received a copy of the GNU General Public License along *
- * with this program; if not, write to the Free Software Foundation, Inc., *
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.           *
+ * Copyright (c) 2014-2019 by David Korth.                                 *
+ * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
 #ifndef __LIBGCTOOLS_GIF_DLOPEN_STRUCT_H__
@@ -33,7 +20,7 @@ extern "C" {
 typedef enum {
 	GIFLIB_UNKNOWN = -1,
 
-	GIFLIB_51 = 7,
+	GIFLIB_51 = 7,	// also used for 5.2
 	GIFLIB_50 = 6,
 	GIFLIB_42 = 5,	// actually 4, but 5 is unused
 	GIFLIB_41 = 4,
@@ -193,8 +180,8 @@ typedef struct _giflib_t {
 typedef struct SavedImage SavedImage;
 
 /**
- * ColorMapObject from giflib-5.1.2.
- * Compatible with v5.0.x, v5.1.x.
+ * ColorMapObject from giflib-5.2.1.
+ * Compatible with v5.0.x, v5.1.x, v5.2.x.
  */
 typedef struct ColorMapObject_v50 {
     int ColorCount;
@@ -204,7 +191,7 @@ typedef struct ColorMapObject_v50 {
 } ColorMapObject_v50;
 
 /**
- * GifFileType from giflib-4.2.3.
+ * ColorMapObject from giflib-4.2.3.
  * Compatible with v4.0.x, v4.1.x, v4.2.x.
  */
 typedef struct ColorMapObject_v40 {
@@ -214,8 +201,8 @@ typedef struct ColorMapObject_v40 {
 } ColorMapObject_v40;
 
 /**
- * GifImageDesc from giflib-5.1.2.
- * Compatible with v5.0.x, v5.1.x.
+ * GifImageDesc from giflib-5.2.1.
+ * Compatible with v5.0.x, v5.1.x, v5.2.x.
  */
 typedef struct GifImageDesc_v50 {
     GifWord Left, Top, Width, Height;   /* Current image dimensions. */
@@ -234,8 +221,8 @@ typedef struct GifImageDesc_v40 {
 } GifImageDesc_v40;
 
 /**
- * GifFileType from giflib-5.1.2.
- * Ccompatible with v5.0.x, v5.1.x.
+ * GifFileType from giflib-5.2.1
+ * Compatible with v5.0.x, v5.1.x, v5.2.x.
  */
 typedef struct GifFileType_v50 {
     GifWord SWidth, SHeight;         /* Size of virtual canvas */

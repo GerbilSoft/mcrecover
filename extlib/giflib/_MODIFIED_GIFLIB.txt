@@ -1,4 +1,4 @@
-This copy of giflib-5.1.4 is a modified version of the original.
+This copy of giflib-5.2.1 is a modified version of the original.
 
 The following changes have been made to the original:
 
@@ -11,6 +11,8 @@ The following changes have been made to the original:
 
 - Some files have been updated to support building with older
   versions of MSVC.
+
+- getarg.h: Added extern "C" guards for C++.
 
 To obtain the original giflib-5.1.4, visit:
 http://giflib.sourceforge.net/
