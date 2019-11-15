@@ -41,7 +41,7 @@ UNSET(MCR_CXX_NO_RTTI_CFLAG)
 UNSET(MCR_CXX_NO_EXCEPTIONS_CFLAG)
 
 # Test for common CFLAGS and CXXFLAGS.
-FOREACH(FLAG_TEST "-Wall" "-Wextra" "-fstrict-aliasing")
+FOREACH(FLAG_TEST "-Wall" "-Wextra" "-fstrict-aliasing" "-fno-common")
 	CHECK_C_COMPILER_FLAG("${FLAG_TEST}" CFLAG_${FLAG_TEST})
 	IF(CFLAG_${FLAG_TEST})
 		SET(MCR_C_FLAGS_COMMON "${MCR_C_FLAGS_COMMON} ${FLAG_TEST}")
@@ -56,26 +56,92 @@ FOREACH(FLAG_TEST "-Wall" "-Wextra" "-fstrict-aliasing")
 ENDFOREACH()
 
 # Test for common LDFLAGS.
-# TODO: Doesn't work on OS X. (which means it's not really testing it!)
-IF(NOT APPLE)
-	FOREACH(FLAG_TEST "-Wl,-O1" "-Wl,--sort-common" "-Wl,--as-needed")
-		CHECK_C_COMPILER_FLAG("${FLAG_TEST}" LDFLAG_${FLAG_TEST})
+# NOTE: CHECK_C_COMPILER_FLAG() doesn't seem to work, even with
+# CMAKE_TRY_COMPILE_TARGET_TYPE. Check `ld --help` for the various
+# parameters instead.
+EXECUTE_PROCESS(COMMAND ${CMAKE_LINKER} --help
+	OUTPUT_VARIABLE _ld_out
+	ERROR_QUIET)
+
+FOREACH(FLAG_TEST "--sort-common" "--as-needed" "--build-id")
+	IF(NOT DEFINED LDFLAG_${FLAG_TEST})
+		MESSAGE(STATUS "Checking if ld supports ${FLAG_TEST}")
+		IF(_ld_out MATCHES "${FLAG_TEST}")
+			MESSAGE(STATUS "Checking if ld supports ${FLAG_TEST} - yes")
+			SET(LDFLAG_${FLAG_TEST} 1 CACHE INTERNAL "Linker supports ${FLAG_TEST}")
+		ELSE()
+			MESSAGE(STATUS "Checking if ld supports ${FLAG_TEST} - no")
+			SET(LDFLAG_${FLAG_TEST} "" CACHE INTERNAL "Linker supports ${FLAG_TEST}")
+		ENDIF()
+	ENDIF()
+
+	IF(LDFLAG_${FLAG_TEST})
+		SET(MCR_EXE_LINKER_FLAGS_COMMON "${MCR_EXE_LINKER_FLAGS_COMMON} -Wl,${FLAG_TEST}")
+	ENDIF(LDFLAG_${FLAG_TEST})
+ENDFOREACH()
+
+# Special case for -O/-O1.
+SET(FLAG_TEST "-O")
+	IF(NOT DEFINED LDFLAG_${FLAG_TEST})
+		MESSAGE(STATUS "Checking if ld supports ${FLAG_TEST}")
+		IF(_ld_out MATCHES "${FLAG_TEST}")
+			MESSAGE(STATUS "Checking if ld supports ${FLAG_TEST} - yes")
+			SET(LDFLAG_${FLAG_TEST} 1 CACHE INTERNAL "Linker supports ${FLAG_TEST}")
+		ELSE()
+			MESSAGE(STATUS "Checking if ld supports ${FLAG_TEST} - no")
+			SET(LDFLAG_${FLAG_TEST} "" CACHE INTERNAL "Linker supports ${FLAG_TEST}")
+		ENDIF()
+	ENDIF()
+
+	IF(LDFLAG_${FLAG_TEST})
+		SET(MCR_EXE_LINKER_FLAGS_COMMON "${MCR_EXE_LINKER_FLAGS_COMMON} -Wl,-O1")
+	ENDIF(LDFLAG_${FLAG_TEST})
+UNSET(FLAG_TEST)
+
+# Special case for --compress-debug-sections.
+SET(FLAG_TEST "--compress-debug-sections")
+	IF(NOT DEFINED LDFLAG_${FLAG_TEST})
+		MESSAGE(STATUS "Checking if ld supports ${FLAG_TEST}")
+		IF(CMAKE_SYSTEM_NAME STREQUAL "NetBSD" OR CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")
+			# FIXME: Do an actual runtime test.
+			# NetBSD/OpenBSD ld has the option, but it fails at runtime:
+			# ld: error: --compress-debug-sections: zlib is not available
+			MESSAGE(STATUS "Checking if ld supports ${FLAG_TEST} - yes, but not usable")
+			SET(LDFLAG_${FLAG_TEST} "" CACHE INTERNAL "Linker supports ${FLAG_TEST}")
+		ELSEIF(_ld_out MATCHES "${FLAG_TEST}")
+			MESSAGE(STATUS "Checking if ld supports ${FLAG_TEST} - yes")
+			SET(LDFLAG_${FLAG_TEST} 1 CACHE INTERNAL "Linker supports ${FLAG_TEST}")
+		ELSE()
+			MESSAGE(STATUS "Checking if ld supports ${FLAG_TEST} - no")
+			SET(LDFLAG_${FLAG_TEST} "" CACHE INTERNAL "Linker supports ${FLAG_TEST}")
+		ENDIF()
+	ENDIF()
+
+	IF(LDFLAG_${FLAG_TEST})
+		SET(MCR_EXE_LINKER_FLAGS_COMMON "${MCR_EXE_LINKER_FLAGS_COMMON} -Wl,${FLAG_TEST}=zlib")
+	ENDIF(LDFLAG_${FLAG_TEST})
+UNSET(FLAG_TEST)
+
+IF(NOT WIN32)
+	# Bsymbolic-functions doesn't make sense on Windows.
+	FOREACH(FLAG_TEST "-Bsymbolic-functions")
+		IF(NOT DEFINED LDFLAG_${FLAG_TEST})
+			MESSAGE(STATUS "Checking if ld supports ${FLAG_TEST}")
+			IF(_ld_out MATCHES "${FLAG_TEST}")
+				MESSAGE(STATUS "Checking if ld supports ${FLAG_TEST} - yes")
+				SET(LDFLAG_${FLAG_TEST} 1 CACHE INTERNAL "Linker supports ${FLAG_TEST}")
+			ELSE()
+				MESSAGE(STATUS "Checking if ld supports ${FLAG_TEST} - no")
+				SET(LDFLAG_${FLAG_TEST} "" CACHE INTERNAL "Linker supports ${FLAG_TEST}")
+			ENDIF()
+		ENDIF()
+
 		IF(LDFLAG_${FLAG_TEST})
-			SET(MCR_EXE_LINKER_FLAGS_COMMON "${MCR_EXE_LINKER_FLAGS_COMMON} ${FLAG_TEST}")
+			SET(RP_EXE_LINKER_FLAGS_COMMON "${RP_EXE_LINKER_FLAGS_COMMON} -Wl,${FLAG_TEST}")
 		ENDIF(LDFLAG_${FLAG_TEST})
-		UNSET(LDFLAG_${FLAG_TEST})
 	ENDFOREACH()
-	IF(NOT WIN32)
-		# Bsymbolic-functions doesn't make sense on Windows.
-		FOREACH(FLAG_TEST "-Wl,-Bsymbolic-functions")
-			CHECK_C_COMPILER_FLAG("${FLAG_TEST}" LDFLAG_${FLAG_TEST})
-			IF(LDFLAG_${FLAG_TEST})
-				SET(MCR_EXE_LINKER_FLAGS_COMMON "${MCR_EXE_LINKER_FLAGS_COMMON} ${FLAG_TEST}")
-			ENDIF(LDFLAG_${FLAG_TEST})
-			UNSET(LDFLAG_${FLAG_TEST})
-		ENDFOREACH()
-	ENDIF(NOT WIN32)
-ENDIF(NOT APPLE)
+ENDIF(NOT WIN32)
+
 SET(MCR_SHARED_LINKER_FLAGS_COMMON "${MCR_EXE_LINKER_FLAGS_COMMON}")
 SET(MCR_MODULE_LINKER_FLAGS_COMMON "${MCR_EXE_LINKER_FLAGS_COMMON}")
 

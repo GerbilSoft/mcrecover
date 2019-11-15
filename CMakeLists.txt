@@ -1,4 +1,5 @@
 PROJECT(mcrecover_base)
+# CMake 2.8.11 adds TARGET_INCLUDE_DIRECTORIES() and Qt4::xxx targets, similar to Qt5.
 # CMake 2.8.12 automates adding compile flags for Qt5, e.g. -fPIC on Linux.
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 
@@ -53,8 +54,8 @@ SET(VERSION_STRING_WIN32 "${VERSION_MAJOR},${VERSION_MINOR},${VERSION_PATCH},${V
 # Also sets the image version for Windows builds.
 INCLUDE(Win32ImageVersionLinkerFlags)
 MACRO(DO_SPLIT_DEBUG _target)
-	# Split debug information.
 	IF(TARGET ${_target})
+		# Split debug information.
 		INCLUDE(SetMSVCDebugPath)
 		SET_MSVC_DEBUG_PATH(${_target})
 		IF(SPLIT_DEBUG)
@@ -80,24 +81,19 @@ IF(POSIX_SH)
 		SET(ENV{SHELLOPTS} igncr)
 	ENDIF(WIN32)
 	ADD_CUSTOM_TARGET(git_version ALL
-		${POSIX_SH} ${CMAKE_CURRENT_SOURCE_DIR}/git_version.sh
-		-s "${CMAKE_CURRENT_SOURCE_DIR}"
-		-o "${CMAKE_CURRENT_BINARY_DIR}/git_version.h"
+		${POSIX_SH} "${CMAKE_SOURCE_DIR}/git_version.sh"
+		-s "${CMAKE_SOURCE_DIR}"
+		-o "${CMAKE_BINARY_DIR}/git_version.h"
 		VERBATIM
 		)
 ELSE(POSIX_SH)
 	# sh isn't available.
 	# Create a blank git_version.h.
-	FILE(WRITE "${CMAKE_CURRENT_BINARY_DIR}/git_version.h"
+	FILE(WRITE "${CMAKE_BINARY_DIR}/git_version.h"
 		"/* dummy file; POSIX sh is not available */\n")
 	# Dummy target for dependencies.
 	ADD_CUSTOM_TARGET(git_version)
 ENDIF(POSIX_SH)
-
-# If no build type is set, default to "debug".
-IF(CMAKE_BUILD_TYPE MATCHES ^$)
-	SET(CMAKE_BUILD_TYPE "debug")
-ENDIF()
 
 # Make sure the file is deleted on `make clean`.
 SET_PROPERTY(DIRECTORY APPEND
