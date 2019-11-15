@@ -19,7 +19,7 @@ INCLUDE(CheckCXXSourceCompiles)
 
 MACRO(CHECK_CXX11_COMPILER_FLAG _RESULT)
 	UNSET(${_RESULT})
-	
+
 	# MSVC doesn't allow setting the C++ standard.
 	IF(NOT MSVC)
 	# Check if C++ 2011 is present without any flags.
