@@ -2,7 +2,7 @@
  * GameCube Tools Library.                                                 *
  * Checksum.cpp: Checksum algorithm class.                                 *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2020 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -21,6 +21,8 @@
 using std::string;
 using std::vector;
 
+namespace Checksum {
+
 /** Algorithms. **/
 
 /**
@@ -30,7 +32,7 @@ using std::vector;
  * @param poly Polynomial.
  * @return Checksum.
  */
-uint16_t Checksum::Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly)
+uint16_t Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly)
 {
 	// TODO: Add optimized version for poly == CRC16_POLY_CCITT.
 	uint16_t crc = 0xFFFF;
@@ -59,7 +61,7 @@ uint16_t Checksum::Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly)
  * @param endian Endianness of the data.
  * @return Checksum.
  */
-uint32_t Checksum::AddInvDual16(const uint16_t *buf, uint32_t siz, ChkEndian endian)
+uint32_t AddInvDual16(const uint16_t *buf, uint32_t siz, ChkEndian endian)
 {
 	// NOTE: Integer overflow/underflow is expected here.
 	uint16_t chk1 = 0;
@@ -122,7 +124,7 @@ uint32_t Checksum::AddInvDual16(const uint16_t *buf, uint32_t siz, ChkEndian end
  * @param siz Length of data buffer.
  * @return Checksum.
  */
-uint32_t Checksum::AddBytes32(const uint8_t *buf, uint32_t siz)
+uint32_t AddBytes32(const uint8_t *buf, uint32_t siz)
 {
 	uint32_t checksum = 0;
 
@@ -147,7 +149,7 @@ uint32_t Checksum::AddBytes32(const uint8_t *buf, uint32_t siz)
  * @param siz Length of data buffer.
  * @return Checksum.
  */
-uint32_t Checksum::SonicChaoGarden(const uint8_t *buf, uint32_t siz)
+uint32_t SonicChaoGarden(const uint8_t *buf, uint32_t siz)
 {
 	// Ported from MainMemory's C# SADX/SA2B Chao Garden checksum code.
 	const uint32_t a4 = 0x686F6765;
@@ -174,7 +176,7 @@ uint32_t Checksum::SonicChaoGarden(const uint8_t *buf, uint32_t siz)
  * @param crc_addr Address of CRC in header.
  * @return Checksum.
  */
-uint16_t Checksum::DreamcastVMU(const uint8_t *buf, uint32_t siz, uint32_t crc_addr)
+uint16_t DreamcastVMU(const uint8_t *buf, uint32_t siz, uint32_t crc_addr)
 {
 	// TODO: Optimize this?
 	// Reference: http://mc.pp.se/dc/vms/fileheader.html
@@ -209,7 +211,7 @@ uint16_t Checksum::DreamcastVMU(const uint8_t *buf, uint32_t siz, uint32_t crc_a
  * @param param Algorithm parameter, e.g. polynomial or sum.
  * @return Checksum.
  */
-uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, ChkEndian endian, uint32_t param)
+uint32_t Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, ChkEndian endian, uint32_t param)
 {
 	switch (algorithm) {
 		case CHKALG_CRC16:
@@ -252,7 +254,7 @@ uint32_t Checksum::Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, C
  * @param algorithm Checksum algorithm name.
  * @return ChkAlgorithm. (If unknown, returns CHKALG_NONE.)
  */
-Checksum::ChkAlgorithm Checksum::ChkAlgorithmFromString(const char *algorithm)
+ChkAlgorithm ChkAlgorithmFromString(const char *algorithm)
 {
 	// FIXME: Case-insensitive comparison?
 	if (!strcmp(algorithm, "crc16") ||
@@ -291,7 +293,7 @@ Checksum::ChkAlgorithm Checksum::ChkAlgorithmFromString(const char *algorithm)
  * @param algorithm ChkAlgorithm.
  * @return Checksum algorithm name, or nullptr if CHKALG_NONE or unknown.
  */
-const char *Checksum::ChkAlgorithmToString(ChkAlgorithm algorithm)
+const char *ChkAlgorithmToString(ChkAlgorithm algorithm)
 {
 	switch (algorithm) {
 		default:
@@ -318,7 +320,7 @@ const char *Checksum::ChkAlgorithmToString(ChkAlgorithm algorithm)
  * @param algorithm ChkAlgorithm.
  * @return Checksum algorithm name, or nullptr if CHKALG_NONE or unknown.
  */
-const char *Checksum::ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm)
+const char *ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm)
 {
 	switch (algorithm) {
 		default:
@@ -345,7 +347,7 @@ const char *Checksum::ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm)
  * @param checksumValues Checksum values to check.
  * @return 4 for 16-bit checksums; 8 for 32-bit checksums.
  */
-int Checksum::ChecksumFieldWidth(const vector<ChecksumValue>& checksumValues)
+int ChecksumFieldWidth(const vector<ChecksumValue>& checksumValues)
 {
 	if (checksumValues.empty())
 		return 4;
@@ -363,28 +365,26 @@ int Checksum::ChecksumFieldWidth(const vector<ChecksumValue>& checksumValues)
 	return 4;
 }
 
-
 /**
  * Get the checksum status.
  * @param checksumValues Checksum values to check.
  * @return Checksum status.
  */
-Checksum::ChkStatus Checksum::ChecksumStatus(const vector<ChecksumValue>& checksumValues)
+ChkStatus ChecksumStatus(const vector<ChecksumValue>& checksumValues)
 {
 	if (checksumValues.empty())
-		return Checksum::CHKST_UNKNOWN;
+		return CHKST_UNKNOWN;
 
 	for (auto iter = checksumValues.cbegin();
 	     iter != checksumValues.cend(); ++iter)
 	{
 		if (iter->expected != iter->actual)
-			return Checksum::CHKST_INVALID;
+			return CHKST_INVALID;
 	}
 
 	// All checksums are good.
-	return Checksum::CHKST_GOOD;
+	return CHKST_GOOD;
 }
-
 
 /**
  * Format checksum values as HTML for display purposes.
@@ -393,7 +393,7 @@ Checksum::ChkStatus Checksum::ChecksumStatus(const vector<ChecksumValue>& checks
  * - String 0 contains the actual checksums.
  * - String 1, if present, contains the expected checksums.
  */
-vector<string> Checksum::ChecksumValuesFormatted(const vector<ChecksumValue>& checksumValues)
+vector<string> ChecksumValuesFormatted(const vector<ChecksumValue>& checksumValues)
 {
 	// Checksum colors.
 	// TODO: Better colors?
@@ -405,11 +405,11 @@ vector<string> Checksum::ChecksumValuesFormatted(const vector<ChecksumValue>& ch
 	const int reserveSize = ((34 + fieldWidth + 5) * (int)checksumValues.size());
 
 	// Get the checksum status.
-	const Checksum::ChkStatus checksumStatus = ChecksumStatus(checksumValues);
+	const ChkStatus checksumStatus = ChecksumStatus(checksumValues);
 
 	string s_chkActual_all; s_chkActual_all.reserve(reserveSize);
 	string s_chkExpected_all;
-	if (checksumStatus == Checksum::CHKST_INVALID)
+	if (checksumStatus == CHKST_INVALID)
 		s_chkExpected_all.reserve(reserveSize);
 
 	int i = 0;
@@ -441,7 +441,7 @@ vector<string> Checksum::ChecksumValuesFormatted(const vector<ChecksumValue>& ch
 			s_chkActual_all += "<span style='color: #080'>";
 			s_chkActual_all += + s_chkActual;
 			s_chkActual_all += "</span>";
-			if (checksumStatus == Checksum::CHKST_INVALID) {
+			if (checksumStatus == CHKST_INVALID) {
 				s_chkExpected_all += "<span style='color: #080'>";
 				s_chkExpected_all += s_chkExpected;
 				s_chkExpected_all += "</span>";
@@ -451,7 +451,7 @@ vector<string> Checksum::ChecksumValuesFormatted(const vector<ChecksumValue>& ch
 			s_chkActual_all += "<span style='color: #F00'>";
 			s_chkActual_all += s_chkActual;
 			s_chkActual_all += "</span>";
-			if (checksumStatus == Checksum::CHKST_INVALID) {
+			if (checksumStatus == CHKST_INVALID) {
 				s_chkExpected_all += "<span style='color: #F00'>";
 				s_chkExpected_all += s_chkExpected;
 				s_chkExpected_all += "</span>";
@@ -462,7 +462,9 @@ vector<string> Checksum::ChecksumValuesFormatted(const vector<ChecksumValue>& ch
 	// Return the checksum strings.
 	vector<string> ret;
 	ret.push_back(s_chkActual_all);
-	if (checksumStatus == Checksum::CHKST_INVALID)
+	if (checksumStatus == CHKST_INVALID)
 		ret.push_back(s_chkExpected_all);
 	return ret;
+}
+
 }
