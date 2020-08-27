@@ -377,10 +377,29 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifier
 				break;
 
 			case VarModifierDef::USEAS_TS_MONTH: {
-				if (num >= 1 && num <= 12)
+				if (num >= 1 && num <= 12) {
 					month = num;
-				else
-					return -4;
+				} else {
+					// Check for abbreviated month names.
+					static const char month_names[12][4] = {
+						"Jan", "Feb", "Mar", "Apr",
+						"May", "Jun", "Jul", "Aug",
+						"Sep", "Oct", "Nov", "Dec"
+					};
+					bool found = false;
+					for (int i = 0; i < 12; i++) {
+						if (var.compare(QLatin1String(month_names[i]), Qt::CaseInsensitive) == 0) {
+							// Found a match.
+							month = i + 1;
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						// Not found.
+						return -4;
+					}
+				}
 				break;
 			}
 
