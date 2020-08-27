@@ -18,6 +18,7 @@
 
 // C++ includes.
 #include <limits>
+using std::list;
 
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
@@ -957,12 +958,12 @@ GcnFile *GcnCard::addLostFile(const card_direntry *dirEntry, const QVector<uint1
  * @param filesFoundList List of GcnSearchData.
  * @return List of GcnFiles added to the GcnCard, or empty list on error.
  */
-QList<GcnFile*> GcnCard::addLostFiles(const QLinkedList<GcnSearchData> &filesFoundList)
+QList<GcnFile*> GcnCard::addLostFiles(const std::list<GcnSearchData> &filesFoundList)
 {
 	QList<GcnFile*> files;
 	if (!isOpen())
 		return files;
-	if (filesFoundList.isEmpty())
+	if (filesFoundList.empty())
 		return files;
 
 	Q_D(GcnCard);
@@ -970,7 +971,9 @@ QList<GcnFile*> GcnCard::addLostFiles(const QLinkedList<GcnSearchData> &filesFou
 	const int idxLast = idx + filesFoundList.size() - 1;
 	emit filesAboutToBeInserted(idx, idxLast);
 
-	foreach (const GcnSearchData &searchData, filesFoundList) {
+	for (auto iter = filesFoundList.cbegin(); iter != filesFoundList.cend(); ++iter) {
+		const GcnSearchData &searchData = *iter;
+
 		GcnFile *file = new GcnFile(this, &searchData.dirEntry, searchData.fatEntries);
 		// NOTE: If file is nullptr, this may screw up the QTreeView
 		// due to filesAboutToBeInserted().

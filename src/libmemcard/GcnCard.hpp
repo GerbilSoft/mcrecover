@@ -11,12 +11,12 @@
 
 #include "Card.hpp"
 
-// Qt includes and classes.
-#include <QtCore/QLinkedList>
-
 #include "card.h"
 #include "Checksum.hpp"
 #include "GcnSearchData.hpp"
+
+// C++ includes.
+#include <list>
 
 class GcnFile;
 
@@ -114,7 +114,7 @@ class GcnCard : public Card
 		 * @param filesFoundList List of SearchData.
 		 * @return List of GcnFiles added to the GcnCard, or empty list on error.
 		 */
-		QList<GcnFile*> addLostFiles(const QLinkedList<GcnSearchData> &filesFoundList);
+		QList<GcnFile*> addLostFiles(const std::list<GcnSearchData> &filesFoundList);
 
 		/**
 		 * Get the header checksum value.

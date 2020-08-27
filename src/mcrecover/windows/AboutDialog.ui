@@ -214,7 +214,6 @@
  </widget>
  <resources>
   <include location="../resources/mcrecover/mcrecover.qrc"/>
-  <include location="resources/mcrecover/mcrecover.qrc"/>
  </resources>
  <connections>
   <connection>

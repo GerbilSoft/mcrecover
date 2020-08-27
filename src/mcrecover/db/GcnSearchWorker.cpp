@@ -23,10 +23,10 @@
 // C++ includes.
 #include <limits>
 #include <memory>
+using std::list;
 using std::unique_ptr;
 
 // Qt includes.
-#include <QtCore/QLinkedList>
 #include <QtCore/QVector>
 
 /** GcnSearchWorkerPrivate **/
@@ -48,11 +48,11 @@ class GcnSearchWorkerPrivate
 
 		/**
 		 * List of files found in the last successful search.
-		 * QLinkedList allows us to prepend items, so we do that
+		 * std::list allows us to prepend items, so we do that
 		 * in order to turn "reverse-order" into "correct-order".
 		 * TODO: Use malloc()'d SearchData?
 		 */
-		QLinkedList<GcnSearchData> filesFoundList;
+		std::list<GcnSearchData> filesFoundList;
 
 		// Properties.
 		GcnCard *card;
@@ -105,7 +105,7 @@ QString GcnSearchWorker::errorString(void) const
  * Get the list of files found in the last successful search.
  * @return List of files found.
  */
-QLinkedList<GcnSearchData> GcnSearchWorker::filesFoundList(void) const
+std::list<GcnSearchData> GcnSearchWorker::filesFoundList(void) const
 {
 	// TODO: Not while thread is running...
 	Q_D(const GcnSearchWorker);
@@ -442,8 +442,8 @@ int GcnSearchWorker::searchMemCard(void)
 				blocksRemaining--;
 			}
 
-			// Add the search data to the list.
-			d->filesFoundList.prepend(searchData);
+			// Add the search data to the list. (front of list)
+			d->filesFoundList.push_front(searchData);
 		}
 	}
 

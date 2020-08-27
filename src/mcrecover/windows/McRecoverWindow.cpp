@@ -44,6 +44,7 @@
 
 // C++ includes.
 #include <vector>
+using std::list;
 using std::vector;
 
 // Qt includes.
@@ -1677,7 +1678,7 @@ void McRecoverWindow::searchThread_searchFinished_slot(int lostFilesFound)
 	d->card->removeLostFiles();
 
 	// Get the files found list.
-	QLinkedList<GcnSearchData> filesFoundList = d->searchThread->filesFoundList();
+	list<GcnSearchData> filesFoundList = d->searchThread->filesFoundList();
 
 	// Add the directory entries.
 	QList<GcnFile*> files = gcnCard->addLostFiles(filesFoundList);

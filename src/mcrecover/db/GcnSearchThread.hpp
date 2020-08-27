@@ -15,8 +15,10 @@
 // Search Data struct.
 #include "GcnSearchData.hpp"
 
+// C++ includes.
+#include <list>
+
 // Qt includes.
-#include <QtCore/QLinkedList>
 #include <QtCore/QObject>
 #include <QtCore/QString>
 
@@ -104,7 +106,7 @@ class GcnSearchThread : public QObject
 		 * Get the list of files found in the last successful search.
 		 * @return List of files found.
 		 */
-		QLinkedList<GcnSearchData> filesFoundList(void);
+		std::list<GcnSearchData> filesFoundList(void);
 
 		/**
 		 * Search a memory card for "lost" files.

@@ -15,8 +15,10 @@
 // Search Data struct.
 #include "GcnSearchData.hpp"
 
+// C++ includes.
+#include <list>
+
 // Qt includes.
-#include <QtCore/QLinkedList>
 #include <QtCore/QObject>
 #include <QtCore/QString>
 
@@ -34,7 +36,7 @@ class GcnSearchWorker : public QObject
 	typedef QObject super;
 
 	Q_PROPERTY(QString errorString READ errorString)
-	Q_PROPERTY(QLinkedList<GcnSearchData> filesFoundList READ filesFoundList)
+	Q_PROPERTY(std::list<GcnSearchData> filesFoundList READ filesFoundList)
 
 	Q_PROPERTY(GcnCard* card READ card WRITE setCard)
 	Q_PROPERTY(QVector<GcnMcFileDb*> databases READ databases WRITE setDatabases)
@@ -103,7 +105,7 @@ class GcnSearchWorker : public QObject
 		 * Get the list of files found in the last successful search.
 		 * @return List of files found.
 		 */
-		QLinkedList<GcnSearchData> filesFoundList(void) const;
+		std::list<GcnSearchData> filesFoundList(void) const;
 
 	public:
 		/** Properties. **/

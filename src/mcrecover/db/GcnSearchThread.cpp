@@ -17,8 +17,10 @@
 // Worker object.
 #include "GcnSearchWorker.hpp"
 
+// C++ classes.
+using std::list;
+
 // Qt includes.
-#include <QtCore/QLinkedList>
 #include <QtCore/QStack>
 #include <QtCore/QThread>
 
@@ -165,7 +167,7 @@ int GcnSearchThread::loadGcnMcFileDbs(const QVector<QString> &dbFilenames)
  * Get the list of files found in the last successful search.
  * @return List of files found.
  */
-QLinkedList<GcnSearchData> GcnSearchThread::filesFoundList(void)
+list<GcnSearchData> GcnSearchThread::filesFoundList(void)
 {
 	// TODO: Not while thread is running...
 	Q_D(GcnSearchThread);

@@ -19,7 +19,6 @@
 #include "libgctools/Checksum.hpp"
 
 // Qt includes.
-#include <QtCore/QLinkedList>
 #include <QtCore/QStack>
 #include <QtCore/QThread>
 

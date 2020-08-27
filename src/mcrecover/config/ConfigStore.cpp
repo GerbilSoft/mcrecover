@@ -87,7 +87,6 @@ class ConfigStorePrivate
 		 *   - SignalMap.object: Object to send signal to.
 		 *   - SignalMap.method: Method name.
 		 */
-		// TODO: Use QLinkedList<SignalMap>* instead?
 		struct SignalMap {
 			QPointer<QObject> object;
 			int method_idx;
