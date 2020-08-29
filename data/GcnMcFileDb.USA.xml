@@ -1924,9 +1924,8 @@
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^POKéMON XD$</gameDesc>
-			<!-- Date format: MM/DD/YYYY - Verify for PAL! -->
-			<!-- TODO: Verify M vs MM, D vs DD. -->
-			<fileDesc>^SAVE FILE (\d{1,2})/(\d{1,2})/(\d{4})$</fileDesc>
+			<!-- Date format: MM/DD/YYYY -->
+			<fileDesc>^SAVE FILE (\d{2})/(\d{2})/(\d{4})$</fileDesc>
 		</search>
 		<variables>
 			<variable id="F1">

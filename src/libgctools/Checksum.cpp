@@ -16,9 +16,11 @@
 #include <cstring>
 
 // C++ includes.
+#include <memory>
 #include <string>
 #include <vector>
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 namespace Checksum {
@@ -200,6 +202,106 @@ uint16_t DreamcastVMU(const uint8_t *buf, uint32_t siz, uint32_t crc_addr)
 	return (n & 0xFFFF);
 }
 
+/**
+ * Pokémon XD algorithm.
+ * Reference: https://github.com/TuxSH/PkmGCTools/blob/master/LibPkmGC/src/LibPkmGC/XD/SaveEditing/SaveSlot.cpp
+ *
+ * The data area is "encrypted", so it has to be decrypted before
+ * a checksum can be calculated.
+ *
+ * @param buf		[in] Data buffer.
+ * @param siz		[in] Length of data buffer.
+ * @param crc_addr	[in] CRC address. (Should be 0x10, 0x14, 0x18, 0x1C.)
+ * @param pChkExpect	[out] Expected checksum, decrypted.
+ * @return Actual checksum, decrypted.
+ */
+uint32_t PokemonXD(const uint8_t *buf, uint32_t siz, uint32_t crc_addr, uint32_t *pChkExpect)
+{
+	// TODO: There's four 32-bit checksums. We should rework
+	// the checksum system so we don't have to decrypt the
+	// save data four times, once for each checksum.
+	static const uint32_t checksum_size = (0x9FF4*4)+8;
+	if (siz < (0x9FF4*4)+8) {
+		// Incorrect buffer size.
+		if (pChkExpect) {
+			*pChkExpect = 0;
+		}
+		return ~0U;
+	}
+
+	// All fields are in big-endian.
+	struct PokemonXDHeader {
+		uint32_t magic;		// [0x000] 0x01010100
+		uint32_t save_count;	// [0x004] Number of times the game has been saved.
+		uint16_t enc_keys[4];	// [0x008] Encryption keys
+
+		// The following data is all encrypted.
+		uint32_t checksum[4];	// [0x010] Checksums
+	};
+
+	// Decryption buffer.
+	unique_ptr<uint8_t[]> decbuf(new uint8_t[checksum_size]);
+	memcpy(decbuf.get(), buf, 16);
+
+	// Decrypt the data.
+	PokemonXDHeader *const pHdr = reinterpret_cast<PokemonXDHeader*>(decbuf.get());
+	uint16_t keys[4];
+	keys[0] = be16_to_cpu(pHdr->enc_keys[0]);
+	keys[1] = be16_to_cpu(pHdr->enc_keys[1]);
+	keys[2] = be16_to_cpu(pHdr->enc_keys[2]);
+	keys[3] = be16_to_cpu(pHdr->enc_keys[3]);
+
+	const uint16_t *psrcbuf16 = reinterpret_cast<const uint16_t*>(buf) + 8;
+	uint16_t *pdestbuf16 = reinterpret_cast<uint16_t*>(decbuf.get()) + 8;
+	for (size_t i = 16; i < checksum_size; i += 8) {
+		for (unsigned int j = 0; j < 4; j++, psrcbuf16++, pdestbuf16++) {
+			uint16_t tmp = be16_to_cpu(*psrcbuf16);
+			tmp -= keys[j];
+			*pdestbuf16 = cpu_to_be16(tmp);
+		}
+
+		// Advance the keys.
+		const uint16_t a = keys[0] + 0x43;
+		const uint16_t b = keys[1] + 0x29;
+		const uint16_t c = keys[2] + 0x17;
+		const uint16_t d = keys[3] + 0x13;
+
+		keys[0] = (a & 0xf) | ((b << 4) & 0xf0) | ((c << 8) & 0xf00) | ((d << 12) & 0xf000);
+		keys[1] = ((a >> 4) & 0xf) | (b & 0xf0) | ((c << 4) & 0xf00) | ((d << 8) & 0xf000);
+		keys[2] = (c & 0xf00) | ((b & 0xf00) >> 4) | ((a & 0xf00) >> 8) | ((d << 4) & 0xf000);
+		keys[3] = ((a >> 12) & 0xf) | ((b >> 8) & 0xf0) | ((c >> 4) & 0xf00) | (d & 0xf000);
+	}
+
+	// Get the expected checksum.
+	// NOTE: Checksum is stored weirdly:
+	// - ID is reversed.
+	// - Checksum is stored wordswapped.
+	// We'll use crc_addr as the checksum ID in the header,
+	// then do a reverse when checking the actual data area.
+	const unsigned int chkID = (crc_addr >> 2) & 3;
+	uint32_t chk_expect = be32_to_cpu(pHdr->checksum[chkID]);
+	chk_expect = (chk_expect << 16) | (chk_expect >> 16);
+	if (pChkExpect) {
+		*pChkExpect = chk_expect;
+	}
+
+	// Calculate the actual checksum.
+	// NOTE: Checksum values should be zeroed out here.
+	pHdr->checksum[0] = 0;
+	pHdr->checksum[1] = 0;
+	pHdr->checksum[2] = 0;
+	pHdr->checksum[3] = 0;
+
+	// Calculate only the specified checksum.
+	uint32_t chk_actual = 0;
+	psrcbuf16 = reinterpret_cast<const uint16_t*>(&decbuf[0x08]);
+	psrcbuf16 += ((chkID ^ 3) * (0x9FF4/2));
+	for (size_t i = 0; i < 0x9FF4; i += 2, psrcbuf16++) {
+		chk_actual += (uint32_t)be16_to_cpu(*psrcbuf16);
+	}
+	return chk_actual;
+}
+
 /** General functions. **/
 
 /**
@@ -220,6 +322,10 @@ uint32_t Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, ChkEndian e
 			return Crc16(static_cast<const uint8_t*>(buf),
 				     siz, (uint16_t)(param & 0xFFFF));
 
+		case CHKALG_CRC32:
+			// TODO: Implement CRC32 once I encounter a file that uses it.
+			break;
+
 		case CHKALG_ADDINVDUAL16:
 			return AddInvDual16(static_cast<const uint16_t*>(buf), siz, endian);
 
@@ -237,10 +343,9 @@ uint32_t Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, ChkEndian e
 				param = 0x46;
 			return DreamcastVMU(static_cast<const uint8_t*>(buf), siz, param);
 
-		case CHKALG_CRC32:
-			// TODO: Implement CRC32 once I encounter a file that uses it.
-			break;
-
+		case CHKALG_POKEMONXD:
+			// NOTE: Expected checksum is discarded.
+			return PokemonXD(static_cast<const uint8_t*>(buf), siz, 0, nullptr);
 		default:
 			break;
 	}
@@ -282,6 +387,11 @@ ChkAlgorithm ChkAlgorithmFromString(const char *algorithm)
 		 !strcmp(algorithm, "dc vmu"))
 	{
 		return CHKALG_DREAMCASTVMU;
+	}
+	else if (!strcmp(algorithm, "pokemonxd") ||
+		 !strcmp(algorithm, "pokémonxd"))
+	{
+		return CHKALG_POKEMONXD;
 	}
 
 	// Unknown algorithm name.
@@ -339,6 +449,8 @@ const char *ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm)
 			return "Sonic Chao Garden";
 		case CHKALG_DREAMCASTVMU:
 			return "Dreamcast VMU";
+		case CHKALG_POKEMONXD:
+			return "Pokémon XD";
 	}
 }
 

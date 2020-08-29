@@ -29,6 +29,7 @@ enum ChkAlgorithm {
 	CHKALG_ADDBYTES32,
 	CHKALG_SONICCHAOGARDEN,
 	CHKALG_DREAMCASTVMU,
+	CHKALG_POKEMONXD,
 
 	CHKALG_MAX
 };
@@ -160,6 +161,21 @@ uint32_t SonicChaoGarden(const uint8_t *buf, uint32_t siz);
 * @return Checksum.
 */
 uint16_t DreamcastVMU(const uint8_t *buf, uint32_t siz, uint32_t crc_addr = -1);
+
+/**
+ * Pokémon XD algorithm.
+ * Reference: https://github.com/TuxSH/PkmGCTools/blob/master/LibPkmGC/src/LibPkmGC/XD/SaveEditing/SaveSlot.cpp
+ *
+ * The data area is "encrypted", so it has to be decrypted before
+ * a checksum can be calculated.
+ *
+ * @param buf		[in] Data buffer.
+ * @param siz		[in] Length of data buffer.
+ * @param crc_addr	[in] CRC address. (Should be 0x10, 0x14, 0x18, 0x1C.)
+ * @param pChkExpect	[out] Expected checksum, decrypted.
+ * @return Actual checksum, decrypted.
+ */
+uint32_t PokemonXD(const uint8_t *buf, uint32_t siz, uint32_t crc_addr, uint32_t *pChkExpect);
 
 /** General functions. **/
 

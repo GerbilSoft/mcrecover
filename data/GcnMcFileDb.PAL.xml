@@ -856,6 +856,79 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Pokémon XD</gameName>
+		<fileInfo>Save File</fileInfo>
+		<gamecode>GXXP</gamecode>
+		<company>01</company>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^POKéMON XD$</gameDesc>
+			<!-- Date format: DD/MM/YY -->
+			<fileDesc>^SAVE FILE (\d{2})/(\d{2})/(\d{2})$</fileDesc>
+		</search>
+		<!-- NOTE: Each save slot has four checksums. -->
+		<checksum>
+			<algorithm>PokemonXD</algorithm>
+			<address>0x6010</address>
+			<range start="0x6000" length="0x28000" />
+		</checksum>
+		<checksum>
+			<algorithm>PokemonXD</algorithm>
+			<address>0x6014</address>
+			<range start="0x6000" length="0x28000" />
+		</checksum>
+		<checksum>
+			<algorithm>PokemonXD</algorithm>
+			<address>0x6018</address>
+			<range start="0x6000" length="0x28000" />
+		</checksum>
+		<checksum>
+			<algorithm>PokemonXD</algorithm>
+			<address>0x601C</address>
+			<range start="0x6000" length="0x28000" />
+		</checksum>
+		<checksum>
+			<algorithm>PokemonXD</algorithm>
+			<address>0x28010</address>
+			<range start="0x2E000" length="0x28000" />
+		</checksum>
+		<checksum>
+			<algorithm>PokemonXD</algorithm>
+			<address>0x28014</address>
+			<range start="0x2E000" length="0x28000" />
+		</checksum>
+		<checksum>
+			<algorithm>PokemonXD</algorithm>
+			<address>0x28018</address>
+			<range start="0x2E000" length="0x28000" />
+		</checksum>
+		<checksum>
+			<algorithm>PokemonXD</algorithm>
+			<address>0x2801C</address>
+			<range start="0x2E000" length="0x28000" />
+		</checksum>
+		<variables>
+			<variable id="F1">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>PokemonXD</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x1C</permission>
+			<length>43</length>
+		</dirEntry>
+	</file>
+	<file>
 		<!-- TODO: File metadata is from GameFAQs. Redo this from a more reliable source. -->
 		<!-- NOTE: USA metadata appears to be the same as EUR. -->
 		<gameName>Resident Evil</gameName>

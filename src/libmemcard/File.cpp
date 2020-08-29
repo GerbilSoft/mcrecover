@@ -328,6 +328,13 @@ void FilePrivate::calculateChecksum(void)
 		uint32_t expected = 0;
 		Checksum::ChaoGardenChecksumData chaoChk_orig;
 
+		// Use Exec() for most algorithms.
+		// Some unusual ones need to be run manually.
+		bool useExec = true;
+
+		const char *const start = (fileData.constData() + checksumDef.start);
+		uint32_t actual = 0;
+
 		switch (checksumDef.algorithm) {
 			case Checksum::CHKALG_CRC16:
 			case Checksum::CHKALG_DREAMCASTVMU:
@@ -390,6 +397,13 @@ void FilePrivate::calculateChecksum(void)
 				break;
 			}
 
+			case Checksum::CHKALG_POKEMONXD:
+				// Pokémon XD has a more complicated checksum.
+				useExec = false;
+				actual = Checksum::PokemonXD(reinterpret_cast<const uint8_t*>(start),
+					checksumDef.length, checksumDef.address, &expected);
+				break;
+
 			case Checksum::CHKALG_NONE:
 			default:
 				// Unsupported algorithm.
@@ -397,10 +411,11 @@ void FilePrivate::calculateChecksum(void)
 				break;
 		}
 
-		// Calculate the checksum.
-		const char *const start = (fileData.constData() + checksumDef.start);
-		uint32_t actual = Checksum::Exec(checksumDef.algorithm,
+		if (useExec) {
+			// Use Checksum::Exec().
+			actual = Checksum::Exec(checksumDef.algorithm,
 				start, checksumDef.length, checksumDef.endian, checksumDef.param);
+		}
 
 		if (checksumDef.algorithm == Checksum::CHKALG_SONICCHAOGARDEN) {
 			// Restore the Chao Garden checksum data.
