@@ -14,5 +14,7 @@ The following changes have been made to the original:
 
 - getarg.h: Added extern "C" guards for C++.
 
-To obtain the original giflib-5.1.4, visit:
+- gif_hash.h: Disabled #include <unistd.h> in MSVC builds.
+
+To obtain the original giflib-5.2.1, visit:
 http://giflib.sourceforge.net/
