@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * MemCardItemDelegate.cpp: MemCard item delegate for QTreeView.           *
  *                                                                         *
- * Copyright (c) 2013-2018 by David Korth.                                 *
+ * Copyright (c) 2013-2020 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -164,9 +164,11 @@ MemCardItemDelegate::MemCardItemDelegate(QObject *parent)
 	: super(parent)
 	, d_ptr(new MemCardItemDelegatePrivate(this))
 {
+#ifdef Q_OS_WIN
 	// Connect the "themeChanged" signal.
 	connect(qApp, SIGNAL(themeChanged()),
 		this, SLOT(themeChanged_slot()));
+#endif /* Q_OS_WIN */
 }
 
 MemCardItemDelegate::~MemCardItemDelegate()
@@ -186,21 +188,19 @@ void MemCardItemDelegate::paint(QPainter *painter,
 		return;
 	}
 
+	// TODO: Combine code with sizeHint().
+
 	// GCN file comments: "GameDesc\0FileDesc"
 	// If no '\0' is present, assume this is regular text
 	// and use the default paint().
-	QString fileComments = index.data().toString();
-	QStringList desc = fileComments.split(QChar(L'\0'));
-	if (desc.size() != 2) {
+	QString s_fileComments = index.data().toString();
+	QStringList sl = s_fileComments.split(QChar(L'\0'));
+	if (sl.size() != 2) {
 		// No '\0' is present.
 		// Use the default paint().
 		super::paint(painter, option, index);
 		return;
 	}
-
-	// TODO: Combine code with sizeHint().
-	const QString &gameDesc = desc[0];
-	const QString &fileDesc = desc[1];
 
 	// Alignment flags.
 	static const int HALIGN_FLAGS =
@@ -243,29 +243,22 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	// Total text height.
 	int textHeight = 0;
 
-	// Game description.
-	// NOTE: Width is decremented in order to prevent
-	// weird wordwrapping issues.
-	const QFontMetrics fmGameDesc(fontGameDesc);
-	QString gameDescElided = fmGameDesc.elidedText(
-		gameDesc, Qt::ElideRight, textRect.width()-1);
-	QRect rectGameDesc = textRect;
-	rectGameDesc.setHeight(fmGameDesc.height());
-	textHeight += fmGameDesc.height();
-	rectGameDesc = fmGameDesc.boundingRect(
-		rectGameDesc, (textAlignment & HALIGN_FLAGS), gameDescElided);
+	// Text boundaries.
+	QVector<QRect> v_rect;
+	v_rect.resize(sl.size());
 
-	// File description.
-	painter->setFont(fontFileDesc);
-	const QFontMetrics fmFileDesc(fontFileDesc);
-	QString fileDescElided = fmFileDesc.elidedText(
-		fileDesc, Qt::ElideRight, textRect.width()-1);
-	QRect rectFileDesc = textRect;
-	rectFileDesc.setHeight(fmFileDesc.height());
-	rectFileDesc.setY(rectGameDesc.y() + textHeight);
-	textHeight += fmFileDesc.height();
-	rectFileDesc = fmFileDesc.boundingRect(
-		rectFileDesc, (textAlignment & HALIGN_FLAGS), fileDescElided);
+	for (int i = 0; i < sl.size(); i++) {
+		// Name uses the normal font.
+		// Description lines use a slightly smaller font.
+		QString &line = sl[i];
+		QRect &rect = v_rect[i];
+
+		const QFontMetrics fm(i == 0 ? fontGameDesc : fontFileDesc);
+		line = fm.elidedText(line, Qt::ElideRight, textRect.width()-1);
+		QRect tmpRect(textRect.x(), textRect.y() + textHeight, textRect.width(), fm.height());
+		textHeight += fm.height();
+		rect = fm.boundingRect(tmpRect, (textAlignment & HALIGN_FLAGS), line);
+	}
 
 	// Adjust for vertical alignment.
 	int diff = 0;
@@ -288,8 +281,11 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	}
 
 	if (diff != 0) {
-		rectGameDesc.translate(0, diff);
-		rectFileDesc.translate(0, diff);
+		std::for_each(v_rect.begin(), v_rect.end(),
+			[diff](QRect &rect) {
+				rect.translate(0, diff);
+			}
+		);
 	}
 
 	painter->save();
@@ -331,10 +327,17 @@ void MemCardItemDelegate::paint(QPainter *painter,
 		painter->setPen(bgOption.palette.text().color());
 	}
 
+	// Draw the text lines.
 	painter->setFont(fontGameDesc);
-	painter->drawText(rectGameDesc, gameDescElided);
-	painter->setFont(fontFileDesc);
-	painter->drawText(rectFileDesc, fileDescElided);
+	int i = 0;
+	auto iter_rect = v_rect.cbegin();
+	const auto iter_sl_cend = sl.cend();
+	for (auto iter_sl = sl.cbegin(); iter_sl != iter_sl_cend; ++iter_sl, ++iter_rect, ++i) {
+		if (i == 1) {
+			painter->setFont(fontFileDesc);
+		}
+		painter->drawText(*iter_rect, *iter_sl);
+	}
 
 	painter->restore();
 }
@@ -354,12 +357,14 @@ QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 		return sz;
 	}
 
+	// TODO: Combine code with paint().
+
 	// GCN file comments: "GameDesc\0FileDesc"
 	// If no '\0' is present, assume this is regular text
-	// and use the default sizeHint().
-	QString fileComments = index.data().toString();
-	QStringList desc = fileComments.split(QChar(L'\0'));
-	if (desc.size() != 2) {
+	// and use the default paint().
+	QString s_fileComments = index.data().toString();
+	QStringList sl = s_fileComments.split(QChar(L'\0'));
+	if (sl.size() != 2) {
 		// No '\0' is present.
 		// TODO: Combine with !index.isValid() case.
 		QSize sz = super::sizeHint(option, index);
@@ -371,27 +376,25 @@ QSize MemCardItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 		return sz;
 	}
 
-	// TODO: Combine code with paint().
-	const QString &gameDesc = desc[0];
-	const QString &fileDesc = desc[1];
-
 	// Get the fonts.
 	Q_D(const MemCardItemDelegate);
-	QStyleOptionViewItem bgOption = option;
-	QFont fontGameDesc = d->fontGameDesc(bgOption.widget);
-	QFont fontFileDesc = d->fontFileDesc(bgOption.widget);
+	QFont fontGameDesc = d->fontGameDesc(option.widget);
+	QFont fontFileDesc = d->fontFileDesc(option.widget);
 
-	// Game description.
-	const QFontMetrics fmGameDesc(fontGameDesc);
-	QSize sz = fmGameDesc.size(0, gameDesc);
+	QSize sz;
+	for (int i = 0; i < sl.size(); i++) {
+		// Game description uses the normal font.
+		// File description lines use a slightly smaller font.
+		const QString &line = sl[i];
 
-	// File description.
-	const QFontMetrics fmFileDesc(fontFileDesc);
-	QSize fileSz = fmFileDesc.size(0, fileDesc);
-	sz.setHeight(sz.height() + fileSz.height());
+		const QFontMetrics fm(i == 0 ? fontGameDesc : fontFileDesc);
+		QSize szLine = fm.size(0, line);
+		sz.setHeight(sz.height() + szLine.height());
 
-	if (fileSz.width() > sz.width())
-		sz.setWidth(fileSz.width());
+		if (szLine.width() > sz.width()) {
+			sz.setWidth(szLine.width());
+		}
+	}
 
 	// Increase width by 1 to prevent accidental eliding.
 	// NOTE: We can't just remove the "-1" from paint(),
