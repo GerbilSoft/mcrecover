@@ -48,6 +48,10 @@ See [doc/gpl-2.0.txt](doc/gpl-2.0.txt) for more information.
 
 * [MORE user-visible changes?]
 
+* Removed gcbanner. This functionality is handled more in-depth by my
+  [ROM Properties Page Shell Extension](https://github.com/GerbilSoft/rom-properties]),
+  which includes a command line interface with more functionality.
+
 ## v0.2.1
 (released 2015/01/04)
 
