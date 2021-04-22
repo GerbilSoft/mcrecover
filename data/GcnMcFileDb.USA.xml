@@ -1859,25 +1859,6 @@
 		</dirEntry>
 	</file>
 	<file>
-		<gameName>Prince of Persia</gameName>
-		<fileInfo>Save File</fileInfo>
-		<id6>GPTE41</id6>
-		<search>
-			<address>0x0000</address>
-			<gameDesc>^Prince of Persia$</gameDesc>
-			<fileDesc>^Save file$</fileDesc>
-		</search>
-		<dirEntry>
-			<filename>Prince of Persia</filename>
-			<bannerFormat>0x01</bannerFormat>
-			<iconAddress>0x0040</iconAddress>
-			<iconFormat>0x5555</iconFormat>
-			<iconSpeed>0xFFFF</iconSpeed>
-			<permission>0x04</permission>
-			<length>15</length>
-		</dirEntry>
-	</file>
-	<file>
 		<gameName>Puyo Pop Fever</gameName>
 		<fileInfo>System File</fileInfo>
 		<id6>GPUE8P</id6>
