@@ -445,6 +445,7 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifier
 		// Set the QDateTime to the current time for now.
 		const QDateTime currentDateTime(QDateTime::currentDateTime());
 		*qDateTime = currentDateTime;
+		qDateTime->setTimeSpec(Qt::UTC);
 
 		// Adjust the date.
 		QDate date = qDateTime->date();
