@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * SAEditor.cpp: Sonic Adventure - save file editor.                       *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2021 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -118,40 +118,7 @@ SAEditorPrivate::SAEditorPrivate(SAEditor* q)
 	, saEventFlagsModel(nullptr)
 	, saNPCFlagsModel(nullptr)
 	, sadxMissionFlagsModel(nullptr)
-{
-	// Make sure sa_defs.h is correct.
-	static_assert(SA_SCORES_LEN == 128, "SA_SCORES_LEN is incorrect");
-	static_assert(sizeof(sa_scores) == SA_SCORES_LEN, "sa_scores has the wrong size");
-	static_assert(SA_TIMES_LEN == 84, "SA_TIMES_LEN is incorrect");
-	static_assert(sizeof(sa_times) == SA_TIMES_LEN, "sa_times has the wrong size");
-	static_assert(SA_WEIGHTS_LEN == 24, "SA_WEIGHTS_LEN is incorrect");
-	static_assert(sizeof(sa_weights) == SA_WEIGHTS_LEN, "sa_weights has the wrong size");
-	static_assert(SA_RINGS_LEN == 64, "SA_RINGS_LEN is incorrect");
-	static_assert(sizeof(sa_rings) == SA_RINGS_LEN, "sa_rings has the wrong size");
-	static_assert(SA_MINI_GAME_SCORES_LEN == 108, "SA_MINI_GAME_SCORES_LEN is incorrect");
-	static_assert(sizeof(sa_mini_game_scores) == SA_MINI_GAME_SCORES_LEN, "sa_mini_game_scores has the wrong size");
-	static_assert(SA_TWINKLE_CIRCUIT_TIMES_LEN == 90, "SA_TWINKLE_CIRCUIT_TIMES_LEN is incorrect");
-	static_assert(sizeof(sa_twinkle_circuit_times) == SA_TWINKLE_CIRCUIT_TIMES_LEN, "sa_twinkle_circuit_times has the wrong size");
-	static_assert(SA_BOSS_ATTACK_TIMES_LEN == 54, "SA_BOSS_ATTACK_TIMES_LEN is incorrect");
-	static_assert(sizeof(sa_boss_attack_times) == SA_BOSS_ATTACK_TIMES_LEN, "sa_boss_attack_times is the wrong size");
-	static_assert(SA_EVENT_FLAGS_LEN == 64, "SA_EVENT_FLAGS_LEN is incorrect");
-	static_assert(sizeof(sa_event_flags) == SA_EVENT_FLAGS_LEN, "sa_event_flags has the wrong size");
-	static_assert(SA_NPC_FLAGS_LEN == 64, "SA_NPC_FLAGS_LEN is incorrect");
-	static_assert(sizeof(sa_npc_flags) == SA_NPC_FLAGS_LEN, "sa_npc_flags has the wrong size");
-	static_assert(SA_ADVENTURE_MODE_LEN == 96, "SA_ADVENTURE_MODE_LEN is incorrect");
-	static_assert(sizeof(sa_adventure_mode) == SA_ADVENTURE_MODE_LEN, "sa_adventure_mode has the wrong size");
-	static_assert(SA_LEVEL_CLEAR_COUNT_LEN == 344, "SA_LEVEL_CLEAR_COUNT_LEN is incorrect");
-	static_assert(sizeof(sa_level_clear_count) == SA_LEVEL_CLEAR_COUNT_LEN, "sa_level_clear_count has the wrong size");
-
-	static_assert(SA_SAVE_SLOT_LEN == 1184, "SA_SAVE_SLOT_LEN is incorrect");
-	static_assert(sizeof(sa_save_slot) == SA_SAVE_SLOT_LEN, "sa_save_file has the wrong size");
-
-	static_assert(SADX_EXTRA_MINI_GAME_SCORES_METAL_LEN == 24, "SADX_EXTRA_MINI_GAME_SCORES_LEN is incorrect");
-	static_assert(sizeof(sadx_extra_mini_game_scores_metal) == SADX_EXTRA_MINI_GAME_SCORES_METAL_LEN, "sadx_extra_mini_game_scores_metal is the wrong size");
-
-	static_assert(SADX_EXTRA_SAVE_SLOT_LEN == 208, "SADX_EXTRA_SAVE_SLOT_LEN is incorrect");
-	static_assert(sizeof(sadx_extra_save_slot) == SADX_EXTRA_SAVE_SLOT_LEN, "sadx_extra_save_slot has the wrong size");
-}
+{ }
 
 SAEditorPrivate::~SAEditorPrivate()
 {
@@ -181,9 +148,9 @@ int SAEditorPrivate::load(File *file)
 
 		// Three, count 'em, *three* save slots!
 		const char *src = (data.data() + SA_SAVE_ADDRESS_DC_0);
-		for (int i = 0; i < 3; i++, src += SA_SAVE_SLOT_LEN) {
-			sa_save_slot *sa_save = (sa_save_slot*)malloc(sizeof(*sa_save));
-			memcpy(sa_save, src, SA_SAVE_SLOT_LEN);
+		for (int i = 0; i < 3; i++, src += sizeof(sa_save_slot)) {
+			sa_save_slot *const sa_save = new sa_save_slot;
+			memcpy(sa_save, src, sizeof(*sa_save));
 			data_main.append(sa_save);
 			data_sadx.append(nullptr);	// DC version - no SADX extras.
 #if SYS_BYTEORDER == SYS_BIG_ENDIAN
@@ -199,8 +166,8 @@ int SAEditorPrivate::load(File *file)
 		// GameCube verison.
 
 		// Only one save slot.
-		sa_save_slot *sa_save = (sa_save_slot*)malloc(sizeof(*sa_save));
-		memcpy(sa_save, (data.data() + SA_SAVE_ADDRESS_GCN), SA_SAVE_SLOT_LEN);
+		sa_save_slot *const sa_save = new sa_save_slot;
+		memcpy(sa_save, (data.data() + SA_SAVE_ADDRESS_GCN), sizeof(*sa_save));
 		data_main.append(sa_save);
 
 #if SYS_BYTEORDER == SYS_LIL_ENDIAN
@@ -210,10 +177,10 @@ int SAEditorPrivate::load(File *file)
 #endif /* SYS_BYTEORDER == SYS_LIL_ENDIAN */
 
 		// Check for SADX extras.
-		if (data.size() >= (SA_SAVE_ADDRESS_GCN + SA_SAVE_SLOT_LEN + SADX_EXTRA_SAVE_SLOT_LEN)) {
+		if (data.size() >= (int)(SA_SAVE_ADDRESS_GCN + sizeof(*sa_save) + sizeof(sadx_extra_save_slot))) {
 			// Found SADX extras.
-			sadx_extra_save_slot *sadx_extra_save = (sadx_extra_save_slot*)malloc(sizeof(*sadx_extra_save));
-			memcpy(sadx_extra_save, (data.data() + SA_SAVE_ADDRESS_GCN + SA_SAVE_SLOT_LEN), SADX_EXTRA_SAVE_SLOT_LEN);
+			sadx_extra_save_slot *const sadx_extra_save = new sadx_extra_save_slot;
+			memcpy(sadx_extra_save, (data.data() + SA_SAVE_ADDRESS_GCN + sizeof(*sa_save)), sizeof(*sadx_extra_save));
 			data_sadx.append(sadx_extra_save);
 #if SYS_BYTEORDER == SYS_LIL_ENDIAN
 			// Byteswap the data.
@@ -255,16 +222,16 @@ end:
 void SAEditorPrivate::clear(void)
 {
 	// Delete all loaded sa_save_slot structs.
-	// NOTE: sa_save_slot is a C struct, so use free().
+	// NOTE: sa_save_slot is allocated using new, so use delete.
 	foreach (sa_save_slot *sa_save, data_main) {
-		free(sa_save);
+		delete sa_save;
 	}
 	data_main.clear();
 
 	// Delete loaded SADX extra save structs.
-	// NOTE: sadx_extra_save_slot is a C struct, so use free().
+	// NOTE: sadx_extra_save_slot is allocated using new, so use delete.
 	foreach (sadx_extra_save_slot *sadx_extra_save, data_sadx) {
-		free(sadx_extra_save);
+		delete sadx_extra_save;
 	}
 	data_sadx.clear();
 }
@@ -633,12 +600,12 @@ int SAEditor::save(void)
 
 		// Three, count 'em, *three* save slots!
 		char *dest = (data.data() + SA_SAVE_ADDRESS_DC_0);
-		for (int i = 0; i < 3; i++, dest += SA_SAVE_SLOT_LEN) {
-			sa_save_slot *sa_save = (sa_save_slot*)dest;
+		for (int i = 0; i < 3; i++, dest += sizeof(sa_save_slot)) {
+			sa_save_slot *const sa_save = reinterpret_cast<sa_save_slot*>(dest);
 			assert(d->data_main.size() > i);
 			if (d->data_main.size() > i) {
 				// Save the slot.
-				memcpy(sa_save, d->data_main.at(i), SA_SAVE_SLOT_LEN);
+				memcpy(sa_save, d->data_main.at(i), sizeof(*sa_save));
 #if SYS_BYTEORDER == SYS_BIG_ENDIAN
 				// Byteswap the data.
 				// Dreamcast's SH-4 is little-endian.
@@ -647,7 +614,7 @@ int SAEditor::save(void)
 			} else {
 				// No save slot available...
 				// Zero out the data.
-				memset(sa_save, 0, SA_SAVE_SLOT_LEN);
+				memset(sa_save, 0, sizeof(*sa_save));
 			}
 
 			// Update the checksums.
@@ -656,8 +623,8 @@ int SAEditor::save(void)
 			// - Game checksum (CRC-16) [one per slot]
 			// - VMS checksum (custom)
 			uint8_t *src = (uint8_t*)data.data() + SA_SAVE_ADDRESS_DC_0;
-			for (int i = 0; i < 3; i++, src += SA_SAVE_SLOT_LEN) {
-				uint16_t crc16 = Checksum::Crc16(src + 4, SA_SAVE_SLOT_LEN - 4);
+			for (int i = 0; i < 3; i++, src += sizeof(*sa_save)) {
+				uint16_t crc16 = Checksum::Crc16(src + 4, sizeof(*sa_save) - 4);
 				crc16 = cpu_to_le16(crc16);
 				memcpy(src + 2, &crc16, sizeof(crc16));
 			}
@@ -674,10 +641,11 @@ int SAEditor::save(void)
 		// GameCube verison.
 
 		// Only one save slot.
-		sa_save_slot *sa_save = (sa_save_slot*)(data.data() + SA_SAVE_ADDRESS_GCN);
+		sa_save_slot *const sa_save = reinterpret_cast<sa_save_slot*>
+			(data.data() + SA_SAVE_ADDRESS_GCN);
 		assert(d->data_main.size() > 0);
 		if (d->data_main.size() > 0) {
-			memcpy(sa_save, d->data_main.at(0), SA_SAVE_SLOT_LEN);
+			memcpy(sa_save, d->data_main.at(0), sizeof(*sa_save));
 #if SYS_BYTEORDER == SYS_LIL_ENDIAN
 			// Byteswap the data.
 			// GameCube's PowerPC 750 is big-endian.
@@ -686,14 +654,15 @@ int SAEditor::save(void)
 		} else {
 			// No save slot available...
 			// Zero out the data.
-			memset(sa_save, 0, SA_SAVE_SLOT_LEN);
+			memset(sa_save, 0, sizeof(*sa_save));
 		}
 
 		// Check for SADX extras.
-		sadx_extra_save_slot *sadx_extra_save = (sadx_extra_save_slot*)(data.data() + SA_SAVE_ADDRESS_GCN + SA_SAVE_SLOT_LEN);
+		sadx_extra_save_slot *const sadx_extra_save = reinterpret_cast<sadx_extra_save_slot*>
+			(data.data() + SA_SAVE_ADDRESS_GCN + sizeof(*sa_save));
 		if (d->data_sadx.size() > 0) {
 			// Found SADX extras.
-			memcpy(sadx_extra_save, d->data_sadx.at(0), SADX_EXTRA_SAVE_SLOT_LEN);
+			memcpy(sadx_extra_save, d->data_sadx.at(0), sizeof(*sadx_extra_save));
 #if SYS_BYTEORDER == SYS_LIL_ENDIAN
 			// Byteswap the data.
 			// GameCube's PowerPC 750 is big-endian.
@@ -702,12 +671,12 @@ int SAEditor::save(void)
 		} else {
 			// No SADX extras.
 			// Zero out the data.
-			memset(sadx_extra_save, 0, SADX_EXTRA_SAVE_SLOT_LEN);
+			memset(sadx_extra_save, 0, sizeof(*sadx_extra_save));
 		}
 
 		// Update the checksum.
 		uint16_t crc16 = Checksum::Crc16((const uint8_t*)data.data() + SA_SAVE_ADDRESS_GCN + 4,
-			SA_SAVE_SLOT_LEN + SADX_EXTRA_SAVE_SLOT_LEN - 4);
+			sizeof(*sa_save) + sizeof(*sadx_extra_save) - 4);
 		crc16 = cpu_to_be16(crc16);
 		memcpy(data.data() + 0x1442, &crc16, sizeof(crc16));
 

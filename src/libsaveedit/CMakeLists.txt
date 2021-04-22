@@ -51,6 +51,7 @@ SET(libsaveedit_SRCS
 # Headers.
 SET(libsaveedit_H
 	EditorWidgetFactory.hpp
+	editcommon.h
 	models/bit_flag.h
 	SonicAdventure/SAData.h
 	)

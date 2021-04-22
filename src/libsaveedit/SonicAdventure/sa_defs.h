@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * sa_defs.h: Sonic Adventure - structure definitions.                     *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2021 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -15,21 +15,13 @@
  * - http://info.sonicretro.org/SCHG:Sonic_Adventure/Main_Save_File
  */
 
-// All structs are packed little-endian.
+// All structs are in little-endian.
 
 #ifndef __LIBSAVEEDIT_SONICADVENTURE_SA_DEFS_H__
 #define __LIBSAVEEDIT_SONICADVENTURE_SA_DEFS_H__
 
 #include <stdint.h>
-
-// Packed struct attribute.
-#if !defined(PACKED)
-#if defined(__GNUC__)
-#define PACKED __attribute__ ((packed))
-#else
-#define PACKED
-#endif /* defined(__GNUC__) */
-#endif /* !defined(PACKED) */
+#include "editcommon.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,9 +41,7 @@ extern "C" {
 // TODO: Byteswapping for unions with structs?
 
 // 3-byte timecode.
-#pragma pack(1)
-typedef struct PACKED _sa_time_code
-{
+typedef struct _sa_time_code {
 	union {
 		uint8_t data[3];
 		struct {
@@ -61,12 +51,10 @@ typedef struct PACKED _sa_time_code
 		};
 	};
 } sa_time_code;
-#pragma pack()
+ASSERT_STRUCT(sa_time_code, 3);
 
 // Score data.
-#define SA_SCORES_LEN 128
-#pragma pack(1)
-typedef union PACKED _sa_scores {
+typedef union _sa_scores {
 	uint32_t all[32];
 	struct {
 		uint32_t sonic[10];
@@ -77,12 +65,10 @@ typedef union PACKED _sa_scores {
 		uint32_t big[4];
 	};
 } sa_scores;
-#pragma pack()
+ASSERT_STRUCT(sa_scores, 128);
 
 // Time data.
-#define SA_TIMES_LEN 84
-#pragma pack(1)
-typedef union PACKED _sa_times {
+typedef union _sa_times {
 	// NOTE: Big does not have times.
 	sa_time_code all[28];
 	struct {
@@ -93,24 +79,20 @@ typedef union PACKED _sa_times {
 		sa_time_code gamma[5];
 	} times;
 } sa_times;
-#pragma pack()
+ASSERT_STRUCT(sa_times, 84);
 
 // Best weights. (Big only)
 // Measured in 10s of grams.
 // Three weights are stored per level.
-#define SA_WEIGHTS_LEN 24
-#pragma pack(1)
-typedef union PACKED _sa_weights {
+typedef union _sa_weights {
 	// NOTE: Big does not have times.
 	uint16_t all[12];
 	uint16_t levels[4][3];
 } sa_weights;
-#pragma pack()
+ASSERT_STRUCT(sa_weights, 24);
 
 // Best rings.
-#define SA_RINGS_LEN 64
-#pragma pack(1)
-typedef union PACKED _sa_rings {
+typedef union _sa_rings {
 	uint16_t all[32];
 	struct {
 		uint16_t sonic[10];
@@ -121,15 +103,13 @@ typedef union PACKED _sa_rings {
 		uint16_t big[4];
 	};
 } sa_rings;
-#pragma pack()
+ASSERT_STRUCT(sa_rings, 64);
 
 /**
  * [0x144] Mini-Game: Best scores.
  * Three scores are stored per mini-game.
  */
-#define SA_MINI_GAME_SCORES_LEN 108
-#pragma pack(1)
-typedef union PACKED _sa_mini_game_scores {
+typedef union _sa_mini_game_scores {
 	uint32_t all[27];	// all
 	uint32_t game[9][3];	// per game
 	struct {
@@ -148,7 +128,7 @@ typedef union PACKED _sa_mini_game_scores {
 		uint32_t hedgehog_hammer[3];
 	};
 } sa_mini_game_scores;
-#pragma pack()
+ASSERT_STRUCT(sa_mini_game_scores, 108);
 
 /**
  * [0x1B0] Mini-Game: Best times. (Twinkle Circuit)
@@ -159,9 +139,7 @@ typedef union PACKED _sa_mini_game_scores {
  * - Lap 1 for Best Time 1
  * - Lap 2 for Best Time 1
  */
-#define SA_TWINKLE_CIRCUIT_TIMES_LEN 90
-#pragma pack(1)
-typedef union PACKED _sa_twinkle_circuit_times {
+typedef union _sa_twinkle_circuit_times {
 	sa_time_code all[30];	// all
 	sa_time_code chr[6][5];	// per character
 	struct {
@@ -173,15 +151,13 @@ typedef union PACKED _sa_twinkle_circuit_times {
 		sa_time_code big[5];
 	};
 } sa_twinkle_circuit_times;
-#pragma pack()
+ASSERT_STRUCT(sa_twinkle_circuit_times, 90);
 
 /**
  * [0x20A] Mini-Game: Best times. (Boss Attack)
  * Three times are stored per character.
  */
-#define SA_BOSS_ATTACK_TIMES_LEN 54
-#pragma pack(1)
-typedef union PACKED _sa_boss_attack_times {
+typedef union _sa_boss_attack_times {
 	sa_time_code all[18];	// all
 	sa_time_code chr[6][3];	// per character
 	struct {
@@ -193,7 +169,7 @@ typedef union PACKED _sa_boss_attack_times {
 		sa_time_code big[3];
 	};
 } sa_boss_attack_times;
-#pragma pack()
+ASSERT_STRUCT(sa_boss_attack_times, 54);
 
 // [0x251] Options: Choose the feature you want to edit.
 #define SA_OPTIONS_MSG_VOICE_AND_TEXT	0x00
@@ -238,10 +214,7 @@ typedef enum {
 } sa_last_char;
 
 // Event flags.
-#define SA_EVENT_FLAGS_LEN 64
-#define SA_EVENT_FLAGS_SECTIONS 8
-#pragma pack(1)
-typedef struct PACKED _sa_event_flags {
+typedef struct _sa_event_flags {
 	union {
 		uint8_t all[64];	// all
 		uint8_t chr[8][8];	// per character
@@ -257,24 +230,20 @@ typedef struct PACKED _sa_event_flags {
 		};
 	};
 } sa_event_flags;
-#pragma pack()
+ASSERT_STRUCT(sa_event_flags, 8*8);
 
 // NPC flags.
-#define SA_NPC_FLAGS_LEN 64
-#pragma pack(1)
-typedef struct PACKED _sa_npc_flags {
+typedef struct _sa_npc_flags {
 	union {
 		uint8_t all[64];	// all
 		// TODO: No one knows what any of
 		// the NPC flags are...
 	};
 } sa_npc_flags;
-#pragma pack()
+ASSERT_STRUCT(sa_npc_flags, 64);
 
 // Adventure Mode data.
-#define SA_ADVENTURE_MODE_LEN 96
-#pragma pack(1)
-typedef struct PACKED _sa_adventure_mode {
+typedef struct _sa_adventure_mode {
 	// One set per character.
 	// NOTE: Using int16_t for the unknown values,
 	// since that matches MainMemory's SASave.
@@ -288,12 +257,10 @@ typedef struct PACKED _sa_adventure_mode {
 		int16_t unknown3;
 	} chr[8];
 } sa_adventure_mode;
-#pragma pack()
+ASSERT_STRUCT(sa_adventure_mode, 96);
 
 // Level clear count.
-#define SA_LEVEL_CLEAR_COUNT_LEN 344
-#pragma pack(1)
-typedef union PACKED _sa_level_clear_count {
+typedef union _sa_level_clear_count {
 	// All levels are available for all characters.
 	uint8_t all[8][43];
 	struct {
@@ -307,7 +274,7 @@ typedef union PACKED _sa_level_clear_count {
 		uint8_t big[43];
 	};
 } sa_level_clear_count;
-#pragma pack()
+ASSERT_STRUCT(sa_level_clear_count, 8*43);
 
 /**
  * Is the specified emblem set?
@@ -321,10 +288,7 @@ typedef union PACKED _sa_level_clear_count {
 // Save slot. (SA1/SADX common data)
 // GCN files have a single slot.
 // Dreamcast files have three slots.
-#define SA_SAVE_SLOT_LEN 1184
-#pragma pack(1)
-typedef struct PACKED _sa_save_slot
-{
+typedef struct _sa_save_slot {
 	uint32_t crc;		// CRC (only low 16 bits are used)
 	uint32_t playTime;	// Play time (1/60ths of a second)
 
@@ -374,7 +338,7 @@ typedef struct PACKED _sa_save_slot
 	// [0x348] Level clear count.
 	sa_level_clear_count clear_count;
 } sa_save_slot;
-#pragma pack()
+ASSERT_STRUCT(sa_save_slot, 1184);
 
 /** SADX-specific data **/
 
@@ -389,9 +353,7 @@ typedef struct PACKED _sa_save_slot
  * Mini-Game: Best scores. (Metal Sonic)
  * Three scores are stored per mini-game.
  */
-#define SADX_EXTRA_MINI_GAME_SCORES_METAL_LEN 24
-#pragma pack(1)
-typedef union PACKED _sadx_extra_mini_game_scores_metal {
+typedef union _sadx_extra_mini_game_scores_metal {
 	uint32_t all[6];	// all
 	uint32_t game[2][3];	// per game
 	struct {
@@ -399,26 +361,23 @@ typedef union PACKED _sadx_extra_mini_game_scores_metal {
 		uint32_t sand_hill[3];
 	};
 } sadx_extra_mini_game_scores_metal;
-#pragma pack()
+ASSERT_STRUCT(sadx_extra_mini_game_scores_metal, 24);
 
 // Save slot. (SADX-specific data)
-#define SADX_EXTRA_SAVE_SLOT_LEN 208
-#pragma pack(1)
-typedef struct PACKED _sadx_extra_save_slot
-{
+typedef struct _sadx_extra_save_slot {
 	// NOTE: Offsets are relative to the main save file.
 
-	// [0x4A0] Mission data.
+	// [0x4A0] Mission data
 	uint8_t missions[60];
 
-	uint32_t rings_black_market;	// [0x4DC] Black Market rings.
+	uint32_t rings_black_market;	// [0x4DC] Black Market rings
 
 	uint32_t scores_metal[10];	// [0x4E0] Scores (Metal Sonic)
 	sa_time_code times_metal[10];	// [0x508] Best Times (Metal Sonic)
 	uint16_t rings_metal[10];	// [0x526] Most Rings (Metal Sonic)
 	uint16_t reserved1;		// [0x43A] unknown
 
-	// TODO: Mini-games.
+	// Mini-games
 	sadx_extra_mini_game_scores_metal mini_game_scores_metal;	// 0x53C
 	sa_time_code twinkle_circuit_metal[5];				// 0x554
 	sa_time_code boss_attack_metal[3];				// 0x563
@@ -426,7 +385,7 @@ typedef struct PACKED _sadx_extra_save_slot
 	// [0x56C] Metal Sonic emblems. (bitfield)
 	uint32_t emblems_metal;
 } sadx_extra_save_slot;
-#pragma pack()
+ASSERT_STRUCT(sadx_extra_save_slot, 208);
 
 #ifdef __cplusplus
 }
