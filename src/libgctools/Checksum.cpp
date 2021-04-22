@@ -71,7 +71,7 @@ uint32_t AddInvDual16(const uint16_t *buf, uint32_t siz, ChkEndian endian)
 
 	// NOTE: Integer overflow/underflow is expected here.
 	uint16_t chk1 = 0;
-	uint16_t chk2 = -siz;
+	uint16_t chk2 = (uint16_t)(-(int)siz);
 
 	if (endian != CHKENDIAN_LITTLE) {
 		// Big-endian system. (PowerPC, etc.)
