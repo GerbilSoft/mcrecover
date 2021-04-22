@@ -30,7 +30,7 @@ CardPrivate::CardPrivate(Card *q, uint32_t blockSize,
 			 int minBlocks, int maxBlocks,
 			 int dat_count, int bat_count)
 	: q_ptr(q)
-	, errors(0)
+	, errors(QFlags<Card::Error>())
 	, file(nullptr)
 	, filesize(0)
 	, readOnly(true)
@@ -752,7 +752,7 @@ QFlags<Card::Error> Card::errors(void) const
 {
 	Q_D(const Card);
 	if (!isOpen())
-		return 0;
+		return QFlags<Card::Error>();
 	return d->errors;
 }
 
