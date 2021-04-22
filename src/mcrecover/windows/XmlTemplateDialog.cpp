@@ -153,11 +153,7 @@ void XmlTemplateDialogPrivate::generateXmlTemplate(void)
 	xml.writeStartElement(QLatin1String("file"));
 	xml.writeTextElement(QLatin1String("gameName"), file->gameDesc());
 	xml.writeTextElement(QLatin1String("fileInfo"), QLatin1String("Save File"));
-	// TODO: Allow combined ID6 tag?
-	// TODO: Make sure gameID is 6 characters.
-	QString gameID = file->gameID();
-	xml.writeTextElement(QLatin1String("gamecode"), gameID.left(4));
-	xml.writeTextElement(QLatin1String("company"), gameID.mid(4));
+	xml.writeTextElement(QLatin1String("id6"), file->gameID());
 
 	// <search> block.
 	xml.writeStartElement(QLatin1String("search"));
