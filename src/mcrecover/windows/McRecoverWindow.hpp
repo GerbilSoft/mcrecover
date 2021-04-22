@@ -22,8 +22,7 @@ class McRecoverWindowPrivate;
 class McRecoverWindow : public QMainWindow
 {
 	Q_OBJECT
-	typedef QMainWindow super;
-	
+
 	public:
 		explicit McRecoverWindow(QWidget *parent = 0);
 		virtual ~McRecoverWindow();
@@ -32,15 +31,26 @@ class McRecoverWindow : public QMainWindow
 		McRecoverWindowPrivate *const d_ptr;
 		Q_DECLARE_PRIVATE(McRecoverWindow)
 	private:
+		typedef QMainWindow super;
 		Q_DISABLE_COPY(McRecoverWindow)
 
 	public:
 		/**
+		 * File type.
+		 */
+		enum class FileType {
+			Unknown = -1,
+			GCN = 0,	// GameCube memory card
+			GCI = 1,	// GameCube save file
+			VMS = 2,	// Dreamcast memory card
+		};
+
+		/**
 		 * Open a GameCube Memory Card image.
 		 * @param filename Filename.
-		 * @param type Type hint from the Open dialog. (0 == GCN, 1 == VMS, other == unknown)
+		 * @param type Type hint from the Open dialog.
 		 */
-		void openCard(const QString &filename, int type = -1);
+		void openCard(const QString &filename, FileType type = FileType::Unknown);
 
 		/**
 		 * Close the currently-opened GameCube Memory Card image.

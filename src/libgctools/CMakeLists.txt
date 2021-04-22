@@ -30,6 +30,12 @@ SET(libgctools_H
 	GcImageWriter_p.hpp
 	GcImageLoader.hpp
 	DcImageLoader.hpp
+
+	util/array_size.h
+	util/bitstuff.h
+	util/byteorder.h
+	util/byteswap.h
+	util/git.h
 	)
 
 # PNG-specific sources.

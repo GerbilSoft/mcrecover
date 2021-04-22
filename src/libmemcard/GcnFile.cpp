@@ -48,23 +48,27 @@ class GcnFilePrivate : public FilePrivate
 		 * Initialize the GcnFile private class.
 		 * This constructor is for valid files.
 		 * @param q GcnFile.
-		 * @param card GcnCard.
+		 * @param card GcnCard (or GciCard)
 		 * @param direntry Directory Entry pointer.
 		 * @param mc_bat Block table.
 		 */
-		GcnFilePrivate(GcnFile *q, GcnCard *card,
+		GcnFilePrivate(GcnFile *q, Card *card,
 			const card_direntry *dirEntry,
 			const card_bat *mc_bat);
 
 		/**
 		 * Initialize the GcnFile private class.
-		 * This constructor is for lost files.
+		 *
+		 * This constructor is for:
+		 * - Lost files: fatEntries must be set to the FAT chain.
+		 * - GCI files: fatEntries must be empty.
+		 *
 		 * @param q GcnFile.
-		 * @param card GcnCard.
+		 * @param card GcnCard (or GciCard)
 		 * @param direntry Directory Entry pointer.
 		 * @param fatEntries FAT entries.
 		 */
-		GcnFilePrivate(GcnFile *q, GcnCard *card,
+		GcnFilePrivate(GcnFile *q, Card *card,
 			const card_direntry *dirEntry,
 			const QVector<uint16_t> &fatEntries);
 
@@ -120,11 +124,11 @@ class GcnFilePrivate : public FilePrivate
  * Initialize the GcnFile private class.
  * This constructor is for valid files.
  * @param q GcnFile.
- * @param card GcnCard.
+ * @param card GcnCard (or GciCard)
  * @param direntry Directory Entry pointer.
  * @param mc_bat Block table.
  */
-GcnFilePrivate::GcnFilePrivate(GcnFile *q, GcnCard *card,
+GcnFilePrivate::GcnFilePrivate(GcnFile *q, Card *card,
 		const card_direntry *dirEntry,
 		const card_bat *mc_bat)
 	: super(q, card)
@@ -177,18 +181,18 @@ GcnFilePrivate::GcnFilePrivate(GcnFile *q, GcnCard *card,
  * Initialize the GcnFile private class.
  * This constructor is for lost files.
  * @param q GcnFile.
- * @param card GcnCard.
+ * @param card GcnCard (or GciCard)
  * @param direntry Directory Entry pointer.
  * @param fatEntries FAT entries.
  */
-GcnFilePrivate::GcnFilePrivate(GcnFile *q, GcnCard *card,
+GcnFilePrivate::GcnFilePrivate(GcnFile *q, Card *card,
 		const card_direntry *dirEntry,
 		const QVector<uint16_t> &fatEntries)
 	: super(q, card)
 	, mc_bat(nullptr)
 	, dirEntry(dirEntry)
 {
-	if (!dirEntry || fatEntries.isEmpty()) {
+	if (!dirEntry) {
 		// Invalid data.
 		this->dirEntry = nullptr;
 		this->fatEntries.clear();
@@ -200,14 +204,30 @@ GcnFilePrivate::GcnFilePrivate(GcnFile *q, GcnCard *card,
 	// gcc-4.9.2 doesn't like assigning variables owned by the
 	// base class in the subclass constructor.
 	// TODO: Maybe add lostFile and fatEntries to the FilePrivate constructor?
-	this->lostFile = true;
 	this->fatEntries = fatEntries;
 
-	// This is a lost file.
-	// We need to make a copy of dirEntry.
-	card_direntry *dentry = (card_direntry*)malloc(sizeof(*dirEntry));
-	memcpy(dentry, dirEntry, sizeof(*dentry));
-	this->dirEntry = dentry;
+	if (!this->fatEntries.empty()) {
+		// This is a lost file.
+		this->lostFile = true;
+
+		// We need to make a copy of dirEntry.
+		card_direntry *const dentry = new card_direntry;
+		memcpy(dentry, dirEntry, sizeof(*dentry));
+		this->dirEntry = dentry;
+	} else {
+		// No FAT entries. This is *not* a lost file;
+		// it's a GCI file, which has contiguous blocks.
+		this->lostFile = false;
+
+		// Initialize fatEntries to a contiguous chain
+		// based on the file size.
+		const uint16_t length = dirEntry->length;
+		const uint16_t block = dirEntry->block;
+		this->fatEntries.resize(length);
+		for (unsigned int i = 0; i < length; i++) {
+			this->fatEntries[i] = (uint16_t)(i + block);
+		}
+	}
 
 	// Load the file information.
 	loadFileInfo();
@@ -218,7 +238,7 @@ GcnFilePrivate::~GcnFilePrivate()
 	if (lostFile) {
 		// dirEntry was allocated by us.
 		// Free it.
-		free((void*)dirEntry);
+		delete dirEntry;
 	}
 }
 
@@ -579,11 +599,11 @@ QVector<GcImage*> GcnFilePrivate::loadIconImages(void)
  * Create a GcnFile for a GcnCard.
  * This constructor is for valid files.
  * @param q GcnFile.
- * @param card GcnCard.
+ * @param card GcnCard (or GciCard)
  * @param direntry Directory Entry pointer.
  * @param mc_bat Block table.
  */
-GcnFile::GcnFile(GcnCard *card,
+GcnFile::GcnFile(Card *card,
 		const card_direntry *dirEntry,
 		const card_bat *mc_bat)
 	: super(new GcnFilePrivate(this, card, dirEntry, mc_bat), card)
@@ -591,19 +611,19 @@ GcnFile::GcnFile(GcnCard *card,
 
 /**
  * Create a GcnFile for a GcnCard.
- * This constructor is for lost files.
- * @param card GcnCard.
+ *
+ * This constructor is for:
+ * - Lost files: fatEntries must be set to the FAT chain.
+ * - GCI files: fatEntries must be empty.
+ *
+ * @param card GcnCard (or GciCard)
  * @param direntry Directory Entry pointer.
  * @param fatEntries FAT entries.
  */
-GcnFile::GcnFile(GcnCard *card,
+GcnFile::GcnFile(Card *card,
 		const card_direntry *dirEntry,
 		const QVector<uint16_t> &fatEntries)
 	: super(new GcnFilePrivate(this, card, dirEntry, fatEntries), card)
-{ }
-
-// TODO: Maybe not needed?
-GcnFile::~GcnFile()
 { }
 
 /**

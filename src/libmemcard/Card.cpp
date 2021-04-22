@@ -28,7 +28,8 @@
 
 CardPrivate::CardPrivate(Card *q, uint32_t blockSize,
 			 int minBlocks, int maxBlocks,
-			 int dat_count, int bat_count)
+			 int dat_count, int bat_count,
+			 uint32_t headerSize)
 	: q_ptr(q)
 	, errors(QFlags<Card::Error>())
 	, file(nullptr)
@@ -36,6 +37,7 @@ CardPrivate::CardPrivate(Card *q, uint32_t blockSize,
 	, readOnly(true)
 	, encoding(Card::ENCODING_UNKNOWN)
 	, blockSize(blockSize)
+	, headerSize(headerSize)
 	, minBlocks(minBlocks)
 	, maxBlocks(maxBlocks)
 	, totalPhysBlocks(0)
@@ -122,7 +124,7 @@ int CardPrivate::open(const QString &filename, QIODevice::OpenModeFlag openMode)
 	this->filesize = file->size();
 
 	// Calculate the size in blocks.
-	totalPhysBlocks = (this->filesize / blockSize);
+	totalPhysBlocks = ((this->filesize - headerSize)/ blockSize);
 
 	// Make sure the size isn't out of range.
 	if (totalPhysBlocks < minBlocks) {
@@ -590,18 +592,19 @@ bool Card::isFreeBlockCountValid(int idx) const
  */
 int Card::readBlock(void *buf, int siz, uint16_t blockIdx)
 {
+	Q_D(Card);
 	if (!isOpen())
 		return EBADF;
-	else if (siz < blockSize())
+	else if (siz < (int)d->blockSize)
 		return -EINVAL;
 	else if (siz == 0)
 		return 0;
 
 	// Read the specified block.
-	Q_D(Card);
-	if (!d->file->seek((int)blockIdx * blockSize()))
+	const qint64 pos = ((qint64)blockIdx * d->blockSize) + d->headerSize;
+	if (!d->file->seek(pos))
 		return -EIO;	// TODO: Proper error code?
-	int ret = (int)d->file->read((char*)buf, blockSize());
+	int ret = (int)d->file->read((char*)buf, d->blockSize);
 	return (ret >= 0 ? ret : -EIO);
 }
 
@@ -614,23 +617,24 @@ int Card::readBlock(void *buf, int siz, uint16_t blockIdx)
  */
 int Card::writeBlock(const void *buf, int siz, uint16_t blockIdx)
 {
+	Q_D(Card);
 	if (!isOpen())
 		return -EBADF;
-	else if (siz < blockSize())
+	else if (siz < (int)d->blockSize)
 		return -EINVAL;
 	else if (siz == 0)
 		return 0;
 
 	// Make sure the card isn't read-only.
-	Q_D(Card);
 	if (d->readOnly)
 		return -EROFS;
 
 	// Write the specified block.
-	if (!d->file->seek((int)blockIdx * blockSize()))
+	const qint64 pos = ((qint64)blockIdx * d->blockSize) + d->headerSize;
+	if (!d->file->seek(pos))
 		return -EIO;    // TODO: Proper error code?
 	// TODO: Check for errors?
-	int ret = (int)d->file->write((char*)buf, blockSize());
+	int ret = (int)d->file->write((char*)buf, d->blockSize);
 	return (ret >= 0 ? ret : -EIO);
 }
 

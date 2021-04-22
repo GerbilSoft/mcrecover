@@ -33,6 +33,7 @@ SET(libmemcard_SRCS
 	Card.cpp
 	File.cpp
 	GcnCard.cpp
+	GciCard.cpp
 	GcnFile.cpp
 	VmuCard.cpp
 	VmuFile.cpp
@@ -58,6 +59,7 @@ SET(libmemcard_MOC_H
 	Card.hpp
 	File.hpp
 	GcnCard.hpp
+	GciCard.hpp
 	GcnFile.hpp
 	VmuCard.hpp
 	VmuFile.hpp

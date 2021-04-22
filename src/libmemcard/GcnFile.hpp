@@ -37,26 +37,28 @@ class GcnFile : public File
 		/**
 		 * Create a GcnFile for a GcnCard.
 		 * This constructor is for valid files.
-		 * @param card GcnCard.
+		 * @param card GcnCard (or GciCard)
 		 * @param direntry Directory Entry pointer.
 		 * @param mc_bat Block table.
 		 */
-		GcnFile(GcnCard *card,
+		GcnFile(Card *card,
 			const card_direntry *dirEntry,
 			const card_bat *mc_bat);
 
 		/**
 		 * Create a GcnFile for a GcnCard.
-		 * This constructor is for lost files.
-		 * @param card GcnCard.
+		 *
+		 * This constructor is for:
+		 * - Lost files: fatEntries must be set to the FAT chain.
+		 * - GCI files: fatEntries must be empty.
+		 *
+		 * @param card GcnCard (or GciCard)
 		 * @param direntry Directory Entry pointer.
 		 * @param fatEntries FAT entries.
 		 */
-		GcnFile(GcnCard *card,
+		GcnFile(Card *card,
 			const card_direntry *dirEntry,
 			const QVector<uint16_t> &fatEntries);
-
-		virtual ~GcnFile();
 
 	protected:
 		Q_DECLARE_PRIVATE(GcnFile)

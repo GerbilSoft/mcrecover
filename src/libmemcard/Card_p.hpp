@@ -25,7 +25,8 @@ class CardPrivate
 	public:
 		CardPrivate(Card *q, uint32_t blockSize,
 			    int minBlocks, int maxBlocks,
-			    int dat_count, int bat_count);
+			    int dat_count, int bat_count,
+			    uint32_t headerSize = 0);
 		virtual ~CardPrivate();
 
 	protected:
@@ -66,6 +67,7 @@ class CardPrivate
 
 		// Card size information.
 		const uint32_t blockSize;	// must be a power of 2
+		const uint32_t headerSize;	// size of header (usually 0; 64 for GCI)
 		const int minBlocks;	// smallest usable card, in blocks
 		const int maxBlocks;	// largest usable card, in blocks
 

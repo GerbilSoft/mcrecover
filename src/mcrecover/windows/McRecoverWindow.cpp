@@ -9,6 +9,7 @@
 #include "config.mcrecover.h"
 #include "McRecoverWindow.hpp"
 #include "util/array_size.h"
+#include "util/bitstuff.h"
 
 #include "McRecoverQApplication.hpp"
 #include "AboutDialog.hpp"
@@ -19,6 +20,9 @@
 #include "libmemcard/MemCardModel.hpp"
 #include "libmemcard/MemCardItemDelegate.hpp"
 #include "libmemcard/MemCardSortFilterProxyModel.hpp"
+
+// GciCard
+#include "libmemcard/GciCard.hpp"
 
 // VmuCard
 #include "libmemcard/VmuCard.hpp"
@@ -216,9 +220,9 @@ class McRecoverWindowPrivate
 		 * If the VMU header is missing, it will assume GCN.
 		 *
 		 * @param filename Memory card filename.
-		 * @return 0 for GCN; 1 for VMU; -1 for unknown.
+		 * @return McRecoverWindow::FileType
 		 */
-		static int checkCardType(const QString &filename);
+		static McRecoverWindow::FileType checkCardType(const QString &filename);
 
 		// Taskbar Button Manager.
 		TaskbarButtonManager *taskbarButtonManager;
@@ -770,20 +774,19 @@ GcImageWriter::AnimImageFormat McRecoverWindowPrivate::animIconFormat(void) cons
  * what system it's for.
  *
  * NOTE: This function will actually just check for VMU.
- * If the VMU header is missing, it will assume GCN.
+ * If the VMU header is missing, it will assume GCN
+ * if the filesize is a power of two, or GCI if it has
+ * a 64-byte header.
  *
  * @param filename Memory card filename.
- * @return 0 for GCN; 1 for VMU; -1 for unknown.
+ * @return McRecoverWindow::FileType
  */
-int McRecoverWindowPrivate::checkCardType(const QString &filename)
+McRecoverWindow::FileType McRecoverWindowPrivate::checkCardType(const QString &filename)
 {
 	QFile file(filename);
-	QByteArray ba;
 
-	// Assume GCN by default.
-	int type = 0;
-
-	if (file.size() == 131072) {
+	const qint64 filesize = file.size();
+	if (filesize == 131072) {
 		// Possibly a Dreamcast VMU.
 		// TODO: Support for 4x cards, though
 		// 4x dumps are likely "four regular dumps".
@@ -796,24 +799,47 @@ int McRecoverWindowPrivate::checkCardType(const QString &filename)
 			goto not_vmu;
 
 		// Read the data.
-		ba = file.read(16);
+		QByteArray ba = file.read(16);
 		if (ba.size() != 16)
 			goto not_vmu;
 
 		// Make sure all 16 bytes are 0x55.
 		const char *data = ba.data();
-		for (int i = ba.size()-1; i >= 0; i--, data++) {
+		for (int i = ba.size(); i > 0; i--, data++) {
 			if (*data != 0x55) {
 				goto not_vmu;
 			}
 		}
 
 		// This is probably a VMU.
-		type = 1;
+		return McRecoverWindow::FileType::VMS;
 	}
 
 not_vmu:
-	return type;
+	// Check for a valid GCN memory card size:
+	// - Minimum: 512 KiB
+	// - Maximum: 16 MiB
+	// - Must be a power of two.
+	if (filesize >= 512*1024 && filesize <= 16*1024*1024 &&
+	    isPow2((unsigned int)filesize))
+	{
+		// Power of two. This is probably a GCN memory card.
+		return McRecoverWindow::FileType::GCN;
+	}
+
+	// Check for a valid GCN file size:
+	// - Minimum: 8 KiB + 64
+	// - Maximum: 16,344 KiB + 64
+	// - Must be a multiple of 8 KiB, plus 64 bytes.
+	if (filesize >= ((8*1024)+64) && filesize <= ((16344*1024)+64) &&
+	    ((filesize - 64) % 8192) == 0)
+	{
+		// This is probably a GCI file.
+		return McRecoverWindow::FileType::GCI;
+	}
+
+	// Unknown file type.
+	return McRecoverWindow::FileType::Unknown;
 }
 
 
@@ -905,9 +931,9 @@ McRecoverWindow::~McRecoverWindow()
 /**
  * Open a GameCube Memory Card image.
  * @param filename Filename.
- * @param type Type hint from the Open dialog. (0 == GCN, 1 == VMS, other == unknown)
+ * @param type Type hint from the Open dialog.
  */
-void McRecoverWindow::openCard(const QString &filename, int type)
+void McRecoverWindow::openCard(const QString &filename, FileType type)
 {
 	Q_D(McRecoverWindow);
 
@@ -923,27 +949,33 @@ void McRecoverWindow::openCard(const QString &filename, int type)
 	/** TODO: CardFactory **/
 
 	// TODO: Use an enum for 'type'?
-	if (type < 0 || type > 1) {
+	if (type == FileType::Unknown) {
 		// Check what type of card this is.
 		type = d->checkCardType(filename);
-		if (type < 0 || type > 1) {
+		if (type == FileType::Unknown) {
 			// Still unknown.
 			// Assume GCN.
-			type = 0;
+			type = FileType::GCN;
 		}
 	}
 
 	// Open the specified memory card image.
 	// TODO: Set this as the last path?
-	QString unkErrMsg;
-	if (type == 1) {
-		//: Failure message for VmuCard.
-		unkErrMsg = tr("VmuCard::open() failed.");
-		d->card = VmuCard::open(filename, this);
-	} else /*if (type == 0)*/ {
-		//: Failure message for GcnCard.
-		unkErrMsg = tr("GcnCard::open() failed.");
-		d->card = GcnCard::open(filename, this);
+	QLatin1String className;
+	switch (type) {
+		default:
+		case FileType::GCN:
+			className = QLatin1String("GcnCard");
+			d->card = GcnCard::open(filename, this);
+			break;
+		case FileType::GCI:
+			className = QLatin1String("GciCard");
+			d->card = GciCard::open(filename, this);
+			break;
+		case FileType::VMS:
+			className = QLatin1String("VmuCard");
+			d->card = VmuCard::open(filename, this);
+			break;
 	}
 
 	if (!d->card || !d->card->isOpen()) {
@@ -963,8 +995,13 @@ void McRecoverWindow::openCard(const QString &filename, int type)
 
 		QString errMsg = tr("An error occurred while opening %1:")
 					.arg(filename_noPath) +
-				QChar(L'\n') + chrBullet + QChar(L' ') +
-				(!errorString.isEmpty() ? errorString : unkErrMsg);
+				QChar(L'\n') + chrBullet + QChar(L' ');
+		if (!errorString.isEmpty()) {
+			errMsg += errorString;
+		} else {
+			//: Failure message when opening a card. (%1 == class name)
+			errMsg += tr("%1 failed.").arg(className);
+		}
 		d->ui.msgWidget->showMessage(errMsg, MessageWidget::ICON_WARNING);
 		closeCard(true);
 		return;
@@ -974,7 +1011,7 @@ void McRecoverWindow::openCard(const QString &filename, int type)
 
 	// If GCN, check file checksums.
 	// TODO: Run this in a separate thread after loading?
-	if (type == 0) {
+	if (type == FileType::GCN) {
 		// TODO: Singleton database management class.
 		// Get the database filenames.
 		QVector<QString> dbFilenames = GcnMcFileDb::GetDbFilenames();
@@ -1359,6 +1396,7 @@ void McRecoverWindow::on_actionOpen_triggered(void)
 	// On Linux, Qt shows an extra space after the filter name, since
 	// it doesn't show the extension. Not sure about Windows...
 	const QString gcnFilter = tr("GameCube Memory Card Image") + QLatin1String(" (*.raw)");
+	const QString gciFilter = tr("GameCube Save File") + QLatin1String(" (*.gci)");
 	const QString vmuFilter = tr("Dreamcast VMU Image") + QLatin1String(" (*.bin)");
 	const QString allFilter = tr("All Files") + QLatin1String(" (*)");
 
@@ -1366,22 +1404,26 @@ void McRecoverWindow::on_actionOpen_triggered(void)
 	// causes a non-native appearance on Windows. Hence, we should use
 	// QFileDialog::getOpenFileName().
 	const QString filters = gcnFilter + QLatin1String(";;") +
+				gciFilter + QLatin1String(";;") +
 				vmuFilter + QLatin1String(";;") +
 				allFilter;
 
 	// Set the default filter.
 	QString selectedFilter;
 	const QString fileTypeKey = QLatin1String("fileType");
-	switch (d->cfg->getInt(fileTypeKey)) {
-		case 0:
+	switch ((FileType)d->cfg->getInt(fileTypeKey)) {
 		default:
+		case FileType::Unknown:
+			selectedFilter = allFilter;
+			break;
+		case FileType::GCN:
 			selectedFilter = gcnFilter;
 			break;
-		case 1:
-			selectedFilter = vmuFilter;
+		case FileType::GCI:
+			selectedFilter = gcnFilter;
 			break;
-		case 2:
-			selectedFilter = allFilter;
+		case FileType::VMS:
+			selectedFilter = vmuFilter;
 			break;
 	}
 
@@ -1403,22 +1445,20 @@ void McRecoverWindow::on_actionOpen_triggered(void)
 		// Filename is selected.
 
 		// Check the selected filename filter.
-		int type = -1;	// TODO: Enum?
-		int cfg_type = -1;
+		FileType type = FileType::Unknown;	// TODO: Enum?
 		if (selectedFilter == gcnFilter) {
-			type = 0;
-			cfg_type = 0;
+			type = FileType::GCN;
+		} else if (selectedFilter == gciFilter) {
+			type = FileType::VMS;
 		} else if (selectedFilter == vmuFilter) {
-			type = 1;
-			cfg_type = 1;
+			type = FileType::VMS;
 		} else if (selectedFilter == allFilter) {
-			type = -1;	// Auto-detect
-			cfg_type = 2;
+			type = FileType::Unknown;	// Auto-detect
 		}
 
 		// Save configuration settings.
 		d->setLastPath(filename);
-		d->cfg->set(fileTypeKey, cfg_type);
+		d->cfg->set(fileTypeKey, (int)type);
 
 		// Open the memory card file.
 		openCard(filename, type);
