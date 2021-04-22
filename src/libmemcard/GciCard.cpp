@@ -83,12 +83,6 @@ int GciCardPrivate::open(const QString &filename)
 		return ret;
 	}
 
-	// Load the GCN-specific data.
-
-	// Fake block count.
-	totalUserBlocks = totalPhysBlocks;
-	freeBlocks = 0;
-
 	// Load the directory entry.
 	// This is the first 64 bytes of the GCI file.
 	file->seek(0);
@@ -99,6 +93,15 @@ int GciCardPrivate::open(const QString &filename)
 		memset(&dirEntry, 0, sizeof(dirEntry));
 		return -1;
 	}
+
+	// Fake block count.
+	totalUserBlocks = totalPhysBlocks;
+	freeBlocks = 0;
+
+	// Block and directory tables are "valid".
+	bat_info.valid = 1;
+	dat_info.valid = 1;
+	dat_info.valid_freeblocks = 1;
 
 #if SYS_BYTEORDER != SYS_BIG_ENDIAN
 	// Byteswap the directory entry.
