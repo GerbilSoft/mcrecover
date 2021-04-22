@@ -65,6 +65,9 @@ GciCardPrivate::GciCardPrivate(GciCard *q)
 {
 	// Clear variables.
 	memset(&dirEntry, 0, sizeof(dirEntry));
+
+	// GCI files are *not* writable.
+	canMakeWritable = false;
 }
 
 /**

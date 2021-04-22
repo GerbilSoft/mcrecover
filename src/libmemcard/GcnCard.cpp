@@ -148,6 +148,9 @@ GcnCardPrivate::GcnCardPrivate(GcnCard *q)
 	memset(mc_dat_chk_expected, 0, sizeof(mc_dat_chk_expected));
 	memset(mc_bat_chk_actual, 0, sizeof(mc_bat_chk_actual));
 	memset(mc_bat_chk_expected, 0, sizeof(mc_bat_chk_expected));
+
+	// GCN cards are writable.
+	canMakeWritable = true;
 }
 
 GcnCardPrivate::~GcnCardPrivate()

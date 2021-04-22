@@ -1105,14 +1105,14 @@ void McRecoverWindow::openCard(const QString &filename, FileType type)
 	// Can we allow writing to this memory card?
 	// NOTE: Currently disabled in Release builds.
 #ifndef NDEBUG
-	if (!cardErrors) {
-		// No errors.
+	if (!cardErrors && d->card->canMakeWritable()) {
+		// No errors, and card can be made writable.
 		d->chkAllowWrite->setChecked(!d->card->isReadOnly());
 		d->chkAllowWrite->setEnabled(true);
 	} else
 #endif /* !NDEBUG */
 	{
-		// Card has errors.
+		// Card has errors or cannot be made writable.
 		d->chkAllowWrite->setEnabled(false);
 		d->chkAllowWrite->setChecked(false);
 	}

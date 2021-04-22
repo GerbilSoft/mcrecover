@@ -35,6 +35,7 @@ CardPrivate::CardPrivate(Card *q, uint32_t blockSize,
 	, file(nullptr)
 	, filesize(0)
 	, readOnly(true)
+	, canMakeWritable(false)
 	, encoding(Card::ENCODING_UNKNOWN)
 	, blockSize(blockSize)
 	, headerSize(headerSize)
@@ -249,9 +250,11 @@ QString Card::errorString(void) const
 
 /**
  * Is this card read-only?
+ *
  * This is true if the card has not been set to writable,
  * or if there are errors on the card and hence it cannot
  * be set to writable.
+ *
  * @return True if this card is read-only; false if not.
  */
 bool Card::isReadOnly(void) const
@@ -288,8 +291,13 @@ int Card::setReadOnly(bool readOnly)
 		return -ENOTTY;
 	}
 
+	if (!readOnly && !d->canMakeWritable) {
+		// Cannot make this card writable.
+		return -EROFS;
+	}
+
 	// Open mode.
-	QIODevice::OpenMode openMode = (readOnly ? QIODevice::ReadOnly : QIODevice::ReadWrite);
+	const QIODevice::OpenMode openMode = (readOnly ? QIODevice::ReadOnly : QIODevice::ReadWrite);
 
 	// Attempt to open the file using a new QFile.
 	// FIXME: Do we need to close the first QFile due to sharing?
@@ -313,6 +321,16 @@ int Card::setReadOnly(bool readOnly)
 	tmp_file->close();
 	delete tmp_file;
 	return 0;
+}
+
+/**
+ * Can this card be made writable?
+ * @return True if it can; false if it can't.
+ */
+bool Card::canMakeWritable(void) const
+{
+	Q_D(const Card);
+	return d->canMakeWritable;
 }
 
 /** Card information **/

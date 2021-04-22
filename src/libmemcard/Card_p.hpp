@@ -58,6 +58,7 @@ class CardPrivate
 		QFile *file;
 		quint64 filesize;
 		bool readOnly;
+		bool canMakeWritable;	// subclass should set this
 
 		// Card properties.
 		Card::Encoding encoding;

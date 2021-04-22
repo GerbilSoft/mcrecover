@@ -137,6 +137,9 @@ VmuCardPrivate::VmuCardPrivate(VmuCard *q)
 	// Clear variables.
 	memset(&mc_root, 0, sizeof(mc_root));
 	memset(&mc_fat, 0, sizeof(mc_fat));
+
+	// VMUs are writable.
+	canMakeWritable = true;
 }
 
 VmuCardPrivate::~VmuCardPrivate()

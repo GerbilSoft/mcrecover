@@ -37,6 +37,7 @@ class Card : public QObject
 	Q_PROPERTY(QString filename READ filename)
 	Q_PROPERTY(int filesize READ filesize)
 	Q_PROPERTY(bool readOnly READ isReadOnly WRITE setReadOnly NOTIFY readOnlyChanged)
+	Q_PROPERTY(bool canMakeWritable READ canMakeWritable)
 
 	// Card size.
 	Q_PROPERTY(int blockSize READ blockSize)
@@ -443,9 +444,11 @@ class Card : public QObject
 	public:
 		/**
 		 * Is this card read-only?
+		 *
 		 * This is true if the card has not been set to writable,
 		 * or if there are errors on the card and hence it cannot
 		 * be set to writable.
+		 *
 		 * @return True if this card is read-only; false if not.
 		 */
 		bool isReadOnly(void) const;
@@ -462,6 +465,12 @@ class Card : public QObject
 		 * (Check this->errorString for more information.)
 		 */
 		int setReadOnly(bool readOnly);
+
+		/**
+		 * Can this card be made writable?
+		 * @return True if it can; false if it can't.
+		 */
+		bool canMakeWritable(void) const;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Card::Errors);
