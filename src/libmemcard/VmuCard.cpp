@@ -223,7 +223,7 @@ int VmuCardPrivate::loadSysInfo(void)
 
 		// Use cp1252 encoding by default.
 		// TODO: "No encoding".
-		this->encoding = Card::ENCODING_CP1252;
+		this->encoding = Card::Encoding::CP1252;
 		return -2;
 	}
 
@@ -250,7 +250,7 @@ int VmuCardPrivate::loadSysInfo(void)
 	// There's no per-card "encoding" value like on GameCube.
 	// Actual encoding is determined by the system being used.
 	// TODO: Add a "no encoding" option?
-	this->encoding = Card::ENCODING_CP1252;
+	this->encoding = Card::Encoding::CP1252;
 
 	// VMU color.
 	if (mc_root.color_type == VMU_COLOR_CUSTOM) {

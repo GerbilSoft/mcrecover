@@ -259,7 +259,7 @@ QTextCodec *GcnFilePrivate::textCodecForRegion(char region) const
 		return cp1252;
 	}
 
-	Card::Encoding encoding = Card::ENCODING_UNKNOWN;
+	Card::Encoding encoding = Card::Encoding::Unknown;
 	switch (region) {
 		case 0:
 			// Use the memory card's encoding.
@@ -273,17 +273,17 @@ QTextCodec *GcnFilePrivate::textCodecForRegion(char region) const
 			// some prototypes, including Sonic Adventure DX
 			// and Metroid Prime 3. Assume Japanese for now.
 			// TODO: Implement a Shift-JIS heuristic for 'S'.
-			encoding = Card::ENCODING_SHIFTJIS;
+			encoding = Card::Encoding::Shift_JIS;
 			break;
 
 		default:
 			// US, Europe, Australia.
 			// TODO: Korea?
-			encoding = Card::ENCODING_CP1252;
+			encoding = Card::Encoding::CP1252;
 			break;
 	}
 
-	if (encoding == Card::ENCODING_SHIFTJIS)
+	if (encoding == Card::Encoding::Shift_JIS)
 		return shiftJis;
 	return cp1252;
 }

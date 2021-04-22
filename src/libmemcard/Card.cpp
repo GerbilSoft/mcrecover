@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * Card.cpp: Memory Card physical layer. [base class]                      *
  *                                                                         *
- * Copyright (c) 2012-2018 by David Korth.                                 *
+ * Copyright (c) 2012-2021 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -36,7 +36,7 @@ CardPrivate::CardPrivate(Card *q, uint32_t blockSize,
 	, filesize(0)
 	, readOnly(true)
 	, canMakeWritable(false)
-	, encoding(Card::ENCODING_UNKNOWN)
+	, encoding(Card::Encoding::Unknown)
 	, blockSize(blockSize)
 	, headerSize(headerSize)
 	, minBlocks(minBlocks)
@@ -217,7 +217,9 @@ void CardPrivate::findMostCommonByte(const uint8_t *buf, size_t siz, uint8_t *mo
 Card::Card(CardPrivate *d, QObject *parent)
 	: super(parent)
 	, d_ptr(d)
-{ }
+{
+	qRegisterMetaType<Encoding>();
+}
 
 Card::~Card()
 {
@@ -439,7 +441,7 @@ int Card::freeBlocks(void) const
 Card::Encoding Card::encoding(void) const
 {
 	if (!isOpen())
-		return Card::ENCODING_UNKNOWN;
+		return Card::Encoding::Unknown;
 	Q_D(const Card);
 	return d->encoding;
 }

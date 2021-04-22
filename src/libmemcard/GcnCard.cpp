@@ -270,7 +270,7 @@ int GcnCardPrivate::format(const QString &filename)
 	mc_header.size = cpu_to_be16(totalPhysBlocks / 16);
 	// Encoding. (Assume cp1252 for now.)
 	mc_header.encoding = cpu_to_be16(SYS_FONT_ENCODING_ANSI);
-	this->encoding = Card::ENCODING_CP1252;
+	this->encoding = Card::Encoding::CP1252;
 	// Calculate the header checksum.
 	uint32_t chksum = Checksum::AddInvDual16((uint16_t*)&mc_header, 0x1FC, Checksum::CHKENDIAN_BIG);
 	mc_header.chksum1 = cpu_to_be16(chksum >> 16);
@@ -425,7 +425,7 @@ int GcnCardPrivate::loadSysInfo(void)
 		mc_bat_int[1].chksum2 = 0xAA55;
 
 		// Use cp1252 encoding by default.
-		this->encoding = Card::ENCODING_CP1252;
+		this->encoding = Card::Encoding::CP1252;
 
 		// Make sure mc_dat and mc_bat are initialized.
 		checkTables();
@@ -451,10 +451,10 @@ int GcnCardPrivate::loadSysInfo(void)
 	switch (mc_header.encoding & SYS_FONT_ENCODING_MASK) {
 		case SYS_FONT_ENCODING_ANSI:
 		default:
-			this->encoding = Card::ENCODING_CP1252;
+			this->encoding = Card::Encoding::CP1252;
 			break;
 		case SYS_FONT_ENCODING_SJIS:
-			this->encoding = Card::ENCODING_SHIFTJIS;
+			this->encoding = Card::Encoding::Shift_JIS;
 			break;
 	}
 

@@ -26,8 +26,6 @@ class GcnCard : public Card
 	Q_OBJECT
 	typedef Card super;
 
-	Q_PROPERTY(int encoding READ encoding)
-
 	// TODO: Register Checksum::ChecksumValue metatype?
 	//Q_PROPERTY(Checksum::ChecksumValue headerChecksumValue READ headerChecksumValue)
 

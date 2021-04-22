@@ -259,19 +259,19 @@ void CardViewPrivate::updateWidgetDisplay(void)
 	// Encoding.
 	QString encoding;
 	switch (card->encoding()) {
-		case Card::ENCODING_UNKNOWN:
+		case Card::Encoding::Unknown:
 		default:
 			// Unknown encoding.
 			// TODO: If the card doesn't support an encoding value,
 			// hide the label entirely.
-			encoding = QLatin1String("Unknown");
+			encoding = CardView::tr("Unknown");
 			break;
 
-		case Card::ENCODING_CP1252:
+		case Card::Encoding::CP1252:
 			encoding = QLatin1String("cp1252");
 			break;
 
-		case Card::ENCODING_SHIFTJIS:
+		case Card::Encoding::Shift_JIS:
 			encoding = QLatin1String("Shift-JIS");
 			break;
 	}

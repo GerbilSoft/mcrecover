@@ -113,8 +113,8 @@ int GciCardPrivate::open(const QString &filename)
 
 	// Set encoding to Shift-JIS if the region byte is 'J'.
 	this->encoding = (dirEntry.gamecode[3] == 'J')
-		? Card::ENCODING_SHIFTJIS
-		: Card::ENCODING_CP1252;
+		? Card::Encoding::Shift_JIS
+		: Card::Encoding::CP1252;
 
 	// Adjust the "first block" value, since it might be incorrect.
 	dirEntry.block = 0;

@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * Card.hpp: Memory Card physical layer. [base class]                      *
  *                                                                         *
- * Copyright (c) 2012-2018 by David Korth.                                 *
+ * Copyright (c) 2012-2021 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -27,7 +27,7 @@ class Card : public QObject
 	Q_OBJECT
 	typedef QObject super;
 
-	Q_ENUMS(Encoding)
+	Q_ENUMS(Card::Encoding)
 	Q_FLAGS(Error Errors)
 
 	Q_PROPERTY(bool open READ isOpen)
@@ -47,7 +47,7 @@ class Card : public QObject
 
 	// Card information.
 	Q_PROPERTY(QString productName READ productName)
-	Q_PROPERTY(Encoding encoding READ encoding)
+	Q_PROPERTY(Card::Encoding encoding READ encoding)
 	Q_PROPERTY(QColor color READ color NOTIFY colorChanged)
 	Q_PROPERTY(QDateTime formatTime READ formatTime)
 
@@ -186,18 +186,18 @@ class Card : public QObject
 		/**
 		 * Text encoding enumeration.
 		 */
-		enum Encoding {
-			ENCODING_UNKNOWN = 0,	// Unknown
-			ENCODING_CP1252,	// cp1252
-			ENCODING_SHIFTJIS,	// Shift-JIS
+		enum class Encoding {
+			Unknown = 0,	// Unknown
+			CP1252,		// cp1252
+			Shift_JIS,	// Shift-JIS
 
-			ENCODING_MAX
+			Max
 		};
 
 		/**
 		 * Get the text encoding used for filenames and descriptions.
 		 * Indicated by the card header.
-		 * If not present, returns ENCODING_UNKNOWN.
+		 * If not present, returns Encoding::Unknown.
 		 * @return Text encoding.
 		 */
 		Encoding encoding(void) const;
@@ -474,5 +474,6 @@ class Card : public QObject
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Card::Errors);
+Q_DECLARE_METATYPE(Card::Encoding)
 
 #endif /* __LIBMEMCARD_CARD_HPP__ */
