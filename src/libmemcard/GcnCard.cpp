@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * GcnCard.hpp: GameCube memory card class.                                *
  *                                                                         *
- * Copyright (c) 2012-2018 by David Korth.                                 *
+ * Copyright (c) 2012-2021 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -230,7 +230,7 @@ int GcnCardPrivate::format(const QString &filename)
 	// Clear errors.
 	// TODO: Separate CardPrivate::create() or format() function
 	// that doesn't check for errors?
-	errors = 0;
+	errors = QFlags<Card::Error>();
 
 	// Create a 251-block card.
 	// Formatting routine based on the Nintendont Loader (r254).
@@ -314,9 +314,8 @@ int GcnCardPrivate::format(const QString &filename)
 	file->write((char*)mc_bat_int, sizeof(mc_bat_int));
 	file->flush();
 
+#if SYS_BYTEORDER != SYS_BIG_ENDIAN
 	// Un-byteswap the tables.
-	// TODO: Skip this on big-endian.
-	// Header.
 	mc_header.sramBias	= be32_to_cpu(mc_header.sramBias);
 	mc_header.sramLang	= be32_to_cpu(0);
 	mc_header.device_id	= be16_to_cpu(mc_header.device_id);
@@ -324,6 +323,7 @@ int GcnCardPrivate::format(const QString &filename)
 	mc_header.encoding	= be16_to_cpu(mc_header.encoding);
 	mc_header.chksum1	= be16_to_cpu(mc_header.chksum1);
 	mc_header.chksum2	= be16_to_cpu(mc_header.chksum2);
+#endif /* SYS_BYTEORDER != SYS_BIG_ENDIAN */
 	headerChecksumValue.actual = ((mc_header.chksum1 << 16) | mc_header.chksum2);
 	headerChecksumValue.expected = headerChecksumValue.actual;
 
@@ -331,17 +331,21 @@ int GcnCardPrivate::format(const QString &filename)
 	bat_info.valid = 0;
 	for (int i = 0; i < 2; i++) {
 		// Directory Table.
+#if SYS_BYTEORDER != SYS_BIG_ENDIAN
 		mc_dat_int[i].dircntrl.updated = cpu_to_be16(mc_dat_int[i].dircntrl.updated);
 		mc_dat_int[i].dircntrl.chksum1 = cpu_to_be16(mc_dat_int[i].dircntrl.chksum1);
 		mc_dat_int[i].dircntrl.chksum2 = cpu_to_be16(mc_dat_int[i].dircntrl.chksum2);
+#endif /* SYS_BYTEORDER != SYS_BIG_ENDIAN */
 		dat_info.valid |= (1 << i);
 
 		// Block Table.
+#if SYS_BYTEORDER != SYS_BIG_ENDIAN
 		mc_bat_int[i].updated		= cpu_to_be16(mc_bat_int[i].updated);
 		mc_bat_int[i].freeblocks	= cpu_to_be16(mc_bat_int[i].freeblocks);
 		mc_bat_int[i].lastalloc		= cpu_to_be16(mc_bat_int[i].lastalloc);
 		mc_bat_int[i].chksum1		= cpu_to_be16(mc_bat_int[i].chksum1);
 		mc_bat_int[i].chksum2		= cpu_to_be16(mc_bat_int[i].chksum2);
+#endif /* SYS_BYTEORDER != SYS_BIG_ENDIAN */
 		bat_info.valid |= (1 << i);
 	}
 
@@ -370,8 +374,9 @@ void GcnCardPrivate::resetUsedBlockMap(void)
 	// Initialize the used block map.
 	// (The first 5 blocks are always used.)
 	usedBlockMap = QVector<uint8_t>(totalPhysBlocks, 0);
-	for (int i = 0; i < 5 && i < totalPhysBlocks; i++)
+	for (int i = 0; i < 5 && i < totalPhysBlocks; i++) {
 		usedBlockMap[i] = 1;
+	}
 }
 
 /**
@@ -427,6 +432,7 @@ int GcnCardPrivate::loadSysInfo(void)
 	// Calculate the header checksum.
 	headerChecksumValue.actual = Checksum::AddInvDual16((uint16_t*)&mc_header, 0x1FC, Checksum::CHKENDIAN_BIG);
 
+#if SYS_BYTEORDER != SYS_BIG_ENDIAN
 	// Byteswap the header contents.
 	mc_header.formatTime	= be64_to_cpu(mc_header.formatTime);
 	mc_header.sramBias	= be32_to_cpu(mc_header.sramBias);
@@ -436,6 +442,7 @@ int GcnCardPrivate::loadSysInfo(void)
 	mc_header.encoding	= be16_to_cpu(mc_header.encoding);
 	mc_header.chksum1	= be16_to_cpu(mc_header.chksum1);
 	mc_header.chksum2	= be16_to_cpu(mc_header.chksum2);
+#endif /* SYS_BYTEORDER != SYS_BIG_ENDIAN */
 
 	// Check the encoding.
 	switch (mc_header.encoding & SYS_FONT_ENCODING_MASK) {
@@ -567,6 +574,7 @@ int GcnCardPrivate::loadDirTable(card_dat *dat, uint32_t address, uint32_t *chec
 			Checksum::CHKENDIAN_BIG);
 	}
 
+#if SYS_BYTEORDER != SYS_BIG_ENDIAN
 	// Byteswap the directory table contents.
 	for (int i = 0; i < NUM_ELEMENTS(dat->entries); i++) {
 		card_direntry *dirEntry	= &dat->entries[i];
@@ -583,6 +591,8 @@ int GcnCardPrivate::loadDirTable(card_dat *dat, uint32_t address, uint32_t *chec
 	dat->dircntrl.updated = be16_to_cpu(dat->dircntrl.updated);
 	dat->dircntrl.chksum1 = be16_to_cpu(dat->dircntrl.chksum1);
 	dat->dircntrl.chksum2 = be16_to_cpu(dat->dircntrl.chksum2);
+#endif /* SYS_BYTEORDER != SYS_BIG_ENDIAN */
+
 	return 0;
 }
 
@@ -611,6 +621,7 @@ int GcnCardPrivate::loadBlockTable(card_bat *bat, uint32_t address, uint32_t *ch
 			Checksum::CHKENDIAN_BIG);
 	}
 
+#if SYS_BYTEORDER != SYS_BIG_ENDIAN
 	// Byteswap the block allocation table contents.
 	bat->chksum1	= be16_to_cpu(bat->chksum1);
 	bat->chksum2	= be16_to_cpu(bat->chksum2);
@@ -618,8 +629,10 @@ int GcnCardPrivate::loadBlockTable(card_bat *bat, uint32_t address, uint32_t *ch
 	bat->freeblocks	= be16_to_cpu(bat->freeblocks);
 	bat->lastalloc	= be16_to_cpu(bat->lastalloc);
 
-	for (int i = 0; i < NUM_ELEMENTS(bat->fat); i++)
+	for (int i = 0; i < NUM_ELEMENTS(bat->fat); i++) {
 		bat->fat[i] = be16_to_cpu(bat->fat[i]);
+	}
+#endif /* SYS_BYTEORDER != SYS_BIG_ENDIAN */
 
 	return 0;
 }

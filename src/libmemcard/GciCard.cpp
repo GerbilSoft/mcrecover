@@ -1,8 +1,11 @@
 /***************************************************************************
  * GameCube Memory Card Recovery Program [libmemcard]                      *
- * GciCard.hpp: GameCube memory card class.                                *
+ * GciCard.cpp: GameCube GCI single-file class.                            *
  *                                                                         *
- * Copyright (c) 2012-2018 by David Korth.                                 *
+ * This is a wrapper class that allows loading of .gci files for editing   *
+ * and template creation. Scanning for lost files is not supported.        *
+ *                                                                         *
+ * Copyright (c) 2012-2021 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 

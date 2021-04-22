@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * VmuCard.cpp: Dreamcast VMU memory card class.                           *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2021 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -233,6 +233,7 @@ int VmuCardPrivate::loadSysInfo(void)
 		}
 	}
 
+#if SYS_BYTEORDER != SYS_LIL_ENDIAN
 	// Byteswap the root block contents.
 	mc_root.fat_addr	= le16_to_cpu(mc_root.fat_addr);
 	mc_root.fat_size	= le16_to_cpu(mc_root.fat_size);
@@ -240,6 +241,7 @@ int VmuCardPrivate::loadSysInfo(void)
 	mc_root.dir_size	= le16_to_cpu(mc_root.dir_size);
 	mc_root.icon		= le16_to_cpu(mc_root.icon);
 	mc_root.user_blocks	= le16_to_cpu(mc_root.user_blocks);
+#endif /* SYS_BYTEORDER != SYS_LIL_ENDIAN */
 
 	// Assume cp1252 encoding.
 	// There's no per-card "encoding" value like on GameCube.
@@ -340,10 +342,12 @@ int VmuCardPrivate::loadFat(void)
 		return -3;
 	}
 
+#if SYS_BYTEORDER != SYS_LIL_ENDIAN
 	// Byteswap the FAT.
 	for (int i = (NUM_ELEMENTS(mc_fat.fat)-1); i >= 0; i--) {
 		mc_fat.fat[i] = le16_to_cpu(mc_fat.fat[i]);
 	}
+#endif /* SYS_BYTEORDER != SYS_LIL_ENDIAN */
 
 	// Calculate the block counts.
 	calcBlockCounts();
@@ -408,6 +412,7 @@ int VmuCardPrivate::loadDir(void)
 		}
 	}
 
+#if SYS_BYTEORDER != SYS_LIL_ENDIAN
 	// Byteswap the directory table contents.
 	for (int i = 0; i < NUM_ELEMENTS(mc_dir); i++) {
 		vmu_dir_entry *dirEntry	= &mc_dir[i];
@@ -415,6 +420,7 @@ int VmuCardPrivate::loadDir(void)
 		dirEntry->size		= le16_to_cpu(dirEntry->size);
 		dirEntry->header_addr	= le16_to_cpu(dirEntry->header_addr);
 	}
+#endif /* SYS_BYTEORDER != SYS_LIL_ENDIAN */
 
 	return 0;
 }
