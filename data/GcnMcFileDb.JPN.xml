@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GcnMcFileDb>
 	<dbInfo>
-		<dbFormatVersion>0.1</dbFormatVersion>
+		<dbFormatVersion>0.2</dbFormatVersion>
 		<dbName>GCN Memory Card File Database (JPN)</dbName>
 		<dbDesc>Definitions for Japanese (NTSC) GameCube games.</dbDesc>
-		<version>0.2.1</version>
+		<version>0.2.1+</version>
 		<author>David Korth</author>
 		<email>gerbilsoft@gerbilsoft.com</email>
 	</dbInfo>
@@ -12,8 +12,7 @@
 		<!-- Animal Forest e+ (aka Animal Crossing e+) -->
 		<gameName>Doubutsu no Mori e+</gameName>
 		<fileInfo>Town File</fileInfo>
-		<gamecode>GAEJ</gamecode>
-		<company>01</company>
+		<id6>GAEJ01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^どうぶつの森ｅ＋$</gameDesc>
@@ -37,8 +36,7 @@
 	<file>
 		<gameName>biohazard4</gameName>
 		<fileInfo>System File</fileInfo>
-		<gamecode>G4BJ</gamecode>
-		<company>08</company>
+		<id6>G4BJ08</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^biohazard4 システムファイル$</gameDesc>
@@ -78,8 +76,7 @@
 	<file>
 		<gameName>Dream Mix TV World Fighters</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GKWJ</gamecode>
-		<company>18</company>
+		<id6>GKWJ18</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^ワールドファイターズ$</gameDesc>
@@ -108,8 +105,7 @@
 	<file>
 		<gameName>Hudson Selection Vol.4: Adventure Island</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GTNJ</gamecode>
-		<company>18</company>
+		<id6>GTNJ18</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^高橋名人の冒険島$</gameDesc>
@@ -137,8 +133,7 @@
 	<file>
 		<gameName>Kururin Squash!</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GKQJ</gamecode>
-		<company>01</company>
+		<id6>GKQJ01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^くるりんスカッシュ！$</gameDesc>
@@ -157,8 +152,7 @@
 	<file>
 		<gameName>Nintendo Puzzle Collection</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GPZJ</gamecode>
-		<company>01</company>
+		<id6>GPZJ01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>ﾆﾝﾃﾝﾄﾞｰ ﾊﾟｽﾞﾙｺﾚｸｼｮﾝ</gameDesc>
@@ -177,8 +171,7 @@
 	<file>
 		<gameName>Sonic Heroes</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>G9SJ</gamecode>
-		<company>8P</company>
+		<id6>G9SJ8P</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^ソニックヒーローズ　：　(\p{Nd}{2})$</gameDesc>

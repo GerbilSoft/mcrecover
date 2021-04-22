@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GcnMcFileDb>
 	<dbInfo>
-		<dbFormatVersion>0.1</dbFormatVersion>
+		<dbFormatVersion>0.2</dbFormatVersion>
 		<dbName>GCN Memory Card File Database (PAL)</dbName>
 		<dbDesc>Definitions for PAL GameCube games.</dbDesc>
-		<version>0.2.1</version>
+		<version>0.2.1+</version>
 		<author>David Korth</author>
 		<email>gerbilsoft@gerbilsoft.com</email>
 	</dbInfo>
 	<file>
 		<gameName>1080: Avalanche</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GTEP</gamecode>
-		<company>01</company>
+		<id6>GTEP01</id6>
 		<search>
 			<address>0x0004</address>
 			<gameDesc>^1080: Avalanche$</gameDesc>
@@ -54,8 +53,7 @@
 	<file>
 		<gameName>Animal Crossing</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GAFP</gamecode>
-		<company>01</company>
+		<id6>GAFP01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Animal Crossing$</gameDesc>
@@ -80,8 +78,7 @@
 	<file>
 		<gameName>Animal Crossing</gameName>
 		<fileInfo>NES Save Data</fileInfo>
-		<gamecode>GAFP</gamecode>
-		<company>01</company>
+		<id6>GAFP01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Animal Crossing$</gameDesc>
@@ -100,8 +97,7 @@
 	<file>
 		<gameName>Battalion Wars</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>G8WP</gamecode>
-		<company>01</company>
+		<id6>G8WP01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Battalion Wars$</gameDesc>
@@ -121,8 +117,7 @@
 		<!-- TODO: File metadata is from GameFAQs. Redo this from a more reliable source. -->
 		<gameName>Bloody Roar: Primal Fury</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GBLP</gamecode>
-		<company>52</company>
+		<id6>GBLP52</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^BLOODY ROAR: PF$</gameDesc>
@@ -141,8 +136,7 @@
 	<file>
 		<gameName>Chibi Robo</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GGTP</gamecode>
-		<company>01</company>
+		<id6>GGTP01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Chibi-Robo!$</gameDesc>
@@ -173,8 +167,7 @@
 	<file>
 		<gameName>Donkey Kong Jungle Beat</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GYBP</gamecode>
-		<company>01</company>
+		<id6>GYBP01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Donkey Kong Jungle Beat$</gameDesc>
@@ -193,8 +186,7 @@
 	<file>
 		<gameName>Donkey Konga</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GKGP</gamecode>
-		<company>01</company>
+		<id6>GKGP01</id6>
 		<search>
 			<!-- Second block. FIXME: Implement block offsets. -->
 			<!-- NOTE: This is also present at 0x4000... -->
@@ -237,8 +229,7 @@
 	<file>
 		<gameName>Eternal Darkness</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GEDP</gamecode>
-		<company>01</company>
+		<id6>GEDP01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Eternal Darkness$</gameDesc>
@@ -257,8 +248,7 @@
 	<file>
 		<gameName>F-Zero GX</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GFZP</gamecode>
-		<company>8P</company>
+		<id6>GFZP8P</id6>
 		<search>
 			<address>0x0004</address>
 			<gameDesc>^F-ZERO GX$</gameDesc>
@@ -290,8 +280,7 @@
 	<file>
 		<gameName>Luigi's Mansion</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GLMP</gamecode>
-		<company>01</company>
+		<id6>GLMP01</id6>
 		<search>
 			<address>0x1C00</address>
 			<gameDesc>^Luigi's Mansion$</gameDesc>
@@ -326,8 +315,7 @@
 	<file>
 		<gameName>Mario Kart: Double Dash!!</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GM4P</gamecode>
-		<company>01</company>
+		<id6>GM4P01</id6>
 		<search>
 			<!-- Second block. FIXME: Implement block offsets. -->
 			<!-- NOTE: This is also present at 0x4000... -->
@@ -361,8 +349,7 @@
 		<!-- NOTE: Update with an actual PAL save! -->
 		<gameName>Mario Party 4</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GMPP</gamecode>
-		<company>01</company>
+		<id6>GMPP01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Mario Party 4$</gameDesc>
@@ -399,8 +386,7 @@
 		<!-- NOTE: Update with an actual PAL save! -->
 		<gameName>Mario Party 5</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GP5P</gamecode>
-		<company>01</company>
+		<id6>GP5P01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Mario Party 5$</gameDesc>
@@ -432,8 +418,7 @@
 		<!-- NOTE: Update with an actual PAL save! -->
 		<gameName>Mario Party 6</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GP6P</gamecode>
-		<company>01</company>
+		<id6>GP6P01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Mario Party 6$</gameDesc>
@@ -465,8 +450,7 @@
 		<!-- NOTE: Update with an actual PAL save! -->
 		<gameName>Mario Party 7</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GP7P</gamecode>
-		<company>01</company>
+		<id6>GP7P01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Mario Party 7$</gameDesc>
@@ -497,8 +481,7 @@
 	<file>
 		<gameName>Metal Gear Solid: The Twin Snakes</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GGSP</gamecode>
-		<company>A4</company>
+		<id6>GGSPA4</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^MGS: The Twin Snakes Game$</gameDesc>
@@ -536,8 +519,7 @@
 		<!-- User will need to select a preferred region. -->
 		<gameName>Metroid Prime</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GM8P</gamecode>
-		<company>01</company>
+		<id6>GM8P01</id6>
 		<search>
 			<address>0x0004</address>
 			<gameDesc>^Metroid Prime$</gameDesc>
@@ -575,8 +557,7 @@
 	<file>
 		<gameName>Metroid Prime 2: Echoes</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>G2MP</gamecode>
-		<company>01</company>
+		<id6>G2MP01</id6>
 		<search>
 			<address>0x0004</address>
 			<gameDesc>^Metroid Prime 2 Echoes$</gameDesc>
@@ -615,8 +596,7 @@
 		<!-- NOTE: Using NTSC metadata. (Couldn't find GUGP69 save file.) -->
 		<gameName>Need for Speed Underground 2</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GUGP</gamecode>
-		<company>69</company>
+		<id6>GUGP69</id6>
 		<search>
 			<address>0x0010</address>
 			<gameDesc>^NFS Underground 2$</gameDesc>
@@ -635,8 +615,7 @@
 	<file>
 		<gameName>Paper Mario: The Thousand Year Door</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>G8MP</gamecode>
-		<company>01</company>
+		<id6>G8MP01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Paper Mario$</gameDesc>
@@ -666,8 +645,7 @@
 	<file>
 		<gameName>Phantasy Star Online: Episodes I &amp; II</gameName>
 		<fileInfo>System File</fileInfo>
-		<gamecode>GPOP</gamecode>
-		<company>8P</company>
+		<id6>GPOP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<!-- NOTE: PSO I & II and PSO I & II Plus have identical save files. -->
@@ -688,8 +666,7 @@
 	<file>
 		<gameName>Phantasy Star Online: Episodes I &amp; II</gameName>
 		<fileInfo>Character File</fileInfo>
-		<gamecode>GPOP</gamecode>
-		<company>8P</company>
+		<id6>GPOP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<!-- NOTE: PSO I & II and PSO I & II Plus have identical save files. -->
@@ -710,8 +687,7 @@
 	<file>
 		<gameName>Phantasy Star Online: Episodes I &amp; II</gameName>
 		<fileInfo>Guild Card File</fileInfo>
-		<gamecode>GPOP</gamecode>
-		<company>8P</company>
+		<id6>GPOP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<!-- NOTE: PSO I & II and PSO I & II Plus have identical save files. -->
@@ -732,8 +708,7 @@
 	<file>
 		<gameName>Phantasy Star Online: Episode III</gameName>
 		<fileInfo>System File</fileInfo>
-		<gamecode>GPSP</gamecode>
-		<company>8P</company>
+		<id6>GPSP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^PSO EPISODE III$</gameDesc>
@@ -753,8 +728,7 @@
 	<file>
 		<gameName>Phantasy Star Online: Episode III</gameName>
 		<fileInfo>Character File</fileInfo>
-		<gamecode>GPSP</gamecode>
-		<company>8P</company>
+		<id6>GPSP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^PSO EPISODE III$</gameDesc>
@@ -774,8 +748,7 @@
 	<file>
 		<gameName>Phantasy Star Online: Episode III</gameName>
 		<fileInfo>Guild Card File</fileInfo>
-		<gamecode>GPSP</gamecode>
-		<company>8P</company>
+		<id6>GPSP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^PSO EPISODE III$</gameDesc>
@@ -795,8 +768,7 @@
 	<file>
 		<gameName>Pikmin 2</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GPVP</gamecode>
-		<company>01</company>
+		<id6>GPVP01</id6>
 		<search>
 			<address>0x1800</address>
 			<gameDesc>^PIKMIN 2$</gameDesc>
@@ -837,8 +809,7 @@
 	<file>
 		<gameName>Pokémon Colosseum</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GC6P</gamecode>
-		<company>01</company>
+		<id6>GC6P01</id6>
 		<search>
 			<address>0x0000</address>
 			<!-- TODO: Non-English descriptions? -->
@@ -858,8 +829,7 @@
 	<file>
 		<gameName>Pokémon XD</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GXXP</gamecode>
-		<company>01</company>
+		<id6>GXXP01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^POKéMON XD$</gameDesc>
@@ -933,8 +903,7 @@
 		<!-- NOTE: USA metadata appears to be the same as EUR. -->
 		<gameName>Resident Evil</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GBIP</gamecode>
-		<company>08</company>
+		<id6>GBIP08</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Resident Evil   .*</gameDesc>
@@ -961,8 +930,7 @@
 	<file>
 		<gameName>SEGA Network Information</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>G9AP</gamecode>
-		<company>8P</company>
+		<id6>G9AP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^(?:SEGA Network Information|Informations réseau SEGA)$</gameDesc>
@@ -981,8 +949,7 @@
 	<file>
 		<gameName>Shadow the Hedgehog</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GUPP</gamecode>
-		<company>8P</company>
+		<id6>GUPP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^SHADOW THE HEDGEHOG$</gameDesc>
@@ -1001,8 +968,7 @@
 	<file>
 		<gameName>Skies of Arcadia Legends</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GEAP</gamecode>
-		<company>8P</company>
+		<id6>GEAP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Skies of Arcadia Legends$</gameDesc>
@@ -1031,8 +997,7 @@
 	<file>
 		<gameName>Sonic Adventure DX: Director's Cut</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GXSP</gamecode>
-		<company>8P</company>
+		<id6>GXSP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Sonic Adventure DX  File (\d)$</gameDesc>
@@ -1057,8 +1022,7 @@
 	<file>
 		<gameName>Sonic Adventure DX: Director's Cut</gameName>
 		<fileInfo>Chao Garden File</fileInfo>
-		<gamecode>GXSP</gamecode>
-		<company>8P</company>
+		<id6>GXSP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Sonic Adventure DX$</gameDesc>
@@ -1087,8 +1051,7 @@
 	<file>
 		<gameName>Sonic Adventure 2: Battle</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GSNP</gamecode>
-		<company>8P</company>
+		<id6>GSNP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^SONIC ADVENTURE 2 BATTLE$</gameDesc>
@@ -1112,8 +1075,7 @@
 	<file>
 		<gameName>Sonic Adventure 2: Battle</gameName>
 		<fileInfo>Chao Garden File</fileInfo>
-		<gamecode>GSNP</gamecode>
-		<company>8P</company>
+		<id6>GSNP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^SONIC ADVENTURE 2 BATTLE$</gameDesc>
@@ -1142,8 +1104,7 @@
 	<file>
 		<gameName>Sonic Gems Collection</gameName>
 		<fileInfo>Settings File</fileInfo>
-		<gamecode>G2XP</gamecode>
-		<company>8P</company>
+		<id6>G2XP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^SONIC GEMS COLLECTION$</gameDesc>
@@ -1171,8 +1132,7 @@
 	<file>
 		<gameName>Sonic Gems Collection</gameName>
 		<fileInfo>Sonic R: Save File</fileInfo>
-		<gamecode>G2XP</gamecode>
-		<company>8P</company>
+		<id6>G2XP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^SONIC GEMS COLLECTION$</gameDesc>
@@ -1191,8 +1151,7 @@
 	<file>
 		<gameName>Sonic Gems Collection</gameName>
 		<fileInfo>Sonic the Fighters: Save File</fileInfo>
-		<gamecode>G2XP</gamecode>
-		<company>8P</company>
+		<id6>G2XP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^SONIC GEMS COLLECTION$</gameDesc>
@@ -1211,8 +1170,7 @@
 	<file>
 		<gameName>Sonic Heroes</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>G9SP</gamecode>
-		<company>8P</company>
+		<id6>G9SP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^SONIC HEROES : (\d{2})$</gameDesc>
@@ -1241,8 +1199,7 @@
 	<file>
 		<gameName>Sonic Mega Collection</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GSOP</gamecode>
-		<company>8P</company>
+		<id6>GSOP8P</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Sonic Mega Collection$</gameDesc>
@@ -1276,8 +1233,7 @@
 	<file>
 		<gameName>SoulCalibur 2</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GRSP</gamecode>
-		<company>AF</company>
+		<id6>GRSPAF</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^SoulCalibur 2$</gameDesc>
@@ -1317,8 +1273,7 @@
 	<file>
 		<gameName>Star Wars: Rebel Strike - Rogue Squadron III</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GLRP</gamecode>
-		<company>64</company>
+		<id6>GLRP64</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Star Wars: Rebel Strike$</gameDesc>
@@ -1337,8 +1292,7 @@
 	<file>
 		<gameName>Star Wars: Rogue Leader - Rogue Squadron II</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GSWP</gamecode>
-		<company>64</company>
+		<id6>GSWP64</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Star Wars: Rogue Leader$</gameDesc>
@@ -1357,8 +1311,7 @@
 	<file>
 		<gameName>Super Monkey Ball</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GMBP</gamecode>
-		<company>8P</company>
+		<id6>GMBP8P</id6>
 		<search>
 			<!-- Third block. FIXME: Implement block offsets. -->
 			<address>0x5804</address>
@@ -1396,8 +1349,7 @@
 	<file>
 		<gameName>Super Monkey Ball 2</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GM2P</gamecode>
-		<company>8P</company>
+		<id6>GM2P8P</id6>
 		<search>
 			<address>0x0004</address>
 			<gameDesc>^SUPER MONKEY BALL 2$</gameDesc>
@@ -1417,8 +1369,7 @@
 	<file>
 		<gameName>Super Smash Bros. Melee</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GALP</gamecode>
-		<company>01</company>
+		<id6>GALP01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Super Smash Bros\. Melee$</gameDesc>
@@ -1449,8 +1400,7 @@
 	<file>
 		<gameName>Tales of Symphonia</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GQSP</gamecode>
-		<company>AF</company>
+		<id6>GQSPAF</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^TALES OF SYMPHONIA$</gameDesc>
@@ -1481,8 +1431,7 @@
 	<file>
 		<gameName>The Legend of Zelda: Collector's Edition</gameName>
 		<fileInfo>Zelda 1: Save File</fileInfo>
-		<gamecode>PZLP</gamecode>
-		<company>01</company>
+		<id6>PZLP01</id6>
 		<search>
 			<address>0x1C00</address>
 			<gameDesc>^Zelda: Collector's Edition$</gameDesc>
@@ -1501,8 +1450,7 @@
 	<file>
 		<gameName>The Legend of Zelda: Collector's Edition</gameName>
 		<fileInfo>Zelda 2: Save File</fileInfo>
-		<gamecode>PZLP</gamecode>
-		<company>01</company>
+		<id6>PZLP01</id6>
 		<search>
 			<address>0x1C00</address>
 			<gameDesc>^Zelda: Collector's Edition$</gameDesc>
@@ -1521,8 +1469,7 @@
 	<file>
 		<gameName>The Legend of Zelda: Collector's Edition</gameName>
 		<fileInfo>Majora's Mask: Save File</fileInfo>
-		<gamecode>PZLP</gamecode>
-		<company>01</company>
+		<id6>PZLP01</id6>
 		<search>
 			<address>0x002C</address>
 			<gameDesc>^Zelda: Collector's Edition$</gameDesc>
@@ -1541,8 +1488,7 @@
 	<file>
 		<gameName>The Legend of Zelda: Four Swords Adventures</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>G4SP</gamecode>
-		<company>01</company>
+		<id6>G4SP01</id6>
 		<search>
 			<address>0x1C00</address>
 			<gameDesc>^Four Swords Adventures$</gameDesc>
@@ -1570,8 +1516,7 @@
 	<file>
 		<gameName>The Legend of Zelda: Ocarina of Time / Master Quest</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>D43P</gamecode>
-		<company>01</company>
+		<id6>D43P01</id6>
 		<search>
 			<address>0x002C</address>
 			<gameDesc>^Zelda: Ocarina of Time$</gameDesc>
@@ -1591,8 +1536,7 @@
 	<file>
 		<gameName>The Legend of Zelda: The Wind Waker</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GZLP</gamecode>
-		<company>01</company>
+		<id6>GZLP01</id6>
 		<search>
 			<address>0x1C00</address>
 			<gameDesc>^Zelda: The Wind Waker$</gameDesc>
@@ -1621,8 +1565,7 @@
 	<file>
 		<gameName>TimeSplitters 2</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GTSP</gamecode>
-		<company>4F</company>
+		<id6>GTSP4F</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^TimeSplitters 2$</gameDesc>
@@ -1641,8 +1584,7 @@
 	<file>
 		<gameName>VIEWTIFUL JOE</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GVJP</gamecode>
-		<company>08</company>
+		<id6>GVJP08</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^VIEWTIFUL JOE$</gameDesc>
@@ -1683,8 +1625,7 @@
 	<file>
 		<gameName>Viewtiful Joe 2</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>G2VP</gamecode>
-		<company>08</company>
+		<id6>G2VP08</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^Viewtiful Joe 2$</gameDesc>
@@ -1725,8 +1666,7 @@
 	<file>
 		<gameName>Wario World</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>GWWP</gamecode>
-		<company>01</company>
+		<id6>GWWP01</id6>
 		<search>
 			<address>0x0000</address>
 			<gameDesc>^WARIO WORLD$</gameDesc>
