@@ -298,10 +298,14 @@ GcnMcFileDef *GcnMcFileDbPrivate::parseXml_file(QXmlStreamReader &xml)
 		return nullptr;
 	}
 
-	GcnMcFileDef *gcnMcFileDef = new GcnMcFileDef;
+	GcnMcFileDef *const gcnMcFileDef = new GcnMcFileDef;
 	QString regionStr;
 
-	// TODO: Combine gamecode/company into ID6.
+	// New DB revision supports <id6>, but we'll support
+	// <gamecode> and <company> for compatibility.
+	// If <id6> is present, <gamecode> and <company> must not
+	// be present, and vice-versa.
+	bool hasID6 = false, hasGameCodeOrCompany = false;
 
 	// Iterate over the properties.
 	xml.readNext();
@@ -310,42 +314,52 @@ GcnMcFileDef *GcnMcFileDbPrivate::parseXml_file(QXmlStreamReader &xml)
 		if (xml.tokenType() == QXmlStreamReader::StartElement) {
 			// Check what this element is.
 			if (xml.name() == QLatin1String("gameName")) {
-				// Game name.
+				// Game name
 				gcnMcFileDef->gameName = parseXml_element(xml);
 			} else if (xml.name() == QLatin1String("fileInfo")) {
-				// File information.
+				// File information
 				gcnMcFileDef->gameName = parseXml_element(xml);
 			} else if (xml.name() == QLatin1String("gamecode")) {
-				// Game code.
+				// Game code
+				hasGameCodeOrCompany = true;
 				QString gamecode = parseXml_element(xml);
 				gamecode.resize(sizeof(gcnMcFileDef->gamecode));
 				memcpy(gcnMcFileDef->gamecode,
 					gamecode.toLatin1().constData(),
 					sizeof(gcnMcFileDef->gamecode));
 			} else if (xml.name() == QLatin1String("company")) {
-				// Company code.
+				// Company code
+				hasGameCodeOrCompany = true;
 				QString company = parseXml_element(xml);
 				company.resize(sizeof(gcnMcFileDef->company));
 				memcpy(gcnMcFileDef->company,
 					company.toLatin1().constData(),
 					sizeof(gcnMcFileDef->company));
+			} else if (xml.name() == QLatin1String("id6")) {
+				// ID6
+				hasID6 = true;
+				QString id6 = parseXml_element(xml);
+				id6.resize(sizeof(gcnMcFileDef->id6));
+				memcpy(gcnMcFileDef->id6,
+					id6.toLatin1().constData(),
+					sizeof(gcnMcFileDef->id6));
 			} else if (xml.name() == QLatin1String("regions")) {
-				// Additional region codes.
+				// Additional region codes
 				regionStr += parseXml_element(xml);
 			} else if (xml.name() == QLatin1String("search")) {
-				// Search definitions.
+				// Search definitions
 				parseXml_file_search(xml, gcnMcFileDef);
 			} else if (xml.name() == QLatin1String("checksum")) {
-				// Checksum definitions.
+				// Checksum definitions
 				parseXml_file_checksum(xml, gcnMcFileDef);
 			} else if (xml.name() == QLatin1String("dirEntry")) {
-				// Directory entry.
+				// Directory entry
 				parseXml_file_dirEntry(xml, gcnMcFileDef);
 			} else if (xml.name() == QLatin1String("variables")) {
-				// Variable modifiers.
+				// Variable modifiers
 				parseXml_file_variables(xml, gcnMcFileDef);
 			} else {
-				// Skip unreocgnized tokens.
+				// Skip unrecognized tokens.
 				xml.readElementText(QXmlStreamReader::SkipChildElements);
 			}
 		}
@@ -354,14 +368,23 @@ GcnMcFileDef *GcnMcFileDbPrivate::parseXml_file(QXmlStreamReader &xml)
 		xml.readNext();
 	}
 
+	// TODO: Only allow ID6 if DB format is v0.2 or higher.
+	if (hasID6 == hasGameCodeOrCompany) {
+		// Either we have both ID6 and gamecode/company,
+		// or we don't have either one.
+		// TODO: Report an error.
+		delete gcnMcFileDef;
+		return nullptr;
+	}
+
 	// Determine the main region code from the game code.
 	QChar regionChr((ushort)gcnMcFileDef->gamecode[3]);
 	gcnMcFileDef->regions = RegionCharToBitfield(regionChr);
 
 	// Parse additional region codes.
-	for (int i = (regionStr.length() - 1); i >= 0; i--) {
-		QChar regionChr = regionStr.at(i);
-		gcnMcFileDef->regions |= RegionCharToBitfield(regionChr);
+	const auto iter_end = regionStr.cend();
+	for (auto iter = regionStr.cbegin(); iter != iter_end; ++iter) {
+		gcnMcFileDef->regions |= RegionCharToBitfield(*iter);
 	}
 
 	// Return the GcnMcFileDef.
