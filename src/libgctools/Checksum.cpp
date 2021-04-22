@@ -2,7 +2,7 @@
  * GameCube Tools Library.                                                 *
  * Checksum.cpp: Checksum algorithm class.                                 *
  *                                                                         *
- * Copyright (c) 2013-2020 by David Korth.                                 *
+ * Copyright (c) 2013-2021 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -65,10 +65,10 @@ uint16_t Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly)
  */
 uint32_t AddInvDual16(const uint16_t *buf, uint32_t siz, ChkEndian endian)
 {
-        // We're operating on words, not bytes.
-        // siz is in bytes, so we have to divide it by two.
-        siz /= 2;
-	
+	// We're operating on words, not bytes.
+	// siz is in bytes, so we have to divide it by two.
+	siz /= 2;
+
 	// NOTE: Integer overflow/underflow is expected here.
 	uint16_t chk1 = 0;
 	uint16_t chk2 = -siz;
