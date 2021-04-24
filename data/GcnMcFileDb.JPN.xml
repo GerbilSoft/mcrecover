@@ -34,8 +34,29 @@
 		<search>
 			<address>0x0004</address>
 			<gameDesc>^1080ﾟ SILVERSTORM$</gameDesc>
-			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>	
+			<!-- Date format: DD/MM/YYYY HH:MM:SS -->
+			<fileDesc>^(\d{1,2})/(\d{1,2})/(\d{4}) (\d{1,2}):(\d{2}):(\d{2})$</fileDesc>
 		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
 		<dirEntry>
 			<filename>Gameslot_1</filename>
 			<bannerFormat>0x01</bannerFormat>
