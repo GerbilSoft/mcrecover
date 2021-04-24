@@ -75,7 +75,7 @@
 			<fileDesc>^(.*)$</fileDesc>
 		</search>
 		<dirEntry>
-			<filename>LOUIS</filename>
+			<filename>$F1</filename>
 			<bannerFormat>0x06</bannerFormat>
 			<iconAddress>0x01C0</iconAddress>
 			<iconFormat>0x5555</iconFormat>
@@ -212,7 +212,7 @@
 			<fileDesc>^(.*)$</fileDesc>
 		</search>
 		<dirEntry>
-			<filename>XEA2006</filename>
+			<filename>$F1</filename>
 			<bannerFormat>0x02</bannerFormat>
 			<iconAddress>0x0050</iconAddress>
 			<iconFormat>0x02</iconFormat>
