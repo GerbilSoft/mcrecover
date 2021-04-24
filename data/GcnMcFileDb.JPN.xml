@@ -28,7 +28,7 @@
 		</dirEntry>
 	</file>
 	<file>
-	<gameName>18 Wheeler</gameName>
+		<gameName>18 Wheeler</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GWEJB0</id6>
 		<search>
@@ -47,6 +47,7 @@
 		</dirEntry>
 	</file>
 	<file>
+		<!-- 2002 FIFA World Cup -->
 		<gameName>FIFA World Cup(TM)</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GFIJ13</id6>
