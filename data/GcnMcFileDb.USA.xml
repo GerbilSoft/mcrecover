@@ -9,6 +9,25 @@
 		<email>gerbilsoft@gerbilsoft.com</email>
 	</dbInfo>
 	<file>
+		<gameName>007: Agent Under Fire (tm)</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GW7E69</id6>
+		<search>
+			<address>0x0024</address>
+			<gameDesc>^007: Agent Under Fire \(tm\)$</gameDesc>
+			<fileDesc>^Save Game File$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>James Bond: Agent Under Fire</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0064</iconAddress>
+			<iconFormat>0x0AAA</iconFormat>
+			<iconSpeed>0x0FFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>007: Everything or Nothing</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GENE69</id6>
