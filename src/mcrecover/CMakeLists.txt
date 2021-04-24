@@ -386,18 +386,16 @@ INSTALL(TARGETS mcrecover
 	ARCHIVE DESTINATION "${DIR_INSTALL_LIB}"
 	COMPONENT "program"
 	)
+# Check if a split debug file should be installed.
 IF(INSTALL_DEBUG)
-IF(MSVC)
-	INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/mcrecover.pdb"
-		DESTINATION "${DIR_INSTALL_EXE_DEBUG}"
-		COMPONENT "debug"
-		)
-ELSEIF(SPLIT_DEBUG)
-	INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/mcrecover.debug"
-		DESTINATION "${DIR_INSTALL_EXE_DEBUG}"
-		COMPONENT "debug"
-		)
-ENDIF()
+	# FIXME: Generator expression $<TARGET_PROPERTY:${_target},PDB> didn't work with CPack-3.6.1.
+	GET_TARGET_PROPERTY(DEBUG_FILENAME mcrecover PDB)
+	IF(DEBUG_FILENAME)
+		INSTALL(FILES "${DEBUG_FILENAME}"
+			DESTINATION "${DIR_INSTALL_EXE_DEBUG}"
+			COMPONENT "debug"
+			)
+	ENDIF(DEBUG_FILENAME)
 ENDIF(INSTALL_DEBUG)
 
 # FreeDesktop.org icon specification.
