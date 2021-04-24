@@ -12,7 +12,7 @@ See [doc/gpl-2.0.txt](doc/gpl-2.0.txt) for more information.
 (released 2018/??/??)
 
 * Database statistics in this release: [UDPATE BEFORE RELEASE]
-  * USA: 117 files
+  * USA: 259 files
   * PAL: 59 files
   * JPN: 7 files
   * KOR: 0 files :(
@@ -53,7 +53,10 @@ See [doc/gpl-2.0.txt](doc/gpl-2.0.txt) for more information.
   which includes a command line interface with more functionality.
 
 * Fixed timezone offset issues with recovered files that have timestamp
-  modifiers.
+  modifiers. (This may be related to the Qt5 conversion.)
+
+* Added lots of missing GCI definitions. Thanks to Louis for providing the
+  GCI files.
 
 ## v0.2.1
 (released 2015/01/04)

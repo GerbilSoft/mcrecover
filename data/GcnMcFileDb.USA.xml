@@ -9,6 +9,124 @@
 		<email>gerbilsoft@gerbilsoft.com</email>
 	</dbInfo>
 	<file>
+		<gameName>007: Everything or Nothing</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GENE69</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^007™: Everything or Nothing™$</gameDesc>
+			<fileDesc>^Saved game data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GAME.DAT</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xFFFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>007: From Russia With Love</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GLZE69</id6>
+		<search>
+			<address>0x0010</address>
+			<gameDesc>^From Russia With Love™$</gameDesc>
+			<fileDesc>^PROFILES$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>BondSv</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0050</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>6</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>1080° Avalanche</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GTEE01</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^1080: Avalanche$</gameDesc>
+			<!-- Date format: MM/DD/YYYY HH:mm:ss -->
+			<!-- TODO: HH or H? -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<!-- FIXME: Multiple game slots? -->
+			<filename>Gameslot_1</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x05</iconFormat>
+			<iconSpeed>0x0F</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>2006 FIFA World Cup™</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G6FE69</id6>
+		<search>
+			<address>0x0010</address>
+			<gameDesc>^2006 FIFA World Cup™$</gameDesc>
+			<fileDesc>^Profiles$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>VProfil</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0050</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>8</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Aggressive Inline</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GILE51</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Aggressive Inline$</gameDesc>
+			<fileDesc>^Skater Career$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>AGGR_INLINE</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>57</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Alien Hominid</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GAHEGG</id6>
@@ -25,6 +143,56 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>8</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>All-Star Baseball 2003</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GA3E51</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^All-Star Baseball 2003$</gameDesc>
+			<fileDesc>^Options$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>ASB2003Settings0</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0555</iconFormat>
+			<iconSpeed>0x0555</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>American Chopper 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GAPE52</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^American Chopper 2$</gameDesc>
+			<fileDesc>^Save Game (\d{1,2}), (\d{2})/(\d{2})/(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>year</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<!-- TODO: Verify that "SL1" corresponds to the save slot. -->
+			<filename>mc0:AC2-SL${F1}_AC2-SL${F1}</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -70,6 +238,120 @@
 			<iconSpeed>0x02</iconSpeed>
 			<permission>0x04</permission>
 			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Aquaman: Battle for Atlantis</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GAQE6S</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Aquaman: Battle for Atlantis™$</gameDesc>
+			<fileDesc>^Aquaman$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Aquaman</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Army Men: Air Combat - The Elite Missions</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GACE5H</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Army Men Air Combat$</gameDesc>
+			<fileDesc>^Save Game$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>0AMAA2</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>ATV: Quad Power Racing 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GATE51</id6>
+		<search>
+			<address>0x0010</address>
+			<gameDesc>^ATV: Quad Power Racing 2$</gameDesc>
+			<fileDesc>^Global Profile$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>PROFILESPROFILE</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0050</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>9</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Auto Modellista</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GAUE08</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^auto modellista$</gameDesc>
+			<fileDesc>^system file$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>auto_modellista_System.SYS</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>19</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Avatar - The Last Airbender</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GAVE78</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Avatar – The Last Airbender$</gameDesc>
+			<fileDesc>^THQ Studio Australia, 2006$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>AVATAR_2006.DAT</filename>
+			<bannerFormat>0x04</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>25</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Barnyard</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GYAE78</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Barnyard$</gameDesc>
+			<fileDesc>^Save Game Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>BYard05</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>28</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -168,6 +450,85 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Batman: Dark Tomorrow</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GBME7F</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^BATMAN: DARK TOMORROW$</gameDesc>
+			<!-- Date format: YYYY/MM/DD HH:mm:ss -->
+			<!-- TODO: HH or H? -->
+			<fileDesc>^(\d{4})/(\d{2})/(\d{2}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>BATMANDARKTOMORROW</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Batman: Vengeance</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GBVE41</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Batman: Vengeance Data$</gameDesc>
+			<fileDesc>^$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>BATMAN VENGEANCE</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x55</iconFormat>
+			<iconSpeed>0xFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Battalion Wars</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G8WE01</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Battalion Wars$</gameDesc>
+			<fileDesc>^Campaign and settings$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Battalion Wars</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Beyblade VForce - Super Tournament Battle</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GBTE70</id6>
@@ -235,6 +596,25 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Big Mutha Truckers</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GT8E78</id6>
+		<search>
+			<address>0x0040</address>
+			<gameDesc>^Big Mutha Truckers$</gameDesc>
+			<fileDesc>^Settings Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SettingsFile</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0080</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Billy Hatcher and the Giant Egg</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GEZE8P</id6>
@@ -263,6 +643,161 @@
 		</variables>
 		<dirEntry>
 			<filename>billyhatcher</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Bionicle</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GVOE69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^BIONICLE\(tm\)$</gameDesc>
+			<fileDesc>^LEGO Interactive$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>BIONICLE(tm)</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Black &amp; Bruised</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G2BE5G</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Black &amp; Bruised$</gameDesc>
+			<fileDesc>^Save Game$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>BLACKBRUISED</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Bloody Roar: Primal Fury</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GBLE52</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^BLOODY ROAR: PF$</gameDesc>
+			<fileDesc>^Hyper-beast fighting$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>BLOODY_ROAR_EXTREME</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x01C0</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Blowout</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GWOE5G</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Blowout$</gameDesc>
+			<fileDesc>^Game time: \d{1,2}:\d{2,2}:\d{2,2}$</fileDesc>
+		</search>
+		<dirEntry>
+			<!-- TODO: Verify that this filename is not unique per save file. -->
+			<filename>I91GGNQ</filename>
+			<bannerFormat>0xF0</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x801E</iconFormat>
+			<iconSpeed>0x9D43</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>BMX XXX</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GB3E51</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^BMX XXX$</gameDesc>
+			<fileDesc>^BMX XXX Save$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>BMX_XXX</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>18</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>BOMBERMAN GENERATION</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GBGE5G</id6>
+		<search>
+			<address>0x4020</address>
+			<gameDesc>^BOMBERMAN GENERATION$</gameDesc>
+			<!-- FIXME: This looks like a D/M date, but it isn't... (was 31/5) -->
+			<fileDesc>^Saved Data of \d{1,2}/\d{1,2}\.$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>bombermang</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0xAA</iconFormat>
+			<iconSpeed>0xD6</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Burnout 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GB4E51</id6>
+		<search>
+			<address>0x0008</address>
+			<gameDesc>^Burnout 2$</gameDesc>
+			<fileDesc>^Save Game$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>savegame.dat</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0048</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Call of Duty 2: Big Red One</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GQCE52</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Call of Duty 2: Big Red One$</gameDesc>
+			<fileDesc>^Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<!-- FIXME: Multiple profiles? -->
+			<filename>CODBProfiles0</filename>
 			<bannerFormat>0x02</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x02</iconFormat>
@@ -301,6 +836,64 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Carmen Sandiego: The Secret of the Stolen Drums</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G3DE6L</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Carmen Sandiego™ : SOTSD$</gameDesc>
+			<fileDesc>^Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>CARMEN</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Casper Spirit Dimensions</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GCPE6S</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Casper Spirit Dimensions$</gameDesc>
+			<fileDesc>^CASPER SAVE (\d{1,2})$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>CASPER SAVE $F1</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Cel Damage(tm)</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GCLE69</id6>
+		<search>
+			<address>0x0014</address>
+			<gameDesc>^Cel Damage\(tm\)$</gameDesc>
+			<!-- Filename is user-specified. "PITA" unlocks everything. -->
+			<fileDesc>^(.+)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>$F1</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0054</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Chibi Robo</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GGTE01</id6>
@@ -331,6 +924,25 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>City Racer</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GRQE41</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^CITY RACER$</gameDesc>
+			<fileDesc>^DATA FILE$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>CITY RACER</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>8</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Crash Bandicoot: The Wrath of Cortex</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GCBE7D</id6>
@@ -347,6 +959,208 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Crash Nitro Kart</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GCNE7D</id6>
+		<search>
+			<address>0x0058</address>
+			<gameDesc>^Crash Nitro Kart$</gameDesc>
+			<fileDesc>^Options And Unlockables$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>all</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0098</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Crash Tag Team Racing</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G9RE7D</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^CrashTTR$</gameDesc>
+			<!-- FIXME: Does this game have save slots? -->
+			<fileDesc>^CrashTTR 1$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>CrashTTR 1</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Crazy Taxi</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GCTE51</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Crazy Taxi$</gameDesc>
+			<fileDesc>^save game data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Crazy Taxi</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Cubivore: Survival of the Fittest</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GCVEEB</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Cubivore Save Data$</gameDesc>
+			<!-- Date format: MM/DD/YYYY HH:mm:ss -->
+			<!-- TODO: HH or H? -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>cubivore_save_data</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>13</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Cubix Robots for Everyone: Showdown</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GCAE5H</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Cubix Showdown$</gameDesc>
+			<fileDesc>^Game progress and options data\.$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>CUBIXSAVE718</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Curious George</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G3JEAF</id6>
+		<search>
+			<address>0x0810</address>
+			<gameDesc>^Curious George$</gameDesc>
+			<!-- Date format: M/D/YYYY H:m:s -->
+			<!-- TODO: D or DD? -->
+			<!-- NOTE: Example time format was "16:49:5", so assuming single-digits. -->
+			<!-- TODO: Verify that "George1" is a save slot. -->
+			<fileDesc>^George(\d{1,2}) (\d{1,2})/(\d{1,2})/(\d{4}) (\d{1,2}):(\d{1,2}):(\d{1,2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F7">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>George${F1}</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0010</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Custom Robo</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GXCE01</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Custom Robo$</gameDesc>
+			<!-- Date format: YYYY/MM/DD HH:mm:ss -->
+			<!-- TODO: HH or H? -->
+			<fileDesc>^(\d{4})/(\d{2})/(\d{2}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>CustomRobo-BattleRevolution</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x15</iconFormat>
+			<iconSpeed>0x2A</iconSpeed>
+			<permission>0x04</permission>
+			<length>15</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -385,6 +1199,215 @@
 			<iconSpeed>0xFF</iconSpeed>
 			<permission>0x04</permission>
 			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Dave Mirra Freestyle BMX 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GBXE51</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Dave Mirra Freestyle BMX 2$</gameDesc>
+			<fileDesc>^Game Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>BMX2SAVE.DAT</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Dead to Rights</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GDREAF</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^DEAD TO RIGHTS$</gameDesc>
+			<fileDesc>^\(C\) 2002 NAMCO$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>DTRSAVE</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>10</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Def Jam: Fight For NY</gameName>
+		<fileInfo>Options File</fileInfo>
+		<id6>GNWE69</id6>
+		<search>
+			<address>0x0010</address>
+			<gameDesc>^Def Jam® Fight For NY™$</gameDesc>
+			<fileDesc>^Options$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Options</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0050</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Def Jam Vendetta</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GDTE69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Def Jam VENDETTA™$</gameDesc>
+			<fileDesc>^GameData$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>DefJamVENDETTA™ GameData</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x1555</iconFormat>
+			<iconSpeed>0x2AAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Defender</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GDFE5D</id6>
+		<search>
+			<address>0x0800</address>
+			<gameDesc>^Defender$</gameDesc>
+			<fileDesc>^Profiles and Settings Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Defender</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Die Hard: Vendetta</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GDIE7D</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Die Hard Vendetta$</gameDesc>
+			<fileDesc>^Game Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Die Hard Vendetta</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>6</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Digimon Rumble Arena 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GD6EB2</id6>
+		<search>
+			<address>0x0010</address>
+			<gameDesc>^Digimon Rumble Arena 2$</gameDesc>
+			<fileDesc>^Save Game$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>DRA2</filename>
+			<bannerFormat>0x04</bannerFormat>
+			<iconAddress>0x0050</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Digimon World 4</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GDJEB2</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^DigimonWorld4$</gameDesc>
+			<fileDesc>^SaveData$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>NDMWSaveData</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>11</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Disney Sports: Basketball</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GDLEA4</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Disney Sports: Basketball$</gameDesc>
+			<fileDesc>^Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>DisneySportsBasketBall</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x04</permission>
+			<length>15</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Disney Sports: Skateboarding</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GDXEA4</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Disney Sports: Skateboarding$</gameDesc>
+			<fileDesc>^SAVE DATA$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>DISNEY_SPORTS_SERIES_SAVE01</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x04</permission>
+			<length>7</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Disney's Extreme Skate Adventure</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GEXE52</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^D\.E\.S\.A\. Game$</gameDesc>
+			<fileDesc>^GAME$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>NGCErpbnvzlaNGCErpbnvzla</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x1555</iconFormat>
+			<iconSpeed>0x2AAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>9</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -469,6 +1492,47 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Donkey Konga 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GY2E01</id6>
+		<search>
+			<address>0x2000</address>
+			<gameDesc>^Donkey Konga 2$</gameDesc>
+			<!-- Date format: MM/DD/YYYY  H:mm:ss -->
+			<!-- NOTE: Leading space for 1-digit hours. -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) ([012 ]?\d):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>DONKEY KONGA 2 SAVEDATA</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x15</iconFormat>
+			<iconSpeed>0x3F</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Dragon Ball Z Budokai</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GD7E70</id6>
@@ -531,6 +1595,85 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Driven</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GDVE6L</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Driven$</gameDesc>
+			<fileDesc>^Game Data and Settings$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GameData</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Ed, Edd n Eddy: The Mis-Edventures</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GE9E5D</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Ed, Edd n Eddy$</gameDesc>
+			<fileDesc>^Saved Games$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>EDEDDNEDDYTHEMIS-EDVENTURES</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Enter The Matrix</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GMXE70</id6>
+		<search>
+			<address>0x000C</address>
+			<gameDesc>^Enter The Matrix$</gameDesc>
+			<!-- Date format: MM/DD/YYYY HH:mm:ss -->
+			<!-- TODO: HH or H? -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>EnterTheMatrix</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x004C</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x04</permission>
+			<length>10</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Eternal Darkness</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GEDE01</id6>
@@ -579,6 +1722,25 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x1C</permission>
 			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Fantastic Four</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GF4E52</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Fantastic Four$</gameDesc>
+			<fileDesc>^Fantastic Four Save Game$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>F4Save1</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -699,6 +1861,277 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Freestyle MetalX</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GFXE5D</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Freestyle MetalX$</gameDesc>
+			<fileDesc>^FMX: GLOBAL$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>FMX: GLOBAL</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>11</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Frogger's Adventures: The Rescue</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GFQEA4</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Frogger's ADV$</gameDesc>
+			<!-- Date format: MM/DD/YYYY HH:mm:ss -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>Frogger's ADV</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x55</iconFormat>
+			<iconSpeed>0xAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Frogger: Ancient Shadow</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GFPEA4</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Frogger Ancient Shadow$</gameDesc>
+			<!-- Date format: MM/DD/YYYY HH:mm:ss -->
+			<!-- TODO: HH or H? -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>Frogger Ancient Shadow</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x55</iconFormat>
+			<iconSpeed>0xAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Gauntlet: Dark Legacy</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GUNE5D</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Gauntlet Dark Legacy$</gameDesc>
+			<fileDesc>^Gauntlet Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Gauntlet - Dark Legacy</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>8</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Geist</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GITE01</id6>
+		<search>
+			<address>0x000C</address>
+			<gameDesc>^Geist$</gameDesc>
+			<fileDesc>^Save File$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Geist</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x004C</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Godzilla: Destroy All Monsters Melee</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GZDE70</id6>
+		<search>
+			<address>0x0010</address>
+			<gameDesc>^Godzilla®: Melee$</gameDesc>
+			<fileDesc>^Godzilla®: Melee Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Godzilla</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0050</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xFFFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Go! Go! Hypergrind</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GHGEEB</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Go! Go! Hypergrind$</gameDesc>
+			<fileDesc>^\d{1,3}/297 collected$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GGHData</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0555</iconFormat>
+			<iconSpeed>0x0FFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>GrooveRider Slot Car Thunder</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GVRE7H</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^GrooveRider$</gameDesc>
+			<fileDesc>^Save$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>details.coc</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Gun</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GUME52</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Gun$</gameDesc>
+			<fileDesc>^gun$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GUNkhtndwjaGUNkhtndwja</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x1555</iconFormat>
+			<iconSpeed>0x2AAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>7</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Harry Potter and the Chamber of Secrets</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GHSE69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Harry Potter: COS$</gameDesc>
+			<fileDesc>^Save Game Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>POTTERCOS</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Harry Potter and the Goblet of Fire</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GH4E69</id6>
+		<search>
+			<address>0x0010</address>
+			<gameDesc>^Harry Potter: GOF$</gameDesc>
+			<fileDesc>^Electronic Arts \(TM\)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Saved Game</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0050</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Harry Potter and the Prisoner of Azkaban</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GAZE69</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Prisoner of Azkaban$</gameDesc>
+			<fileDesc>^Electronic Arts$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SaveGame-0</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Harry Potter and the Sorcerer's Stone</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GHLE69</id6>
@@ -715,6 +2148,82 @@
 			<iconSpeed>0x02</iconSpeed>
 			<permission>0x04</permission>
 			<length>9</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Hot Wheels: Velocity X</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GHWE78</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Hot Wheels\(TM\) Velocity X$</gameDesc>
+			<fileDesc>^Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>hwvx</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Hot Wheels: World Race</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GHRE78</id6>
+		<search>
+			<address>0x0010</address>
+			<gameDesc>^Hot Wheels World Race$</gameDesc>
+			<fileDesc>^Game Progress$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>HOTWHEELPROGRESS</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0050</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>15</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Hulk</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GHKE7D</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^The Hulk$</gameDesc>
+			<fileDesc>^Save data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Hulk</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>I-Ninja</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GNJEAF</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^I-Ninja$</gameDesc>
+			<fileDesc>^He's one angry Ninja$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>I-Ninja</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -759,6 +2268,25 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Intellivision Lives!</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GIVE4Z</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Intellivision Lives!$</gameDesc>
+			<fileDesc>^High Scores and Options$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>NTVSAVE</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x01</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>James Bond 007: Everything or Nothing</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GENE69</id6>
@@ -784,7 +2312,7 @@
 		<search>
 			<address>0x0004</address>
 			<gameDesc>^007™: Everything or Nothing™$</gameDesc>
-			<fileDesc>^Profile: (.*)$</fileDesc>
+			<fileDesc>^Profile: (.+)$</fileDesc>
 		</search>
 		<dirEntry>
 			<filename>${F1}.prf</filename>
@@ -794,6 +2322,25 @@
 			<iconSpeed>0xFFFF</iconSpeed>
 			<permission>0x04</permission>
 			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Kao The Kangaroo: Round 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GKOE70</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Kao the kangaroo$</gameDesc>
+			<fileDesc>^Round 2$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>kao_2_savegame</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xFFFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -994,6 +2541,63 @@
 			<iconAddress>0x0000</iconAddress>
 			<iconFormat>0x4041</iconFormat>
 			<iconSpeed>0xFFFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Madagascar</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GGZE52</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Madagascar$</gameDesc>
+			<fileDesc>^Saved Games$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SaveGames</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Madden NFL 2005</gameName>
+		<fileInfo>Franchise File</fileInfo>
+		<id6>GNQE69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Madden NFL 2005$</gameDesc>
+			<fileDesc>^Franchise-(.+)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GNQE-69B${F1}</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>167</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Madden NFL 2005</gameName>
+		<fileInfo>Profile File</fileInfo>
+		<id6>GNQE69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Madden NFL 2005$</gameDesc>
+			<fileDesc>^Profile-(.+)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GNQE-69H${F1}</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
 		</dirEntry>
@@ -1243,6 +2847,46 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Marvel Nemesis: Rise of the Imperfects</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GVLE69</id6>
+		<search>
+			<address>0x0010</address>
+			<gameDesc>^Imperfects$</gameDesc>
+			<fileDesc>^SAVE (\d{1,2})$</fileDesc>
+		</search>
+		<dirEntry>
+			<!-- TODO: Verify the filename variable. -->
+			<filename>BSave${F1}</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0050</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Medal Of Honor: Rising Sun</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GR8E69</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Medal Of Honor™ Rising Sun$</gameDesc>
+			<fileDesc>^MOHRS$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>MOHRS</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<!-- TODO: Box says 10 blocks - additional files? -->
+			<length>8</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Mega Man Anniversary Collection</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>G6QE08</id6>
@@ -1275,6 +2919,44 @@
 			<bannerFormat>0x02</bannerFormat>
 			<iconAddress>0x0040</iconAddress>
 			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Mega Man X: Command Mission</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GXRE08</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Mega Man X Command Mission$</gameDesc>
+			<fileDesc>^Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>RockmanX CM</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x15</iconFormat>
+			<iconSpeed>0x3F</iconSpeed>
+			<permission>0x04</permission>
+			<length>10</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Metal Arms: Glitch in the System</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GM5E7D</id6>
+		<search>
+			<address>0x0008</address>
+			<gameDesc>^Metal Arms$</gameDesc>
+			<fileDesc>^(.+)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>4D9CF33A_${F1}</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0048</iconAddress>
+			<iconFormat>0x01</iconFormat>
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>4</length>
@@ -1401,6 +3083,25 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Minority Report: Everybody Runs</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GMWE52</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Minority Report \(tm\)$</gameDesc>
+			<fileDesc>^Save Game$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>mr.sav</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Mortal Kombat: Deadly Alliance</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GMKE5D</id6>
@@ -1445,7 +3146,7 @@
 		<search>
 			<address>0x0004</address>
 			<gameDesc>^MVP Baseball™ 2005$</gameDesc>
-			<fileDesc>^Owner-(.*)$</fileDesc>
+			<fileDesc>^Owner-(.+)$</fileDesc>
 		</search>
 		<dirEntry>
 			<filename>Owner Mode_${F1}.dat</filename>
@@ -1465,7 +3166,7 @@
 		<search>
 			<address>0x0004</address>
 			<gameDesc>^MVP Baseball™ 2005$</gameDesc>
-			<fileDesc>^Rosters-(.*)$</fileDesc>
+			<fileDesc>^Rosters-(.+)$</fileDesc>
 		</search>
 		<dirEntry>
 			<filename>Rosters_${F1}.dat</filename>
@@ -1486,7 +3187,7 @@
 		<search>
 			<address>0x0004</address>
 			<gameDesc>^MVP Baseball™ 2005$</gameDesc>
-			<fileDesc>^Profile-(.*)$</fileDesc>
+			<fileDesc>^Profile-(.+)$</fileDesc>
 		</search>
 		<dirEntry>
 			<filename>Profile_${F1}.dat</filename>
@@ -1496,6 +3197,44 @@
 			<iconSpeed>0x02</iconSpeed>
 			<permission>0x04</permission>
 			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Namco Museum</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GNMEAF</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^NAMCOMUSEUM$</gameDesc>
+			<fileDesc>^© 2001 NAMCO LTD\.$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>NAMCOMUSEUM</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x05</iconFormat>
+			<iconSpeed>0x0F</iconSpeed>
+			<permission>0x00</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Namco Museum 50th Anniversary</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G5NEAF</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Namco Museum\(tm\) 50th$</gameDesc>
+			<fileDesc>^$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Namco Museum 50th Anniversary</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -1537,13 +3276,206 @@
 		</dirEntry>
 	</file>
 	<file>
-		<gameName>Need for Speed Underground 2</gameName>
+		<gameName>NBA Street</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GNSE69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^NBA Street™$</gameDesc>
+			<fileDesc>^Game Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GAMEDATA.DAT</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<!-- TODO: Box says 10 blocks - additional files? -->
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>NBA Street Vol. 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GNZE69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^NBA STREET Vol\. 2$</gameDesc>
+			<fileDesc>^Game Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>NBA STREET Vol. 2</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>7</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>NCAA® Football 2004</gameName>
+		<fileInfo>Roster File</fileInfo>
+		<id6>GNXE69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^NCAA® Football 2004$</gameDesc>
+			<fileDesc>^Roster-(.+)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GNXE-69Rost${F1}</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<!-- TODO: Box says 208 blocks - additional files? -->
+			<length>53</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>NCAA Football 2005</gameName>
+		<fileInfo>Dynasty File</fileInfo>
+		<id6>GCUE69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^NCAA® Football 2005$</gameDesc>
+			<fileDesc>^Dynasty-(.+)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GCUE-69D${F1}</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>181</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>NCAA® Football 2005</gameName>
+		<fileInfo>Profile File</fileInfo>
+		<id6>GCUE69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^NCAA® Football 2005$</gameDesc>
+			<fileDesc>^Profile-(.+)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GCUE-69P${F1}</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>NCAA® Football 2005</gameName>
+		<fileInfo>Roster File</fileInfo>
+		<id6>GCUE69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^NCAA® Football 2005$</gameDesc>
+			<!-- TODO: Verify the first part of the file description. -->
+			<fileDesc>^.* Roster-Ros(.+)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GCUE-69RRos${F1}</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>58</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>NCAA Football 2005</gameName>
+		<fileInfo>Settings File</fileInfo>
+		<id6>GCUE69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^NCAA® Football 2005$</gameDesc>
+			<fileDesc>^Settings-(.+)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GCUE-69S${F1}</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Need for Speed: Hot Pursuit 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GH2E69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^NFS: HP2$</gameDesc>
+			<fileDesc>^(.+)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>${F1}</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0A</iconFormat>
+			<iconSpeed>0x0A</iconSpeed>
+			<permission>0x04</permission>
+			<length>7</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Need for Speed: Most Wanted</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GOWE69</id6>
+		<search>
+			<address>0x0010</address>
+			<gameDesc>^NFS Most Wanted$</gameDesc>
+			<fileDesc>^(.+)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>NFSMW${F1}</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0050</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>9</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Need for Speed: Underground</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GNDE69</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Need for Speed™ Underground$</gameDesc>
+			<fileDesc>^(.+)</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>${F1}.nfs</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>9</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Need for Speed: Underground 2</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GUGE69</id6>
 		<search>
 			<address>0x0010</address>
 			<gameDesc>^NFS Underground 2$</gameDesc>
-			<fileDesc>^(.*)$</fileDesc>
+			<fileDesc>^(.+)$</fileDesc>
 		</search>
 		<dirEntry>
 			<filename>NFSU2${F1}</filename>
@@ -1595,6 +3527,44 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Outlaw Golf</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GOFE7L</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Outlaw Golf$</gameDesc>
+			<fileDesc>^Golf_Gone_Wild$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Golf_Gone_Wild</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Over The Hedge</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GH5E52</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Over The Hedge$</gameDesc>
+			<fileDesc>^Save Game File$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Over The Hedge</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>35</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Pac-Man World 2</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GP2EAF</id6>
@@ -1611,6 +3581,25 @@
 			<iconSpeed>0x2AAA</iconSpeed>
 			<permission>0x04</permission>
 			<length>8</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Pac-Man World Rally</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G89EAF</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Pac-Man World Rally$</gameDesc>
+			<fileDesc>^Global Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>MASTERSAVEFILE</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>19</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -1840,6 +3829,25 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Power Rangers Dino Thunder</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GRUE78</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Power Rangers Dino Thunder$</gameDesc>
+			<fileDesc>^Options and saved games$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Save Data</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Prince of Persia</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GPTE41</id6>
@@ -1856,6 +3864,26 @@
 			<iconSpeed>0xFFFF</iconSpeed>
 			<permission>0x04</permission>
 			<length>15</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Prince of Persia: Warrior Within</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G2OE41</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Prince of Persia: WW$</gameDesc>
+			<fileDesc>^Save file$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Prince of Persia: WW</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xFFFF</iconSpeed>
+			<permission>0x04</permission>
+			<!-- TODO: Box says 4 blocks? -->
+			<length>21</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -1894,6 +3922,83 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>R: Racing Evolution</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GRJEAF</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^R:RACING EVOLUTION$</gameDesc>
+			<fileDesc>^Game data (\d{1,2})$</fileDesc>
+		</search>
+		<dirEntry>
+			<!-- TODO: Verify that this game has multiple save slots. -->
+			<filename>Game${F1}</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Rave Master</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GRVEA4</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^RAVE MASTER$</gameDesc>
+			<fileDesc>^system file$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>ravedata</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>14</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Rayman Arena</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GRYE41</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^RAYMAN ARENA$</gameDesc>
+			<fileDesc>^UBI SOFT Entertainment$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Rayman Arena</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Red Faction II</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GRFE78</id6>
+		<search>
+			<address>0x5800</address>
+			<gameDesc>^Red Faction® II$</gameDesc>
+			<fileDesc>^Profile: (.+)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>${F1}.plr</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>7</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -1945,6 +4050,121 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Resident Evil - Code: Veronica X</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GCDE08</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^RESIDENT EVIL CVX$</gameDesc>
+			<fileDesc>^Save File$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>RE_CVX.SYS</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>6</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Ribbit King</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GKREB2</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Ribbit King$</gameDesc>
+			<fileDesc>^Did you Frolf today\?$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>RibbitKing</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAA</iconFormat>
+			<iconSpeed>0xAA</iconSpeed>
+			<permission>0x04</permission>
+			<!-- TODO: Box says 4 blocks - additional files? -->
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>RoadKill</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GOCE5D</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^RoadKill$</gameDesc>
+			<fileDesc>^Vehicle Combat$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GOCE</filename>
+			<bannerFormat>0xF8</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x2003</iconSpeed>
+			<permission>0x04</permission>
+			<length>7</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Scaler</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GKUE9G</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Scaler™$</gameDesc>
+			<fileDesc>^Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SCALER</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Scooby-Doo!: Mystery Mayhem</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GC3E78</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Scooby-Doo!™MysteryMayhem$</gameDesc>
+			<fileDesc>^Save Game Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SD2003</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Scooby-Doo! Unmasked</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G5DE78</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Scooby-Doo!™ Unmasked$</gameDesc>
+			<fileDesc>^Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>BASLUS-99999SCOOBY5</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Second Sight</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GISE36</id6>
@@ -1980,6 +4200,25 @@
 			<iconSpeed>0xAAAA</iconSpeed>
 			<permission>0x1C</permission>
 			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Sega Soccer Slam</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GSSE8P</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Sega Soccer Slam$</gameDesc>
+			<fileDesc>^Save Game/Settings File$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SOCCERSLAM</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -2359,6 +4598,82 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Speed Kings</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GDCE51</id6>
+		<search>
+			<address>0x000C</address>
+			<gameDesc>^Speed Kings$</gameDesc>
+			<fileDesc>^Game Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SKSave</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x004C</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Sphinx &amp; the Cursed Mummy</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GXPE78</id6>
+		<search>
+			<address>0x0180</address>
+			<gameDesc>^Sphinx &amp; the Cursed Mummy™$</gameDesc>
+			<fileDesc>^Game Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GXPE</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x01C0</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>20</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Spider-Man</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GSME52</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Spider-Man$</gameDesc>
+			<fileDesc>^Save Game$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>spidermn.sav</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x0A</iconFormat>
+			<iconSpeed>0x0F</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Spider-Man 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GK2E52</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Spider-Man 2$</gameDesc>
+			<fileDesc>^Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>DOL-GK2Espidermn</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>24</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Spongebob Squarepants: Battle for Bikini Bottom</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GQPE78</id6>
@@ -2400,6 +4715,44 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Spy Hunter</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GSHE5D</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Spy Hunter$</gameDesc>
+			<fileDesc>^Agent Dossiers$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>SPCSPNSPYHUNT</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Shrek SuperSlam</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G2RE52</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Shrek SuperSlam®$</gameDesc>
+			<fileDesc>^Game Progress$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>ShrekSuperSlam.sav</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Spyro: A Hero's Tail</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>G5SE7D</id6>
@@ -2435,6 +4788,26 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>8</length>
+		</dirEntry>
+	</file>
+	<file>
+		<!-- TODO: Additional files? -->
+		<gameName>SSX Tricky</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GSTE69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^SSX Tricky$</gameDesc>
+			<fileDesc>^Game/Options$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>settings.ssx</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -2535,6 +4908,25 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Starsky &amp; Hutch</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GT5E7N</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Starsky &amp; Hutch$</gameDesc>
+			<fileDesc>^Saved Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Starsky</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAA</iconFormat>
+			<iconSpeed>0xFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Super Mario Strikers</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>G4QE01</id6>
@@ -2608,6 +5000,25 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Super Monkey Ball Adventure</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G3LE8P</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Super Monkey Ball Adventure$</gameDesc>
+			<fileDesc>^Game Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>FILE_V28</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>7</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Super Smash Bros. Melee</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GALE01</id6>
@@ -2639,6 +5050,25 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Superman: Shadow of Apokolips</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GSUE70</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Superman\(TM\): SoA$</gameDesc>
+			<fileDesc>^\(c\) Infogrames 2003$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Superman</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Tales of Symphonia</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GQSEAF</id6>
@@ -2667,6 +5097,196 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Teen Titans</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G6TE5G</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^Teen Titans$</gameDesc>
+			<fileDesc>^Game Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>TEENTITANS</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Teenage Mutant Ninja Turtles</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GTFEA4</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Teenage Mutant Ninja Turtles$</gameDesc>
+			<!-- Date format: M/D/YYYY HH:mm -->
+			<!-- TODO: HH or H? -->
+			<fileDesc>^(\d{1,2})/(\d{1,2})/(\d{4}) (\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>tmnt_game</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x05</iconFormat>
+			<iconSpeed>0x0F</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Teenage Mutant Ninja Turtles 2: Battle Nexus</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GNIEA4</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^TMNT™2 BATTLE NEXUS™$</gameDesc>
+			<!-- Date format: M/D/YYYY HH:mm -->
+			<!-- TODO: HH or H? -->
+			<fileDesc>^(\d{1,2})/(\d{1,2})/(\d{4}) (\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>tmnt2.dat</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Teenage Mutant Ninja Turtles 3: Mutant Nightmare</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G3QEA4</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^TMNT®3$</gameDesc>
+			<!-- Date format: M/D/YYYY HH:mm -->
+			<!-- TODO: HH or H? -->
+			<fileDesc>^(\d{1,2})/(\d{1,2})/(\d{4}) (\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>tmnt3.dat</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Terminator 3: The Redemption</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GT6E70</id6>
+		<search>
+			<address>0x0008</address>
+			<gameDesc>^Terminator 3$</gameDesc>
+			<fileDesc>^T3: The Redemption$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>t3_save_data</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0048</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xFFFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>The Grim Adventures of Billy &amp; Mandy</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GGNE5D</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Adventures of Billy &amp; Mandy$</gameDesc>
+			<fileDesc>^Save Game$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Default</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0060</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x01</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>The Chronicles of Narnia</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GLVE4Q</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^The Chronicles of Narnia$</gameDesc>
+			<fileDesc>^Save Game$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>FILE_V27</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>7</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -2859,6 +5479,82 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>The Lord of the Rings: The Return of the King</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GKLE69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^The Lord of the Rings™;$</gameDesc>
+			<fileDesc>^The Return of the King™$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>rotksave</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x04</permission>
+			<length>6</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>The Lord of the Rings: The Two Towers</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GLOE69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^The Two Towers™$</gameDesc>
+			<fileDesc>^Saved game data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>LotrTTTGameData</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xFFFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>4</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>The Polar Express</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GP3E78</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^The Polar Express$</gameDesc>
+			<fileDesc>^Save Game Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>PolarExpress</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>The Powerpuff Girls: Relish Rampage</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GPQE6L</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Relish Rampage$</gameDesc>
+			<fileDesc>^Save data file$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>PPGGameData</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>The Sims™ 2</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>G4ZE69</id6>
@@ -2875,6 +5571,204 @@
 			<iconSpeed>0x03</iconSpeed>
 			<permission>0x04</permission>
 			<length>147</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>SpongeBob SquarePants: The Movie</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GGVE78</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^The SpongeBob Movie$</gameDesc>
+			<!-- Date format: MM/DD/YYYY HH:mm:ss -->
+			<!-- TODO: HH or H? -->
+			<fileDesc>^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>SpongeBobMovie01</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>9</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>The Urbz: Sims in the City</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GUBE69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^The Urbz™: Sims in the City™$</gameDesc>
+			<fileDesc>^Save Data and Settings$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Urbz Save</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>107</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Tom and Jerry in War of the Whiskers</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GTJE5L</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Tom and Jerry$</gameDesc>
+			<fileDesc>^War of the Whiskers$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>War of the Whiskers</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<!-- TODO: Box says 3 blocks - additional files? -->
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>True Crime: Streets of LA</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GTLE52</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^True Crime: Streets of LA$</gameDesc>
+			<fileDesc>^Save data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>TRUE CRIME STREETS OF LA</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Ultimate Muscle: Legends vs. New Generation</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GKNEB2</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^ULTIMATE MUSCLE SaveData$</gameDesc>
+			<!-- Date format: YYYY/MM/DD HH:mm:ss -->
+			<!-- TODO: HH or H? -->
+			<fileDesc>^(\d{4})/(\d{2})/(\d{2}) (\d{2}):(\d{2}):(\d{2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>year</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F3">
+				<useAs>day</useAs>
+			</variable>
+			<variable id="F4">
+				<useAs>hour</useAs>
+			</variable>
+			<variable id="F5">
+				<useAs>minute</useAs>
+			</variable>
+			<variable id="F6">
+				<useAs>second</useAs>
+			</variable>
+		</variables>
+		<dirEntry>
+			<filename>ULTIMATEMUSCLESaveData</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Ultimate Spider-Man</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GUTE52</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Ultimate Spider-Man$</gameDesc>
+			<fileDesc>^Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>DOL-GUTEuspidrmn</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>15</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Universal Studios Theme Park Adventure</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GUSE7F</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^UNIVERSAL STUDIOS TM$</gameDesc>
+			<fileDesc>^Saved Game$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>UNIVERSAL STUDIOS US</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>1</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>V-Rally 3</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GV3P70</id6>
+		<search>
+			<address>0x0800</address>
+			<gameDesc>^VR3$</gameDesc>
+			<fileDesc>^V-Rally 3 Save Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>savedata.dat</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0000</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<!-- TODO: Box says 59 blocks - additional files? -->
+			<length>14</length>
 		</dirEntry>
 	</file>
 	<file>
@@ -3040,6 +5934,121 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Wave Race: Blue Storm</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GWRE01</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^WAVE RACE BLUE STORM$</gameDesc>
+			<fileDesc>^Don't forget your towel$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>WAVERACE BLUESTORM</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0x5555</iconSpeed>
+			<permission>0x04</permission>
+			<length>12</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Worms 3D</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GWME51</id6>
+		<search>
+			<address>0x000C</address>
+			<gameDesc>^Worms 3D$</gameDesc>
+			<fileDesc>^Team17 Software Ltd$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>Worms3DSave</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x004C</iconAddress>
+			<iconFormat>0xAA</iconFormat>
+			<iconSpeed>0xAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>10</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>WWE Day of Reckoning</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GWPE78</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^WWE Day Of Reckoning$</gameDesc>
+			<fileDesc>^System Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>/wmed_sys</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xFFF3</iconSpeed>
+			<permission>0x04</permission>
+			<length>32</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>WWE Day of Reckoning 2</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GW2E78</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^WWE Day Of Reckoning 2$</gameDesc>
+			<fileDesc>^System Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>/wmed_sys</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xFFF3</iconSpeed>
+			<permission>0x04</permission>
+			<length>34</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>WWE WrestleMania X8</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GW3E78</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^WrestleMania X8$</gameDesc>
+			<fileDesc>^$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>/w_mania2002</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xFFFF</iconSpeed>
+			<permission>0x04</permission>
+			<!-- TODO: Box says 12 blocks? -->
+			<length>14</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>WWE WrestleMania XIX</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GW9E78</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^WWE WrestleMania XIX$</gameDesc>
+			<fileDesc>^System Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>/wmx9_sys</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x02AA</iconFormat>
+			<iconSpeed>0x02AA</iconSpeed>
+			<permission>0x04</permission>
+			<length>20</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Yu-Gi-Oh! The Falsebound Kingdom</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GYFEA4</id6>
@@ -3056,6 +6065,25 @@
 			<iconSpeed>0x03FB</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>Zoids: Battle Legends</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GZSE70</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^ZOIDS BATTLE LEGENDS$</gameDesc>
+			<fileDesc>^Saved Data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>ZOIDSVS2.TEA</filename>
+			<bannerFormat>0x00</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x03</iconSpeed>
+			<permission>0x04</permission>
+			<length>10</length>
 		</dirEntry>
 	</file>
 </GcnMcFileDb>
