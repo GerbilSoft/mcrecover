@@ -85,6 +85,25 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>James Bond 007™: NightFire™</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GO7E69</id6>
+		<search>
+			<address>0x0180</address>
+			<gameDesc>^James Bond 007™: NightFire™$</gameDesc>
+			<fileDesc>^(.*)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>$F1</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x01C0</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xEAAB</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>1080° Avalanche</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GTEE01</id6>
@@ -186,15 +205,14 @@
 	<file>
 		<gameName>2006 FIFA World Cup™</gameName>
 		<fileInfo>Save File</fileInfo>
-		<gamecode>G6FE</gamecode>
-		<company>69</company>
+		<id6>G6FE69</id6>
 		<search>
 			<address>0x0010</address>
 			<gameDesc>^2006 FIFA World Cup™$</gameDesc>
 			<fileDesc>^(.*)$</fileDesc>
 		</search>
 		<dirEntry>
-			<filename>XEA2006</filename>
+			<filename>$F1</filename>
 			<bannerFormat>0x02</bannerFormat>
 			<iconAddress>0x0050</iconAddress>
 			<iconFormat>0x02</iconFormat>
