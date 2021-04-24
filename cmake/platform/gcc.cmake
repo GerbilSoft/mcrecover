@@ -41,7 +41,7 @@ UNSET(MCR_CXX_NO_RTTI_CFLAG)
 UNSET(MCR_CXX_NO_EXCEPTIONS_CFLAG)
 
 # Test for common CFLAGS and CXXFLAGS.
-FOREACH(FLAG_TEST "-Wall" "-Wextra" "-fstrict-aliasing" "-fno-common")
+FOREACH(FLAG_TEST "-Wall" "-Wextra" "-Wno-multichar" "-fstrict-aliasing" "-fno-common" "-Werror=return-type")
 	CHECK_C_COMPILER_FLAG("${FLAG_TEST}" CFLAG_${FLAG_TEST})
 	IF(CFLAG_${FLAG_TEST})
 		SET(MCR_C_FLAGS_COMMON "${MCR_C_FLAGS_COMMON} ${FLAG_TEST}")
@@ -54,6 +54,13 @@ FOREACH(FLAG_TEST "-Wall" "-Wextra" "-fstrict-aliasing" "-fno-common")
 	ENDIF(CXXFLAG_${FLAG_TEST})
 	UNSET(CXXFLAG_${FLAG_TEST})
 ENDFOREACH()
+
+# -Wimplicit-function-declaration should be an error. (C only)
+CHECK_C_COMPILER_FLAG("-Werror=implicit-function-declaration" CFLAG_IMPLFUNC)
+IF(CFLAG_IMPLFUNC)
+	SET(RP_C_FLAGS_COMMON "${RP_C_FLAGS_COMMON} -Werror=implicit-function-declaration")
+ENDIF(CFLAG_IMPLFUNC)
+UNSET(CFLAG_IMPLFUNC)
 
 # Test for common LDFLAGS.
 # NOTE: CHECK_C_COMPILER_FLAG() doesn't seem to work, even with
@@ -137,7 +144,7 @@ IF(NOT WIN32)
 		ENDIF()
 
 		IF(LDFLAG_${FLAG_TEST})
-			SET(RP_EXE_LINKER_FLAGS_COMMON "${RP_EXE_LINKER_FLAGS_COMMON} -Wl,${FLAG_TEST}")
+			SET(MCR_EXE_LINKER_FLAGS_COMMON "${MCR_EXE_LINKER_FLAGS_COMMON} -Wl,${FLAG_TEST}")
 		ENDIF(LDFLAG_${FLAG_TEST})
 	ENDFOREACH()
 ENDIF(NOT WIN32)

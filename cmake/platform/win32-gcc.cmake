@@ -2,7 +2,7 @@
 # For MinGW compilers.
 
 # Enable "secure" API functions: *_s()
-SET(MCR_C_FLAGS_WIN32 "${MCR_C_FLAGS_WIN32} -DMINGW_HAS_SECURE_API")
+ADD_DEFINITIONS(-DMINGW_HAS_SECURE_API)
 
 # Subsystem and minimum Windows version:
 # - If 32-bit: 5.00
@@ -33,7 +33,7 @@ ENDIF(CMAKE_BUILD_TYPE MATCHES ^release)
 # Test for various linker flags.
 # NOTE: --tsaware is only valid for EXEs, not DLLs.
 # TODO: Make static linkage a CMake option: --static-libgcc, --static-libstdc++
-+FOREACH(FLAG_TEST "-Wl,--large-address-aware" "-Wl,--nxcompat" "-Wl,--tsaware")
+FOREACH(FLAG_TEST "-Wl,--large-address-aware" "-Wl,--nxcompat" "-Wl,--tsaware")
 	# CMake doesn't like "+" characters in variable names.
 	STRING(REPLACE "+" "_" FLAG_TEST_VARNAME "${FLAG_TEST}")
 
