@@ -9,6 +9,82 @@
 		<email>gerbilsoft@gerbilsoft.com</email>
 	</dbInfo>
 	<file>
+		<gameName>007: Agent Under Fire (tm)</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GW7P69</id6>
+		<search>
+			<address>0x0024</address>
+			<gameDesc>^007: Agent Under Fire \(tm\)$</gameDesc>
+			<fileDesc>^Save Game File$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>James Bond: Agent Under Fire</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0064</iconAddress>
+			<iconFormat>0x0AAA</iconFormat>
+			<iconSpeed>0x0FFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>007™: Everything or Nothing™</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GENP69</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^007™: Everything or Nothing™$</gameDesc>
+			<fileDesc>^Saved game data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GAME.DAT</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xFFFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>From Russia With Love™</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GLZP69</id6>
+		<search>
+			<address>0x0010</address>
+			<gameDesc>^From Russia With Love™$</gameDesc>
+			<fileDesc>^PROFILES$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>BondSv</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0050</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>6</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>James Bond 007™: NightFire™</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GO7P69</id6>
+		<search>
+			<address>0x0180</address>
+			<gameDesc>^James Bond 007™: NightFire™$</gameDesc>
+			<fileDesc>^(.*)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>$F1</filename>
+			<bannerFormat>0x06</bannerFormat>
+			<iconAddress>0x01C0</iconAddress>
+			<iconFormat>0x5555</iconFormat>
+			<iconSpeed>0xEAAB</iconSpeed>
+			<permission>0x04</permission>
+			<length>2</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>1080: Avalanche</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GTEP01</id6>
@@ -48,6 +124,101 @@
 			<iconSpeed>0x0F</iconSpeed>
 			<permission>0x04</permission>
 			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>18 Wheeler</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GWEP8P</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^18 Wheeler$</gameDesc>
+			<fileDesc>^save game data$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>18 Wheeler</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xAAAA</iconSpeed>
+			<permission>0x04</permission>
+			<length>3</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>2002 FIFA World Cup™</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GFSP69</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^2002 FIFA World Cup™$</gameDesc>
+			<fileDesc>^Settings and Game$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>2002FIFAWORLDCUP</filename>
+			<bannerFormat>0x01</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x01</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>49</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>2006 FIFA World Cup™</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G6FP69</id6>
+		<search>
+			<address>0x0010</address>
+			<gameDesc>^2006 FIFA World Cup™$</gameDesc>
+			<fileDesc>^Profiles$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>VProfil</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0050</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>8</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>2006 FIFA World Cup™</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G6FP69</id6>
+		<search>
+			<address>0x0010</address>
+			<gameDesc>^2006 FIFA World Cup™$</gameDesc>
+			<fileDesc>^Squads$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>YRoster</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0050</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>21</length>
+		</dirEntry>
+	</file>
+	<file>
+		<gameName>2006 FIFA World Cup™</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>G6FP69</id6>
+		<search>
+			<address>0x0010</address>
+			<gameDesc>^2006 FIFA World Cup™$</gameDesc>
+			<fileDesc>^(.*)$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>$F1</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0050</iconAddress>
+			<iconFormat>0x02</iconFormat>
+			<iconSpeed>0x02</iconSpeed>
+			<permission>0x04</permission>
+			<length>54</length>
 		</dirEntry>
 	</file>
 	<file>
