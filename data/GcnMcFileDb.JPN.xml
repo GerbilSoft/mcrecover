@@ -9,6 +9,25 @@
 		<email>gerbilsoft@gerbilsoft.com</email>
 	</dbInfo>
 	<file>
+		<gameName>007:EoN</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GENJ13</id6>
+		<search>
+			<address>0x0004</address>
+			<gameDesc>^007:EoN$</gameDesc>
+			<fileDesc>^Mission$</fileDesc>
+		</search>
+		<dirEntry>
+			<filename>GAME.DAT</filename>
+			<bannerFormat>0x02</bannerFormat>
+			<iconAddress>0x0044</iconAddress>
+			<iconFormat>0xAAAA</iconFormat>
+			<iconSpeed>0xFFFF</iconSpeed>
+			<permission>0x04</permission>
+			<length>5</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>1080ﾟ SILVERSTORM</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GTEJ01</id6>
