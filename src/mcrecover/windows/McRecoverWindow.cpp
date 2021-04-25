@@ -961,19 +961,19 @@ void McRecoverWindow::openCard(const QString &filename, FileType type)
 
 	// Open the specified memory card image.
 	// TODO: Set this as the last path?
-	QLatin1String className;
+	const char *className;
 	switch (type) {
 		default:
 		case FileType::GCN:
-			className = QLatin1String("GcnCard");
+			className = "GcnCard";
 			d->card = GcnCard::open(filename, this);
 			break;
 		case FileType::GCI:
-			className = QLatin1String("GciCard");
+			className = "GciCard";
 			d->card = GciCard::open(filename, this);
 			break;
 		case FileType::VMS:
-			className = QLatin1String("VmuCard");
+			className = "VmuCard";
 			d->card = VmuCard::open(filename, this);
 			break;
 	}
@@ -1000,7 +1000,7 @@ void McRecoverWindow::openCard(const QString &filename, FileType type)
 			errMsg += errorString;
 		} else {
 			//: Failure message when opening a card. (%1 == class name)
-			errMsg += tr("%1 failed.").arg(className);
+			errMsg += tr("%1 failed.").arg(QLatin1String(className));
 		}
 		d->ui.msgWidget->showMessage(errMsg, MessageWidget::ICON_WARNING);
 		closeCard(true);
