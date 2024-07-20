@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * MemCardModel.cpp: QAbstractListModel for Card.                          *
  *                                                                         *
- * Copyright (c) 2012-2018 by David Korth.                                 *
+ * Copyright (c) 2012-2024 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -290,7 +290,9 @@ void MemCardModelPrivate::updateAnimTimerState(void)
 	if (pauseCounter <= 0 && !animState.isEmpty()) {
 		// Animation is not paused, and we have animated icons.
 		// Start the timer.
-		animTimer->start(IconAnimHelper::FAST_ANIM_TIMER);
+		// FIXME: Support PAL; handle extra beginning frame and reduced ending frame.
+		// FIXME: Dreamcast animation timing?
+		animTimer->start(67 /*4*1000/60*/);
 	} else {
 		// Either animation is paused, or we don't have animated icons.
 		// Stop the timer.

@@ -55,8 +55,11 @@ See [doc/gpl-2.0.txt](doc/gpl-2.0.txt) for more information.
 * Fixed timezone offset issues with recovered files that have timestamp
   modifiers. (This may be related to the Qt5 conversion.)
 
-* Added lots of missing GCI definitions. Thanks to Louis for providing the
-  GCI files.
+* Added lots of missing GCI definitions. Thanks to @Louis322 for providing
+  the GCI files.
+
+* Improved GameCube icon animation timing. Thanks to @Louis322 for providing
+  the necessary information.
 
 ## v0.2.1
 (released 2015/01/04)

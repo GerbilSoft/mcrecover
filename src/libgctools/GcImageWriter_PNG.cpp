@@ -2,7 +2,7 @@
  * GameCube Tools Library.                                                 *
  * GcImageWriter_PNG.cpp: GameCube image writer. (PNG functions)           *
  *                                                                         *
- * Copyright (c) 2012-2016 by David Korth.                                 *
+ * Copyright (c) 2012-2024 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -301,8 +301,9 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 		// NOTE: NULL images should be removed by write().
 		const GcImage *gcImage = gcImages->at(i);
 
-		// NOTE: Icon delay is in units of 8 NTSC frames.
-		const uint16_t iconDelay = (uint16_t)(gcIconDelays->at(i) * 8);
+		// NOTE: Icon delay is in units of 4 NTSC frames.
+		// FIXME: Support PAL; handle extra beginning frame and reduced ending frame.
+		const uint16_t iconDelay = (uint16_t)(gcIconDelays->at(i) * 4);
 		static const uint16_t iconDelayDenom = 60;
 
 		// Calculate the row pointers.

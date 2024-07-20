@@ -2,7 +2,7 @@
  * GameCube Tools Library.                                                 *
  * GcImageWriter_GIF.cpp: GameCube image writer. (GIF functions)           *
  *                                                                         *
- * Copyright (c) 2012-2019 by David Korth.                                 *
+ * Copyright (c) 2012-2024 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -327,8 +327,9 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 		// NOTE: NULL images should be removed by write().
 		const GcImage *gcImage = gcImages->at(i);
 
-		// NOTE: Icon delay is in units of 8 NTSC frames.
-		const float fIconDelay = (float)(gcIconDelays->at(i) * 8 * 100) / 60.0f;
+		// NOTE: Icon delay is in units of 4 NTSC frames.
+		// FIXME: Support PAL; handle extra beginning frame and reduced ending frame.
+		const float fIconDelay = (float)(gcIconDelays->at(i) * 4 * 100) / 60.0f;
 		const uint16_t uIconDelay = (uint16_t)fIconDelay;
 
 		// Graphics control block.

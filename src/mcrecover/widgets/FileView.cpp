@@ -221,7 +221,9 @@ void FileViewPrivate::updateAnimTimerState(void)
 	if (pauseCounter <= 0 && file != nullptr && helper.isAnimated()) {
 		// Animation is not paused, and we have an animated icon.
 		// Start the timer.
-		animTimer->start(IconAnimHelper::FAST_ANIM_TIMER);
+		// FIXME: Support PAL; handle extra beginning frame and reduced ending frame.
+		// FIXME: Dreamcast animation timing?
+		animTimer->start(67 /*4*1000/60*/);
 	} else {
 		// Either animation is paused, or we don't have an animated icon.
 		// Stop the timer.

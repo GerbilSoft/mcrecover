@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * IconAnimHelper.hpp: Icon animation helper.                              *
  *                                                                         *
- * Copyright (c) 2012-2018 by David Korth.                                 *
+ * Copyright (c) 2012-2024 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -38,12 +38,6 @@ class IconAnimHelper : public QObject
 		Q_DISABLE_COPY(IconAnimHelper)
 
 	public:
-		/**
-		 * Time, in ms, for each frame for "fast" animated icons.
-		 * TODO: Figure out the correct timer interval.
-		 */
-		static const int FAST_ANIM_TIMER = 125;
-
 		/**
 		 * Get the File this IconAnimHelper is handling.
 		 * @return File.
