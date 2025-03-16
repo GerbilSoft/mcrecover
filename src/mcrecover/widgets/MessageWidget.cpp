@@ -27,49 +27,49 @@
 
 class MessageWidgetPrivate
 {
-	public:
-		explicit MessageWidgetPrivate(MessageWidget *q);
-		~MessageWidgetPrivate();
+public:
+	explicit MessageWidgetPrivate(MessageWidget *q);
+	~MessageWidgetPrivate();
 
-	protected:
-		MessageWidget *const q_ptr;
-		Q_DECLARE_PUBLIC(MessageWidget)
-	private:
-		Q_DISABLE_COPY(MessageWidgetPrivate)
+protected:
+	MessageWidget *const q_ptr;
+	Q_DECLARE_PUBLIC(MessageWidget)
+private:
+	Q_DISABLE_COPY(MessageWidgetPrivate)
 
-	public:
-		struct Ui_MessageWidget {
-			QHBoxLayout *hboxMain;
-			QFrame *content;
-			QHBoxLayout *hboxFrame;
-			QLabel *lblIcon;
-			QLabel *lblMessage;
-			QToolButton *btnDismiss;
+public:
+	struct Ui_MessageWidget {
+		QHBoxLayout *hboxMain;
+		QFrame *content;
+		QHBoxLayout *hboxFrame;
+		QLabel *lblIcon;
+		QLabel *lblMessage;
+		QToolButton *btnDismiss;
 
-			void setupUi(QWidget *MessageWidget);
-		};
-		Ui_MessageWidget ui;
+		void setupUi(QWidget *MessageWidget);
+	};
+	Ui_MessageWidget ui;
 
-		// Icon being displayed.
-		MessageWidget::MsgIcon icon;
-		static const int iconSz = 22;
-		void setIcon(MessageWidget::MsgIcon icon);
+	// Icon being displayed.
+	MessageWidget::MsgIcon icon;
+	static const int iconSz = 22;
+	void setIcon(MessageWidget::MsgIcon icon);
 
-		// Message timeout.
-		QTimer *tmrTimeout;
-		bool timeout;	// True if message was dismissed via timeout.
+	// Message timeout
+	QTimer *tmrTimeout;
+	bool timeout;	// True if message was dismissed via timeout.
 
-		// Colors.
-		// TODO: Use system colors on KDE?
-		static const QRgb colorCritical = 0xEE4444;
-		static const QRgb colorQuestion = 0x66EE66;
-		static const QRgb colorWarning = 0xEECC66;
-		static const QRgb colorInformation = 0x66CCEE;
+	// Colors
+	// TODO: Use system colors on KDE?
+	static const QRgb colorCritical = 0xEE4444;
+	static const QRgb colorQuestion = 0x66EE66;
+	static const QRgb colorWarning = 0xEECC66;
+	static const QRgb colorInformation = 0x66CCEE;
 
-		// Animation.
-		QTimeLine *timeLine;
-		int calcBestHeight(void) const;
-		bool animateOnShow;
+	// Animation.
+	QTimeLine *timeLine;
+	int calcBestHeight(void) const;
+	bool animateOnShow;
 };
 
 MessageWidgetPrivate::MessageWidgetPrivate(MessageWidget *q)
@@ -127,6 +127,9 @@ void MessageWidgetPrivate::Ui_MessageWidget::setupUi(QWidget *MessageWidget)
 	lblMessage->setObjectName(QLatin1String("lblMessage"));
 	lblMessage->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
 	lblMessage->setTextInteractionFlags(Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse);
+	// Text color should be dark.
+	// If using a dark theme system-wide, the default text color will be light.
+	lblMessage->setStyleSheet(QLatin1String("color: black"));
 
 	hboxFrame->addWidget(lblMessage);
 	hboxFrame->setAlignment(lblMessage, Qt::AlignTop);
