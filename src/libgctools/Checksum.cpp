@@ -28,11 +28,11 @@ namespace Checksum {
 /** Algorithms. **/
 
 /**
- * CRC-16 algorithm.
- * @param buf Data buffer.
- * @param siz Length of data buffer.
- * @param poly Polynomial.
- * @return Checksum.
+ * CRC-16 algorithm
+ * @param buf Data buffer
+ * @param siz Length of data buffer
+ * @param poly Polynomial
+ * @return Checksum
  */
 uint16_t Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly)
 {
@@ -53,15 +53,17 @@ uint16_t Crc16(const uint8_t *buf, uint32_t siz, uint16_t poly)
 }
 
 /**
- * AddInvDual16 algorithm.
+ * AddInvDual16 algorithm
+ *
  * Adds 16-bit words together in a uint16_t.
  * First word is a simple addition.
  * Second word adds (word ^ 0xFFFF).
  * If either word equals 0xFFFF, it's changed to 0.
- * @param buf Data buffer.
- * @param siz Length of data buffer.
- * @param endian Endianness of the data.
- * @return Checksum.
+ *
+ * @param buf Data buffer
+ * @param siz Length of data buffer
+ * @param endian Endianness of the data
+ * @return Checksum
  */
 uint32_t AddInvDual16(const uint16_t *buf, uint32_t siz, ChkEndian endian)
 {
@@ -122,11 +124,11 @@ uint32_t AddInvDual16(const uint16_t *buf, uint32_t siz, ChkEndian endian)
 }
 
 /**
- * AddBytes32 algorithm.
+ * AddBytes32 algorithm
  * Adds all bytes together in a uint32_t.
- * @param buf Data buffer.
- * @param siz Length of data buffer.
- * @return Checksum.
+ * @param buf Data buffer
+ * @param siz Length of data buffer
+ * @return Checksum
  */
 uint32_t AddBytes32(const uint8_t *buf, uint32_t siz)
 {
@@ -148,10 +150,10 @@ uint32_t AddBytes32(const uint8_t *buf, uint32_t siz)
 }
 
 /**
- * SonicChaoGarden algorithm.
- * @param buf Data buffer.
- * @param siz Length of data buffer.
- * @return Checksum.
+ * SonicChaoGarden algorithm
+ * @param buf Data buffer
+ * @param siz Length of data buffer
+ * @return Checksum
  */
 uint32_t SonicChaoGarden(const uint8_t *buf, uint32_t siz)
 {
@@ -167,7 +169,7 @@ uint32_t SonicChaoGarden(const uint8_t *buf, uint32_t siz)
 }
 
 /**
- * Dreamcast VMU algorithm.
+ * Dreamcast VMU algorithm
  * Based on FCS-16.
  *
  * NOTE: The CRC is stored within the header.
@@ -175,10 +177,10 @@ uint32_t SonicChaoGarden(const uint8_t *buf, uint32_t siz)
  * handle this properly. (Set to -1 to skip.)
  * The usual address is 0x46.
  *
- * @param buf Data buffer.
- * @param siz Length of data buffer.
- * @param crc_addr Address of CRC in header.
- * @return Checksum.
+ * @param buf Data buffer
+ * @param siz Length of data buffer
+ * @param crc_addr Address of CRC in header
+ * @return Checksum
  */
 uint16_t DreamcastVMU(const uint8_t *buf, uint32_t siz, uint32_t crc_addr)
 {
@@ -205,17 +207,17 @@ uint16_t DreamcastVMU(const uint8_t *buf, uint32_t siz, uint32_t crc_addr)
 }
 
 /**
- * Pokémon XD algorithm.
+ * Pokémon XD algorithm
  * Reference: https://github.com/TuxSH/PkmGCTools/blob/master/LibPkmGC/src/LibPkmGC/XD/SaveEditing/SaveSlot.cpp
  *
  * The data area is "encrypted", so it has to be decrypted before
  * a checksum can be calculated.
  *
- * @param buf		[in] Data buffer.
- * @param siz		[in] Length of data buffer.
- * @param crc_addr	[in] CRC address. (Should be 0x10, 0x14, 0x18, 0x1C.)
- * @param pChkExpect	[out] Expected checksum, decrypted.
- * @return Actual checksum, decrypted.
+ * @param buf		[in] Data buffer
+ * @param siz		[in] Length of data buffer
+ * @param crc_addr	[in] CRC address (Should be 0x10, 0x14, 0x18, 0x1C.)
+ * @param pChkExpect	[out] Expected checksum, decrypted
+ * @return Actual checksum, decrypted
  */
 uint32_t PokemonXD(const uint8_t *buf, uint32_t siz, uint32_t crc_addr, uint32_t *pChkExpect)
 {
@@ -308,12 +310,12 @@ uint32_t PokemonXD(const uint8_t *buf, uint32_t siz, uint32_t crc_addr, uint32_t
 
 /**
  * Get the checksum for a block of data.
- * @param algorithm Checksum algorithm.
- * @param buf Data buffer.
- * @param siz Length of data buffer.
- * @param endian Endianness of the data.
+ * @param algorithm Checksum algorithm
+ * @param buf Data buffer
+ * @param siz Length of data buffer
+ * @param endian Endianness of the data
  * @param param Algorithm parameter, e.g. polynomial or sum.
- * @return Checksum.
+ * @return Checksum
  */
 uint32_t Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, ChkEndian endian, uint32_t param)
 {
@@ -360,8 +362,8 @@ uint32_t Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, ChkEndian e
 
 /**
  * Get a ChkAlgorithm from a checksum algorithm name.
- * @param algorithm Checksum algorithm name.
- * @return ChkAlgorithm. (If unknown, returns ChkAlgorithm::None.)
+ * @param algorithm Checksum algorithm name
+ * @return ChkAlgorithm (If unknown, returns ChkAlgorithm::None.)
  */
 ChkAlgorithm ChkAlgorithmFromString(const char *algorithm)
 {
@@ -404,7 +406,7 @@ ChkAlgorithm ChkAlgorithmFromString(const char *algorithm)
 
 /**
  * Get a checksum algorithm name from a ChkAlgorithm.
- * @param algorithm ChkAlgorithm.
+ * @param algorithm ChkAlgorithm
  * @return Checksum algorithm name, or nullptr if ChkAlgorithm::None or unknown.
  */
 const char *ChkAlgorithmToString(ChkAlgorithm algorithm)
@@ -431,7 +433,7 @@ const char *ChkAlgorithmToString(ChkAlgorithm algorithm)
 
 /**
  * Get a nicely formatted checksum algorithm name from a ChkAlgorithm.
- * @param algorithm ChkAlgorithm.
+ * @param algorithm ChkAlgorithm
  * @return Checksum algorithm name, or nullptr if ChkAlgorithm::None or unknown.
  */
 const char *ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm)
@@ -460,7 +462,7 @@ const char *ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm)
 
 /**
  * Get the checksum field width.
- * @param checksumValues Checksum values to check.
+ * @param checksumValues Checksum values to check
  * @return 4 for 16-bit checksums; 8 for 32-bit checksums.
  */
 int ChecksumFieldWidth(const vector<ChecksumValue>& checksumValues)
@@ -483,8 +485,8 @@ int ChecksumFieldWidth(const vector<ChecksumValue>& checksumValues)
 
 /**
  * Get the checksum status.
- * @param checksumValues Checksum values to check.
- * @return Checksum status.
+ * @param checksumValues Checksum values to check
+ * @return Checksum status
  */
 ChkStatus ChecksumStatus(const vector<ChecksumValue>& checksumValues)
 {
@@ -506,7 +508,7 @@ ChkStatus ChecksumStatus(const vector<ChecksumValue>& checksumValues)
 
 /**
  * Format checksum values as HTML for display purposes.
- * @param checksumValues Checksum values to format.
+ * @param checksumValues Checksum values to format
  * @return QVector containing one or two HTML strings.
  * - String 0 contains the actual checksums.
  * - String 1, if present, contains the expected checksums.
