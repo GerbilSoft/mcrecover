@@ -51,7 +51,7 @@ enum class ChkEndian {
 	Little = 1,	// Little-endian (x86, SH-4, etc.)
 };
 
-// Checksum definition struct.
+// Checksum definition struct
 struct ChecksumDef {
 	ChkAlgorithm algorithm;
 	uint32_t address;	// Checksum address.
@@ -73,13 +73,13 @@ struct ChecksumDef {
 	}
 };
 
-// Checksum value struct.
+// Checksum value struct
 struct ChecksumValue {
 	uint32_t expected;
 	uint32_t actual;
 };
 
-// Chao Garden checksum struct.
+// Chao Garden checksum struct
 struct ChaoGardenChecksumData {
 	/**
 	 * The following bytes MUST be 0 when evaluating the checksum:
@@ -96,16 +96,16 @@ struct ChaoGardenChecksumData {
 	uint8_t checksum_2;     // Checksum byte 2. (bits 23-16)
 };
 
-/** Default polynomials. **/
+/** Default polynomials **/
 
-static const uint16_t CRC16_POLY_CCITT = 0x8408;
-static const uint32_t CRC32_POLY_ZLIB = 0xEDB88320;
+static constexpr uint16_t CRC16_POLY_CCITT = 0x8408;
+static constexpr uint32_t CRC32_POLY_ZLIB = 0xEDB88320;
 
-/** Default sums. **/
+/** Default sums **/
 
-static const uint16_t ADDSUBDUAL16_SUM_GCN_MEMCARD = 0xFFFF;
+static constexpr uint16_t ADDSUBDUAL16_SUM_GCN_MEMCARD = 0xFFFF;
 
-/** Algorithms. **/
+/** Algorithms **/
 
 /**
  * CRC-16 algorithm
