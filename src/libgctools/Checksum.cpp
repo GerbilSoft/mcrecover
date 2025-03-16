@@ -11,11 +11,12 @@
 
 #include "util/byteswap.h"
 
-// C includes. (C++ namespace)
+// C includes (C++ namespace)
+#include <cassert>
 #include <cstdio>
 #include <cstring>
 
-// C++ includes.
+// C++ includes
 #include <memory>
 #include <string>
 #include <vector>
@@ -25,7 +26,7 @@ using std::vector;
 
 namespace Checksum {
 
-/** Algorithms. **/
+/** Algorithms **/
 
 /**
  * CRC-16 algorithm
@@ -306,7 +307,7 @@ uint32_t PokemonXD(const uint8_t *buf, uint32_t siz, uint32_t crc_addr, uint32_t
 	return chk_actual;
 }
 
-/** General functions. **/
+/** General functions **/
 
 /**
  * Get the checksum for a block of data.
@@ -467,8 +468,9 @@ const char *ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm)
  */
 int ChecksumFieldWidth(const vector<ChecksumValue>& checksumValues)
 {
-	if (checksumValues.empty())
+	if (checksumValues.empty()) {
 		return 4;
+	}
 
 	for (auto iter = checksumValues.cbegin();
 	     iter != checksumValues.cend(); ++iter)
