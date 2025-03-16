@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * GcToolsQt.cpp: libgctools Qt wrappers.                                  *
  *                                                                         *
- * Copyright (c) 2012-2013 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -31,10 +31,10 @@ QImage gcImageToQImage(const GcImage *gcImage)
 	QImage::Format imgFmt;
 	GcImage::PxFmt pxFmt = gcImage->pxFmt();
 	switch (pxFmt) {
-		case GcImage::PXFMT_CI8:
+		case GcImage::PxFmt::CI8:
 			imgFmt = QImage::Format_Indexed8;
 			break;
-		case GcImage::PXFMT_ARGB32:
+		case GcImage::PxFmt::ARGB32:
 			imgFmt = QImage::Format_ARGB32;
 			break;
 		default:
@@ -49,7 +49,7 @@ QImage gcImageToQImage(const GcImage *gcImage)
 		gcImage->width(), gcImage->height(), imgFmt);
 
 	// CI8 images: Set the palette.
-	if (pxFmt == GcImage::PXFMT_CI8) {
+	if (pxFmt == GcImage::PxFmt::CI8) {
 		const uint32_t *palette = gcImage->palette();
 		if (palette) {
 			vector<uint32_t> vPalette;

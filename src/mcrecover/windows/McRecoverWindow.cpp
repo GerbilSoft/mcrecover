@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * McRecoverWindow.cpp: Main window.                                       *
  *                                                                         *
- * Copyright (c) 2012-2018 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -535,19 +535,19 @@ void McRecoverWindowPrivate::saveFiles(const QVector<File*> &files, QString path
 	}
 
 	// Save files using default filenames to the specified path.
-	enum OverwriteAllStatus {
-		OVERWRITEALL_UNKNOWN	= 0,
-		OVERWRITEALL_YESTOALL	= 1,
-		OVERWRITEALL_NOTOALL	= 2,
+	enum class OverwriteAllStatus {
+		Unknown		= 0,
+		YesToAll	= 1,
+		NoToAll		= 2,
 	};
 
 	int filesSaved = 0;
-	OverwriteAllStatus overwriteAll = OVERWRITEALL_UNKNOWN;
+	OverwriteAllStatus overwriteAll = OverwriteAllStatus::Unknown;
 
 	if (files.size() == 1 && path.isEmpty()) {
 		// Single file, path not specified.
 		singleFile = true;
-		overwriteAll = OVERWRITEALL_YESTOALL;
+		overwriteAll = OverwriteAllStatus::YesToAll;
 		File *file = files.at(0);
 
 		const QString defFilename = lastPath() + QChar(L'/') +
@@ -592,7 +592,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<File*> &files, QString path
 			// NOTE: Not done in the case of a single file because
 			// the "Save" dialog already prompted the user.
 			if (QFile::exists(filename)) {
-				if (overwriteAll == OVERWRITEALL_UNKNOWN) {
+				if (overwriteAll == OverwriteAllStatus::Unknown) {
 					bool overwrite = false;
 					int ret = QMessageBox::warning(q,
 						McRecoverWindow::tr("File Already Exists"),
@@ -616,20 +616,20 @@ void McRecoverWindowPrivate::saveFiles(const QVector<File*> &files, QString path
 
 						case QMessageBox::YesToAll:
 							// Overwrite this file and all other files.
-							overwriteAll = OVERWRITEALL_YESTOALL;
+							overwriteAll = OverwriteAllStatus::YesToAll;
 							overwrite = true;
 							break;
 
 						case QMessageBox::NoToAll:
 							// Don't overwrite this file or any other files.
-							overwriteAll = OVERWRITEALL_NOTOALL;
+							overwriteAll = OverwriteAllStatus::NoToAll;
 							overwrite = false;
 							break;
 					}
 
 					if (!overwrite)
 						continue;
-				} else if (overwriteAll == OVERWRITEALL_NOTOALL) {
+				} else if (overwriteAll == OverwriteAllStatus::NoToAll) {
 					// Don't overwrite any files.
 					continue;
 				}
@@ -749,12 +749,12 @@ GcImageWriter::AnimImageFormat McRecoverWindowPrivate::animIconFormat(void) cons
 		GcImageWriter::animImageFormatFromName(fmt.toLatin1().constData());
 	if (!GcImageWriter::isAnimImageFormatSupported(animImgf)) {
 		// Format is not supported.
-		animImgf = GcImageWriter::ANIMGF_UNKNOWN;
+		animImgf = GcImageWriter::AnimImageFormat::Unknown;
 	}
 
-	if (animImgf == GcImageWriter::ANIMGF_UNKNOWN) {
+	if (animImgf == GcImageWriter::AnimImageFormat::Unknown) {
 		// Determine which format to use.
-		for (int i = 1; i < GcImageWriter::ANIMGF_MAX; i++) {
+		for (int i = 1; i < (int)GcImageWriter::AnimImageFormat::Max; i++) {
 			// Is this animated image format available?
 			if (GcImageWriter::isAnimImageFormatSupported(
 				(GcImageWriter::AnimImageFormat)i))
@@ -1002,7 +1002,7 @@ void McRecoverWindow::openCard(const QString &filename, FileType type)
 			//: Failure message when opening a card. (%1 == class name)
 			errMsg += tr("%1 failed.").arg(QLatin1String(className));
 		}
-		d->ui.msgWidget->showMessage(errMsg, MessageWidget::ICON_WARNING);
+		d->ui.msgWidget->showMessage(errMsg, MessageWidget::MsgIcon::Warning);
 		closeCard(true);
 		return;
 	}
@@ -1099,7 +1099,7 @@ void McRecoverWindow::openCard(const QString &filename, FileType type)
 		}
 
 		// Show a warning message.
-		d->ui.msgWidget->showMessage(msg, MessageWidget::ICON_WARNING, 0, d->card);
+		d->ui.msgWidget->showMessage(msg, MessageWidget::MsgIcon::Warning, 0, d->card);
 	}
 
 	// Can we allow writing to this memory card?
@@ -1607,7 +1607,7 @@ void McRecoverWindow::on_actionSaveAll_triggered(void)
 	if (numFiles <= 0)
 		return;
 
-	QVector<File*> files = d->card->getFiles(Card::FTYPE_ALL);
+	QVector<File*> files = d->card->getFiles(Card::FileTypes::All);
 	if (files.isEmpty()) {
 		// No files to save...
 		return;
@@ -1794,19 +1794,19 @@ void McRecoverWindow::setAnimIconFormat_cfg_slot(const QVariant &animIconFormat)
 	Q_D(McRecoverWindow);
 	GcImageWriter::AnimImageFormat animImgf = d->animIconFormat();
 	switch (animImgf) {
-		case GcImageWriter::ANIMGF_APNG:
+		case GcImageWriter::AnimImageFormat::APNG:
 			d->ui.actionAnimAPNG->setChecked(true);
 			break;
-		case GcImageWriter::ANIMGF_GIF:
+		case GcImageWriter::AnimImageFormat::GIF:
 			d->ui.actionAnimGIF->setChecked(true);
 			break;
-		case GcImageWriter::ANIMGF_PNG_FPF:
+		case GcImageWriter::AnimImageFormat::PNG_FPF:
 			d->ui.actionAnimPNGfpf->setChecked(true);
 			break;
-		case GcImageWriter::ANIMGF_PNG_VS:
+		case GcImageWriter::AnimImageFormat::PNG_VS:
 			d->ui.actionAnimPNGhs->setChecked(true);
 			break;
-		case GcImageWriter::ANIMGF_PNG_HS:
+		case GcImageWriter::AnimImageFormat::PNG_HS:
 			d->ui.actionAnimPNGhs->setChecked(true);
 			break;
 		default:
@@ -1906,6 +1906,6 @@ void McRecoverWindow::chkAllowWrite_clicked(bool checked)
 			// Use strerror().
 			errMsg += QLatin1String(strerror(-ret)) + QChar(L'.');
 		}
-		d->ui.msgWidget->showMessage(errMsg, MessageWidget::ICON_WARNING);
+		d->ui.msgWidget->showMessage(errMsg, MessageWidget::MsgIcon::Warning);
 	}
 }

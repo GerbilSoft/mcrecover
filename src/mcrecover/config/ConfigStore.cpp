@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * ConfigStore.cpp: Configuration store.                                   *
  *                                                                         *
- * Copyright (c) 2011-2014 by David Korth.                                 *
+ * Copyright (c) 2011-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -30,69 +30,69 @@
 
 class ConfigStorePrivate
 {
-	public:
-		explicit ConfigStorePrivate(ConfigStore *q);
-		~ConfigStorePrivate();
+public:
+	explicit ConfigStorePrivate(ConfigStore *q);
+	~ConfigStorePrivate();
 
-	private:
-		ConfigStore *const q_ptr;
-		Q_DECLARE_PUBLIC(ConfigStore)
-	private:
-		Q_DISABLE_COPY(ConfigStorePrivate)
+private:
+	ConfigStore *const q_ptr;
+	Q_DECLARE_PUBLIC(ConfigStore)
+private:
+	Q_DISABLE_COPY(ConfigStorePrivate)
 
-	public:
-		/**
-		* Initialize the configuration path.
-		*/
-		static void InitConfigPath(void);
+public:
+	/**
+	 * Initialize the configuration path.
+	 */
+	static void InitConfigPath(void);
 
-		/**
-		 * Validate a property.
-		 * @param key Property name.
-		 * @param value Property value. (May be edited for validation.)
-		 * @return Property value (possibly adjusted) if validated; invalid QVariant on failure.
-		 */
-		static QVariant Validate(const QString &name, const QVariant &value);
+	/**
+	 * Validate a property.
+	 * @param key Property name
+	 * @param value Property value (May be edited for validation.)
+	 * @return Property value (possibly adjusted) if validated; invalid QVariant on failure.
+	 */
+	static QVariant Validate(const QString &name, const QVariant &value);
 
-		/**
-		 * Look up the method index of a SIGNAL() or SLOT() in a QObject.
-		 * @param object Qt object.
-		 * @param method Method name.
-		 * @return Method index, or negative on error.
-		 */
-		static int LookupQtMethod(const QObject *object, const char *method);
+	/**
+	 * Look up the method index of a SIGNAL() or SLOT() in a QObject.
+	 * @param object Qt object
+	 * @param method Method name
+	 * @return Method index, or negative on error.
+	 */
+	static int LookupQtMethod(const QObject *object, const char *method);
 
-		/**
-		 * Invoke a Qt method by method index, with one QVariant parameter.
-		 * @param object Qt object.
-		 * @param method_idx Method index.
-		 * @param param QVariant parameter.
-		 */
-		static void InvokeQtMethod(QObject *object, int method_idx, const QVariant &param);
+	/**
+	 * Invoke a Qt method by method index, with one QVariant parameter.
+	 * @param object Qt object
+	 * @param method_idx Method index
+	 * @param param QVariant parameter
+	 */
+	static void InvokeQtMethod(QObject *object, int method_idx, const QVariant &param);
 
-		/** Internal variables. **/
+	/** Internal variables **/
 
-		// Configuration path.
-		static QString ConfigPath;
+	// Configuration path
+	static QString ConfigPath;
 
-		// Current settings.
-		// TODO: Use const char* for the key instead of QString?
-		QHash<QString, QVariant> settings;
+	// Current settings
+	// TODO: Use const char* for the key instead of QString?
+	QHash<QString, QVariant> settings;
 
-		/**
-		 * Signal mappings.
-		 * Format:
-		 * - Key: Property to watch.
-		 * - Value: List of SignalMaps.
-		 *   - SignalMap.object: Object to send signal to.
-		 *   - SignalMap.method: Method name.
-		 */
-		struct SignalMap {
-			QPointer<QObject> object;
-			int method_idx;
-		};
-		QHash<QString, QVector<SignalMap>* > signalMaps;
-		QMutex mtxSignalMaps;
+	/**
+	 * Signal mappings
+	 * Format:
+	 * - Key: Property to watch
+	 * - Value: List of SignalMaps
+	 *   - SignalMap.object: Object to send signal to
+	 *   - SignalMap.method: Method name
+	 */
+	struct SignalMap {
+		QPointer<QObject> object;
+		int method_idx;
+	};
+	QHash<QString, QVector<SignalMap>* > signalMaps;
+	QMutex mtxSignalMaps;
 };
 
 /** ConfigStorePrivate **/
@@ -104,8 +104,9 @@ ConfigStorePrivate::ConfigStorePrivate(ConfigStore* q)
 {
 	// Determine the configuration path.
 	// TODO: Use a mutex?
-	if (ConfigPath.isEmpty())
+	if (ConfigPath.isEmpty()) {
 		InitConfigPath();
+	}
 }
 
 /**
@@ -136,22 +137,26 @@ void ConfigStorePrivate::InitConfigPath(void)
 	int slash_pos = configPath.lastIndexOf(QChar(L'/'));
 #ifdef Q_OS_WIN
 	int bslash_pos = configPath.lastIndexOf(QChar(L'\\'));
-	if (bslash_pos > slash_pos)
+	if (bslash_pos > slash_pos) {
 		slash_pos = bslash_pos;
+	}
 #endif /* Q_OS_WIN */
-	if (slash_pos >= 0)
+	if (slash_pos >= 0) {
 		configPath.remove(slash_pos + 1, configPath.size());
+	}
 
 	// Make sure the directory exists.
 	// If it doesn't exist, create it.
 	QDir configDir(configPath);
-	if (!configDir.exists())
+	if (!configDir.exists()) {
 		configDir.mkpath(configDir.absolutePath());
+	}
 
 	// Save the main configuration path.
 	configPath = configDir.absolutePath();
-	if (!configPath.endsWith(QChar(L'/')))
+	if (!configPath.endsWith(QChar(L'/'))) {
 		configPath.append(QChar(L'/'));
+	}
 	ConfigStorePrivate::ConfigPath = configPath;
 }
 
@@ -164,8 +169,8 @@ ConfigStorePrivate::~ConfigStorePrivate()
 
 /**
  * Validate a property.
- * @param key Property name.
- * @param value Property value. (May be edited for validation.)
+ * @param key Property name
+ * @param value Property value (May be edited for validation.)
  * @return Property value (possibly adjusted) if validated; invalid QVariant on failure.
  */
 QVariant ConfigStorePrivate::Validate(const QString &name, const QVariant &value)
@@ -173,26 +178,29 @@ QVariant ConfigStorePrivate::Validate(const QString &name, const QVariant &value
 	// Get the DefaultSetting entry for this property.
 	// TODO: Lock the hash?
 	const ConfigDefaults::DefaultSetting *def = ConfigDefaults::Instance()->get(name);
-	if (!def)
+	if (!def) {
 		return -1;
+	}
 
 	switch (def->validation) {
-		case ConfigDefaults::DefaultSetting::VT_NONE:
+		case ConfigDefaults::DefaultSetting::ValidationType::None:
 		default:
 			// No validation required.
 			return value;
 
-		case ConfigDefaults::DefaultSetting::VT_BOOL:
+		case ConfigDefaults::DefaultSetting::ValidationType::Boolean:
 			if (!value.canConvert(QVariant::Bool))
 				return QVariant();
 			return QVariant(value.toBool());
 
-		case ConfigDefaults::DefaultSetting::VT_RANGE: {
-			if (!value.canConvert(QVariant::Int))
+		case ConfigDefaults::DefaultSetting::ValidationType::Range: {
+			if (!value.canConvert(QVariant::Int)) {
 				return QVariant();
+			}
 			int val = value.toString().toInt(nullptr, 0);
-			if (val < def->range_min || val > def->range_max)
+			if (val < def->range_min || val > def->range_max) {
 				return QVariant();
+			}
 			return QVariant(val);
 		}
 	}
@@ -203,8 +211,8 @@ QVariant ConfigStorePrivate::Validate(const QString &name, const QVariant &value
 
 /**
  * Look up the method index of a SIGNAL() or SLOT() in a QObject.
- * @param object Qt object.
- * @param method Method name.
+ * @param object Qt object
+ * @param method Method name
  * @return Method index, or negative on error.
  */
 int ConfigStorePrivate::LookupQtMethod(const QObject *object, const char *method)
@@ -233,9 +241,9 @@ int ConfigStorePrivate::LookupQtMethod(const QObject *object, const char *method
 
 /**
  * Invoke a Qt method by method index, with one QVariant parameter.
- * @param object Qt object.
- * @param method_idx Method index.
- * @param param QVariant parameter.
+ * @param object Qt object
+ * @param method_idx Method index
+ * @param param QVariant parameter
  */
 void ConfigStorePrivate::InvokeQtMethod(QObject *object, int method_idx, const QVariant &param)
 {
@@ -283,8 +291,8 @@ void ConfigStore::reset(void)
 
 /**
  * Set a property.
- * @param key Property name.
- * @param value Property value.
+ * @param key Property name
+ * @param value Property value
  */
 void ConfigStore::set(const QString &key, const QVariant &value)
 {
@@ -341,8 +349,8 @@ void ConfigStore::set(const QString &key, const QVariant &value)
 
 /**
  * Get a property.
- * @param key Property name.
- * @return Property value.
+ * @param key Property name
+ * @return Property value
  */
 QVariant ConfigStore::get(const QString &key) const
 {
@@ -364,8 +372,8 @@ QVariant ConfigStore::get(const QString &key) const
 /**
  * Get a property.
  * Converts hexadecimal string values to unsigned int.
- * @param key Property name.
- * @return Property value.
+ * @param key Property name
+ * @return Property value
  */
 unsigned int ConfigStore::getUInt(const QString &key) const
 {
@@ -375,8 +383,8 @@ unsigned int ConfigStore::getUInt(const QString &key) const
 /**
  * Get a property.
  * Converts hexadecimal string values to signed int.
- * @param key Property name.
- * @return Property value.
+ * @param key Property name
+ * @return Property value
  */
 int ConfigStore::getInt(const QString &key) const
 {
@@ -385,7 +393,7 @@ int ConfigStore::getInt(const QString &key) const
 
 /**
  * Get the default configuration path.
- * @return Default configuration path.
+ * @return Default configuration path
  */
 QString ConfigStore::ConfigPath(void)
 {
@@ -396,7 +404,7 @@ QString ConfigStore::ConfigPath(void)
 
 /**
  * Load the configuration file.
- * @param filename Configuration filename.
+ * @param filename Configuration filename
  * @return 0 on success; non-zero on error.
  */
 int ConfigStore::load(const QString &filename)
@@ -433,7 +441,7 @@ int ConfigStore::load(const QString &filename)
 
 /**
  * Load the configuration file.
- * No filename specified; use the default filename.
+ * No filename specified; use the default filename
  * @return 0 on success; non-zero on error.
  */
 int ConfigStore::load(void)
@@ -446,7 +454,7 @@ int ConfigStore::load(void)
 
 /**
  * Save the configuration file.
- * @param filename Filename.
+ * @param filename Filename
  * @return 0 on success; non-zero on error.
  */
 int ConfigStore::save(const QString &filename) const
@@ -516,9 +524,9 @@ int ConfigStore::save(void) const
 
 /**
  * Register an object for property change notification.
- * @param property Property to watch.
- * @param object QObject to register.
- * @param method Method name.
+ * @param property Property to watch
+ * @param object QObject to register
+ * @param method Method name
  */
 void ConfigStore::registerChangeNotification(const QString &property, QObject *object, const char *method)
 {
@@ -558,9 +566,9 @@ void ConfigStore::registerChangeNotification(const QString &property, QObject *o
 
 /**
  * Unregister an object for property change notification.
- * @param property Property to watch.
- * @param object QObject to register.
- * @param method Method name.
+ * @param property Property to watch
+ * @param object QObject to register
+ * @param method Method name
  */
 void ConfigStore::unregisterChangeNotification(const QString &property, QObject *object, const char *method)
 {

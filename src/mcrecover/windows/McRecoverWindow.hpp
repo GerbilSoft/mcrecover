@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * McRecoverWindow.hpp: Main window.                                       *
  *                                                                         *
- * Copyright (c) 2012-2018 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -40,6 +40,7 @@ class McRecoverWindow : public QMainWindow
 		 */
 		enum class FileType {
 			Unknown = -1,
+
 			GCN = 0,	// GameCube memory card
 			GCI = 1,	// GameCube save file
 			VMS = 2,	// Dreamcast memory card

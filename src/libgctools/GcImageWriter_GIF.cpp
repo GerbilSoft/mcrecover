@@ -2,7 +2,7 @@
  * GameCube Tools Library.                                                 *
  * GcImageWriter_GIF.cpp: GameCube image writer. (GIF functions)           *
  *                                                                         *
- * Copyright (c) 2012-2024 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -43,9 +43,9 @@ int gcn_GifQuantizeBuffer(unsigned int Width, unsigned int Height,
 
 /**
  * GIF write function.
- * @param gif	[in] GifFileType pointer.
- * @param buf	[in] Data to write.
- * @param len	[in] Size of buf.
+ * @param gif	[in] GifFileType pointer
+ * @param buf	[in] Data to write
+ * @param len	[in] Size of buf
  * @return Number of bytes written.
  */
 int GcImageWriterPrivate::gif_output_func(GifFileType *gif, const GifByteType *buf, int len)
@@ -64,8 +64,8 @@ int GcImageWriterPrivate::gif_output_func(GifFileType *gif, const GifByteType *b
 
 /**
  * Convert a GcImage palette to a GIF palette.
- * @param colorMap	[out] GIF ColorMapObject.
- * @param palette	[in] GcImage palette. (must have 256 entries)
+ * @param colorMap	[out] GIF ColorMapObject
+ * @param palette	[in] GcImage palette (must have 256 entries)
  * @return Index of transparent color, or -1 if no transparent color.
  */
 int GcImageWriterPrivate::paletteToGifColorMap(ColorMapObject *colorMap, const uint32_t *palette)
@@ -97,8 +97,8 @@ int GcImageWriterPrivate::paletteToGifColorMap(ColorMapObject *colorMap, const u
 
 /**
  * Add a loop extension block to the GIF image.
- * @param gif		[in] GIF image.
- * @param loopCount	[in] Loop count. (0 == infinite)
+ * @param gif		[in] GIF image
+ * @param loopCount	[in] Loop count (0 == infinite)
  * @return GIF_OK on success; GIF_ERROR on error.
  */
 int GcImageWriterPrivate::gif_addLoopExtension(GifFileType *gif, uint16_t loopCount)
@@ -144,9 +144,9 @@ int GcImageWriterPrivate::gif_addLoopExtension(GifFileType *gif, uint16_t loopCo
 
 /**
  * Add a graphics control block to a GIF frame.
- * @param gif		[in] GIF image.
- * @param trans_idx	[in] Transparent color index. (-1 for no transparency)
- * @param iconDelay	[in] Icon delay, in centiseconds.
+ * @param gif		[in] GIF image
+ * @param trans_idx	[in] Transparent color index (-1 for no transparency)
+ * @param iconDelay	[in] Icon delay, in centiseconds
  * @return GIF_OK on success; GIF_ERROR on error.
  */
 int GcImageWriterPrivate::gif_addGraphicsControlBlock(GifFileType *gif, int trans_idx, uint16_t iconDelay)
@@ -183,9 +183,9 @@ int GcImageWriterPrivate::gif_addGraphicsControlBlock(GifFileType *gif, int tran
 /**
  * Write an ARGB32 image to a GIF.
  * This will reduce the image to 256 colors first.
- * @param gif		[in] GIF image.
- * @param gcImage	[in] GcImage to write.
- * @param colorMap	[in] Color map object to use.
+ * @param gif		[in] GIF image
+ * @param gcImage	[in] GcImage to write
+ * @param colorMap	[in] Color map object to use
  * @return GIF_OK on success; GIF_ERROR on error.
  */
 int GcImageWriterPrivate::gif_writeARGB32Image(GifFileType *gif,
@@ -245,8 +245,8 @@ int GcImageWriterPrivate::gif_writeARGB32Image(GifFileType *gif,
 
 /**
  * Write an animated GcImage to the internal memory buffer in some GIF format.
- * @param gcImages	[in] Vector of GcImage.
- * @param gcIconDelays	[in] Icon delays.
+ * @param gcImages	[in] Vector of GcImage
+ * @param gcIconDelays	[in] Icon delays
  * @return 0 on success; non-zero on error.
  */
 int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
@@ -271,7 +271,7 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 	}
 
 	bool is_CI8_UNIQUE = false;
-	if (gcImage0->pxFmt() == GcImage::PXFMT_CI8) {
+	if (gcImage0->pxFmt() == GcImage::PxFmt::CI8) {
 		// May be CI8 or CI8_UNIQUE.
 		is_CI8_UNIQUE = is_gcImages_CI8_UNIQUE(gcImages);
 		if (!is_CI8_UNIQUE) {
@@ -348,7 +348,7 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 		}
 
 		switch (gcImage->pxFmt()) {
-			case GcImage::PXFMT_CI8:
+			case GcImage::PxFmt::CI8:
 				// Start the frame.
 				if (EGifDlPutImageDesc(gif, 0, 0, w, h, false,
 				    (is_CI8_UNIQUE ? colorMap : nullptr)) != GIF_OK)
@@ -372,7 +372,7 @@ int GcImageWriterPrivate::writeGif_anim(const vector<const GcImage*> *gcImages,
 				}
 				break;
 
-			case GcImage::PXFMT_ARGB32:
+			case GcImage::PxFmt::ARGB32:
 				// Reduce the image to 256 colors.
 				// TODO: Use a similar palette for all images?
 				// Otherwise it might look weird...

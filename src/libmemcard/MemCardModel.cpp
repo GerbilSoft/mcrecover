@@ -37,94 +37,94 @@
 
 class MemCardModelPrivate
 {
-	public:
-		explicit MemCardModelPrivate(MemCardModel *q);
-		~MemCardModelPrivate();
+public:
+	explicit MemCardModelPrivate(MemCardModel *q);
+	~MemCardModelPrivate();
 
-	protected:
-		MemCardModel *const q_ptr;
-		Q_DECLARE_PUBLIC(MemCardModel)
-	private:
-		Q_DISABLE_COPY(MemCardModelPrivate)
+protected:
+	MemCardModel *const q_ptr;
+	Q_DECLARE_PUBLIC(MemCardModel)
+private:
+	Q_DISABLE_COPY(MemCardModelPrivate)
 
-	public:
-		Card *card;
+public:
+	Card *card;
 
-		QHash<const File*, IconAnimHelper*> animState;
+	QHash<const File*, IconAnimHelper*> animState;
 
+	/**
+	 * Initialize the animation state for all files.
+	 */
+	void initAnimState(void);
+
+	/**
+	 * Initialize the animation state for a given file.
+	 * @param file File
+	 */
+	void initAnimState(const File *file);
+
+	/**
+	 * Update the animation timer state.
+	 * Starts the timer if animated icons are present; stops the timer if not.
+	 */
+	void updateAnimTimerState(void);
+
+	// Animation timer
+	QTimer *animTimer;
+	// Pause count. If >0, animation is paused.
+	int pauseCounter;
+
+	// Style variables
+	struct style_t {
 		/**
-		 * Initialize the animation state for all files.
+		 * Initialize the style variables.
 		 */
-		void initAnimState(void);
+		void init(void);
 
-		/**
-		 * Initialize the animation state for a given file.
-		 * @param file File.
-		 */
-		void initAnimState(const File *file);
+		// Background colors for "lost" files.
+		QBrush brush_lostFile;
+		QBrush brush_lostFile_alt;
 
-		/**
-		 * Update the animation timer state.
-		 * Starts the timer if animated icons are present; stops the timer if not.
-		 */
-		void updateAnimTimerState(void);
+		// Icon IDs
+		enum class IconID {
+			Unknown = 0,	// Checksum is unknown
+			Invalid,	// Checksum is invalid
+			Good,		// Checksum is good
 
-		// Animation timer.
-		QTimer *animTimer;
-		// Pause count. If >0, animation is paused.
-		int pauseCounter;
-
-		// Style variables.
-		struct style_t {
-			/**
-			 * Initialize the style variables.
-			 */
-			void init(void);
-
-			// Background colors for "lost" files.
-			QBrush brush_lostFile;
-			QBrush brush_lostFile_alt;
-
-			// Icon IDs.
-			enum IconID {
-				ICON_UNKNOWN,	// Checksum is unknown
-				ICON_INVALID,	// Checksum is invalid
-				ICON_GOOD,	// Checksum is good
-
-				ICON_MAX
-			};
-
-			/**
-			 * Load an icon.
-			 * @param id Icon ID.
-			 * @return Icon.
-			 */
-			QIcon getIcon(IconID id) const;
-
-		private:
-			/**
-			 * Load an icon from the Qt resources.
-			 * @param dir Base directory.
-			 * @param name Icon name.
-			 */
-			static QIcon loadIcon(const QString &dir, const QString &name);
-
-			// Icons for COL_TYPE.
-			mutable QIcon m_icons[ICON_MAX];
+			Max
 		};
-		style_t style;
 
 		/**
-		 * Cached copy of card->fileCount().
-		 * This value is needed after the card is destroyed,
-		 * so we need to cache it here, since the destroyed()
-		 * slot might be run *after* the Card is deleted.
+		 * Load an icon.
+		 * @param id Icon ID
+		 * @return Icon
 		 */
-		int fileCount;
+		QIcon getIcon(IconID id) const;
 
-		// Row insert start/end indexes.
-		int insertStart;
-		int insertEnd;
+	private:
+		/**
+		 * Load an icon from the Qt resources.
+		 * @param dir Base directory
+		 * @param name Icon name
+		 */
+		static QIcon loadIcon(const QString &dir, const QString &name);
+
+		// Icons for COL_TYPE
+		mutable QIcon m_icons[static_cast<int>(IconID::Max)];
+	};
+	style_t style;
+
+	/**
+	 * Cached copy of card->fileCount().
+	 * This value is needed after the card is destroyed,
+	 * so we need to cache it here, since the destroyed()
+	 * slot might be run *after* the Card is deleted.
+	 */
+	int fileCount;
+
+	// Row insert start/end indexes
+	int insertStart;
+	int insertEnd;
 };
 
 MemCardModelPrivate::MemCardModelPrivate(MemCardModel *q)
@@ -178,35 +178,35 @@ void MemCardModelPrivate::style_t::init(void)
 
 /**
  * Load an icon.
- * @param id Icon ID.
- * @return Icon.
+ * @param id Icon ID
+ * @return Icon
  */
 QIcon MemCardModelPrivate::style_t::getIcon(IconID id) const
 {
-	assert(id >= 0);
-	assert(id < ICON_MAX);
-	if (id < 0 || id >= ICON_MAX) {
+	assert((int)id >= 0);
+	assert(id < IconID::Max);
+	if ((int)id < 0 || id >= IconID::Max) {
 		return QIcon();
 	}
 
-	if (m_icons[id].isNull()) {
+	if (m_icons[(int)id].isNull()) {
 		static const char *const names[] = {
 			"dialog-question",
 			"dialog-error",
 			"dialog-ok-apply"
 		};
-		static_assert(ARRAY_SIZE(names) == ICON_MAX, "names[] needs to be updated!");
-		m_icons[id] = loadIcon(QLatin1String("oxygen"), QLatin1String(names[id]));
-		assert(!m_icons[id].isNull());
+		static_assert(ARRAY_SIZE(names) == (int)IconID::Max, "names[] needs to be updated!");
+		m_icons[(int)id] = loadIcon(QLatin1String("oxygen"), QLatin1String(names[(int)id]));
+		assert(!m_icons[(int)id].isNull());
 	}
 
-	return m_icons[id];
+	return m_icons[(int)id];
 }
 
 /**
  * Load an icon from the Qt resources.
- * @param dir Base directory.
- * @param name Icon name.
+ * @param dir Base directory
+ * @param name Icon name
  */
 QIcon MemCardModelPrivate::style_t::loadIcon(const QString &dir, const QString &name)
 {
@@ -266,7 +266,7 @@ void MemCardModelPrivate::initAnimState(void)
 
 /**
  * Initialize the animation state for a given file.
- * @param file File.
+ * @param file File
  */
 void MemCardModelPrivate::initAnimState(const File *file)
 {
@@ -389,11 +389,11 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 					switch (file->checksumStatus()) {
 						default:
 						case Checksum::ChkStatus::Unknown:
-							return d->style.getIcon(MemCardModelPrivate::style_t::ICON_UNKNOWN);
+							return d->style.getIcon(MemCardModelPrivate::style_t::IconID::Unknown);
 						case Checksum::ChkStatus::Invalid:
-							return  d->style.getIcon(MemCardModelPrivate::style_t::ICON_INVALID);
+							return  d->style.getIcon(MemCardModelPrivate::style_t::IconID::Invalid);
 						case Checksum::ChkStatus::Good:
-							return  d->style.getIcon(MemCardModelPrivate::style_t::ICON_GOOD);
+							return  d->style.getIcon(MemCardModelPrivate::style_t::IconID::Good);
 					}
 
 				default:

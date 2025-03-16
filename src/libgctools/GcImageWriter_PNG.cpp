@@ -2,7 +2,7 @@
  * GameCube Tools Library.                                                 *
  * GcImageWriter_PNG.cpp: GameCube image writer. (PNG functions)           *
  *                                                                         *
- * Copyright (c) 2012-2024 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -27,9 +27,9 @@ using std::vector;
 
 /**
  * PNG write function.
- * @param png_ptr	[in] PNG pointer.
- * @param buf		[in] Data to write.
- * @param len		[in] Size of buf.
+ * @param png_ptr	[in] PNG pointer
+ * @param buf		[in] Data to write
+ * @param len		[in] Size of buf
  */
 void GcImageWriterPrivate::png_io_write(png_structp png_ptr, png_bytep buf, png_size_t len)
 {
@@ -48,7 +48,7 @@ void GcImageWriterPrivate::png_io_write(png_structp png_ptr, png_bytep buf, png_
  * PNG flush function.
  * Required when writing PNG images.
  * This implementation is a no-op.
- * @param png_ptr	[in] PNG pointer.
+ * @param png_ptr	[in] PNG pointer
  */
 void GcImageWriterPrivate::png_io_flush(png_structp png_ptr)
 {
@@ -58,10 +58,10 @@ void GcImageWriterPrivate::png_io_flush(png_structp png_ptr)
 
 /**
  * Write a PLTE chunk to a PNG image.
- * @param png_ptr	[in] PNG pointer.
- * @param info_ptr	[in] PNG info pointer.
- * @param palette	[in] Palette. (ARGB32 format)
- * @param num_entries	[in] Number of palette entries.
+ * @param png_ptr	[in] PNG pointer
+ * @param info_ptr	[in] PNG info pointer
+ * @param palette	[in] Palette (ARGB32 format)
+ * @param num_entries	[in] Number of palette entries
  * @return 0 on success; non-zero on error.
  */
 int GcImageWriterPrivate::writePng_PLTE(
@@ -91,7 +91,7 @@ int GcImageWriterPrivate::writePng_PLTE(
 
 /**
  * Write a GcImage to the internal memory buffer in PNG format.
- * @param gcImage	[in] GcImage.
+ * @param gcImage	[in] GcImage
  * @return 0 on success; non-zero on error.
  */
 int GcImageWriterPrivate::writePng(const GcImage *gcImage)
@@ -143,7 +143,7 @@ int GcImageWriterPrivate::writePng(const GcImage *gcImage)
 	// Write the PNG header.
 	int pitch;
 	switch (gcImage->pxFmt()) {
-		case GcImage::PXFMT_ARGB32:
+		case GcImage::PxFmt::ARGB32:
 			png_set_IHDR(png_ptr, info_ptr, w, h,
 					8, PNG_COLOR_TYPE_RGB_ALPHA,
 					PNG_INTERLACE_NONE,
@@ -152,7 +152,7 @@ int GcImageWriterPrivate::writePng(const GcImage *gcImage)
 			pitch = (w * 4);
 			break;
 
-		case GcImage::PXFMT_CI8: {
+		case GcImage::PxFmt::CI8: {
 			png_set_IHDR(png_ptr, info_ptr, w, h,
 					8, PNG_COLOR_TYPE_PALETTE,
 					PNG_INTERLACE_NONE,
@@ -200,8 +200,8 @@ int GcImageWriterPrivate::writePng(const GcImage *gcImage)
 
 /**
  * Write an animated GcImage to the internal memory buffer in APNG format.
- * @param gcImages	[in] Vector of GcImage.
- * @param gcIconDelays	[in] Icon delays.
+ * @param gcImages	[in] Vector of GcImage
+ * @param gcIconDelays	[in] Icon delays
  * @return 0 on success; non-zero on error.
  */
 int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, const vector<int> *gcIconDelays)
@@ -255,7 +255,7 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 	// Write the PNG header.
 	int pitch;
 	switch (pxFmt) {
-		case GcImage::PXFMT_ARGB32:
+		case GcImage::PxFmt::ARGB32:
 			png_set_IHDR(png_ptr, info_ptr, w, h,
 					8, PNG_COLOR_TYPE_RGB_ALPHA,
 					PNG_INTERLACE_NONE,
@@ -264,7 +264,7 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 			pitch = (w * 4);
 			break;
 
-		case GcImage::PXFMT_CI8: {
+		case GcImage::PxFmt::CI8: {
 			png_set_IHDR(png_ptr, info_ptr, w, h,
 					8, PNG_COLOR_TYPE_PALETTE,
 					PNG_INTERLACE_NONE,
@@ -336,7 +336,7 @@ int GcImageWriterPrivate::writeAPng(const vector<const GcImage*> *gcImages, cons
 
 /**
  * Write an animated GcImage to the internal memory buffer in PNG FPF format.
- * @param gcImages	[in] Vector of GcImage.
+ * @param gcImages	[in] Vector of GcImage
  * @return 0 on success; non-zero on error.
  */
 int GcImageWriterPrivate::writePng_FPF(const vector<const GcImage*> *gcImages)
@@ -353,7 +353,7 @@ int GcImageWriterPrivate::writePng_FPF(const vector<const GcImage*> *gcImages)
 
 /**
  * Write an animated GcImage to the internal memory buffer in PNG VS format.
- * @param gcImages	[in] Vector of GcImage.
+ * @param gcImages	[in] Vector of GcImage
  * @return 0 on success; non-zero on error.
  */
 int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
@@ -409,7 +409,7 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 	// Write the PNG header.
 	int pitch;
 	switch (pxFmt) {
-		case GcImage::PXFMT_ARGB32:
+		case GcImage::PxFmt::ARGB32:
 			png_set_IHDR(png_ptr, info_ptr, w, vs_h,
 					8, PNG_COLOR_TYPE_RGB_ALPHA,
 					PNG_INTERLACE_NONE,
@@ -418,7 +418,7 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 			pitch = (w * 4);
 			break;
 
-		case GcImage::PXFMT_CI8: {
+		case GcImage::PxFmt::CI8: {
 			png_set_IHDR(png_ptr, info_ptr, w, vs_h,
 					8, PNG_COLOR_TYPE_PALETTE,
 					PNG_INTERLACE_NONE,
@@ -473,7 +473,7 @@ int GcImageWriterPrivate::writePng_VS(const vector<const GcImage*> *gcImages)
 
 /**
  * Write an animated GcImage to the internal memory buffer in PNG HS format.
- * @param gcImages	[in] Vector of GcImage.
+ * @param gcImages	[in] Vector of GcImage
  * @return 0 on success; non-zero on error.
  */
 int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
@@ -530,7 +530,7 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 	// Write the PNG header.
 	int pitch;
 	switch (pxFmt) {
-		case GcImage::PXFMT_ARGB32:
+		case GcImage::PxFmt::ARGB32:
 			png_set_IHDR(png_ptr, info_ptr, vs_w, h,
 					8, PNG_COLOR_TYPE_RGB_ALPHA,
 					PNG_INTERLACE_NONE,
@@ -539,7 +539,7 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 			pitch = (w * 4);
 			break;
 
-		case GcImage::PXFMT_CI8: {
+		case GcImage::PxFmt::CI8: {
 			png_set_IHDR(png_ptr, info_ptr, vs_w, h,
 					8, PNG_COLOR_TYPE_PALETTE,
 					PNG_INTERLACE_NONE,
@@ -603,9 +603,9 @@ int GcImageWriterPrivate::writePng_HS(const vector<const GcImage*> *gcImages)
 
 /**
  * Write an animated GcImage to the internal memory buffer in some PNG format.
- * @param gcImages	[in] Vector of GcImage.
- * @param gcIconDelays	[in] Icon delays.
- * @param animImgf	[in] Animated image format.
+ * @param gcImages	[in] Vector of GcImage
+ * @param gcIconDelays	[in] Icon delays
+ * @param animImgf	[in] Animated image format
  * @return 0 on success; non-zero on error.
  */
 int GcImageWriterPrivate::writePng_anim(const vector<const GcImage*> *gcImages,
@@ -617,12 +617,12 @@ int GcImageWriterPrivate::writePng_anim(const vector<const GcImage*> *gcImages,
 	// the allocated vector for CI8_UNIQUE conversion.
 
 	switch (animImgf) {
-		case GcImageWriter::ANIMGF_PNG_FPF:
+		case GcImageWriter::AnimImageFormat::PNG_FPF:
 			// No image conversion necessary.
 			return writePng_FPF(gcImages);
-		case GcImageWriter::ANIMGF_APNG:
-		case GcImageWriter::ANIMGF_PNG_HS:
-		case GcImageWriter::ANIMGF_PNG_VS:
+		case GcImageWriter::AnimImageFormat::APNG:
+		case GcImageWriter::AnimImageFormat::PNG_HS:
+		case GcImageWriter::AnimImageFormat::PNG_VS:
 			// Image conversion is necessary.
 			break;
 		default:
@@ -641,13 +641,13 @@ int GcImageWriterPrivate::writePng_anim(const vector<const GcImage*> *gcImages,
 
 	int ret;
 	switch (animImgf) {
-		case GcImageWriter::ANIMGF_APNG:
+		case GcImageWriter::AnimImageFormat::APNG:
 			ret = writeAPng(gcImages, gcIconDelays);
 			break;
-		case GcImageWriter::ANIMGF_PNG_HS:
+		case GcImageWriter::AnimImageFormat::PNG_HS:
 			ret = writePng_HS(gcImages);
 			break;
-		case GcImageWriter::ANIMGF_PNG_VS:
+		case GcImageWriter::AnimImageFormat::PNG_VS:
 			ret = writePng_VS(gcImages);
 			break;
 		default:

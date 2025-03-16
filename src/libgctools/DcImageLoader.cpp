@@ -3,7 +3,7 @@
  * DcImageLoader.cpp: Dreamcast image loader.                              *
  * Converts Dreamcast images from native formats to GcImage.               *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -55,7 +55,7 @@ GcImage *DcImageLoader::fromPalette16(int w, int h,
 	// TODO: Make an internal 16-color format?
 	GcImage *gcImage = new GcImage();
 	GcImagePrivate *const d = gcImage->d;
-	d->init(w, h, GcImage::PXFMT_CI8);
+	d->init(w, h, GcImage::PxFmt::CI8);
 
 	// Convert the palette.
 	// TODO: Optimize using pointers instead of indexes?
@@ -97,7 +97,7 @@ GcImage *DcImageLoader::fromARGB4444(int w, int h, const uint16_t *img_buf, int 
 	// Create a GcImage.
 	GcImage *gcImage = new GcImage();
 	GcImagePrivate *const d = gcImage->d;
-	d->init(w, h, GcImage::PXFMT_ARGB32);
+	d->init(w, h, GcImage::PxFmt::ARGB32);
 
 	uint32_t *px_dest = (uint32_t*)d->imageData;
 	for (int i = img_siz; i > 0; i--, img_buf++, px_dest++) {
@@ -134,7 +134,7 @@ GcImage *DcImageLoader::fromMonochrome(int w, int h,
 	// TODO: Make an internal 2-color format?
 	GcImage *gcImage = new GcImage();
 	GcImagePrivate *const d = gcImage->d;
-	d->init(w, h, GcImage::PXFMT_CI8);
+	d->init(w, h, GcImage::PxFmt::CI8);
 
 	// Convert the palette.
 	// TODO: Optimize using pointers instead of indexes?

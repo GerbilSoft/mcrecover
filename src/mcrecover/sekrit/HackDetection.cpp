@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * HackDetection.cpp: * HACK DETECTION *                                   *
  *                                                                         *
- * Copyright (c) 2013-2018 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -28,52 +28,52 @@
 
 class HackDetectionPrivate
 {
-	public:
-		explicit HackDetectionPrivate(HackDetection *q);
+public:
+	explicit HackDetectionPrivate(HackDetection *q);
 
-	protected:
-		HackDetection *const q_ptr;
-		Q_DECLARE_PUBLIC(HackDetection)
-	private:
-		Q_DISABLE_COPY(HackDetectionPrivate)
+protected:
+	HackDetection *const q_ptr;
+	Q_DECLARE_PUBLIC(HackDetection)
+private:
+	Q_DISABLE_COPY(HackDetectionPrivate)
 
-	public:
-		QRect winRect;
+public:
+	QRect winRect;
 
-		// Screen index.
-		int screenIdx;
-		void setScreen(int screenIdx);
+	// Screen index
+	int screenIdx;
+	void setScreen(int screenIdx);
 
-		// Font.
-		QFont fntHack;
-		QFont fntHackText;
-		QFont fntHackStar;
-		int hMargin;
-		QChar chrStar;
-		QPoint drpTranslate;
-		void initFont(void);
+	// Font
+	QFont fntHack;
+	QFont fntHackText;
+	QFont fntHackStar;
+	int hMargin;
+	QChar chrStar;
+	QPoint drpTranslate;
+	void initFont(void);
 
-		// "Hack Detection" message.
-		HackDetection::DetectType detectType;
-		QString hdTitle;
-		QString hdMessage;
-		QString hdCloser;
-		void initMessage(void);
+	// "Hack Detection" message
+	HackDetection::DetectType detectType;
+	QString hdTitle;
+	QString hdMessage;
+	QString hdCloser;
+	void initMessage(void);
 
-		// There is no escape. Muahahahaha.
-		bool allowEscape;
-		bool escapeBlink;
-		QTimer *tmrEscapeBlink;
+	// There is no escape. Muahahahaha.
+	bool allowEscape;
+	bool escapeBlink;
+	QTimer *tmrEscapeBlink;
 
-		static const int ESCAPE_TIMER = 10000;
-		static const int BLINK_TIMER = 500;
+	static constexpr int ESCAPE_TIMER = 10000;
+	static constexpr int BLINK_TIMER = 500;
 };
 
 HackDetectionPrivate::HackDetectionPrivate(HackDetection* q)
 	: q_ptr(q)
 	, screenIdx(0)
 	, hMargin(0)
-	, detectType(HackDetection::DT_NONE)
+	, detectType(HackDetection::DetectType::None)
 	, allowEscape(false)
 	, escapeBlink(false)
 	, tmrEscapeBlink(new QTimer(q))
@@ -88,7 +88,7 @@ HackDetectionPrivate::HackDetectionPrivate(HackDetection* q)
 
 /**
  * Set the screen.
- * @param screenIdx Screen index.
+ * @param screenIdx Screen index
  */
 void HackDetectionPrivate::setScreen(int screenIdx)
 {
@@ -220,29 +220,29 @@ void HackDetectionPrivate::initMessage(void)
 {
 	// "Hack Detection" title.
 	switch (detectType) {
-		case HackDetection::DT_NONE:
-		case HackDetection::DT_H:
+		case HackDetection::DetectType::None:
+		case HackDetection::DetectType::H:
 		default:
 			//: "Hack Detection" title.
-			hdTitle = HackDetection::tr("Hack Detection", "DT_H").toUpper();
+			hdTitle = HackDetection::tr("Hack Detection", "DetectType::H").toUpper();
 			break;
 
-		case HackDetection::DT_Q:
+		case HackDetection::DetectType::Q:
 			//: "Quack Detection" title.
-			hdTitle = HackDetection::tr("Quack Detection", "DT_Q").toUpper();
+			hdTitle = HackDetection::tr("Quack Detection", "DetectType::Q").toUpper();
 			break;
 
-		case HackDetection::DT_S:
+		case HackDetection::DetectType::S:
 			//: "'Snack Detection" title.
-			hdTitle = HackDetection::tr("Snack Detection", "DT_S").toUpper();
+			hdTitle = HackDetection::tr("Snack Detection", "DetectType::S").toUpper();
 			break;
 	}
 
 	// "Hack Detection" message. Preserve the linebreaks!
 	switch (detectType) {
-		case HackDetection::DT_NONE:
-		case HackDetection::DT_H:
-		case HackDetection::DT_Q:
+		case HackDetection::DetectType::None:
+		case HackDetection::DetectType::H:
+		case HackDetection::DetectType::Q:
 		default:
 			//: "Hack Detection" message. Preserve the linebreaks!
 			hdMessage = HackDetection::tr(
@@ -250,19 +250,19 @@ void HackDetectionPrivate::initMessage(void)
 				"outside source. This is not allowed as specified in\n"
 				"the game license.\n"
 				"You must reinstall the game and accept the game\n"
-				"license again, to continue to play the game.", "DT_H").toUpper();
-			hdCloser = HackDetection::tr("Game halted.", "DT_H").toUpper();
+				"license again, to continue to play the game.", "DetectType::H").toUpper();
+			hdCloser = HackDetection::tr("Game halted.", "DetectType::H").toUpper();
 			break;
 
-		case HackDetection::DT_S:
+		case HackDetection::DetectType::S:
 			//: "Snack Detection" message. Preserve the linebreaks!
 			hdMessage = HackDetection::tr(
 				"One or more snack ingredients were manipulated by an\n"
 				"outside sauce. This is not allowed as specified in\n"
 				"the snack recipe.\n"
 				"You must rebake the snack and accept the snack\n"
-				"recipe again, to continue to eat the snack.", "DT_S").toUpper();
-			hdCloser = HackDetection::tr("Snack salted.", "DT_S").toUpper();
+				"recipe again, to continue to eat the snack.", "DetectType::S").toUpper();
+			hdCloser = HackDetection::tr("Snack salted.", "DetectType::S").toUpper();
 			break;
 	}
 
@@ -275,7 +275,7 @@ void HackDetectionPrivate::initMessage(void)
 /**
  * Create a Hack Detection window.
  * Uses the default screen.
- * @param parent Parent.
+ * @param parent Parent
  */
 HackDetection::HackDetection(QWidget *parent)
 	: QWidget(parent,
@@ -291,8 +291,8 @@ HackDetection::HackDetection(QWidget *parent)
 
 /**
  * Create a Hack Detection window.
- * @param parent Parent.
- * @param screen Screen index.
+ * @param parent Parent
+ * @param screen Screen index
  */
 HackDetection::HackDetection(int screen, QWidget *parent)
 	: QWidget(parent,
@@ -308,7 +308,7 @@ HackDetection::HackDetection(int screen, QWidget *parent)
 /**
  * Initialize the Hack Detection window.
  * (Called from the constructor.)
- * @param screen Screen index.
+ * @param screen Screen index
  */
 void HackDetection::init(int screen)
 {
@@ -371,11 +371,11 @@ void HackDetection::setDetectType(DetectType detectType)
 		this->update();
 }
 
-/** Properties. **/
+/** Properties **/
 
 /**
  * Minimum size hint.
- * @return Minimum size hint.
+ * @return Minimum size hint
  */
 QSize HackDetection::minimumSizeHint(void) const
 {
@@ -385,7 +385,7 @@ QSize HackDetection::minimumSizeHint(void) const
 
 /**
  * Size hint.
- * @return Size hint.
+ * @return Size hint
  */
 QSize HackDetection::sizeHint(void) const
 {
@@ -393,11 +393,11 @@ QSize HackDetection::sizeHint(void) const
 	return d->winRect.size();
 }
 
-/** Events. **/
+/** Events **/
 
 /**
  * Widget state has changed.
- * @param event State change event.
+ * @param event State change event
  */
 void HackDetection::changeEvent(QEvent *event)
 {
@@ -414,8 +414,8 @@ void HackDetection::changeEvent(QEvent *event)
 }
 
 /**
- * Show event.
- * @param event QShowEvent.
+ * Show event
+ * @param event QShowEvent
  */
 void HackDetection::showEvent(QShowEvent *event)
 {
@@ -440,8 +440,8 @@ void HackDetection::showEvent(QShowEvent *event)
 }
 
 /**
- * Paint event.
- * @param event QPaintEvent.
+ * Paint event
+ * @param event QPaintEvent
  */
 void HackDetection::paintEvent(QPaintEvent *event)
 {
@@ -547,8 +547,8 @@ void HackDetection::paintEvent(QPaintEvent *event)
 }
 
 /**
- * Close event.
- * @param event QCloseEvent.
+ * Close event
+ * @param event QCloseEvent
  */
 void HackDetection::closeEvent(QCloseEvent *event)
 {
@@ -557,8 +557,8 @@ void HackDetection::closeEvent(QCloseEvent *event)
 }
 
 /**
- * Key press event.
- * @param event QKeyEvent.
+ * Key press event
+ * @param event QKeyEvent
  */
 void HackDetection::keyPressEvent(QKeyEvent *event)
 {
@@ -577,7 +577,7 @@ void HackDetection::keyPressEvent(QKeyEvent *event)
 	event->ignore();
 }
 
-/** Slots. **/
+/** Slots **/
 
 /**
  * "Allow Escape" / Blink timer has expired.

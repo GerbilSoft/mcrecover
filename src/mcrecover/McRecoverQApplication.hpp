@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * McRecoverQApplication.hpp: QApplication subclass.                       *
  *                                                                         *
- * Copyright (c) 2013-2018 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -54,11 +54,11 @@ class McRecoverQApplication : public QApplication
 				const QWidget *widget = 0);
 
 #ifdef Q_OS_WIN
-		enum Win32Icon_t {
-			W32ICON_NONE = 0,
-			W32ICON_DEFRAG,
+		enum class Win32Icon_t {
+			None = 0,
+			Defrag,
 
-			W32ICON_MAX
+			Max
 		};
 
 		/**

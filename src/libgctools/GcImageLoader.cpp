@@ -3,7 +3,7 @@
  * GcImageLoader.cpp: GameCube image loader.                               *
  * Converts GameCube images from native formats to GcImage.                *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -108,7 +108,7 @@ GcImage *GcImageLoader::fromCI8(int w, int h,
 	// Create a GcImage.
 	GcImage *gcImage = new GcImage();
 	GcImagePrivate *const d = gcImage->d;
-	d->init(w, h, GcImage::PXFMT_CI8);
+	d->init(w, h, GcImage::PxFmt::CI8);
 
 	// Convert the palette.
 	// TODO: Optimize using pointers instead of indexes?
@@ -160,7 +160,7 @@ GcImage *GcImageLoader::fromRGB5A3(int w, int h, const uint16_t *img_buf, int im
 	// Create a GcImage.
 	GcImage *gcImage = new GcImage();
 	GcImagePrivate *const d = gcImage->d;
-	d->init(w, h, GcImage::PXFMT_ARGB32);
+	d->init(w, h, GcImage::PxFmt::ARGB32);
 
 	// Temporary tile buffer.
 	uint32_t tileBuf[4*4];

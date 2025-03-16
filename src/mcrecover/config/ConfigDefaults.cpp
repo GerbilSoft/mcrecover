@@ -2,40 +2,40 @@
  * GameCube Memory Card Recovery Program.                                  *
  * ConfigDefaults.hpp: Configuration defaults.                             *
  *                                                                         *
- * Copyright (c) 2008-2012 by David Korth.                                 *
+ * Copyright (c) 2008-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
 #include "ConfigDefaults.hpp"
 
 /**
- * Single instance of ConfigDefaults.
+ * Single instance of ConfigDefaults
  */
 ConfigDefaults *ConfigDefaults::ms_Instance = nullptr;
 
 /**
- * Default configuration filename.
+ * Default configuration filename
  */
 const char *const ConfigDefaults::DefaultConfigFilename = "mcrecover.conf";
 
 /**
- * Default settings.
+ * Default settings
  */
 const ConfigDefaults::DefaultSetting ConfigDefaults::DefaultSettings[] =
 {
 	/** Super hidden settings! **/
-	{"iKnowWhatImDoingAndWillVoidTheWarranty", "false", 0, DefaultSetting::DEF_NO_SAVE, DefaultSetting::VT_BOOL, 0, 0},
+	{"iKnowWhatImDoingAndWillVoidTheWarranty", "false", 0, DefaultSetting::DEF_NO_SAVE, DefaultSetting::ValidationType::Boolean, 0, 0},
 
 	/** General settings. **/
-	{"lastPath",		"", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
-	{"preferredRegion",	"E", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
-	{"searchUsedBlocks",	"false", 0, 0,	DefaultSetting::VT_BOOL, 0, 0},
-	{"animIconFormat",	"APNG", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
-	{"language",		"", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
-	{"fileType",		"0", 0, 0,	DefaultSetting::VT_NONE, 0, 0},
+	{"lastPath",		"", 0, 0,	DefaultSetting::ValidationType::None, 0, 0},
+	{"preferredRegion",	"E", 0, 0,	DefaultSetting::ValidationType::None, 0, 0},
+	{"searchUsedBlocks",	"false", 0, 0,	DefaultSetting::ValidationType::Boolean, 0, 0},
+	{"animIconFormat",	"APNG", 0, 0,	DefaultSetting::ValidationType::None, 0, 0},
+	{"language",		"", 0, 0,	DefaultSetting::ValidationType::None, 0, 0},
+	{"fileType",		"0", 0, 0,	DefaultSetting::ValidationType::None, 0, 0},
 
 	/** End of array. **/
-	{nullptr, nullptr, 0, 0, DefaultSetting::VT_NONE, 0, 0}
+	{nullptr, nullptr, 0, 0, DefaultSetting::ValidationType::None, 0, 0}
 };
 
 ConfigDefaults::ConfigDefaults()
@@ -52,7 +52,7 @@ ConfigDefaults::ConfigDefaults()
 
 /**
  * Return a single instance of ConfigDefaults.
- * @return Single instance of ConfigDefaults.
+ * @return Single instance of ConfigDefaults
  */
 ConfigDefaults *ConfigDefaults::Instance(void)
 {

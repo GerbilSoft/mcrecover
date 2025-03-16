@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * Card.hpp: Memory Card physical layer. [base class]                      *
  *                                                                         *
- * Copyright (c) 2012-2021 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -362,18 +362,18 @@ class Card : public QObject
 		 */
 		File *getFile(int idx);
 
-		enum FileTypes {
-			FTYPE_NONE	= 0,	// Don't return any files.
-			FTYPE_NORMAL	= 1,	// Return normal files only.
-			FTYPE_LOST	= 2,	// Return lost files only.
-			FTYPE_ALL	= 3,	// Return all files.
+		enum class FileTypes {
+			None	= 0,	// Don't return any files.
+			Normal	= 1,	// Return normal files only.
+			Lost	= 2,	// Return lost files only.
+			All	= 3,	// Return all files.
 		};
 
 		/**
 		 * Get File objects that match the given types.
-		 * @param types Types of files to return. (default is FTYPE_ALL)
+		 * @param types Types of files to return (default is FileTypes::All)
 		 */
-		QVector<File*> getFiles(FileTypes types = FTYPE_ALL);
+		QVector<File*> getFiles(FileTypes types = FileTypes::All);
 
 		/**
 		 * Remove all "lost" files.

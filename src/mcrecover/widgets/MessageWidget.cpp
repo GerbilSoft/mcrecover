@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * MessageWidget.hpp: Message widget.                                      *
  *                                                                         *
- * Copyright (c) 2014-2016 by David Korth.                                 *
+ * Copyright (c) 2014-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -50,7 +50,7 @@ public:
 	};
 	Ui_MessageWidget ui;
 
-	// Icon being displayed.
+	// Icon being displayed
 	MessageWidget::MsgIcon icon;
 	static const int iconSz = 22;
 	void setIcon(MessageWidget::MsgIcon icon);
@@ -66,7 +66,7 @@ public:
 	static const QRgb colorWarning = 0xEECC66;
 	static const QRgb colorInformation = 0x66CCEE;
 
-	// Animation.
+	// Animation
 	QTimeLine *timeLine;
 	int calcBestHeight(void) const;
 	bool animateOnShow;
@@ -74,7 +74,7 @@ public:
 
 MessageWidgetPrivate::MessageWidgetPrivate(MessageWidget *q)
 	: q_ptr(q)
-	, icon(MessageWidget::ICON_NONE)
+	, icon(MessageWidget::MsgIcon::None)
 	, tmrTimeout(new QTimer(q))
 	, timeout(false)
 	, timeLine(new QTimeLine(500, q))
@@ -86,7 +86,7 @@ MessageWidgetPrivate::~MessageWidgetPrivate()
 
 /**
  * Initialize the UI.
- * @param MessageWidget MessageWidget.
+ * @param MessageWidget MessageWidget
  */
 void MessageWidgetPrivate::Ui_MessageWidget::setupUi(QWidget *MessageWidget)
 {
@@ -150,36 +150,38 @@ void MessageWidgetPrivate::Ui_MessageWidget::setupUi(QWidget *MessageWidget)
 
 /**
  * Set the icon.
- * @param icon Icon to set.
+ * @param icon Icon to set
  */
 void MessageWidgetPrivate::setIcon(MessageWidget::MsgIcon icon)
 {
-	if (icon < MessageWidget::ICON_NONE || icon >= MessageWidget::ICON_MAX)
-		icon = MessageWidget::ICON_NONE;
-	if (this->icon == icon)
+	if (icon < MessageWidget::MsgIcon::None || icon >= MessageWidget::MsgIcon::Max) {
+		icon = MessageWidget::MsgIcon::None;
+	}
+	if (this->icon == icon) {
 		return;
+	}
 	this->icon = icon;
 
 	QStyle::StandardPixmap standardPixmap;
 	bool hasStandardPixmap = false;
 	switch (icon) {
-		case MessageWidget::ICON_NONE:
+		case MessageWidget::MsgIcon::None:
 		default:
 			hasStandardPixmap = false;
 			break;
-		case MessageWidget::ICON_CRITICAL:
+		case MessageWidget::MsgIcon::Critical:
 			standardPixmap = QStyle::SP_MessageBoxCritical;
 			hasStandardPixmap = true;
 			break;
-		case MessageWidget::ICON_QUESTION:
+		case MessageWidget::MsgIcon::Question:
 			standardPixmap = QStyle::SP_MessageBoxQuestion;
 			hasStandardPixmap = true;
 			break;
-		case MessageWidget::ICON_WARNING:
+		case MessageWidget::MsgIcon::Warning:
 			standardPixmap = QStyle::SP_MessageBoxWarning;
 			hasStandardPixmap = true;
 			break;
-		case MessageWidget::ICON_INFORMATION:
+		case MessageWidget::MsgIcon::Information:
 			standardPixmap = QStyle::SP_MessageBoxInformation;
 			hasStandardPixmap = true;
 			break;
@@ -200,7 +202,7 @@ void MessageWidgetPrivate::setIcon(MessageWidget::MsgIcon icon)
 
 /**
  * Calculate the best height for the widget.
- * @return Best height.
+ * @return Best height
  */
 int MessageWidgetPrivate::calcBestHeight(void) const
 {
@@ -239,11 +241,11 @@ MessageWidget::~MessageWidget()
 	delete d;
 }
 
-/** Events. **/
+/** Events **/
 
 /**
- * Paint event.
- * @param event QPaintEvent.
+ * Paint event
+ * @param event QPaintEvent
  */
 void MessageWidget::paintEvent(QPaintEvent *event)
 {
@@ -262,16 +264,16 @@ void MessageWidget::paintEvent(QPaintEvent *event)
 	QBrush bgColor;
 	Q_D(MessageWidget);
 	switch (d->icon) {
-		case ICON_CRITICAL:
+		case MsgIcon::Critical:
 			bgColor = QColor(MessageWidgetPrivate::colorCritical);
 			break;
-		case ICON_QUESTION:
+		case MsgIcon::Question:
 			bgColor = QColor(MessageWidgetPrivate::colorQuestion);
 			break;
-		case ICON_WARNING:
+		case MsgIcon::Warning:
 			bgColor = QColor(MessageWidgetPrivate::colorWarning);
 			break;
-		case ICON_INFORMATION:
+		case MsgIcon::Information:
 			bgColor = QColor(MessageWidgetPrivate::colorInformation);
 			break;
 		default:
@@ -288,8 +290,8 @@ void MessageWidget::paintEvent(QPaintEvent *event)
 }
 
 /**
- * Show event.
- * @param event QShowEent.
+ * Show event
+ * @param event QShowEvent
  */
 void MessageWidget::showEvent(QShowEvent *event)
 {
@@ -308,13 +310,13 @@ void MessageWidget::showEvent(QShowEvent *event)
 	}
 }
 
-/** Slots. **/
+/** Slots **/
 
 /**
  * Show a message.
- * @param msg Message text. (supports Qt RichText formatting)
- * @param icon Icon.
- * @param timeout Timeout, in milliseconds. (0 for no timeout)
+ * @param msg Message text (supports Qt RichText formatting)
+ * @param icon Icon
+ * @param timeout Timeout, in milliseconds (0 for no timeout)
  * @param closeOnDestroy Close the message when the specified QObject is destroyed.
  */
 void MessageWidget::showMessage(const QString &msg, MsgIcon icon, int timeout, QObject *closeOnDestroy)

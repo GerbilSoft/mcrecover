@@ -738,7 +738,7 @@ int File::saveBanner(const QString &filenameNoExt) const
 
 	// Append the correct extension.
 	QString filename = filenameNoExt;
-	const char *ext = GcImageWriter::extForImageFormat(GcImageWriter::IMGF_PNG);
+	const char *ext = GcImageWriter::extForImageFormat(GcImageWriter::ImageFormat::PNG);
 	if (ext)
 		filename += QChar(L'.') + QLatin1String(ext);
 
@@ -774,7 +774,7 @@ int File::saveBanner(QIODevice *qioDevice) const
 		return -EINVAL;
 
 	GcImageWriter gcImageWriter;
-	int ret = gcImageWriter.write(d->gcBanner, GcImageWriter::IMGF_PNG);
+	int ret = gcImageWriter.write(d->gcBanner, GcImageWriter::ImageFormat::PNG);
 	if (!ret) {
 		const vector<uint8_t> *pngData = gcImageWriter.memBuffer();
 		ret = qioDevice->write(reinterpret_cast<const char*>(pngData->data()), pngData->size());
@@ -808,7 +808,7 @@ int File::saveIcon(const QString &filenameNoExt,
 		ext = GcImageWriter::extForAnimImageFormat(animImgf);
 	} else {
 		// Static icon.
-		ext = GcImageWriter::extForImageFormat(GcImageWriter::IMGF_PNG);
+		ext = GcImageWriter::extForImageFormat(GcImageWriter::ImageFormat::PNG);
 	}
 
 	// NOTE: Due to PNG_FPF saving multiple files, we can't simply
@@ -848,7 +848,7 @@ int File::saveIcon(const QString &filenameNoExt,
 		ret = gcImageWriter.write(&gcImages, &gcIconDelays, animImgf);
 	} else {
 		// Static icon.
-		ret = gcImageWriter.write(d->gcIcons.at(0), GcImageWriter::IMGF_PNG);
+		ret = gcImageWriter.write(d->gcIcons.at(0), GcImageWriter::ImageFormat::PNG);
 	}
 
 	if (ret != 0) {

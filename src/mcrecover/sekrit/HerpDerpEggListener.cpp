@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * HerpDerpEggListener.cpp: Listener for... something. (shh)               *
  *                                                                         *
- * Copyright (c) 2014 by David Korth.                                      *
+ * Copyright (c) 2014-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -51,7 +51,7 @@ class HerpDerpEggListenerPrivate
 
 HerpDerpEggListenerPrivate::HerpDerpEggListenerPrivate(HerpDerpEggListener *q)
 	: q_ptr(q)
-	, detectType(HackDetection::DT_NONE)
+	, detectType(HackDetection::DetectType::None)
 	, seq_pos(0)
 { }	
 
@@ -99,12 +99,12 @@ HerpDerpEggListener::~HerpDerpEggListener()
 
 /**
  * Set the selected game ID. (ID6)
- * @param gameID Game ID. (gamecode+company)
+ * @param gameID Game ID (gamecode+company)
  */
 void HerpDerpEggListener::setSelGameID(const QString &gameID)
 {
 	Q_D(HerpDerpEggListener);
-	d->detectType = HackDetection::DT_NONE;
+	d->detectType = HackDetection::DetectType::None;
 	d->seq_pos = 0;
 	if (gameID.size() != 6) {
 		// Invalid game ID.
@@ -116,37 +116,37 @@ void HerpDerpEggListener::setSelGameID(const QString &gameID)
 
 	struct hurrMatch_t {
 		char gameID[7];
-		uint8_t dt;
+		HackDetection::DetectType dt;
 	};
 
 	static const hurrMatch_t hurrMatch[] = {
 		/** HACK DETECTION **/
-		{"G2XE8P", HackDetection::DT_H},
-		{"G2XP8P", HackDetection::DT_H},
-		{"G9SE8P", HackDetection::DT_H},
-		{"G9SJ8P", HackDetection::DT_H},
-		{"G9SP8P", HackDetection::DT_H},
-		{"GSBJ8P", HackDetection::DT_H},
-		{"GSNE8P", HackDetection::DT_H},
-		{"GSNP8P", HackDetection::DT_H},
-		{"GSOE8P", HackDetection::DT_H},
-		{"GSOJ8P", HackDetection::DT_H},
-		{"GSOP8P", HackDetection::DT_H},
-		{"GXEE8P", HackDetection::DT_H},
-		{"GXEJ8P", HackDetection::DT_H},
-		{"GXEP8P", HackDetection::DT_H},
-		{"GXSE8P", HackDetection::DT_H},
-		{"GXSP6W", HackDetection::DT_H},
-		{"GXSP8P", HackDetection::DT_H},
-		{"RELSAB", HackDetection::DT_H},
+		{"G2XE8P", HackDetection::DetectType::H},
+		{"G2XP8P", HackDetection::DetectType::H},
+		{"G9SE8P", HackDetection::DetectType::H},
+		{"G9SJ8P", HackDetection::DetectType::H},
+		{"G9SP8P", HackDetection::DetectType::H},
+		{"GSBJ8P", HackDetection::DetectType::H},
+		{"GSNE8P", HackDetection::DetectType::H},
+		{"GSNP8P", HackDetection::DetectType::H},
+		{"GSOE8P", HackDetection::DetectType::H},
+		{"GSOJ8P", HackDetection::DetectType::H},
+		{"GSOP8P", HackDetection::DetectType::H},
+		{"GXEE8P", HackDetection::DetectType::H},
+		{"GXEJ8P", HackDetection::DetectType::H},
+		{"GXEP8P", HackDetection::DetectType::H},
+		{"GXSE8P", HackDetection::DetectType::H},
+		{"GXSP6W", HackDetection::DetectType::H},
+		{"GXSP8P", HackDetection::DetectType::H},
+		{"RELSAB", HackDetection::DetectType::H},
 		/** QUACK DETECTION **/
-		{"GDDE41", HackDetection::DT_Q},
-		{"GDDP41", HackDetection::DT_Q},
-		{"GDOP41", HackDetection::DT_Q},
+		{"GDDE41", HackDetection::DetectType::Q},
+		{"GDDP41", HackDetection::DetectType::Q},
+		{"GDOP41", HackDetection::DetectType::Q},
 		/** SNACK DETECTION **/
-		{"GKYE01", HackDetection::DT_S},
-		{"GKYJ01", HackDetection::DT_S},
-		{"GKYP01", HackDetection::DT_S},
+		{"GKYE01", HackDetection::DetectType::S},
+		{"GKYJ01", HackDetection::DetectType::S},
+		{"GKYP01", HackDetection::DetectType::S},
 	};
 
 	for (int i = (ARRAY_SIZE(hurrMatch)-1); i >= 0; i--) {
@@ -172,8 +172,8 @@ void HerpDerpEggListener::widget_keyPress(QKeyEvent *event)
 	};
 
 	Q_D(HerpDerpEggListener);
-	if (d->detectType <= HackDetection::DT_NONE ||
-	    d->detectType >= HackDetection::DT_MAX) {
+	if (d->detectType <= HackDetection::DetectType::None ||
+	    d->detectType >= HackDetection::DetectType::Max) {
 		// Invalid detection.
 		d->seq_pos = 0;
 		return;

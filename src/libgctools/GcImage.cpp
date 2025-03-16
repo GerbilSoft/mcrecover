@@ -2,7 +2,7 @@
  * GameCube Tools Library.                                                 *
  * GcImage.cpp: GameCube image format handler.                             *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -18,13 +18,15 @@ using std::vector;
 GcImagePrivate::GcImagePrivate()
 	: imageData(nullptr)
 	, imageData_len(0)
-	, pxFmt(GcImage::PXFMT_NONE)
+	, pxFmt(GcImage::PxFmt::None)
 	, width(0)
 	, height(0)
-{ }
+{}
 
 GcImagePrivate::~GcImagePrivate()
-	{ free(imageData); }
+{
+	free(imageData);
+}
 
 GcImagePrivate::GcImagePrivate(const GcImagePrivate &other)
 	: imageData_len(other.imageData_len)
@@ -57,15 +59,15 @@ void GcImagePrivate::init(int w, int h, GcImage::PxFmt pxFmt)
 	palette.clear();
 	width = 0;
 	height = 0;
-	this->pxFmt = GcImage::PXFMT_NONE;
+	this->pxFmt = GcImage::PxFmt::None;
 
 	if (w > 0 && h > 0) {
 		size_t imgSize;
 		switch (pxFmt) {
-			case GcImage::PXFMT_CI8:
+			case GcImage::PxFmt::CI8:
 				imgSize = (w * h);
 				break;
-			case GcImage::PXFMT_ARGB32:
+			case GcImage::PxFmt::ARGB32:
 				imgSize = (w * h * 4);
 				break;
 			default:
@@ -89,14 +91,16 @@ void GcImagePrivate::init(int w, int h, GcImage::PxFmt pxFmt)
 
 GcImage::GcImage()
 	: d(new GcImagePrivate())
-{ }
+{}
 
 GcImage::~GcImage()
-	{ delete d; }
+{
+	delete d;
+}
 
 GcImage::GcImage(const GcImage &other)
 	: d(new GcImagePrivate(*other.d))
-{ }
+{}
 
 /**
  * Convert this GcImage to RGB5A3.
@@ -107,15 +111,15 @@ GcImage::GcImage(const GcImage &other)
 GcImage *GcImage::toRGB5A3(void) const
 {
 	switch (d->pxFmt) {
-		case PXFMT_ARGB32:
+		case PxFmt::ARGB32:
 			// Image is already ARGB32.
 			return new GcImage(*this);
 
-		case PXFMT_CI8: {
+		case PxFmt::CI8: {
 			// CI8. Convert to ARGB32.
 			GcImage *gcImage = new GcImage();
 			GcImagePrivate *const d_new = gcImage->d;
-			d_new->init(d->width, d->height, PXFMT_ARGB32);
+			d_new->init(d->width, d->height, PxFmt::ARGB32);
 
 			const uint8_t *ci8 = static_cast<const uint8_t*>(d->imageData);
 			uint32_t *rgb5A3 = static_cast<uint32_t*>(d_new->imageData);
@@ -135,7 +139,7 @@ GcImage *GcImage::toRGB5A3(void) const
 			return gcImage;
 		}
 
-		case PXFMT_NONE:
+		case PxFmt::None:
 		default:
 			// Invalid image format.
 			break;
@@ -145,16 +149,32 @@ GcImage *GcImage::toRGB5A3(void) const
 	return nullptr;
 }
 
+/**
+ * Get the pixel format of the image.
+ * @return Pixel format
+ */
 GcImage::PxFmt GcImage::pxFmt(void) const
-	{ return d->pxFmt; }
+{
+	return d->pxFmt;
+}
+
+/**
+ * Get the image data.
+ * @return Image data
+ */
 const void *GcImage::imageData(void) const
-	{ return d->imageData; }
+{
+	return d->imageData;
+}
+
+/**
+ * Get the image data length.
+ * @return Image data length
+ */
 size_t GcImage::imageData_len(void) const
-	{ return d->imageData_len; }
-int GcImage::width(void) const
-	{ return d->width; }
-int GcImage::height(void) const
-	{ return d->height; }
+{
+	return d->imageData_len;
+}
 
 /**
  * Get the image palette.
@@ -162,7 +182,25 @@ int GcImage::height(void) const
  */
 const uint32_t *GcImage::palette(void) const
 {
-	if (d->pxFmt != PXFMT_CI8 || d->palette.size() != 256)
+	if (d->pxFmt != PxFmt::CI8 || d->palette.size() != 256)
 		return nullptr;
 	return d->palette.data();
+}
+
+/**
+ * Get the image width, in pixels.
+ * @return Image width
+ */
+int GcImage::width(void) const
+{
+	return d->width;
+}
+
+/**
+ * Get the image height, in pixels.
+ * @return Image height
+ */
+int GcImage::height(void) const
+{
+	return d->height;
 }
