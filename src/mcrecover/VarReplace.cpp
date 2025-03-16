@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * VarReplace.cpp: Variable replacement functions.                         *
  *                                                                         *
- * Copyright (c) 2013-2018 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -37,14 +37,14 @@ class VarReplacePrivate
 
 /**
  * Replace variables in a given string.
- * @param str String to replace variables in.
- * @param vars QHash containing variables for replacement.
+ * @param str String to replace variables in
+ * @param vars QHash containing variables for replacement
  *
  * QHash format:
  * - key: variable name
  * - value: variable value
  *
- * @return str with replaced variables.
+ * @return str with replaced variables
  */
 QString VarReplace::Exec(const QString &str, const QHash<QString, QString> &vars)
 {
@@ -195,14 +195,14 @@ QString VarReplace::Exec(const QString &str, const QHash<QString, QString> &vars
 
 /**
  * Combine QStringLists of GameDesc variables and FileDesc variables into a QHash.
- * @param gameDescVars GameDesc variables.
- * @param fileDescVars FileDesc variables.
+ * @param gameDescVars GameDesc variables
+ * @param fileDescVars FileDesc variables
  *
  * NOTE: The first variable in each match ($G0, $F0) is
  * the full match from PCRE. This usually won't be used,
  * but is included in the variable hash anyway.
  *
- * @return QHash containing the variables. (key == ID)
+ * @return QHash containing the variables (key == ID)
  */
 QHash<QString, QString> VarReplace::StringListsToHash(
 	const QStringList &gameDescVars,
@@ -227,8 +227,8 @@ QHash<QString, QString> VarReplace::StringListsToHash(
 /**
  * Parse a string as an integer.
  * This function handles fullwidth numbers.
- * @param str String.
- * @return Integer.
+ * @param str String
+ * @return Integer
  */
 int VarReplace::strToInt(const QString &str)
 {
@@ -287,8 +287,8 @@ int VarReplace::strToInt(const QString &str)
 
 /**
  * Apply variable modifiers to a QHash containing variables.
- * @param varModifierDefs	[in] Variable modifier definitions.
- * @param vars			[in, out] Variables to modify.
+ * @param varModifierDefs	[in] Variable modifier definitions
+ * @param vars			[in, out] Variables to modify
  * @param qDateTime		[out, opt] If specified, QDateTime for the timestamp.
  * @return 0 on success; non-zero if any modifiers failed.
  */
@@ -325,17 +325,17 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifier
 		// Apply the modifier.
 		switch (varModifierDef.varType) {
 			default:
-			case VarModifierDef::VARTYPE_STRING:
+			case VarModifierDef::VarType::String:
 				// Parse as a string.
 				// Nothing special needs to be done here...
 				break;
 
-			case VarModifierDef::VARTYPE_NUMBER:
+			case VarModifierDef::VarType::Number:
 				// Parse as a number. (Base 10)
 				var = QString::number(num, 10);
 				break;
 
-			case VarModifierDef::VARTYPE_CHAR:
+			case VarModifierDef::VarType::Char:
 				// Parse as an ASCII character.
 				if (var.size() != 1)
 					return -2;
@@ -347,10 +347,10 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifier
 		if (var.size() < varModifierDef.minWidth) {
 			var.reserve(varModifierDef.minWidth);
 			QChar fillChar = QChar::fromLatin1(varModifierDef.fillChar);
-			if (varModifierDef.fieldAlign == VarModifierDef::FIELDALIGN_LEFT) {
+			if (varModifierDef.fieldAlign == VarModifierDef::FieldAlign::Left) {
 				while (var.size() < varModifierDef.minWidth)
 					var.append(fillChar);
-			} else /*if (variableDef.fieldAlign == VarModifierDef::FIELDALIGN_RIGHT)*/ {
+			} else /*if (variableDef.fieldAlign == VarModifierDef::FieldAlign::Right)*/ {
 				while (var.size() < varModifierDef.minWidth)
 					var.prepend(fillChar);
 			}
@@ -359,11 +359,11 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifier
 		// Check if this variable should be used in the QDateTime.
 		switch (varModifierDef.useAs) {
 			default:
-			case VarModifierDef::USEAS_FILENAME:
+			case VarModifierDef::UseAs::Filename:
 				// Not a QDateTime component.
 				break;
 
-			case VarModifierDef::USEAS_TS_YEAR:
+			case VarModifierDef::UseAs::TS_Year:
 				if (num >= 0 && num <= 99) {
 					// 2-digit year.
 					year = num + 2000;
@@ -376,7 +376,7 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifier
 				}
 				break;
 
-			case VarModifierDef::USEAS_TS_MONTH: {
+			case VarModifierDef::UseAs::TS_Month: {
 				if (num >= 1 && num <= 12) {
 					month = num;
 				} else {
@@ -403,35 +403,35 @@ int VarReplace::ApplyModifiers(const QHash<QString, VarModifierDef> &varModifier
 				break;
 			}
 
-			case VarModifierDef::USEAS_TS_DAY:
+			case VarModifierDef::UseAs::TS_Day:
 				if (num >= 1 && num <= 31)
 					day = num;
 				else
 					return -5;
 				break;
 
-			case VarModifierDef::USEAS_TS_HOUR:
+			case VarModifierDef::UseAs::TS_Hour:
 				if (num >= 0 && num <= 23)
 					hour = num;
 				else
 					return -6;
 				break;
 
-			case VarModifierDef::USEAS_TS_MINUTE:
+			case VarModifierDef::UseAs::TS_Minute:
 				if (num >= 0 && num <= 59)
 					minute = num;
 				else
 					return -7;
 				break;
 
-			case VarModifierDef::USEAS_TS_SECOND:
+			case VarModifierDef::UseAs::TS_Second:
 				if (num >= 0 && num <= 59)
 					second = num;
 				else
 					return -8;
 				break;
 
-			case VarModifierDef::USEAS_TS_AMPM:
+			case VarModifierDef::UseAs::TS_AMPM:
 				// TODO: Implement this once I encounter
 				// a save file that actually uses it.
 				break;

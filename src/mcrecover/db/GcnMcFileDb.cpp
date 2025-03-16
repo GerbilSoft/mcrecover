@@ -42,94 +42,94 @@
 
 class GcnMcFileDbPrivate
 {
-	public:
-		explicit GcnMcFileDbPrivate(GcnMcFileDb *q);
-		~GcnMcFileDbPrivate();
+public:
+	explicit GcnMcFileDbPrivate(GcnMcFileDb *q);
+	~GcnMcFileDbPrivate();
 
-	private:
-		GcnMcFileDb *const q_ptr;
-		Q_DECLARE_PUBLIC(GcnMcFileDb)
+private:
+	GcnMcFileDb *const q_ptr;
+	Q_DECLARE_PUBLIC(GcnMcFileDb)
 
-		// Block size.
-		static const uint32_t BLOCK_SIZE = 0x2000;
-		static const uint32_t BLOCK_SIZE_MASK = (BLOCK_SIZE - 1);
+	// Block size
+	static constexpr uint32_t BLOCK_SIZE = 0x2000;
+	static constexpr uint32_t BLOCK_SIZE_MASK = (BLOCK_SIZE - 1);
 
-	public:
-		/**
-		 * GCN memory card file definitions.
-		 * - Key: Search address. (limited to BLOCK_SIZE-1)
-		 * - Value: QVector<>* of GcnMcFileDef*.
-		 */
-		QMap<uint32_t, QVector<GcnMcFileDef*>*> addr_file_defs;
+public:
+	/**
+	 * GCN memory card file definitions
+	 * - Key: Search address. (limited to BLOCK_SIZE-1)
+	 * - Value: QVector<>* of GcnMcFileDef*.
+	 */
+	QMap<uint32_t, QVector<GcnMcFileDef*>*> addr_file_defs;
 
-		/**
-		 * Convert a region character to a GcnMcFileDef::regions_t bitfield value.
-		 * @param regionChr Region character.
-		 * @return region_t value, or 0 if unknown.
-		 */
-		static uint8_t RegionCharToBitfield(QChar regionChr);
+	/**
+	 * Convert a region character to a GcnMcFileDef::regions_t bitfield value.
+	 * @param regionChr Region character
+	 * @return region_t value, or 0 if unknown.
+	 */
+	static uint8_t RegionCharToBitfield(QChar regionChr);
 
-		/**
-		 * Clear the GCN Memory Card File database.
-		 * This clears addr_file_defs.
-		 */
-		void clear(void);
+	/**
+	 * Clear the GCN Memory Card File database.
+	 * This clears addr_file_defs.
+	 */
+	void clear(void);
 
-		/**
-		 * Load a GCN Memory Card File database.
-		 * @param filename Filename of the database file.
-		 * @return 0 on success; non-zero on error. (Check errorString()!)
-		 */
-		int load(const QString &filename);
+	/**
+	 * Load a GCN Memory Card File database.
+	 * @param filename Filename of the database file
+	 * @return 0 on success; non-zero on error. (Check errorString()!)
+	 */
+	int load(const QString &filename);
 
-		void parseXml_GcnMcFileDb(QXmlStreamReader &xml);
-		GcnMcFileDef *parseXml_file(QXmlStreamReader &xml);
-		QString parseXml_element(QXmlStreamReader &xml);
-		void parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
-		void parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
-		void parseXml_file_dirEntry(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
-		void parseXml_file_variables(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
-		void parseXml_file_variable(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
+	void parseXml_GcnMcFileDb(QXmlStreamReader &xml);
+	GcnMcFileDef *parseXml_file(QXmlStreamReader &xml);
+	QString parseXml_element(QXmlStreamReader &xml);
+	void parseXml_file_search(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
+	void parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
+	void parseXml_file_dirEntry(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
+	void parseXml_file_variables(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
+	void parseXml_file_variable(QXmlStreamReader &xml, GcnMcFileDef *gcnMcFileDef);
 
-		/**
-		 * Error string.
-		 * Set if an error occurs in load().
-		 */
-		QString errorString;
+	/**
+	 * Error string.
+	 * Set if an error occurs in load().
+	 */
+	QString errorString;
 
-		// Text codecs.
-		QTextCodec *const textCodecJP;
-		QTextCodec *const textCodecUS;
+	// Text codecs
+	QTextCodec *const textCodecJP;
+	QTextCodec *const textCodecUS;
 
-		/**
-		 * Get a comment from the GCN comment block, converted to UTF-16.
-		 * @param buf Comment block.
-		 * @param siz Size of comment block. (usually 32)
-		 * @param textCodec QTextCodec. (If nullptr, use latin1.)
-		 * @return GCN comment block, converted to UTF-16.
-		 */
-		static QString GetGcnCommentUtf16(const char *buf, int siz, QTextCodec *textCodec);
+	/**
+	 * Get a comment from the GCN comment block, converted to UTF-16.
+	 * @param buf Comment block
+	 * @param size Size of comment block (usually 32)
+	 * @param textCodec QTextCodec (If nullptr, use latin1.)
+	 * @return GCN comment block, converted to UTF-16.
+	 */
+	static QString GetGcnCommentUtf16(const char *buf, size_t size, QTextCodec *textCodec);
 
-		/**
-		 * Get a comment from the GCN comment block, converted to UTF-8.
-		 * @param buf Comment block.
-		 * @param siz Size of comment block. (usually 32)
-		 * @param textCodec QTextCodec. (If nullptr, use latin1.)
-		 * @return GCN comment block, converted to UTF-8.
-		 */
-		static QByteArray GetGcnCommentUtf8(const char *buf, int siz, QTextCodec *textCodec);
+	/**
+	 * Get a comment from the GCN comment block, converted to UTF-8.
+	 * @param buf Comment block
+	 * @param siz Size of comment block (usually 32)
+	 * @param textCodec QTextCodec (If nullptr, use latin1.)
+	 * @return GCN comment block, converted to UTF-8.
+	 */
+	static QByteArray GetGcnCommentUtf8(const char *buf, size_t size, QTextCodec *textCodec);
 
-		/**
-		 * Construct a GcnSearchData entry.
-		 * @param matchFileDef	[in] File definition.
-		 * @param vars		[in] Variables.
-		 * @param qDateTime	[in] Timestamp.
-		 * @return GcnSearchData entry.
-		 */
-		GcnSearchData constructSearchData(
-			const GcnMcFileDef *matchFileDef,
-			const QHash<QString, QString> &vars,
-			const QDateTime &qDateTime) const;
+	/**
+	 * Construct a GcnSearchData entry.
+	 * @param matchFileDef	[in] File definition
+	 * @param vars		[in] Variables
+	 * @param qDateTime	[in] Timestamp
+	 * @return GcnSearchData entry
+	 */
+	GcnSearchData constructSearchData(
+		const GcnMcFileDef *matchFileDef,
+		const QHash<QString, QString> &vars,
+		const QDateTime &qDateTime) const;
 };
 
 GcnMcFileDbPrivate::GcnMcFileDbPrivate(GcnMcFileDb *q)
@@ -187,7 +187,7 @@ void GcnMcFileDbPrivate::clear(void)
 
 /**
  * Load a GCN Memory Card File Database.
- * @param filename Filename of the database file.
+ * @param filename Filename of the database file
  * @return 0 on success; non-zero on error.
  */
 int GcnMcFileDbPrivate::load(const QString &filename)
@@ -715,50 +715,53 @@ void GcnMcFileDbPrivate::parseXml_file_variable(QXmlStreamReader& xml, GcnMcFile
 			// Check what this element is.
 			if (xml.name() == QLatin1String("useAs")) {
 				str = parseXml_element(xml).toLower();
-				if (str == QLatin1String("year"))
-					varModifierDef.useAs = VarModifierDef::USEAS_TS_YEAR;
-				else if (str == QLatin1String("month"))
-					varModifierDef.useAs = VarModifierDef::USEAS_TS_MONTH;
-				else if (str == QLatin1String("day"))
-					varModifierDef.useAs = VarModifierDef::USEAS_TS_DAY;
-				else if (str == QLatin1String("hour"))
-					varModifierDef.useAs = VarModifierDef::USEAS_TS_HOUR;
-				else if (str == QLatin1String("minute"))
-					varModifierDef.useAs = VarModifierDef::USEAS_TS_MINUTE;
-				else if (str == QLatin1String("second"))
-					varModifierDef.useAs = VarModifierDef::USEAS_TS_SECOND;
-				else if (str == QLatin1String("ampm"))
-					varModifierDef.useAs = VarModifierDef::USEAS_TS_AMPM;
-				else //if (str == QLatin1String("filename"))
-					varModifierDef.useAs = VarModifierDef::USEAS_FILENAME;
+				if (str == QLatin1String("year")) {
+					varModifierDef.useAs = VarModifierDef::UseAs::TS_Year;
+				} else if (str == QLatin1String("month")) {
+					varModifierDef.useAs = VarModifierDef::UseAs::TS_Month;
+				} else if (str == QLatin1String("day")) {
+					varModifierDef.useAs = VarModifierDef::UseAs::TS_Day;
+				} else if (str == QLatin1String("hour")) {
+					varModifierDef.useAs = VarModifierDef::UseAs::TS_Hour;
+				} else if (str == QLatin1String("minute")) {
+					varModifierDef.useAs = VarModifierDef::UseAs::TS_Minute;
+				} else if (str == QLatin1String("second")) {
+					varModifierDef.useAs = VarModifierDef::UseAs::TS_Second;
+				} else if (str == QLatin1String("ampm")) {
+					varModifierDef.useAs = VarModifierDef::UseAs::TS_AMPM;
+				} else /*if (str == QLatin1String("filename"))*/ {
+					varModifierDef.useAs = VarModifierDef::UseAs::Filename;
+				}
 			} else if (xml.name() == QLatin1String("type")) {
 				str = parseXml_element(xml).toLower();
-				if (str == QLatin1String("number"))
-					varModifierDef.varType = VarModifierDef::VARTYPE_NUMBER;
-				else if (str == QLatin1String("char"))
-					varModifierDef.varType = VarModifierDef::VARTYPE_CHAR;
-				else //if (str == QLatin1String("string"))
-					varModifierDef.varType = VarModifierDef::VARTYPE_STRING;
+				if (str == QLatin1String("number")) {
+					varModifierDef.varType = VarModifierDef::VarType::Number;
+				} else if (str == QLatin1String("char")) {
+					varModifierDef.varType = VarModifierDef::VarType::Char;
+				} else /*if (str == QLatin1String("string"))*/ {
+					varModifierDef.varType = VarModifierDef::VarType::String;
+				}
 			} else if (xml.name() == QLatin1String("minWidth")) {
-				// Minimum field width.
+				// Minimum field width
 				str = parseXml_element(xml);
 				varModifierDef.minWidth = (uint8_t)str.toUInt(nullptr, 0);
 			} else if (xml.name() == QLatin1String("fillChar")) {
-				// Fill character.
+				// Fill character
 				// TODO: Show an error if the string is not exactly 1 character?
 				// TODO: Show an error if the character is not ASCII?
 				str = parseXml_element(xml);
 				const QChar fillChar = (str.isEmpty() ? QChar(L' ') : str.at(0));
 				varModifierDef.fillChar = fillChar.toLatin1();
 			} else if (xml.name() == QLatin1String("align")) {
-				// Field alignment.
+				// Field alignment
 				str = parseXml_element(xml).toLower();
-				if (str == QLatin1String("left"))
-					varModifierDef.fieldAlign = VarModifierDef::FIELDALIGN_LEFT;
-				else //if (str == QLatin1String("right"))
-					varModifierDef.fieldAlign = VarModifierDef::FIELDALIGN_RIGHT;
+				if (str == QLatin1String("left")) {
+					varModifierDef.fieldAlign = VarModifierDef::FieldAlign::Left;
+				} else /*if (str == QLatin1String("right"))*/ {
+					varModifierDef.fieldAlign = VarModifierDef::FieldAlign::Right;
+				}
 			} else if (xml.name() == QLatin1String("add")) {
-				// Add value.
+				// Add value
 				// TODO: Show an error if not number or char?
 				str = parseXml_element(xml).toLower();
 				varModifierDef.addValue = str.toInt(nullptr, 0);
@@ -774,26 +777,28 @@ void GcnMcFileDbPrivate::parseXml_file_variable(QXmlStreamReader& xml, GcnMcFile
 
 	// Add the variable modifier definition.
 	// TODO: Show warning if this is a duplicate, or if the ID is invalid.
-	if (!id.isEmpty())
+	if (!id.isEmpty()) {
 		gcnMcFileDef->varModifiers.insert(id, varModifierDef);
+	}
 }
 
 /**
  * Get a comment from the GCN comment block, converted to UTF-16.
- * @param buf Comment block.
- * @param siz Size of comment block. (usually 32)
- * @param textCodec QTextCodec. (If nullptr, use latin1.)
+ * @param buf Comment block
+ * @param size Size of comment block (usually 32)
+ * @param textCodec QTextCodec (If nullptr, use latin1.)
  * @return GCN comment block, converted to UTF-16.
  */
-QString GcnMcFileDbPrivate::GetGcnCommentUtf16(const char *buf, int siz, QTextCodec *textCodec)
+QString GcnMcFileDbPrivate::GetGcnCommentUtf16(const char *buf, size_t size, QTextCodec *textCodec)
 {
 	// Remove trailing NULL characters before converting to UTF-8.
-	const char *p_nullChr = (const char*)memchr(buf, 0x00, siz);
+	const char *p_nullChr = (const char*)memchr(buf, 0x00, size);
 	if (p_nullChr) {
 		// Found a NULL character.
-		if (p_nullChr == buf)
+		if (p_nullChr == buf) {
 			return QString();
-		siz = (p_nullChr - buf);
+		}
+		size = (p_nullChr - buf);
 	}
 
 	// Convert the comment to Unicode.
@@ -802,10 +807,10 @@ QString GcnMcFileDbPrivate::GetGcnCommentUtf16(const char *buf, int siz, QTextCo
 	if (!textCodec) {
 		// No text codec was specified.
 		// Default to Latin-1.
-		comment = QString::fromLatin1(buf, siz).trimmed();
+		comment = QString::fromLatin1(buf, size).trimmed();
 	} else {
 		// Use the text codec.
-		comment = textCodec->toUnicode(buf, siz).trimmed();
+		comment = textCodec->toUnicode(buf, size).trimmed();
 	}
 
 	// Comment converted to UTF-16.
@@ -814,23 +819,23 @@ QString GcnMcFileDbPrivate::GetGcnCommentUtf16(const char *buf, int siz, QTextCo
 
 /**
  * Get a comment from the GCN comment block, converted to UTF-8.
- * @param buf Comment block.
- * @param siz Size of comment block. (usually 32)
- * @param textCodec QTextCodec. (If nullptr, use latin1.)
+ * @param buf Comment block
+ * @param siz Size of comment block (usually 32)
+ * @param textCodec QTextCodec (If nullptr, use latin1.)
  * @return GCN comment block, converted to UTF-8.
  */
-QByteArray GcnMcFileDbPrivate::GetGcnCommentUtf8(const char *buf, int siz, QTextCodec *textCodec)
+QByteArray GcnMcFileDbPrivate::GetGcnCommentUtf8(const char *buf, size_t size, QTextCodec *textCodec)
 {
 	// This is now a wrapper around GetGcnCommentUtf16().
-	return GetGcnCommentUtf16(buf, siz, textCodec).toUtf8();
+	return GetGcnCommentUtf16(buf, size, textCodec).toUtf8();
 }
 
 /**
  * Construct a GcnSearchData entry.
- * @param matchFileDef	[in] File definition.
- * @param vars		[in] Variables.
- * @param qDateTime	[in] Timestamp.
- * @return GcnSearchData entry.
+ * @param matchFileDef	[in] File definition
+ * @param vars		[in] Variables
+ * @param qDateTime	[in] Timestamp
+ * @return GcnSearchData entry
  */
 GcnSearchData GcnMcFileDbPrivate::constructSearchData(
 	const GcnMcFileDef *matchFileDef,
@@ -929,7 +934,7 @@ int GcnMcFileDb::load(const QString &filename)
 /**
  * Get the error string.
  * This is set if load() fails.
- * @return Error string.
+ * @return Error string
  */
 QString GcnMcFileDb::errorString(void) const
 {
@@ -940,11 +945,11 @@ QString GcnMcFileDb::errorString(void) const
 
 /**
  * Check a GCN memory card block to see if it matches any search patterns.
- * @param buf	[in] GCN memory card block to check.
- * @param siz	[in] Size of buf. (Should be BLOCK_SIZE == 0x2000.)
+ * @param buf	[in] GCN memory card block to check
+ * @param size	[in] Size of buf (Should be BLOCK_SIZE == 0x2000.)
  * @return QVector of matches, or empty QVector if no matches were found.
  */
-QVector<GcnSearchData> GcnMcFileDb::checkBlock(const void *buf, int siz) const
+QVector<GcnSearchData> GcnMcFileDb::checkBlock(const void *buf, size_t size) const
 {
 	// File entry matches.
 	QVector<GcnSearchData> fileMatches;
@@ -954,8 +959,9 @@ QVector<GcnSearchData> GcnMcFileDb::checkBlock(const void *buf, int siz) const
 		// Make sure this address is within the bounds of the buffer.
 		// Game Description + File Description == 64 bytes. (0x40)
 		const int maxAddress = (int)(address + 0x40);
-		if (maxAddress < 0 || maxAddress > siz)
+		if (maxAddress < 0 || maxAddress > size) {
 			continue;
+		}
 
 		// Get the game description and file description.
 		const char *const commentData = ((const char*)buf + address);
@@ -1017,7 +1023,7 @@ QVector<GcnSearchData> GcnMcFileDb::checkBlock(const void *buf, int siz) const
  * If two files with the same filename are found,
  * the one in the higher-precedence directory gets
  * higher precedence.
- * @return List of database files.
+ * @return List of database files
  */
 QVector<QString> GcnMcFileDb::GetDbFilenames(void)
 {
