@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * VmuFile.cpp: Dreamcast VMU file entry class.                            *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -527,12 +527,12 @@ VmuFile::VmuFile(VmuCard *card,
 	if (d->dirEntry->filetype == VMU_DIR_FILETYPE_DATA) {
 		// Data file. Verify the header's CRC.
 		Checksum::ChecksumDef checksumDef;
-		checksumDef.algorithm = Checksum::CHKALG_DREAMCASTVMU;
+		checksumDef.algorithm = Checksum::ChkAlgorithm::DreamcastVMU;
 		checksumDef.address = 0x46;
 		checksumDef.param = 0x46;
 		checksumDef.start = 0;
 		checksumDef.length = (this->size() * card->blockSize());
-		checksumDef.endian = Checksum::CHKENDIAN_LITTLE;
+		checksumDef.endian = Checksum::ChkEndian::Little;
 
 		// TODO: Optimize this?
 		QVector<Checksum::ChecksumDef> checksumDefs;

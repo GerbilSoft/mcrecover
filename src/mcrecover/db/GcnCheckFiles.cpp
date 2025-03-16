@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnCheckFiles.cpp: Validate checksums on normal GCN files.              *
  *                                                                         *
- * Copyright (c) 2013-2018 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -107,7 +107,7 @@ int GcnCheckFiles::loadGcnMcFileDbs(const QVector<QString> &dbFilenames)
  */
 void GcnCheckFiles::addChecksumDefs(GcnFile *file) const
 {
-	if (file->checksumStatus() != Checksum::CHKST_UNKNOWN) {
+	if (file->checksumStatus() != Checksum::ChkStatus::Unknown) {
 		// Checksum has already been obtained for this file.
 		return;
 	}
@@ -115,8 +115,9 @@ void GcnCheckFiles::addChecksumDefs(GcnFile *file) const
 	Q_D(const GcnCheckFiles);
 	foreach (GcnMcFileDb *db, d->dbs) {
 		bool ok = db->addChecksumDefs(file);
-		if (ok)
+		if (ok) {
 			break;
+		}
 	}
 }
 

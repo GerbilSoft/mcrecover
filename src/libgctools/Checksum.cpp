@@ -2,7 +2,7 @@
  * GameCube Tools Library.                                                 *
  * Checksum.cpp: Checksum algorithm class.                                 *
  *                                                                         *
- * Copyright (c) 2013-2021 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -73,7 +73,7 @@ uint32_t AddInvDual16(const uint16_t *buf, uint32_t siz, ChkEndian endian)
 	uint16_t chk1 = 0;
 	uint16_t chk2 = (uint16_t)(-(int)siz);
 
-	if (endian != CHKENDIAN_LITTLE) {
+	if (endian != ChkEndian::Little) {
 		// Big-endian system. (PowerPC, etc.)
 		// Do four words at a time.
 		// TODO: Optimize byteswapping?
@@ -318,26 +318,30 @@ uint32_t PokemonXD(const uint8_t *buf, uint32_t siz, uint32_t crc_addr, uint32_t
 uint32_t Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, ChkEndian endian, uint32_t param)
 {
 	switch (algorithm) {
-		case CHKALG_CRC16:
+		default:
+		case ChkAlgorithm::None:
+			break;
+
+		case ChkAlgorithm::CRC16:
 			if (param == 0)
 				param = CRC16_POLY_CCITT;
 			return Crc16(static_cast<const uint8_t*>(buf),
 				     siz, (uint16_t)(param & 0xFFFF));
 
-		case CHKALG_CRC32:
+		case ChkAlgorithm::CRC32:
 			// TODO: Implement CRC32 once I encounter a file that uses it.
 			break;
 
-		case CHKALG_ADDINVDUAL16:
+		case ChkAlgorithm::AddInvDual16:
 			return AddInvDual16(static_cast<const uint16_t*>(buf), siz, endian);
 
-		case CHKALG_ADDBYTES32:
+		case ChkAlgorithm::AddBytes32:
 			return AddBytes32(static_cast<const uint8_t*>(buf), siz);
 
-		case CHKALG_SONICCHAOGARDEN:
+		case ChkAlgorithm::SonicChaoGarden:
 			return SonicChaoGarden(static_cast<const uint8_t*>(buf), siz);
 
-		case CHKALG_DREAMCASTVMU:
+		case ChkAlgorithm::DreamcastVMU:
 			// If param is 0, assume a default CRC address of 0x46.
 			// (NOTE: Headers in game files are at 0x200,
 			//  but the CRC field is unused for game files.)
@@ -345,11 +349,9 @@ uint32_t Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, ChkEndian e
 				param = 0x46;
 			return DreamcastVMU(static_cast<const uint8_t*>(buf), siz, param);
 
-		case CHKALG_POKEMONXD:
+		case ChkAlgorithm::PokemonXD:
 			// NOTE: Expected checksum is discarded.
 			return PokemonXD(static_cast<const uint8_t*>(buf), siz, 0, nullptr);
-		default:
-			break;
 	}
 
 	// Unknown algorithm.
@@ -359,7 +361,7 @@ uint32_t Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, ChkEndian e
 /**
  * Get a ChkAlgorithm from a checksum algorithm name.
  * @param algorithm Checksum algorithm name.
- * @return ChkAlgorithm. (If unknown, returns CHKALG_NONE.)
+ * @return ChkAlgorithm. (If unknown, returns ChkAlgorithm::None.)
  */
 ChkAlgorithm ChkAlgorithmFromString(const char *algorithm)
 {
@@ -367,62 +369,62 @@ ChkAlgorithm ChkAlgorithmFromString(const char *algorithm)
 	if (!strcmp(algorithm, "crc16") ||
 	    !strcmp(algorithm, "crc-16"))
 	{
-		return CHKALG_CRC16;
+		return ChkAlgorithm::CRC16;
 	}
 	else if (!strcmp(algorithm, "crc32") ||
 		 !strcmp(algorithm, "crc-32"))
 	{
-		return CHKALG_CRC32;
+		return ChkAlgorithm::CRC32;
 	} else if (!strcmp(algorithm, "addinvdual16")) {
-		return CHKALG_ADDINVDUAL16;
+		return ChkAlgorithm::AddInvDual16;
 	} else if (!strcmp(algorithm, "addbytes32")) {
-		return CHKALG_ADDBYTES32;
+		return ChkAlgorithm::AddBytes32;
 	}
 	else if (!strcmp(algorithm, "sonicchaogarden") ||
 		 !strcmp(algorithm, "sonic chao garden"))
 	{
-		return CHKALG_SONICCHAOGARDEN;
+		return ChkAlgorithm::SonicChaoGarden;
 	}
 	else if (!strcmp(algorithm, "dreamcastvmu") ||
 		 !strcmp(algorithm, "dreamcast vmu") ||
 		 !strcmp(algorithm, "dcvmu") ||
 		 !strcmp(algorithm, "dc vmu"))
 	{
-		return CHKALG_DREAMCASTVMU;
+		return ChkAlgorithm::DreamcastVMU;
 	}
 	else if (!strcmp(algorithm, "pokemonxd") ||
 		 !strcmp(algorithm, "pokémonxd"))
 	{
-		return CHKALG_POKEMONXD;
+		return ChkAlgorithm::PokemonXD;
 	}
 
 	// Unknown algorithm name.
-	return CHKALG_NONE;
+	return ChkAlgorithm::None;
 }
 
 /**
  * Get a checksum algorithm name from a ChkAlgorithm.
  * @param algorithm ChkAlgorithm.
- * @return Checksum algorithm name, or nullptr if CHKALG_NONE or unknown.
+ * @return Checksum algorithm name, or nullptr if ChkAlgorithm::None or unknown.
  */
 const char *ChkAlgorithmToString(ChkAlgorithm algorithm)
 {
 	switch (algorithm) {
 		default:
-		case CHKALG_NONE:
+		case ChkAlgorithm::None:
 			return nullptr;
 
-		case CHKALG_CRC16:
+		case ChkAlgorithm::CRC16:
 			return "CRC-16";
-		case CHKALG_CRC32:
+		case ChkAlgorithm::CRC32:
 			return "CRC-32";
-		case CHKALG_ADDINVDUAL16:
+		case ChkAlgorithm::AddInvDual16:
 			return "AddInvDual16";
-		case CHKALG_ADDBYTES32:
+		case ChkAlgorithm::AddBytes32:
 			return "AddBytes32";
-		case CHKALG_SONICCHAOGARDEN:
+		case ChkAlgorithm::SonicChaoGarden:
 			return "SonicChaoGarden";
-		case CHKALG_DREAMCASTVMU:
+		case ChkAlgorithm::DreamcastVMU:
 			return "DreamcastVMU";
 	}
 }
@@ -430,28 +432,28 @@ const char *ChkAlgorithmToString(ChkAlgorithm algorithm)
 /**
  * Get a nicely formatted checksum algorithm name from a ChkAlgorithm.
  * @param algorithm ChkAlgorithm.
- * @return Checksum algorithm name, or nullptr if CHKALG_NONE or unknown.
+ * @return Checksum algorithm name, or nullptr if ChkAlgorithm::None or unknown.
  */
 const char *ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm)
 {
 	switch (algorithm) {
 		default:
-		case CHKALG_NONE:
+		case ChkAlgorithm::None:
 			return nullptr;
 
-		case CHKALG_CRC16:
+		case ChkAlgorithm::CRC16:
 			return "CRC-16";
-		case CHKALG_CRC32:
+		case ChkAlgorithm::CRC32:
 			return "CRC-32";
-		case CHKALG_ADDINVDUAL16:
+		case ChkAlgorithm::AddInvDual16:
 			return "AddInvDual16";
-		case CHKALG_ADDBYTES32:
+		case ChkAlgorithm::AddBytes32:
 			return "AddBytes32";
-		case CHKALG_SONICCHAOGARDEN:
+		case ChkAlgorithm::SonicChaoGarden:
 			return "Sonic Chao Garden";
-		case CHKALG_DREAMCASTVMU:
+		case ChkAlgorithm::DreamcastVMU:
 			return "Dreamcast VMU";
-		case CHKALG_POKEMONXD:
+		case ChkAlgorithm::PokemonXD:
 			return "Pokémon XD";
 	}
 }
@@ -486,18 +488,20 @@ int ChecksumFieldWidth(const vector<ChecksumValue>& checksumValues)
  */
 ChkStatus ChecksumStatus(const vector<ChecksumValue>& checksumValues)
 {
-	if (checksumValues.empty())
-		return CHKST_UNKNOWN;
+	if (checksumValues.empty()) {
+		return ChkStatus::Unknown;
+	}
 
 	for (auto iter = checksumValues.cbegin();
 	     iter != checksumValues.cend(); ++iter)
 	{
-		if (iter->expected != iter->actual)
-			return CHKST_INVALID;
+		if (iter->expected != iter->actual) {
+			return ChkStatus::Invalid;
+		}
 	}
 
 	// All checksums are good.
-	return CHKST_GOOD;
+	return ChkStatus::Good;
 }
 
 /**
@@ -523,8 +527,9 @@ vector<string> ChecksumValuesFormatted(const vector<ChecksumValue>& checksumValu
 
 	string s_chkActual_all; s_chkActual_all.reserve(reserveSize);
 	string s_chkExpected_all;
-	if (checksumStatus == CHKST_INVALID)
+	if (checksumStatus == ChkStatus::Invalid) {
 		s_chkExpected_all.reserve(reserveSize);
+	}
 
 	int i = 0;
 	for (auto iter = checksumValues.cbegin();
@@ -555,7 +560,7 @@ vector<string> ChecksumValuesFormatted(const vector<ChecksumValue>& checksumValu
 			s_chkActual_all += "<span style='color: #080'>";
 			s_chkActual_all += + s_chkActual;
 			s_chkActual_all += "</span>";
-			if (checksumStatus == CHKST_INVALID) {
+			if (checksumStatus == ChkStatus::Invalid) {
 				s_chkExpected_all += "<span style='color: #080'>";
 				s_chkExpected_all += s_chkExpected;
 				s_chkExpected_all += "</span>";
@@ -565,7 +570,7 @@ vector<string> ChecksumValuesFormatted(const vector<ChecksumValue>& checksumValu
 			s_chkActual_all += "<span style='color: #F00'>";
 			s_chkActual_all += s_chkActual;
 			s_chkActual_all += "</span>";
-			if (checksumStatus == CHKST_INVALID) {
+			if (checksumStatus == ChkStatus::Invalid) {
 				s_chkExpected_all += "<span style='color: #F00'>";
 				s_chkExpected_all += s_chkExpected;
 				s_chkExpected_all += "</span>";
@@ -576,8 +581,9 @@ vector<string> ChecksumValuesFormatted(const vector<ChecksumValue>& checksumValu
 	// Return the checksum strings.
 	vector<string> ret;
 	ret.push_back(s_chkActual_all);
-	if (checksumStatus == CHKST_INVALID)
+	if (checksumStatus == ChkStatus::Invalid) {
 		ret.push_back(s_chkExpected_all);
+	}
 	return ret;
 }
 

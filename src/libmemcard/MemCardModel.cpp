@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * MemCardModel.cpp: QAbstractListModel for Card.                          *
  *                                                                         *
- * Copyright (c) 2012-2024 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -388,11 +388,11 @@ QVariant MemCardModel::data(const QModelIndex& index, int role) const
 				case COL_ISVALID:
 					switch (file->checksumStatus()) {
 						default:
-						case Checksum::CHKST_UNKNOWN:
+						case Checksum::ChkStatus::Unknown:
 							return d->style.getIcon(MemCardModelPrivate::style_t::ICON_UNKNOWN);
-						case Checksum::CHKST_INVALID:
+						case Checksum::ChkStatus::Invalid:
 							return  d->style.getIcon(MemCardModelPrivate::style_t::ICON_INVALID);
-						case Checksum::CHKST_GOOD:
+						case Checksum::ChkStatus::Good:
 							return  d->style.getIcon(MemCardModelPrivate::style_t::ICON_GOOD);
 					}
 

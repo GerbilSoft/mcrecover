@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnMcFileDb.cpp: GCN Memory Card File Database class.                   *
  *                                                                         *
- * Copyright (c) 2013-2018 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -554,26 +554,26 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 	// Determine which checksum algorithm to use.
 	checksumDef.algorithm = Checksum::ChkAlgorithmFromString(algorithm.toLatin1().constData());
 	switch (checksumDef.algorithm) {
-		case Checksum::CHKALG_CRC16:
-			checksumDef.param =
-				(poly != 0 ? (poly & 0xFFFF) : Checksum::CRC16_POLY_CCITT);
-			break;
-
-		case Checksum::CHKALG_CRC32:
-			checksumDef.param =
-				(poly != 0 ? poly : Checksum::CRC32_POLY_ZLIB);
-			break;
-
-		case Checksum::CHKALG_NONE:
-			// Unknown algorithm.
-			// TODO: Show an error message?
-			return;
-
 		default:
 			// Other algorithm.
 			// No parameter is required.
 			checksumDef.param = 0;
 			break;
+
+		case Checksum::ChkAlgorithm::CRC16:
+			checksumDef.param =
+				(poly != 0 ? (poly & 0xFFFF) : Checksum::CRC16_POLY_CCITT);
+			break;
+
+		case Checksum::ChkAlgorithm::CRC32:
+			checksumDef.param =
+				(poly != 0 ? poly : Checksum::CRC32_POLY_ZLIB);
+			break;
+
+		case Checksum::ChkAlgorithm::None:
+			// Unknown algorithm.
+			// TODO: Show an error message?
+			return;
 	}
 
 	// Clamp instances to an upper limit of 2043.
@@ -1105,8 +1105,8 @@ QVector<QString> GcnMcFileDb::GetDbFilenames(void)
  */
 bool GcnMcFileDb::addChecksumDefs(GcnFile *file) const
 {
-	assert(file->checksumStatus() == Checksum::CHKST_UNKNOWN);
-	if (file->checksumStatus() != Checksum::CHKST_UNKNOWN) {
+	assert(file->checksumStatus() == Checksum::ChkStatus::Unknown);
+	if (file->checksumStatus() != Checksum::ChkStatus::Unknown) {
 		// Checksum has already been obtained for this file.
 		return true;
 	}

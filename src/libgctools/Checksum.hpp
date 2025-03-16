@@ -2,7 +2,7 @@
  * GameCube Tools Library.                                                 *
  * Checksum.hpp: Checksum algorithm class.                                 *
  *                                                                         *
- * Copyright (c) 2013-2020 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -21,34 +21,34 @@ namespace Checksum {
 /**
  * Checksum algorithms.
  */
-enum ChkAlgorithm {
-	CHKALG_NONE = 0,
-	CHKALG_CRC16,
-	CHKALG_CRC32,
-	CHKALG_ADDINVDUAL16,
-	CHKALG_ADDBYTES32,
-	CHKALG_SONICCHAOGARDEN,
-	CHKALG_DREAMCASTVMU,
-	CHKALG_POKEMONXD,
+enum class ChkAlgorithm {
+	None = 0,
+	CRC16,
+	CRC32,
+	AddInvDual16,
+	AddBytes32,
+	SonicChaoGarden,
+	DreamcastVMU,
+	PokemonXD,
 
-	CHKALG_MAX
+	Max
 };
 
 /**
 * Checksum status.
 */
-enum ChkStatus {
-	CHKST_UNKNOWN = 0,	// Unknown checksum.
-	CHKST_INVALID,		// Checksum is invalid.
-	CHKST_GOOD		// Checksum is good.
+enum class ChkStatus {
+	Unknown = 0,	// Unknown checksum.
+	Invalid,	// Checksum is invalid.
+	Good,		// Checksum is good.
 };
 
 /**
 * Checksum data endianness.
 */
-enum ChkEndian {
-	CHKENDIAN_BIG = 0,	// Big-endian (PowerPC, etc.)
-	CHKENDIAN_LITTLE = 1,	// Little-endian (x86, SH-4, etc.)
+enum class ChkEndian {
+	Big = 0,	// Big-endian (PowerPC, etc.)
+	Little = 1,	// Little-endian (x86, SH-4, etc.)
 };
 
 // Checksum definition struct.
@@ -64,12 +64,12 @@ struct ChecksumDef {
 
 	void clear(void)
 	{
-		algorithm = CHKALG_NONE;
+		algorithm = ChkAlgorithm::None;
 		address = 0;
 		param = 0;
 		start = 0;
 		length = 0;
-		endian = CHKENDIAN_BIG;
+		endian = ChkEndian::Big;
 	}
 };
 
@@ -193,21 +193,21 @@ uint32_t Exec(ChkAlgorithm algorithm, const void *buf, uint32_t siz, ChkEndian e
 /**
 * Get a ChkAlgorithm from a checksum algorithm name.
 * @param algorithm Checksum algorithm name.
-* @return ChkAlgorithm. (If unknown, returns CHKALG_NONE.)
+* @return ChkAlgorithm. (If unknown, returns ChkAlgorithm::None.)
 */
 ChkAlgorithm ChkAlgorithmFromString(const char *algorithm);
 
 /**
 * Get a checksum algorithm name from a ChkAlgorithm.
 * @param algorithm ChkAlgorithm.
-* @return Checksum algorithm name, or nullptr if CHKALG_NONE or unknown.
+* @return Checksum algorithm name, or nullptr if ChkAlgorithm::None or unknown.
 */
 const char *ChkAlgorithmToString(ChkAlgorithm algorithm);
 
 /**
 * Get a nicely formatted checksum algorithm name from a ChkAlgorithm.
 * @param algorithm ChkAlgorithm.
-* @return Checksum algorithm name, or nullptr if CHKALG_NONE or unknown.
+* @return Checksum algorithm name, or nullptr if ChkAlgorithm::None or unknown.
 */
 const char *ChkAlgorithmToStringFormatted(ChkAlgorithm algorithm);
 

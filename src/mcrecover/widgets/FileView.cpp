@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * FileView.cpp: File view widget.                                         *
  *                                                                         *
- * Copyright (c) 2012-2018 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -160,7 +160,7 @@ void FileViewPrivate::updateWidgetDisplay(void)
 	ui.lblChecksumAlgorithm->setVisible(true);
 
 	// Is the checksum known?
-	if (file->checksumStatus() == Checksum::CHKST_UNKNOWN) {
+	if (file->checksumStatus() == Checksum::ChkStatus::Unknown) {
 		// Unknown checksum.
 		ui.lblChecksumAlgorithm->setText(FileView::tr("Unknown", "checksum"));
 		ui.lblChecksumActualTitle->setVisible(false);

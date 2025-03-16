@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * File.cpp: Memory Card file entry. [base class]                          *
  *                                                                         *
- * Copyright (c) 2012-2018 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -305,8 +305,8 @@ void FilePrivate::calculateChecksum(void)
 	for (int i = 0; i < (int)checksumDefs.size(); i++) {
 		const Checksum::ChecksumDef &checksumDef = checksumDefs.at(i);
 
-		if (checksumDef.algorithm == Checksum::CHKALG_NONE ||
-		    checksumDef.algorithm >= Checksum::CHKALG_MAX ||
+		if (checksumDef.algorithm == Checksum::ChkAlgorithm::None ||
+		    checksumDef.algorithm >= Checksum::ChkAlgorithm::Max ||
 		    checksumDef.length == 0)
 		{
 			// No algorithm or invalid algorithm set,
@@ -336,30 +336,36 @@ void FilePrivate::calculateChecksum(void)
 		uint32_t actual = 0;
 
 		switch (checksumDef.algorithm) {
-			case Checksum::CHKALG_CRC16:
-			case Checksum::CHKALG_DREAMCASTVMU:
-				if (checksumDef.endian != Checksum::CHKENDIAN_LITTLE) {
-					// Big-endian.
+			default:
+			case Checksum::ChkAlgorithm::None:
+				// Unsupported algorithm.
+				expected = 0;
+				break;
+
+			case Checksum::ChkAlgorithm::CRC16:
+			case Checksum::ChkAlgorithm::DreamcastVMU:
+				if (checksumDef.endian != Checksum::ChkEndian::Little) {
+					// Big-endian
 					expected = (data[checksumDef.address+0] << 8) |
 						   (data[checksumDef.address+1]);
 				} else {
-					// Little-endian.
+					// Little-endian
 					expected = (data[checksumDef.address+1] << 8) |
 						   (data[checksumDef.address+0]);
 				}
 				break;
 
-			case Checksum::CHKALG_CRC32:
-			case Checksum::CHKALG_ADDINVDUAL16:
-			case Checksum::CHKALG_ADDBYTES32:
-				if (checksumDef.endian != Checksum::CHKENDIAN_LITTLE) {
-					// Big-endian.
+			case Checksum::ChkAlgorithm::CRC32:
+			case Checksum::ChkAlgorithm::AddInvDual16:
+			case Checksum::ChkAlgorithm::AddBytes32:
+				if (checksumDef.endian != Checksum::ChkEndian::Little) {
+					// Big-endian
 					expected = (data[checksumDef.address+0] << 24) |
 						   (data[checksumDef.address+1] << 16) |
 						   (data[checksumDef.address+2] << 8) |
 						   (data[checksumDef.address+3]);
 				} else {
-					// Little-endian.
+					// Little-endian
 					expected = (data[checksumDef.address+3] << 24) |
 						   (data[checksumDef.address+2] << 16) |
 						   (data[checksumDef.address+1] << 8) |
@@ -367,19 +373,19 @@ void FilePrivate::calculateChecksum(void)
 				}
 				break;
 
-			case Checksum::CHKALG_SONICCHAOGARDEN: {
+			case Checksum::ChkAlgorithm::SonicChaoGarden: {
 				memcpy(&chaoChk_orig, &data[checksumDef.address], sizeof(chaoChk_orig));
 
 				// Temporary working copy.
 				Checksum::ChaoGardenChecksumData chaoChk = chaoChk_orig;
-				if (checksumDef.endian != Checksum::CHKENDIAN_LITTLE) {
-					// Big-endian.
+				if (checksumDef.endian != Checksum::ChkEndian::Little) {
+					// Big-endian
 					expected = (chaoChk.checksum_3 << 24) |
 						   (chaoChk.checksum_2 << 16) |
 						   (chaoChk.checksum_1 << 8) |
 						   (chaoChk.checksum_0);
 				} else {
-					// Little-endian.
+					// Little-endian
 					// TODO: Is this correct?
 					expected = (chaoChk.checksum_0 << 24) |
 						   (chaoChk.checksum_1 << 16) |
@@ -397,17 +403,11 @@ void FilePrivate::calculateChecksum(void)
 				break;
 			}
 
-			case Checksum::CHKALG_POKEMONXD:
+			case Checksum::ChkAlgorithm::PokemonXD:
 				// Pokémon XD has a more complicated checksum.
 				useExec = false;
 				actual = Checksum::PokemonXD(reinterpret_cast<const uint8_t*>(start),
 					checksumDef.length, checksumDef.address, &expected);
-				break;
-
-			case Checksum::CHKALG_NONE:
-			default:
-				// Unsupported algorithm.
-				expected = 0;
 				break;
 		}
 
@@ -417,7 +417,7 @@ void FilePrivate::calculateChecksum(void)
 				start, checksumDef.length, checksumDef.endian, checksumDef.param);
 		}
 
-		if (checksumDef.algorithm == Checksum::CHKALG_SONICCHAOGARDEN) {
+		if (checksumDef.algorithm == Checksum::ChkAlgorithm::SonicChaoGarden) {
 			// Restore the Chao Garden checksum data.
 			memcpy(&data[checksumDef.address], &chaoChk_orig, sizeof(chaoChk_orig));
 		}
@@ -937,8 +937,9 @@ QVector<Checksum::ChecksumValue> File::checksumValues(void) const
 Checksum::ChkAlgorithm File::checksumAlgorithm(void) const
 {
 	Q_D(const File);
-	if (d->checksumDefs.isEmpty())
-		return Checksum::CHKALG_NONE;
+	if (d->checksumDefs.isEmpty()) {
+		return Checksum::ChkAlgorithm::None;
+	}
 	return d->checksumDefs.at(0).algorithm;
 }
 
