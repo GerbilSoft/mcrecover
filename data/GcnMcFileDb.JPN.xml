@@ -283,6 +283,12 @@
 				<useAs>day</useAs>
 			</variable>
 		</variables>
+		<checksum>
+			<algorithm>AddInvDual16</algorithm>
+			<address>0x2000</address>
+			<range start="0x2004" length="0x1FF8" />
+			<multiple instances="58" increment="0x2000" />
+		</checksum>
 		<dirEntry>
 			<filename>pokemon_rs_memory_box</filename>
 			<bannerFormat>0x05</bannerFormat>
