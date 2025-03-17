@@ -287,7 +287,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
  * @param size Desired size.
  * @return QIcon.
  */
-QIcon McRecoverQApplication::Win32Icon(Win32Icon_t iconId, const QSize &size)
+QIcon McRecoverQApplication::Win32Icon(Win32Icon iconId, const QSize &size)
 {
 	if (iconId <= Win32Icon::None || iconId >= Win32Icon::Max) {
 		return QIcon();

@@ -77,7 +77,7 @@ class McRecoverQApplication : public QApplication
 		 * @param size Desired size.
 		 * @return QIcon.
 		 */
-		static QIcon Win32Icon(Win32Icon_t icon, const QSize &size);
+		static QIcon Win32Icon(Win32Icon icon, const QSize &size);
 
 		// Win32 event filter.
 		bool winEventFilter(MSG *msg, long *result);
