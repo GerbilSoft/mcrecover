@@ -2,20 +2,24 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * SAEditor.cpp: Sonic Adventure - save file editor.                       *
  *                                                                         *
- * Copyright (c) 2015-2021 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
 #include "SAEditor.hpp"
 
-// C includes. (C++ namespace)
+// C includes (C++ namespace)
 #include <cstdlib>
 #include <cassert>
 
-// Qt includes.
+// C++ includes
+#include <vector>
+using std::vector;
+
+// Qt includes
 #include <QtCore/QEvent>
 
-// Files.
+// Files
 #include "libmemcard/File.hpp"
 #include "libmemcard/GcnFile.hpp"
 #include "libmemcard/VmuFile.hpp"
@@ -32,7 +36,7 @@
 #include "../models/ByteFlagsModel.hpp"
 #include "SADXMissionFlags.hpp"
 
-// Checksum algorithms.
+// Checksum algorithms
 #include "libgctools/Checksum.hpp"
 
 // TODO: Put this in a common header file somewhere.
@@ -44,73 +48,73 @@
 #include "../EditorWidget_p.hpp"
 class SAEditorPrivate : public EditorWidgetPrivate
 {
-	public:
-		explicit SAEditorPrivate(SAEditor *q);
-		virtual ~SAEditorPrivate();
+public:
+	explicit SAEditorPrivate(SAEditor *q);
+	virtual ~SAEditorPrivate();
 
-	private:
-		typedef EditorWidgetPrivate super;
-		Q_DECLARE_PUBLIC(SAEditor)
-		Q_DISABLE_COPY(SAEditorPrivate)
+private:
+	typedef EditorWidgetPrivate super;
+	Q_DECLARE_PUBLIC(SAEditor)
+	Q_DISABLE_COPY(SAEditorPrivate)
 
-	public:
-		Ui::SAEditor ui;
+public:
+	Ui::SAEditor ui;
 
-		// sa_save_slot structs.
-		QVector<sa_save_slot*> data_main;
-		QVector<sadx_extra_save_slot*> data_sadx;
+	// sa_save_slot structs
+	vector<sa_save_slot*> data_main;
+	vector<sadx_extra_save_slot*> data_sadx;
 
-		// Editor widgets. (non-flags)
-		QVector<SAEditWidget*> saEditWidgets;
-		QVector<SADXEditWidget*> sadxEditWidgets;
+	// Editor widgets (non-flags)
+	vector<SAEditWidget*> saEditWidgets;
+	vector<SADXEditWidget*> sadxEditWidgets;
 
-		// BitFlagsModel objects.
-		// Used for event flags, NPC flags, etc.
-		// Since BitFlagsView uses a QTreeView with a list model
-		// directly, we're storing the data here instead of
-		// having BitFlagsView store the data.
-		SAEventFlags saEventFlags;
-		SANPCFlags saNPCFlags;
-		BitFlagsModel *saEventFlagsModel;
-		BitFlagsModel *saNPCFlagsModel;
+	// BitFlagsModel objects
+	// Used for event flags, NPC flags, etc.
+	// Since BitFlagsView uses a QTreeView with a list model
+	// directly, we're storing the data here instead of
+	// having BitFlagsView store the data.
+	SAEventFlags saEventFlags;
+	SANPCFlags saNPCFlags;
+	BitFlagsModel *saEventFlagsModel;
+	BitFlagsModel *saNPCFlagsModel;
 
-		// ByteFlagsModel objects.
-		SADXMissionFlags sadxMissionFlags;
-		ByteFlagsModel *sadxMissionFlagsModel;
+	// ByteFlagsModel objects
+	SADXMissionFlags sadxMissionFlags;
+	ByteFlagsModel *sadxMissionFlagsModel;
 
-		/**
-		 * Load data from a file.
-		 * @param file File.
-		 * @return 0 on success; non-zero on error.
-		 */
-		int load(File *file);
+	/**
+	 * Load data from a file.
+	 * @param file File
+	 * @return 0 on success; non-zero on error.
+	 */
+	int load(File *file);
 
-		/**
-		 * Clear the sa_save_slot structs.
-		 */
-		void clear(void);
+	/**
+	 * Clear the sa_save_slot structs.
+	 */
+	void clear(void);
 
-		/**
-		 * Update the display.
-		 */
-		void updateDisplay(void);
+	/**
+	 * Update the display.
+	 */
+	void updateDisplay(void);
 
-		/**
-		 * Save data for the current slot.
-		 */
-		void saveCurrentSlot(void);
+	/**
+	 * Save data for the current slot.
+	 */
+	void saveCurrentSlot(void);
 
-		/**
-		 * Byteswap an sa_save_slot.
-		 * @param sa_save sa_save_slot.
-		 */
-		static void byteswap_sa_save_slot(sa_save_slot *sa_save);
+	/**
+	 * Byteswap an sa_save_slot.
+	 * @param sa_save sa_save_slot
+	 */
+	static void byteswap_sa_save_slot(sa_save_slot *sa_save);
 
-		/**
-		 * Byteswap an sadx_extra_save_slot.
-		 * @param sa_save sadx_extra_save_slot.
-		 */
-		static void byteswap_sadx_extra_save_slot(sadx_extra_save_slot *sadx_extra_save);
+	/**
+	 * Byteswap an sadx_extra_save_slot.
+	 * @param sadx_extra_save sadx_extra_save_slot
+	 */
+	static void byteswap_sadx_extra_save_slot(sadx_extra_save_slot *sadx_extra_save);
 };
 
 SAEditorPrivate::SAEditorPrivate(SAEditor* q)
@@ -127,7 +131,7 @@ SAEditorPrivate::~SAEditorPrivate()
 
 /**
  * Load data from a file.
- * @param file File.
+ * @param file File
  * @return 0 on success; non-zero on error.
  */
 int SAEditorPrivate::load(File *file)
@@ -147,12 +151,14 @@ int SAEditorPrivate::load(File *file)
 		// DC version.
 
 		// Three, count 'em, *three* save slots!
+		data_main.reserve(3);
+		data_sadx.reserve(3);
 		const char *src = (data.data() + SA_SAVE_ADDRESS_DC_0);
 		for (int i = 0; i < 3; i++, src += sizeof(sa_save_slot)) {
 			sa_save_slot *const sa_save = new sa_save_slot;
 			memcpy(sa_save, src, sizeof(*sa_save));
-			data_main.append(sa_save);
-			data_sadx.append(nullptr);	// DC version - no SADX extras.
+			data_main.push_back(sa_save);
+			data_sadx.push_back(nullptr);	// DC version - no SADX extras.
 #if SYS_BYTEORDER == SYS_BIG_ENDIAN
 			// Byteswap the data.
 			// Dreamcast's SH-4 is little-endian.
@@ -168,7 +174,7 @@ int SAEditorPrivate::load(File *file)
 		// Only one save slot.
 		sa_save_slot *const sa_save = new sa_save_slot;
 		memcpy(sa_save, (data.data() + SA_SAVE_ADDRESS_GCN), sizeof(*sa_save));
-		data_main.append(sa_save);
+		data_main.push_back(sa_save);
 
 #if SYS_BYTEORDER == SYS_LIL_ENDIAN
 		// Byteswap the data.
@@ -181,7 +187,7 @@ int SAEditorPrivate::load(File *file)
 			// Found SADX extras.
 			sadx_extra_save_slot *const sadx_extra_save = new sadx_extra_save_slot;
 			memcpy(sadx_extra_save, (data.data() + SA_SAVE_ADDRESS_GCN + sizeof(*sa_save)), sizeof(*sadx_extra_save));
-			data_sadx.append(sadx_extra_save);
+			data_sadx.push_back(sadx_extra_save);
 #if SYS_BYTEORDER == SYS_LIL_ENDIAN
 			// Byteswap the data.
 			// GameCube's PowerPC 750 is big-endian.
@@ -189,7 +195,7 @@ int SAEditorPrivate::load(File *file)
 #endif /* SYS_BYTEORDER == SYS_LIL_ENDIAN */
 		} else {
 			// No SADX extras.
-			data_sadx.append(nullptr);
+			data_sadx.push_back(nullptr);
 		}
 
 		// Loaded successfully.
@@ -223,14 +229,14 @@ void SAEditorPrivate::clear(void)
 {
 	// Delete all loaded sa_save_slot structs.
 	// NOTE: sa_save_slot is allocated using new, so use delete.
-	foreach (sa_save_slot *sa_save, data_main) {
+	for (sa_save_slot *sa_save : data_main) {
 		delete sa_save;
 	}
 	data_main.clear();
 
 	// Delete loaded SADX extra save structs.
 	// NOTE: sadx_extra_save_slot is allocated using new, so use delete.
-	foreach (sadx_extra_save_slot *sadx_extra_save, data_sadx) {
+	for (sadx_extra_save_slot *sadx_extra_save : data_sadx) {
 		delete sadx_extra_save;
 	}
 	data_sadx.clear();
@@ -245,7 +251,7 @@ void SAEditorPrivate::updateDisplay(void)
 
 	// Display the data.
 	const sa_save_slot *sa_save = data_main.at(this->currentSaveSlot);
-	foreach (SAEditWidget *saEditWidget, saEditWidgets) {
+	for (SAEditWidget *saEditWidget : saEditWidgets) {
 		saEditWidget->load(sa_save);
 	}
 
@@ -266,7 +272,7 @@ void SAEditorPrivate::updateDisplay(void)
 	}
 	if (sadx_extra_save) {
 		// SADX extra data found. Load it.
-		foreach (SADXEditWidget *sadxEditWidget, sadxEditWidgets) {
+		for (SADXEditWidget *sadxEditWidget : sadxEditWidgets) {
 			sadxEditWidget->loadDX(sadx_extra_save);
 		}
 
@@ -282,7 +288,7 @@ void SAEditorPrivate::updateDisplay(void)
 	} else {
 		// No SADX extra data.
 		// Make sure the SADX sections are hidden.
-		foreach (SADXEditWidget *sadxEditWidget, sadxEditWidgets) {
+		for (SADXEditWidget *sadxEditWidget : sadxEditWidgets) {
 			sadxEditWidget->loadDX(nullptr);
 		}
 
@@ -305,8 +311,8 @@ void SAEditorPrivate::saveCurrentSlot(void)
 	assert(this->currentSaveSlot >= 0 && this->currentSaveSlot < this->saveSlots);
 
 	// Save the data.
-	sa_save_slot *sa_save = data_main.at(this->currentSaveSlot);
-	foreach (SAEditWidget *saEditWidget, saEditWidgets) {
+	sa_save_slot *sa_save = data_main[this->currentSaveSlot];
+	for (SAEditWidget *saEditWidget : saEditWidgets) {
 		saEditWidget->save(sa_save);
 	}
 
@@ -321,7 +327,7 @@ void SAEditorPrivate::saveCurrentSlot(void)
 	}
 	if (sadx_extra_save) {
 		// SADX extra data found. Save it.
-		foreach (SADXEditWidget *sadxEditWidget, sadxEditWidgets) {
+		for (SADXEditWidget *sadxEditWidget : sadxEditWidgets) {
 			sadxEditWidget->saveDX(sadx_extra_save);
 		}
 
@@ -333,7 +339,7 @@ void SAEditorPrivate::saveCurrentSlot(void)
 
 /**
  * Byteswap an sa_save_slot.
- * @param sa_save sa_save_slot.
+ * @param sa_save sa_save_slot
  */
 void SAEditorPrivate::byteswap_sa_save_slot(sa_save_slot *sa_save)
 {
@@ -376,7 +382,7 @@ void SAEditorPrivate::byteswap_sa_save_slot(sa_save_slot *sa_save)
 
 /**
  * Byteswap an sadx_extra_save_slot.
- * @param sa_save sadx_extra_save_slot.
+ * @param sadx_extra_save sadx_extra_save_slot
  */
 void SAEditorPrivate::byteswap_sadx_extra_save_slot(sadx_extra_save_slot *sadx_extra_save)
 {
@@ -415,18 +421,18 @@ SAEditor::SAEditor(QWidget *parent)
 
 	// Initialize the SAEditWidget vector.
 	d->saEditWidgets.reserve(6);
-	d->saEditWidgets.append(d->ui.saGeneral);
-	d->saEditWidgets.append(d->ui.saAdventure);
-	d->saEditWidgets.append(d->ui.saLevelStats);
-	d->saEditWidgets.append(d->ui.saSubGames);
-	d->saEditWidgets.append(d->ui.saMiscEmblems);
-	d->saEditWidgets.append(d->ui.saLevelClearCount);
+	d->saEditWidgets.push_back(d->ui.saGeneral);
+	d->saEditWidgets.push_back(d->ui.saAdventure);
+	d->saEditWidgets.push_back(d->ui.saLevelStats);
+	d->saEditWidgets.push_back(d->ui.saSubGames);
+	d->saEditWidgets.push_back(d->ui.saMiscEmblems);
+	d->saEditWidgets.push_back(d->ui.saLevelClearCount);
 
 	// Initialize the SADXEditWidget vector.
 	d->saEditWidgets.reserve(3);
-	d->sadxEditWidgets.append(d->ui.saGeneral);
-	d->sadxEditWidgets.append(d->ui.saLevelStats);
-	d->sadxEditWidgets.append(d->ui.saSubGames);
+	d->sadxEditWidgets.push_back(d->ui.saGeneral);
+	d->sadxEditWidgets.push_back(d->ui.saLevelStats);
+	d->sadxEditWidgets.push_back(d->ui.saSubGames);
 
 	// SAEventFlags model and widget.
 	d->saEventFlagsModel = new BitFlagsModel(this);
@@ -444,19 +450,19 @@ SAEditor::SAEditor(QWidget *parent)
 	d->ui.sadxMissionFlagsView->setByteFlagsModel(d->sadxMissionFlagsModel);
 
 	// Connect the widgetHasBeenModified() signals.
-	foreach (SAEditWidget *saEditWidget, d->saEditWidgets) {
-		connect(saEditWidget, SIGNAL(hasBeenModified(bool)),
-			this, SLOT(widgetHasBeenModified(bool)));
+	for (SAEditWidget *saEditWidget : d->saEditWidgets) {
+		connect(saEditWidget, &SAEditWidget::hasBeenModified,
+			this, &SAEditor::widgetHasBeenModified);
 	}
-	foreach (SADXEditWidget *sadxEditWidget, d->sadxEditWidgets) {
-		connect(sadxEditWidget, SIGNAL(hasBeenModified(bool)),
-			this, SLOT(widgetHasBeenModified(bool)));
+	for (SADXEditWidget *sadxEditWidget : d->sadxEditWidgets) {
+		connect(sadxEditWidget, &SADXEditWidget::hasBeenModified,
+			this, &SAEditor::widgetHasBeenModified);
 	}
 }
 
 /**
  * Widget state has changed.
- * @param event State change event.
+ * @param event State change event
  */
 void SAEditor::changeEvent(QEvent *event)
 {
@@ -517,7 +523,7 @@ bool SAEditor::isFileSupported(const File *file)
  * Set the File to edit.
  * This function MUST be overridden by subclasses.
  *
- * @param file File to edit.
+ * @param file File to edit
  * If the file isn't valid, it won't be set;
  * check file() afterwards to verify.
  *
@@ -600,7 +606,7 @@ int SAEditor::save(void)
 
 		// Three, count 'em, *three* save slots!
 		char *dest = (data.data() + SA_SAVE_ADDRESS_DC_0);
-		for (int i = 0; i < 3; i++, dest += sizeof(sa_save_slot)) {
+		for (size_t i = 0; i < 3; i++, dest += sizeof(sa_save_slot)) {
 			sa_save_slot *const sa_save = reinterpret_cast<sa_save_slot*>(dest);
 			assert(d->data_main.size() > i);
 			if (d->data_main.size() > i) {
@@ -710,7 +716,7 @@ void SAEditor::reload(void)
 
 /**
  * Widget's modified state has been changed.
- * @param modified New modified status.
+ * @param modified New modified status
  */
 void SAEditor::widgetHasBeenModified(bool modified)
 {
