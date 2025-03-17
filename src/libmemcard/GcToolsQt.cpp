@@ -52,9 +52,8 @@ QImage gcImageToQImage(const GcImage *gcImage)
 	if (pxFmt == GcImage::PxFmt::CI8) {
 		const uint32_t *palette = gcImage->palette();
 		if (palette) {
-			vector<uint32_t> vPalette;
-			vPalette.assign(palette, palette + 256);
-			qImg.setColorTable(QVector<QRgb>::fromStdVector(vPalette));
+			QVector<QRgb> vPalette(palette, palette + 256);
+			qImg.setColorTable(vPalette);
 		}
 	}
 

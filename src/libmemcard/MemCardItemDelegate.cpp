@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * MemCardItemDelegate.cpp: MemCard item delegate for QTreeView.           *
  *                                                                         *
- * Copyright (c) 2013-2020 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -215,10 +215,13 @@ void MemCardItemDelegate::paint(QPainter *painter,
 
 	// Get the text alignment.
 	int textAlignment = 0;
-	if (index.data(Qt::TextAlignmentRole).canConvert(QVariant::Int))
-		textAlignment = index.data(Qt::TextAlignmentRole).toInt();
-	if (textAlignment == 0)
+	QVariant varAlignment = index.data(Qt::TextAlignmentRole);
+	if (varAlignment.canConvert(QVariant::Int)) {
+		textAlignment = varAlignment.toInt();
+	}
+	if (textAlignment == 0) {
 		textAlignment = option.displayAlignment;
+	}
 
 	QRect textRect = option.rect;
 	QStyleOptionViewItem bgOption = option;
@@ -296,13 +299,19 @@ void MemCardItemDelegate::paint(QPainter *painter,
 	if (bg_var.canConvert<QBrush>()) {
 		bg = bg_var.value<QBrush>();
 	} else {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 		// Check for Qt::BackgroundColorRole.
+		// NOTE: Deprecated in Qt5; removed in Qt6.
+		// NOTE 2: Qt::BackgroundColorRole is equal to Qt::BackgroundRole in Qt5...
 		bg_var = index.data(Qt::BackgroundColorRole);
-		if (bg_var.canConvert<QColor>())
+		if (bg_var.canConvert<QColor>()) {
 			bg = QBrush(bg_var.value<QColor>());
+		}
+#endif /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
 	}
-	if (bg.style() != Qt::NoBrush)
+	if (bg.style() != Qt::NoBrush) {
 		bgOption.backgroundBrush = bg;
+	}
 
 	// Draw the style element.
 	style->drawControl(QStyle::CE_ItemViewItem, &bgOption, painter, bgOption.widget);
@@ -314,9 +323,9 @@ void MemCardItemDelegate::paint(QPainter *painter,
 		// Vista theme uses a slightly different palette.
 		// See: qwindowsvistastyle.cpp::drawControl(), line 1524 (qt-4.8.5)
 		QPalette *palette = &bgOption.palette;
-                palette->setColor(QPalette::All, QPalette::HighlightedText, palette->color(QPalette::Active, QPalette::Text));
-                // Note that setting a saturated color here results in ugly XOR colors in the focus rect
-                palette->setColor(QPalette::All, QPalette::Highlight, palette->base().color().darker(108));
+		palette->setColor(QPalette::All, QPalette::HighlightedText, palette->color(QPalette::Active, QPalette::Text));
+		// Note that setting a saturated color here results in ugly XOR colors in the focus rect
+		palette->setColor(QPalette::All, QPalette::Highlight, palette->base().color().darker(108));
 	}
 #endif
 

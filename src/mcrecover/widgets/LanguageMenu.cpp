@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * LanguageMenu.cpp: QMenu subclass for selecting a UI language.           *
  *                                                                         *
- * Copyright (c) 2012-2016 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -25,49 +25,50 @@
 
 class LanguageMenuPrivate
 {
-	public:
-		explicit LanguageMenuPrivate(LanguageMenu *q);
+public:
+	explicit LanguageMenuPrivate(LanguageMenu *q);
 
-	private:
-		LanguageMenu *const q_ptr;
-		Q_DECLARE_PUBLIC(LanguageMenu)
-		Q_DISABLE_COPY(LanguageMenuPrivate)
+private:
+	LanguageMenu *const q_ptr;
+	Q_DECLARE_PUBLIC(LanguageMenu)
+	Q_DISABLE_COPY(LanguageMenuPrivate)
 
-	public:
-		// "System Default" language.
-		QAction *actLanguageSysDefault;
-		// Key: Locale ID; value: QAction
-		QHash<QString, QAction*> hashActions;
+public:
+	// "System Default" language
+	QAction *actLanguageSysDefault;
+	// Key: Locale ID; value: QAction
+	QHash<QString, QAction*> hashActions;
 
-		// Action group and signal mapper.
-		QActionGroup *actgrp;
-		QSignalMapper *mapper;
+	// Action group and signal mapper
+	// TODO: Remove for Qt5/Qt6.
+	QActionGroup *actgrp;
+	QSignalMapper *mapper;
 
-		// Current language. (locale tag, e.g. "en_US")
-		// If empty, we're using the System Default language.
-		QString locale;
+	// Current language (locale tag, e.g. "en_US")
+	// If empty, we're using the System Default language.
+	QString locale;
 
-		/**
-		 * Get an icon for a given locale.
-		 * @param locale Locale tag, e.g. "en_US".
-		 * @return Icon, or null QIcon if not found.
-		 */
-		static QIcon iconForLocale(const QString &locale);
+	/**
+	 * Get an icon for a given locale.
+	 * @param locale Locale tag, e.g. "en_US".
+	 * @return Icon, or null QIcon if not found.
+	 */
+	static QIcon iconForLocale(const QString &locale);
 
-		/**
-		 * Clear the Language Menu.
-		 */
-		void clear(void);
+	/**
+	 * Clear the Language Menu.
+	 */
+	void clear(void);
 
-		/**
-		 * Retranslate the "System Default" language action.
-		 */
-		void retranslateSystemDefault(void);
+	/**
+	 * Retranslate the "System Default" language action.
+	 */
+	void retranslateSystemDefault(void);
 
-		/**
-		 * Initialize the Language menu.
-		 */
-		void init(void);
+	/**
+	 * Initialize the Language menu.
+	 */
+	void init(void);
 };
 
 LanguageMenuPrivate::LanguageMenuPrivate(LanguageMenu *q)
@@ -104,8 +105,14 @@ void LanguageMenuPrivate::clear(void)
 QIcon LanguageMenuPrivate::iconForLocale(const QString &locale)
 {
 	// Check for an icon.
+
 	// Check region, then language.
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+	QStringList locale_parts = locale.split(QChar(L'_'), Qt::SkipEmptyParts);
+#else /* QT_VERSION < QT_VERSION_CHECK(5, 15, 0) */
 	QStringList locale_parts = locale.split(QChar(L'_'), QString::SkipEmptyParts);
+#endif /* QT_VERSION >= QT_VERSION_CHECK(5, 15, 0) */
+
 	QIcon flagIcon;
 	for (int i = (locale_parts.size() - 1); i >= 0; i--) {
 		QString filename = QLatin1String(":/flags/") +
@@ -270,7 +277,7 @@ bool LanguageMenu::setLanguage(const QString &locale)
 
 /**
  * Widget state has changed.
- * @param event State change event.
+ * @param event State change event
  */
 void LanguageMenu::changeEvent(QEvent *event)
 {

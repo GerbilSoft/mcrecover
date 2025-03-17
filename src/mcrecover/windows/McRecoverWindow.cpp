@@ -14,7 +14,7 @@
 #include "McRecoverQApplication.hpp"
 #include "AboutDialog.hpp"
 
-// GcnCard classes.
+// GcnCard classes
 #include "libmemcard/GcnCard.hpp"
 #include "libmemcard/GcnFile.hpp"
 #include "libmemcard/MemCardModel.hpp"
@@ -27,31 +27,31 @@
 // VmuCard
 #include "libmemcard/VmuCard.hpp"
 
-// File database.
+// File database
 #include "db/GcnMcFileDb.hpp"
 #include "db/GcnCheckFiles.hpp"
 
-// Search classes.
+// Search classes
 #include "db/GcnSearchThread.hpp"
 #include "widgets/StatusBarManager.hpp"
 
-// Taskbar Button Manager.
+// Taskbar Button Manager
 #include "TaskbarButtonManager/TaskbarButtonManager.hpp"
 #include "TaskbarButtonManager/TaskbarButtonManagerFactory.hpp"
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif /* Q_OS_WIN */
 
-// C includes. (C++ namespace)
+// C includes (C++ namespace)
 #include <cstdio>
 #include <cassert>
 
-// C++ includes.
+// C++ includes
 #include <vector>
 using std::list;
 using std::vector;
 
-// Qt includes.
+// Qt includes
 #include <QtCore/QUrl>
 #include <QtCore/QStack>
 #include <QtCore/QVector>

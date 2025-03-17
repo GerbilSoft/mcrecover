@@ -29,45 +29,45 @@
 #include "ui_FileView.h"
 class FileViewPrivate
 {
-	public:
-		explicit FileViewPrivate(FileView *q);
-		~FileViewPrivate();
+public:
+	explicit FileViewPrivate(FileView *q);
+	~FileViewPrivate();
 
-	protected:
-		FileView *const q_ptr;
-		Q_DECLARE_PUBLIC(FileView)
-	private:
-		Q_DISABLE_COPY(FileViewPrivate)
+protected:
+	FileView *const q_ptr;
+	Q_DECLARE_PUBLIC(FileView)
+private:
+	Q_DISABLE_COPY(FileViewPrivate)
 
-	public:
-		// UI
-		Ui::FileView ui;
+public:
+	// UI
+	Ui::FileView ui;
 
-		const File *file;
+	const File *file;
 
-		// Icon animation helper.
-		IconAnimHelper helper;
+	// Icon animation helper
+	IconAnimHelper helper;
 
-		// Animation timer.
-		QTimer *animTimer;
-		// Pause count. If >0, animation is paused.
-		int pauseCounter;
+	// Animation timer
+	QTimer *animTimer;
+	// Pause count. If >0, animation is paused.
+	int pauseCounter;
 
-		/**
-		 * Update the widget display.
-		 */
-		void updateWidgetDisplay(void);
+	/**
+	 * Update the widget display.
+	 */
+	void updateWidgetDisplay(void);
 
-		/**
-		 * Update the animation timer state.
-		 * Starts the timer if animated icons are present; stops the timer if not.
-		 */
-		void updateAnimTimerState(void);
+	/**
+	 * Update the animation timer state.
+	 * Starts the timer if animated icons are present; stops the timer if not.
+	 */
+	void updateAnimTimerState(void);
 
-		/**
-		 * XmlTemplateDialog manager.
-		 */
-		XmlTemplateDialogManager *xmlTemplateDialogManager;
+	/**
+	 * XmlTemplateDialog manager
+	 */
+	XmlTemplateDialogManager *xmlTemplateDialogManager;
 };
 
 FileViewPrivate::FileViewPrivate(FileView *q)
@@ -261,7 +261,7 @@ FileView::~FileView()
 
 /**
  * Get the File being displayed.
- * @return File.
+ * @return File
  */
 const File *FileView::file(void) const
 {
@@ -271,7 +271,7 @@ const File *FileView::file(void) const
 
 /**
  * Set the File being displayed.
- * @param file File.
+ * @param file File
  */
 void FileView::setFile(const File *file)
 {
@@ -298,7 +298,7 @@ void FileView::setFile(const File *file)
 
 /**
  * Widget state has changed.
- * @param event State change event.
+ * @param event State change event
  */
 void FileView::changeEvent(QEvent *event)
 {
@@ -313,7 +313,7 @@ void FileView::changeEvent(QEvent *event)
 	super::changeEvent(event);
 }
 
-/** Public slots. **/
+/** Public slots **/
 
 /**
  * Pause animation.
@@ -347,11 +347,11 @@ void FileView::resumeAnimation(void)
 	d->updateAnimTimerState();
 }
 
-/** Private slots. **/
+/** Private slots **/
 
 /**
  * File object was destroyed.
- * @param obj QObject that was destroyed.
+ * @param obj QObject that was destroyed
  */
 void FileView::file_destroyed_slot(QObject *obj)
 {

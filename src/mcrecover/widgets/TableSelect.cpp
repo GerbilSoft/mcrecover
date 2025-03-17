@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * TableSelect.cpp: Directory/Block Table select widget.                   *
  *                                                                         *
- * Copyright (c) 2014-2016 by David Korth.                                 *
+ * Copyright (c) 2014-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -23,67 +23,67 @@
 
 class TableSelectPrivate
 {
-	public:
-		explicit TableSelectPrivate(TableSelect *q);
+public:
+	explicit TableSelectPrivate(TableSelect *q);
 
-	private:
-		TableSelect *const q_ptr;
-		Q_DECLARE_PUBLIC(TableSelect)
-		Q_DISABLE_COPY(TableSelectPrivate)
+private:
+	TableSelect *const q_ptr;
+	Q_DECLARE_PUBLIC(TableSelect)
+	Q_DISABLE_COPY(TableSelectPrivate)
 
-	public:
-		struct Ui_TableSelect {
-			QGridLayout *gridMain;
+public:
+	struct Ui_TableSelect {
+		QGridLayout *gridMain;
 
-			// Directory table.
-			QLabel *lblDirImage;
-			QButtonGroup *btnDirGroup;
-			QVector<QPushButton*> btnDir;
-			QVector<QLabel*> lblDirStatus;
+		// Directory table
+		QLabel *lblDirImage;
+		QButtonGroup *btnDirGroup;
+		QVector<QPushButton*> btnDir;
+		QVector<QLabel*> lblDirStatus;
 
-			// Block table.
-			QLabel *lblBlockImage;
-			QButtonGroup *btnBlockGroup;
-			QVector<QPushButton*> btnBlock;
-			QVector<QLabel*> lblBlockStatus;
+		// Block table
+		QLabel *lblBlockImage;
+		QButtonGroup *btnBlockGroup;
+		QVector<QPushButton*> btnBlock;
+		QVector<QLabel*> lblBlockStatus;
 
-			void setupUi(QWidget *TableSelect);
-			void retranslateUi(QWidget *TableSelect);
-		};
-		Ui_TableSelect ui;
+		void setupUi(QWidget *TableSelect);
+		void retranslateUi(QWidget *TableSelect);
+	};
+	Ui_TableSelect ui;
 
-		Card *card;
+	Card *card;
 
-		// Icon size.
-		static const int iconSz = 16;
+	// Icon size
+	static constexpr int iconSz = 16;
 
-	protected:
-		/**
-		 * Update the DAT/BAT widget count based on the active Card.
-		 */
-		void updateWidgetCount(void);
+protected:
+	/**
+	 * Update the DAT/BAT widget count based on the active Card.
+	 */
+	void updateWidgetCount(void);
 
-		/**
-		 * Update the Directory Table display.
-		 */
-		void updateDirTableDisplay(void);
+	/**
+	 * Update the Directory Table display.
+	 */
+	void updateDirTableDisplay(void);
 
-		/**
-		 * Update the Block Table display.
-		 */
-		void updateBlockTableDisplay(void);
+	/**
+	 * Update the Block Table display.
+	 */
+	void updateBlockTableDisplay(void);
 
-	public:
-		/**
-		 * Update the widget display.
-		 */
-		void updateWidgetDisplay(void);
+public:
+	/**
+	 * Update the widget display.
+	 */
+	void updateWidgetDisplay(void);
 };
 
 TableSelectPrivate::TableSelectPrivate(TableSelect *q)
 	: q_ptr(q)
 	, card(nullptr)
-{ }
+{}
 
 /**
  * Initialize the UI.
@@ -436,7 +436,7 @@ TableSelect::~TableSelect()
 
 /**
  * Get the Card being displayed.
- * @return Card.
+ * @return Card
  */
 Card *TableSelect::card(void) const
 {
@@ -446,7 +446,7 @@ Card *TableSelect::card(void) const
 
 /**
  * Set the Card being displayed.
- * @param card Card.
+ * @param card Card
  */
 void TableSelect::setCard(Card *card)
 {
@@ -482,11 +482,11 @@ void TableSelect::setCard(Card *card)
 	d->updateWidgetDisplay();
 }
 
-/** Events. **/
+/** Events **/
 
 /**
  * Widget state has changed.
- * @param event State change event.
+ * @param event State change event
  */
 void TableSelect::changeEvent(QEvent *event)
 {
@@ -527,11 +527,11 @@ int TableSelect::activeBatIdx(void) const
 	return d->card->activeBatIdx();
 }
 
-/** Internal slots. **/
+/** Internal slots **/
 
 /**
  * Card object was destroyed.
- * @param obj QObject that was destroyed.
+ * @param obj QObject that was destroyed
  */
 void TableSelect::memCard_destroyed_slot(QObject *obj)
 {
@@ -548,7 +548,7 @@ void TableSelect::memCard_destroyed_slot(QObject *obj)
 
 /**
  * Card's active Directory Table index was changed.
- * @param idx New active Directory Table index.
+ * @param idx New active Directory Table index
  */
 void TableSelect::memCard_activeDatIdxChanged_slot(int idx)
 {
@@ -562,7 +562,7 @@ void TableSelect::memCard_activeDatIdxChanged_slot(int idx)
 
 /**
  * Card's active Block Table index was changed.
- * @param idx New active Block Table index.
+ * @param idx New active Block Table index
  */
 void TableSelect::memCard_activeBatIdxChanged_slot(int idx)
 {
@@ -574,12 +574,12 @@ void TableSelect::memCard_activeBatIdxChanged_slot(int idx)
 	}
 }
 
-/** Public slots. **/
+/** Public slots **/
 
 /**
  * Set the active Directory Table index.
  * NOTE: This function reloads the file list, without lost files.
- * @param idx Active Directory Table index. (0 or 1)
+ * @param idx Active Directory Table index (0 or 1)
  */
 void TableSelect::setActiveDatIdx(int idx)
 {
@@ -592,7 +592,7 @@ void TableSelect::setActiveDatIdx(int idx)
 /**
  * Set the active Block Table index.
  * NOTE: This function reloads the file list, without lost files.
- * @param idx Active Block Table index. (0 or 1)
+ * @param idx Active Block Table index (0 or 1)
  */
 void TableSelect::setActiveBatIdx(int idx)
 {

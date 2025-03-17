@@ -22,23 +22,29 @@
 // GcnFile
 #include "libmemcard/GcnFile.hpp"
 
-// C includes.
+// C includes
 #include <stdint.h>
 
-// C includes. (C++ namespace)
+// C includes (C++ namespace)
 #include <cassert>
 #include <cctype>
 #include <cstdio>
 #include <cstring>
 
-// Qt includes.
+// Qt includes
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QMap>
-#include <QtCore/QTextCodec>
 #include <QtCore/QVector>
 #include <QtCore/QXmlStreamReader>
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#  include <QtCore/QStringDecoder>
+#  include <QtCore/QStringEncoder>
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
+#  include <QtCore/QTextCodec>
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
 
 class GcnMcFileDbPrivate
 {
@@ -97,6 +103,38 @@ public:
 	 */
 	QString errorString;
 
+	// TODO: Allocate QStringDecoder/QStringEncoder/QTextCodec on demand?
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	// String decoders
+	mutable QStringDecoder stringDecoderJP;
+	mutable QStringDecoder stringDecoderUS;
+
+	// String encoders
+	mutable QStringEncoder stringEncoderJP;
+	mutable QStringEncoder stringEncoderUS;
+
+	/**
+	 * Get a comment from the GCN comment block, converted to UTF-16.
+	 * @param buf Comment block
+	 * @param size Size of comment block (usually 32)
+	 * @param stringDecoder QStringDecoder (If invalid, use latin1.)
+	 * @return GCN comment block, converted to UTF-16.
+	 */
+	static QString GetGcnCommentUtf16(const char *buf, size_t size, QStringDecoder &stringDecoder);
+
+	/**
+	 * Get a comment from the GCN comment block, converted to UTF-8.
+	 * @param buf Comment block
+	 * @param siz Size of comment block (usually 32)
+	 * @param stringDecoder QStringDecoder (If invalid, use latin1.)
+	 * @return GCN comment block, converted to UTF-8.
+	 */
+	static inline QByteArray GetGcnCommentUtf8(const char *buf, size_t size, QStringDecoder &stringDecoder)
+	{
+		// This is now a wrapper around GetGcnCommentUtf16().
+		return GetGcnCommentUtf16(buf, size, stringDecoder).toUtf8();
+	}
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
 	// Text codecs
 	QTextCodec *const textCodecJP;
 	QTextCodec *const textCodecUS;
@@ -117,7 +155,12 @@ public:
 	 * @param textCodec QTextCodec (If nullptr, use latin1.)
 	 * @return GCN comment block, converted to UTF-8.
 	 */
-	static QByteArray GetGcnCommentUtf8(const char *buf, size_t size, QTextCodec *textCodec);
+	static inline QByteArray GetGcnCommentUtf8(const char *buf, size_t size, QTextCodec *textCodec)
+	{
+		// This is now a wrapper around GetGcnCommentUtf16().
+		return GetGcnCommentUtf16(buf, size, textCodec).toUtf8();
+	}
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
 
 	/**
 	 * Construct a GcnSearchData entry.
@@ -134,9 +177,16 @@ public:
 
 GcnMcFileDbPrivate::GcnMcFileDbPrivate(GcnMcFileDb *q)
 	: q_ptr(q)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	, stringDecoderJP("Shift_JIS")
+	, stringDecoderUS("cp1252")
+	, stringEncoderJP("Shift_JIS")
+	, stringEncoderUS("cp1252")
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
 	, textCodecJP(QTextCodec::codecForName("Shift-JIS"))
-	, textCodecUS(QTextCodec::codecForName("Windows-1252"))
-{ }
+	, textCodecUS(QTextCodec::codecForName("cp1252"))
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
+{}
 
 GcnMcFileDbPrivate::~GcnMcFileDbPrivate()
 {
@@ -782,6 +832,16 @@ void GcnMcFileDbPrivate::parseXml_file_variable(QXmlStreamReader& xml, GcnMcFile
 	}
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+/**
+ * Get a comment from the GCN comment block, converted to UTF-16.
+ * @param buf Comment block
+ * @param size Size of comment block (usually 32)
+ * @param stringDecoder QStringDecoder (If invalid, use latin1.)
+ * @return GCN comment block, converted to UTF-16.
+ */
+QString GcnMcFileDbPrivate::GetGcnCommentUtf16(const char *buf, size_t size, QStringDecoder &stringDecoder)
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
 /**
  * Get a comment from the GCN comment block, converted to UTF-16.
  * @param buf Comment block
@@ -790,6 +850,7 @@ void GcnMcFileDbPrivate::parseXml_file_variable(QXmlStreamReader& xml, GcnMcFile
  * @return GCN comment block, converted to UTF-16.
  */
 QString GcnMcFileDbPrivate::GetGcnCommentUtf16(const char *buf, size_t size, QTextCodec *textCodec)
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
 {
 	// Remove trailing NULL characters before converting to UTF-8.
 	const char *p_nullChr = (const char*)memchr(buf, 0x00, size);
@@ -804,30 +865,25 @@ QString GcnMcFileDbPrivate::GetGcnCommentUtf16(const char *buf, size_t size, QTe
 	// Convert the comment to Unicode.
 	// Trim the comment while we're at it.
 	QString comment;
-	if (!textCodec) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	if (stringDecoder.isValid()) {
+		// Use the text codec.
+		comment = QString(stringDecoder.decode(QByteArrayView(buf, size))).trimmed();
+	} else
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
+	if (textCodec) {
+		// Use the text codec.
+		comment = textCodec->toUnicode(buf, size).trimmed();
+	} else
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
+	{
 		// No text codec was specified.
 		// Default to Latin-1.
 		comment = QString::fromLatin1(buf, size).trimmed();
-	} else {
-		// Use the text codec.
-		comment = textCodec->toUnicode(buf, size).trimmed();
 	}
 
 	// Comment converted to UTF-16.
 	return comment;
-}
-
-/**
- * Get a comment from the GCN comment block, converted to UTF-8.
- * @param buf Comment block
- * @param siz Size of comment block (usually 32)
- * @param textCodec QTextCodec (If nullptr, use latin1.)
- * @return GCN comment block, converted to UTF-8.
- */
-QByteArray GcnMcFileDbPrivate::GetGcnCommentUtf8(const char *buf, size_t size, QTextCodec *textCodec)
-{
-	// This is now a wrapper around GetGcnCommentUtf16().
-	return GetGcnCommentUtf16(buf, size, textCodec).toUtf8();
 }
 
 /**
@@ -857,8 +913,18 @@ GcnSearchData GcnMcFileDbPrivate::constructSearchData(
 	// Substitute variables in the filename.
 	QString filename = VarReplace::Exec(matchFileDef->dirEntry.filename, vars);
 
-	// Filename.
+	// Filename
 	// FIXME: Also for 'S' (used by SADX preview)?
+	// FIXME: What if the US encoder isn't working?
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	if (dirEntry->gamecode[3] == 'J' && stringEncoderJP.isValid()) {
+		// JP file. Convert to Shift-JIS.
+		ba = stringEncoderJP.encode(filename);
+	} else if (stringEncoderUS.isValid()) {
+		// US/EU file. Convert to cp1252.
+		ba = stringEncoderUS.encode(filename);
+	}
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
 	if (dirEntry->gamecode[3] == 'J' && textCodecJP) {
 		// JP file. Convert to Shift-JIS.
 		ba = textCodecJP->fromUnicode(filename);
@@ -866,6 +932,7 @@ GcnSearchData GcnMcFileDbPrivate::constructSearchData(
 		// US/EU file. Convert to cp1252.
 		ba = textCodecUS->fromUnicode(filename);
 	}
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
 
 	if (ba.isEmpty()) {
 		// QByteArray is empty. Conversion failed.
@@ -965,10 +1032,17 @@ QVector<GcnSearchData> GcnMcFileDb::checkBlock(const void *buf, size_t size) con
 
 		// Get the game description and file description.
 		const char *const commentData = ((const char*)buf + address);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+		const QString gameDescUS = d->GetGcnCommentUtf16(commentData, 32, d->stringDecoderUS);
+		const QString gameDescJP = d->GetGcnCommentUtf16(commentData, 32, d->stringDecoderJP);
+		const QString fileDescUS = d->GetGcnCommentUtf16(commentData+32, 32, d->stringDecoderUS);
+		const QString fileDescJP = d->GetGcnCommentUtf16(commentData+32, 32, d->stringDecoderJP);
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
 		const QString gameDescUS = d->GetGcnCommentUtf16(commentData, 32, d->textCodecUS);
 		const QString gameDescJP = d->GetGcnCommentUtf16(commentData, 32, d->textCodecJP);
 		const QString fileDescUS = d->GetGcnCommentUtf16(commentData+32, 32, d->textCodecUS);
 		const QString fileDescJP = d->GetGcnCommentUtf16(commentData+32, 32, d->textCodecJP);
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
 
 		QVector<GcnMcFileDef*> *vec = d->addr_file_defs.value(address);
 		foreach (const GcnMcFileDef *gcnMcFileDef, *vec) {

@@ -10,26 +10,31 @@
 #include "File_p.hpp"
 #include "Card.hpp"
 
-// GcImage.
+// GcImage
 #include "GcImage.hpp"
 #include "GcToolsQt.hpp"
 #include "GcImageWriter.hpp"
 
-// C includes. (C++ namespace)
+// C includes (C++ namespace)
 #include <cerrno>
 #include <cassert>
 
-// C++ includes.
+// C++ includes
 #include <string>
 #include <vector>
 using std::string;
 using std::vector;
 
-// Qt includes.
+// Qt includes
 #include <QtCore/QByteArray>
-#include <QtCore/QTextCodec>
 #include <QtCore/QFile>
 #include <QtCore/QIODevice>
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#  include <QtCore/QStringDecoder>
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
+#  include <QtCore/QTextCodec>
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
 
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
@@ -157,7 +162,11 @@ QString FilePrivate::StripInvalidDosChars(
 {
 	QString ret(filename);
 	for (int i = (ret.size() - 1); i > 0; i--) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+		QChar &chr = ret[i];
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
 		QCharRef chr = ret[i];
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
 
 		// Reference: http://en.wikipedia.org/wiki/8.3_filename#Directory_table
 		switch (chr.unicode()) {
@@ -188,11 +197,6 @@ QString FilePrivate::StripInvalidDosChars(
  */
 QString FilePrivate::decodeText_SJISorCP1252(const char *str, int len)
 {
-	// Static codec initialization.
-	// NOTE: Assuming cp1252 always works.
-	static QTextCodec *shiftJis = QTextCodec::codecForName("Shift_JIS");
-	static QTextCodec *cp1252 = QTextCodec::codecForName("cp1252");
-
 	// Remove trailing NULL characters before converting to UTF-8.
 	for (int i = len-1; i >= 0; i--) {
 		if (str[i] == 0) {
@@ -204,34 +208,74 @@ QString FilePrivate::decodeText_SJISorCP1252(const char *str, int len)
 		}
 	}
 
-	if (!shiftJis) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	// Static codec initialization.
+	// NOTE: Assuming cp1252 always works.
+	static QStringDecoder codec_sjis("Shift_JIS", QStringConverter::Flag::ConvertInvalidToNull);
+	static QStringDecoder codec_1252("cp1252");
+
+	if (!codec_sjis.isValid()) {
 		// Shift-JIS isn't available.
 		// Always use cp1252.
-		assert(cp1252 != nullptr);
-		if (!cp1252) {
+		assert(codec_1252.isValid());
+		if (!codec_1252.isValid()) {
 			// Should not happen...
 			return QString::fromLatin1(str, len);
 		}
-		return cp1252->toUnicode(str, len);
+		return codec_1252.decode(QByteArrayView(str, len));
 	}
 
 	// Attempt to decode as Shift-JIS.
 	// TODO: There should be a faster way to check if the text isn't valid...
 	// (iconv can return an error if an invalid character is encountered.)
-	QTextCodec::ConverterState state(QTextCodec::ConvertInvalidToNull);
-	QString text = shiftJis->toUnicode(str, len, &state);
+	QString text = codec_sjis.decode(QByteArrayView(str, len));
 	// U+FFFD: REPLACEMENT CHARACTER
 	// QTextCodec uses this if it encounters
 	// an invalid Shift-JIS sequence.
 	if (text.contains(QChar(0xFFFD))) {
 		// Invalid characters detected.
 		// Use cp1252 instead.
-		if (!cp1252) {
+		if (!codec_1252.isValid()) {
 			// Should not happen...
 			return QString::fromLatin1(str, len);
 		}
-		return cp1252->toUnicode(str, len);
+		return codec_1252.decode(QByteArrayView(str, len));
 	}
+#else /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
+	// Static codec initialization.
+	// NOTE: Assuming cp1252 always works.
+	static QTextCodec *codec_sjis = QTextCodec::codecForName("Shift_JIS");
+	static QTextCodec *codec_1252 = QTextCodec::codecForName("cp1252");
+
+	if (!codec_sjis) {
+		// Shift-JIS isn't available.
+		// Always use cp1252.
+		assert(codec_1252 != nullptr);
+		if (!codec_1252) {
+			// Should not happen...
+			return QString::fromLatin1(str, len);
+		}
+		return codec_1252->toUnicode(str, len);
+	}
+
+	// Attempt to decode as Shift-JIS.
+	// TODO: There should be a faster way to check if the text isn't valid...
+	// (iconv can return an error if an invalid character is encountered.)
+	QTextCodec::ConverterState state(QTextCodec::ConvertInvalidToNull);
+	QString text = codec_sjis->toUnicode(str, len, &state);
+	// U+FFFD: REPLACEMENT CHARACTER
+	// QTextCodec uses this if it encounters
+	// an invalid Shift-JIS sequence.
+	if (text.contains(QChar(0xFFFD))) {
+		// Invalid characters detected.
+		// Use cp1252 instead.
+		if (!codec_1252) {
+			// Should not happen...
+			return QString::fromLatin1(str, len);
+		}
+		return codec_1252->toUnicode(str, len);
+	}
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
 
 	// Text decoded as Shift-JIS.
 	return text;
@@ -950,7 +994,19 @@ Checksum::ChkAlgorithm File::checksumAlgorithm(void) const
 Checksum::ChkStatus File::checksumStatus(void) const
 {
 	Q_D(const File);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	// Qt6 removed QVector::toStdVector().
+	// TODO: Convert these to std::vector<>?
+	std::vector<Checksum::ChecksumValue> vec;
+	vec.reserve(d->checksumValues.size());
+	for (const Checksum::ChecksumValue &p : d->checksumValues) {
+		vec.push_back(p);
+	}
+	return Checksum::ChecksumStatus(vec);
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
 	return Checksum::ChecksumStatus(d->checksumValues.toStdVector());
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
 }
 
 /**
@@ -962,7 +1018,20 @@ Checksum::ChkStatus File::checksumStatus(void) const
 QVector<QString> File::checksumValuesFormatted(void) const
 {
 	Q_D(const File);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	// Qt6 removed QVector::toStdVector().
+	// TODO: Convert these to std::vector<>?
+	std::vector<Checksum::ChecksumValue> vec;
+	vec.reserve(d->checksumValues.size());
+	for (const Checksum::ChecksumValue &p : d->checksumValues) {
+		vec.push_back(p);
+	}
+	vector<string> vs = Checksum::ChecksumValuesFormatted(vec);
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
 	vector<string> vs = Checksum::ChecksumValuesFormatted(d->checksumValues.toStdVector());
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
+
 	QVector<QString> ret;
 	ret.reserve((int)vs.size());
 	for (auto iter = vs.cbegin(); iter != vs.cend(); ++iter) {

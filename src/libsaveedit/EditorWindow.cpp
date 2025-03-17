@@ -2,22 +2,23 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * EditorWindow.cpp: Save file editor window.                              *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
 #include "EditorWindow.hpp"
 
-// Qt includes.
+// Qt includes
 #include <QtCore/QEvent>
 #include <QtCore/QSignalMapper>
 #include <QtCore/QVector>
 #include <QAction>
+#include <QActionGroup>
 
-// Files.
+// Files
 #include "libmemcard/File.hpp"
 
-// EditorWidget.
+// EditorWidget
 #include "EditorWidget.hpp"
 #include "EditorWidgetFactory.hpp"
 
@@ -26,43 +27,43 @@
 #include "ui_EditorWindow.h"
 class EditorWindowPrivate
 {
-	public:
-		explicit EditorWindowPrivate(EditorWindow *q);
-		~EditorWindowPrivate();
+public:
+	explicit EditorWindowPrivate(EditorWindow *q);
+	~EditorWindowPrivate();
 
-	private:
-		EditorWindow *const q_ptr;
-		Q_DECLARE_PUBLIC(EditorWindow)
-		Q_DISABLE_COPY(EditorWindowPrivate)
+private:
+	EditorWindow *const q_ptr;
+	Q_DECLARE_PUBLIC(EditorWindow)
+	Q_DISABLE_COPY(EditorWindowPrivate)
 
-	public:
-		Ui::EditorWindow ui;
+public:
+	Ui::EditorWindow ui;
 
-		// Editor widget.
-		EditorWidget *editorWidget;
+	// Editor widget
+	EditorWidget *editorWidget;
 
-		// Save slot buttons.
-		QVector<QAction*> saveSlotButtons;
-		QActionGroup *actgrpSaveSlots;
-		QSignalMapper *signalMapper;
-		QAction *toolBarSeparator;	// CACHED; don't delete this!
+	// Save slot buttons
+	QVector<QAction*> saveSlotButtons;
+	QActionGroup *actgrpSaveSlots;
+	QSignalMapper *signalMapper;
+	QAction *toolBarSeparator;	// CACHED; don't delete this!
 
-		/**
-		 * Set the editor widget.
-		 * The editor widget will be owned by this EditorWindow.
-		 * @param editorWidget Editor widget.
-		 */
-		void setEditorWidget(EditorWidget *editorWidget);
+	/**
+	 * Set the editor widget.
+	 * The editor widget will be owned by this EditorWindow.
+	 * @param editorWidget Editor widget
+	 */
+	void setEditorWidget(EditorWidget *editorWidget);
 
-		/**
-		 * Initialize the toolbar.
-		 */
-		void initToolbar(void);
+	/**
+	 * Initialize the toolbar.
+	 */
+	void initToolbar(void);
 
-		/**
-		 * Update the save slot buttons.
-		 */
-		void updateSaveSlotButtons(void);
+	/**
+	 * Update the save slot buttons.
+	 */
+	void updateSaveSlotButtons(void);
 };
 
 EditorWindowPrivate::EditorWindowPrivate(EditorWindow* q)
@@ -90,7 +91,7 @@ EditorWindowPrivate::~EditorWindowPrivate()
 /**
  * Set the editor widget.
  * This EditorWindow will take ownership of the EditorWidget.
- * @param editor Editor widget.
+ * @param editor Editor widget
  */
 void EditorWindowPrivate::setEditorWidget(EditorWidget *editorWidget)
 {

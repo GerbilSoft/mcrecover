@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * ByteFlagsView.hpp: Byte Flags editor.                                   *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -21,44 +21,44 @@ class ByteFlagsView : public QWidget
 	Q_PROPERTY(ByteFlagsModel* byteFlagsModel READ byteFlagsModel WRITE setByteFlagsModel)
 	Q_PROPERTY(int pageSize READ pageSize)
 
-	public:
-		explicit ByteFlagsView(QWidget *parent = 0);
-		~ByteFlagsView();
+public:
+	explicit ByteFlagsView(QWidget *parent = 0);
+	~ByteFlagsView();
 
-	private:
-		typedef QWidget super;
-		ByteFlagsViewPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(ByteFlagsView)
-		Q_DISABLE_COPY(ByteFlagsView)
+private:
+	typedef QWidget super;
+	ByteFlagsViewPrivate *const d_ptr;
+	Q_DECLARE_PRIVATE(ByteFlagsView)
+	Q_DISABLE_COPY(ByteFlagsView)
 
-	protected:
-		// State change event. (Used for switching the UI language at runtime.)
-		void changeEvent(QEvent *event) final;
+protected:
+	// State change event (Used for switching the UI language at runtime.)
+	void changeEvent(QEvent *event) final;
 
-	public:
-		/** Model access. **/
+public:
+	/** Model access **/
 
-		/**
-		 * Get the ByteFlagsModel this widget is editing.
-		 * @return ByteFlagsModel.
-		 */
-		ByteFlagsModel *byteFlagsModel(void) const;
+	/**
+	 * Get the ByteFlagsModel this widget is editing.
+	 * @return ByteFlagsModel
+	 */
+	ByteFlagsModel *byteFlagsModel(void) const;
 
-		/**
-		 * Set the ByteFlagsModel to edit.
-		 * @param byteFlagsModel ByteFlagsModel.
-		 */
-		void setByteFlagsModel(ByteFlagsModel *model);
+	/**
+	 * Set the ByteFlagsModel to edit.
+	 * @param byteFlagsModel ByteFlagsModel
+	 */
+	void setByteFlagsModel(ByteFlagsModel *model);
 
-		/** Data access. **/
+	/** Data access **/
 
-		/**
-		 * Get the page size.
-		 * @return Page size.
-		 */
-		int pageSize(void) const;
+	/**
+	 * Get the page size.
+	 * @return Page size
+	 */
+	int pageSize(void) const;
 
-		// TODO: Page count?
+	// TODO: Page count?
 };
 
 #endif /* __LIBSAVEEDIT_MODELS_BYTEFLAGSVIEW_HPP__ */

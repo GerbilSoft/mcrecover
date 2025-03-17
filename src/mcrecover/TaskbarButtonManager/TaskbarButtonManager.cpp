@@ -2,13 +2,13 @@
  * GameCube Memory Card Recovery Program.                                  *
  * TaskbarButtonManager.cpp: Taskbar button manager base class.            *
  *                                                                         *
- * Copyright (c) 2013-2016 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
 #include "TaskbarButtonManager.hpp"
 
-// Qt includes.
+// Qt includes
 #include <QWidget>
 
 /** TaskbarButtonManagerPrivate **/
@@ -19,7 +19,7 @@ TaskbarButtonManagerPrivate::TaskbarButtonManagerPrivate(TaskbarButtonManager *c
 	, window(nullptr)
 	, progressBarValue(-1)
 	, progressBarMax(-1)
-{ }
+{}
 
 TaskbarButtonManagerPrivate::~TaskbarButtonManagerPrivate()
 {
@@ -41,7 +41,7 @@ TaskbarButtonManager::~TaskbarButtonManager()
 
 /**
  * Get the window this TaskbarButtonManager is managing.
- * @return Window.
+ * @return Window
  */
 QWidget *TaskbarButtonManager::window(void) const
 {
@@ -52,7 +52,7 @@ QWidget *TaskbarButtonManager::window(void) const
 /**
  * Set the window this TaskbarButtonManager should manage.
  * This must be a top-level window in order to work properly.
- * @param window Window.
+ * @param window Window
  */
 void TaskbarButtonManager::setWindow(QWidget *window)
 {
@@ -86,7 +86,7 @@ void TaskbarButtonManager::clearProgressBar(void)
 
 /**
  * Get the progress bar value.
- * @return Value.
+ * @return Value
  */
 int TaskbarButtonManager::progressBarValue(void) const
 {
@@ -96,7 +96,7 @@ int TaskbarButtonManager::progressBarValue(void) const
 
 /**
  * Set the progress bar value.
- * @param value Value.
+ * @param value Value
  */
 void TaskbarButtonManager::setProgressBarValue(int value)
 {
@@ -109,7 +109,7 @@ void TaskbarButtonManager::setProgressBarValue(int value)
 
 /**
  * Get the progress bar's maximum value.
- * @return Maximum value.
+ * @return Maximum value
  */
 int TaskbarButtonManager::progressBarMax(void) const
 {
@@ -119,7 +119,7 @@ int TaskbarButtonManager::progressBarMax(void) const
 
 /**
  * Set the progress bar's maximum value.
- * @param max Maximum value.
+ * @param max Maximum value
  */
 void TaskbarButtonManager::setProgressBarMax(int max)
 {
@@ -134,7 +134,7 @@ void TaskbarButtonManager::setProgressBarMax(int max)
 
 /**
  * Window we're managing was destroyed.
- * @param obj QObject that was destroyed.
+ * @param obj QObject that was destroyed
  */
 void TaskbarButtonManager::windowDestroyed_slot(QObject *obj)
 {

@@ -28,8 +28,8 @@ class GcnFile;
 class GcnMcFileDbPrivate;
 class GcnMcFileDb : public QObject
 {
-Q_OBJECT
-typedef QObject super;
+	Q_OBJECT
+	typedef QObject super;
 
 public:
 	explicit GcnMcFileDb(QObject *parent = 0);

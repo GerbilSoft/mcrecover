@@ -249,8 +249,7 @@ void ConfigStorePrivate::InvokeQtMethod(QObject *object, int method_idx, const Q
 {
 	// Based on QMetaObject::invokeMethod().
 	QMetaMethod metaMethod = object->metaObject()->method(method_idx);
-	metaMethod.invoke(object, Qt::AutoConnection,
-		      QGenericReturnArgument(), Q_ARG(QVariant, param));
+	metaMethod.invoke(object, Qt::AutoConnection, Q_ARG(QVariant, param));
 }
 
 /** ConfigStore **/

@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * XmlTemplateDialog.cpp: XML template dialog.                             *
  *                                                                         *
- * Copyright (c) 2014-2016 by David Korth.                                 *
+ * Copyright (c) 2014-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -11,11 +11,11 @@
 // MemCard
 #include "libmemcard/GcnFile.hpp"
 
-// Qt includes.
+// Qt includes
 #include <QtCore/QXmlStreamWriter>
 #include <QtGui/QFontDatabase>
 
-// C includes. (C++ namespace)
+// C includes (C++ namespace)
 #include <cstdio>
 
 /** XmlTemplateDialogPrivate **/
@@ -23,39 +23,39 @@
 #include "ui_XmlTemplateDialog.h"
 class XmlTemplateDialogPrivate
 {
-	public:
-		XmlTemplateDialogPrivate(XmlTemplateDialog *q, const GcnFile *file);
+public:
+	XmlTemplateDialogPrivate(XmlTemplateDialog *q, const GcnFile *file);
 
-	protected:
-		XmlTemplateDialog *const q_ptr;
-		Q_DECLARE_PUBLIC(XmlTemplateDialog)
-	private:
-		Q_DISABLE_COPY(XmlTemplateDialogPrivate)
+protected:
+	XmlTemplateDialog *const q_ptr;
+	Q_DECLARE_PUBLIC(XmlTemplateDialog)
+private:
+	Q_DISABLE_COPY(XmlTemplateDialogPrivate)
 
-	public:
-		Ui::XmlTemplateDialog ui;
+public:
+	Ui::XmlTemplateDialog ui;
 
-		const GcnFile *file;
+	const GcnFile *file;
 
-		// XML template.
-		QString xmlTemplate;
+	// XML template
+	QString xmlTemplate;
 
-		/**
-		 * Update the window text.
-		 */
-		void updateWindowText(void);
+	/**
+	 * Update the window text.
+	 */
+	void updateWindowText(void);
 
-		/**
-		 * Escape a string for use as a PCRE regular expression.
-		 * This also adds ^ and $ to the beginning and end of the string.
-		 * @return Escaped string.
-		 */
-		static QString escapeString(const QString &str);
+	/**
+	 * Escape a string for use as a PCRE regular expression.
+	 * This also adds ^ and $ to the beginning and end of the string.
+	 * @return Escaped string
+	 */
+	static QString escapeString(const QString &str);
 
-		/**
-		 * Generate the XML template.
-		 */
-		void generateXmlTemplate(void);
+	/**
+	 * Generate the XML template.
+	 */
+	void generateXmlTemplate(void);
 };
 
 XmlTemplateDialogPrivate::XmlTemplateDialogPrivate(XmlTemplateDialog* q, const GcnFile *file)
@@ -99,7 +99,7 @@ void XmlTemplateDialogPrivate::updateWindowText(void)
 /**
  * Escape a string for use as a PCRE regular expression.
  * This also adds ^ and $ to the beginning and end of the string.
- * @return Escaped string.
+ * @return Escaped string
  */
 QString XmlTemplateDialogPrivate::escapeString(const QString &str)
 {
@@ -190,9 +190,10 @@ void XmlTemplateDialogPrivate::generateXmlTemplate(void)
 
 	// Remove the "<?xml" line.
 	// This is an XML fragment, not a full document.
-	int n = xmlTemplate.indexOf(L'\n');
-	if (n >= 0)
+	int n = xmlTemplate.indexOf(QChar(L'\n'));
+	if (n >= 0) {
 		xmlTemplate.remove(0, n + 1);
+	}
 }
 
 /** XmlTemplateDialog **/
@@ -269,7 +270,7 @@ XmlTemplateDialog::~XmlTemplateDialog()
 
 /**
  * Widget state has changed.
- * @param event State change event.
+ * @param event State change event
  */
 void XmlTemplateDialog::changeEvent(QEvent *event)
 {

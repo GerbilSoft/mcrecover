@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * MessageWidgetStack.hpp: Message widget stack.                           *
  *                                                                         *
- * Copyright (c) 2014-2016 by David Korth.                                 *
+ * Copyright (c) 2014-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -21,29 +21,30 @@
 
 class MessageWidgetStackPrivate
 {
-	public:
-		explicit MessageWidgetStackPrivate(MessageWidgetStack *q);
-		~MessageWidgetStackPrivate();
+public:
+	explicit MessageWidgetStackPrivate(MessageWidgetStack *q);
+	~MessageWidgetStackPrivate();
 
-	protected:
-		MessageWidgetStack *const q_ptr;
-		Q_DECLARE_PUBLIC(MessageWidgetStack)
-	private:
-		Q_DISABLE_COPY(MessageWidgetStackPrivate)
+protected:
+	MessageWidgetStack *const q_ptr;
+	Q_DECLARE_PUBLIC(MessageWidgetStack)
+private:
+	Q_DISABLE_COPY(MessageWidgetStackPrivate)
 
-	public:
-		struct Ui_MessageWidgetStack {
-			QVBoxLayout *vboxMain;
+public:
+	struct Ui_MessageWidgetStack {
+		QVBoxLayout *vboxMain;
 
-			void setupUi(QWidget *MessageWidgetStack);
-		};
-		Ui_MessageWidgetStack ui;
+		void setupUi(QWidget *MessageWidgetStack);
+	};
+	Ui_MessageWidgetStack ui;
 
-		// All active MessageWidgets.
-		QSet<MessageWidget*> messageWidgets;
+	// All active MessageWidgets
+	QSet<MessageWidget*> messageWidgets;
 
-		// QSignalMapper for the dismissed() signal.
-		QSignalMapper *mapperMessageWidgets;
+	// QSignalMapper for the dismissed() signal
+	// TODO: Remove for Qt5/Qt6.
+	QSignalMapper *mapperMessageWidgets;
 };
 
 MessageWidgetStackPrivate::MessageWidgetStackPrivate(MessageWidgetStack *q)
@@ -64,7 +65,7 @@ MessageWidgetStackPrivate::~MessageWidgetStackPrivate()
 
 /**
  * Initialize the UI.
- * @param MessageWidgetStack MessageWidgetStack.
+ * @param MessageWidgetStack MessageWidgetStack
  */
 void MessageWidgetStackPrivate::Ui_MessageWidgetStack::setupUi(QWidget *MessageWidgetStack)
 {
@@ -73,7 +74,10 @@ void MessageWidgetStackPrivate::Ui_MessageWidgetStack::setupUi(QWidget *MessageW
 
 	vboxMain = new QVBoxLayout(MessageWidgetStack);
 	vboxMain->setObjectName(QLatin1String("vboxMain"));
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	// FIXME: Not available in Qt6.
 	vboxMain->setMargin(0);
+#endif /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
 
 	QMetaObject::connectSlotsByName(MessageWidgetStack);
 }
@@ -96,9 +100,9 @@ MessageWidgetStack::~MessageWidgetStack()
 
 /**
  * Show a message.
- * @param msg Message text. (supports Qt RichText formatting)
- * @param icon Icon.
- * @param timeout Timeout, in milliseconds. (0 for no timeout)
+ * @param msg Message text (supports Qt RichText formatting)
+ * @param icon Icon
+ * @param timeout Timeout, in milliseconds (0 for no timeout)
  * @param closeOnDestroy Close the message when the specified QObject is destroyed.
  */
 void MessageWidgetStack::showMessage(const QString &msg, MessageWidget::MsgIcon icon, int timeout, QObject *closeOnDestroy)
@@ -120,11 +124,11 @@ void MessageWidgetStack::showMessage(const QString &msg, MessageWidget::MsgIcon 
 	messageWidget->showMessage(msg, icon, timeout, closeOnDestroy);
 }
 
-/** Slots. **/
+/** Slots **/
 
 /**
  * A MessageWidget has been dismissed.
- * @param widget MessageWidget.
+ * @param widget MessageWidget
  */
 void MessageWidgetStack::messageWidget_dismissed_slot(QWidget *widget)
 {
@@ -138,7 +142,7 @@ void MessageWidgetStack::messageWidget_dismissed_slot(QWidget *widget)
 
 /**
  * A MessageWidget has been destroyed.
- * @param obj QObject that was destroyed.
+ * @param obj QObject that was destroyed
  */
 void MessageWidgetStack::messageWidget_destroyed_slot(QObject *obj)
 {

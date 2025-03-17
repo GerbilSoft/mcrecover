@@ -234,7 +234,7 @@ SET(mcrecover_RCC_SRCS
 
 QT_ADD_RESOURCES(
 	mcrecover_RCC_O ${mcrecover_RCC_SRCS}
-	OPTIONS -no-compress
+	OPTIONS --no-compress
 	)
 
 #########################

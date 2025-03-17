@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * BitFlagsView.hpp: Bit Flags editor.                                     *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -23,34 +23,34 @@
 #include "ui_BitFlagsView.h"
 class BitFlagsViewPrivate
 {
-	public:
-		explicit BitFlagsViewPrivate(BitFlagsView *q);
+public:
+	explicit BitFlagsViewPrivate(BitFlagsView *q);
 
-	protected:
-		BitFlagsView *const q_ptr;
-		Q_DECLARE_PUBLIC(BitFlagsView)
-	private:
-		Q_DISABLE_COPY(BitFlagsViewPrivate)
+protected:
+	BitFlagsView *const q_ptr;
+	Q_DECLARE_PUBLIC(BitFlagsView)
+private:
+	Q_DISABLE_COPY(BitFlagsViewPrivate)
 
-	public:
-		Ui_BitFlagsView ui;
+public:
+	Ui_BitFlagsView ui;
 
-		// Page Filter model. (owned by this widget)
-		PageFilterModel *pageFilterModel;
+	// Page Filter model (owned by this widget)
+	PageFilterModel *pageFilterModel;
 
-		// Default page size.
-		static const int defaultPageSize = 64;
+	// Default page size.
+	static constexpr int defaultPageSize = 64;
 
-		/**
-		 * Update the display.
-		 */
-		void updateDisplay(void);
+	/**
+	 * Update the display.
+	 */
+	void updateDisplay(void);
 
-		/**
-		 * Update the tab bar.
-		 * @param forceTextUpdate If true, update all tab text. Needed for language changes.
-		 */
-		void updateTabBar(bool forceTextUpdate = false);
+	/**
+	 * Update the tab bar.
+	 * @param forceTextUpdate If true, update all tab text. Needed for language changes.
+	 */
+	void updateTabBar(bool forceTextUpdate = false);
 };
 
 BitFlagsViewPrivate::BitFlagsViewPrivate(BitFlagsView *q)
@@ -81,11 +81,19 @@ void BitFlagsViewPrivate::updateDisplay(void)
 	// Resize the columns to fit the contents.
 	// TODO: On theme change, pageSize change...?
 	ui.lstEventFlags->resizeColumnToContents(BitFlagsModel::COL_CHECKBOX);
+
 	// ID should be as wide as the largest ID number.
 	QFontMetrics fm = ui.lstEventFlags->fontMetrics();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+	int id_width = fm.horizontalAdvance(QString::number(model->rowCount()-1));
+	// FIXME: Add text margins. For now, just add width of 'W'.
+	id_width += fm.horizontalAdvance(QChar(L'W'));
+#else /* QT_VERSION < QT_VERSION_CHECK(5, 11, 0) */
 	int id_width = fm.width(QString::number(model->rowCount()-1));
 	// FIXME: Add text margins. For now, just add width of 'W'.
 	id_width += fm.width(QChar(L'W'));
+#endif /* QT_VERSION >= QT_VERSION_CHECK(5, 11, 0) */
+
 	ui.lstEventFlags->setColumnWidth(BitFlagsModel::COL_ID, id_width+1);
 	
 	// Event Description and overall width.
@@ -174,11 +182,11 @@ BitFlagsView::~BitFlagsView()
 	delete d_ptr;
 }
 
-/** Events. **/
+/** Events **/
 
 /**
  * Widget state has changed.
- * @param event State change event.
+ * @param event State change event
  */
 void BitFlagsView::changeEvent(QEvent *event)
 {
@@ -195,11 +203,11 @@ void BitFlagsView::changeEvent(QEvent *event)
 	super::changeEvent(event);
 }
 
-/** Model access. **/
+/** Model access **/
 
 /**
  * Get the BitFlagsModel this widget is editing.
- * @return BitFlagsModel.
+ * @return BitFlagsModel
  */
 BitFlagsModel *BitFlagsView::bitFlagsModel(void) const
 {
@@ -209,7 +217,7 @@ BitFlagsModel *BitFlagsView::bitFlagsModel(void) const
 
 /**
  * Set the BitFlagsModel to edit.
- * @param bitFlagsModel BitFlagsModel.
+ * @param bitFlagsModel BitFlagsModel
  */
 void BitFlagsView::setBitFlagsModel(BitFlagsModel *bitFlagsModel)
 {
@@ -224,11 +232,11 @@ void BitFlagsView::setBitFlagsModel(BitFlagsModel *bitFlagsModel)
 	d->updateDisplay();
 }
 
-/** Data access. **/
+/** Data access **/
 
 /**
  * Get the page size.
- * @return Page size.
+ * @return Page size
  */
 int BitFlagsView::pageSize(void) const
 {

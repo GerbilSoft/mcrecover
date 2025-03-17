@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * SAAdventure.cpp: Sonic Adventure - Adventure Mode status editor.        *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -38,54 +38,54 @@
 #include "ui_SAAdventure.h"
 class SAAdventurePrivate
 {
-	public:
-		explicit SAAdventurePrivate(SAAdventure *q);
-		~SAAdventurePrivate();
+public:
+	explicit SAAdventurePrivate(SAAdventure *q);
+	~SAAdventurePrivate();
 
-	protected:
-		SAAdventure *const q_ptr;
-		Q_DECLARE_PUBLIC(SAAdventure)
-	private:
-		Q_DISABLE_COPY(SAAdventurePrivate)
+protected:
+	SAAdventure *const q_ptr;
+	Q_DECLARE_PUBLIC(SAAdventure)
+private:
+	Q_DISABLE_COPY(SAAdventurePrivate)
 
-	public:
-		Ui_SAAdventure ui;
+public:
+	Ui_SAAdventure ui;
 
-		// Total of 8 characters.
-		#define TOTAL_CHARACTERS 8
-		// Character widgets.
-		struct {
-			QLabel *lblCharacter;
-			QSpinBox *spnLives;		// [0, 127]
-			QCheckBox *chkCompleted;
-			QComboBox *cboTimeOfDay;
-			QSpinBox *spnEntrance;		// [-32,768, 32,767]
-			QComboBox *cboLevelName;
-			QSpinBox *spnLevelAct;		// [0, 7]
+	// Total of 8 characters.
+	static constexpr int TOTAL_CHARACTERS = 8;
+	// Character widgets
+	struct {
+		QLabel *lblCharacter;
+		QSpinBox *spnLives;		// [0, 127]
+		QCheckBox *chkCompleted;
+		QComboBox *cboTimeOfDay;
+		QSpinBox *spnEntrance;		// [-32,768, 32,767]
+		QComboBox *cboLevelName;
+		QSpinBox *spnLevelAct;		// [0, 7]
 
 #ifndef DONT_SHOW_UNKNOWN
-			QSpinBox *spnUnknown[3];	// [-32,768, 32,767]
+		QSpinBox *spnUnknown[3];	// [-32,768, 32,767]
 #endif
-		} characters[TOTAL_CHARACTERS];
+	} characters[TOTAL_CHARACTERS];
 
-		/**
-		 * Initialize character widgets.
-		 */
-		void initCharacters(void);
+	/**
+	 * Initialize character widgets.
+	 */
+	void initCharacters(void);
 
-		/**
-		 * Map onscreen rows to internal character values.
-		 * This moves "Super Sonic" and "Unused" to the
-		 * end of the list.
-		 */
-		static const uint8_t mapRowsToCharIdx[8];
+	/**
+	 * Map onscreen rows to internal character values.
+	 * This moves "Super Sonic" and "Unused" to the
+	 * end of the list.
+	 */
+	static const uint8_t mapRowsToCharIdx[8];
 
-		/**
-		 * Map row numbers to life counter indexes in the save file.
-		 * -1 indicates no life counter.
-		 * NOTE: May not be needed; it matches the row order.
-		 */
-		static const int8_t mapRowsToLifeIdx[8];
+	/**
+	 * Map row numbers to life counter indexes in the save file.
+	 * -1 indicates no life counter.
+	 * NOTE: May not be needed; it matches the row order.
+	 */
+	static const int8_t mapRowsToLifeIdx[8];
 };
 
 /**
@@ -183,7 +183,7 @@ void SAAdventurePrivate::initCharacters(void)
 		// in order to show up properly in SALevelStats.
 		// FIXME: Remove the newlines from the source,
 		// and add them manually in SALevelStats?
-		levelNames[i] = QString::fromLatin1(sa_level_names_all[i]).replace(L'\n', L' ');
+		levelNames[i] = QString::fromLatin1(sa_level_names_all[i]).replace(QChar(L'\n'), QChar(L' '));
 	}
 
 	QString qsCssCheckBox = QLatin1String(sa_ui_css_emblem_checkbox);
@@ -349,7 +349,7 @@ int SAAdventure::load(const sa_save_slot *sa_save)
 	suspendHasBeenModified();
 
 	// Life counters.
-	for (int i = TOTAL_CHARACTERS-1; i >= 0; i--) {
+	for (int i = SAAdventurePrivate::TOTAL_CHARACTERS-1; i >= 0; i--) {
 		const int lifeIdx = d->mapRowsToLifeIdx[i];
 		if (lifeIdx < 0) {
 			// "Unused" character doesn't have a life counter.
@@ -372,7 +372,7 @@ int SAAdventure::load(const sa_save_slot *sa_save)
 	d->characters[6].chkCompleted->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 117));
 
 	// Adventure mode.
-	for (int i = TOTAL_CHARACTERS-1; i >= 0; i--) {
+	for (int i = SAAdventurePrivate::TOTAL_CHARACTERS-1; i >= 0; i--) {
 		const int chr = d->mapRowsToCharIdx[i];
 
 		// TODO: Validate the data.
@@ -412,7 +412,7 @@ int SAAdventure::save(sa_save_slot *sa_save)
 	Q_D(const SAAdventure);
 
 	// Life counters.
-	for (int i = TOTAL_CHARACTERS-1; i >= 0; i--) {
+	for (int i = SAAdventurePrivate::TOTAL_CHARACTERS-1; i >= 0; i--) {
 		const int lifeIdx = d->mapRowsToLifeIdx[i];
 		if (lifeIdx < 0) {
 			// "Unused" character doesn't have a life counter.
@@ -438,7 +438,7 @@ int SAAdventure::save(sa_save_slot *sa_save)
 	sa_save->emblems[14] |= (d->characters[6].chkCompleted->isChecked() ? 0x01 : 0x00);
 
 	// Adventure mode.
-	for (int i = TOTAL_CHARACTERS-1; i >= 0; i--) {
+	for (int i = SAAdventurePrivate::TOTAL_CHARACTERS-1; i >= 0; i--) {
 		const int chr = d->mapRowsToCharIdx[i];
 
 		// TODO: Validate the data.

@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnSearchWorker.hpp: GCN "lost" file search worker.                     *
  *                                                                         *
- * Copyright (c) 2013-2016 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -14,13 +14,13 @@
 // GCN Memory Card File Database
 #include "db/GcnMcFileDb.hpp"
 
-// Checksum algorithm class.
+// Checksum algorithm class
 #include "Checksum.hpp"
 
-// C includes. (C++ namespace)
+// C includes (C++ namespace)
 #include <cstdio>
 
-// C++ includes.
+// C++ includes
 #include <limits>
 #include <memory>
 using std::list;
@@ -33,35 +33,35 @@ using std::unique_ptr;
 
 class GcnSearchWorkerPrivate
 {
-	public:
-		explicit GcnSearchWorkerPrivate(GcnSearchWorker *q);
+public:
+	explicit GcnSearchWorkerPrivate(GcnSearchWorker *q);
 
-	protected:
-		GcnSearchWorker *const q_ptr;
-		Q_DECLARE_PUBLIC(GcnSearchWorker)
-	private:
-		Q_DISABLE_COPY(GcnSearchWorkerPrivate)
+protected:
+	GcnSearchWorker *const q_ptr;
+	Q_DECLARE_PUBLIC(GcnSearchWorker)
+private:
+	Q_DISABLE_COPY(GcnSearchWorkerPrivate)
 
-	public:
-		// Last error string.
-		QString errorString;
+public:
+	// Last error string
+	QString errorString;
 
-		/**
-		 * List of files found in the last successful search.
-		 * std::list allows us to prepend items, so we do that
-		 * in order to turn "reverse-order" into "correct-order".
-		 * TODO: Use malloc()'d SearchData?
-		 */
-		std::list<GcnSearchData> filesFoundList;
+	/**
+	 * List of files found in the last successful search.
+	 * std::list allows us to prepend items, so we do that
+	 * in order to turn "reverse-order" into "correct-order".
+	 * TODO: Use malloc()'d SearchData?
+	 */
+	std::list<GcnSearchData> filesFoundList;
 
-		// Properties.
-		GcnCard *card;
-		QVector<GcnMcFileDb*> databases;
-		char preferredRegion;
-		bool searchUsedBlocks;
+	// Properties
+	GcnCard *card;
+	QVector<GcnMcFileDb*> databases;
+	char preferredRegion;
+	bool searchUsedBlocks;
 
-		// Original thread.
-		QThread *origThread;
+	// Original thread
+	QThread *origThread;
 };
 
 GcnSearchWorkerPrivate::GcnSearchWorkerPrivate(GcnSearchWorker* q)
@@ -85,7 +85,7 @@ GcnSearchWorker::~GcnSearchWorker()
 	delete d;
 }
 
-/** Read-only properties. **/
+/** Read-only properties **/
 
 /**
  * Get the last error string.
@@ -93,7 +93,7 @@ GcnSearchWorker::~GcnSearchWorker()
  * NOTE: This is NOT cleared if no error occurs.
  * It should only be checked if an error occurred.
  *
- * @return Last error string.
+ * @return Last error string
  */
 QString GcnSearchWorker::errorString(void) const
 {
@@ -103,7 +103,7 @@ QString GcnSearchWorker::errorString(void) const
 
 /**
  * Get the list of files found in the last successful search.
- * @return List of files found.
+ * @return List of files found
  */
 std::list<GcnSearchData> GcnSearchWorker::filesFoundList(void) const
 {
@@ -112,11 +112,11 @@ std::list<GcnSearchData> GcnSearchWorker::filesFoundList(void) const
 	return d->filesFoundList;
 }
 
-/** Properties. **/
+/** Properties **/
 
 /**
  * Get the GcnCard.
- * @return GcnCard.
+ * @return GcnCard
  */
 GcnCard *GcnSearchWorker::card(void) const
 {
@@ -126,7 +126,7 @@ GcnCard *GcnSearchWorker::card(void) const
 
 /**
  * Set the GcnCard.
- * @param card GcnCard.
+ * @param card GcnCard
  */
 void GcnSearchWorker::setCard(GcnCard *card)
 {
@@ -137,7 +137,7 @@ void GcnSearchWorker::setCard(GcnCard *card)
 
 /**
  * Get the vector of GCN file databases.
- * @return GCN file databases.
+ * @return GCN file databases
  */
 QVector<GcnMcFileDb*> GcnSearchWorker::databases(void) const
 {
@@ -147,7 +147,7 @@ QVector<GcnMcFileDb*> GcnSearchWorker::databases(void) const
 
 /**
  * Set the vector of GCN file databases.
- * @param databases GCN file databases.
+ * @param databases GCN file databases
  */
 void GcnSearchWorker::setDatabases(const QVector<GcnMcFileDb*> &databases)
 {
@@ -158,7 +158,7 @@ void GcnSearchWorker::setDatabases(const QVector<GcnMcFileDb*> &databases)
 
 /**
  * Get the preferred region.
- * @return Preferred region.
+ * @return Preferred region
  */
 char GcnSearchWorker::preferredRegion(void) const
 {
@@ -168,7 +168,7 @@ char GcnSearchWorker::preferredRegion(void) const
 
 /**
  * Set the preferred region.
- * @param preferredRegion Preferred region.
+ * @param preferredRegion Preferred region
  */
 void GcnSearchWorker::setPreferredRegion(char preferredRegion)
 {
@@ -205,7 +205,7 @@ void GcnSearchWorker::setSearchUsedBlocks(bool searchUsedBlocks)
  * the search is complete. If nullptr, no attachment
  * will be done, and the data may be lost.
  *
- * @return Original thread.
+ * @return Original thread
  */
 QThread *GcnSearchWorker::origThread(void) const
 {
@@ -220,7 +220,7 @@ QThread *GcnSearchWorker::origThread(void) const
  * the search is complete. If nullptr, no attachment
  * will be done, and the data may be lost.
  *
- * @param origThread Original thread.
+ * @param origThread Original thread
  */
 void GcnSearchWorker::setOrigThread(QThread *origThread)
 {
@@ -229,7 +229,7 @@ void GcnSearchWorker::setOrigThread(QThread *origThread)
 	d->origThread = origThread;
 }
 
-/** Search functions. **/
+/** Search functions **/
 
 /**
  * Search a memory card for "lost" files.

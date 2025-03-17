@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * GcnFile.cpp: GameCube file entry class.                                 *
  *                                                                         *
- * Copyright (c) 2012-2018 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -16,11 +16,11 @@
 #include "GcImageLoader.hpp"
 #include "TimeFuncs.hpp"
 
-// C includes. (C++ namespace)
+// C includes (C++ namespace)
 #include <cerrno>
 #include <cassert>
 
-// C++ includes.
+// C++ includes
 #include <memory>
 #include <string>
 #include <vector>
@@ -28,11 +28,16 @@ using std::string;
 using std::unique_ptr;
 using std::vector;
 
-// Qt includes.
+// Qt includes
 #include <QtCore/QByteArray>
-#include <QtCore/QTextCodec>
 #include <QtCore/QFile>
 #include <QtCore/QIODevice>
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#  include <QtCore/QStringDecoder>
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
+#  include <QtCore/QTextCodec>
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
 
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
@@ -79,12 +84,21 @@ class GcnFilePrivate : public FilePrivate
 	private:
 		Q_DISABLE_COPY(GcnFilePrivate)
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+		/**
+		 * Get a QStringDecoder for a given region.
+		 * @param region Region code (If 0, use the memory card's encoding.)
+		 * @return QStringDecoder
+		 */
+		QStringDecoder &stringDecoderForRegion(char region) const;
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
 		/**
 		 * Get a QTextCodec for a given region.
-		 * @param region Region code. (If 0, use the memory card's encoding.)
-		 * @return QTextCodec.
+		 * @param region Region code (If 0, use the memory card's encoding.)
+		 * @return QTextCodec
 		 */
 		QTextCodec *textCodecForRegion(char region) const;
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
 
 		/**
 		 * Load the file information.
@@ -242,21 +256,24 @@ GcnFilePrivate::~GcnFilePrivate()
 	}
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 /**
- * Get a QTextCodec for a given region.
- * @param region Region code. (If 0, use the memory card's encoding.)
- * @return QTextCodec.
+ * Get a QStringDecoder for a given region.
+ * @param region Region code (If 0, use the memory card's encoding.)
+ * @return QStringDecoder
  */
-QTextCodec *GcnFilePrivate::textCodecForRegion(char region) const
+QStringDecoder &GcnFilePrivate::stringDecoderForRegion(char region) const
 {
-	static QTextCodec *shiftJis = QTextCodec::codecForName("Shift_JIS");
-	static QTextCodec *cp1252 = QTextCodec::codecForName("cp1252");
+	// Static codec initialization.
+	// NOTE: Assuming cp1252 always works.
+	static QStringDecoder codec_sjis("Shift_JIS", QStringConverter::Flag::ConvertInvalidToNull);
+	static QStringDecoder codec_1252("cp1252");
 
-	if (!shiftJis) {
+	if (!codec_sjis.isValid()) {
 		// Shift-JIS isn't available.
 		// Always use cp1252.
-		assert(cp1252 != nullptr);
-		return cp1252;
+		assert(codec_1252.isValid());
+		return codec_1252;
 	}
 
 	Card::Encoding encoding = Card::Encoding::Unknown;
@@ -283,10 +300,59 @@ QTextCodec *GcnFilePrivate::textCodecForRegion(char region) const
 			break;
 	}
 
-	if (encoding == Card::Encoding::Shift_JIS)
-		return shiftJis;
-	return cp1252;
+	if (encoding == Card::Encoding::Shift_JIS) {
+		return codec_sjis;
+	}
+	return codec_1252;
 }
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
+/**
+ * Get a QTextCodec for a given region.
+ * @param region Region code (If 0, use the memory card's encoding.)
+ * @return QTextCodec
+ */
+QTextCodec *GcnFilePrivate::textCodecForRegion(char region) const
+{
+	static QTextCodec *codec_sjis = QTextCodec::codecForName("Shift_JIS");
+	static QTextCodec *codec_1252 = QTextCodec::codecForName("cp1252");
+
+	if (!codec_sjis) {
+		// Shift-JIS isn't available.
+		// Always use cp1252.
+		assert(codec_1252 != nullptr);
+		return codec_1252;
+	}
+
+	Card::Encoding encoding = Card::Encoding::Unknown;
+	switch (region) {
+		case 0:
+			// Use the memory card's encoding.
+			encoding = card->encoding();
+			break;
+
+		case 'J':
+		case 'S':
+			// Japanese.
+			// NOTE: 'S' appears in RELSAB, which is used for
+			// some prototypes, including Sonic Adventure DX
+			// and Metroid Prime 3. Assume Japanese for now.
+			// TODO: Implement a Shift-JIS heuristic for 'S'.
+			encoding = Card::Encoding::Shift_JIS;
+			break;
+
+		default:
+			// US, Europe, Australia.
+			// TODO: Korea?
+			encoding = Card::Encoding::CP1252;
+			break;
+	}
+
+	if (encoding == Card::Encoding::Shift_JIS) {
+		return codec_sjis;
+	}
+	return codec_1252;
+}
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
 
 /**
  * Load the file information.
@@ -297,29 +363,41 @@ void GcnFilePrivate::loadFileInfo(void)
 	// NOTE: gamecode and company are right next to each other,
 	// so we can "overrun" the buffer here.
 	gameID = QString::fromLatin1(dirEntry->gamecode,
-			sizeof(dirEntry->gamecode) + sizeof(dirEntry->company));
+		sizeof(dirEntry->gamecode) + sizeof(dirEntry->company));
 
 	// TODO: Use decodeText_SJISorCP1252() instead?
 	// Get the appropriate QTextCodec for this file.
-	const char region = (gameID.size() >= 4
+	const char region = (gameID.size() >= 4)
 				? gameID.at(3).toLatin1()
-				: 0);
+				: 0;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	QStringDecoder &stringDecoder = stringDecoderForRegion(region);
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
 	QTextCodec *textCodec = textCodecForRegion(region);
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
 
-	// Remove trailing NULL characters before converting to UTF-8.
+	// Remove trailing NULL characters before converting to Unicode.
 	QByteArray filenameData(dirEntry->filename, sizeof(dirEntry->filename));
 	int nullChr = filenameData.indexOf('\0');
 	if (nullChr >= 0)
 		filenameData.resize(nullChr);
 
-	// Convert the filename to UTF-8.
-	if (!textCodec) {
-		// No text codec was found.
-		// Default to Latin-1.
-		filename = QString::fromLatin1(filenameData.constData(), filenameData.size());
-	} else {
+	// Convert the filename to Unicode.
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	if (stringDecoder.isValid()) {
+		// Use the string decoder.
+		filename = stringDecoder.decode(filenameData);
+	} else
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
+	if (textCodec) {
 		// Use the text codec.
 		filename = textCodec->toUnicode(filenameData.constData(), filenameData.size());
+	} else
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
+	{
+		// No text codec was found.
+		// Default to Latin-1.
+		filename = QString::fromLatin1(filenameData);
 	}
 
 	// Timestamp.
@@ -359,17 +437,26 @@ void GcnFilePrivate::loadFileInfo(void)
 	if (nullChr >= 0)
 		fileDescData.resize(nullChr);
 
-	// Convert the descriptions to UTF-8.
+	// Convert the descriptions to Unicode.
 	// Trim the descriptions while we're at it.
-	if (!textCodec) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	if (stringDecoder.isValid()) {
+		// Use the string decoder.
+		gameDesc = QString(stringDecoder.decode(gameDescData)).trimmed();
+		fileDesc = QString(stringDecoder.decode(fileDescData)).trimmed();
+	} else
+#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
+	if (textCodec) {
+		// Use the text codec.
+		gameDesc = textCodec->toUnicode(gameDescData).trimmed();
+		fileDesc = textCodec->toUnicode(fileDescData).trimmed();
+	} else
+#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
+	{
 		// No text codec was found.
 		// Default to Latin-1.
 		gameDesc = QString::fromLatin1(gameDescData.constData(), gameDescData.size()).trimmed();
 		fileDesc = QString::fromLatin1(fileDescData.constData(), fileDescData.size()).trimmed();
-	} else {
-		// Use the text codec.
-		gameDesc = textCodec->toUnicode(gameDescData.constData(), gameDescData.size()).trimmed();
-		fileDesc = textCodec->toUnicode(fileDescData.constData(), fileDescData.size()).trimmed();
 	}
 
 	// TODO: Change gameDesc and fileDesc to QStringRefs

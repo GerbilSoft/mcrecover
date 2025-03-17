@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * EditorWidget.cpp: Editor widget base class.                             *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -71,8 +71,8 @@ void EditorWidgetPrivate::setGeneralSettings(bool generalSettings)
  * Create an EditorWidget.
  * This EditorWidget is NOT valid by itself, and must be
  * subclassed in order to implement certain functions.
- * @param d EditorWidgetPrivate-derived private class.
- * @param parent Parent widget.
+ * @param d EditorWidgetPrivate-derived private class
+ * @param parent Parent widget
  */
 EditorWidget::EditorWidget(EditorWidgetPrivate *d, QWidget *parent)
 	: super(parent)
@@ -104,7 +104,7 @@ File *EditorWidget::file(void) const
 
 /**
  * Get the number of save slots available in this editor.
- * @return Number of save slots.
+ * @return Number of save slots
  */
 int EditorWidget::saveSlots(void) const
 {
@@ -124,7 +124,7 @@ bool EditorWidget::hasGeneralSettings(void) const
 
 /**
  * Get the current save slot.
- * @return Current save slot. (-1 for "general" settings)
+ * @return Current save slot (-1 for "general" settings)
  */
 int EditorWidget::currentSaveSlot(void) const
 {
@@ -144,7 +144,7 @@ int EditorWidget::currentSaveSlot(void) const
  *
  * NOTE: The subclass should NOT modify d->currentSaveSlot!
  *
- * @param saveSlot New save slot. (-1 for "general" settings)
+ * @param saveSlot New save slot (-1 for "general" settings)
  * TODO: Return the selected save slot?
  */
 void EditorWidget::setCurrentSaveSlot(int saveSlot)

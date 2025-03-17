@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * BitFlagsView.hpp: Bit Flags editor.                                     *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -21,44 +21,44 @@ class BitFlagsView : public QWidget
 	Q_PROPERTY(BitFlagsModel* bitFlagsModel READ bitFlagsModel WRITE setBitFlagsModel)
 	Q_PROPERTY(int pageSize READ pageSize)
 
-	public:
-		explicit BitFlagsView(QWidget *parent = 0);
-		~BitFlagsView();
+public:
+	explicit BitFlagsView(QWidget *parent = 0);
+	~BitFlagsView();
 
-	private:
-		typedef QWidget super;
-		BitFlagsViewPrivate *const d_ptr;
-		Q_DECLARE_PRIVATE(BitFlagsView)
-		Q_DISABLE_COPY(BitFlagsView)
+private:
+	typedef QWidget super;
+	BitFlagsViewPrivate *const d_ptr;
+	Q_DECLARE_PRIVATE(BitFlagsView)
+	Q_DISABLE_COPY(BitFlagsView)
 
-	protected:
-		// State change event. (Used for switching the UI language at runtime.)
-		void changeEvent(QEvent *event) final;
+protected:
+	// State change event (Used for switching the UI language at runtime.)
+	void changeEvent(QEvent *event) final;
 
-	public:
-		/** Model access. **/
+public:
+	/** Model access **/
 
-		/**
-		 * Get the BitFlagsModel this widget is editing.
-		 * @return BitFlagsModel.
-		 */
-		BitFlagsModel *bitFlagsModel(void) const;
+	/**
+	 * Get the BitFlagsModel this widget is editing.
+	 * @return BitFlagsModel
+	 */
+	BitFlagsModel *bitFlagsModel(void) const;
 
-		/**
-		 * Set the BitFlagsModel to edit.
-		 * @param bitFlagsModel BitFlagsModel.
-		 */
-		void setBitFlagsModel(BitFlagsModel *model);
+	/**
+	 * Set the BitFlagsModel to edit.
+	 * @param bitFlagsModel BitFlagsModel
+	 */
+	void setBitFlagsModel(BitFlagsModel *model);
 
-		/** Data access. **/
+	/** Data access **/
 
-		/**
-		 * Get the page size.
-		 * @return Page size.
-		 */
-		int pageSize(void) const;
+	/**
+	 * Get the page size.
+	 * @return Page size
+	 */
+	int pageSize(void) const;
 
-		// TODO: Page count?
+	// TODO: Page count?
 };
 
 #endif /* __LIBSAVEEDIT_WIDGETS_BITFLAGSVIEW_HPP__ */

@@ -21,8 +21,8 @@
 #include <QtGui/QFont>
 #include <QtGui/QFontMetrics>
 #include <QtGui/QRawFont>
+#include <QtGui/QScreen>
 #include <QApplication>
-#include <QDesktopWidget>
 
 /** HackDetectionPrivate **/
 
@@ -92,10 +92,13 @@ HackDetectionPrivate::HackDetectionPrivate(HackDetection* q)
  */
 void HackDetectionPrivate::setScreen(int screenIdx)
 {
-	QDesktopWidget *desktop = QApplication::desktop();
-	if (screenIdx < 0 || screenIdx >= desktop->numScreens()) {
+	QList<QScreen*> screens = QGuiApplication::screens();
+	QScreen *screen;
+	if (screenIdx >= 0 && screenIdx < screens.size()) {
+		screen = screens[screenIdx];
+	} else {
 		// Invalid. Assume the default screen.
-		screenIdx = desktop->primaryScreen();
+		screen = QGuiApplication::primaryScreen();
 	}
 
 	this->screenIdx = screenIdx;
@@ -104,7 +107,7 @@ void HackDetectionPrivate::setScreen(int screenIdx)
 	// NOTE: Don't get the desktop->screen(), since this may
 	// be the rectangle for all monitors combined (at least
 	// this is the case on Windows).
-	winRect = desktop->screenGeometry(screenIdx);
+	winRect = screen->geometry();
 }
 
 /**
@@ -286,7 +289,7 @@ HackDetection::HackDetection(QWidget *parent)
 	, d_ptr(new HackDetectionPrivate(this))
 {
 	// Default screen index.
-	init(QApplication::desktop()->primaryScreen());
+	init(-1);
 }
 
 /**

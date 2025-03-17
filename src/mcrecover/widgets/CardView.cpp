@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * CardView.hpp: Card view widget.                                         *
  *                                                                         *
- * Copyright (c) 2012-2016 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -13,16 +13,16 @@
 #include "libmemcard/GcnCard.hpp"
 #include "Checksum.hpp"
 
-// C includes.
+// C includes
 #include <stdlib.h>
 
-// C++ includes.
+// C++ includes
 #include <string>
 #include <vector>
 using std::string;
 using std::vector;
 
-// Qt includes.
+// Qt includes
 #include <QtGui/QPainter>
 
 /** CardViewPrivate **/
@@ -30,37 +30,37 @@ using std::vector;
 #include "ui_CardView.h"
 class CardViewPrivate
 {
-	public:
-		explicit CardViewPrivate(CardView *q);
-		~CardViewPrivate();
+public:
+	explicit CardViewPrivate(CardView *q);
+	~CardViewPrivate();
 
-	protected:
-		CardView *const q_ptr;
-		Q_DECLARE_PUBLIC(CardView)
-	private:
-		Q_DISABLE_COPY(CardViewPrivate)
+protected:
+	CardView *const q_ptr;
+	Q_DECLARE_PUBLIC(CardView)
+private:
+	Q_DISABLE_COPY(CardViewPrivate)
 
-	public:
-		Ui::CardView ui;
-		QMargins origMargins;
+public:
+	Ui::CardView ui;
+	QMargins origMargins;
 
-		Card *card;
+	Card *card;
 
-		// Format time.
-		QDateTime formatTime;
-		// Card color (border).
-		QColor color;
-		int cardBorder;
+	// Format time
+	QDateTime formatTime;
+	// Card color (border)
+	QColor color;
+	int cardBorder;
 
-		/**
-		 * Update the widget display.
-		 */
-		void updateWidgetDisplay(void);
+	/**
+	 * Update the widget display.
+	 */
+	void updateWidgetDisplay(void);
 
-		/**
-		 * Update the block count display.
-		 */
-		void updateBlockCountDisplay(void);
+	/**
+	 * Update the block count display.
+	 */
+	void updateBlockCountDisplay(void);
 };
 
 CardViewPrivate::CardViewPrivate(CardView *q)
@@ -137,7 +137,7 @@ void CardViewPrivate::updateWidgetDisplay(void)
 		return;
 	}
 
-	// Card icon and type.
+	// Card icon and type
 	QPixmap icon = card->icon();
 	if (!icon.isNull()) {
 		ui.lblCardIcon->setPixmap(icon);
@@ -149,23 +149,24 @@ void CardViewPrivate::updateWidgetDisplay(void)
 	//ui.lblCardType->setText(card->productName());
 	ui.lblCardType->setVisible(true);
 
-	// Block count.
+	// Block count
 	ui.lblBlockCount->setVisible(true);
 
-	// Update the format time.
+	// Update the format time
 	if (this->formatTime != card->formatTime()) {
 		// Card's format time has changed.
 		this->formatTime = card->formatTime();
 
 		if (!formatTime.isValid() || formatTime.toMSecsSinceEpoch() == 0) {
-			// Invalid format time.
+			// Invalid format time
 			ui.lblFormatTimeTitle->setVisible(false);
 			ui.lblFormatTime->setVisible(false);
 		} else {
-			// Format time is valid.
+			// Format time is valid
+			const QLocale locale = QLocale::system();
 			ui.lblFormatTimeTitle->setVisible(true);
 			ui.lblFormatTime->setVisible(true);
-			ui.lblFormatTime->setText(formatTime.toString(Qt::DefaultLocaleShortDate));
+			ui.lblFormatTime->setText(locale.toString(formatTime, locale.dateTimeFormat(QLocale::ShortFormat)));
 		}
 	}
 
@@ -314,7 +315,7 @@ CardView::~CardView()
 
 /**
  * Get the Card being displayed.
- * @return Card.
+ * @return Card
  */
 Card *CardView::card(void) const
 {
@@ -324,7 +325,7 @@ Card *CardView::card(void) const
 
 /**
  * Set the Card being displayed.
- * @param card Card.
+ * @param card Card
  */
 void CardView::setCard(Card *card)
 {
@@ -358,7 +359,7 @@ void CardView::setCard(Card *card)
 
 /**
  * Widget state has changed.
- * @param event State change event.
+ * @param event State change event
  */
 void CardView::changeEvent(QEvent *event)
 {
@@ -375,7 +376,7 @@ void CardView::changeEvent(QEvent *event)
 
 /**
  * Paint event.
- * @param event Paint event.
+ * @param event Paint event
  */
 void CardView::paintEvent(QPaintEvent *event)
 {
@@ -416,11 +417,11 @@ void CardView::paintEvent(QPaintEvent *event)
 	}
 }
 
-/** Slots. **/
+/** Slots **/
 
 /**
  * Card object was destroyed.
- * @param obj QObject that was destroyed.
+ * @param obj QObject that was destroyed
  */
 void CardView::card_destroyed_slot(QObject *obj)
 {
@@ -446,7 +447,7 @@ void CardView::card_blockCountChanged_slot(void)
 
 /**
  * Card's color has changed.
- * @param color New color.
+ * @param color New color
  */
 void CardView::card_colorChanged_slot(const QColor &color)
 {

@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * ByteFlagsView.hpp: Byte Flags editor.                                   *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -24,34 +24,34 @@
 #include "ui_ByteFlagsView.h"
 class ByteFlagsViewPrivate
 {
-	public:
-		explicit ByteFlagsViewPrivate(ByteFlagsView *q);
+public:
+	explicit ByteFlagsViewPrivate(ByteFlagsView *q);
 
-	protected:
-		ByteFlagsView *const q_ptr;
-		Q_DECLARE_PUBLIC(ByteFlagsView)
-	private:
-		Q_DISABLE_COPY(ByteFlagsViewPrivate)
+protected:
+	ByteFlagsView *const q_ptr;
+	Q_DECLARE_PUBLIC(ByteFlagsView)
+private:
+	Q_DISABLE_COPY(ByteFlagsViewPrivate)
 
-	public:
-		Ui_ByteFlagsView ui;
+public:
+	Ui_ByteFlagsView ui;
 
-		// Page Filter model. (owned by this widget)
-		PageFilterModel *pageFilterModel;
+	// Page Filter model (owned by this widget)
+	PageFilterModel *pageFilterModel;
 
-		// Default page size.
-		static const int defaultPageSize = 64;
+	// Default page size
+	static constexpr int defaultPageSize = 64;
 
-		/**
-		 * Update the display.
-		 */
-		void updateDisplay(void);
+	/**
+	 * Update the display.
+	 */
+	void updateDisplay(void);
 
-		/**
-		 * Update the tab bar.
-		 * @param forceTextUpdate If true, update all tab text. Needed for language changes.
-		 */
-		void updateTabBar(bool forceTextUpdate = false);
+	/**
+	 * Update the tab bar.
+	 * @param forceTextUpdate If true, update all tab text. Needed for language changes.
+	 */
+	void updateTabBar(bool forceTextUpdate = false);
 };
 
 ByteFlagsViewPrivate::ByteFlagsViewPrivate(ByteFlagsView *q)
@@ -85,9 +85,16 @@ void ByteFlagsViewPrivate::updateDisplay(void)
 
 	// ID should be as wide as the largest ID number.
 	QFontMetrics fm = ui.lstEventFlags->fontMetrics();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+	int id_width = fm.horizontalAdvance(QString::number(model->rowCount()-1));
+	// FIXME: Add text margins. For now, just add width of 'W'.
+	id_width += fm.horizontalAdvance(QChar(L'W'));
+#else /* QT_VERSION < QT_VERSION_CHECK(5, 11, 0) */
 	int id_width = fm.width(QString::number(model->rowCount()-1));
 	// FIXME: Add text margins. For now, just add width of 'W'.
 	id_width += fm.width(QChar(L'W'));
+#endif /* QT_VERSION >= QT_VERSION_CHECK(5, 11, 0) */
+
 	ui.lstEventFlags->setColumnWidth(ByteFlagsModel::COL_ID, id_width+1);
 }
 
@@ -175,11 +182,11 @@ ByteFlagsView::~ByteFlagsView()
 	delete d_ptr;
 }
 
-/** Events. **/
+/** Events **/
 
 /**
  * Widget state has changed.
- * @param event State change event.
+ * @param event State change event
  */
 void ByteFlagsView::changeEvent(QEvent *event)
 {
@@ -196,11 +203,11 @@ void ByteFlagsView::changeEvent(QEvent *event)
 	super::changeEvent(event);
 }
 
-/** Model access. **/
+/** Model access **/
 
 /**
  * Get the ByteFlagsModel this widget is editing.
- * @return ByteFlagsModel.
+ * @return ByteFlagsModel
  */
 ByteFlagsModel *ByteFlagsView::byteFlagsModel(void) const
 {
@@ -210,7 +217,7 @@ ByteFlagsModel *ByteFlagsView::byteFlagsModel(void) const
 
 /**
  * Set the ByteFlagsModel to edit.
- * @param byteFlagsModel ByteFlagsModel.
+ * @param byteFlagsModel ByteFlagsModel
  */
 void ByteFlagsView::setByteFlagsModel(ByteFlagsModel *byteFlagsModel)
 {
@@ -235,11 +242,11 @@ void ByteFlagsView::setByteFlagsModel(ByteFlagsModel *byteFlagsModel)
 	d->updateDisplay();
 }
 
-/** Data access. **/
+/** Data access **/
 
 /**
  * Get the page size.
- * @return Page size.
+ * @return Page size
  */
 int ByteFlagsView::pageSize(void) const
 {

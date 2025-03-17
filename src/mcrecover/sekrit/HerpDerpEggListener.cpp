@@ -17,36 +17,36 @@
 
 // Qt includes.
 #include <QtGui/QKeyEvent>
+#include <QtGui/QScreen>
 #include <QApplication>
-#include <QDesktopWidget>
 
 /** HerpDerpEggListenerPrivate **/
 
 class HerpDerpEggListenerPrivate
 {
-	public:
-		explicit HerpDerpEggListenerPrivate(HerpDerpEggListener *q);
-		~HerpDerpEggListenerPrivate();
+public:
+	explicit HerpDerpEggListenerPrivate(HerpDerpEggListener *q);
+	~HerpDerpEggListenerPrivate();
 
-	protected:
-		HerpDerpEggListener *const q_ptr;
-		Q_DECLARE_PUBLIC(HerpDerpEggListener)
-	private:
-		Q_DISABLE_COPY(HerpDerpEggListenerPrivate)
+protected:
+	HerpDerpEggListener *const q_ptr;
+	Q_DECLARE_PUBLIC(HerpDerpEggListener)
+private:
+	Q_DISABLE_COPY(HerpDerpEggListenerPrivate)
 
-	public:
-		HackDetection::DetectType detectType;
-		int seq_pos;
+public:
+	HackDetection::DetectType detectType;
+	int seq_pos;
 
-		// Set of HackDetection objects.
-		// NOTE: Must be QObject, since we can't use
-		// qobject_cast<> in the destroyed() slot.
-		QSet<QObject*> hdSet;
+	// Set of HackDetection objects.
+	// NOTE: Must be QObject, since we can't use
+	// qobject_cast<> in the destroyed() slot.
+	QSet<QObject*> hdSet;
 
-		/**
-		 * Do "Hack Detection" on all monitors.
-		 */
-		void doHackDetection(void);
+	/**
+	 * Do "Hack Detection" on all monitors.
+	 */
+	void doHackDetection(void);
 };
 
 HerpDerpEggListenerPrivate::HerpDerpEggListenerPrivate(HerpDerpEggListener *q)
@@ -73,8 +73,8 @@ void HerpDerpEggListenerPrivate::doHackDetection(void)
 	QWidget *parent = qobject_cast<QWidget*>(q->parent());
 
 	seq_pos = 0;
-	QDesktopWidget *desktop = QApplication::desktop();
-	for (int i = 0; i < desktop->numScreens(); i++) {
+	QList<QScreen*> screens = QGuiApplication::screens();
+	for (int i = 0; i < (int)screens.size(); i++) {
 		HackDetection *hd = new HackDetection(i, parent);
 		hd->setDetectType(this->detectType);
 		QObject::connect(hd, &QObject::destroyed,

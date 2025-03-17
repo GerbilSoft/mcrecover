@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * StatusBarManager.cpp: Status Bar manager                                *
  *                                                                         *
- * Copyright (c) 2013-2016 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -26,57 +26,52 @@
 
 class StatusBarManagerPrivate
 {
-	public:
-		explicit StatusBarManagerPrivate(StatusBarManager *q);
-		~StatusBarManagerPrivate();
+public:
+	explicit StatusBarManagerPrivate(StatusBarManager *q);
+	~StatusBarManagerPrivate();
 
-	protected:
-		StatusBarManager *const q_ptr;
-		Q_DECLARE_PUBLIC(StatusBarManager)
-	private:
-		Q_DISABLE_COPY(StatusBarManagerPrivate)
+protected:
+	StatusBarManager *const q_ptr;
+	Q_DECLARE_PUBLIC(StatusBarManager)
+private:
+	Q_DISABLE_COPY(StatusBarManagerPrivate)
 
-	public:
-		// Status bar.
-		QStatusBar *statusBar;
+public:
+	QStatusBar *statusBar;		// Status bar
+	QLabel *lblMessage;		// Message label
+	QProgressBar *progressBar;	// Progress bar
 
-		// Message label.
-		QLabel *lblMessage;
+	// Search thread
+	// NOTE: We don't own this!
+	GcnSearchThread *searchThread;
 
-		// Progress bar.
-		QProgressBar *progressBar;
+	// Last status message
+	QString lastStatusMessage;
 
-		// Search thread.
-		// NOTE: We don't own this!
-		GcnSearchThread *searchThread;
+	/**
+	 * Update the status bar.
+	 */
+	void updateStatusBar(void);
 
-		// Last status message.
-		QString lastStatusMessage;
+	// Are we currently scanning a memory card?
+	bool scanning;
 
-		/**
-		 * Update the status bar.
-		 */
-		void updateStatusBar(void);
+	// Search status from last SearchThread update.
+	int currentPhysBlock;
+	int totalPhysBlocks;
+	int currentSearchBlock;
+	int totalSearchBlocks;
+	int lostFilesFound;
 
-		// Are we currently scanning a memory card?
-		bool scanning;
+	// Number of seconds to wait before hiding the
+	// progress bar after the search has completed.
+	static constexpr int SECONDS_TO_HIDE_PROGRESS_BAR = 5;
 
-		// Search status from last SearchThread update.
-		int currentPhysBlock;
-		int totalPhysBlocks;
-		int currentSearchBlock;
-		int totalSearchBlocks;
-		int lostFilesFound;
+	// TaskbarButtonManager
+	TaskbarButtonManager *taskbarButtonManager;
 
-		// Number of seconds to wait before hiding the
-		// progress bar after the search has completed.
-		static const int SECONDS_TO_HIDE_PROGRESS_BAR = 5;
-
-		// TaskbarButtonManager.
-		TaskbarButtonManager *taskbarButtonManager;
-
-		// Timer for hiding the progress bar.
-		QTimer tmrHideProgressBar;
+	// Timer for hiding the progress bar
+	QTimer tmrHideProgressBar;
 };
 
 StatusBarManagerPrivate::StatusBarManagerPrivate(StatusBarManager *q)
@@ -184,7 +179,7 @@ StatusBarManager::~StatusBarManager()
 
 /**
  * Get the QStatusBar.
- * @return QStatusBar.
+ * @return QStatusBar
  */
 QStatusBar *StatusBarManager::statusBar(void) const
 {
@@ -194,13 +189,14 @@ QStatusBar *StatusBarManager::statusBar(void) const
 
 /**
  * Set the QStatusBar.
- * @param statusBar QStatusBar.
+ * @param statusBar QStatusBar
  */
 void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 {
 	Q_D(StatusBarManager);
-	if (d->statusBar == statusBar)
+	if (d->statusBar == statusBar) {
 		return;
+	}
 
 	// Stop the Hide Progress Bar timer.
 	d->tmrHideProgressBar.stop();
@@ -251,7 +247,7 @@ void StatusBarManager::setStatusBar(QStatusBar *statusBar)
 
 /**
  * Get the GcnSearchThread.
- * @return GcnSearchThread.
+ * @return GcnSearchThread
  */
 GcnSearchThread *StatusBarManager::searchThread(void) const
 {
@@ -261,13 +257,14 @@ GcnSearchThread *StatusBarManager::searchThread(void) const
 
 /**
  * Set the GcnSearchThread.
- * @param searchThread GcnSearchThread.
+ * @param searchThread GcnSearchThread
  */
 void StatusBarManager::setSearchThread(GcnSearchThread *searchThread)
 {
 	Q_D(StatusBarManager);
-	if (d->searchThread == searchThread)
+	if (d->searchThread == searchThread) {
 		return;
+	}
 
 	if (d->searchThread) {
 		// Disconnect signals from the current searchThread.
@@ -316,7 +313,7 @@ void StatusBarManager::setSearchThread(GcnSearchThread *searchThread)
 
 /**
  * Get the TaskbarButtonManager.
- * @return TaskbarButtonManager.
+ * @return TaskbarButtonManager
  */
 TaskbarButtonManager *StatusBarManager::taskbarButtonManager(void) const
 {
@@ -326,13 +323,14 @@ TaskbarButtonManager *StatusBarManager::taskbarButtonManager(void) const
 
 /**
  * Set the TaskbarButtonManager.
- * @param taskbarButtonManager TaskbarButtonManager.
+ * @param taskbarButtonManager TaskbarButtonManager
  */
 void StatusBarManager::setTaskbarButtonManager(TaskbarButtonManager *taskbarButtonManager)
 {
 	Q_D(StatusBarManager);
-	if (d->taskbarButtonManager == taskbarButtonManager)
+	if (d->taskbarButtonManager == taskbarButtonManager) {
 		return;
+	}
 
 	if (d->taskbarButtonManager) {
 		// Disconnect the "destroyed" slot.
@@ -352,12 +350,12 @@ void StatusBarManager::setTaskbarButtonManager(TaskbarButtonManager *taskbarButt
 	}
 }
 
-/** Public Slots. **/
+/** Public Slots **/
 
 /**
  * A memory card image was opened.
- * @param filename Filename.
- * @param productName Product name of the memory card.
+ * @param filename Filename
+ * @param productName Product name of the memory card
  */
 void StatusBarManager::opened(const QString &filename, const QString &productName)
 {
@@ -379,7 +377,7 @@ void StatusBarManager::opened(const QString &filename, const QString &productNam
 
 /**
  * The current memory card image was closed.
- * @param productName Product name of the memory card.
+ * @param productName Product name of the memory card
  */
 void StatusBarManager::closed(const QString &productName)
 {
@@ -395,8 +393,8 @@ void StatusBarManager::closed(const QString &productName)
 
 /**
  * Files were saved.
- * @param n Number of files saved.
- * @param path Path files were saved to.
+ * @param n Number of files saved
+ * @param path Path files were saved to
  */
 void StatusBarManager::filesSaved(int n, const QString &path)
 {
@@ -411,11 +409,11 @@ void StatusBarManager::filesSaved(int n, const QString &path)
 	d->tmrHideProgressBar.stop();
 }
 
-/** Private Slots. **/
+/** Private Slots **/
 
 /**
  * An object has been destroyed.
- * @param obj QObject that was destroyed.
+ * @param obj QObject that was destroyed
  */
 void StatusBarManager::object_destroyed_slot(QObject *obj)
 {
@@ -440,9 +438,9 @@ void StatusBarManager::object_destroyed_slot(QObject *obj)
 
 /**
  * Search has started.
- * @param totalPhysBlocks Total number of blocks in the card.
- * @param totalSearchBlocks Number of blocks being searched.
- * @param firstPhysBlock First block being searched.
+ * @param totalPhysBlocks Total number of blocks in the card
+ * @param totalSearchBlocks Number of blocks being searched
+ * @param firstPhysBlock First block being searched
  */
 void StatusBarManager::searchStarted_slot(int totalPhysBlocks, int totalSearchBlocks, int firstPhysBlock)
 {
@@ -479,7 +477,7 @@ void StatusBarManager::searchCancelled_slot(void)
 
 /**
  * Search has completed.
- * @param lostFilesFound Number of "lost" files found.
+ * @param lostFilesFound Number of "lost" files found
  */
 void StatusBarManager::searchFinished_slot(int lostFilesFound)
 {
@@ -498,9 +496,9 @@ void StatusBarManager::searchFinished_slot(int lostFilesFound)
 
 /**
  * Update search status.
- * @param currentPhysBlock Current physical block number being searched.
- * @param currentSearchBlock Number of blocks searched so far.
- * @param lostFilesFound Number of "lost" files found.
+ * @param currentPhysBlock Current physical block number being searched
+ * @param currentSearchBlock Number of blocks searched so far
+ * @param lostFilesFound Number of "lost" files found
  */
 void StatusBarManager::searchUpdate_slot(int currentPhysBlock, int currentSearchBlock, int lostFilesFound)
 {
@@ -516,7 +514,7 @@ void StatusBarManager::searchUpdate_slot(int currentPhysBlock, int currentSearch
 
 /**
  * An error has occurred during the search.
- * @param errorString Error string.
+ * @param errorString Error string
  */
 void StatusBarManager::searchError_slot(QString errorString)
 {
