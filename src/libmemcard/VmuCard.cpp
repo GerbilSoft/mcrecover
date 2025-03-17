@@ -485,13 +485,14 @@ void VmuCardPrivate::loadFileList(void)
 		// Mark the file's blocks as used.
 		// TODO
 		/*
-		QVector<uint16_t> fatEntries = vmuFile->fatEntries();
-		foreach (uint16_t block, fatEntries) {
+		std::vector<uint16_t> fatEntries = vmuFile->fatEntries();
+		for (uint16_t block : fatEntries) {
 			if (block >= 5 && block < usedBlockMap.size()) {
 				// Valid block.
 				// Increment its entry in the usedBlockMap.
-				if (usedBlockMap[block] < std::numeric_limits<uint8_t>::max())
+				if (usedBlockMap[block] < std::numeric_limits<uint8_t>::max()) {
 					usedBlockMap[block]++;
+				}
 			} else {
 				// Invalid block.
 				// TODO: Store an error value somewhere.
