@@ -422,10 +422,10 @@ TableSelect::TableSelect(QWidget *parent)
 	d->ui.setupUi(this);
 
 	// Connect button group signals.
-	connect(d->ui.btnDirGroup, SIGNAL(buttonClicked(int)),
-		this, SLOT(setActiveDatIdx(int)));
-	connect(d->ui.btnBlockGroup, SIGNAL(buttonClicked(int)),
-		this, SLOT(setActiveBatIdx(int)));
+	connect(d->ui.btnDirGroup, &QButtonGroup::idClicked,
+		this, &TableSelect::setActiveDatIdx);
+	connect(d->ui.btnBlockGroup, &QButtonGroup::idClicked,
+		this, &TableSelect::setActiveBatIdx);
 }
 
 TableSelect::~TableSelect()
