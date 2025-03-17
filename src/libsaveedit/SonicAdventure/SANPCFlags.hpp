@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * SANPCFlags.hpp: Sonic Adventure - NPC flags.                            *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_SONICADVENTURE_SANPCFLAGS_HPP__
-#define __LIBSAVEEDIT_SONICADVENTURE_SANPCFLAGS_HPP__
+#pragma once
 
 #include "../models/BitFlags.hpp"
 
@@ -30,5 +29,3 @@ class SANPCFlags : public BitFlags
 		 */
 		QString flagType(void) const final;
 };
-
-#endif /* __LIBSAVEEDIT_SONICADVENTURE_SANPCFLAGS_HPP__ */

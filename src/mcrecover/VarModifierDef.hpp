@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_VARIABLEDEF_HPP__
-#define __MCRECOVER_VARIABLEDEF_HPP__
+#pragma once
 
 // C includes.
 #include <stdint.h>
@@ -98,5 +97,3 @@ public:
 		, addValue(0)
 	{}
 };
-
-#endif /* __MCRECOVER_VARIABLEDEF_HPP__ */

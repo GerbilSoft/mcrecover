@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * EditorWidgetFactory.hpp: EditorWidget factory class.                    *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -17,7 +17,7 @@
 
 /**
  * Create an EditorWidget for the specified file.
- * @param file File to edit.
+ * @param file File to edit
  * @return EditorWidget, or nullptr if no editors support this file.
  */
 EditorWidget *EditorWidgetFactory::createWidget(File *file)
@@ -43,7 +43,7 @@ EditorWidget *EditorWidgetFactory::createWidget(File *file)
 
 /**
  * Is an editor available for the specified file?
- * @param file File to edit.
+ * @param file File to edit
  * @return True if an editor is available; false if not.
  */
 bool EditorWidgetFactory::isEditorAvailable(const File *file)

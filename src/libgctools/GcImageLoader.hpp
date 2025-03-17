@@ -3,12 +3,11 @@
  * GcImageLoader.hpp: GameCube image loader.                               *
  * Converts GameCube images from native formats to GcImage.                *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBGCTOOLS_GCIMAGELOADER_HPP__
-#define __LIBGCTOOLS_GCIMAGELOADER_HPP__
+#pragma once
 
 // C includes.
 #include <stdint.h>
@@ -47,5 +46,3 @@ class GcImageLoader
 		 */
 		static GcImage *fromRGB5A3(int w, int h, const uint16_t *img_buf, int img_siz);
 };
-
-#endif /* __LIBGCTOOLS_GCIMAGELOADER_HPP__ */

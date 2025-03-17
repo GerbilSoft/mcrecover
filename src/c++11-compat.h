@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __CXX11_COMPAT_H__
-#define __CXX11_COMPAT_H__
+#pragma once
 
 #ifndef __cplusplus
 /**
@@ -106,5 +105,3 @@ namespace std {
 #ifdef _WIN32
 #include "c99-compat.msvcrt.h"
 #endif
-
-#endif /* __CXX11_COMPAT_H__ */

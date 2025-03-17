@@ -2,17 +2,16 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnCheckFiles.hpp: Validate checksums on normal GCN files.              *
  *                                                                         *
- * Copyright (c) 2013-2018 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_DB_GCNCHECKFILES_HPP__
-#define __MCRECOVER_DB_GCNCHECKFILES_HPP__
+#pragma once
 
-// Search Data struct.
+// Search Data struct
 #include "GcnSearchData.hpp"
 
-// Qt includes.
+// Qt includes
 #include <QtCore/QObject>
 #include <QtCore/QString>
 
@@ -81,5 +80,3 @@ inline int GcnCheckFiles::loadGcnMcFileDb(const QString &dbFilename)
 	dbFilenames.append(dbFilename);
 	return loadGcnMcFileDbs(dbFilenames);
 }
-
-#endif /* __MCRECOVER_DB_GCNCHECKFILES_HPP__ */

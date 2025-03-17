@@ -3,7 +3,7 @@
  * banner.h: GameCube banner definitions.                                  *
  * Contains definitions for opening.bnr.                                   *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -12,8 +12,7 @@
  * - http://hitmen.c02.at/files/yagcd/yagcd/chap14.html
  */
 
-#ifndef __LIBGCTOOLS_BANNER_H__
-#define __LIBGCTOOLS_BANNER_H__
+#pragma once
 
 #include <stdint.h>
 
@@ -122,5 +121,3 @@ typedef struct PACKED _banner_wibn_t
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __LIBGCTOOLS_BANNER_H__ */

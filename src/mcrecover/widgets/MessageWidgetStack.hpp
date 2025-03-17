@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MESSAGEWIDGETSTACK_HPP__
-#define __MCRECOVER_MESSAGEWIDGETSTACK_HPP__
+#pragma once
 
 #include <QWidget>
 #include "MessageWidget.hpp"
@@ -51,5 +50,3 @@ protected slots:
 	 */
 	void messageWidget_destroyed_slot(QObject *obj);
 };
-
-#endif /* __MCRECOVER_MESSAGEWIDGETSTACK_HPP__ */

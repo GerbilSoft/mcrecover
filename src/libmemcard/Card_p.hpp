@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * Card_p.hpp: Memory Card physical layer. [base class] (PRIVATE)          *
  *                                                                         *
- * Copyright (c) 2012-2018 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBMEMCARD_CARD_P_HPP__
-#define __LIBMEMCARD_CARD_P_HPP__
+#pragma once
 
 #include "Card.hpp"
 
@@ -146,5 +145,3 @@ class CardPrivate
 		 */
 		static void findMostCommonByte(const uint8_t *buf, size_t siz, uint8_t *most_byte, int *count);
 };
-
-#endif /* __LIBMEMCARD_CARD_P_HPP__ */

@@ -3,12 +3,11 @@
  * DcImageLoader.hpp: Dreamcast image loader.                              *
  * Converts Dreamcast images from native formats to GcImage.               *
  *                                                                         *
- * Copyright (c) 2012-2015 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBGCTOOLS_DCIMAGELOADER_HPP__
-#define __LIBGCTOOLS_DCIMAGELOADER_HPP__
+#pragma once
 
 // C includes.
 #include <stdint.h>
@@ -58,5 +57,3 @@ class DcImageLoader
 		 */
 		static GcImage *fromMonochrome(int w, int h, const uint8_t *img_buf, int img_siz);
 };
-
-#endif /* __LIBGCTOOLS_GCIMAGE_HPP__ */

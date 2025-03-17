@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_SEKRIT_HERPDERPEGGLISTENER_HPP__
-#define __MCRECOVER_SEKRIT_HERPDERPEGGLISTENER_HPP__
+#pragma once
 
 // Qt includes and classes.
 #include <QtCore/QObject>
@@ -45,5 +44,3 @@ public slots:
 	void widget_focusOut(QFocusEvent *event);
 	void hd_destroyed(QObject *object);
 };
-
-#endif /* __MCRECOVER_SEARCHTHREAD_HPP__ */

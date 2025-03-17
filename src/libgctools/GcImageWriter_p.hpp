@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBGCTOOLS_GCIMAGE_P_HPP__
-#define __LIBGCTOOLS_GCIMAGE_P_HPP__
+#pragma once
 
 #include <config.libgctools.h>
 #include "GcImageWriter.hpp"
@@ -202,5 +201,3 @@ public:
 			  const std::vector<int> *gcIconDelays);
 #endif /* USE_GIF */
 };
-
-#endif /* __LIBGCTOOLS_GCIMAGE_P_HPP__ */

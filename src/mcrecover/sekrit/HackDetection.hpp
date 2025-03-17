@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_HACKDETECTION_HPP__
-#define __MCRECOVER_HACKDETECTION_HPP__
+#pragma once
 
 #include <QWidget>
 
@@ -98,5 +97,3 @@ protected slots:
 	 */
 	void tmrEscapeBlink_timeout(void);
 };
-
-#endif /* __MCRECOVER_HACKDETECTION_HPP__ */

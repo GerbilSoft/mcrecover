@@ -46,9 +46,9 @@ GcImagePrivate::GcImagePrivate(const GcImagePrivate &other)
 
 /**
  * Initialize the GcImage.
- * @param w Width.
- * @param h Height.
- * @param pxFmt Pixel format.
+ * @param w Width
+ * @param h Height
+ * @param pxFmt Pixel format
  */
 void GcImagePrivate::init(int w, int h, GcImage::PxFmt pxFmt)
 {

@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBGCTOOLS_CHECKSUM_HPP__
-#define __LIBGCTOOLS_CHECKSUM_HPP__
+#pragma once
 
 // C includes.
 #include <stdint.h>
@@ -237,5 +236,3 @@ ChkStatus ChecksumStatus(const std::vector<ChecksumValue>& checksumValues);
 std::vector<std::string> ChecksumValuesFormatted(const std::vector<ChecksumValue>& checksumValues);
 
 }
-
-#endif /* __LIBGCTOOLS_CHECKSUM_HPP__ */

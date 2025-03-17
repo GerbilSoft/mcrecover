@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBGCTOOLS_GCIMAGE_HPP__
-#define __LIBGCTOOLS_GCIMAGE_HPP__
+#pragma once
 
 // C includes.
 #include <stdint.h>
@@ -98,5 +97,3 @@ public:
 	 */
 	int height(void) const;
 };
-
-#endif /* __LIBGCTOOLS_GCIMAGE_HPP__ */

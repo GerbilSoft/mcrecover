@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_SONICADVENTURE_SAEDITWIDGET_HPP__
-#define __LIBSAVEEDIT_SONICADVENTURE_SAEDITWIDGET_HPP__
+#pragma once
 
 #include <QWidget>
 #include <cassert>
@@ -120,5 +119,3 @@ class SAEditWidget : public QWidget
 		 */
 		virtual int save(_sa_save_slot *sa_save) = 0;
 };
-
-#endif /* __LIBSAVEEDIT_SONICADVENTURE_SAEDITWIDGET_HPP__ */

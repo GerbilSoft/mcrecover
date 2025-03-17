@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * SAEditWidget.hpp: Sonic Adventure - SADX edit widget base class.        *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_SONICADVENTURE_SADXEDITWIDGET_HPP__
-#define __LIBSAVEEDIT_SONICADVENTURE_SADXEDITWIDGET_HPP__
+#pragma once
 
 #include "SAEditWidget.hpp"
 
@@ -43,5 +42,3 @@ class SADXEditWidget : public SAEditWidget
 		 */
 		virtual int saveDX(_sadx_extra_save_slot *sadx_extra_save) = 0;
 };
-
-#endif /* __LIBSAVEEDIT_SONICADVENTURE_SADXEDITWIDGET_HPP__ */

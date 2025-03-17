@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MCRECOVERWINDOW_HPP__
-#define __MCRECOVER_MCRECOVERWINDOW_HPP__
+#pragma once
 
 #include <QMainWindow>
 
@@ -164,5 +163,3 @@ protected slots:
 	 */
 	void chkAllowWrite_clicked(bool checked);
 };
-
-#endif /* __MCRECOVER_MCRECOVERWINDOW_HPP__ */

@@ -4,12 +4,11 @@
  * Used for things where a single object has multiple flags                *
  * stored as a byte.                                                       *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_MODELS_BYTEFLAGS_HPP__
-#define __LIBSAVEEDIT_MODELS_BYTEFLAGS_HPP__
+#pragma once
 
 // Qt includes.
 #include <QtCore/QObject>
@@ -188,5 +187,3 @@ class ByteFlags : public QObject
 		 */
 		virtual QString pageName(int page) const;
 };
-
-#endif /* __LIBSAVEEDIT_MODELS_BYTEFLAGS_HPP__ */

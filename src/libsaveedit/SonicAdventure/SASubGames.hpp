@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * SASubGames.hpp: Sonic Adventure - Sub Games editor.                     *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_SONICADVENTURE_SASUBGAMES_HPP__
-#define __LIBSAVEEDIT_SONICADVENTURE_SASUBGAMES_HPP__
+#pragma once
 
 #include "SADXEditWidget.hpp"
 
@@ -81,5 +80,3 @@ class SASubGames : public SADXEditWidget
 		 */
 		void on_cboCharacter_currentIndexChanged(int index);
 };
-
-#endif /* __LIBSAVEEDIT_SONICADVENTURE_SASUBGAMES_HPP__ */

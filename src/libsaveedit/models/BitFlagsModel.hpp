@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * BitFlagsModel.hpp: QAbstractListModel for BitFlags.                     *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_MODELS_BITFLAGSMODEL_HPP__
-#define __LIBSAVEEDIT_MODELS_BITFLAGSMODEL_HPP__
+#pragma once
 
 // Qt includes.
 #include <QtCore/QAbstractListModel>
@@ -105,5 +104,3 @@ class BitFlagsModel : public QAbstractListModel
 		 */
 		void bitFlags_flagsChanged_slot(int firstFlag, int lastFlag);
 };
-
-#endif /* __LIBSAVEEDIT_MODELS_BITFLAGSMODEL_HPP__ */

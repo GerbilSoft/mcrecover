@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program.                                  *
  * TaskbarButtonManagerFactory.hpp: TaskbarButtonManager factory class.    *
  *                                                                         *
- * Copyright (c) 2015-2016 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGERFACTORY_HPP__
-#define __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGERFACTORY_HPP__
+#pragma once
 
 // for Q_DISABLE_COPY()
 #include <QtCore/qglobal.h>
@@ -30,5 +29,3 @@ class TaskbarButtonManagerFactory
 		 */
 		static TaskbarButtonManager *createManager(QObject *parent = 0);
 };
-
-#endif /* __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGERFACTORY_HPP__ */

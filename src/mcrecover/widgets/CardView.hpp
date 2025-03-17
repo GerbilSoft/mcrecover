@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_WIDGETS_CARDVIEW_HPP__
-#define __MCRECOVER_WIDGETS_CARDVIEW_HPP__
+#pragma once
 
 #include <QWidget>
 
@@ -70,5 +69,3 @@ protected slots:
 	 */
 	void card_colorChanged_slot(const QColor &color);
 };
-
-#endif /* __MCRECOVER_WIDGETS_CARDVIEW_HPP__ */

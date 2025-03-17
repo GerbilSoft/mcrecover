@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * MemCardModel.hpp: QAbstractListModel for Card.                          *
  *                                                                         *
- * Copyright (c) 2012-2018 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MEMCARDMODEL_HPP__
-#define __MCRECOVER_MEMCARDMODEL_HPP__
+#pragma once
 
 class Card;
 
@@ -118,5 +117,3 @@ class MemCardModel : public QAbstractListModel
 		 */
 		void themeChanged_slot(void);
 };
-
-#endif /* __MCRECOVER_MEMCARDMODEL_HPP__ */

@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_DB_GCNSEARCHWORKER_HPP__
-#define __MCRECOVER_DB_GCNSEARCHWORKER_HPP__
+#pragma once
 
 // Card definitions
 #include "card.h"
@@ -216,5 +215,3 @@ public slots:
 	 */
 	void searchMemCard_threaded(void);
 };
-
-#endif /* __MCRECOVER_DB_GCNSEARCHWORKER_HPP__ */

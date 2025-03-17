@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGER_HPP__
-#define __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGER_HPP__
+#pragma once
 
 #include <QtWidgets/QWidget>
 
@@ -94,5 +93,3 @@ private slots:
 	 */
 	void windowDestroyed_slot(QObject *obj);
 };
-
-#endif /* __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGER_HPP__ */

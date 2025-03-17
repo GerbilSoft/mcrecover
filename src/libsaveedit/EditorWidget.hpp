@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_EDITORWIDGET_HPP__
-#define __LIBSAVEEDIT_EDITORWIDGET_HPP__
+#pragma once
 
 // C includes (C++ namespace)
 #include <cassert>
@@ -201,5 +200,3 @@ inline void EditorWidget::setModified(bool modified)
 	m_modified = modified;
 	emit hasBeenModified(modified);
 }
-
-#endif /* __LIBSAVEEDIT_EDITORWIDGET_HPP__ */

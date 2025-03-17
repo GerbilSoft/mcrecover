@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MCRECOVERQAPPLICATION_HPP__
-#define __MCRECOVER_MCRECOVERQAPPLICATION_HPP__
+#pragma once
 
 #include <QApplication>
 #include <QtGui/QIcon>
@@ -102,5 +101,3 @@ class McRecoverQApplication : public QApplication
 		 */
 		void themeChanged(void);
 };
-
-#endif /* __MCRECOVER_MCRECOVERQAPPLICATION_HPP__ */

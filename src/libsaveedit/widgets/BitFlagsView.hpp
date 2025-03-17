@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_WIDGETS_BITFLAGSVIEW_HPP__
-#define __LIBSAVEEDIT_WIDGETS_BITFLAGSVIEW_HPP__
+#pragma once
 
 #include <QWidget>
 
@@ -60,5 +59,3 @@ public:
 
 	// TODO: Page count?
 };
-
-#endif /* __LIBSAVEEDIT_WIDGETS_BITFLAGSVIEW_HPP__ */

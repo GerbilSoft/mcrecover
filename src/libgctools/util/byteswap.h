@@ -2,14 +2,13 @@
  * GameCube Tools Library.                                                 *
  * byteswap.h: Byteswapping functions.                                     *
  *                                                                         *
- * Copyright (c) 2008-2018 by David Korth.                                 *
+ * Copyright (c) 2008-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBGCTOOLS_UTIL_BYTESWAP_H__
-#define __LIBGCTOOLS_UTIL_BYTESWAP_H__
+#pragma once
 
-/* C includes. */
+/* C includes */
 #include <stdint.h>
 
 /* Get the system byte order. */
@@ -81,5 +80,3 @@
 	#define cpu_to_le32(x)	__swab32(x)
 	#define cpu_to_le64(x)	__swab64(x)
 #endif
-
-#endif /* __LIBGCTOOLS_UTIL_BYTESWAP_H__ */

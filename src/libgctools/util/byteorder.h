@@ -2,12 +2,11 @@
  * GameCube Tools Library.                                                 *
  * byteorder.h: System byte order header.                                  *
  *                                                                         *
- * Copyright (c) 2011-2018 by David Korth.                                 *
+ * Copyright (c) 2011-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBGCTOOLS_UTIL_BYTEORDER_H__
-#define __LIBGCTOOLS_UTIL_BYTEORDER_H__
+#pragma once
 
 /**
  * Check the system byte order.
@@ -59,5 +58,3 @@
 #undef SYS_IS_PDP_ENDIAN
 
 #endif
-
-#endif /* __LIBGCTOOLS_UTIL_BYTEORDER_H__ */

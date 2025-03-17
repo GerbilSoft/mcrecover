@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * SAAdventure.hpp: Sonic Adventure - Adventure Mode status editor.        *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_SONICADVENTURE_SAADVENTURE_HPP__
-#define __LIBSAVEEDIT_SONICADVENTURE_SAADVENTURE_HPP__
+#pragma once
 
 #include "SAEditWidget.hpp"
 
@@ -49,5 +48,3 @@ class SAAdventure : public SAEditWidget
 		 */
 		int save(_sa_save_slot *sa_save) final;
 };
-
-#endif /* __LIBSAVEEDIT_SONICADVENTURE_SAADVENTURE_HPP__ */

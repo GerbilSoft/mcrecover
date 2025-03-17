@@ -17,8 +17,7 @@
 
 // All structs are in little-endian.
 
-#ifndef __LIBSAVEEDIT_SONICADVENTURE_SA_DEFS_H__
-#define __LIBSAVEEDIT_SONICADVENTURE_SA_DEFS_H__
+#pragma once
 
 #include <stdint.h>
 #include "editcommon.h"
@@ -390,5 +389,3 @@ ASSERT_STRUCT(sadx_extra_save_slot, 208);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __LIBSAVEEDIT_SONICADVENTURE_SA_DEFS_H__ */

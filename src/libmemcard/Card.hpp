@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBMEMCARD_CARD_HPP__
-#define __LIBMEMCARD_CARD_HPP__
+#pragma once
 
 // C includes
 #include <stdint.h>
@@ -474,5 +473,3 @@ class Card : public QObject
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Card::Errors);
 Q_DECLARE_METATYPE(Card::Encoding)
-
-#endif /* __LIBMEMCARD_CARD_HPP__ */

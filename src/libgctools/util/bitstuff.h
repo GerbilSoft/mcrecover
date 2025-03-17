@@ -2,12 +2,11 @@
  * GameCube Tools Library.                                                 *
  * bitstuff.h: Bit manipulation inline functions.                          *
  *                                                                         *
- * Copyright (c) 2016-2021 by David Korth.                                 *
+ * Copyright (c) 2016-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBGCTOOLS_BITSTUFF_H__
-#define __LIBGCTOOLS_BITSTUFF_H__
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -80,5 +79,3 @@ static inline int isPow2(unsigned int x)
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __LIBGCTOOLS_BITSTUFF_H__ */

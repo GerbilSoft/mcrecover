@@ -8,8 +8,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_SONICADVENTURE_SADATA_H__
-#define __LIBSAVEEDIT_SONICADVENTURE_SADATA_H__
+#pragma once
 
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
@@ -94,5 +93,3 @@ extern const char sa_ui_css_emblem_checkbox_large[];
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __LIBSAVEEDIT_SONICADVENTURE_SADATA_H__ */

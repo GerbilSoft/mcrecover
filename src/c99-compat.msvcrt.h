@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __C99_COMPAT_MSVCRT_H__
-#define __C99_COMPAT_MSVCRT_H__
+#pragma once
 
 #ifndef _WIN32
 # error c99-compat.msvcrt.h should only be included in Win32 builds.
@@ -117,5 +116,3 @@
 #ifndef timegm
 # define timegm(tm)	_mkgmtime(tm)
 #endif
-
-#endif /* __C99_COMPAT_MSVCRT_H__ */

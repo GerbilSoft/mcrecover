@@ -109,6 +109,15 @@ SET(mcrecover_SRCS
 	config/ConfigDefaults.cpp
 	PathFuncs.cpp
 	)
+SET(mcrecover_H
+	mcrecover.hpp
+	McRecoverQApplication.hpp
+	VarReplace.hpp
+	TranslationManager.hpp
+	config/ConfigStore.hpp
+	config/ConfigDefaults.hpp
+	PathFuncs.hpp
+	)
 
 SET(mcrecover_DB_SRCS
 	db/GcnMcFileDb.cpp
@@ -117,7 +126,11 @@ SET(mcrecover_DB_SRCS
 	db/GcnCheckFiles.cpp
 	)
 SET(mcrecover_DB_H
+	db/GcnMcFileDb.hpp
 	db/GcnMcFileDef.hpp
+	db/GcnSearchThread.hpp
+	db/GcnSearchWorker.hpp
+	db/GcnCheckFiles.hpp
 	)
 
 SET(mcrecover_WINDOW_SRCS
@@ -126,6 +139,13 @@ SET(mcrecover_WINDOW_SRCS
 	windows/XmlTemplateDialog.cpp
 	windows/XmlTemplateDialogManager.cpp
 	windows/FormatNewMemCardDialog.cpp
+	)
+SET(mcrecover_WINDOW_H
+	windows/McRecoverWindow.hpp
+	windows/AboutDialog.hpp
+	windows/XmlTemplateDialog.hpp
+	windows/XmlTemplateDialogManager.hpp
+	windows/FormatNewMemCardDialog.hpp
 	)
 
 SET(mcrecover_WIDGET_SRCS
@@ -138,11 +158,25 @@ SET(mcrecover_WIDGET_SRCS
 	widgets/MessageWidgetStack.cpp
 	widgets/LanguageMenu.cpp
 	)
+SET(mcrecover_WIDGET_H
+	widgets/StatusBarManager.hpp
+	widgets/FileView.hpp
+	widgets/CardView.hpp
+	widgets/QTreeViewOpt.hpp
+	widgets/MessageWidget.hpp
+	widgets/TableSelect.hpp
+	widgets/MessageWidgetStack.hpp
+	widgets/LanguageMenu.hpp
+	)
 
 # Shh... it's a secret to everybody.
 SET(mcrecover_SEKRIT_SRCS
 	sekrit/HerpDerpEggListener.cpp
 	sekrit/HackDetection.cpp
+	)
+SET(mcrecover_SEKRIT_H
+	sekrit/HerpDerpEggListener.hpp
+	sekrit/HackDetection.hpp
 	)
 
 # Win32-specific sources
@@ -244,12 +278,11 @@ QT_ADD_RESOURCES(
 # TODO: Set Win32 when compiling release build
 # to disable the command prompt window.
 ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
-	${mcrecover_SRCS}
+	${mcrecover_SRCS} ${mcrecover_H}
 	${mcrecover_DB_SRCS} ${mcrecover_DB_H}
-	${mcrecover_WINDOW_SRCS}
-	${mcrecover_WIDGET_SRCS}
-	${mcrecover_EDIT_SRCS} ${mcrecover_EDIT_H}
-	${mcrecover_SEKRIT_SRCS}
+	${mcrecover_WINDOW_SRCS} ${mcrecover_WINDOW_H}
+	${mcrecover_WIDGET_SRCS} ${mcrecover_WIDGET_H}
+	${mcrecover_SEKRIT_SRCS} ${mcrecover_SEKRIT_H}
 	${mcrecover_OS_SRCS}
 	${mcrecover_UIS_H}
 	${mcrecover_RCC_O}

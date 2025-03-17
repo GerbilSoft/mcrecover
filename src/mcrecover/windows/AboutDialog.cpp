@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * AboutDialog.cpp: About Dialog.                                          *
  *                                                                         *
- * Copyright (c) 2013-2018 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -44,48 +44,48 @@
 #include "ui_AboutDialog.h"
 class AboutDialogPrivate
 {
-	public:
-		explicit AboutDialogPrivate(AboutDialog *q);
+public:
+	explicit AboutDialogPrivate(AboutDialog *q);
 
-	protected:
-		AboutDialog *const q_ptr;
-		Q_DECLARE_PUBLIC(AboutDialog)
-	private:
-		Q_DISABLE_COPY(AboutDialogPrivate)
+protected:
+	AboutDialog *const q_ptr;
+	Q_DECLARE_PUBLIC(AboutDialog)
+private:
+	Q_DISABLE_COPY(AboutDialogPrivate)
 
-	public:
-		static AboutDialog *ms_AboutDialog;
-		Ui::AboutDialog ui;
+public:
+	static AboutDialog *ms_AboutDialog;
+	Ui::AboutDialog ui;
 
-		bool scrlAreaInit;
+	bool scrlAreaInit;
 
-		// Initialize the About Dialog text.
-		void initAboutDialogText(void);
+	// Initialize the About Dialog text.
+	void initAboutDialogText(void);
 
-		// Credits.
-		static QString GetCredits(void);
+	// Credits.
+	static QString GetCredits(void);
 
-		// Libraries.
-		static QString GetLibraries(void);
+	// Libraries.
+	static QString GetLibraries(void);
 
-		// Debug information.
-		static QString GetDebugInfo(void);
+	// Debug information.
+	static QString GetDebugInfo(void);
 #ifdef Q_OS_WIN
-		static QString GetCodePageInfo(void);
+	static QString GetCodePageInfo(void);
 #endif /* Q_OS_WIN */
 
-		// Support.
-		static QString GetSupport(void);
+	// Support.
+	static QString GetSupport(void);
 };
 
-// Static member initialization.
+// Static member initialization
 AboutDialog *AboutDialogPrivate::ms_AboutDialog = nullptr;
 
 
-AboutDialogPrivate::AboutDialogPrivate(AboutDialog* q)
+AboutDialogPrivate::AboutDialogPrivate(AboutDialog *q)
 	: q_ptr(q)
 	, scrlAreaInit(false)
-{ }
+{}
 
 /**
  * Initialize the About Dialog text.

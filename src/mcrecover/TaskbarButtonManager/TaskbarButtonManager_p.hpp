@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGER_P_HPP__
-#define __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGER_P_HPP__
+#pragma once
 
 #include "TaskbarButtonManager.hpp"
 
@@ -31,5 +30,3 @@ public:
 	int progressBarValue;	// Current progress. (-1 for no bar)
 	int progressBarMax;	// Maximum progress.
 };
-
-#endif /* __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGER_P_HPP__ */

@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * MemCardSortFilterProxyModel.hpp: MemCardModel sort filter proxy.        *
  *                                                                         *
- * Copyright (c) 2012-2018 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MEMCARDSORTFILTERPROXYMODEL_HPP__
-#define __MCRECOVER_MEMCARDSORTFILTERPROXYMODEL_HPP__
+#pragma once
 
 #include <QSortFilterProxyModel>
 
@@ -26,5 +25,3 @@ class MemCardSortFilterProxyModel : public QSortFilterProxyModel
 		bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const final;
 		bool lessThan(const QModelIndex &left, const QModelIndex &right) const final;
 };
-
-#endif /* __MCRECOVER_MEMCARDSORTFILTERPROXYMODEL_HPP__ */

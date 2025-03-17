@@ -27,11 +27,11 @@ EditorWidgetPrivate::~EditorWidgetPrivate()
 	// Nothing to clean up here...
 }
 
-/** Convenience functions for EditorWidget subclasses. **/
+/** Convenience functions for EditorWidget subclasses **/
 
 /**
  * Set the number of save slots.
- * @param saveSlots New number of save slots. (Must be at least 1!)
+ * @param saveSlots New number of save slots (Must be at least 1!)
  */
 void EditorWidgetPrivate::setSaveSlots(int saveSlots)
 {

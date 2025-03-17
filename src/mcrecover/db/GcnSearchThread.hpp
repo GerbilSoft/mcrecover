@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnSearchThread.hpp: GCN "lost" file search thread.                      *
  *                                                                         *
- * Copyright (c) 2013-2016 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_DB_GCNSEARCHTHREAD_HPP__
-#define __MCRECOVER_DB_GCNSEARCHTHREAD_HPP__
+#pragma once
 
 // Card definitions.
 #include "card.h"
@@ -176,5 +175,3 @@ inline int GcnSearchThread::loadGcnMcFileDb(const QString &dbFilename)
 	dbFilenames.append(dbFilename);
 	return loadGcnMcFileDbs(dbFilenames);
 }
-
-#endif /* __MCRECOVER_SEARCHTHREAD_HPP__ */

@@ -6,10 +6,9 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_CONFIG_CONFIGSTORE_HPP__
-#define __MCRECOVER_CONFIG_CONFIGSTORE_HPP__
+#pragma once
 
-// Qt includes.
+// Qt includes
 #include <QtCore/QObject>
 
 class ConfigStorePrivate;
@@ -120,5 +119,3 @@ public:
 	 */
 	void notifyAll(void);
 };
-
-#endif /* __MCRECOVER_CONFIG_CONFIGSTORE_HPP__ */

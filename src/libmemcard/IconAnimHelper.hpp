@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * IconAnimHelper.hpp: Icon animation helper.                              *
  *                                                                         *
- * Copyright (c) 2012-2024 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBMEMCARD_ICONANIMHELPER_HPP__
-#define __LIBMEMCARD_ICONANIMHELPER_HPP__
+#pragma once
 
 // Qt includes.
 #include <QtCore/QObject>
@@ -80,5 +79,3 @@ class IconAnimHelper : public QObject
 		 */
 		void file_destroyed_slot(QObject *obj = 0);
 };
-
-#endif /* __LIBMEMCARD_ICONANIMHELPER_HPP__ */

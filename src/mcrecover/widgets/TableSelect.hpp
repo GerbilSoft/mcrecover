@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_TABLESELECT_HPP__
-#define __MCRECOVER_TABLESELECT_HPP__
+#pragma once
 
 #include <QtWidgets/QWidget>
 
@@ -105,5 +104,3 @@ public slots:
 	 */
 	void setActiveBatIdx(int idx);
 };
-
-#endif /* __MCRECOVER_TABLESELECT_HPP__ */

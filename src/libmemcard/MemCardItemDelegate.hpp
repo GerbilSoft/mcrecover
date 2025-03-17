@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * MemCardItemDelegate.hpp: MemCard item delegate for QTreeView.           *
  *                                                                         *
- * Copyright (c) 2013-2018 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MEMCARDITEMDELEGATE_HPP__
-#define __MCRECOVER_MEMCARDITEMDELEGATE_HPP__
+#pragma once
 
 // Qt includes.
 #include <QStyledItemDelegate>
@@ -40,5 +39,3 @@ class MemCardItemDelegate : public QStyledItemDelegate
 		 */
 		void themeChanged_slot(void);
 };
-
-#endif /* __MCRECOVER_MEMCARDITEMDELEGATE_HPP__ */

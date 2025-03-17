@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__
-#define __LIBSAVEEDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__
+#pragma once
 
 #include "../EditorWidget.hpp"
 
@@ -88,5 +87,3 @@ protected slots:
 	 */
 	void widgetHasBeenModified(bool modified);
 };
-
-#endif /* __LIBSAVEEDIT_SONICADVENTURE_SONICADVENTUREEDITOR_HPP__ */

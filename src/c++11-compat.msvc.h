@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __CXX11_COMPAT_MSVC_H__
-#define __CXX11_COMPAT_MSVC_H__
+#pragma once
 
 #ifndef _MSC_VER
 #error c++11-compat.msvc.h should only be included in MSVC builds.
@@ -72,5 +71,3 @@
  * - http://www.nedproductions.biz/blog/implementing-typeof-in-microsofts-c-compiler
  */
 #define typeof(x) decltype(x)
-
-#endif /* __CXX11_COMPAT_MSVC_H__ */

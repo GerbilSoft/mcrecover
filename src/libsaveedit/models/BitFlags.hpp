@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * BitFlags.hpp: Generic bit flags base class.                             *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_MODELS_BITFLAGS_HPP__
-#define __LIBSAVEEDIT_MODELS_BITFLAGS_HPP__
+#pragma once
 
 // Qt includes.
 #include <QtCore/QObject>
@@ -167,5 +166,3 @@ class BitFlags : public QObject
 		 */
 		virtual QString pageName(int page) const;
 };
-
-#endif /* __LIBSAVEEDIT_MODELS_BITFLAGS_HPP__ */

@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * PageFilterModel.hpp: Filter a QAbstractItemModel by pages.              *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_MODELS_PAGEFILTERMODEL_HPP__
-#define __LIBSAVEEDIT_MODELS_PAGEFILTERMODEL_HPP__
+#pragma once
 
 // Qt includes.
 #include <QSortFilterProxyModel>
@@ -86,5 +85,3 @@ class PageFilterModel : public QSortFilterProxyModel
 		 */
 		void setCurrentPage(int page);
 };
-
-#endif /* __LIBSAVEEDIT_MODELS_PAGEFILTERMODEL_HPP__ */

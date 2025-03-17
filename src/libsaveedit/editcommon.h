@@ -17,8 +17,7 @@
 
 // All structs are packed little-endian.
 
-#ifndef __LIBSAVEEDIT_EDITCOMMON_H__
-#define __LIBSAVEEDIT_EDITCOMMON_H__
+#pragma once
 
 // PACKED struct attribute.
 // Use in conjunction with #pragma pack(1).
@@ -46,5 +45,3 @@
 #    define ASSERT_STRUCT(st, sz)
 #  endif
 #endif /* ASSERT_STRUCT */
-
-#endif /* __LIBSAVEEDIT_EDITCOMMON_H__ */

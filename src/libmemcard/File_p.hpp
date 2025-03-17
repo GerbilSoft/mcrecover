@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBMEMCARD_FILE_P_HPP__
-#define __LIBMEMCARD_FILE_P_HPP__
+#pragma once
 
 #include "File.hpp"
 class Card;
@@ -143,5 +142,3 @@ public:
 	 */
 	void calculateChecksum(void);
 };
-
-#endif /* __LIBMEMCARD_FILE_P_HPP__ */

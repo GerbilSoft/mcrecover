@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_XMLTEMPLATEDIALOG_HPP__
-#define __MCRECOVER_XMLTEMPLATEDIALOG_HPP__
+#pragma once
 
 #include <QDialog>
 
@@ -36,5 +35,3 @@ protected:
 	// State change event (Used for switching the UI language at runtime.)
 	void changeEvent(QEvent *event) final;
 };
-
-#endif /* __MCRECOVER_XMLTEMPLATEDIALOG_HPP__ */

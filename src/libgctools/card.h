@@ -39,8 +39,7 @@ distribution.
 
 -------------------------------------------------------------*/
 
-#ifndef __MCRECOVER_CARD_H__
-#define __MCRECOVER_CARD_H__
+#pragma once
 
 #include <stdint.h>
 
@@ -221,5 +220,3 @@ typedef struct PACKED _card_bat
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __MCRECOVER_CARD_H__ */

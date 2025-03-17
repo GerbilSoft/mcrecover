@@ -9,8 +9,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBMEMCARD_GCICARD_HPP__
-#define __LIBMEMCARD_GCICARD_HPP__
+#pragma once
 
 #include "Card.hpp"
 
@@ -82,5 +81,3 @@ public:
 	 */
 	QString productName(void) const final;
 };
-
-#endif /* __LIBMEMCARD_GCICARD_HPP__ */

@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_VARREPLACE_HPP__
-#define __MCRECOVER_VARREPLACE_HPP__
+#pragma once
 
 // MemCard Recover includes.
 #include "VarModifierDef.hpp"
@@ -76,5 +75,3 @@ public:
 				  QHash<QString, QString> &vars,
 				  QDateTime *qDateTime);
 };
-
-#endif /* __MCRECOVER_VARREPLACE_HPP__ */

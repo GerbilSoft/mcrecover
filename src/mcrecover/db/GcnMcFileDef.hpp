@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_GCNMCFILEDEF_HPP__
-#define __MCRECOVER_GCNMCFILEDEF_HPP__
+#pragma once
 
 // C includes
 #include <stdint.h>
@@ -114,5 +113,3 @@ public:
 		dirEntry.length = 0;
 	}
 };
-
-#endif /* __MCRECOVER_GCNMCFILEDEF_HPP__ */

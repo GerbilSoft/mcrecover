@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_TRANSLATIONMGR_HPP__
-#define __MCRECOVER_TRANSLATIONMGR_HPP__
+#pragma once
 
 // Qt includes.
 #include <QtCore/QString>
@@ -47,5 +46,3 @@ public:
 	 */
 	QMap<QString, QString> enumerate(void) const;
 };
-
-#endif /* __MCRECOVER_TRANSLATIONMGR_HPP__ */

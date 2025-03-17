@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_WIDGETS_LANGUAGEMENU_HPP__
-#define __MCRECOVER_WIDGETS_LANGUAGEMENU_HPP__
+#pragma once
 
 #include <QMenu>
 
@@ -60,5 +59,3 @@ protected:
 	 */
 	void changeEvent(QEvent *event) final;
 };
-
-#endif /* __MCRECOVER_WIDGETS_LANGUAGEMENU_HPP__ */

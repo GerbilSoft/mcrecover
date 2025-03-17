@@ -2,7 +2,7 @@
  * GameCube Tools Library.                                                 *
  * vmu.h: Dreamcast VMU file system definitions.                           *
  *                                                                         *
- * Copyright (c) 2015 by David Korth.                                      *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -15,8 +15,7 @@
 
 // All structs are packed little-endian.
 
-#ifndef __LIBGCTOOLS_VMU_H__
-#define __LIBGCTOOLS_VMU_H__
+#pragma once
 
 #include <stdint.h>
 
@@ -287,5 +286,3 @@ typedef struct PACKED _vmu_card_icon_color_data
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __LIBGCTOOLS_VMU_H__ */

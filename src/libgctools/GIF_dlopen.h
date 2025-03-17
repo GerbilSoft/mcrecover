@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GIF_dlopen.h: giflib dlopen() wrapper.                                  *
  *                                                                         *
- * Copyright (c) 2014-2016 by David Korth.                                 *
+ * Copyright (c) 2014-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBGCTOOLS_GIF_DLOPEN_H__
-#define __LIBGCTOOLS_GIF_DLOPEN_H__
+#pragma once
 
 #ifdef _GIF_LIB_H_
 #error Do not include gif_lib.h when using GIF_dlopen.h
@@ -284,5 +283,3 @@ extern int GifDlBitSize(int n);
 	GifBitSize(n)
 
 #endif /* USE_INTERNAL_GIF */
-
-#endif /* __LIBGCTOOLS_GIF_DLOPEN_H__ */

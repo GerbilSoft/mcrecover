@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * TimeCodeEdit.hpp: sa_time_code editor widget.                           *
  *                                                                         *
- * Copyright (c) 2016-2018 by David Korth.                                 *
+ * Copyright (c) 2016-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_SONICADVENTURE_TIMECODEEDIT_HPP__
-#define __LIBSAVEEDIT_SONICADVENTURE_TIMECODEEDIT_HPP__
+#pragma once
 
 #include <QtCore/QMetaType>
 #include <QWidget>
@@ -234,5 +233,3 @@ class TimeCodeEdit : public QWidget
 };
 
 Q_DECLARE_METATYPE(TimeCodeEdit::DisplayMode)
-
-#endif /* __LIBSAVEEDIT_SONICADVENTURE_TIMECODEEDIT_HPP__ */

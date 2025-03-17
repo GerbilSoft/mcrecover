@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBMEMCARD_GCNFILE_HPP__
-#define __LIBMEMCARD_GCNFILE_HPP__
+#pragma once
 
 #include "File.hpp"
 // TODO: Remove card.h from here.
@@ -122,5 +121,3 @@ public:
 	 */
 	const card_direntry *dirEntry(void) const;
 };
-
-#endif /* __LIBMEMCARD_GCNFILE_HPP__ */

@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_WIDGETS_STATUSBARMANAGER_HPP__
-#define __MCRECOVER_WIDGETS_STATUSBARMANAGER_HPP__
+#pragma once
 
 // Qt includes
 #include <QtCore/QObject>
@@ -146,5 +145,3 @@ private slots:
 	 */
 	void hideProgressBar_slot(void);
 };
-
-#endif /* __MCRECOVER_WIDGETS_STATUSBARMANAGER_HPP__ */

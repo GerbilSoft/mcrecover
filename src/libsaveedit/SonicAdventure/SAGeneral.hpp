@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * SAGeneral.hpp: Sonic Adventure - General settings editor.               *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_SONICADVENTURE_SAGENERAL_HPP__
-#define __LIBSAVEEDIT_SONICADVENTURE_SAGENERAL_HPP__
+#pragma once
 
 #include "SADXEditWidget.hpp"
 
@@ -74,5 +73,3 @@ class SAGeneral : public SADXEditWidget
 		 */
 		int saveDX(_sadx_extra_save_slot *sadx_extra_save) final;
 };
-
-#endif /* __LIBSAVEEDIT_SONICADVENTURE_SAGENERAL_HPP__ */

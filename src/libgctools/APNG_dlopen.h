@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program.                                  *
  * APNG_dlopen.h: APNG dlopen()'d function pointers.                       *
  *                                                                         *
- * Copyright (c) 2014 by David Korth.                                      *
+ * Copyright (c) 2014-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBGCTOOLS_APNG_DLOPEN_H__
-#define __LIBGCTOOLS_APNG_DLOPEN_H__
+#pragma once
 
 #include "config.libgctools.h"
 #include <png.h>
@@ -224,5 +223,3 @@ PNG_EXPORT(264, void, png_write_frame_tail, (png_structp png_ptr,
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __LIBGCTOOLS_APNG_DLOPEN_H__ */

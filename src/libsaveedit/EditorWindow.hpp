@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * EditorWindow.hpp: Save file editor.                                     *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_EDITORWINDOW_HPP__
-#define __LIBSAVEEDIT_EDITORWINDOW_HPP__
+#pragma once
 
 #include <QMainWindow>
 
@@ -92,5 +91,3 @@ class EditorWindow : public QMainWindow
 		 */
 		void on_actionReload_triggered(void);
 };
-
-#endif /* __LIBSAVEEDIT_EDITORWINDOW_HPP__ */

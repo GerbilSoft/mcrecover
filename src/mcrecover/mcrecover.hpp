@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program.                                  *
  * mcrecover.hpp: Main program.                                            *
  *                                                                         *
- * Copyright (c) 2011-2013 by David Korth.                                 *
+ * Copyright (c) 2011-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MCRECOVER_HPP__
-#define __MCRECOVER_MCRECOVER_HPP__
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,5 +27,3 @@ int mcrecover_main(int argc, char *argv[]);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __MCRECOVER_MCRECOVER_HPP__ */

@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GIF_dlopen.h: giflib dlopen() wrapper. (struct definitions)             *
  *                                                                         *
- * Copyright (c) 2014-2019 by David Korth.                                 *
+ * Copyright (c) 2014-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBGCTOOLS_GIF_DLOPEN_STRUCT_H__
-#define __LIBGCTOOLS_GIF_DLOPEN_STRUCT_H__
+#pragma once
 
 #include "GIF_dlopen.h"
 
@@ -263,5 +262,3 @@ typedef struct GifFileType_v40 {
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __LIBGCTOOLS_GIF_DLOPEN_STRUCT_H__ */

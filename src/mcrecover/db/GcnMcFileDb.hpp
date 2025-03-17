@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_GCNMCFILEDB_HPP__
-#define __MCRECOVER_GCNMCFILEDB_HPP__
+#pragma once
 
 // Card definitions.
 #include "card.h"
@@ -85,5 +84,3 @@ public:
 	 */
 	bool addChecksumDefs(GcnFile *file) const;
 };
-
-#endif /* __MCRECOVER_GCNMCFILEDB_HPP__ */

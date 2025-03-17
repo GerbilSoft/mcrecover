@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBMEMCARD_FILE_HPP__
-#define __LIBMEMCARD_FILE_HPP__
+#pragma once
 
 #include "Card.hpp"
 
@@ -336,5 +335,3 @@ public:
 	 */
 	bool isReadOnly(void) const;
 };
-
-#endif /* __LIBMEMCARD_FILE_HPP__ */

@@ -6,13 +6,12 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_CONFIG_CONFIGDEFAULTS_HPP__
-#define __MCRECOVER_CONFIG_CONFIGDEFAULTS_HPP__
+#pragma once
 
-// C includes.
+// C includes
 #include <stdint.h>
 
-// Qt includes.
+// Qt includes
 #include <QtCore/QHash>
 #include <QtCore/QString>
 
@@ -101,5 +100,3 @@ inline const ConfigDefaults::DefaultSetting *ConfigDefaults::get(const QString &
 {
 	return defaultSettingsHash.value(key, nullptr);
 }
-
-#endif /* __MCRECOVER_CONFIG_CONFIGDEFAULTS_HPP__ */

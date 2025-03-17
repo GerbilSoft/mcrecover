@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * SALevelClearCount.hpp: Sonic Adventure - Level Clear Count editor.      *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBSAVEEDIT_SONICADVENTURE_SALEVELCLEARCOUNT_HPP__
-#define __LIBSAVEEDIT_SONICADVENTURE_SALEVELCLEARCOUNT_HPP__
+#pragma once
 
 #include "SAEditWidget.hpp"
 
@@ -72,5 +71,3 @@ class SALevelClearCount : public SAEditWidget
 		 */
 		bool eventFilter(QObject *watched, QEvent *event) final;
 };
-
-#endif /* __LIBSAVEEDIT_SONICADVENTURE_SALEVELCLEARCOUNT_HPP__ */

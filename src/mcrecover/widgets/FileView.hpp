@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_WIDGETS_FILEVIEW_HPP__
-#define __MCRECOVER_WIDGETS_FILEVIEW_HPP__
+#pragma once
 
 #include <QWidget>
 
@@ -89,5 +88,3 @@ protected slots:
 	 */
 	void on_btnEdit_clicked(void);
 };
-
-#endif /* __MCRECOVER_WIDGETS_FILEVIEW_HPP__ */

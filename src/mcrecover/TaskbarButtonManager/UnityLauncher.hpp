@@ -2,12 +2,11 @@
  * GameCube Memory Card Recovery Program.                                  *
  * UnityLauncher.cpp: Unity Launcher implementation.                       *
  *                                                                         *
- * Copyright (c) 2013-2018 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_TASKBARBUTTONMANAGER_UNITYLAUNCHER_HPP__
-#define __MCRECOVER_TASKBARBUTTONMANAGER_UNITYLAUNCHER_HPP__
+#pragma once
 
 #include "TaskbarButtonManager.hpp"
 
@@ -51,5 +50,3 @@ class UnityLauncher : public TaskbarButtonManager
 		 */
 		void update(void) final;
 };
-
-#endif /* __MCRECOVER_TASKBARBUTTONMANAGER_UNITYLAUNCHER_HPP__ */

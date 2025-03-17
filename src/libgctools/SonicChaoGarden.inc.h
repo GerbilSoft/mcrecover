@@ -2,12 +2,11 @@
  * GameCube Tools Library.                                                 *
  * SonicChaoGarden.inc.h: SonicChaoGarden algorithm data.                  *
  *                                                                         *
- * Copyright (c) 2013 by David Korth.                                      *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBGCTOOLS_SONICCHAOGARDEN_INC_H__
-#define __LIBGCTOOLS_SONICCHAOGARDEN_INC_H__
+#pragma once
 
 // C includes.
 #include <stdint.h>
@@ -66,5 +65,3 @@ static const uint32_t SonicChaoGarden_CRC32_Table[256] = {
 	0xDCDE5729, 0xEBD967BF, 0xB3667A2E, 0x82614AB8, 0xD9681B02,
 	0xEE6F2B94, 0xB40BBE37, 0x810C8EA1, 0xDA05DF1B, 0xED02EF8D
 };
-
-#endif /* __LIBGCTOOLS_SONICCHAOGARDEN_INC_H__ */

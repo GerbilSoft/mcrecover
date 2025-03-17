@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __MCRECOVER_MESSAGEWIDGET_HPP__
-#define __MCRECOVER_MESSAGEWIDGET_HPP__
+#pragma once
 
 #include <QWidget>
 
@@ -109,5 +108,3 @@ signals:
 	 */
 	void dismissed(bool timeout);
 };
-
-#endif /* __MCRECOVER_MESSAGEWIDGET_HPP__ */

@@ -2,17 +2,16 @@
  * GameCube Memory Card Recovery Program [libmemcard]                      *
  * TimeFuncs.hpp: Time conversion functions.                               *
  *                                                                         *
- * Copyright (c) 2012-2018 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBMEMCARD_TIMEFUNCS_HPP__
-#define __LIBMEMCARD_TIMEFUNCS_HPP__
+#pragma once
 
-// C includes.
+// C includes
 #include <stdint.h>
 
-// Qt includes.
+// Qt includes
 #include <QtCore/QDateTime>
 
 // from vmu.h
@@ -54,5 +53,3 @@ uint32_t toGcnTimestamp(const QDateTime &qDateTime);
 QDateTime fromVmuTimestamp(const struct _vmu_timestamp &vmuTimestamp);
 
 }
-
-#endif /* __LIBMEMCARD_TIMEFUNCS_HPP__ */

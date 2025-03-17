@@ -6,8 +6,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
-#ifndef __LIBGCTOOLS_GCIMAGEWRITER_HPP__
-#define __LIBGCTOOLS_GCIMAGEWRITER_HPP__
+#pragma once
 
 // C includes.
 #include <stdint.h>
@@ -175,5 +174,3 @@ public:
 		  const std::vector<int> *gcIconDelays,
 		  AnimImageFormat animImgf);
 };
-
-#endif /* __LIBGCTOOLS_CHECKSUM_HPP__ */
