@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * sa_defs.h: Sonic Adventure - structure definitions.                     *
  *                                                                         *
- * Copyright (c) 2015-2021 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -11,8 +11,8 @@
  * - https://github.com/sonicretro/sa_tools/tree/master/SASave
  *
  * Additional references:
- * - http://rnhart.net/articles/sa-savefile.htm
- * - http://info.sonicretro.org/SCHG:Sonic_Adventure/Main_Save_File
+ * - https://rnhart.net/articles/sa-savefile.htm
+ * - https://info.sonicretro.org/SCHG:Sonic_Adventure/Main_Save_File
  */
 
 // All structs are in little-endian.

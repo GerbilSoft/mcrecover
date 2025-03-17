@@ -557,7 +557,7 @@ int SASubGames::load(const sa_save_slot *sa_save)
 	// TODO: Metal Sonic.
 
 	// Emblems. (Yes, it's in a weird order; no, I don't know why.)
-	// TODO: Verify these. (Source: http://info.sonicretro.org/SCHG:Sonic_Adventure/Main_Save_File)
+	// TODO: Verify these. (Source: https://info.sonicretro.org/SCHG:Sonic_Adventure/Main_Save_File)
 	d->ui.chkTwinkleCircuit_2->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 96));
 	d->ui.chkSkyChaseAct1_2->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 97));
 	d->ui.chkSkyChaseAct2_2->setChecked(SA_TEST_EMBLEM(sa_save->emblems, 98));
@@ -595,7 +595,7 @@ int SASubGames::save(sa_save_slot *sa_save)
 	memcpy(&sa_save->boss_attack,      &d->boss_attack,      sizeof(sa_save->boss_attack));
 
 	// Emblems. (Yes, it's in a weird order; no, I don't know why.)
-	// TODO: Verify these. (Source: http://info.sonicretro.org/SCHG:Sonic_Adventure/Main_Save_File)
+	// TODO: Verify these. (Source: https://info.sonicretro.org/SCHG:Sonic_Adventure/Main_Save_File)
 	// TODO: Helper function to get emblem by index.
 	sa_save->emblems[12] = 0;
 	sa_save->emblems[12] |= (d->ui.chkTwinkleCircuit_2->isChecked() ? 0x01 : 0x00);

@@ -239,7 +239,7 @@ QString AboutDialogPrivate::GetCredits(void)
 		{CT_CONTINUE,	"gukid", nullptr, nullptr},			// NTSC-U
 
 		{CT_TRANSLATORS,	"Overlord", nullptr, "en_GB"},
-		{CT_CONTINUE,	"Kevin L\xC3\xB3pez", "http://kelopez.cl/", "es_CL"},
+		{CT_CONTINUE,	"Kevin L\xC3\xB3pez", "https://kelopez.cl/", "es_CL"},
 		{CT_CONTINUE,	"Egor305", nullptr, "ru_RU"},
 
 		{CT_MAX, nullptr, nullptr, nullptr}
@@ -363,7 +363,7 @@ QString AboutDialogPrivate::GetLibraries(void)
 	// TODO: Use richtext instead of plaintext?
 	sLibraries += QLatin1String(
 			"Copyright (C) 1995-2013 Jean-loup Gailly and Mark Adler.\n"
-			"http://www.zlib.net/\n");
+			"https://www.zlib.net/\n");
 	sLibraries += sLicense.arg(QLatin1String("zlib license"));
 #endif /* HAVE_ZLIB */
 
@@ -589,8 +589,8 @@ QString AboutDialogPrivate::GetSupport(void)
 
 	// Support sites.
 	static const supportSite_t supportSites[] = {
-		{QT_TRANSLATE_NOOP(AboutDialog, "Sonic Retro"), "http://forums.sonicretro.org/index.php?showtopic=32621"},
-		{QT_TRANSLATE_NOOP(AboutDialog, "GBAtemp"), "http://gbatemp.net/threads/gcn-memcard-recover.349406/"},
+		{QT_TRANSLATE_NOOP(AboutDialog, "Sonic Retro"), "https://forums.sonicretro.org/index.php?showtopic=32621"},
+		{QT_TRANSLATE_NOOP(AboutDialog, "GBAtemp"), "https://gbatemp.net/threads/gcn-memcard-recover.349406/"},
 		{nullptr, nullptr}
 	};
 
