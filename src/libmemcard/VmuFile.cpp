@@ -41,87 +41,87 @@ class VmuFilePrivate : public FilePrivate
 {
 	typedef FilePrivate super;
 
-	public:
-		/**
-		 * Initialize the VmuFile private class.
-		 * This constructor is for valid files.
-		 * @param q VmuFile.
-		 * @param card VmuCard.
-		 * @param direntry Directory Entry pointer.
-		 * @param mc_fat VMU FAT.
-		 */
-		VmuFilePrivate(VmuFile *q, VmuCard *card,
-			const vmu_dir_entry *dirEntry,
-			const vmu_fat *mc_fat);
+public:
+	/**
+	 * Initialize the VmuFile private class.
+	 * This constructor is for valid files.
+	 * @param q VmuFile
+	 * @param card VmuCard
+	 * @param direntry Directory Entry pointer
+	 * @param mc_fat VMU FAT
+	 */
+	VmuFilePrivate(VmuFile *q, VmuCard *card,
+		const vmu_dir_entry *dirEntry,
+		const vmu_fat *mc_fat);
 
-		virtual ~VmuFilePrivate();
+	virtual ~VmuFilePrivate();
 
-	protected:
-		Q_DECLARE_PUBLIC(VmuFile)
-	private:
-		Q_DISABLE_COPY(VmuFilePrivate)
+protected:
+	Q_DECLARE_PUBLIC(VmuFile)
+private:
+	Q_DISABLE_COPY(VmuFilePrivate)
 
-		/**
-		 * Load the file information.
-		 */
-		void loadFileInfo(void);
+	/**
+	 * Load the file information.
+	 */
+	void loadFileInfo(void);
 
-	public:
-		const vmu_fat *mc_fat;	// VMU FAT. (TODO: Do we need to store this?)
+public:
+	const vmu_fat *mc_fat;	// VMU FAT (TODO: Do we need to store this?)
 
-		/**
-		 * Directory entry.
-		 * This points to an entry within card's Directory Table.
-		 * NOTE: If this is a lost file, this was allocated by us,
-		 * and needs to be freed in the destructor.
-		 */
-		const vmu_dir_entry *dirEntry;
+	/**
+	 * Directory entry.
+	 * This points to an entry within card's Directory Table.
+	 * NOTE: If this is a lost file, this was allocated by us,
+	 * and needs to be freed in the destructor.
+	 */
+	const vmu_dir_entry *dirEntry;
 
-		// VMU file header.
-		// NOTE: Not allocated for ICONDATA_VMS.
-		vmu_file_header *fileHeader;
+	// VMU file header
+	// NOTE: Not allocated for ICONDATA_VMS.
+	vmu_file_header *fileHeader;
 
-		// File descriptions.
-		QString vmu_desc;
-		QString dc_desc;
+	// File descriptions
+	QString vmu_desc;
+	QString dc_desc;
 
-		// VMU icons. (ICONDATA_VMS)
-		// NOTE: These must NOT be the same as
-		// gcBanner or any icon in gcIcons.
-		bool isIconData;
-		GcImage *vmu_icon_mono;
-		GcImage *vmu_icon_color;
+	// VMU icons (ICONDATA_VMS)
+	// NOTE: These must NOT be the same as
+	// gcBanner or any icon in gcIcons.
+	bool isIconData;
+	GcImage *vmu_icon_mono;
+	GcImage *vmu_icon_color;
 
-		/**
-		 * Load the banner image.
-		 * @return GcImage containing the banner image, or nullptr on error.
-		 */
-		GcImage *loadBannerImage(void) final;
+	/**
+	 * Load the banner image.
+	 * @return GcImage containing the banner image, or nullptr on error.
+	 */
+	GcImage *loadBannerImage(void) final;
 
-		/**
-		 * Load the icon images.
-		 * @return QVector<GcImage*> containing the icon images, or empty QVector on error.
-		 */
-		QVector<GcImage*> loadIconImages(void) final;
+	/**
+	 * Load the icon images.
+	 * @return QVector<GcImage*> containing the icon images, or empty QVector on error.
+	 */
+	QVector<GcImage*> loadIconImages(void) final;
 
-		/**
-		 * Load the icon images.
-		 * Special version for ICONDATA_VMS.
-		 *
-		 * NOTE: This function ONLY sets the internal variables
-		 * vmu_icon_mono and vmu_icon_color. The caller must
-		 * check those variables afterwards.
-		 */
-		void loadIconImages_ICONDATA_VMS(void);
+	/**
+	 * Load the icon images.
+	 * Special version for ICONDATA_VMS.
+	 *
+	 * NOTE: This function ONLY sets the internal variables
+	 * vmu_icon_mono and vmu_icon_color. The caller must
+	 * check those variables afterwards.
+	 */
+	void loadIconImages_ICONDATA_VMS(void);
 };
 
 /**
  * Initialize the VmuFile private class.
  * This constructor is for valid files.
- * @param q VmuFile.
- * @param card VmuCard.
- * @param direntry Directory Entry pointer.
- * @param mc_fat VMU FAT.
+ * @param q VmuFile
+ * @param card VmuCard
+ * @param direntry Directory Entry pointer
+ * @param mc_fat VMU FAT
  */
 VmuFilePrivate::VmuFilePrivate(VmuFile *q, VmuCard *card,
 		const vmu_dir_entry *dirEntry,
@@ -169,7 +169,7 @@ VmuFilePrivate::VmuFilePrivate(VmuFile *q, VmuCard *card,
 	// starting address is 16-bit.
 	uint32_t next_block = dirEntry->address;
 	if (next_block < (uint32_t)totalUserBlocks && next_block != VMU_FAT_BLOCK_LAST_IN_FILE) {
-		fatEntries.append(next_block);
+		fatEntries.push_back(next_block);
 
 		// Go through the rest of the blocks.
 		for (int i = size; i > 1; i--) {
@@ -181,7 +181,7 @@ VmuFilePrivate::VmuFilePrivate(VmuFile *q, VmuCard *card,
 				// Next block is invalid.
 				break;
 			}
-			fatEntries.append(next_block);
+			fatEntries.push_back(next_block);
 		}
 	}
 
@@ -534,8 +534,8 @@ VmuFile::VmuFile(VmuCard *card,
 		checksumDef.endian = Checksum::ChkEndian::Little;
 
 		// TODO: Optimize this?
-		QVector<Checksum::ChecksumDef> checksumDefs;
-		checksumDefs.append(checksumDef);
+		std::vector<Checksum::ChecksumDef> checksumDefs;
+		checksumDefs.push_back(checksumDef);
 		setChecksumDefs(checksumDefs);
 	}
 }

@@ -42,8 +42,8 @@ using std::vector;
 
 /**
  * Initialize the FilePrivate private class.
- * @param q File object.
- * @param card Card this file belongs to.
+ * @param q File object
+ * @param card Card this file belongs to
  */
 FilePrivate::FilePrivate(File *q, Card *card)
 	: q_ptr(q)
@@ -64,7 +64,7 @@ FilePrivate::~FilePrivate()
 
 /**
  * Get the file size, in blocks.
- * @return File size, in blocks.
+ * @return File size, in blocks
  */
 int FilePrivate::size(void) const
 {
@@ -77,7 +77,7 @@ int FilePrivate::size(void) const
 
 /**
  * Convert a file block number to a physical block number.
- * @param fileBlock File block number.
+ * @param fileBlock File block number
  * @return Physical block number, or negative on error.
  */
 uint16_t FilePrivate::fileBlockAddrToPhysBlockAddr(uint16_t fileBlock) const
@@ -116,8 +116,8 @@ QByteArray FilePrivate::loadFileData(void)
 
 /**
  * Read the specified range from the file.
- * @param blockStart First block.
- * @param len Length, in blocks.
+ * @param blockStart First block
+ * @param len Length, in blocks
  * @return QByteArray with file data, or empty QByteArray on error.
  */
 QByteArray FilePrivate::readBlocks(uint16_t blockStart, int len)
@@ -152,8 +152,8 @@ QByteArray FilePrivate::readBlocks(uint16_t blockStart, int len)
 
 /**
  * Strip invalid DOS characters from a filename.
- * @param filename Filename.
- * @param replaceChar Replacement character.
+ * @param filename Filename
+ * @param replaceChar Replacement character
  * @return Filename with invalid DOS characters replaced with replaceChar.
  */
 QString FilePrivate::StripInvalidDosChars(
@@ -191,9 +191,9 @@ QString FilePrivate::StripInvalidDosChars(
 /**
  * Attempt to decode text as Shift-JIS.
  * If that fails, use cp1252.
- * @param str Text data.
- * @param len Length of str.
- * @return Unicode QString.
+ * @param str Text data
+ * @param len Length of str
+ * @return Unicode QString
  */
 QString FilePrivate::decodeText_SJISorCP1252(const char *str, int len)
 {
@@ -346,8 +346,8 @@ void FilePrivate::calculateChecksum(void)
 	uint8_t *data = reinterpret_cast<uint8_t*>(fileData.data());
 
 	// Process all of the checksum definitions.
-	for (int i = 0; i < (int)checksumDefs.size(); i++) {
-		const Checksum::ChecksumDef &checksumDef = checksumDefs.at(i);
+	for (size_t i = 0; i < checksumDefs.size(); i++) {
+		const Checksum::ChecksumDef &checksumDef = checksumDefs[i];
 
 		if (checksumDef.algorithm == Checksum::ChkAlgorithm::None ||
 		    checksumDef.algorithm >= Checksum::ChkAlgorithm::Max ||
@@ -482,8 +482,8 @@ void FilePrivate::calculateChecksum(void)
  * be subclassed by a system-specific class. The subclass
  * constructor must then initialize the File, including
  * fatEntries and other properties.
- * @param d FilePrivate-derived private class.
- * @param card Card object.
+ * @param d FilePrivate-derived private class
+ * @param card Card object
  */
 File::File(FilePrivate *d, Card *card)
 	: super(card)
@@ -502,7 +502,7 @@ File::~File()
 
 /**
  * Get the internal filename.
- * @return internal filename.
+ * @return internal filename
  */
 QString File::filename(void) const
 {
@@ -512,9 +512,9 @@ QString File::filename(void) const
 
 /**
  * Get this file's FAT entries.
- * @return FAT entries.
+ * @return FAT entries
  */
-QVector<uint16_t> File::fatEntries(void) const
+std::vector<uint16_t> File::fatEntries(void) const
 {
 	Q_D(const File);
 	return d->fatEntries;
@@ -534,9 +534,9 @@ QByteArray File::loadFileData(void)
  * Write data to the file.
  * NOTE: This function cannot expand files at the moment.
  * Length+size must be <= total file size.
- * @param address Address to write to.
- * @param data Data to write.
- * @param length Amount of data to write, in bytes.
+ * @param address Address to write to
+ * @param data Data to write
+ * @param length Amount of data to write, in bytes
  * @return Bytes written on success; negative POSIX error code on error.
  */
 int File::write(uint32_t address, const void *const data, uint32_t length)
@@ -620,7 +620,7 @@ QString File::gameID(void) const
 
 /**
  * Get the last modified time.
- * @return Last modified time.
+ * @return Last modified time
  */
 QDateTime File::mtime(void) const
 {
@@ -633,7 +633,7 @@ QDateTime File::mtime(void) const
  * This is for UI purposes only.
  * Description may contain a '\0' to separate
  * the main description from a sub-description.
- * @return File's description.
+ * @return File's description
  */
 QString File::description(void) const
 {
@@ -645,7 +645,7 @@ QString File::description(void) const
  * Get the file's mode. (attribute, permissions)
  * NOTE: Values may be system-specific.
  * FIXME: Use system-independent values?
- * @return File mode.
+ * @return File mode
  */
 uint32_t File::mode(void) const
 {
@@ -655,7 +655,7 @@ uint32_t File::mode(void) const
 
 /**
  * Get the file size, in blocks.
- * @return File size, in blocks.
+ * @return File size, in blocks
  */
 int File::size(void) const
 {
@@ -677,7 +677,7 @@ QPixmap File::banner(void) const
 
 /**
  * Get the number of icons in the file.
- * @return Number of icons.
+ * @return Number of icons
  */
 int File::iconCount(void) const
 {
@@ -687,7 +687,7 @@ int File::iconCount(void) const
 
 /**
  * Get an icon from the file.
- * @param idx Icon number.
+ * @param idx Icon number
  * @return Icon, or null QPixmap on error.
  */
 QPixmap File::icon(int idx) const
@@ -701,8 +701,8 @@ QPixmap File::icon(int idx) const
 /**
  * Get the delay for a given icon.
  * FIXME: Make this use system-independent values.
- * @param idx Icon number.
- * @return Icon delay.
+ * @param idx Icon number
+ * @return Icon delay
  */
 int File::iconDelay(int idx) const
 {
@@ -716,7 +716,7 @@ int File::iconDelay(int idx) const
  * Get the icon animation mode.
  * FIXME: Use system-independent values.
  * Currently uses GCN values.
- * @return Icon animation mode.
+ * @return Icon animation mode
  */
 int File::iconAnimMode(void) const
 {
@@ -768,7 +768,7 @@ int File::exportToFile(const QString &filename)
 
 /**
  * Save the banner image.
- * @param filenameNoExt Filename for the GCI file, sans extension.
+ * @param filenameNoExt Filename for the GCI file, sans extension
  * @return 0 on success; non-zero on error.
  * TODO: Error code constants.
  */
@@ -807,7 +807,7 @@ int File::saveBanner(const QString &filenameNoExt) const
 
 /**
  * Save the banner image.
- * @param qioDevice QIODevice to write the banner image to.
+ * @param qioDevice QIODevice to write the banner image to
  * @return 0 on success; non-zero on error.
  * TODO: Error code constants.
  */
@@ -833,8 +833,8 @@ int File::saveBanner(QIODevice *qioDevice) const
 
 /**
  * Save the icon.
- * @param filenameNoExt Filename for the icon, sans extension.
- * @param animImgf Animated image format to use for animated icons.
+ * @param filenameNoExt Filename for the icon, sans extension
+ * @param animImgf Animated image format to use for animated icons
  * @return 0 on success; non-zero on error.
  * TODO: Error code constants.
  */
@@ -944,9 +944,9 @@ int File::saveIcon(const QString &filenameNoExt,
 
 /**
  * Get the checksum definitions.
- * @return Checksum definitions.
+ * @return Checksum definitions
  */
-QVector<Checksum::ChecksumDef> File::checksumDefs(void) const
+std::vector<Checksum::ChecksumDef> File::checksumDefs(void) const
 {
 	Q_D(const File);
 	return d->checksumDefs;
@@ -954,9 +954,9 @@ QVector<Checksum::ChecksumDef> File::checksumDefs(void) const
 
 /**
  * Set the checksum definitions.
- * @param checksumDefs Checksum definitions.
+ * @param checksumDefs Checksum definitions
  */
-void File::setChecksumDefs(const QVector<Checksum::ChecksumDef> &checksumDefs)
+void File::setChecksumDefs(const std::vector<Checksum::ChecksumDef> &checksumDefs)
 {
 	Q_D(File);
 	d->checksumDefs = checksumDefs;
@@ -967,7 +967,7 @@ void File::setChecksumDefs(const QVector<Checksum::ChecksumDef> &checksumDefs)
  * Get the checksum values.
  * @return Checksum values, or empty QVector if no checksum definitions were set.
  */
-QVector<Checksum::ChecksumValue> File::checksumValues(void) const
+std::vector<Checksum::ChecksumValue> File::checksumValues(void) const
 {
 	Q_D(const File);
 	return d->checksumValues;
@@ -976,61 +976,37 @@ QVector<Checksum::ChecksumValue> File::checksumValues(void) const
 /**
  * Get the checksum algorithm.
  * NOTE: We're assuming each file only uses one algorithm...
- * @return Checksum algorithm.
+ * @return Checksum algorithm
  */
 Checksum::ChkAlgorithm File::checksumAlgorithm(void) const
 {
 	Q_D(const File);
-	if (d->checksumDefs.isEmpty()) {
+	if (d->checksumDefs.empty()) {
 		return Checksum::ChkAlgorithm::None;
 	}
-	return d->checksumDefs.at(0).algorithm;
+	return d->checksumDefs[0].algorithm;
 }
 
 /**
  * Get the checksum status.
- * @return Checksum status.
+ * @return Checksum status
  */
 Checksum::ChkStatus File::checksumStatus(void) const
 {
 	Q_D(const File);
-
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-	// Qt6 removed QVector::toStdVector().
-	// TODO: Convert these to std::vector<>?
-	std::vector<Checksum::ChecksumValue> vec;
-	vec.reserve(d->checksumValues.size());
-	for (const Checksum::ChecksumValue &p : d->checksumValues) {
-		vec.push_back(p);
-	}
-	return Checksum::ChecksumStatus(vec);
-#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
-	return Checksum::ChecksumStatus(d->checksumValues.toStdVector());
-#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
+	return Checksum::ChecksumStatus(d->checksumValues);
 }
 
 /**
  * Format checksum values as HTML for display purposes.
- * @return QVector containing one or two HTML strings.
+ * @return QVector containing one or two HTML strings:
  * - String 0 contains the actual checksums.
  * - String 1, if present, contains the expected checksums.
  */
 QVector<QString> File::checksumValuesFormatted(void) const
 {
 	Q_D(const File);
-
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-	// Qt6 removed QVector::toStdVector().
-	// TODO: Convert these to std::vector<>?
-	std::vector<Checksum::ChecksumValue> vec;
-	vec.reserve(d->checksumValues.size());
-	for (const Checksum::ChecksumValue &p : d->checksumValues) {
-		vec.push_back(p);
-	}
-	vector<string> vs = Checksum::ChecksumValuesFormatted(vec);
-#else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
-	vector<string> vs = Checksum::ChecksumValuesFormatted(d->checksumValues.toStdVector());
-#endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
+	const vector<string> vs = Checksum::ChecksumValuesFormatted(d->checksumValues);
 
 	QVector<QString> ret;
 	ret.reserve((int)vs.size());

@@ -2,18 +2,21 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnMcFileDef.hpp: GCN Memory Card File Definition class.                *
  *                                                                         *
- * Copyright (c) 2013-2018 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
 #ifndef __MCRECOVER_GCNMCFILEDEF_HPP__
 #define __MCRECOVER_GCNMCFILEDEF_HPP__
 
-// C includes.
+// C includes
 #include <stdint.h>
 #include <string.h>
 
-// Qt includes.
+// C++ includes
+#include <vector>
+
+// Qt includes
 #include <QtCore/QString>
 #include <QtCore/QHash>
 #include <QtCore/QRegularExpression>
@@ -22,94 +25,94 @@
 #include "VarModifierDef.hpp"
 
 class GcnMcFileDef {
-	public:
-		enum regions_t {
-			REGION_JPN = (1 << 0),
-			REGION_USA = (1 << 1),
-			REGION_EUR = (1 << 2),
-			REGION_KOR = (1 << 3),
-		};
+public:
+	enum regions_t {
+		REGION_JPN = (1 << 0),
+		REGION_USA = (1 << 1),
+		REGION_EUR = (1 << 2),
+		REGION_KOR = (1 << 3),
+	};
 
-	private:
-		Q_DISABLE_COPY(GcnMcFileDef);
+private:
+	Q_DISABLE_COPY(GcnMcFileDef);
 
-	public:
-		// Game name.
-		QString gameName;
+public:
+	// Game name
+	QString gameName;
 
-		// File information.
-		// Distinguishes between different types
-		// of files saved by a single game.
-		QString fileInfo;
+	// File information
+	// Distinguishes between different types
+	// of files saved by a single game.
+	QString fileInfo;
 
-		// ID6. (gamecode, company)
-		union {
-			char id6[6];
-			struct {
-				char gamecode[4];
-				char company[2];
-			};
-		};
-
-		// Regions this file definition applies to.
-		uint8_t regions;
-
+	// ID6 (gamecode, company)
+	union {
+		char id6[6];
 		struct {
-			/**
-			 * Comment search address.
-			 * This is also used for dirEntry.
-			 */
-			uint32_t address;
+			char gamecode[4];
+			char company[2];
+		};
+	};
 
-			QString gameDesc;	// regex
-			QString fileDesc;	// regex
+	// Regions this file definition applies to
+	uint8_t regions;
 
-			// Regular expressions.
-			QRegularExpression gameDesc_regex;
-			QRegularExpression fileDesc_regex;
-		} search;
-
+	struct {
 		/**
-		 * Checksum definitions.
-		 * Some files have more than one checksum.
+		 * Comment search address
+		 * This is also used for dirEntry.
 		 */
-		QVector<Checksum::ChecksumDef> checksumDefs;
+		uint32_t address;
 
-		struct {
-			QString filename;
-			uint8_t bannerFormat;
-			uint32_t iconAddress;
-			uint16_t iconFormat;
-			uint16_t iconSpeed;
-			uint8_t permission;
-			uint16_t length;	// Length, in blocks.
+		QString gameDesc;	// regex
+		QString fileDesc;	// regex
 
-			// NOTE: commentAddress is implied by search.address.
-			//uint32_t commentAddress;
-		} dirEntry;
+		// Regular expressions
+		QRegularExpression gameDesc_regex;
+		QRegularExpression fileDesc_regex;
+	} search;
 
-		/**
-		 * Variable modifiers.
-		 * - Key: Variable ID.
-		 * - Value: Variable modifier definition.
-		 */
-		QHash<QString, VarModifierDef> varModifiers;
+	/**
+	 * Checksum definitions
+	 * Some files have more than one checksum.
+	 */
+	std::vector<Checksum::ChecksumDef> checksumDefs;
 
-		// Make sure all fields are initialized.
-		GcnMcFileDef()
-		{
-			this->regions = 0;
-			memset(id6, 0, sizeof(id6));
+	struct {
+		QString filename;
+		uint8_t bannerFormat;
+		uint32_t iconAddress;
+		uint16_t iconFormat;
+		uint16_t iconSpeed;
+		uint8_t permission;
+		uint16_t length;	// Length, in blocks.
 
-			search.address = 0;
+		// NOTE: commentAddress is implied by search.address.
+		//uint32_t commentAddress;
+	} dirEntry;
 
-			dirEntry.bannerFormat = 0;
-			dirEntry.iconAddress = 0;
-			dirEntry.iconFormat = 0;
-			dirEntry.iconSpeed = 0;
-			dirEntry.permission = 0;
-			dirEntry.length = 0;
-		}
+	/**
+	 * Variable modifiers
+	 * - Key: Variable ID.
+	 * - Value: Variable modifier definition.
+	 */
+	QHash<QString, VarModifierDef> varModifiers;
+
+	// Make sure all fields are initialized.
+	GcnMcFileDef()
+	{
+		this->regions = 0;
+		memset(id6, 0, sizeof(id6));
+
+		search.address = 0;
+
+		dirEntry.bannerFormat = 0;
+		dirEntry.iconAddress = 0;
+		dirEntry.iconFormat = 0;
+		dirEntry.iconSpeed = 0;
+		dirEntry.permission = 0;
+		dirEntry.length = 0;
+	}
 };
 
 #endif /* __MCRECOVER_GCNMCFILEDEF_HPP__ */

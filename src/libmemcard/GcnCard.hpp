@@ -15,8 +15,9 @@
 #include "Checksum.hpp"
 #include "GcnSearchData.hpp"
 
-// C++ includes.
+// C++ includes
 #include <list>
+#include <vector>
 
 class GcnFile;
 
@@ -29,97 +30,97 @@ class GcnCard : public Card
 	// TODO: Register Checksum::ChecksumValue metatype?
 	//Q_PROPERTY(Checksum::ChecksumValue headerChecksumValue READ headerChecksumValue)
 
-	protected:
-		explicit GcnCard(QObject *parent = 0);
-	public:
-		virtual ~GcnCard();
+protected:
+	explicit GcnCard(QObject *parent = 0);
+public:
+	virtual ~GcnCard();
 
-	protected:
-		Q_DECLARE_PRIVATE(GcnCard)
-	private:
-		Q_DISABLE_COPY(GcnCard)
+protected:
+	Q_DECLARE_PRIVATE(GcnCard)
+private:
+	Q_DISABLE_COPY(GcnCard)
 
-	public:
-		/**
-		 * Open an existing Memory Card image.
-		 * @param filename Filename.
-		 * @param parent Parent object.
-		 * @return GcnCard object, or nullptr on error.
-		 */
-		static GcnCard *open(const QString& filename, QObject *parent);
+public:
+	/**
+	 * Open an existing Memory Card image.
+	 * @param filename Filename
+	 * @param parent Parent object
+	 * @return GcnCard object, or nullptr on error.
+	 */
+	static GcnCard *open(const QString& filename, QObject *parent);
 
-		/**
-		 * Format a new Memory Card image.
-		 * @param filename Filename.
-		 * @param parent Parent object.
-		 * @return GcnCard object, or nullptr on error.
-		 */
-		static GcnCard *format(const QString& filename, QObject *parent);
+	/**
+	 * Format a new Memory Card image.
+	 * @param filename Filename
+	 * @param parent Parent object
+	 * @return GcnCard object, or nullptr on error.
+	 */
+	static GcnCard *format(const QString& filename, QObject *parent);
 
-	public:
-		/** File system **/
+public:
+	/** File system **/
 
-		/**
-		 * Set the active Directory Table index.
-		 * NOTE: This function reloads the file list, without lost files.
-		 * @param idx Active Directory Table index.
-		 */
-		void setActiveDatIdx(int idx) final;
+	/**
+	 * Set the active Directory Table index.
+	 * NOTE: This function reloads the file list, without lost files.
+	 * @param idx Active Directory Table index
+	 */
+	void setActiveDatIdx(int idx) final;
 
-		/**
-		 * Set the active Block Table index.
-		 * NOTE: This function reloads the file list, without lost files.
-		 * @param idx Active Block Table index.
-		 */
-		void setActiveBatIdx(int idx) final;
+	/**
+	 * Set the active Block Table index.
+	 * NOTE: This function reloads the file list, without lost files.
+	 * @param idx Active Block Table index
+	 */
+	void setActiveBatIdx(int idx) final;
 
-	public:
-		/** Card information **/
+public:
+	/** Card information **/
 
-		/**
-		 * Get the product name of this memory card.
-		 * This refers to the class in general,
-		 * and does not change based on size.
-		 * @return Product name.
-		 */
-		QString productName(void) const final;
+	/**
+	 * Get the product name of this memory card.
+	 * This refers to the class in general,
+	 * and does not change based on size.
+	 * @return Product name
+	 */
+	QString productName(void) const final;
 
-		/**
-		 * Get the used block map.
-		 * NOTE: This is only valid for regular files, not "lost" files.
-		 * @return Used block map.
-		 */
-		QVector<uint8_t> usedBlockMap(void);
+	/**
+	 * Get the used block map.
+	 * NOTE: This is only valid for regular files, not "lost" files.
+	 * @return Used block map
+	 */
+	QVector<uint8_t> usedBlockMap(void);
 
-		/**
-		 * Add a "lost" file.
-		 * NOTE: This is a debugging version.
-		 * Add more comprehensive versions with a block map specification.
-		 * @return GcnFile added to the GcnCard, or nullptr on error.
-		 */
-		GcnFile *addLostFile(const card_direntry *dirEntry);
+	/**
+	 * Add a "lost" file.
+	 * NOTE: This is a debugging version.
+	 * Add more comprehensive versions with a block map specification.
+	 * @return GcnFile added to the GcnCard, or nullptr on error.
+	 */
+	GcnFile *addLostFile(const card_direntry *dirEntry);
 
-		/**
-		 * Add a "lost" file.
-		 * @param dirEntry Directory entry.
-		 * @param fatEntries FAT entries.
-		 * @return GcnFile added to the GcnCard, or nullptr on error.
-		 */
-		GcnFile *addLostFile(const card_direntry *dirEntry, const QVector<uint16_t> &fatEntries);
+	/**
+	 * Add a "lost" file.
+	 * @param dirEntry Directory entry
+	 * @param fatEntries FAT entries
+	 * @return GcnFile added to the GcnCard, or nullptr on error.
+	 */
+	GcnFile *addLostFile(const card_direntry *dirEntry, const std::vector<uint16_t> &fatEntries);
 
-		/**
-		 * Add "lost" files.
-		 * @param filesFoundList List of SearchData.
-		 * @return List of GcnFiles added to the GcnCard, or empty list on error.
-		 */
-		QList<GcnFile*> addLostFiles(const std::list<GcnSearchData> &filesFoundList);
+	/**
+	 * Add "lost" files.
+	 * @param filesFoundList List of SearchData
+	 * @return List of GcnFiles added to the GcnCard, or empty list on error.
+	 */
+	QList<GcnFile*> addLostFiles(const std::list<GcnSearchData> &filesFoundList);
 
-		/**
-		 * Get the header checksum value.
-		 * NOTE: Header checksum is always AddInvDual16.
-		 * @return Header checksum value.
-		 */
-		Checksum::ChecksumValue headerChecksumValue(void) const;
+	/**
+	 * Get the header checksum value.
+	 * NOTE: Header checksum is always AddInvDual16.
+	 * @return Header checksum value
+	 */
+	Checksum::ChecksumValue headerChecksumValue(void) const;
 };
 
 #endif /* __LIBMEMCARD_GCNCARD_HPP__ */

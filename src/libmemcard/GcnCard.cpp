@@ -19,6 +19,7 @@
 // C++ includes.
 #include <limits>
 using std::list;
+using std::vector;
 
 #define NUM_ELEMENTS(x) ((int)(sizeof(x) / sizeof(x[0])))
 
@@ -776,8 +777,8 @@ void GcnCardPrivate::loadGcnFileList(void)
 		lstFiles_new.append(mcFile);
 
 		// Mark the file's blocks as used.
-		QVector<uint16_t> fatEntries = mcFile->fatEntries();
-		foreach (uint16_t block, fatEntries) {
+		std::vector<uint16_t> fatEntries = mcFile->fatEntries();
+		for (uint16_t block : fatEntries) {
 			if (block >= 5 && block < usedBlockMap.size()) {
 				// Valid block.
 				// Increment its entry in the usedBlockMap.
@@ -807,7 +808,7 @@ void GcnCardPrivate::loadGcnFileList(void)
 
 GcnCard::GcnCard(QObject *parent)
 	: super(new GcnCardPrivate(this), parent)
-{ }
+{}
 
 GcnCard::~GcnCard()
 {
@@ -816,8 +817,8 @@ GcnCard::~GcnCard()
 
 /**
  * Open an existing Memory Card image.
- * @param filename Filename.
- * @param parent Parent object.
+ * @param filename Filename
+ * @param parent Parent object
  * @return GcnCard object, or nullptr on error.
  */
 GcnCard *GcnCard::open(const QString& filename, QObject *parent)
@@ -830,8 +831,8 @@ GcnCard *GcnCard::open(const QString& filename, QObject *parent)
 
 /**
  * Format a new Memory Card image.
- * @param filename Filename.
- * @param parent Parent object.
+ * @param filename Filename
+ * @param parent Parent object
  * @return GcnCard object, or nullptr on error.
  */
 GcnCard *GcnCard::format(const QString& filename, QObject *parent)
@@ -849,7 +850,7 @@ GcnCard *GcnCard::format(const QString& filename, QObject *parent)
 /**
  * Set the active Directory Table index.
  * NOTE: This function reloads the file list, without lost files.
- * @param idx Active Directory Table index. (0 or 1)
+ * @param idx Active Directory Table index (0 or 1)
  */
 void GcnCard::setActiveDatIdx(int idx)
 {
@@ -869,7 +870,7 @@ void GcnCard::setActiveDatIdx(int idx)
 /**
  * Set the active Block Table index.
  * NOTE: This function reloads the file list, without lost files.
- * @param idx Active Block Table index. (0 or 1)
+ * @param idx Active Block Table index (0 or 1)
  */
 void GcnCard::setActiveBatIdx(int idx)
 {
@@ -892,7 +893,7 @@ void GcnCard::setActiveBatIdx(int idx)
  * Get the product name of this memory card.
  * This refers to the class in general,
  * and does not change based on size.
- * @return Product name.
+ * @return Product name
  */
 QString GcnCard::productName(void) const
 {
@@ -902,7 +903,7 @@ QString GcnCard::productName(void) const
 /**
  * Get the used block map.
  * NOTE: This is only valid for regular files, not "lost" files.
- * @return Used block map.
+ * @return Used block map
  */
 QVector<uint8_t> GcnCard::usedBlockMap(void)
 {
@@ -925,7 +926,7 @@ GcnFile *GcnCard::addLostFile(const card_direntry *dirEntry)
 
 	// Initialize the FAT entries baesd on start/length.
 	// TODO: Check for block collisions and skip used blocks.
-	QVector<uint16_t> fatEntries;
+	vector<uint16_t> fatEntries;
 	fatEntries.reserve(dirEntry->length);
 
 	const uint16_t maxBlockNum = ((uint16_t)totalPhysBlocks() - 1);
@@ -942,7 +943,7 @@ GcnFile *GcnCard::addLostFile(const card_direntry *dirEntry)
 		for (; length > 0; length--, block++) {
 			if (block > maxBlockNum)
 				block = 5;
-			fatEntries.append(block);
+			fatEntries.push_back(block);
 		}
 	}
 
@@ -951,11 +952,11 @@ GcnFile *GcnCard::addLostFile(const card_direntry *dirEntry)
 
 /**
  * Add a "lost" file.
- * @param dirEntry Directory entry.
- * @param fatEntries FAT entries.
+ * @param dirEntry Directory entry
+ * @param fatEntries FAT entries
  * @return GcnFile added to the GcnCard, or nullptr on error.
  */
-GcnFile *GcnCard::addLostFile(const card_direntry *dirEntry, const QVector<uint16_t> &fatEntries)
+GcnFile *GcnCard::addLostFile(const card_direntry *dirEntry, const std::vector<uint16_t> &fatEntries)
 {
 	if (!isOpen())
 		return nullptr;
@@ -971,7 +972,7 @@ GcnFile *GcnCard::addLostFile(const card_direntry *dirEntry, const QVector<uint1
 
 /**
  * Add "lost" files.
- * @param filesFoundList List of GcnSearchData.
+ * @param filesFoundList List of GcnSearchData
  * @return List of GcnFiles added to the GcnCard, or empty list on error.
  */
 QList<GcnFile*> GcnCard::addLostFiles(const std::list<GcnSearchData> &filesFoundList)
@@ -1010,7 +1011,7 @@ QList<GcnFile*> GcnCard::addLostFiles(const std::list<GcnSearchData> &filesFound
 /**
  * Get the header checksum value.
  * NOTE: Header checksum is always AddInvDual16.
- * @return Header checksum value.
+ * @return Header checksum value
  */
 Checksum::ChecksumValue GcnCard::headerChecksumValue(void) const
 {

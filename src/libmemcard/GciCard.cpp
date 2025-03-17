@@ -5,7 +5,7 @@
  * This is a wrapper class that allows loading of .gci files for editing   *
  * and template creation. Scanning for lost files is not supported.        *
  *                                                                         *
- * Copyright (c) 2012-2021 by David Korth.                                 *
+ * Copyright (c) 2012-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -32,26 +32,26 @@ class GciCardPrivate : public CardPrivate
 {
 	typedef CardPrivate super;
 
-	public:
-		explicit GciCardPrivate(GciCard *q);
-		void init(void);
+public:
+	explicit GciCardPrivate(GciCard *q);
+	void init(void);
 
-	protected:
-		Q_DECLARE_PUBLIC(GciCard)
-	private:
-		Q_DISABLE_COPY(GciCardPrivate)
+protected:
+	Q_DECLARE_PUBLIC(GciCard)
+private:
+	Q_DISABLE_COPY(GciCardPrivate)
 
-	private:
-		// Cached copy of the GCI directory entry.
-		card_direntry dirEntry;
+private:
+	// Cached copy of the GCI directory entry
+	card_direntry dirEntry;
 
-	public:
-		/**
-		 * Open an existing GCI file.
-		 * @param filename GCI filename.
-		 * @return 0 on success; non-zero on error. (also check errorString)
-		 */
-		int open(const QString &filename);
+public:
+	/**
+	 * Open an existing GCI file.
+	 * @param filename GCI filename
+	 * @return 0 on success; non-zero on error. (also check errorString)
+	 */
+	int open(const QString &filename);
 };
 
 GciCardPrivate::GciCardPrivate(GciCard *q)
@@ -72,7 +72,7 @@ GciCardPrivate::GciCardPrivate(GciCard *q)
 
 /**
  * Open an existing Memory Card image.
- * @param filename Memory Card image filename.
+ * @param filename Memory Card image filename
  * @return 0 on success; non-zero on error. (also check errorString)
  */
 int GciCardPrivate::open(const QString &filename)
@@ -124,7 +124,7 @@ int GciCardPrivate::open(const QString &filename)
 
 	// Add the directory entry to the file list.
 	Q_Q(GciCard);
-	GcnFile *const mcFile = new GcnFile(q, &dirEntry, QVector<uint16_t>());
+	GcnFile *const mcFile = new GcnFile(q, &dirEntry, std::vector<uint16_t>());
 	emit q->filesAboutToBeInserted(0, 0);
 	lstFiles.append(mcFile);
 	emit q->filesInserted();
@@ -138,12 +138,12 @@ int GciCardPrivate::open(const QString &filename)
 
 GciCard::GciCard(QObject *parent)
 	: super(new GciCardPrivate(this), parent)
-{ }
+{}
 
 /**
  * Open an existing GCI file.
- * @param filename Filename.
- * @param parent Parent object.
+ * @param filename Filename
+ * @param parent Parent object
  * @return GciCard object, or nullptr on error.
  */
 GciCard *GciCard::open(const QString& filename, QObject *parent)
@@ -163,7 +163,7 @@ GciCard *GciCard::open(const QString& filename, QObject *parent)
  * Get the product name of this memory card.
  * This refers to the class in general,
  * and does not change based on size.
- * @return Product name.
+ * @return Product name
  */
 QString GciCard::productName(void) const
 {

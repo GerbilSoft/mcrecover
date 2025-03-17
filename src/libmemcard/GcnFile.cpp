@@ -48,99 +48,99 @@ class GcnFilePrivate : public FilePrivate
 {
 	typedef FilePrivate super;
 
-	public:
-		/**
-		 * Initialize the GcnFile private class.
-		 * This constructor is for valid files.
-		 * @param q GcnFile.
-		 * @param card GcnCard (or GciCard)
-		 * @param direntry Directory Entry pointer.
-		 * @param mc_bat Block table.
-		 */
-		GcnFilePrivate(GcnFile *q, Card *card,
-			const card_direntry *dirEntry,
-			const card_bat *mc_bat);
+public:
+	/**
+	 * Initialize the GcnFile private class.
+	 * This constructor is for valid files.
+	 * @param q GcnFile.
+	 * @param card GcnCard (or GciCard)
+	 * @param direntry Directory Entry pointer
+	 * @param mc_bat Block table
+	 */
+	GcnFilePrivate(GcnFile *q, Card *card,
+		const card_direntry *dirEntry,
+		const card_bat *mc_bat);
 
-		/**
-		 * Initialize the GcnFile private class.
-		 *
-		 * This constructor is for:
-		 * - Lost files: fatEntries must be set to the FAT chain.
-		 * - GCI files: fatEntries must be empty.
-		 *
-		 * @param q GcnFile.
-		 * @param card GcnCard (or GciCard)
-		 * @param direntry Directory Entry pointer.
-		 * @param fatEntries FAT entries.
-		 */
-		GcnFilePrivate(GcnFile *q, Card *card,
-			const card_direntry *dirEntry,
-			const QVector<uint16_t> &fatEntries);
+	/**
+	 * Initialize the GcnFile private class.
+	 *
+	 * This constructor is for:
+	 * - Lost files: fatEntries must be set to the FAT chain.
+	 * - GCI files: fatEntries must be empty.
+	 *
+	 * @param q GcnFile
+	 * @param card GcnCard (or GciCard)
+	 * @param direntry Directory Entry pointer
+	 * @param fatEntries FAT entries
+	 */
+	GcnFilePrivate(GcnFile *q, Card *card,
+		const card_direntry *dirEntry,
+		const std::vector<uint16_t> &fatEntries);
 
-		virtual ~GcnFilePrivate();
+	virtual ~GcnFilePrivate();
 
-	protected:
-		Q_DECLARE_PUBLIC(GcnFile)
-	private:
-		Q_DISABLE_COPY(GcnFilePrivate)
+protected:
+	Q_DECLARE_PUBLIC(GcnFile)
+private:
+	Q_DISABLE_COPY(GcnFilePrivate)
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-		/**
-		 * Get a QStringDecoder for a given region.
-		 * @param region Region code (If 0, use the memory card's encoding.)
-		 * @return QStringDecoder
-		 */
-		QStringDecoder &stringDecoderForRegion(char region) const;
+	/**
+	 * Get a QStringDecoder for a given region.
+	 * @param region Region code (If 0, use the memory card's encoding.)
+	 * @return QStringDecoder
+	 */
+	QStringDecoder &stringDecoderForRegion(char region) const;
 #else /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
-		/**
-		 * Get a QTextCodec for a given region.
-		 * @param region Region code (If 0, use the memory card's encoding.)
-		 * @return QTextCodec
-		 */
-		QTextCodec *textCodecForRegion(char region) const;
+	/**
+	 * Get a QTextCodec for a given region.
+	 * @param region Region code (If 0, use the memory card's encoding.)
+	 * @return QTextCodec
+	 */
+	QTextCodec *textCodecForRegion(char region) const;
 #endif /* QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) */
 
-		/**
-		 * Load the file information.
-		 */
-		void loadFileInfo(void);
+	/**
+	 * Load the file information.
+	 */
+	void loadFileInfo(void);
 
-	public:
-		const card_bat *mc_bat;	// Block table. (TODO: Do we need to store this?)
+public:
+	const card_bat *mc_bat;	// Block table. (TODO: Do we need to store this?)
 
-		/**
-		 * Directory entry.
-		 * This points to an entry within card's Directory Table.
-		 * NOTE: If this is a lost file, this was allocated by us,
-		 * and needs to be freed in the destructor.
-		 */
-		const card_direntry *dirEntry;
+	/**
+	 * Directory entry
+	 * This points to an entry within card's Directory Table.
+	 * NOTE: If this is a lost file, this was allocated by us,
+	 * and needs to be freed in the destructor.
+	 */
+	const card_direntry *dirEntry;
 
-		// Game and File descriptions.
-		// TODO: Optimize by using QStringRef to description.
-		QString gameDesc;
-		QString fileDesc;
+	// Game and File descriptions
+	// TODO: Optimize by using QStringRef to description.
+	QString gameDesc;
+	QString fileDesc;
 
-		/**
-		 * Load the banner image.
-		 * @return GcImage containing the banner image, or nullptr on error.
-		 */
-		GcImage *loadBannerImage(void) final;
+	/**
+	 * Load the banner image.
+	 * @return GcImage containing the banner image, or nullptr on error.
+	 */
+	GcImage *loadBannerImage(void) final;
 
-		/**
-		 * Load the icon images.
-		 * @return QVector<GcImage*> containing the icon images, or empty QVector on error.
-		 */
-		QVector<GcImage*> loadIconImages(void) final;
+	/**
+	 * Load the icon images.
+	 * @return QVector<GcImage*> containing the icon images, or empty QVector on error.
+	 */
+	QVector<GcImage*> loadIconImages(void) final;
 };
 
 /**
  * Initialize the GcnFile private class.
  * This constructor is for valid files.
- * @param q GcnFile.
+ * @param q GcnFile
  * @param card GcnCard (or GciCard)
- * @param direntry Directory Entry pointer.
- * @param mc_bat Block table.
+ * @param direntry Directory Entry pointer
+ * @param mc_bat Block table
  */
 GcnFilePrivate::GcnFilePrivate(GcnFile *q, Card *card,
 		const card_direntry *dirEntry,
@@ -163,8 +163,9 @@ GcnFilePrivate::GcnFilePrivate(GcnFile *q, Card *card,
 	// the filesystem is heavily corrupted, or the file
 	// isn't actually a GCN Memory Card image.
 	int length = dirEntry->length;
-	if (length > card->totalUserBlocks())
+	if (length > card->totalUserBlocks()) {
 		length = card->totalUserBlocks();
+	}
 
 	// Load the FAT entries.
 	fatEntries.clear();
@@ -172,7 +173,7 @@ GcnFilePrivate::GcnFilePrivate(GcnFile *q, Card *card,
 	uint16_t next_block = dirEntry->block;
 	if (next_block >= 5 && next_block != 0xFFFF &&
 	    next_block < (uint16_t)NUM_ELEMENTS(mc_bat->fat)) {
-		fatEntries.append(next_block);
+		fatEntries.push_back(next_block);
 
 		// Go through the rest of the blocks.
 		for (int i = length; i > 1; i--) {
@@ -183,7 +184,7 @@ GcnFilePrivate::GcnFilePrivate(GcnFile *q, Card *card,
 				// Next block is invalid.
 				break;
 			}
-			fatEntries.append(next_block);
+			fatEntries.push_back(next_block);
 		}
 	}
 
@@ -194,14 +195,14 @@ GcnFilePrivate::GcnFilePrivate(GcnFile *q, Card *card,
 /**
  * Initialize the GcnFile private class.
  * This constructor is for lost files.
- * @param q GcnFile.
+ * @param q GcnFile
  * @param card GcnCard (or GciCard)
- * @param direntry Directory Entry pointer.
- * @param fatEntries FAT entries.
+ * @param direntry Directory Entry pointer
+ * @param fatEntries FAT entries
  */
 GcnFilePrivate::GcnFilePrivate(GcnFile *q, Card *card,
 		const card_direntry *dirEntry,
-		const QVector<uint16_t> &fatEntries)
+		const std::vector<uint16_t> &fatEntries)
 	: super(q, card)
 	, mc_bat(nullptr)
 	, dirEntry(dirEntry)
@@ -685,10 +686,10 @@ QVector<GcImage*> GcnFilePrivate::loadIconImages(void)
 /**
  * Create a GcnFile for a GcnCard.
  * This constructor is for valid files.
- * @param q GcnFile.
+ * @param q GcnFile
  * @param card GcnCard (or GciCard)
- * @param direntry Directory Entry pointer.
- * @param mc_bat Block table.
+ * @param direntry Directory Entry pointer
+ * @param mc_bat Block table
  */
 GcnFile::GcnFile(Card *card,
 		const card_direntry *dirEntry,
@@ -704,18 +705,18 @@ GcnFile::GcnFile(Card *card,
  * - GCI files: fatEntries must be empty.
  *
  * @param card GcnCard (or GciCard)
- * @param direntry Directory Entry pointer.
- * @param fatEntries FAT entries.
+ * @param direntry Directory Entry pointer
+ * @param fatEntries FAT entries
  */
 GcnFile::GcnFile(Card *card,
 		const card_direntry *dirEntry,
-		const QVector<uint16_t> &fatEntries)
+		const std::vector<uint16_t> &fatEntries)
 	: super(new GcnFilePrivate(this, card, dirEntry, fatEntries), card)
 { }
 
 /**
  * Get the game description.
- * @return Game description.
+ * @return Game description
  */
 QString GcnFile::gameDesc(void) const
 {
@@ -725,7 +726,7 @@ QString GcnFile::gameDesc(void) const
 
 /**
  * Get the file description.
- * @return File description.
+ * @return File description
  */
 QString GcnFile::fileDesc(void) const
 {
@@ -736,7 +737,7 @@ QString GcnFile::fileDesc(void) const
 /**
  * Get the file's mode as a string.
  * This is system-specific.
- * @return File mode as a string.
+ * @return File mode as a string
  */
 QString GcnFile::modeAsString(void) const
 {
@@ -755,7 +756,7 @@ QString GcnFile::modeAsString(void) const
 
 /**
  * Get the default export filename.
- * @return Default export filename.
+ * @return Default export filename
  */
 QString GcnFile::defaultExportFilename(void) const
 {
@@ -787,7 +788,7 @@ QString GcnFile::defaultExportFilename(void) const
 
 /**
  * Export the file.
- * @param filename Filename for the exported file.
+ * @param filename Filename for the exported file
  * @return 0 on success; non-zero on error.
  * TODO: Error code constants.
  */
@@ -802,7 +803,7 @@ int GcnFile::exportToFile(const QString &filename)
 
 /**
  * Export the file.
- * @param qioDevice QIODevice to write the data to.
+ * @param qioDevice QIODevice to write the data to
  * @return 0 on success; non-zero on error.
  * TODO: Error code constants.
  */
@@ -842,7 +843,7 @@ int GcnFile::exportToFile(QIODevice *qioDevice)
 
 /**
  * Get the directory entry.
- * @return Directory entry.
+ * @return Directory entry
  */
 const card_direntry *GcnFile::dirEntry(void) const
 {

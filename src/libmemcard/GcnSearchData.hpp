@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program. [libmemcard]                     *
  * GcnSearchData.hpp: GCN search data.                                     *
  *                                                                         *
- * Copyright (c) 2013-2018 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -12,14 +12,11 @@
 #include "card.h"
 #include "Checksum.hpp"
 
-// Qt includes.
-#include <QtCore/QVector>
-
 struct GcnSearchData
 {
 	card_direntry dirEntry;
-	QVector<uint16_t> fatEntries;
-	QVector<Checksum::ChecksumDef> checksumDefs;
+	std::vector<uint16_t> fatEntries;
+	std::vector<Checksum::ChecksumDef> checksumDefs;
 };
 
 #endif /* __LIBMEMCARD_GCNSEARCHDATA_HPP__ */

@@ -634,7 +634,7 @@ void GcnMcFileDbPrivate::parseXml_file_checksum(QXmlStreamReader &xml, GcnMcFile
 	// TODO: Make sure (instances * increment) doesn't go past the end of the card?
 	for (; instances > 0; instances--) {
 		// Add the checksum definition.
-		gcnMcFileDef->checksumDefs.append(checksumDef);
+		gcnMcFileDef->checksumDefs.push_back(checksumDef);
 
 		// Next instance.
 		checksumDef.address += increment;

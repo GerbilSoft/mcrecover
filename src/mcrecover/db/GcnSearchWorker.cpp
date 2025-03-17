@@ -384,9 +384,10 @@ int GcnSearchWorker::searchMemCard(void)
 			searchData.fatEntries.reserve(searchData.dirEntry.length);
 
 			// First block is always valid.
-			searchData.fatEntries.append(searchData.dirEntry.block);
-			if (usedBlockMap[searchData.dirEntry.block] < std::numeric_limits<uint8_t>::max())
+			searchData.fatEntries.push_back(searchData.dirEntry.block);
+			if (usedBlockMap[searchData.dirEntry.block] < std::numeric_limits<uint8_t>::max()) {
 				usedBlockMap[searchData.dirEntry.block]++;
+			}
 
 			uint16_t blocksRemaining = (searchData.dirEntry.length - 1);
 			uint16_t block = (searchData.dirEntry.block + 1);
@@ -410,9 +411,10 @@ int GcnSearchWorker::searchMemCard(void)
 				// Check if this block is used.
 				if (usedBlockMap[block] == 0) {
 					// Block is not used.
-					searchData.fatEntries.append(block);
-					if (!wasWrapped)
+					searchData.fatEntries.push_back(block);
+					if (!wasWrapped) {
 						usedBlockMap[block]++;
+					}
 					blocksRemaining--;
 				}
 
@@ -421,7 +423,7 @@ int GcnSearchWorker::searchMemCard(void)
 			}
 
 			// Naive block algorithm for the remaining blocks.
-			block = (searchData.fatEntries.value(searchData.fatEntries.size() - 1) + 1);
+			block = (searchData.fatEntries[searchData.fatEntries.size() - 1] + 1);
 			wasWrapped = false;
 			while (blocksRemaining > 0) {
 				if (block >= totalPhysBlocks) {
@@ -433,10 +435,11 @@ int GcnSearchWorker::searchMemCard(void)
 				}
 
 				// Add this block.
-				searchData.fatEntries.append(block);
+				searchData.fatEntries.push_back(block);
 				if (usedBlockMap[block] < std::numeric_limits<uint8_t>::max()) {
-					if (!wasWrapped)
+					if (!wasWrapped) {
 						usedBlockMap[block]++;
+					}
 				}
 				block++;
 				blocksRemaining--;
