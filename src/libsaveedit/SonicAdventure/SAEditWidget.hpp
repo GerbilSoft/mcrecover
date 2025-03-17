@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program [libsaveedit]                     *
  * SAEditWidget.hpp: Sonic Adventure - SA1/SADX edit widget base class.    *
  *                                                                         *
- * Copyright (c) 2015-2018 by David Korth.                                 *
+ * Copyright (c) 2015-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -47,7 +47,10 @@ class SAEditWidget : public QWidget
 		 * Has this widget been modified?
 		 * @return True if modified; false if not.
 		 */
-		inline bool isModified(void) const;
+		inline bool isModified(void) const
+		{
+			return m_modified;
+		}
 
 	protected:
 		/**
@@ -56,14 +59,14 @@ class SAEditWidget : public QWidget
 		 * the variable directly in order to handle signals.
 		 * @param modified New 'modified' state.
 		 */
-		inline void setModified(bool modified);
+		void setModified(bool modified);
 
 	protected slots:
 		/**
 		 * Connect a widget's modified signal to this slot
 		 * to automatically set the modified state.
 		 */
-		inline void widgetModifiedSlot(void);
+		void widgetModifiedSlot(void);
 
 	private:
 		// Temporarily suspend modification signals.
@@ -77,14 +80,21 @@ class SAEditWidget : public QWidget
 		 * Increments a counter; call the unsuspend
 		 * function the same number of times.
 		 */
-		inline void suspendHasBeenModified(void);
+		inline void suspendHasBeenModified(void)
+		{
+			m_suspendHasBeenModified++;
+		}
 
 		/**
 		 * Unsuspend the hasBeenModified signal.
 		 * Decrements a counter; when it reaches 0,
 		 * the signal is re-enabled.
 		 */
-		inline void unsuspendHasBeenModified(void);
+		inline void unsuspendHasBeenModified(void)
+		{
+			assert(m_suspendHasBeenModified > 0);
+			m_suspendHasBeenModified--;
+		}
 
 	public:
 		/**
@@ -110,60 +120,5 @@ class SAEditWidget : public QWidget
 		 */
 		virtual int save(_sa_save_slot *sa_save) = 0;
 };
-
-/**
- * Has this widget been modified?
- * @return True if modified; false if not.
- */
-inline bool SAEditWidget::isModified(void) const
-{
-	return m_modified;
-}
-
-/**
- * Change the 'modified' state.
- * This function must be called instead of modifying
- * the variable directly in order to handle signals.
- * @param modified New 'modified' state.
- */
-inline void SAEditWidget::setModified(bool modified)
-{
-	if (m_modified == modified)
-		return;
-	m_modified = modified;
-	emit hasBeenModified(modified);
-}
-
-/**
- * Connect a widget's modified signal to this slot
- * to automatically set the modified state.
- */
-inline void SAEditWidget::widgetModifiedSlot(void)
-{
-	if (m_suspendHasBeenModified <= 0) {
-		setModified(true);
-	}
-}
-
-/**
- * Suspend the hasBeenModified signal.
- * Increments a counter; call the unsuspend
- * function the same number of times.
- */
-inline void SAEditWidget::suspendHasBeenModified(void)
-{
-	m_suspendHasBeenModified++;
-}
-
-/**
-* Unsuspend the hasBeenModified signal.
-* Decrements a counter; when it reaches 0,
-* the signal is re-enabled.
-*/
-inline void SAEditWidget::unsuspendHasBeenModified(void)
-{
-	assert(m_suspendHasBeenModified > 0);
-	m_suspendHasBeenModified--;
-}
 
 #endif /* __LIBSAVEEDIT_SONICADVENTURE_SAEDITWIDGET_HPP__ */

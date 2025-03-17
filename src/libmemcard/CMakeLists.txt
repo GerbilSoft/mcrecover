@@ -5,19 +5,23 @@ PROJECT(libmemcard)
 # Main binary directory. Needed for git_version.h
 INCLUDE_DIRECTORIES("${CMAKE_BINARY_DIR}")
 
-# Find Qt5.
-# FIXME: Figure out a minimum Qt5 version.
-# QtWin::fromHICON was added in Qt 5.2.
-SET(Qt5_NO_LINK_QTMAIN 1)
-FIND_PACKAGE(Qt5 ${QT_REQUIRED} COMPONENTS Core Gui Widgets Xml)
-IF(ENABLE_DBUS)
-	# QtDBus is used for DockManager.
-	FIND_PACKAGE(Qt5DBus)
-	# FIXME: HAVE_Qt5DBus isn't working...
-	SET(QtDBus_FOUND ${Qt5DBus_FOUND})
-ENDIF(ENABLE_DBUS)
+SET(CMAKE_AUTOMOC ON)
+IF(QT_VERSION EQUAL 6)
+	# Find Qt6
+	SET(Qt6_NO_LINK_QTMAIN 1)
+	FIND_PACKAGE(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+ELSEIF(QT_VERSION EQUAL 5)
+	# Find Qt5
+	# FIXME: Figure out a minimum Qt5 version.
+	# QtWin::fromHICON was added in Qt 5.2.
+	SET(Qt5_NO_LINK_QTMAIN 1)
+	FIND_PACKAGE(Qt5 5.2.0 REQUIRED COMPONENTS Core Gui Widgets)
+ELSE()
+	MESSAGE(FATAL_ERROR "Unsupported Qt version: ${QT_VERSION}")
+ENDIF()
+SET(QT_NS Qt${QT_VERSION})
 
-# Sources.
+# Sources
 SET(libmemcard_SRCS
 	# Miscellaneous
 	GcToolsQt.cpp
@@ -38,33 +42,14 @@ SET(libmemcard_SRCS
 	VmuCard.cpp
 	VmuFile.cpp
 	)
-# Headers.
+
+# Headers
 SET(libmemcard_H
 	# Miscellaneous
 	GcToolsQt.hpp
 	GcnSearchData.hpp
 	TimeFuncs.hpp
 	)
-# Headers with Qt objects.
-SET(libmemcard_MOC_H
-	# Miscellaneous
-	IconAnimHelper.hpp
-
-	# Memory Card model
-	MemCardModel.hpp
-	MemCardItemDelegate.hpp
-	MemCardSortFilterProxyModel.hpp
-
-	# Memory Card objects
-	Card.hpp
-	File.hpp
-	GcnCard.hpp
-	GciCard.hpp
-	GcnFile.hpp
-	VmuCard.hpp
-	VmuFile.hpp
-	)
-QT5_WRAP_CPP(libmemcard_MOC_SRCS ${libmemcard_MOC_H})
 
 ######################
 # Build the library. #
@@ -72,7 +57,6 @@ QT5_WRAP_CPP(libmemcard_MOC_SRCS ${libmemcard_MOC_H})
 
 ADD_LIBRARY(memcard STATIC
 	${libmemcard_SRCS} ${libmemcard_H}
-	${libmemcard_MOC_SRCS}
 	)
 ADD_DEPENDENCIES(memcard git_version)
 SET_MSVC_DEBUG_PATH(memcard)
@@ -89,7 +73,7 @@ TARGET_LINK_LIBRARIES(memcard gctools)
 
 # Qt libraries
 # NOTE: Libraries have to be linked in reverse order.
-TARGET_LINK_LIBRARIES(memcard Qt5::Widgets Qt5::Gui Qt5::Core)
+TARGET_LINK_LIBRARIES(memcard ${QT_NS}::Widgets ${QT_NS}::Gui ${QT_NS}::Core)
 
 # Define -DQT_NO_DEBUG in release builds.
 SET(CMAKE_C_FLAGS_RELEASE   "-DQT_NO_DEBUG ${CMAKE_C_FLAGS_RELEASE}")

@@ -5,33 +5,54 @@ PROJECT(libsaveedit)
 # Main binary directory. Needed for git_version.h
 INCLUDE_DIRECTORIES("${CMAKE_BINARY_DIR}")
 
-# Find Qt5.
-# FIXME: Figure out a minimum Qt5 version.
-# QtWin::fromHICON was added in Qt 5.2.
-SET(Qt5_NO_LINK_QTMAIN 1)
-FIND_PACKAGE(Qt5 ${QT_REQUIRED} COMPONENTS Core Gui Widgets)
+SET(CMAKE_AUTOMOC ON)
+IF(QT_VERSION EQUAL 6)
+	# Find Qt6
+	SET(Qt6_NO_LINK_QTMAIN 1)
+	FIND_PACKAGE(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+ELSEIF(QT_VERSION EQUAL 5)
+	# Find Qt5
+	# FIXME: Figure out a minimum Qt5 version.
+	# QtWin::fromHICON was added in Qt 5.2.
+	SET(Qt5_NO_LINK_QTMAIN 1)
+	FIND_PACKAGE(Qt5 5.2.0 REQUIRED COMPONENTS Core Gui Widgets)
 
-# Sources.
+	# Qt 5.15/6 has qt_wrap_cpp.
+	# We can't depend on having Qt 5.15, though.
+	IF(Qt5_VERSION VERSION_LESS 5.15.0)
+		FUNCTION(QT_WRAP_UI outfiles)
+			QT5_WRAP_UI("${outfiles}" ${ARGN})
+			SET("${outfiles}" "${${outfiles}}" PARENT_SCOPE)
+		ENDFUNCTION(QT_WRAP_UI)
+	ENDIF(Qt5_VERSION VERSION_LESS 5.15.0)
+ELSE()
+	MESSAGE(FATAL_ERROR "Unsupported Qt version: ${QT_VERSION}")
+ENDIF()
+SET(QT_NS Qt${QT_VERSION})
+
+# Sources
 SET(libsaveedit_SRCS
-	# Base editor window and widget.
+	# Base editor window and widget
 	EditorWindow.cpp
 	EditorWidget.cpp
 	EditorWidgetFactory.cpp
 
-	# Item models.
+	# Item models
 	models/BitFlags.cpp
 	models/BitFlagsModel.cpp
 	models/ByteFlags.cpp
 	models/ByteFlagsModel.cpp
 	models/PageFilterModel.cpp
 
-	# Item view widgets.
+	# Item view widgets
 	widgets/BitFlagsView.cpp
 	widgets/ByteFlagsView.cpp
 	widgets/CenteredCheckBoxDelegate.cpp
 
-	# Sonic Adventure (DX) editor.
+	# Sonic Adventure (DX) editor
 	SonicAdventure/SAEditor.cpp
+	SonicAdventure/SAEditWidget.cpp
+	SonicAdventure/SADXEditWidget.cpp
 	SonicAdventure/SALevelStats.cpp
 	SonicAdventure/SALevelClearCount.cpp
 	SonicAdventure/SAEventFlags.cpp
@@ -48,7 +69,7 @@ SET(libsaveedit_SRCS
 	SonicAdventure/SASubGames.cpp
 	)
 
-# Headers.
+# Headers
 SET(libsaveedit_H
 	EditorWidgetFactory.hpp
 	editcommon.h
@@ -56,42 +77,7 @@ SET(libsaveedit_H
 	SonicAdventure/SAData.h
 	)
 
-# Headers with Qt objects.
-SET(libsaveedit_MOC_H
-	# Base editor window and widget.
-	EditorWindow.hpp
-	EditorWidget.hpp
-
-	# Item models.
-	models/BitFlags.hpp
-	models/BitFlagsModel.hpp
-	models/ByteFlags.hpp
-	models/ByteFlagsModel.hpp
-	models/PageFilterModel.hpp
-
-	# Item view widgets.
-	widgets/BitFlagsView.hpp
-	widgets/ByteFlagsView.hpp
-	widgets/CenteredCheckBoxDelegate.hpp
-
-	# Sonic Adventure (DX) editor.
-	SonicAdventure/SAEditor.hpp
-	SonicAdventure/SALevelStats.hpp
-	SonicAdventure/SALevelClearCount.hpp
-	SonicAdventure/SAEventFlags.hpp
-	SonicAdventure/SANPCFlags.hpp
-	SonicAdventure/SADXMissionFlags.hpp
-	SonicAdventure/SAGeneral.hpp
-	SonicAdventure/SAAdventure.hpp
-	SonicAdventure/SAMiscEmblems.hpp
-	SonicAdventure/TimeCodeEdit.hpp
-	SonicAdventure/SASubGames.hpp
-	SonicAdventure/SAEditWidget.hpp
-	SonicAdventure/SADXEditWidget.hpp
-	)
-QT5_WRAP_CPP(libsaveedit_MOC_SRCS ${libsaveedit_MOC_H})
-
-# UI files.
+# UI files
 SET(libsaveedit_UIS
 	# Base editor window.
 	EditorWindow.ui
@@ -110,7 +96,7 @@ SET(libsaveedit_UIS
 	SonicAdventure/TimeCodeEdit.ui
 	SonicAdventure/SASubGames.ui
 	)
-QT5_WRAP_UI(libsaveedit_UIS_H ${libsaveedit_UIS})
+QT_WRAP_UI(libsaveedit_UIS_H ${libsaveedit_UIS})
 
 ######################
 # Build the library. #
@@ -118,7 +104,6 @@ QT5_WRAP_UI(libsaveedit_UIS_H ${libsaveedit_UIS})
 
 ADD_LIBRARY(saveedit STATIC
 	${libsaveedit_SRCS} ${libsaveedit_H}
-	${libsaveedit_MOC_SRCS}
 	${libsaveedit_UIS_H}
 	)
 ADD_DEPENDENCIES(saveedit git_version)
@@ -136,7 +121,7 @@ TARGET_LINK_LIBRARIES(saveedit gctools memcard)
 
 # Qt libraries
 # NOTE: Libraries have to be linked in reverse order.
-TARGET_LINK_LIBRARIES(saveedit Qt5::Widgets Qt5::Gui Qt5::Core)
+TARGET_LINK_LIBRARIES(saveedit ${QT_NS}::Widgets ${QT_NS}::Gui ${QT_NS}::Core)
 
 # Define -DQT_NO_DEBUG in release builds.
 SET(CMAKE_C_FLAGS_RELEASE   "-DQT_NO_DEBUG ${CMAKE_C_FLAGS_RELEASE}")

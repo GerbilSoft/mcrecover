@@ -3,6 +3,19 @@ PROJECT(mcrecover_base)
 # CMake 2.8.12 automates adding compile flags for Qt5, e.g. -fPIC on Linux.
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 
+# CMP0151: Use -isystem for AUTOMOC include directories.
+# clang complains about `using namespace` statements in the
+# generated moc_*.cpp files:
+# In file included from src/kde/kf5/kfilemetadata_rom-properties-kf5_autogen/mocs_compilation.cpp:2:
+# src/kde/kf5/kfilemetadata_rom-properties-kf5_autogen/BKZOEHIFDQ/moc_ExtractorPluginKF5.cpp:1082:17:
+#     warning: using namespace directive in global context in header [-Wheader-hygiene]
+#  1082 | using namespace RomPropertiesKF5;
+#       |                 ^
+# Introduced in CMake 3.27.
+IF(POLICY CMP0151)
+	CMAKE_POLICY(SET CMP0151 NEW)
+ENDIF(POLICY CMP0151)
+
 LIST(APPEND CMAKE_MODULE_PATH
 	"${CMAKE_SOURCE_DIR}/cmake/macros"
 	"${CMAKE_SOURCE_DIR}/cmake/modules"

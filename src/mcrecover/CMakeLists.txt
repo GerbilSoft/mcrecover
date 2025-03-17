@@ -15,17 +15,48 @@ ELSE()
 	SET(MCRECOVER_TRANSLATIONS_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${DIR_INSTALL_TRANSLATIONS}")
 ENDIF()
 
-# Find Qt5.
-# FIXME: Figure out a minimum Qt5 version.
-# QtWin::fromHICON was added in Qt 5.2.
-SET(Qt5_NO_LINK_QTMAIN 1)
-FIND_PACKAGE(Qt5 5.2.0 REQUIRED COMPONENTS Core Gui Widgets Xml)
-IF(ENABLE_DBUS)
-	# QtDBus is used for DockManager.
-	FIND_PACKAGE(Qt5DBus)
-	# FIXME: HAVE_Qt5DBus isn't working...
-	SET(QtDBus_FOUND ${Qt5DBus_FOUND})
-ENDIF(ENABLE_DBUS)
+SET(CMAKE_AUTOMOC ON)
+IF(QT_VERSION EQUAL 6)
+	# Find Qt6
+	SET(Qt6_NO_LINK_QTMAIN 1)
+	FIND_PACKAGE(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+
+	IF(ENABLE_DBUS)
+		# QtDBus is used for DockManager.
+		FIND_PACKAGE(Qt6DBus)
+		# FIXME: HAVE_Qt6DBus isn't working...
+		SET(QtDBus_FOUND ${Qt6DBus_FOUND})
+	ENDIF(ENABLE_DBUS)
+ELSEIF(QT_VERSION EQUAL 5)
+	# Find Qt5
+	# FIXME: Figure out a minimum Qt5 version.
+	# QtWin::fromHICON was added in Qt 5.2.
+	SET(Qt5_NO_LINK_QTMAIN 1)
+	FIND_PACKAGE(Qt5 5.2.0 REQUIRED COMPONENTS Core Gui Widgets)
+
+	IF(ENABLE_DBUS)
+		# QtDBus is used for DockManager.
+		FIND_PACKAGE(Qt5DBus)
+		# FIXME: HAVE_Qt5DBus isn't working...
+		SET(QtDBus_FOUND ${Qt5DBus_FOUND})
+	ENDIF(ENABLE_DBUS)
+
+	# Qt 5.15/6 has qt_wrap_cpp.
+	# We can't depend on having Qt 5.15, though.
+	IF(Qt5_VERSION VERSION_LESS 5.15.0)
+		FUNCTION(QT_WRAP_UI outfiles)
+			QT5_WRAP_UI("${outfiles}" ${ARGN})
+			SET("${outfiles}" "${${outfiles}}" PARENT_SCOPE)
+		ENDFUNCTION(QT_WRAP_UI)
+		FUNCTION(QT_ADD_DBUS_INTERFACES sources)
+			QT5_ADD_DBUS_INTERFACES("${sources}" ${ARGN})
+			SET("${sources}" "${${sources}}" PARENT_SCOPE)
+		ENDFUNCTION(QT_ADD_DBUS_INTERFACES sources)
+	ENDIF(Qt5_VERSION VERSION_LESS 5.15.0)
+ELSE()
+	MESSAGE(FATAL_ERROR "Unsupported Qt version: ${QT_VERSION}")
+ENDIF()
+SET(QT_NS Qt${QT_VERSION})
 
 IF(WIN32 AND QT_IS_STATIC)
 	# Win32: Qt Static requires some extra libraries.
@@ -64,7 +95,7 @@ ADD_DEFINITIONS(${GIF_DEFINITIONS})
 # Write the config.h file.
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.mcrecover.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.mcrecover.h")
 
-# Sources.
+# Sources
 SET(mcrecover_SRCS
 	mcrecover.cpp
 	McRecoverQApplication.cpp
@@ -110,7 +141,7 @@ SET(mcrecover_SEKRIT_SRCS
 	sekrit/HackDetection.cpp
 	)
 
-# Win32-specific sources.
+# Win32-specific sources
 IF(WIN32)
 	SET(mcrecover_OS_SRCS
 		McRecoverQApplication_win32.cpp
@@ -118,44 +149,7 @@ IF(WIN32)
 		)
 ENDIF(WIN32)
 
-# Headers with Qt objects.
-SET(mcrecover_MOC_H
-	McRecoverQApplication.hpp
-	config/ConfigStore.hpp
-	)
-
-SET(mcrecover_DB_MOC_H
-	db/GcnMcFileDb.hpp
-	db/GcnSearchThread.hpp
-	db/GcnSearchWorker.hpp
-	db/GcnCheckFiles.hpp
-	)
-
-SET(mcrecover_WINDOW_MOC_H
-	windows/McRecoverWindow.hpp
-	windows/AboutDialog.hpp
-	windows/XmlTemplateDialog.hpp
-	windows/XmlTemplateDialogManager.hpp
-	windows/FormatNewMemCardDialog.hpp
-	)
-
-SET(mcrecover_WIDGET_MOC_H
-	widgets/StatusBarManager.hpp
-	widgets/FileView.hpp
-	widgets/CardView.hpp
-	widgets/QTreeViewOpt.hpp
-	widgets/MessageWidget.hpp
-	widgets/TableSelect.hpp
-	widgets/MessageWidgetStack.hpp
-	widgets/LanguageMenu.hpp
-	)
-
-SET(mcrecover_SEKRIT_MOC_H
-	sekrit/HerpDerpEggListener.hpp
-	sekrit/HackDetection.hpp
-	)
-
-# UI files.
+# UI files
 SET(mcrecover_WINDOW_UIS
 	windows/McRecoverWindow.ui
 	windows/AboutDialog.ui
@@ -174,26 +168,12 @@ SET(mcrecover_UIS
 	${mcrecover_WIDGET_UIS}
 	${mcrecover_EDIT_UIS}
 	)
-QT5_WRAP_UI(mcrecover_UIS_H ${mcrecover_UIS})
-
-# Create MOC source files for classes that need them.
-SET(mcrecover_MOC_H
-	${mcrecover_MOC_H}
-	${mcrecover_DB_MOC_H}
-	${mcrecover_WINDOW_MOC_H}
-	${mcrecover_WIDGET_MOC_H}
-	${mcrecover_EDIT_MOC_H}
-	${mcrecover_SEKRIT_MOC_H}
-	)
-QT5_WRAP_CPP(mcrecover_MOC_SRCS ${mcrecover_MOC_H})
+QT_WRAP_UI(mcrecover_UIS_H ${mcrecover_UIS})
 
 # TaskbarButtonManager
 SET(mcrecover_TBM_SRCS
 	TaskbarButtonManager/TaskbarButtonManager.cpp
 	TaskbarButtonManager/TaskbarButtonManagerFactory.cpp
-	)
-SET(mcrecover_TBM_MOC_H
-	TaskbarButtonManager/TaskbarButtonManager.hpp
 	)
 SET(mcrecover_TBM_H TaskbarButtonManager/TaskbarButtonManager_p.hpp)
 
@@ -203,10 +183,6 @@ IF(WIN32)
 		${mcrecover_TBM_SRCS}
 		TaskbarButtonManager/Win7TaskbarList.cpp
 		)
-	SET(mcrecover_TBM_MOC_H
-		${mcrecover_TBM_MOC_H}
-		TaskbarButtonManager/Win7TaskbarList.hpp
-		)
 ELSEIF(UNIX AND NOT APPLE)
 	# Unity Launcher API.
 	# dlopen() is required.
@@ -214,10 +190,6 @@ ELSEIF(UNIX AND NOT APPLE)
 	SET(mcrecover_TBM_SRCS
 		${mcrecover_TBM_SRCS}
 		TaskbarButtonManager/UnityLauncher.cpp
-		)
-	SET(mcrecover_TBM_MOC_H
-		${mcrecover_TBM_MOC_H}
-		TaskbarButtonManager/UnityLauncher.hpp
 		)
 
 	IF(QtDBus_FOUND)
@@ -232,7 +204,7 @@ ELSEIF(UNIX AND NOT APPLE)
 		# Enable DockManager / Unity API support.
 		# NOTE: The D-BUS interfaces are generated in ${CMAKE_CURRENT_BINARY_DIR},
 		# *not* ${CMAKE_CURRENT_BINARY_DIR}/dbus/.
-		QT5_ADD_DBUS_INTERFACES(
+		QT_ADD_DBUS_INTERFACES(
 			mcrecover_DBUS_INTERFACE_SRCS
 			${DBus_XML_SRCS}
 			)
@@ -241,17 +213,8 @@ ELSEIF(UNIX AND NOT APPLE)
 			${mcrecover_DBUS_INTERFACE_SRCS}
 			TaskbarButtonManager/DockManager.cpp
 			)
-		SET(mcrecover_TBM_MOC_H
-			${mcrecover_TBM_MOC_H}
-			TaskbarButtonManager/DockManager.hpp
-			)
 	ENDIF(QtDBus_FOUND)
 ENDIF()
-
-IF(mcrecover_TBM_MOC_H)
-	# Create MOC source files for classes that need them.
-	QT5_WRAP_CPP(mcrecover_TBM_MOC_SRCS ${mcrecover_TBM_MOC_H})
-ENDIF(mcrecover_TBM_MOC_H)
 
 ######################
 # Qt resource files. #
@@ -284,11 +247,9 @@ ADD_EXECUTABLE(mcrecover WIN32 MACOSX_BUNDLE
 	${mcrecover_EDIT_SRCS} ${mcrecover_EDIT_H}
 	${mcrecover_SEKRIT_SRCS}
 	${mcrecover_OS_SRCS}
-	${mcrecover_MOC_SRCS}
 	${mcrecover_UIS_H}
 	${mcrecover_RCC_O}
 	${mcrecover_TBM_SRCS} ${mcrecover_TBM_H}
-	${mcrecover_TBM_MOC_SRCS}
 	)
 ADD_DEPENDENCIES(mcrecover git_version)
 DO_SPLIT_DEBUG(mcrecover)
@@ -317,9 +278,9 @@ TARGET_LINK_LIBRARIES(mcrecover ${MCRECOVER_EXTLIB})
 # Qt libraries
 # NOTE: Libraries have to be linked in reverse order.
 IF(QtDBus_FOUND)
-	TARGET_LINK_LIBRARIES(mcrecover Qt5::DBus)
+	TARGET_LINK_LIBRARIES(mcrecover ${QT_NS}::DBus)
 ENDIF(QtDBus_FOUND)
-TARGET_LINK_LIBRARIES(mcrecover Qt5::Widgets Qt5::Gui Qt5::Core)
+TARGET_LINK_LIBRARIES(mcrecover ${QT_NS}::Widgets ${QT_NS}::Gui ${QT_NS}::Core)
 
 # extlib (needed twice due to weird dependencies with Qt/static)
 TARGET_LINK_LIBRARIES(mcrecover ${MCRECOVER_EXTLIB})
