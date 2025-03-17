@@ -52,7 +52,15 @@ QImage gcImageToQImage(const GcImage *gcImage)
 	if (pxFmt == GcImage::PxFmt::CI8) {
 		const uint32_t *palette = gcImage->palette();
 		if (palette) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 			QVector<QRgb> vPalette(palette, palette + 256);
+#else /* QT_VERSION < QT_VERSION_CHECK(5, 14, 0) */
+			QVector<QRgb> vPalette;
+			vPalette.reserve(256);
+			for (size_t i = 0; i < 256; i++) {
+				vPalette.append(palette[i]);
+			}
+#endif /* #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0) */
 			qImg.setColorTable(vPalette);
 		}
 	}
