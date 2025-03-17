@@ -907,14 +907,14 @@ int File::saveIcon(const QString &filenameNoExt,
 		if (gcImageWriter.numFiles() > 1) {
 			// Multiple files.
 			// Append the file number.
-			char tmp[8];
-			snprintf(tmp, sizeof(tmp), "%02d", i+1);
-			filename += QChar(L'.') + QLatin1String(tmp);
+			filename += QString(QLatin1String(".%1")).arg(i+1, 2, QChar(L'0'));
 		}
 
 		// Append the file extension.
-		if (ext)
-			filename += QChar(L'.') + QLatin1String(ext);
+		if (ext) {
+			filename += QChar(L'.');
+			filename += QLatin1String(ext);
+		}
 
 		QFile file(filename);
 		if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
