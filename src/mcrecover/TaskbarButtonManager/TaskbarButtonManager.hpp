@@ -9,16 +9,14 @@
 #ifndef __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGER_HPP__
 #define __MCRECOVER_TASKBARBUTTONMANAGER_TASKBARBUTTONMANAGER_HPP__
 
-#include <QtCore/QObject>
-class QWidget;
+#include <QtWidgets/QWidget>
 
 class TaskbarButtonManagerPrivate;
 class TaskbarButtonManager : public QObject
 {
 	Q_OBJECT
 
-	// FIXME: QWidget* isn't working on Qt6 moc.
-	//Q_PROPERTY(QWidget* window READ window WRITE setWindow)
+	Q_PROPERTY(QWidget* window READ window WRITE setWindow)
 	Q_PROPERTY(int progressBarValue READ progressBarValue WRITE setProgressBarValue)
 	Q_PROPERTY(int progressBarMax READ progressBarMax WRITE setProgressBarMax)
 

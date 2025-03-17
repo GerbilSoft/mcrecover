@@ -9,15 +9,17 @@
 #ifndef __MCRECOVER_WIDGETS_STATUSBARMANAGER_HPP__
 #define __MCRECOVER_WIDGETS_STATUSBARMANAGER_HPP__
 
-// Qt includes and classes.
+// Qt includes
 #include <QtCore/QObject>
-class QStatusBar;
+#include <QtWidgets/QStatusBar>
 
 // Card definitions.
 #include "card.h"
 
 class GcnSearchThread;
 class TaskbarButtonManager;
+Q_DECLARE_OPAQUE_POINTER(GcnSearchThread*)
+Q_DECLARE_METATYPE(GcnSearchThread*)
 
 class StatusBarManagerPrivate;
 class StatusBarManager : public QObject
@@ -25,9 +27,8 @@ class StatusBarManager : public QObject
 	Q_OBJECT
 	typedef QObject super;
 
-	// FIXME: QStatusBar* and GcnSearchThread* aren't working on Qt6 moc.
-	//Q_PROPERTY(QStatusBar* statusBar READ statusBar WRITE setStatusBar)
-	//Q_PROPERTY(GcnSearchThread* searchThread READ searchThread WRITE setSearchThread)
+	Q_PROPERTY(QStatusBar* statusBar READ statusBar WRITE setStatusBar)
+	Q_PROPERTY(GcnSearchThread* searchThread READ searchThread WRITE setSearchThread)
 
 public:
 	explicit StatusBarManager(QObject *parent = 0);

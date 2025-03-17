@@ -11,7 +11,7 @@
 
 #include <QWidget>
 
-class Card;
+#include "Card.hpp"
 
 class CardViewPrivate;
 class CardView : public QWidget
@@ -20,7 +20,7 @@ class CardView : public QWidget
 	typedef QWidget super;
 
 	// FIXME: Card* isn't working on Qt6 moc.
-	//Q_PROPERTY(Card* card READ card WRITE setCard)
+	Q_PROPERTY(Card* card READ card WRITE setCard)
 
 public:
 	explicit CardView(QWidget *parent = 0);

@@ -14,6 +14,7 @@
 #include "card.h"
 #include "Checksum.hpp"
 #include "GcnSearchData.hpp"
+Q_DECLARE_METATYPE(Checksum::ChecksumValue)
 
 // C++ includes
 #include <list>
@@ -27,8 +28,7 @@ class GcnCard : public Card
 	Q_OBJECT
 	typedef Card super;
 
-	// TODO: Register Checksum::ChecksumValue metatype?
-	//Q_PROPERTY(Checksum::ChecksumValue headerChecksumValue READ headerChecksumValue)
+	Q_PROPERTY(Checksum::ChecksumValue headerChecksumValue READ headerChecksumValue)
 
 protected:
 	explicit GcnCard(QObject *parent = 0);

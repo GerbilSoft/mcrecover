@@ -12,6 +12,8 @@
 #include <QWidget>
 
 class File;
+Q_DECLARE_OPAQUE_POINTER(const File*)
+Q_DECLARE_METATYPE(const File*)
 
 class FileViewPrivate;
 class FileView : public QWidget
@@ -19,8 +21,7 @@ class FileView : public QWidget
 	Q_OBJECT
 	typedef QWidget super;
 
-	// FIXME: File* isn't working on Qt6 moc.
-	//Q_PROPERTY(const File* file READ file WRITE setFile)
+	Q_PROPERTY(const File* file READ file WRITE setFile)
 
 public:
 	explicit FileView(QWidget *parent = 0);

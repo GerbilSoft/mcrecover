@@ -21,13 +21,13 @@
 // Qt includes
 #include <QtCore/QObject>
 #include <QtCore/QString>
-
-// Qt classes
-class QThread;
+#include <QtCore/QThread>
 
 // Forward declarations
 class GcnCard;
 class GcnMcFileDb;
+Q_DECLARE_OPAQUE_POINTER(GcnCard*);
+Q_DECLARE_METATYPE(GcnCard*);
 
 class GcnSearchWorkerPrivate;
 class GcnSearchWorker : public QObject
@@ -36,15 +36,13 @@ class GcnSearchWorker : public QObject
 	typedef QObject super;
 
 	Q_PROPERTY(QString errorString READ errorString)
-	// FIXME: std::list<GcnSearchData> isn't working on Qt6 moc.
-	//Q_PROPERTY(std::list<GcnSearchData> filesFoundList READ filesFoundList)
+	Q_PROPERTY(std::list<GcnSearchData> filesFoundList READ filesFoundList)
 
-	// FIXME: GcnCard*, QVector<GcnMcFileDb*>, and QThread* aren't working on Qt6 moc.
-	//Q_PROPERTY(GcnCard* card READ card WRITE setCard)
-	//Q_PROPERTY(QVector<GcnMcFileDb*> databases READ databases WRITE setDatabases)
+	Q_PROPERTY(GcnCard* card READ card WRITE setCard)
+	Q_PROPERTY(QVector<GcnMcFileDb*> databases READ databases WRITE setDatabases)
 	Q_PROPERTY(char preferredRegion READ preferredRegion WRITE setPreferredRegion)
 	Q_PROPERTY(bool searchUsedBlocks READ searchUsedBlocks WRITE setSearchUsedBlocks)
-	//Q_PROPERTY(QThread* origThread READ origThread WRITE setOrigThread)
+	Q_PROPERTY(QThread* origThread READ origThread WRITE setOrigThread)
 
 public:
 	explicit GcnSearchWorker(QObject *parent = 0);

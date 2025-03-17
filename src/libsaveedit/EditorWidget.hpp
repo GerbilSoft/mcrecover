@@ -17,6 +17,8 @@
 
 // TODO: Namespace?
 class File;
+Q_DECLARE_OPAQUE_POINTER(File*)
+Q_DECLARE_METATYPE(File*)
 
 class EditorWidgetPrivate;
 class EditorWidget : public QWidget
@@ -24,8 +26,7 @@ class EditorWidget : public QWidget
 	Q_OBJECT
 
 	// TODO: NOTIFY signal for file?
-	// FIXME: File* isn't working on Qt6 moc.
-	//Q_PROPERTY(File* file READ file WRITE setFile /*NOTIFY fileChanged*/)
+	Q_PROPERTY(File* file READ file WRITE setFile /*NOTIFY fileChanged*/)
 	Q_PROPERTY(int currentSaveSlot READ currentSaveSlot WRITE setCurrentSaveSlot NOTIFY currentSaveSlotChanged);
 	Q_PROPERTY(int saveSlots READ saveSlots NOTIFY saveSlotsChanged)
 	Q_PROPERTY(bool generalSettings READ hasGeneralSettings NOTIFY generalSettingsChanged)

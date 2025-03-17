@@ -9,9 +9,9 @@
 #ifndef __MCRECOVER_TABLESELECT_HPP__
 #define __MCRECOVER_TABLESELECT_HPP__
 
-#include <QWidget>
+#include <QtWidgets/QWidget>
 
-class Card;
+#include "Card.hpp"
 
 class TableSelectPrivate;
 class TableSelect : public QWidget
@@ -19,8 +19,7 @@ class TableSelect : public QWidget
 	Q_OBJECT
 	typedef QWidget super;
 
-	// FIXME: Card* isn't working on Qt6 moc.
-	//Q_PROPERTY(Card* card READ card WRITE setCard)
+	Q_PROPERTY(Card* card READ card WRITE setCard)
 	Q_PROPERTY(int activeDatIdx READ activeDatIdx WRITE setActiveDatIdx)
 	Q_PROPERTY(int activeBatIdx READ activeBatIdx WRITE setActiveBatIdx)
 
