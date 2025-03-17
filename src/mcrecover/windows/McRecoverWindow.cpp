@@ -56,7 +56,6 @@ using std::vector;
 #include <QtCore/QStack>
 #include <QtCore/QVector>
 #include <QtCore/QFile>
-#include <QtCore/QSignalMapper>
 #include <QtCore/QLocale>
 #include <QtCore/QMimeData>
 #include <QtGui/QDragEnterEvent>
@@ -84,147 +83,145 @@ using std::vector;
 #include "ui_McRecoverWindow.h"
 class McRecoverWindowPrivate
 {
-	public:
-		explicit McRecoverWindowPrivate(McRecoverWindow *q);
-		~McRecoverWindowPrivate();
+public:
+	explicit McRecoverWindowPrivate(McRecoverWindow *q);
+	~McRecoverWindowPrivate();
 
-	protected:
-		McRecoverWindow *const q_ptr;
-		Q_DECLARE_PUBLIC(McRecoverWindow)
-	private:
-		Q_DISABLE_COPY(McRecoverWindowPrivate)
+protected:
+	McRecoverWindow *const q_ptr;
+	Q_DECLARE_PUBLIC(McRecoverWindow)
+private:
+	Q_DISABLE_COPY(McRecoverWindowPrivate)
 
-	public:
-		Ui::McRecoverWindow ui;
+public:
+	Ui::McRecoverWindow ui;
 
-		// Memory Card.
-		Card *card;
-		MemCardModel *model;
-		MemCardSortFilterProxyModel *proxyModel;
+	// Memory Card
+	Card *card;
+	MemCardModel *model;
+	MemCardSortFilterProxyModel *proxyModel;
 
-		/**
-		 * Format a file size
-		 * @param size File size.
-		 * @return Formatted file size.
-		 */
-		static QString formatFileSize(quint64 size);
+	/**
+	 * Format a file size
+	 * @param size File size
+	 * @return Formatted file size
+	 */
+	static QString formatFileSize(quint64 size);
 
-		// Filename.
-		QString filename;
-		QString displayFilename;	// filename without subdirectories
+	// Filename
+	QString filename;
+	QString displayFilename;	// filename without subdirectories
 
-		// Initialized columns?
-		bool cols_init;
+	// Initialized columns?
+	bool cols_init;
 
-		/**
-		 * Update the memory card's QTreeView.
-		 */
-		void updateLstFileList(void);
+	/**
+	 * Update the memory card's QTreeView.
+	 */
+	void updateLstFileList(void);
 
-		// Search thread.
-		GcnSearchThread *searchThread;
+	// Search thread
+	GcnSearchThread *searchThread;
 
-		/**
-		 * Initialize the toolbar.
-		 */
-		void initToolbar(void);
+	/**
+	 * Initialize the toolbar.
+	 */
+	void initToolbar(void);
 
-		/**
-		 * Retranslate the toolbar.
-		 */
-		void retranslateToolbar(void);
+	/**
+	 * Retranslate the toolbar.
+	 */
+	void retranslateToolbar(void);
 
-		/**
-		 * Update the action enable status.
-		 */
-		void updateActionEnableStatus(void);
+	/**
+	 * Update the action enable status.
+	 */
+	void updateActionEnableStatus(void);
 
-		// Status Bar Manager.
-		StatusBarManager *statusBarManager;
+	// Status Bar Manager
+	StatusBarManager *statusBarManager;
 
-		/**
-		 * Update the window title.
-		 */
-		void updateWindowTitle(void);
+	/**
+	 * Update the window title.
+	 */
+	void updateWindowTitle(void);
 
-		/**
-		 * Change the file extension of the specified file.
-		 * @param filename Filename.
-		 * @param newExt New extension, including leading dot.
-		 * @return Filename with new extension.
-		 */
-		static QString changeFileExtension(const QString &filename, const QString &newExt);
+	/**
+	 * Change the file extension of the specified file.
+	 * @param filename Filename
+	 * @param newExt New extension, including leading dot
+	 * @return Filename with new extension
+	 */
+	static QString changeFileExtension(const QString &filename, const QString &newExt);
 
-		/**
-		 * Save the specified file(s).
-		 * @param files List of file(s) to save.
-		 * @param path If specified, save file(s) to path using default GCI filenames.
-		 */
-		void saveFiles(const QVector<File*> &files, QString path = QString());
+	/**
+	 * Save the specified file(s).
+	 * @param files List of file(s) to save
+	 * @param path If specified, save file(s) to path using default GCI filenames.
+	 */
+	void saveFiles(const QVector<File*> &files, QString path = QString());
 
-		// UI busy counter.
-		int uiBusyCounter;
+	// UI busy counter
+	int uiBusyCounter;
 
-		/**
-		 * "Preferred Region" selection.
-		 * Possible values: 0, 'E', 'P', 'J', 'K'
-		 * 0 indicates no preferred region.
-		 */
-		char preferredRegion;
-		QLabel *lblPreferredRegion;
-		QActionGroup *actgrpRegion;
-		QSignalMapper *mapperPreferredRegion;
+	/**
+	 * "Preferred Region" selection
+	 * Possible values: 0, 'E', 'P', 'J', 'K'
+	 * 0 indicates no preferred region.
+	 */
+	char preferredRegion;
+	QLabel *lblPreferredRegion;
+	QActionGroup *actgrpRegion;
 
-		/**
-		 * "Animated Icon Format" selection.
-		 */
-		QActionGroup *actgrpAnimIconFormat;
-		QSignalMapper *mapperAnimIconFormat;
+	/**
+	 * "Animated Icon Format" selection
+	 */
+	QActionGroup *actgrpAnimIconFormat;
 
-		// Configuration.
-		ConfigStore *cfg;
+	// Configuration
+	ConfigStore *cfg;
 
-		/**
-		 * Get the last path.
-		 * @return Last path.
-		 */
-		QString lastPath(void) const;
+	/**
+	 * Get the last path.
+	 * @return Last path
+	 */
+	QString lastPath(void) const;
 
-		/**
-		 * Set the last path.
-		 * @param path Last path.
-		 */
-		void setLastPath(const QString &path);
+	/**
+	 * Set the last path.
+	 * @param path Last path
+	 */
+	void setLastPath(const QString &path);
 
-		/**
-		 * Get the animated icon format to use.
-		 * @return Animated icon format to use.
-		 */
-		GcImageWriter::AnimImageFormat animIconFormat(void) const;
+	/**
+	 * Get the animated icon format to use.
+	 * @return Animated icon format to use
+	 */
+	GcImageWriter::AnimImageFormat animIconFormat(void) const;
 
-		/**
-		 * "Allow Write" checkbox in the toolbar.
-		 * TODO: Better name, and/or change to "Read Only"?
-		 */
-		QCheckBox *chkAllowWrite;
+	/**
+	 * "Allow Write" checkbox in the toolbar.
+	 * TODO: Better name, and/or change to "Read Only"?
+	 */
+	QCheckBox *chkAllowWrite;
 
-		// Shh... it's a secret to everybody.
-		HerpDerpEggListener *herpDerp;
+	// Shh... it's a secret to everybody.
+	HerpDerpEggListener *herpDerp;
 
-		/**
-		 * Read a memory card file and try to guess
-		 * what system it's for.
-		 *
-		 * NOTE: This function will actually just check for VMU.
-		 * If the VMU header is missing, it will assume GCN.
-		 *
-		 * @param filename Memory card filename.
-		 * @return McRecoverWindow::FileType
-		 */
-		static McRecoverWindow::FileType checkCardType(const QString &filename);
+	/**
+	 * Read a memory card file and try to guess
+	 * what system it's for.
+	 *
+	 * NOTE: This function will actually just check for VMU.
+	 * If the VMU header is missing, it will assume GCN.
+	 *
+	 * @param filename Memory card filename
+	 * @return McRecoverWindow::FileType
+	 */
+	static McRecoverWindow::FileType checkCardType(const QString &filename);
 
-		// Taskbar Button Manager.
-		TaskbarButtonManager *taskbarButtonManager;
+	// Taskbar Button Manager
+	TaskbarButtonManager *taskbarButtonManager;
 };
 
 McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
@@ -239,9 +236,7 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 	, preferredRegion(0)
 	, lblPreferredRegion(nullptr)
 	, actgrpRegion(new QActionGroup(q))
-	, mapperPreferredRegion(new QSignalMapper(q))
 	, actgrpAnimIconFormat(new QActionGroup(q))
-	, mapperAnimIconFormat(new QSignalMapper(q))
 	, cfg(new ConfigStore(q))
 	, chkAllowWrite(nullptr)
 	, herpDerp(new HerpDerpEggListener(q))
@@ -266,14 +261,6 @@ McRecoverWindowPrivate::McRecoverWindowPrivate(McRecoverWindow *q)
 			 q, &McRecoverWindow::markUiNotBusy);
 	QObject::connect(searchThread, &QObject::destroyed,
 			 q, &McRecoverWindow::markUiNotBusy);
-
-	// Connect the QSignalMapper slot for "Preferred Region" selection.
-	QObject::connect(mapperPreferredRegion, SIGNAL(mapped(int)),
-			 q, SLOT(setPreferredRegion_slot(int)));
-
-	// Connect the QSignalMapper slot for the animated icon format selection.
-	QObject::connect(mapperAnimIconFormat, SIGNAL(mapped(int)),
-			 q, SLOT(setAnimIconFormat_slot(int)));
 
 	// Configuration signals.
 	cfg->registerChangeNotification(QLatin1String("preferredRegion"),
@@ -302,8 +289,8 @@ McRecoverWindowPrivate::~McRecoverWindowPrivate()
 
 /**
  * Format a file size
- * @param size File size.
- * @return Formatted file size.
+ * @param size File size
+ * @return Formatted file size
  */
 QString McRecoverWindowPrivate::formatFileSize(quint64 size)
 {
@@ -369,21 +356,20 @@ void McRecoverWindowPrivate::initToolbar(void)
 	actgrpRegion->addAction(ui.actionRegionJPN);
 	actgrpRegion->addAction(ui.actionRegionKOR);
 
-	// Connect QAction signals to the QSignalMapper.
-	QObject::connect(ui.actionRegionUSA, SIGNAL(triggered()),
-			 mapperPreferredRegion, SLOT(map()));
-	QObject::connect(ui.actionRegionPAL, SIGNAL(triggered()),
-			 mapperPreferredRegion, SLOT(map()));
-	QObject::connect(ui.actionRegionJPN, SIGNAL(triggered()),
-			 mapperPreferredRegion, SLOT(map()));
-	QObject::connect(ui.actionRegionKOR, SIGNAL(triggered()),
-			 mapperPreferredRegion, SLOT(map()));
-
-	// Set the mappings in the QSignalMapper.
-	mapperPreferredRegion->setMapping(ui.actionRegionUSA, 'E');
-	mapperPreferredRegion->setMapping(ui.actionRegionPAL, 'P');
-	mapperPreferredRegion->setMapping(ui.actionRegionJPN, 'J');
-	mapperPreferredRegion->setMapping(ui.actionRegionKOR, 'K');
+	// Connect QAction signals to the slot using a lambda function.
+	Q_Q(McRecoverWindow);
+	QObject::connect(ui.actionRegionUSA, &QAction::triggered, [q]() {
+		q->setPreferredRegion_slot('E');
+	});
+	QObject::connect(ui.actionRegionPAL, &QAction::triggered, [q]() {
+		q->setPreferredRegion_slot('P');
+	});
+	QObject::connect(ui.actionRegionJPN, &QAction::triggered, [q]() {
+		q->setPreferredRegion_slot('J');
+	});
+	QObject::connect(ui.actionRegionKOR, &QAction::triggered, [q]() {
+		q->setPreferredRegion_slot('K');
+	});
 
 	// Set up the QActionGroup for the "Animated Icon Format" options.
 	// Indexes correspond to GcImageWriter::AnimImageFormat enum values.
@@ -404,9 +390,9 @@ void McRecoverWindowPrivate::initToolbar(void)
 			(GcImageWriter::AnimImageFormat)(i+1)))
 		{
 			// Image format is available.
-			QObject::connect(animImgfActions[i], SIGNAL(triggered()),
-					 mapperAnimIconFormat, SLOT(map()));
-			mapperAnimIconFormat->setMapping(animImgfActions[i], (i+1));
+			QObject::connect(animImgfActions[i], &QAction::triggered, [q, i]() {
+				q->setAnimIconFormat_slot(i+1);
+			});
 		} else {
 			// Image format is not available.
 			// Disable the action.
@@ -415,7 +401,6 @@ void McRecoverWindowPrivate::initToolbar(void)
 	}
 
 	// Make sure the "About" button is right-aligned.
-	Q_Q(McRecoverWindow);
 	QWidget *spacer = new QWidget(q);
 	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	ui.toolBar->insertWidget(ui.actionAbout, spacer);
@@ -489,9 +474,9 @@ void McRecoverWindowPrivate::updateWindowTitle(void)
 
 /**
  * Change the file extension of the specified file.
- * @param filename Filename.
- * @param newExt New extension, including leading dot.
- * @return Filename with new extension.
+ * @param filename Filename
+ * @param newExt New extension, including leading dot
+ * @return Filename with new extension
  */
 QString McRecoverWindowPrivate::changeFileExtension(const QString &filename, const QString &newExt)
 {
@@ -511,7 +496,7 @@ QString McRecoverWindowPrivate::changeFileExtension(const QString &filename, con
 
 /**
  * Save the specified file(s).
- * @param files List of file(s) to save.
+ * @param files List of file(s) to save
  * @param path If specified, save file(s) to path using default GCI filenames.
  */
 void McRecoverWindowPrivate::saveFiles(const QVector<File*> &files, QString path)
@@ -685,7 +670,7 @@ void McRecoverWindowPrivate::saveFiles(const QVector<File*> &files, QString path
 
 /**
  * Get the last path.
- * @return Last path.
+ * @return Last path
  */
 QString McRecoverWindowPrivate::lastPath(void) const
 {
@@ -712,7 +697,7 @@ QString McRecoverWindowPrivate::lastPath(void) const
 
 /**
  * Set the last path.
- * @param path Last path.
+ * @param path Last path
  */
 void McRecoverWindowPrivate::setLastPath(const QString &path)
 {
@@ -737,7 +722,7 @@ void McRecoverWindowPrivate::setLastPath(const QString &path)
 
 /**
  * Get the animated icon format to use.
- * @return Animated icon format to use.
+ * @return Animated icon format to use
  */
 GcImageWriter::AnimImageFormat McRecoverWindowPrivate::animIconFormat(void) const
 {
@@ -777,7 +762,7 @@ GcImageWriter::AnimImageFormat McRecoverWindowPrivate::animIconFormat(void) cons
  * if the filesize is a power of two, or GCI if it has
  * a 64-byte header.
  *
- * @param filename Memory card filename.
+ * @param filename Memory card filename
  * @return McRecoverWindow::FileType
  */
 McRecoverWindow::FileType McRecoverWindowPrivate::checkCardType(const QString &filename)
@@ -929,7 +914,7 @@ McRecoverWindow::~McRecoverWindow()
 
 /**
  * Open a GameCube Memory Card image.
- * @param filename Filename.
+ * @param filename Filename
  * @param type Type hint from the Open dialog.
  */
 void McRecoverWindow::openCard(const QString &filename, FileType type)
@@ -1620,7 +1605,7 @@ void McRecoverWindow::on_actionSaveAll_triggered(void)
  * Set the preferred region.
  * This slot is triggered by a QSignalMapper that
  * maps the various QActions.
- * @param preferredRegion Preferred region. (actually char)
+ * @param preferredRegion Preferred region (actually char)
  */
 void McRecoverWindow::setPreferredRegion_slot(int preferredRegion)
 {
@@ -1641,7 +1626,7 @@ void McRecoverWindow::setPreferredRegion_slot(int preferredRegion)
 /**
  * Set the preferred region.
  * This version is used by ConfigDefaults.
- * @param preferredRegion Preferred region. (actually char)
+ * @param preferredRegion Preferred region (actually char)
  */
 void McRecoverWindow::setPreferredRegion_slot(const QVariant &preferredRegion)
 {
@@ -1774,7 +1759,7 @@ void McRecoverWindow::lstFileList_selectionModel_selectionChanged(
 void McRecoverWindow::setAnimIconFormat_slot(int animIconFormat)
 {
 	const char *fmt = GcImageWriter::nameOfAnimImageFormat(
-				(GcImageWriter::AnimImageFormat)animIconFormat);
+		static_cast<GcImageWriter::AnimImageFormat>(animIconFormat));
 	QString s_fmt = (fmt ? QLatin1String(fmt) : QString());
 
 	Q_D(McRecoverWindow);
@@ -1784,7 +1769,7 @@ void McRecoverWindow::setAnimIconFormat_slot(int animIconFormat)
 
 /**
  * UI language was changed by the configuration.
- * @param animIconFormat Animated icon format.
+ * @param animIconFormat Animated icon format
  */
 void McRecoverWindow::setAnimIconFormat_cfg_slot(const QVariant &animIconFormat)
 {

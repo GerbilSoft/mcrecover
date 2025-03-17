@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * TranslationManager.cpp: Qt translation manager.                         *
  *                                                                         *
- * Copyright (c) 2014 by David Korth.                                      *
+ * Copyright (c) 2014-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -25,26 +25,26 @@
 
 class TranslationManagerPrivate
 {
-	public:
-		explicit TranslationManagerPrivate(TranslationManager *q);
-		~TranslationManagerPrivate();
+public:
+	explicit TranslationManagerPrivate(TranslationManager *q);
+	~TranslationManagerPrivate();
 
-	protected:
-		TranslationManager *const q_ptr;
-		Q_DECLARE_PUBLIC(TranslationManager)
-	private:
-		Q_DISABLE_COPY(TranslationManagerPrivate)
+protected:
+	TranslationManager *const q_ptr;
+	Q_DECLARE_PUBLIC(TranslationManager)
+private:
+	Q_DISABLE_COPY(TranslationManagerPrivate)
 
-	public:
-		static TranslationManager *instance;
+public:
+	static TranslationManager *instance;
 
-		// QTranslators.
-		QTranslator *qtTranslator;
-		QTranslator *prgTranslator;
+	// QTranslators
+	QTranslator *qtTranslator;
+	QTranslator *prgTranslator;
 
-		// List of paths to check for translations.
-		// NOTE: qtTranslator also checks QLibraryInfo::TranslationsPath.
-		QVector<QString> pathList;
+	// List of paths to check for translations
+	// NOTE: qtTranslator also checks QLibraryInfo::TranslationsPath.
+	QVector<QString> pathList;
 };
 
 // Singleton instance.

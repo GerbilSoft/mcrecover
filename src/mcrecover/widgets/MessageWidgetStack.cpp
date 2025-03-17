@@ -9,12 +9,11 @@
 #include "MessageWidgetStack.hpp"
 #include "McRecoverQApplication.hpp"
 
-// Qt includes.
+// Qt includes
 #include <QtCore/QSet>
-#include <QtCore/QSignalMapper>
 #include <QVBoxLayout>
 
-// Qt animation includes.
+// Qt animation includes
 #include <QtCore/QTimeLine>
 
 /** MessageWidgetStackPrivate **/
@@ -41,20 +40,11 @@ public:
 
 	// All active MessageWidgets
 	QSet<MessageWidget*> messageWidgets;
-
-	// QSignalMapper for the dismissed() signal
-	// TODO: Remove for Qt5/Qt6.
-	QSignalMapper *mapperMessageWidgets;
 };
 
 MessageWidgetStackPrivate::MessageWidgetStackPrivate(MessageWidgetStack *q)
 	: q_ptr(q)
-	, mapperMessageWidgets(new QSignalMapper(q))
-{
-	// Connect the QSignalMapper slot for MessageWidget dismissed().
-	QObject::connect(mapperMessageWidgets, SIGNAL(mapped(QWidget*)),
-			 q, SLOT(messageWidget_dismissed_slot(QWidget*)));
-}
+{}
 
 MessageWidgetStackPrivate::~MessageWidgetStackPrivate()
 {
@@ -114,9 +104,10 @@ void MessageWidgetStack::showMessage(const QString &msg, MessageWidget::MsgIcon 
 	// Connect the signals.
 	QObject::connect(messageWidget, &QObject::destroyed,
 		this, &MessageWidgetStack::messageWidget_destroyed_slot);
-	QObject::connect(messageWidget, SIGNAL(dismissed(bool)),
-		d->mapperMessageWidgets, SLOT(map()));
-	d->mapperMessageWidgets->setMapping(messageWidget, messageWidget);
+
+	QObject::connect(messageWidget, &MessageWidget::dismissed, [this, messageWidget]() {
+		this->messageWidget_dismissed_slot(messageWidget);
+	});
 
 	// Show the message.
 	d->ui.vboxMain->addWidget(messageWidget);
