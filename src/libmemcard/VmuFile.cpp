@@ -15,11 +15,11 @@
 #include "DcImageLoader.hpp"
 #include "TimeFuncs.hpp"
 
-// C includes. (C++ namespace)
+// C includes (C++ namespace)
 #include <cerrno>
 #include <cstdlib>
 
-// C++ includes.
+// C++ includes
 #include <memory>
 #include <string>
 #include <vector>
@@ -27,9 +27,8 @@ using std::string;
 using std::unique_ptr;
 using std::vector;
 
-// Qt includes.
+// Qt includes
 #include <QtCore/QByteArray>
-#include <QtCore/QTextCodec>
 #include <QtCore/QFile>
 #include <QtCore/QIODevice>
 

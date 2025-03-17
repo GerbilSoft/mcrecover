@@ -58,7 +58,6 @@ using std::vector;
 #include <QtCore/QFile>
 #include <QtCore/QSignalMapper>
 #include <QtCore/QLocale>
-#include <QtCore/QTextCodec>
 #include <QtCore/QMimeData>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDropEvent>

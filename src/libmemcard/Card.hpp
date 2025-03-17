@@ -9,14 +9,13 @@
 #ifndef __LIBMEMCARD_CARD_HPP__
 #define __LIBMEMCARD_CARD_HPP__
 
-// C includes.
+// C includes
 #include <stdint.h>
 
-// Qt includes and classes.
+// Qt includes and classes
 #include <QtCore/QDateTime>
 #include <QtCore/QObject>
 #include <QtCore/QString>
-#include <QtCore/QTextCodec>
 #include <QtGui/QColor>
 
 class File;
