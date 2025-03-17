@@ -592,10 +592,15 @@ QVector<GcImage*> GcnFilePrivate::loadIconImages(void)
 	struct CI8_SHARED_data {
 		int iconIdx;
 		uint32_t iconAddr;
+
+		CI8_SHARED_data(int iconIdx, uint32_t iconAddr)
+			: iconIdx(iconIdx)
+			, iconAddr(iconAddr)
+		{}
 	};
 
 	// Decode the icon(s).
-	QVector<CI8_SHARED_data> lst_CI8_SHARED;
+	vector<CI8_SHARED_data> v_CI8_SHARED;
 	QVector<GcImage*> gcImages;
 	// TODO: Should be part of a struct that's returned...
 	this->iconSpeed.clear();
@@ -613,10 +618,7 @@ QVector<GcImage*> GcnFilePrivate::loadIconImages(void)
 				// CI8 palette is after *all* the icons.
 				// (256 entries in RGB5A3 format.)
 				// This is handled after the rest of the icons.
-				CI8_SHARED_data data;
-				data.iconIdx = i;
-				data.iconAddr = imgAddr;
-				lst_CI8_SHARED.append(data);
+				v_CI8_SHARED.emplace_back(i, imgAddr);
 
 				// Add a nullptr as a placeholder.
 				gcImages.append(nullptr);
@@ -655,14 +657,14 @@ QVector<GcImage*> GcnFilePrivate::loadIconImages(void)
 		}
 	}
 
-	if (!lst_CI8_SHARED.isEmpty()) {
+	if (!v_CI8_SHARED.empty()) {
 		// Process CI8 SHARED icons.
 		// TODO: Convert the palette once instead of every time?
 		const int imageSize = (CARD_ICON_W * CARD_ICON_H * 1);
-		foreach (const CI8_SHARED_data& data, lst_CI8_SHARED) {
+		for (const CI8_SHARED_data &data : v_CI8_SHARED) {
 			GcImage *gcIcon = GcImageLoader::fromCI8(CARD_ICON_W, CARD_ICON_H,
-						(const uint8_t*)&imgData.constData()[data.iconAddr], imageSize,
-						(const uint16_t*)&imgData.constData()[imgAddr], 0x200);
+				(const uint8_t*)&imgData.constData()[data.iconAddr], imageSize,
+				(const uint16_t*)&imgData.constData()[imgAddr], 0x200);
 			gcImages[data.iconIdx] = gcIcon;
 		}
 	}
