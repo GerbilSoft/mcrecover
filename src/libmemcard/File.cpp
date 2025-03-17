@@ -219,7 +219,7 @@ QString FilePrivate::decodeText_SJISorCP1252(const char *str, int len)
 	// TODO: There should be a faster way to check if the text isn't valid...
 	// (iconv can return an error if an invalid character is encountered.)
 	QTextCodec::ConverterState state(QTextCodec::ConvertInvalidToNull);
-	QString text = shiftJis->toUnicode(str, len);
+	QString text = shiftJis->toUnicode(str, len, &state);
 	// U+FFFD: REPLACEMENT CHARACTER
 	// QTextCodec uses this if it encounters
 	// an invalid Shift-JIS sequence.
