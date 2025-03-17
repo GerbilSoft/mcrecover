@@ -48,6 +48,10 @@ ELSEIF(QT_VERSION EQUAL 5)
 			QT5_WRAP_UI("${outfiles}" ${ARGN})
 			SET("${outfiles}" "${${outfiles}}" PARENT_SCOPE)
 		ENDFUNCTION(QT_WRAP_UI)
+		FUNCTION(QT_ADD_RESOURCES outfiles)
+			QT5_ADD_RESOURCES("${outfiles}" ${ARGN})
+			SET("${outfiles}" "${${outfiles}}" PARENT_SCOPE)
+		ENDFUNCTION(QT_ADD_RESOURCES)
 		FUNCTION(QT_ADD_DBUS_INTERFACES sources)
 			QT5_ADD_DBUS_INTERFACES("${sources}" ${ARGN})
 			SET("${sources}" "${${sources}}" PARENT_SCOPE)
@@ -228,7 +232,7 @@ SET(mcrecover_RCC_SRCS
 	resources/hw/hw.qrc
 	)
 
-QT5_ADD_RESOURCES(
+QT_ADD_RESOURCES(
 	mcrecover_RCC_O ${mcrecover_RCC_SRCS}
 	OPTIONS -no-compress
 	)
