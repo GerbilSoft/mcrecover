@@ -49,6 +49,20 @@ SET(libmemcard_H
 	GcToolsQt.hpp
 	GcnSearchData.hpp
 	TimeFuncs.hpp
+
+	# Memory Card model
+	MemCardModel.hpp
+	MemCardItemDelegate.hpp
+	MemCardSortFilterProxyModel.hpp
+
+	# Memory Card objects
+	Card.hpp
+	File.hpp
+	GcnCard.hpp
+	GciCard.hpp
+	GcnFile.hpp
+	VmuCard.hpp
+	VmuFile.hpp
 	)
 
 ######################

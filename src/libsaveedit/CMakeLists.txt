@@ -71,9 +71,40 @@ SET(libsaveedit_SRCS
 
 # Headers
 SET(libsaveedit_H
+	# Base editor window and widget
+	EditorWindow.hpp
+	EditorWidget.hpp
 	EditorWidgetFactory.hpp
 	editcommon.h
+
+	# Item models
+	models/BitFlags.hpp
+	models/BitFlagsModel.hpp
+	models/ByteFlags.hpp
+	models/ByteFlagsModel.hpp
+	models/PageFilterModel.hpp
 	models/bit_flag.h
+
+	# Item view widgets
+	widgets/BitFlagsView.hpp
+	widgets/ByteFlagsView.hpp
+	widgets/CenteredCheckBoxDelegate.hpp
+
+	# Sonic Adventure (DX) editor
+	SonicAdventure/SAEditor.hpp
+	SonicAdventure/SAEditWidget.hpp
+	SonicAdventure/SADXEditWidget.hpp
+	SonicAdventure/SALevelStats.hpp
+	SonicAdventure/SALevelClearCount.hpp
+	SonicAdventure/SAEventFlags.hpp
+	SonicAdventure/SANPCFlags.hpp
+	SonicAdventure/SADXMissionFlags.hpp
+	SonicAdventure/SAGeneral.hpp
+	SonicAdventure/SAData.h
+	SonicAdventure/SAAdventure.hpp
+	SonicAdventure/SAMiscEmblems.hpp
+	SonicAdventure/TimeCodeEdit.hpp
+	SonicAdventure/SASubGames.hpp
 	SonicAdventure/SAData.h
 	)
 
