@@ -978,6 +978,39 @@
 		</dirEntry>
 	</file>
 	<file>
+		<gameName>Pokémon Box R&amp;S</gameName>
+		<fileInfo>Save File</fileInfo>
+		<id6>GPXP01</id6>
+		<search>
+			<address>0x0000</address>
+			<gameDesc>^Pokémon Box R&amp;S$</gameDesc>
+			<fileDesc>^Saved data of (\d{1,2})/(\d{1,2})$</fileDesc>
+		</search>
+		<variables>
+			<variable id="F1">
+				<useAs>month</useAs>
+			</variable>
+			<variable id="F2">
+				<useAs>day</useAs>
+			</variable>
+		</variables>
+		<checksum>
+			<algorithm>AddInvDual16</algorithm>
+			<address>0x2000</address>
+			<range start="0x2004" length="0x1FF8" />
+			<multiple instances="58" increment="0x2000" />
+		</checksum>
+		<dirEntry>
+			<filename>pokemon_rs_memory_box</filename>
+			<bannerFormat>0x05</bannerFormat>
+			<iconAddress>0x0040</iconAddress>
+			<iconFormat>0x15</iconFormat>
+			<iconSpeed>0x3F</iconSpeed>
+			<permission>0x1C</permission>
+			<length>59</length>
+		</dirEntry>
+	</file>
+	<file>
 		<gameName>Pokémon Colosseum</gameName>
 		<fileInfo>Save File</fileInfo>
 		<id6>GC6P01</id6>
