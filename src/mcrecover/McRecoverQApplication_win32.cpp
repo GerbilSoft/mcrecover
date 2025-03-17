@@ -289,15 +289,18 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
  */
 QIcon McRecoverQApplication::Win32Icon(Win32Icon_t iconId, const QSize &size)
 {
-	if (iconId <= W32ICON_NONE || iconId >= W32ICON_MAX)
+	if (iconId <= Win32Icon::None || iconId >= Win32Icon::Max) {
 		return QIcon();
+	}
 
 	// Get the SYSTEM32 directory.
 	// TODO: Win9x support, maybe...
 	WCHAR sys32dir[MAX_PATH];
 	HRESULT hr = SHGetFolderPathW(nullptr, CSIDL_SYSTEM, nullptr, 0, sys32dir);
-	if (FAILED(hr))
+	if (FAILED(hr)) {
 		return QIcon();
+	}
+
 	// NOTE: QChar* is functionally equivalent to char16_t,
 	// which is the same as WCHAR on Windows.
 	QString qsys32dir(reinterpret_cast<const QChar*>(sys32dir));
@@ -306,7 +309,7 @@ QIcon McRecoverQApplication::Win32Icon(Win32Icon_t iconId, const QSize &size)
 	// that don't exist in the icon?
 	QPixmap pixmap;
 	switch (iconId) {
-		case W32ICON_DEFRAG: {
+		case Win32Icon::Defrag: {
 			/**
 			 * Check the following icons:
 			 * - Win7:  SYSTEM32/dfrgui.exe;130

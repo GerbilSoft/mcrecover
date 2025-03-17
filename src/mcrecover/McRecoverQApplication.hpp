@@ -54,7 +54,7 @@ class McRecoverQApplication : public QApplication
 				const QWidget *widget = 0);
 
 #ifdef Q_OS_WIN
-		enum class Win32Icon_t {
+		enum class Win32Icon {
 			None = 0,
 			Defrag,
 

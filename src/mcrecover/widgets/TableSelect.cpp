@@ -126,7 +126,7 @@ void TableSelectPrivate::Ui_TableSelect::setupUi(QWidget *TableSelect)
 #ifdef Q_OS_WIN
 	// Win32: Get the icon from Windows Defragmenter.
 	iconBlockTable = McRecoverQApplication::Win32Icon(
-		McRecoverQApplication::W32ICON_DEFRAG, qIconSz);
+		McRecoverQApplication::Win32Icon::Defrag, qIconSz);
 	if (iconBlockTable.isNull())
 #endif /* Q_OS_WIN */
 	{
