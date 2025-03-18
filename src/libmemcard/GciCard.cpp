@@ -99,8 +99,11 @@ int GciCardPrivate::open(const QString &filename)
 	freeBlocks = 0;
 
 	// Block and directory tables are "valid".
+	bat_info.active = 0;
+	dat_info.active = 0;
 	bat_info.valid = 1;
 	dat_info.valid = 1;
+	bat_info.valid_freeblocks = 1;
 	dat_info.valid_freeblocks = 1;
 
 #if SYS_BYTEORDER != SYS_BIG_ENDIAN
