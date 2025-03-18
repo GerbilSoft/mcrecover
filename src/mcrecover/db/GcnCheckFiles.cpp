@@ -12,31 +12,31 @@
 #include "libmemcard/GcnCard.hpp"
 #include "libmemcard/GcnFile.hpp"
 
-// GCN Memory Card File Database.
+// GCN Memory Card File Database
 #include "db/GcnMcFileDb.hpp"
 
-// Checksum algorithm class.
+// Checksum algorithm class
 #include "libgctools/Checksum.hpp"
 
-// Qt includes.
+// Qt includes
 #include <QtCore/QStack>
 #include <QtCore/QThread>
 
 class GcnCheckFilesPrivate
 {
-	public:
-		explicit GcnCheckFilesPrivate(GcnCheckFiles *q);
-		~GcnCheckFilesPrivate();
+public:
+	explicit GcnCheckFilesPrivate(GcnCheckFiles *q);
+	~GcnCheckFilesPrivate();
 
-	protected:
-		GcnCheckFiles *const q_ptr;
-		Q_DECLARE_PUBLIC(GcnCheckFiles)
-	private:
-		Q_DISABLE_COPY(GcnCheckFilesPrivate)
+protected:
+	GcnCheckFiles *const q_ptr;
+	Q_DECLARE_PUBLIC(GcnCheckFiles)
+private:
+	Q_DISABLE_COPY(GcnCheckFilesPrivate)
 
-	public:
-		// GCN Memory Card File databases.
-		QVector<GcnMcFileDb*> dbs;
+public:
+	// GCN Memory Card File databases
+	QVector<GcnMcFileDb*> dbs;
 };
 
 GcnCheckFilesPrivate::GcnCheckFilesPrivate(GcnCheckFiles* q)
@@ -65,8 +65,8 @@ GcnCheckFiles::~GcnCheckFiles()
 
 /**
  * Load multiple GCN Memory Card File databases.
- * TODO: Singleton DB file management class.
- * @param dbFilenames Filenames of GCN Memory Card File database.
+ * TODO: Singleton DB file management class
+ * @param dbFilenames Filenames of GCN Memory Card File database
  * @return 0 on success; non-zero on error. (Check error string!)
  */
 int GcnCheckFiles::loadGcnMcFileDbs(const QVector<QString> &dbFilenames)
