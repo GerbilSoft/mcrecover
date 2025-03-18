@@ -2,7 +2,7 @@
  * GameCube Memory Card Recovery Program.                                  *
  * GcnSearchThread.cpp: GCN "lost" file search thread.                     *
  *                                                                         *
- * Copyright (c) 2013-2016 by David Korth.                                 *
+ * Copyright (c) 2013-2025 by David Korth.                                 *
  * SPDX-License-Identifier: GPL-2.0-or-later                               *
  ***************************************************************************/
 
@@ -14,44 +14,44 @@
 // GCN Memory Card File Database.
 #include "db/GcnMcFileDb.hpp"
 
-// Worker object.
+// Worker object
 #include "GcnSearchWorker.hpp"
 
-// C++ classes.
+// C++ classes
 using std::list;
 
-// Qt includes.
+// Qt includes
 #include <QtCore/QStack>
 #include <QtCore/QThread>
 
 class GcnSearchThreadPrivate
 {
-	public:
-		explicit GcnSearchThreadPrivate(GcnSearchThread *q);
-		~GcnSearchThreadPrivate();
+public:
+	explicit GcnSearchThreadPrivate(GcnSearchThread *q);
+	~GcnSearchThreadPrivate();
 
-	protected:
-		GcnSearchThread *const q_ptr;
-		Q_DECLARE_PUBLIC(GcnSearchThread)
-	private:
-		Q_DISABLE_COPY(GcnSearchThreadPrivate)
+protected:
+	GcnSearchThread *const q_ptr;
+	Q_DECLARE_PUBLIC(GcnSearchThread)
+private:
+	Q_DISABLE_COPY(GcnSearchThreadPrivate)
 
-	public:
-		// GCN Memory Card File databases.
-		QVector<GcnMcFileDb*> dbs;
+public:
+	// GCN Memory Card File databases
+	QVector<GcnMcFileDb*> dbs;
 
-		// Worker object.
-		// NOTE: This object cannot have a parent;
-		// otherwise, QObject::moveToThread() won't work.
-		GcnSearchWorker *worker;
+	// Worker object
+	// NOTE: This object cannot have a parent;
+	// otherwise, QObject::moveToThread() won't work.
+	GcnSearchWorker *worker;
 
-		// Worker thread.
-		QThread *workerThread;
+	// Worker thread
+	QThread *workerThread;
 
-		/**
-		 * Stop the worker thread.
-		 */
-		void stopWorkerThread(void);
+	/**
+	 * Stop the worker thread.
+	 */
+	void stopWorkerThread(void);
 };
 
 GcnSearchThreadPrivate::GcnSearchThreadPrivate(GcnSearchThread* q)
@@ -118,7 +118,7 @@ GcnSearchThread::~GcnSearchThread()
  * NOTE: This is NOT cleared if no error occurs.
  * It should only be checked if an error occurred.
  *
- * @return Last error string.
+ * @return Last error string
  */
 QString GcnSearchThread::errorString(void) const
 {
@@ -126,11 +126,11 @@ QString GcnSearchThread::errorString(void) const
 	return d->worker->errorString();
 }
 
-/** Functions. **/
+/** Functions **/
 
 /**
  * Load multiple GCN Memory Card File databases.
- * @param dbFilenames Filenames of GCN Memory Card File database.
+ * @param dbFilenames Filenames of GCN Memory Card File database
  * @return 0 on success; non-zero on error. (Check error string!)
  */
 int GcnSearchThread::loadGcnMcFileDbs(const QVector<QString> &dbFilenames)
@@ -165,7 +165,7 @@ int GcnSearchThread::loadGcnMcFileDbs(const QVector<QString> &dbFilenames)
 
 /**
  * Get the list of files found in the last successful search.
- * @return List of files found.
+ * @return List of files found
  */
 list<GcnSearchData> GcnSearchThread::filesFoundList(void)
 {
@@ -178,9 +178,12 @@ list<GcnSearchData> GcnSearchThread::filesFoundList(void)
  * Search a memory card for "lost" files.
  * Synchronous search; non-threaded.
  * @param card Memory Card to search
- * @param preferredRegion Preferred region.
+ * @param preferredRegion Preferred region
  * @param searchUsedBlocks If true, search all blocks, not just blocks marked as empty.
  * @return Number of files found on success; negative on error.
+ *
+ * NOTE: Even though the search will be done synchronously,
+ * signals will still be emitted, similar to searchMemCard_async().
  *
  * If successful, retrieve the file list using dirEntryList().
  * If an error occurs, check the errorString(). (TODO)
@@ -213,16 +216,22 @@ int GcnSearchThread::searchMemCard(GcnCard *card, char preferredRegion, bool sea
 /**
  * Search a memory card for "lost" files.
  * Asynchronous search; uses a separate thread.
- * @param card Memory Card to search.
- * @param preferredRegion Preferred region.
- * @param searchUsedBlocks If true, search all blocks, not just empty blocks.
- * @return 0 if the thread started successfully; non-zero on error.
+ * @param card Memory Card to search
+ * @param preferredRegion Preferred region
+ * @param searchUsedBlocks If true, search all blocks, not just blocks marked as empty.
+ * @return 0 if thread started successfully; non-zero on error.
  *
  * Search is completed when either of the following
  * signals are emitted:
  * - searchCancelled(): Search was cancelled. No files found.
  * - searchFinished(): Search has completed.
  * - searchError(): Search failed due to an error.
+ *
+ * NOTE: If the search could not be done asynchronously, it will
+ * be done synchronously, though the signals will still be emitted.
+ *
+ * In the case of searchFinished(), use dirEntryList() to get
+ * the list of files.
  */
 int GcnSearchThread::searchMemCard_async(GcnCard *card, char preferredRegion, bool searchUsedBlocks)
 {
@@ -260,7 +269,7 @@ int GcnSearchThread::searchMemCard_async(GcnCard *card, char preferredRegion, bo
 	return 0;
 }
 
-/** Slots. **/
+/** Slots **/
 
 /**
  * Search has been cancelled.
@@ -278,7 +287,7 @@ void GcnSearchThread::searchCancelled_slot(void)
 
 /**
  * Search has completed.
- * @param lostFilesFound Number of "lost" files found.
+ * @param lostFilesFound Number of "lost" files found
  */
 void GcnSearchThread::searchFinished_slot(int lostFilesFound)
 {
@@ -293,7 +302,7 @@ void GcnSearchThread::searchFinished_slot(int lostFilesFound)
 
 /**
  * An error has occurred during the search.
- * @param errorString Error string.
+ * @param errorString Error string
  */
 void GcnSearchThread::searchError_slot(const QString &errorString)
 {
