@@ -26,16 +26,18 @@
  */
 int mcrecover_main(int argc, char *argv[])
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	// Enable High DPI.
 	McRecoverQApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
-#if QT_VERSION >= 0x050600
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
 	// Enable High DPI pixmaps.
 	McRecoverQApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
-#else
+#else /* QT_VERSION < QT_VERSION_CHECK(5, 6, 0) */
 	// Hardcode the value in case the user upgrades to Qt 5.6 later.
 	// http://doc.qt.io/qt-5/qt.html#ApplicationAttribute-enum
 	McRecoverQApplication::setAttribute((Qt::ApplicationAttribute)13, true);
-#endif /* QT_VERSION >= 0x050600 */
+#endif /* QT_VERSION >= QT_VERSION_CHECK(5, 6, 0) */
+#endif /* QT_VERSION < QT_VERSION_CHECK(6, 0, 0) */
 
 	McRecoverQApplication *mcApp = new McRecoverQApplication(argc, argv);
 
