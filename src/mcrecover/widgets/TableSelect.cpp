@@ -422,10 +422,17 @@ TableSelect::TableSelect(QWidget *parent)
 	d->ui.setupUi(this);
 
 	// Connect button group signals.
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
 	connect(d->ui.btnDirGroup, &QButtonGroup::idClicked,
 		this, &TableSelect::setActiveDatIdx);
 	connect(d->ui.btnBlockGroup, &QButtonGroup::idClicked,
 		this, &TableSelect::setActiveBatIdx);
+#else /* QT_VERSION < QT_VERSION_CHECK(5, 15, 0) */
+	connect(d->ui.btnDirGroup, SIGNAL(buttonClicked(int)),
+		this, SLOT(setActiveDatIdx(int)));
+	connect(d->ui.btnBlockGroup, SIGNAL(buttonClicked(int)),
+		this, SLOT(setActiveDatIdx(int)));
+#endif /* QT_VERSION >= QT_VERSION_CHECK(5, 15, 0) */
 }
 
 TableSelect::~TableSelect()
